@@ -1,0 +1,13 @@
+{
+  "appId": "crossword",
+  "defaultModeId": "default",
+  "modes": [
+    {
+      "id": "default",
+      "name": "Default",
+      "data": {
+        "maxWords": 14
+      }
+    }
+  ]
+}

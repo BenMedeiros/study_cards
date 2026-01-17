@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "id": "letters_to_numbers",
+    "name": "Letters to Numbers",
+    "description": "A=1, B=2, ... (v0 seed)",
+    "version": 1,
+    "fields": [
+      { "key": "letter", "label": "Letter", "type": "string" },
+      { "key": "number", "label": "Number", "type": "number" }
+    ]
+  },
+  "entries": [
+    { "id": "A", "letter": "A", "number": 1 },
+    { "id": "B", "letter": "B", "number": 2 },
+    { "id": "C", "letter": "C", "number": 3 },
+    { "id": "D", "letter": "D", "number": 4 },
+    { "id": "E", "letter": "E", "number": 5 },
+    { "id": "F", "letter": "F", "number": 6 },
+    { "id": "G", "letter": "G", "number": 7 },
+    { "id": "H", "letter": "H", "number": 8 },
+    { "id": "I", "letter": "I", "number": 9 },
+    { "id": "J", "letter": "J", "number": 10 },
+    { "id": "K", "letter": "K", "number": 11 },
+    { "id": "L", "letter": "L", "number": 12 },
+    { "id": "M", "letter": "M", "number": 13 },
+    { "id": "N", "letter": "N", "number": 14 },
+    { "id": "O", "letter": "O", "number": 15 },
+    { "id": "P", "letter": "P", "number": 16 },
+    { "id": "Q", "letter": "Q", "number": 17 },
+    { "id": "R", "letter": "R", "number": 18 },
+    { "id": "S", "letter": "S", "number": 19 },
+    { "id": "T", "letter": "T", "number": 20 },
+    { "id": "U", "letter": "U", "number": 21 },
+    { "id": "V", "letter": "V", "number": 22 },
+    { "id": "W", "letter": "W", "number": 23 },
+    { "id": "X", "letter": "X", "number": 24 },
+    { "id": "Y", "letter": "Y", "number": 25 },
+    { "id": "Z", "letter": "Z", "number": 26 }
+  ]
+}
