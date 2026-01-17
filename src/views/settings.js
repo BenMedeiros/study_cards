@@ -581,12 +581,17 @@ export function renderSettings({ store, onNavigate, route }) {
         standardRandRow.append(standardRandCb, standardRandLabel);
         uiBox.append(standardRandRow);
         
-        // Batch enabled checkbox
-        const batchRow = document.createElement('div');
-        batchRow.style.display = 'flex';
-        batchRow.style.alignItems = 'center';
-        batchRow.style.gap = '8px';
-        batchRow.style.marginBottom = '12px';
+        // Batch settings section
+        const batchSection = document.createElement('div');
+        batchSection.style.display = 'flex';
+        batchSection.style.flexDirection = 'column';
+        batchSection.style.gap = '12px';
+        batchSection.style.marginBottom = '12px';
+        
+        const batchEnableRow = document.createElement('div');
+        batchEnableRow.style.display = 'flex';
+        batchEnableRow.style.alignItems = 'center';
+        batchEnableRow.style.gap = '8px';
         const batchCb = document.createElement('input');
         batchCb.type = 'checkbox';
         batchCb.id = 'settings-batch-enabled-standard';
@@ -594,20 +599,26 @@ export function renderSettings({ store, onNavigate, route }) {
         batchCb.addEventListener('change', () => {
           data.batchEnabled = batchCb.checked;
           updateDirtyFromDraft();
-          updateBatchSizeVisibility();
+          updateBatchSettingsVisibility();
         });
         const batchLabel = document.createElement('label');
         batchLabel.htmlFor = 'settings-batch-enabled-standard';
         batchLabel.className = 'hint';
         batchLabel.textContent = 'Enable Batches';
-        batchRow.append(batchCb, batchLabel);
-        uiBox.append(batchRow);
+        batchEnableRow.append(batchCb, batchLabel);
+        batchSection.append(batchEnableRow);
         
-        // Batch size input
+        // Batch details (only shown when enabled)
+        const batchDetails = document.createElement('div');
+        batchDetails.style.display = 'flex';
+        batchDetails.style.flexDirection = 'column';
+        batchDetails.style.gap = '12px';
+        batchDetails.style.paddingLeft = '24px';
+        batchDetails.style.borderLeft = '2px solid var(--panel)';
+        
         const batchSizeRow = document.createElement('div');
         batchSizeRow.className = 'row';
         batchSizeRow.style.alignItems = 'center';
-        batchSizeRow.style.marginBottom = '12px';
         const batchSizeLabel = document.createElement('span');
         batchSizeLabel.className = 'hint';
         batchSizeLabel.textContent = 'Batch Size:';
@@ -624,11 +635,34 @@ export function renderSettings({ store, onNavigate, route }) {
           updateDirtyFromDraft();
         });
         batchSizeRow.append(batchSizeLabel, batchSizeInput);
-        const updateBatchSizeVisibility = () => {
-          batchSizeRow.style.display = data.batchEnabled ? 'flex' : 'none';
+        
+        const batchLoopRow = document.createElement('div');
+        batchLoopRow.style.display = 'flex';
+        batchLoopRow.style.alignItems = 'center';
+        batchLoopRow.style.gap = '8px';
+        const batchLoopCb = document.createElement('input');
+        batchLoopCb.type = 'checkbox';
+        batchLoopCb.id = 'settings-batch-loop-standard';
+        batchLoopCb.checked = data.batchLoop ?? true;
+        batchLoopCb.addEventListener('change', () => {
+          data.batchLoop = batchLoopCb.checked;
+          updateDirtyFromDraft();
+        });
+        const batchLoopLabel = document.createElement('label');
+        batchLoopLabel.htmlFor = 'settings-batch-loop-standard';
+        batchLoopLabel.className = 'hint';
+        batchLoopLabel.textContent = 'Loop batch automatically';
+        batchLoopRow.append(batchLoopCb, batchLoopLabel);
+        
+        batchDetails.append(batchSizeRow, batchLoopRow);
+        batchSection.append(batchDetails);
+        
+        const updateBatchSettingsVisibility = () => {
+          batchDetails.style.display = data.batchEnabled ? 'flex' : 'none';
         };
-        updateBatchSizeVisibility();
-        uiBox.append(batchSizeRow);
+        updateBatchSettingsVisibility();
+        
+        uiBox.append(batchSection);
       }
       
       // Display Fields section (only for standard mode)

@@ -30,10 +30,17 @@ export function renderFlashcards({ store }) {
   let currentBatchIndex = 0;
   let index = 0;
   let shownAt = nowMs();
+  let batchStartTime = nowMs();
   let submitTimer = null;
   let feedbackMode = false;
   let userAnswer = '';
   let isCorrect = false;
+  let batchResults = []; // Track timing for each card: { entry, timeMs, wasCorrect }
+  
+  function resetBatchResults() {
+    batchResults = [];
+    batchStartTime = nowMs();
+  }
 
   function createBatches() {
     const batchSize = Math.max(1, settings.batchSize ?? 10);
@@ -66,8 +73,24 @@ export function renderFlashcards({ store }) {
   function clampIndex() {
     const batchEntries = getCurrentBatchEntries();
     const total = batchEntries.length;
-    if (total === 0) index = 0;
-    else index = (index + total) % total;
+    if (total === 0) {
+      index = 0;
+      return false;
+    }
+    
+    // Check if we're trying to go past the end
+    if (index >= total) {
+      if (settings.batchEnabled && !settings.batchLoop) {
+        // Don't loop - keep at last card
+        index = total - 1;
+        return true; // Signal completion
+      }
+      // Loop back to start
+      index = index % total;
+    } else if (index < 0) {
+      index = (index + total) % total;
+    }
+    return false; // Not completed
   }
 
   function renderStandardCard(body, entry, settings) {
@@ -148,7 +171,12 @@ export function renderFlashcards({ store }) {
         userAnswer = '';
         feedbackMode = false;
         index += 1;
-        clampIndex();
+        const completed = clampIndex();
+        if (completed) {
+          // Show completion instead of rendering next card
+          feedbackMode = true;
+          index -= 1; // Go back to last card
+        }
         shownAt = nowMs();
         render();
       } else {
@@ -293,11 +321,17 @@ export function renderFlashcards({ store }) {
         (newSettings.batchEnabled && newSettings.batchSize !== settings.batchSize)) {
       settings.batchEnabled = newSettings.batchEnabled;
       settings.batchSize = newSettings.batchSize;
+      settings.batchLoop = newSettings.batchLoop;
       if (settings.batchEnabled) {
         createBatches();
         currentBatchIndex = 0;
       }
       index = 0;
+    }
+    
+    // Sync batchLoop setting
+    if (newSettings.batchLoop !== settings.batchLoop) {
+      settings.batchLoop = newSettings.batchLoop;
     }
     
     const batchEntries = getCurrentBatchEntries();
@@ -398,7 +432,20 @@ export function renderFlashcards({ store }) {
         feedbackMode = false;
         userAnswer = '';
         index += 1;
-        clampIndex();
+        const completed = clampIndex();
+        if (completed) {
+          // Batch complete - show completion message
+          index -= 1; // Stay on last card
+          body.innerHTML = '<div style="text-align: center; padding: 40px;"><h3>Batch Complete!</h3><p class="hint">You\'ve completed all cards in this batch.</p></div>';
+          continueBtn.textContent = 'Restart Batch';
+          continueBtn.onclick = () => {
+            index = 0;
+            feedbackMode = false;
+            userAnswer = '';
+            render();
+          };
+          return;
+        }
         shownAt = nowMs();
         render();
       });
@@ -443,7 +490,18 @@ export function renderFlashcards({ store }) {
           msOnCard: Math.round(nowMs() - shownAt),
         });
         index += 1;
-        clampIndex();
+        const completed = clampIndex();
+        if (completed) {
+          // Show completion message
+          body.innerHTML = '<div style="text-align: center; padding: 40px;"><h3>Batch Complete!</h3><p class="hint">You\'ve completed all cards in this batch.</p></div>';
+          next.textContent = 'Restart Batch';
+          next.onclick = async () => {
+            index = 0;
+            shownAt = nowMs();
+            render();
+          };
+          return;
+        }
         shownAt = nowMs();
         render();
       });
