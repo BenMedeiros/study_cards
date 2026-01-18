@@ -227,7 +227,7 @@ export function renderQaCards({ store }) {
       }
 
       // Add speaker button for Japanese fields only
-      const shouldHaveSpeaker = ['kanji', 'reading'].includes(field.key);
+      const shouldHaveSpeaker = ['kanji', 'reading', 'japaneseName'].includes(field.key);
       if (shouldHaveSpeaker && fieldValue) {
         const speakerBtn = createSpeakerButton({
           text: fieldValue,

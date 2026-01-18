@@ -30,6 +30,7 @@ export function getLanguageCode(fieldKey, collectionCategory) {
     'latinName': 'en-US', // Use English for Latin names
     'kanji': 'ja-JP',     // Japanese
     'reading': 'ja-JP',   // Japanese
+    'japaneseName': 'ja-JP', // Japanese
   };
   
   return languageMap[fieldKey] || 'en-US';

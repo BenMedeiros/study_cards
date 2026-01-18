@@ -6,6 +6,7 @@
     { "key": "greekPronunciation", "label": "Greek Pron.", "type": "string" },
     { "key": "latinName", "label": "Latin Name", "type": "string" },
     { "key": "latinPronunciation", "label": "Latin Pron.", "type": "string" },
+    { "key": "japaneseName", "label": "Japanese Name", "type": "string" },
     { "key": "godOf", "label": "God Of", "type": "string" },
     { "key": "powers", "label": "Powers", "type": "string" },
     { "key": "physicalDescription", "label": "Physical Desc.", "type": "string" },
