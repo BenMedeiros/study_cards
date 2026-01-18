@@ -95,6 +95,7 @@ export function renderQaCards({ store }) {
       // Only Enter key submits
       if (key === 'Enter') {
         e.preventDefault();
+        e.stopPropagation(); // Prevent event from bubbling to wrapper
         handleSubmit();
         return;
       }
@@ -250,6 +251,7 @@ export function renderQaCards({ store }) {
     const total = entries.length;
 
     wrapper.innerHTML = '';
+    wrapper.tabIndex = 0; // Make wrapper focusable for Enter key
 
     const headerRow = document.createElement('div');
     headerRow.className = 'row';
@@ -308,25 +310,6 @@ export function renderQaCards({ store }) {
     });
     answerSelect.style.minWidth = '120px';
 
-    toolsRow.append(questionLabel, questionSelect, answerLabel, answerSelect);
-
-    const body = document.createElement('div');
-    body.id = 'qa-cards-body';
-    body.style.marginTop = '10px';
-    
-    const controls = document.createElement('div');
-    controls.className = 'row';
-    controls.id = 'qa-cards-controls';
-    controls.style.marginTop = '6px';
-
-    if (!entry) {
-      body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
-    } else if (feedbackMode) {
-      renderFeedback(body, entry);
-    } else {
-      renderCard(body, entry);
-    }
-
     if (feedbackMode) {
       const handleContinue = () => {
         feedbackMode = false;
@@ -342,8 +325,9 @@ export function renderQaCards({ store }) {
       continueBtn.className = 'button';
       continueBtn.textContent = 'Continue';
       continueBtn.addEventListener('click', handleContinue);
+      continueBtn.style.marginLeft = 'auto';
       
-      controls.append(continueBtn);
+      toolsRow.append(questionLabel, questionSelect, answerLabel, answerSelect, continueBtn);
       
       // Allow Enter to continue to next card
       const keyHandler = (e) => {
@@ -354,9 +338,26 @@ export function renderQaCards({ store }) {
         }
       };
       wrapper.addEventListener('keydown', keyHandler);
+      
+      // Focus wrapper so Enter key works immediately
+      setTimeout(() => wrapper.focus(), 0);
+    } else {
+      toolsRow.append(questionLabel, questionSelect, answerLabel, answerSelect);
     }
 
-    wrapper.append(headerRow, toolsRow, body, controls);
+    const body = document.createElement('div');
+    body.id = 'qa-cards-body';
+    body.style.marginTop = '10px';
+
+    if (!entry) {
+      body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
+    } else if (feedbackMode) {
+      renderFeedback(body, entry);
+    } else {
+      renderCard(body, entry);
+    }
+
+    wrapper.append(headerRow, toolsRow, body);
   }
 
   render();
