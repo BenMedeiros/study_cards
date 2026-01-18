@@ -664,10 +664,7 @@ export function renderQaCards({ store }) {
     }
 
     if (feedbackMode) {
-      const continueBtn = document.createElement('button');
-      continueBtn.className = 'button';
-      continueBtn.textContent = 'Continue';
-      continueBtn.addEventListener('click', () => {
+      const handleContinue = () => {
         feedbackMode = false;
         userAnswer = '';
         index += 1;
@@ -680,8 +677,30 @@ export function renderQaCards({ store }) {
         }
         shownAt = nowMs();
         render();
-      });
+      };
+      
+      const continueBtn = document.createElement('button');
+      continueBtn.className = 'button';
+      continueBtn.textContent = 'Continue';
+      continueBtn.addEventListener('click', handleContinue);
       controls.append(continueBtn);
+      
+      // Allow typing to continue to next card
+      const keyHandler = (e) => {
+        if (/^[a-zA-Z]$/.test(e.key) || isHiraganaOrKatakana(e.key)) {
+          e.preventDefault();
+          handleContinue();
+        }
+      };
+      wrapper.addEventListener('keydown', keyHandler);
+      
+      // Clean up listener when moving to next card
+      const originalRender = render;
+      render = function() {
+        wrapper.removeEventListener('keydown', keyHandler);
+        render = originalRender;
+        originalRender();
+      };
     }
 
     if (batchSelector) {

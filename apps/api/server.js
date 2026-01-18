@@ -100,27 +100,26 @@ app.post('/api/sync/pushCollection', async (req, res) => {
   }
 });
 
-// Settings sync (local backend only)
-app.get('/api/settings', async (req, res) => {
-  try {
-    const raw = await fs.readFile(localSettingsPath, 'utf8').catch(() => null);
-    if (!raw) return res.json({ ok: true, settings: null });
-    const settings = JSON.parse(raw);
-    return res.json({ ok: true, settings });
-  } catch (err) {
-    return res.status(500).json({ ok: false, error: String(err?.message ?? err) });
-  }
-});
-
+// Save settings for a specific collection to its .settings.json file
 app.post('/api/sync/pushSettings', async (req, res) => {
   try {
-    const payload = req.body;
-    if (!payload || typeof payload !== 'object') {
-      return res.status(400).json({ ok: false, error: 'Missing JSON body' });
+    const { collectionId, settingsPath, settings } = req.body;
+    
+    if (!collectionId || !settingsPath) {
+      return res.status(400).json({ ok: false, error: 'Missing collectionId or settingsPath' });
     }
 
-    await fs.mkdir(dataDir, { recursive: true });
-    await fs.writeFile(localSettingsPath, JSON.stringify(payload, null, 2) + '\n', 'utf8');
+    // Convert relative path to absolute
+    // settingsPath comes as './collections/japanese/jp_n5_kanji.settings.json'
+    const relPath = settingsPath.replace(/^\.\//, '');
+    const fullPath = path.join(repoRoot, relPath);
+
+    // Ensure directory exists
+    await fs.mkdir(path.dirname(fullPath), { recursive: true });
+
+    // Write settings file
+    await fs.writeFile(fullPath, JSON.stringify(settings, null, 2) + '\n', 'utf8');
+    
     return res.json({ ok: true });
   } catch (err) {
     return res.status(500).json({ ok: false, error: String(err?.message ?? err) });

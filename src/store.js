@@ -19,6 +19,8 @@ export function createStore() {
     backend: { connected: false, label: 'Backend: unknown' },
     collections: [],
     activeCollectionId: null,
+    // Cache for loaded settings: { collectionId: { appId: { ...settings } } }
+    settingsCache: {},
   };
 
   function notify() {
@@ -49,7 +51,51 @@ export function createStore() {
   async function setActiveCollectionId(id) {
     if (state.activeCollectionId === id) return;
     state.activeCollectionId = id;
+    await loadCollectionSettings(id);
     notify();
+  }
+
+  // Get settings file path for a collection
+  function getSettingsPath(collection) {
+    // Extract directory path from collection
+    // If collection came from collections/japanese/jp_n5_kanji.json
+    // settings should be collections/japanese/jp_n5_kanji.settings.json
+    const collectionId = collection.metadata.id;
+    
+    // Try to find the collection in the loaded list to get its source path
+    // For now, assume settings are in same folder as collection JSON
+    // We'll use the collection ID to construct the path
+    
+    // Check if there's a path hint stored on the collection
+    if (collection._sourcePath) {
+      const basePath = collection._sourcePath.replace(/\.json$/, '');
+      return `${basePath}.settings.json`;
+    }
+    
+    // Fallback: assume it's in collections root
+    return `./collections/${collectionId}.settings.json`;
+  }
+
+  // Load settings for a specific collection
+  async function loadCollectionSettings(collectionId) {
+    const collection = state.collections.find(c => c.metadata.id === collectionId);
+    if (!collection) return;
+
+    const settingsPath = getSettingsPath(collection);
+    
+    try {
+      const res = await fetch(settingsPath, { cache: 'no-store' });
+      if (res.ok) {
+        const settings = await res.json();
+        state.settingsCache[collectionId] = settings || {};
+      } else {
+        // No settings file exists yet, use empty
+        state.settingsCache[collectionId] = {};
+      }
+    } catch {
+      // Settings file doesn't exist or error loading, use empty
+      state.settingsCache[collectionId] = {};
+    }
   }
 
   // Get settings for an app, merging defaults with collection overrides
@@ -57,8 +103,10 @@ export function createStore() {
     const collection = getActiveCollection();
     if (!collection) return getDefaultSettingsForApp(appId);
     
+    const collectionId = collection.metadata.id;
     const defaults = getDefaultSettingsForApp(appId);
-    const overrides = collection.metadata?.settings?.[appId] ?? {};
+    const collectionSettings = state.settingsCache[collectionId] || {};
+    const overrides = collectionSettings[appId] || {};
     
     return { ...defaults, ...overrides };
   }
@@ -76,32 +124,31 @@ export function createStore() {
     const collection = getActiveCollection();
     if (!collection) return;
 
-    // Ensure settings structure exists
-    if (!collection.metadata.settings) {
-      collection.metadata.settings = {};
+    const collectionId = collection.metadata.id;
+    
+    // Ensure settings cache exists for this collection
+    if (!state.settingsCache[collectionId]) {
+      state.settingsCache[collectionId] = {};
     }
-    if (!collection.metadata.settings[appId]) {
-      collection.metadata.settings[appId] = {};
+    if (!state.settingsCache[collectionId][appId]) {
+      state.settingsCache[collectionId][appId] = {};
     }
 
     const defaults = getDefaultSettingsForApp(appId);
     
     // If value equals default, remove it from overrides
     if (defaults[key] === value) {
-      delete collection.metadata.settings[appId][key];
+      delete state.settingsCache[collectionId][appId][key];
       // Clean up empty objects
-      if (Object.keys(collection.metadata.settings[appId]).length === 0) {
-        delete collection.metadata.settings[appId];
-      }
-      if (Object.keys(collection.metadata.settings).length === 0) {
-        collection.metadata.settings = {};
+      if (Object.keys(state.settingsCache[collectionId][appId]).length === 0) {
+        delete state.settingsCache[collectionId][appId];
       }
     } else {
       // Store override
-      collection.metadata.settings[appId][key] = value;
+      state.settingsCache[collectionId][appId][key] = value;
     }
 
-    await saveCollection(collection);
+    await saveCollectionSettings(collectionId);
     notify();
   }
 
@@ -110,13 +157,41 @@ export function createStore() {
     const collection = getActiveCollection();
     if (!collection) return;
 
-    if (collection.metadata.settings?.[appId]) {
-      delete collection.metadata.settings[appId];
-      if (Object.keys(collection.metadata.settings).length === 0) {
-        collection.metadata.settings = {};
-      }
-      await saveCollection(collection);
+    const collectionId = collection.metadata.id;
+    
+    if (state.settingsCache[collectionId]?.[appId]) {
+      delete state.settingsCache[collectionId][appId];
+      await saveCollectionSettings(collectionId);
       notify();
+    }
+  }
+
+  // Save settings for a collection to its settings file
+  async function saveCollectionSettings(collectionId) {
+    const collection = state.collections.find(c => c.metadata.id === collectionId);
+    if (!collection) return;
+
+    const settings = state.settingsCache[collectionId] || {};
+    
+    // If backend connected, push settings to backend
+    if (state.backend.connected) {
+      try {
+        const settingsPath = getSettingsPath(collection);
+        const res = await fetch('./api/sync/pushSettings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collectionId,
+            settingsPath,
+            settings
+          }),
+        });
+        if (res.ok) {
+          await logEvent({ type: 'settings.saved', collectionId, appIds: Object.keys(settings) });
+        }
+      } catch (err) {
+        console.error('Failed to save settings:', err);
+      }
     }
   }
 
@@ -157,10 +232,8 @@ export function createStore() {
       if (!res.ok) throw new Error(`Failed to load collection: ${relPath}`);
       const data = await res.json();
       
-      // Ensure settings structure exists
-      if (!data.metadata.settings) {
-        data.metadata.settings = {};
-      }
+      // Store source path for settings file resolution
+      data._sourcePath = `./collections/${relPath}`;
       
       loaded.push(data);
     }
@@ -198,6 +271,11 @@ export function createStore() {
 
     if (!state.activeCollectionId && state.collections.length > 0) {
       state.activeCollectionId = state.collections[0]?.metadata?.id ?? null;
+    }
+    
+    // Load settings for the active collection
+    if (state.activeCollectionId) {
+      await loadCollectionSettings(state.activeCollectionId);
     }
 
     await refreshBackendState();
