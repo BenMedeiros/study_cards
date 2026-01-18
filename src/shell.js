@@ -40,6 +40,8 @@ export function createAppShell({ store, onNavigate }) {
     const brand = document.createElement('div');
     brand.className = 'brand';
     brand.id = 'hdr-brand';
+    brand.style.cursor = 'pointer';
+    brand.title = 'Click to collapse/expand header';
 
     const brandTitle = document.createElement('div');
     brandTitle.className = 'brand-title';
@@ -52,6 +54,13 @@ export function createAppShell({ store, onNavigate }) {
     brandSubtitle.textContent = 'Local-first study tools';
 
     brand.append(brandTitle, brandSubtitle);
+    
+    // Add collapse toggle
+    brand.addEventListener('click', () => {
+      const right = document.getElementById('hdr-right');
+      const isCollapsed = right.style.display === 'none';
+      right.style.display = isCollapsed ? 'flex' : 'none';
+    });
 
     const right = document.createElement('div');
     right.className = 'header-right';

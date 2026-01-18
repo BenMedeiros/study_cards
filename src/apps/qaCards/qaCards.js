@@ -182,6 +182,7 @@ export function renderQaCards({ store }) {
   let userAnswer = '';
   let isCorrect = false;
   let batchResults = [];
+  let currentRenderState = null; // Track what we last rendered
   
   function resetBatchResults() {
     batchResults = [];
@@ -258,17 +259,6 @@ export function renderQaCards({ store }) {
 
     const inputWrapper = document.createElement('div');
     inputWrapper.className = 'simple-card-input-wrapper';
-    
-    // Add card type label in bottom right
-    const cardLabel = document.createElement('div');
-    cardLabel.style.position = 'absolute';
-    cardLabel.style.bottom = '8px';
-    cardLabel.style.right = '12px';
-    cardLabel.style.fontSize = '11px';
-    cardLabel.style.color = 'var(--muted)';
-    cardLabel.style.opacity = '0.6';
-    cardLabel.textContent = 'QuestionCard';
-    container.append(cardLabel);
 
     const input = document.createElement('input');
     input.type = 'text';
@@ -288,7 +278,15 @@ export function renderQaCards({ store }) {
         submitTimer = null;
       }
 
-      const correctAnswer = String(entry[answerField] ?? '').trim();
+      // Read current entry dynamically
+      const currentEntry = getCurrentBatchEntries()[index];
+      if (!currentEntry) return;
+      
+      const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
+      const answerField = settings.answerField || (fields[1]?.key ?? 'answer');
+      const correctAnswer = String(currentEntry[answerField] ?? '').trim();
+      const answerIsJapanese = /[\u3040-\u30ff]/.test(correctAnswer);
+      
       userAnswer = input.value.trim();
       
       // Use normalized comparison for Japanese text, case-insensitive for others
@@ -446,6 +444,54 @@ export function renderQaCards({ store }) {
             }
           }
         }, 0);
+      }
+    });
+
+    // Handle input event for mobile keyboards
+    input.addEventListener('input', (e) => {
+      // Skip if we already handled this via keydown
+      if (e.inputType === 'deleteContentBackward') {
+        return; // Already handled in keydown
+      }
+      
+      // Read current entry and answer dynamically
+      const currentEntry = getCurrentBatchEntries()[index];
+      if (!currentEntry) return;
+      
+      const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
+      const answerField = settings.answerField || (fields[1]?.key ?? 'answer');
+      const correctAnswer = String(currentEntry[answerField] ?? '').trim();
+      const answerIsJapanese = /[\u3040-\u30ff]/.test(correctAnswer);
+      
+      // For non-Japanese answers on mobile, update userAnswer and check auto-correct
+      if (!answerIsJapanese) {
+        userAnswer = input.value;
+        
+        if (submitMethod === 'timer') {
+          resetTimer();
+        } else if (submitMethod === 'auto_correct') {
+          if (userAnswer.trim().toLowerCase() === correctAnswer.toLowerCase()) {
+            handleSubmit();
+          }
+        }
+      } else {
+        // For Japanese answers, check if user typed Japanese directly (mobile IME)
+        const currentValue = input.value;
+        const hasJapanese = /[\u3040-\u30ff]/.test(currentValue);
+        
+        if (hasJapanese && currentValue !== userAnswer) {
+          // User typed Japanese directly (not via romaji)
+          userAnswer = currentValue;
+          input.dataset.romajiBuffer = '';
+          
+          if (submitMethod === 'timer') {
+            resetTimer();
+          } else if (submitMethod === 'auto_correct') {
+            if (normalizeJapanese(userAnswer) === normalizeJapanese(correctAnswer)) {
+              handleSubmit();
+            }
+          }
+        }
       }
     });
 
@@ -662,6 +708,36 @@ export function renderQaCards({ store }) {
     const batchEntries = getCurrentBatchEntries();
     const entry = batchEntries[index];
     const total = batchEntries.length;
+    
+    const newState = batchCompleted ? 'summary' : (feedbackMode ? 'feedback' : 'question');
+    const stateChanged = currentRenderState !== newState;
+    
+    // Update position badge if it already exists (for quick updates)
+    const existingPos = document.getElementById('qa-cards-position');
+    if (existingPos) {
+      existingPos.textContent = total ? `${index + 1} / ${total}` : 'Empty';
+    }
+
+    // If state hasn't changed and we're in question mode, just update the question text
+    if (!stateChanged && newState === 'question' && entry) {
+      const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
+      const questionField = settings.questionField || (fields[0]?.key ?? 'question');
+      const questionValue = entry[questionField] ?? '';
+      const questionDiv = document.querySelector('.simple-card-question');
+      const inputField = document.querySelector('.simple-card-input');
+      if (questionDiv && inputField) {
+        questionDiv.textContent = questionValue;
+        inputField.value = '';
+        inputField.dataset.romajiBuffer = '';
+        inputField.dataset.previousRest = '';
+        userAnswer = '';
+        setTimeout(() => inputField.focus(), 0);
+        currentRenderState = newState;
+        return; // Don't rebuild, just updated the question
+      }
+    }
+    
+    currentRenderState = newState;
 
     wrapper.innerHTML = '';
 
@@ -672,6 +748,7 @@ export function renderQaCards({ store }) {
     const title = document.createElement('h2');
     title.id = 'qa-cards-title';
     title.style.margin = '0';
+    title.style.fontSize = '18px';
     title.textContent = `QA Cards — ${active.metadata.name}`;
 
     const pos = document.createElement('div');
@@ -734,7 +811,7 @@ export function renderQaCards({ store }) {
     const controls = document.createElement('div');
     controls.className = 'row';
     controls.id = 'qa-cards-controls';
-    controls.style.marginTop = '12px';
+    controls.style.marginTop = '6px';
 
     if (batchCompleted) {
       renderBatchSummary(body, controls);
@@ -752,6 +829,14 @@ export function renderQaCards({ store }) {
       renderFeedback(body, entry, settings);
     } else {
       renderCard(body, entry, settings);
+      
+      // Add card type label
+      const cardTypeLabel = document.createElement('span');
+      cardTypeLabel.style.fontSize = '11px';
+      cardTypeLabel.style.color = 'var(--muted)';
+      cardTypeLabel.style.opacity = '0.6';
+      cardTypeLabel.style.marginLeft = 'auto';
+      cardTypeLabel.textContent = 'QuestionCard';
       
       // Add "Show Answer" button when in question mode
       const showAnswerBtn = document.createElement('button');
@@ -787,7 +872,7 @@ export function renderQaCards({ store }) {
         feedbackMode = true;
         render();
       });
-      controls.append(showAnswerBtn);
+      controls.append(showAnswerBtn, cardTypeLabel);
     }
 
     if (feedbackMode) {

@@ -127,6 +127,8 @@ app.post('/api/sync/pushSettings', async (req, res) => {
 });
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-app.listen(port, '127.0.0.1', () => {
-  console.log(`Study Cards server running at http://127.0.0.1:${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Study Cards server running at http://0.0.0.0:${port}`);
+  console.log(`Access from this machine: http://127.0.0.1:${port}`);
+  console.log(`Access from local network: http://[your-ip]:${port}`);
 });
