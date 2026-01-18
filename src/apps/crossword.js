@@ -589,7 +589,6 @@ export function renderCrossword({ store }) {
 
     newBtn.addEventListener('click', async () => {
       puzzle = generatePuzzle();
-      await store.logEvent({ type: 'crossword.new', collectionId: active.metadata.id, wordsPlaced: puzzle.placed.length });
       renderPuzzle();
     });
 
@@ -607,7 +606,6 @@ export function renderCrossword({ store }) {
         input.classList.toggle('cw-right', val.length > 0 && isOk);
         if (isOk) correct++;
       }
-      await store.logEvent({ type: 'crossword.check', collectionId: active.metadata.id, correct, total });
     });
 
     revealBtn.addEventListener('click', async () => {
@@ -617,14 +615,12 @@ export function renderCrossword({ store }) {
         input.classList.remove('cw-wrong');
         input.classList.add('cw-right');
       }
-      await store.logEvent({ type: 'crossword.reveal', collectionId: active.metadata.id });
     });
 
     wrapper.append(header, hint, body);
   }
 
   puzzle = generatePuzzle();
-  store.logEvent({ type: 'crossword.opened', collectionId: active.metadata.id, wordsPlaced: puzzle.placed.length }).catch(() => {});
 
   renderPuzzle();
   el.append(wrapper);

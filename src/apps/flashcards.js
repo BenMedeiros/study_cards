@@ -87,12 +87,6 @@ export function renderFlashcards({ store }) {
     next.textContent = 'Next';
 
     prev.addEventListener('click', async () => {
-      await store.logEvent({
-        type: 'flashcards.prev',
-        collectionId: active.metadata.id,
-        entryId: entry?.id ?? null,
-        msOnCard: Math.round(nowMs() - shownAt),
-      });
       if (index > 0) {
         index -= 1;
         shownAt = nowMs();
@@ -102,12 +96,6 @@ export function renderFlashcards({ store }) {
 
     next.addEventListener('click', async () => {
       const timeOnCard = Math.round(nowMs() - shownAt);
-      await store.logEvent({
-        type: 'flashcards.next',
-        collectionId: active.metadata.id,
-        entryId: entry?.id ?? null,
-        msOnCard: timeOnCard,
-      });
       
       if (index < total - 1) {
         index += 1;
@@ -138,12 +126,6 @@ export function renderFlashcards({ store }) {
         index -= 1;
         shownAt = nowMs();
         render();
-        store.logEvent({
-          type: 'flashcards.prev',
-          collectionId: active.metadata.id,
-          entryId: entries[index]?.id ?? null,
-          msOnCard: 0,
-        });
       }
     } else if (e.key === 'ArrowRight') {
       e.preventDefault();
@@ -151,12 +133,6 @@ export function renderFlashcards({ store }) {
         index += 1;
         shownAt = nowMs();
         render();
-        store.logEvent({
-          type: 'flashcards.next',
-          collectionId: active.metadata.id,
-          entryId: entries[index]?.id ?? null,
-          msOnCard: 0,
-        });
       }
     }
   };
@@ -175,8 +151,6 @@ export function renderFlashcards({ store }) {
     });
     observer.observe(document.body, { childList: true, subtree: true });
   }, 100);
-
-  store.logEvent({ type: 'flashcards.opened', collectionId: active.metadata.id }).catch(() => {});
 
   el.append(wrapper);
   return el;

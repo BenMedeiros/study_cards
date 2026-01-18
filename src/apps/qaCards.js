@@ -75,18 +75,6 @@ export function renderQaCards({ store }) {
       
       const timeOnCard = Math.round(nowMs() - shownAt);
 
-      store.logEvent({
-        type: 'qa_cards.answer_submitted',
-        collectionId: active.metadata.id,
-        entryId: entry?.id ?? null,
-        questionField,
-        answerField,
-        userAnswer,
-        correctAnswer,
-        isCorrect,
-        msOnCard: timeOnCard,
-      }).catch(() => {});
-
       feedbackMode = true;
       render();
     }
@@ -407,8 +395,6 @@ export function renderQaCards({ store }) {
   }
 
   render();
-
-  store.logEvent({ type: 'qa_cards.opened', collectionId: active.metadata.id }).catch(() => {});
 
   el.append(wrapper);
   return el;

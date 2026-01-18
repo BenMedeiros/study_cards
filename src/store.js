@@ -121,8 +121,6 @@ export function createStore() {
       state.activeCollectionId = state.collections[0]?.metadata?.id ?? null;
     }
 
-    await logEvent({ type: 'app.started' });
-
     notify();
   }
 
@@ -137,17 +135,6 @@ export function createStore() {
     }
   }
 
-  async function logEvent(payload) {
-    const activeCollectionId = state.activeCollectionId;
-    const event = {
-      id: uuid(),
-      ts: nowIso(),
-      activeCollectionId,
-      ...payload,
-    };
-    console.log('[Event]', event);
-  }
-
   return {
     subscribe,
     initialize,
@@ -157,7 +144,5 @@ export function createStore() {
     getActiveCollection,
     setActiveCollectionId,
     syncCollectionFromURL,
-
-    logEvent,
   };
 }
