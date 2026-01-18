@@ -1,6 +1,7 @@
 {
   "collections": [
     "japanese/jp_n5_kanji.json",
-    "numbers/letters_to_numbers.json"
+    "numbers/letters_to_numbers.json",
+    "mythology/greek_gods.json"
   ]
 }

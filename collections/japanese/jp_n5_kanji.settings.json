@@ -1,5 +1,9 @@
 {
   "qaCards": {
     "submitMethod": "auto_correct"
+  },
+  "flashcards": {
+    "randomize": true,
+    "batchEnabled": true
   }
 }

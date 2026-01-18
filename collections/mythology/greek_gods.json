@@ -1,0 +1,149 @@
+{
+  "metadata": {
+    "id": "greek_gods",
+    "name": "Greek Gods",
+    "description": "Major deities from Greek mythology",
+    "version": 1,
+    "fields": [
+      { "key": "englishName", "label": "English Name", "type": "string" },
+      { "key": "greekName", "label": "Greek Name", "type": "string" },
+      { "key": "latinName", "label": "Latin Name", "type": "string" },
+      { "key": "godOf", "label": "God Of", "type": "string" },
+      { "key": "powers", "label": "Powers", "type": "string" },
+      { "key": "physicalDescription", "label": "Physical Description", "type": "string" },
+      { "key": "source", "label": "Source", "type": "string" }
+    ]
+  },
+  "entries": [
+    {
+      "id": "zeus",
+      "englishName": "Zeus",
+      "greekName": "Ζεύς",
+      "latinName": "Iuppiter",
+      "godOf": "Sky, thunder, king of the gods",
+      "powers": "Control of weather, thunderbolts, supreme authority",
+      "physicalDescription": "Mature, regal man with a beard, often holding a lightning bolt",
+      "source": "Hesiod's Theogony, Homeric Hymns, ancient art"
+    },
+    {
+      "id": "hera",
+      "englishName": "Hera",
+      "greekName": "Ἥρα",
+      "latinName": "Iuno",
+      "godOf": "Marriage, women, queen of the gods",
+      "powers": "Protection of married women, divine authority",
+      "physicalDescription": "Majestic woman wearing a crown, often with a peacock",
+      "source": "Hesiod's Theogony, Homeric Hymns"
+    },
+    {
+      "id": "poseidon",
+      "englishName": "Poseidon",
+      "greekName": "Ποσειδῶν",
+      "latinName": "Neptunus",
+      "godOf": "Sea, earthquakes, horses",
+      "powers": "Control of oceans, creation of storms and earthquakes, shape-shifting",
+      "physicalDescription": "Powerful bearded man holding a trident",
+      "source": "Homeric Hymns, Odyssey"
+    },
+    {
+      "id": "athena",
+      "englishName": "Athena",
+      "greekName": "Ἀθηνᾶ",
+      "latinName": "Minerva",
+      "godOf": "Wisdom, war strategy, crafts",
+      "powers": "Strategic warfare, wisdom, patron of heroes and craftsmen",
+      "physicalDescription": "Armed warrior woman with helmet, shield, and spear, often with an owl",
+      "source": "Homeric Hymns, Iliad, Odyssey"
+    },
+    {
+      "id": "apollo",
+      "englishName": "Apollo",
+      "greekName": "Ἀπόλλων",
+      "latinName": "Apollo",
+      "godOf": "Sun, music, prophecy, healing",
+      "powers": "Archery, prophecy, healing and disease, music",
+      "physicalDescription": "Youthful, beardless man often with a lyre or bow",
+      "source": "Homeric Hymns, Iliad"
+    },
+    {
+      "id": "artemis",
+      "englishName": "Artemis",
+      "greekName": "Ἄρτεμις",
+      "latinName": "Diana",
+      "godOf": "Hunt, wilderness, moon",
+      "powers": "Archery, protection of young women, control over wild animals",
+      "physicalDescription": "Young woman with bow and arrows, often with deer or hunting dogs",
+      "source": "Homeric Hymns, Callimachus"
+    },
+    {
+      "id": "ares",
+      "englishName": "Ares",
+      "greekName": "Ἄρης",
+      "latinName": "Mars",
+      "godOf": "War, violence, bloodshed",
+      "powers": "Battle prowess, courage in combat, physical strength",
+      "physicalDescription": "Armed warrior with helmet, shield, and spear",
+      "source": "Iliad, Hesiod's Theogony"
+    },
+    {
+      "id": "aphrodite",
+      "englishName": "Aphrodite",
+      "greekName": "Ἀφροδίτη",
+      "latinName": "Venus",
+      "godOf": "Love, beauty, desire",
+      "powers": "Inspiring love and desire, beauty, persuasion",
+      "physicalDescription": "Beautiful woman, often depicted nude or partially draped, with doves",
+      "source": "Hesiod's Theogony, Homeric Hymns"
+    },
+    {
+      "id": "hephaestus",
+      "englishName": "Hephaestus",
+      "greekName": "Ἥφαιστος",
+      "latinName": "Vulcanus",
+      "godOf": "Fire, metalworking, craftsmanship",
+      "powers": "Master craftsman, creation of divine weapons and artifacts",
+      "physicalDescription": "Bearded smith with hammer and tongs, sometimes depicted as lame",
+      "source": "Iliad, Hesiod's Theogony"
+    },
+    {
+      "id": "hermes",
+      "englishName": "Hermes",
+      "greekName": "Ἑρμῆς",
+      "latinName": "Mercurius",
+      "godOf": "Messengers, travelers, thieves, commerce",
+      "powers": "Speed, eloquence, guide of souls to underworld",
+      "physicalDescription": "Young man with winged sandals and hat, carrying a caduceus",
+      "source": "Homeric Hymns, Iliad, Odyssey"
+    },
+    {
+      "id": "demeter",
+      "englishName": "Demeter",
+      "greekName": "Δημήτηρ",
+      "latinName": "Ceres",
+      "godOf": "Agriculture, harvest, fertility",
+      "powers": "Control over crops and seasons, fertility of the earth",
+      "physicalDescription": "Mature woman often holding wheat sheaves or a torch",
+      "source": "Homeric Hymn to Demeter, Hesiod's Theogony"
+    },
+    {
+      "id": "dionysus",
+      "englishName": "Dionysus",
+      "greekName": "Διόνυσος",
+      "latinName": "Bacchus",
+      "godOf": "Wine, festivity, theater",
+      "powers": "Inducing ecstasy and madness, viticulture, theatrical arts",
+      "physicalDescription": "Youthful man crowned with ivy, often holding a thyrsus and wine cup",
+      "source": "Homeric Hymns, Euripides' The Bacchae"
+    },
+    {
+      "id": "hades",
+      "englishName": "Hades",
+      "greekName": "ᾍδης",
+      "latinName": "Pluto",
+      "godOf": "Underworld, death, wealth",
+      "powers": "Rule over the dead, invisibility (helm of darkness), mineral wealth",
+      "physicalDescription": "Dark-bearded man often with a scepter and Cerberus",
+      "source": "Homeric Hymns, Theogony"
+    }
+  ]
+}

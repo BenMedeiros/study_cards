@@ -57,7 +57,20 @@ const ROMAJI_MAP = {
   xya: 'ゃ', xyu: 'ゅ', xyo: 'ょ',
   lya: 'ゃ', lyu: 'ゅ', lyo: 'ょ',
   xtsu: 'っ', ltsu: 'っ',
+  '-': 'ー',
 };
+
+// Normalize Japanese text for comparison (convert katakana to hiragana)
+function normalizeJapanese(text) {
+  return String(text).split('').map(ch => {
+    const code = ch.charCodeAt(0);
+    // Convert katakana (30A0-30FF) to hiragana (3040-309F)
+    if (code >= 0x30A0 && code <= 0x30FF) {
+      return String.fromCharCode(code - 0x60);
+    }
+    return ch;
+  }).join('').toLowerCase();
+}
 
 function convertRomajiIncremental(buffer) {
   let i = 0;
@@ -230,6 +243,10 @@ export function renderQaCards({ store }) {
     const questionField = settings.questionField || (fields[0]?.key ?? 'question');
     const answerField = settings.answerField || (fields[1]?.key ?? 'answer');
     const questionValue = entry[questionField] ?? '';
+    const correctAnswer = String(entry[answerField] ?? '').trim();
+    
+    // Only enable romaji conversion if the answer contains Japanese characters
+    const answerIsJapanese = /[\u3040-\u30ff]/.test(correctAnswer);
 
     const container = document.createElement('div');
     container.className = 'simple-card-container';
@@ -260,7 +277,13 @@ export function renderQaCards({ store }) {
 
       const correctAnswer = String(entry[answerField] ?? '').trim();
       userAnswer = input.value.trim();
-      isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+      
+      // Use normalized comparison for Japanese text, case-insensitive for others
+      if (answerIsJapanese) {
+        isCorrect = normalizeJapanese(userAnswer) === normalizeJapanese(correctAnswer);
+      } else {
+        isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+      }
       
       const timeOnCard = Math.round(nowMs() - shownAt);
 
@@ -326,15 +349,17 @@ export function renderQaCards({ store }) {
       }
       
       if (key === 'Backspace') {
-        const buffer = input.dataset.romajiBuffer ?? '';
-        if (buffer.length > 0) {
-          e.preventDefault();
-          const nextBuf = buffer.slice(0, -1);
-          input.dataset.romajiBuffer = nextBuf;
-          const { kana } = convertRomajiIncremental(nextBuf);
-          input.value = kana;
-          userAnswer = kana;
-          return;
+        if (answerIsJapanese) {
+          const buffer = input.dataset.romajiBuffer ?? '';
+          if (buffer.length > 0) {
+            e.preventDefault();
+            const nextBuf = buffer.slice(0, -1);
+            input.dataset.romajiBuffer = nextBuf;
+            const { kana } = convertRomajiIncremental(nextBuf);
+            input.value = kana;
+            userAnswer = kana;
+            return;
+          }
         }
         setTimeout(() => {
           userAnswer = input.value;
@@ -343,7 +368,7 @@ export function renderQaCards({ store }) {
         return;
       }
       
-      if (isHiraganaOrKatakana(key)) {
+      if (answerIsJapanese && isHiraganaOrKatakana(key)) {
         e.preventDefault();
         userAnswer = input.value + key;
         input.value = userAnswer;
@@ -352,15 +377,31 @@ export function renderQaCards({ store }) {
         if (submitMethod === 'timer') {
           resetTimer();
         } else if (submitMethod === 'auto_correct') {
-          const correctAnswer = String(entry[answerField] ?? '').trim();
-          if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+          if (normalizeJapanese(userAnswer) === normalizeJapanese(correctAnswer)) {
             handleSubmit();
           }
         }
         return;
       }
       
-      if (/^[a-zA-Z]$/.test(key)) {
+      // Handle dash/hyphen for long vowel mark
+      if (answerIsJapanese && (key === '-' || key === 'ー')) {
+        e.preventDefault();
+        userAnswer = input.value + 'ー';
+        input.value = userAnswer;
+        input.dataset.romajiBuffer = '';
+        
+        if (submitMethod === 'timer') {
+          resetTimer();
+        } else if (submitMethod === 'auto_correct') {
+          if (normalizeJapanese(userAnswer) === normalizeJapanese(correctAnswer)) {
+            handleSubmit();
+          }
+        }
+        return;
+      }
+      
+      if (answerIsJapanese && /^[a-zA-Z]$/.test(key)) {
         e.preventDefault();
         const buffer = (input.dataset.romajiBuffer ?? '') + key.toLowerCase();
         const { kana, rest } = convertRomajiIncremental(buffer);
@@ -373,12 +414,25 @@ export function renderQaCards({ store }) {
         if (submitMethod === 'timer') {
           resetTimer();
         } else if (submitMethod === 'auto_correct') {
-          const correctAnswer = String(entry[answerField] ?? '').trim();
-          if (rest === '' && userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+          if (rest === '' && normalizeJapanese(userAnswer) === normalizeJapanese(correctAnswer)) {
             handleSubmit();
           }
         }
         return;
+      }
+      
+      // For non-Japanese answers, handle normally
+      if (!answerIsJapanese) {
+        setTimeout(() => {
+          userAnswer = input.value;
+          if (submitMethod === 'timer') {
+            resetTimer();
+          } else if (submitMethod === 'auto_correct') {
+            if (userAnswer.trim().toLowerCase() === correctAnswer.toLowerCase()) {
+              handleSubmit();
+            }
+          }
+        }, 0);
       }
     });
 
@@ -661,6 +715,42 @@ export function renderQaCards({ store }) {
       renderFeedback(body, entry, settings);
     } else {
       renderCard(body, entry, settings);
+      
+      // Add "Show Answer" button when in question mode
+      const showAnswerBtn = document.createElement('button');
+      showAnswerBtn.className = 'button';
+      showAnswerBtn.textContent = 'Show Answer';
+      showAnswerBtn.style.opacity = '0.7';
+      showAnswerBtn.addEventListener('click', () => {
+        // Mark as incorrect and show feedback
+        isCorrect = false;
+        const timeOnCard = Math.round(nowMs() - shownAt);
+        
+        store.logEvent({
+          type: 'qa_cards.answer_shown',
+          collectionId: active.metadata.id,
+          entryId: entry?.id ?? null,
+          msOnCard: timeOnCard,
+        }).catch(() => {});
+        
+        if (settings.batchEnabled) {
+          const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
+          const answerField = settings.answerField || (fields[1]?.key ?? 'answer');
+          const correctAnswer = String(entry[answerField] ?? '').trim();
+          
+          batchResults.push({
+            entry,
+            timeMs: timeOnCard,
+            wasCorrect: false,
+            userAnswer: '(shown)',
+            correctAnswer
+          });
+        }
+        
+        feedbackMode = true;
+        render();
+      });
+      controls.append(showAnswerBtn);
     }
 
     if (feedbackMode) {
