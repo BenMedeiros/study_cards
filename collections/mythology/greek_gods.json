@@ -3,16 +3,7 @@
     "id": "greek_gods",
     "name": "Greek Gods",
     "description": "Major deities from Greek mythology",
-    "version": 1,
-    "fields": [
-      { "key": "englishName", "label": "English Name", "type": "string" },
-      { "key": "greekName", "label": "Greek Name", "type": "string" },
-      { "key": "latinName", "label": "Latin Name", "type": "string" },
-      { "key": "godOf", "label": "God Of", "type": "string" },
-      { "key": "powers", "label": "Powers", "type": "string" },
-      { "key": "physicalDescription", "label": "Physical Description", "type": "string" },
-      { "key": "source", "label": "Source", "type": "string" }
-    ]
+    "version": 1
   },
   "entries": [
     {

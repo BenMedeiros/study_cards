@@ -3,11 +3,7 @@
     "id": "letters_to_numbers",
     "name": "Letters to Numbers",
     "description": "A=1, B=2, ... (v0 seed)",
-    "version": 1,
-    "fields": [
-      { "key": "letter", "label": "Letter", "type": "string" },
-      { "key": "number", "label": "Number", "type": "number" }
-    ]
+    "version": 1
   },
   "entries": [
     { "id": "A", "letter": "A", "number": 1 },

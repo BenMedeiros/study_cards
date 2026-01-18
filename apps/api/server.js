@@ -25,6 +25,36 @@ app.get('/api/health', (req, res) => {
 
 const collectionsDir = path.join(repoRoot, 'collections');
 
+// Recursive function to list all JSON files in collections folder
+async function listCollectionFiles(dir, basePath = '') {
+  const files = [];
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  
+  for (const entry of entries) {
+    const relativePath = basePath ? `${basePath}/${entry.name}` : entry.name;
+    const fullPath = path.join(dir, entry.name);
+    
+    if (entry.isDirectory()) {
+      const subFiles = await listCollectionFiles(fullPath, relativePath);
+      files.push(...subFiles);
+    } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.json')) {
+      files.push(relativePath);
+    }
+  }
+  
+  return files.sort();
+}
+
+// API endpoint to list all collection files (must come before static middleware)
+app.get('/api/collections/list', async (req, res) => {
+  try {
+    const files = await listCollectionFiles(collectionsDir);
+    res.json(files);
+  } catch (err) {
+    res.status(500).json({ error: String(err?.message ?? err) });
+  }
+});
+
 // Serve collections as static files under /collections so the web UI can fetch them.
 app.use('/collections', express.static(collectionsDir));
 

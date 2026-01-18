@@ -1,0 +1,26 @@
+{
+  "language": "japanese",
+  "commonFields": [
+    { "key": "kanji", "label": "Kanji", "type": "string" },
+    { "key": "reading", "label": "Reading", "type": "string" },
+    { "key": "meaning", "label": "Meaning", "type": "string" },
+    { 
+      "key": "type", 
+      "label": "Type", 
+      "type": "enum",
+      "values": [
+        "noun",
+        "ichidan-verb",
+        "godan-verb",
+        "irregular-verb",
+        "i-adjective",
+        "na-adjective",
+        "particle",
+        "expression",
+        "counter",
+        "adverb",
+        "conjunction"
+      ]
+    }
+  ]
+}

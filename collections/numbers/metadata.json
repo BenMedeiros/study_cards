@@ -1,0 +1,7 @@
+{
+  "category": "numbers",
+  "commonFields": [
+    { "key": "letter", "label": "Letter", "type": "string" },
+    { "key": "number", "label": "Number", "type": "number" }
+  ]
+}

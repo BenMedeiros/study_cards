@@ -27,6 +27,7 @@ export function renderQaCards({ store }) {
   let feedbackMode = false;
   let userAnswer = '';
   let isCorrect = false;
+  let completed = false;
 
   function renderCard(body, entry) {
     const questionValue = entry[questionField] ?? '';
@@ -312,13 +313,17 @@ export function renderQaCards({ store }) {
 
     if (feedbackMode) {
       const handleContinue = () => {
-        feedbackMode = false;
-        userAnswer = '';
         if (index < total - 1) {
+          feedbackMode = false;
+          userAnswer = '';
           index += 1;
+          shownAt = nowMs();
+          render();
+        } else {
+          // Last card - show completion
+          completed = true;
+          render();
         }
-        shownAt = nowMs();
-        render();
       };
       
       const continueBtn = document.createElement('button');
@@ -349,7 +354,28 @@ export function renderQaCards({ store }) {
     body.id = 'qa-cards-body';
     body.style.marginTop = '10px';
 
-    if (!entry) {
+    if (completed) {
+      body.innerHTML = `
+        <div class="simple-card-feedback">
+          <h3>🎉 Completed!</h3>
+          <p>You've finished all ${total} cards in this collection.</p>
+          <button class="button" id="restart-btn" style="margin-top: 16px;">Start Over</button>
+        </div>
+      `;
+      setTimeout(() => {
+        const restartBtn = document.getElementById('restart-btn');
+        if (restartBtn) {
+          restartBtn.addEventListener('click', () => {
+            index = 0;
+            feedbackMode = false;
+            userAnswer = '';
+            completed = false;
+            shownAt = nowMs();
+            render();
+          });
+        }
+      }, 0);
+    } else if (!entry) {
       body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
     } else if (feedbackMode) {
       renderFeedback(body, entry);

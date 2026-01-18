@@ -1,0 +1,24 @@
+{
+  "metadata": {
+    "id": "jp_linguistic_terms",
+    "name": "Japanese Linguistic Terms",
+    "description": "Terminology for Japanese phonetics and writing systems",
+    "version": 1
+  },
+  "entries": [
+    { "id": "拗音", "kanji": "拗音", "reading": "ようおん", "meaning": "yōon; contracted sound (e.g., きょ/しゃ)", "type": "noun" },
+    { "id": "促音", "kanji": "促音", "reading": "そくおん", "meaning": "sokuon; small っ (geminate consonant marker)", "type": "noun" },
+    { "id": "長音", "kanji": "長音", "reading": "ちょうおん", "meaning": "chōon; long vowel marker (ー)", "type": "noun" },
+    { "id": "撥音", "kanji": "撥音", "reading": "はつおん", "meaning": "hatsuon; the ん sound (syllabic 'n')", "type": "noun" },
+    { "id": "清音", "kanji": "清音", "reading": "せいおん", "meaning": "seion; unvoiced/plain kana (か, き, く...)", "type": "noun" },
+    { "id": "濁音", "kanji": "濁音", "reading": "だくおん", "meaning": "dakuon; voiced consonants (が, ぎ, ぐ... with ゛)", "type": "noun" },
+    { "id": "半濁音", "kanji": "半濁音", "reading": "はんだくおん", "meaning": "handakuon; semi-voiced (ぱ, ぴ, ぷ... with ゜)", "type": "noun" },
+    { "id": "平仮名", "kanji": "平仮名", "reading": "ひらがな", "meaning": "hiragana script", "type": "noun" },
+    { "id": "片仮名", "kanji": "片仮名", "reading": "カタカナ", "meaning": "katakana script", "type": "noun" },
+    { "id": "漢字", "kanji": "漢字", "reading": "かんじ", "meaning": "kanji; Chinese characters", "type": "noun" },
+    { "id": "音読み", "kanji": "音読み", "reading": "おんよみ", "meaning": "on-yomi; Chinese-derived reading", "type": "noun" },
+    { "id": "訓読み", "kanji": "訓読み", "reading": "くんよみ", "meaning": "kun-yomi; native Japanese reading", "type": "noun" },
+    { "id": "送り仮名", "kanji": "送り仮名", "reading": "おくりがな", "meaning": "okurigana; kana suffixes after kanji", "type": "noun" },
+    { "id": "仮名", "kanji": "仮名", "reading": "かな", "meaning": "kana; hiragana and katakana collectively", "type": "noun" }
+  ]
+}

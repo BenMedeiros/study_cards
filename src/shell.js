@@ -76,7 +76,8 @@ export function createAppShell({ store, onNavigate }) {
       onChange: async (value) => {
         await store.setActiveCollectionId(value);
         renderHeader();
-        renderRoute(getCurrentRoute());
+        const currentRoute = getCurrentRoute();
+        renderRoute(currentRoute);
       }
     });
     collectionSelect.id = 'hdr-collection-select';

@@ -10,7 +10,10 @@ const shell = createAppShell({ store, onNavigate: navigateTo });
 root.append(shell.el);
 
 installHashRouter({
-  onRoute: (route) => shell.renderRoute(route),
+  onRoute: (route) => {
+    store.syncCollectionFromURL(route);
+    shell.renderRoute(route);
+  },
 });
 
 // Default route

@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "id": "jp_vocab_linguistic_kanji",
+    "name": "Common Words Using Linguistic Term Kanji",
+    "description": "Popular vocabulary featuring kanji from Japanese linguistic terminology",
+    "version": 1
+  },
+  "entries": [
+    { "id": "促進", "kanji": "促進", "reading": "そくしん", "meaning": "promotion; acceleration", "type": "noun" },
+    { "id": "促す", "kanji": "促す", "reading": "うながす", "meaning": "to urge; to prompt", "type": "godan-verb" },
+    
+    { "id": "長い", "kanji": "長い", "reading": "ながい", "meaning": "long", "type": "i-adjective" },
+    { "id": "社長", "kanji": "社長", "reading": "しゃちょう", "meaning": "company president", "type": "noun" },
+    { "id": "部長", "kanji": "部長", "reading": "ぶちょう", "meaning": "department head", "type": "noun" },
+    { "id": "成長", "kanji": "成長", "reading": "せいちょう", "meaning": "growth", "type": "noun" },
+    
+    { "id": "清い", "kanji": "清い", "reading": "きよい", "meaning": "pure; clean", "type": "i-adjective" },
+    { "id": "清潔", "kanji": "清潔", "reading": "せいけつ", "meaning": "clean; sanitary", "type": "na-adjective" },
+    
+    { "id": "濁る", "kanji": "濁る", "reading": "にごる", "meaning": "to become muddy; cloudy", "type": "godan-verb" },
+    
+    { "id": "半分", "kanji": "半分", "reading": "はんぶん", "meaning": "half", "type": "noun" },
+    { "id": "半ば", "kanji": "半ば", "reading": "なかば", "meaning": "middle; halfway", "type": "noun" },
+    
+    { "id": "平日", "kanji": "平日", "reading": "へいじつ", "meaning": "weekday", "type": "noun" },
+    { "id": "平和", "kanji": "平和", "reading": "へいわ", "meaning": "peace", "type": "noun" },
+    { "id": "平気", "kanji": "平気", "reading": "へいき", "meaning": "calm; composed; alright", "type": "na-adjective" },
+    
+    { "id": "仮定", "kanji": "仮定", "reading": "かてい", "meaning": "assumption; hypothesis", "type": "noun" },
+    
+    { "id": "片方", "kanji": "片方", "reading": "かたほう", "meaning": "one side; one of a pair", "type": "noun" },
+    { "id": "片付ける", "kanji": "片付ける", "reading": "かたづける", "meaning": "to tidy up; to put away", "type": "ichidan-verb" },
+    
+    { "id": "漢方", "kanji": "漢方", "reading": "かんぽう", "meaning": "Chinese medicine; traditional medicine", "type": "noun" },
+    
+    { "id": "読む", "kanji": "読む", "reading": "よむ", "meaning": "to read", "type": "godan-verb" },
+    { "id": "読書", "kanji": "読書", "reading": "どくしょ", "meaning": "reading (books)", "type": "noun" },
+    
+    { "id": "訓練", "kanji": "訓練", "reading": "くんれん", "meaning": "training; drill", "type": "noun" },
+    
+    { "id": "送る", "kanji": "送る", "reading": "おくる", "meaning": "to send", "type": "godan-verb" },
+    { "id": "送料", "kanji": "送料", "reading": "そうりょう", "meaning": "shipping fee; postage", "type": "noun" },
+    { "id": "見送る", "kanji": "見送る", "reading": "みおくる", "meaning": "to see off; to postpone", "type": "godan-verb" }
+  ]
+}
