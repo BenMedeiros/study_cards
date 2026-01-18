@@ -1,3 +1,4 @@
+
 import { isHiraganaOrKatakana, convertRomajiIncremental, splitKana } from '../../utils/japanese.js';
 
 function normalizeAnswer(reading) {

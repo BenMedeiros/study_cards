@@ -1,141 +1,6 @@
-import { nowMs } from '../../utils/time.js';
-
-function shuffleArray(array) {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
-
-function isVowel(ch) {
-  return ch === 'a' || ch === 'i' || ch === 'u' || ch === 'e' || ch === 'o';
-}
-
-function isHiraganaOrKatakana(ch) {
-  return /[\u3040-\u30ff]/.test(ch);
-}
-
-// Romaji -> hiragana mapping
-const ROMAJI_MAP = {
-  a: 'あ', i: 'い', u: 'う', e: 'え', o: 'お',
-
-  ka: 'か', ki: 'き', ku: 'く', ke: 'け', ko: 'こ',
-  sa: 'さ', shi: 'し', si: 'し', su: 'す', se: 'せ', so: 'そ',
-  ta: 'た', chi: 'ち', ti: 'ち', tsu: 'つ', tu: 'つ', te: 'て', to: 'と',
-  na: 'な', ni: 'に', nu: 'ぬ', ne: 'ね', no: 'の',
-  ha: 'は', hi: 'ひ', fu: 'ふ', hu: 'ふ', he: 'へ', ho: 'ほ',
-  ma: 'ま', mi: 'み', mu: 'む', me: 'め', mo: 'も',
-  ya: 'や', yu: 'ゆ', yo: 'よ',
-  ra: 'ら', ri: 'り', ru: 'る', re: 'れ', ro: 'ろ',
-  wa: 'わ', wo: 'を', n: 'ん',
-
-  ga: 'が', gi: 'ぎ', gu: 'ぐ', ge: 'げ', go: 'ご',
-  za: 'ざ', ji: 'じ', zi: 'じ', zu: 'ず', ze: 'ぜ', zo: 'ぞ',
-  da: 'だ', di: 'ぢ', du: 'づ', de: 'で', do: 'ど',
-  ba: 'ば', bi: 'び', bu: 'ぶ', be: 'べ', bo: 'ぼ',
-  pa: 'ぱ', pi: 'ぴ', pu: 'ぷ', pe: 'ぺ', po: 'ぽ',
-
-  kya: 'きゃ', kyu: 'きゅ', kyo: 'きょ',
-  gya: 'ぎゃ', gyu: 'ぎゅ', gyo: 'ぎょ',
-  sha: 'しゃ', shu: 'しゅ', sho: 'しょ',
-  sya: 'しゃ', syu: 'しゅ', syo: 'しょ',
-  ja: 'じゃ', ju: 'じゅ', jo: 'じょ',
-  jya: 'じゃ', jyu: 'じゅ', jyo: 'じょ',
-  cha: 'ちゃ', chu: 'ちゅ', cho: 'ちょ',
-  cya: 'ちゃ', cyu: 'ちゅ', cyo: 'ちょ',
-  nya: 'にゃ', nyu: 'にゅ', nyo: 'にょ',
-  hya: 'ひゃ', hyu: 'ひゅ', hyo: 'ひょ',
-  bya: 'びゃ', byu: 'びゅ', byo: 'びょ',
-  pya: 'ぴゃ', pyu: 'ぴゅ', pyo: 'ぴょ',
-  mya: 'みゃ', myu: 'みゅ', myo: 'みょ',
-  rya: 'りゃ', ryu: 'りゅ', ryo: 'りょ',
-
-  xa: 'ぁ', xi: 'ぃ', xu: 'ぅ', xe: 'ぇ', xo: 'ぉ',
-  la: 'ぁ', li: 'ぃ', lu: 'ぅ', le: 'ぇ', lo: 'ぉ',
-  xya: 'ゃ', xyu: 'ゅ', xyo: 'ょ',
-  lya: 'ゃ', lyu: 'ゅ', lyo: 'ょ',
-  xtsu: 'っ', ltsu: 'っ',
-  '-': 'ー',
-};
-
-// Normalize Japanese text for comparison (convert katakana to hiragana)
-function normalizeJapanese(text) {
-  return String(text).split('').map(ch => {
-    const code = ch.charCodeAt(0);
-    // Convert katakana (30A0-30FF) to hiragana (3040-309F)
-    if (code >= 0x30A0 && code <= 0x30FF) {
-      return String.fromCharCode(code - 0x60);
-    }
-    return ch;
-  }).join('').toLowerCase();
-}
-
-function convertRomajiIncremental(buffer) {
-  let i = 0;
-  let out = '';
-  const s = String(buffer ?? '').toLowerCase();
-
-  while (i < s.length) {
-    const ch = s[i];
-
-    if (!/[a-z]/.test(ch)) {
-      i++;
-      continue;
-    }
-
-    if (ch === 'n') {
-      const next = s[i + 1];
-      if (!next) {
-        return { kana: out, rest: s.slice(i) };
-      }
-      if (next === 'n') {
-        out += 'ん';
-        i += 2;
-        continue;
-      }
-      if (isVowel(next) || next === 'y') {
-        // Part of syllable
-      } else {
-        out += 'ん';
-        i += 1;
-        continue;
-      }
-    }
-
-    const next = s[i + 1];
-    if (next && ch === next && !isVowel(ch) && ch !== 'n') {
-      out += 'っ';
-      i += 1;
-      continue;
-    }
-
-    const tri = s.slice(i, i + 3);
-    const bi = s.slice(i, i + 2);
-    const uni = s.slice(i, i + 1);
-
-    if (ROMAJI_MAP[tri]) {
-      out += ROMAJI_MAP[tri];
-      i += 3;
-      continue;
-    }
-    if (ROMAJI_MAP[bi]) {
-      out += ROMAJI_MAP[bi];
-      i += 2;
-      continue;
-    }
-    if (ROMAJI_MAP[uni]) {
-      out += ROMAJI_MAP[uni];
-      i += 1;
-      continue;
-    }
-
-    return { kana: out, rest: s.slice(i) };
-  }
-
-  return { kana: out, rest: '' };
-}
+import { nowMs } from '../../utils/helpers.js';
+import { shuffleArray } from '../../utils/arrays.js';
+import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } from '../../utils/japanese.js';
 
 export function getDefaultSettings() {
   return {
@@ -153,7 +18,7 @@ export function getDefaultSettings() {
   };
 }
 
-export function renderQaCards({ store }) {
+export function renderQaCards({ store, onNavigate }) {
   const el = document.createElement('div');
   el.id = 'qa-cards-root';
 
@@ -182,12 +47,14 @@ export function renderQaCards({ store }) {
   let userAnswer = '';
   let isCorrect = false;
   let batchResults = [];
+  let cardsCompletedInBatch = 0;
   let currentRenderState = null; // Track what we last rendered
   
   function resetBatchResults() {
     batchResults = [];
     batchStartTime = nowMs();
     batchCompleted = false;
+    cardsCompletedInBatch = 0;
   }
 
   function createBatches() {
@@ -312,22 +179,25 @@ export function renderQaCards({ store }) {
       
       if (settings.batchEnabled) {
         batchResults.push({
-          entry,
+          entry: currentEntry,
           timeMs: timeOnCard,
           wasCorrect: isCorrect,
           userAnswer,
           correctAnswer
         });
+        cardsCompletedInBatch++;
       }
 
       if (settings.autoAdvance && isCorrect) {
         userAnswer = '';
         feedbackMode = false;
-        index += 1;
-        const completed = clampIndex();
-        if (completed) {
+        // Check if we've completed all cards and trying to advance
+        const batchEntries = getCurrentBatchEntries();
+        if (settings.batchEnabled && cardsCompletedInBatch >= batchEntries.length) {
           batchCompleted = true;
-          index -= 1;
+        } else {
+          index += 1;
+          clampIndex();
         }
         shownAt = nowMs();
         render();
@@ -519,17 +389,6 @@ export function renderQaCards({ store }) {
     question.className = 'simple-card-question';
     question.textContent = questionValue;
     container.append(question);
-    
-    // Add card type label in bottom right
-    const cardLabel = document.createElement('div');
-    cardLabel.style.position = 'absolute';
-    cardLabel.style.bottom = '8px';
-    cardLabel.style.right = '12px';
-    cardLabel.style.fontSize = '11px';
-    cardLabel.style.color = 'var(--muted)';
-    cardLabel.style.opacity = '0.6';
-    cardLabel.textContent = 'FeedbackCard';
-    container.append(cardLabel);
 
     if (onSubmitAction === 'show_field_only') {
       const answerDisplay = document.createElement('div');
@@ -598,24 +457,12 @@ export function renderQaCards({ store }) {
     
     const summary = document.createElement('div');
     summary.style.padding = '20px';
-    summary.style.position = 'relative';
     
     const header = document.createElement('h3');
     header.textContent = 'Batch Complete!';
     header.style.textAlign = 'center';
     header.style.marginBottom = '20px';
     summary.append(header);
-    
-    // Add card type label in bottom right
-    const cardLabel = document.createElement('div');
-    cardLabel.style.position = 'absolute';
-    cardLabel.style.bottom = '8px';
-    cardLabel.style.right = '12px';
-    cardLabel.style.fontSize = '11px';
-    cardLabel.style.color = 'var(--muted)';
-    cardLabel.style.opacity = '0.6';
-    cardLabel.textContent = 'SummaryCard';
-    summary.append(cardLabel);
     
     const totalTimeDiv = document.createElement('div');
     totalTimeDiv.style.textAlign = 'center';
@@ -642,8 +489,10 @@ export function renderQaCards({ store }) {
       for (let i = 0; i < batchResults.length; i++) {
         const result = batchResults[i];
         const cardDiv = document.createElement('div');
-        cardDiv.className = 'kv';
-        cardDiv.style.padding = '8px';
+        cardDiv.style.display = 'flex';
+        cardDiv.style.alignItems = 'center';
+        cardDiv.style.gap = '12px';
+        cardDiv.style.padding = '8px 12px';
         cardDiv.style.backgroundColor = 'var(--panel)';
         cardDiv.style.borderRadius = '4px';
         
@@ -651,36 +500,35 @@ export function renderQaCards({ store }) {
         const answerValue = result.entry[answerField] ?? '';
         const displayValue = `${questionValue} → ${answerValue}`;
         
-        const cardInfo = document.createElement('div');
-        cardInfo.style.flex = '1';
-        cardInfo.style.display = 'flex';
-        cardInfo.style.alignItems = 'center';
-        cardInfo.style.gap = '8px';
-        
         const cardNumber = document.createElement('span');
         cardNumber.style.fontWeight = 'bold';
-        cardNumber.style.minWidth = '30px';
+        cardNumber.style.minWidth = '25px';
+        cardNumber.style.flexShrink = '0';
         cardNumber.textContent = `${i + 1}.`;
         
         const cardContent = document.createElement('span');
-        cardContent.textContent = String(displayValue).substring(0, 70);
-        if (String(displayValue).length > 70) cardContent.textContent += '...';
-        
-        cardInfo.append(cardNumber, cardContent);
+        cardContent.style.flex = '1';
+        cardContent.style.minWidth = '0';
+        cardContent.style.overflow = 'hidden';
+        cardContent.style.textOverflow = 'ellipsis';
+        cardContent.style.whiteSpace = 'nowrap';
+        cardContent.textContent = displayValue;
         
         const correctBadge = document.createElement('span');
-        correctBadge.style.marginLeft = '8px';
-        correctBadge.style.fontSize = '14px';
+        correctBadge.style.fontSize = '16px';
+        correctBadge.style.flexShrink = '0';
         correctBadge.textContent = result.wasCorrect ? '✓' : '✗';
         correctBadge.style.color = result.wasCorrect ? '#4ade80' : '#ef4444';
-        cardInfo.append(correctBadge);
         
         const timeSpan = document.createElement('div');
         timeSpan.className = 'badge';
+        timeSpan.style.minWidth = '45px';
+        timeSpan.style.flexShrink = '0';
+        timeSpan.style.textAlign = 'right';
         const cardSeconds = Math.round(result.timeMs / 1000);
         timeSpan.textContent = cardSeconds < 60 ? `${cardSeconds}s` : `${Math.floor(cardSeconds / 60)}m ${cardSeconds % 60}s`;
         
-        cardDiv.append(cardInfo, timeSpan);
+        cardDiv.append(cardNumber, cardContent, correctBadge, timeSpan);
         resultsList.append(cardDiv);
       }
       
@@ -692,16 +540,34 @@ export function renderQaCards({ store }) {
     const restartBtn = document.createElement('button');
     restartBtn.className = 'button';
     restartBtn.textContent = 'Restart Batch';
-    restartBtn.addEventListener('click', () => {
+    const handleRestart = () => {
       index = 0;
       feedbackMode = false;
       userAnswer = '';
       resetBatchResults();
       shownAt = nowMs();
       render();
-    });
+    };
+    restartBtn.addEventListener('click', handleRestart);
     
-    controls.append(restartBtn);
+    const cardTypeLabel = document.createElement('span');
+    cardTypeLabel.id = 'qa-cards-summary-card-label';
+    cardTypeLabel.style.fontSize = '11px';
+    cardTypeLabel.style.color = 'var(--muted)';
+    cardTypeLabel.style.opacity = '0.6';
+    cardTypeLabel.style.marginLeft = 'auto';
+    cardTypeLabel.textContent = 'SummaryCard';
+    
+    controls.append(restartBtn, cardTypeLabel);
+    
+    // Allow Enter key to restart batch
+    const keyHandler = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleRestart();
+      }
+    };
+    wrapper.addEventListener('keydown', keyHandler);
   }
 
   function render() {
@@ -756,7 +622,20 @@ export function renderQaCards({ store }) {
     pos.id = 'qa-cards-position';
     pos.textContent = total ? `${index + 1} / ${total}` : 'Empty';
 
-    headerRow.append(title, pos);
+    const settingsGear = document.createElement('button');
+    settingsGear.className = 'icon-button';
+    settingsGear.id = 'qa-cards-settings-gear';
+    settingsGear.type = 'button';
+    settingsGear.title = 'Edit settings';
+    settingsGear.textContent = '⚙';
+    settingsGear.style.marginLeft = 'auto';
+    if (onNavigate) {
+      settingsGear.addEventListener('click', () => {
+        onNavigate('/settings?app=qaCards');
+      });
+    }
+
+    headerRow.append(title, pos, settingsGear);
 
     let batchSelector = null;
     if (settings.batchEnabled && batches.length > 0) {
@@ -813,7 +692,11 @@ export function renderQaCards({ store }) {
     controls.id = 'qa-cards-controls';
     controls.style.marginTop = '6px';
 
-    if (batchCompleted) {
+    if (!entry) {
+      body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
+    } else if (feedbackMode) {
+      renderFeedback(body, entry, settings);
+    } else if (batchCompleted) {
       renderBatchSummary(body, controls);
       if (batchSelector) {
         wrapper.append(headerRow, batchSelector, body, controls);
@@ -821,17 +704,12 @@ export function renderQaCards({ store }) {
         wrapper.append(headerRow, body, controls);
       }
       return;
-    }
-
-    if (!entry) {
-      body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
-    } else if (feedbackMode) {
-      renderFeedback(body, entry, settings);
     } else {
       renderCard(body, entry, settings);
       
       // Add card type label
       const cardTypeLabel = document.createElement('span');
+      cardTypeLabel.id = 'qa-cards-question-card-label';
       cardTypeLabel.style.fontSize = '11px';
       cardTypeLabel.style.color = 'var(--muted)';
       cardTypeLabel.style.opacity = '0.6';
@@ -867,6 +745,7 @@ export function renderQaCards({ store }) {
             userAnswer: '(shown)',
             correctAnswer
           });
+          cardsCompletedInBatch++;
         }
         
         feedbackMode = true;
@@ -879,13 +758,13 @@ export function renderQaCards({ store }) {
       const handleContinue = () => {
         feedbackMode = false;
         userAnswer = '';
-        index += 1;
-        const completed = clampIndex();
-        if (completed) {
-          index -= 1;
+        // Check if we've completed all cards and trying to advance
+        const batchEntries = getCurrentBatchEntries();
+        if (settings.batchEnabled && cardsCompletedInBatch >= batchEntries.length) {
           batchCompleted = true;
-          render();
-          return;
+        } else {
+          index += 1;
+          clampIndex();
         }
         shownAt = nowMs();
         render();
@@ -895,24 +774,26 @@ export function renderQaCards({ store }) {
       continueBtn.className = 'button';
       continueBtn.textContent = 'Continue';
       continueBtn.addEventListener('click', handleContinue);
-      controls.append(continueBtn);
       
-      // Allow typing to continue to next card
+      const cardTypeLabel = document.createElement('span');
+      cardTypeLabel.id = 'qa-cards-feedback-card-label';
+      cardTypeLabel.style.fontSize = '11px';
+      cardTypeLabel.style.color = 'var(--muted)';
+      cardTypeLabel.style.opacity = '0.6';
+      cardTypeLabel.style.marginLeft = 'auto';
+      cardTypeLabel.textContent = 'FeedbackCard';
+      
+      controls.append(continueBtn, cardTypeLabel);
+      
+      // Allow typing or Enter to continue to next card
       const keyHandler = (e) => {
-        if (/^[a-zA-Z]$/.test(e.key) || isHiraganaOrKatakana(e.key)) {
+        if (e.key === 'Enter' || /^[a-zA-Z]$/.test(e.key) || isHiraganaOrKatakana(e.key)) {
           e.preventDefault();
+          wrapper.removeEventListener('keydown', keyHandler);
           handleContinue();
         }
       };
       wrapper.addEventListener('keydown', keyHandler);
-      
-      // Clean up listener when moving to next card
-      const originalRender = render;
-      render = function() {
-        wrapper.removeEventListener('keydown', keyHandler);
-        render = originalRender;
-        originalRender();
-      };
     }
 
     if (batchSelector) {

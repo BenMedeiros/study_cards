@@ -5,7 +5,7 @@ import { renderCrossword } from './apps/crossword/crossword.js';
 import { renderSettings } from './views/settings.js';
 import { renderCollectionsManager } from './views/collections.js';
 import { renderPlaceholderTool } from './views/placeholder.js';
-import { createDropdown } from './utils/dropdown.js';
+import { createDropdown } from './components/dropdown.js';
 
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
@@ -108,37 +108,6 @@ export function createAppShell({ store, onNavigate }) {
 
     collectionBadge.append(collectionLabel, collectionSelect, collectionGear);
 
-    // App settings selector (per-collection, per-app)
-    const route = getCurrentRoute();
-    const appId =
-      route.pathname === '/flashcards' ? 'flashcards' :
-      route.pathname === '/qa-cards' ? 'qaCards' :
-      route.pathname === '/crossword' ? 'crossword' :
-      null;
-
-    let settingsBadge = null;
-    if (appId) {
-      settingsBadge = document.createElement('div');
-      settingsBadge.className = 'badge';
-      settingsBadge.id = 'hdr-settings-badge';
-
-      const settingsLabel = document.createElement('span');
-      settingsLabel.className = 'badge-muted';
-      settingsLabel.textContent = 'Settings:';
-
-      const settingsGear = document.createElement('button');
-      settingsGear.className = 'icon-button';
-      settingsGear.id = 'hdr-settings-gear';
-      settingsGear.type = 'button';
-      settingsGear.title = 'Edit settings';
-      settingsGear.textContent = '⚙';
-      settingsGear.addEventListener('click', () => {
-        onNavigate(`/settings?app=${encodeURIComponent(appId)}`);
-      });
-
-      settingsBadge.append(settingsLabel, settingsGear);
-    }
-
     const refreshBackend = document.createElement('button');
     refreshBackend.className = 'button';
     refreshBackend.id = 'hdr-backend-recheck';
@@ -160,7 +129,6 @@ export function createAppShell({ store, onNavigate }) {
     });
 
     right.append(collectionBadge);
-    if (settingsBadge) right.append(settingsBadge);
     right.append(backendBadge, refreshBackend);
     headerInner.append(brand, right);
 
@@ -209,11 +177,7 @@ export function createAppShell({ store, onNavigate }) {
     }
 
     if (route.pathname === '/qa-cards') {
-      main.append(renderQaCards({ store }));
-      return;
-    }
-    if (route.pathname === '/qa-cards') {
-      main.append(renderQaCards({ store }));
+      main.append(renderQaCards({ store, onNavigate }));
       return;
     }
     if (route.pathname === '/crossword') {

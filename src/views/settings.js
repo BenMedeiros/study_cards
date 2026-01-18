@@ -1,4 +1,4 @@
-import { createDropdown } from '../utils/dropdown.js';
+import { createDropdown } from '../components/dropdown.js';
 
 function getAppLabel(appId) {
   const labels = {
@@ -36,7 +36,7 @@ export function renderSettings({ store, onNavigate, route }) {
   back.id = 'settings-back';
   back.name = 'back';
   back.textContent = 'Back';
-  back.addEventListener('click', () => onNavigate('/'));
+  back.addEventListener('click', () => history.back());
 
   header.append(title, back);
 

@@ -4,7 +4,7 @@
     "batchEnabled": true,
     "randomize": true,
     "autoAdvance": true,
-    "batchLoop": false
+    "batchSize": 3
   },
   "flashcards": {
     "randomize": true,

@@ -1,5 +1,4 @@
-import { detectBackend } from './utils/backend.js';
-import { nowIso, uuid } from './utils/time.js';
+import { detectBackend, nowIso, uuid } from './utils/helpers.js';
 
 // Import getDefaultSettings from all apps
 import { getDefaultSettings as getFlashcardsDefaults } from './apps/flashcards/flashcards.js';

@@ -1,6 +1,11 @@
+/**
+ * Backend detection and time utilities
+ */
+
+/**
+ * Detect backend availability
+ */
 export async function detectBackend() {
-  // Relative URL so GitHub Pages subpaths work.
-  // When running locally via Express, this should succeed.
   const url = './api/health';
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 600);
@@ -16,4 +21,25 @@ export async function detectBackend() {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+/**
+ * Get current time as ISO string
+ */
+export function nowIso() {
+  return new Date().toISOString();
+}
+
+/**
+ * Generate UUID (good enough for local IDs)
+ */
+export function uuid() {
+  return `${Date.now().toString(16)}-${Math.random().toString(16).slice(2)}`;
+}
+
+/**
+ * Get high-resolution timestamp in milliseconds
+ */
+export function nowMs() {
+  return performance.now();
 }

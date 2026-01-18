@@ -1,19 +1,7 @@
-function safeIdPart(value) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9_-]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 64);
-}
+import { el, safeId, kv } from '../components/dom.js';
 
-function el(tag, className, text, id) {
-  const n = document.createElement(tag);
-  if (className) n.className = className;
-  if (text != null) n.textContent = text;
-  if (id) n.id = id;
-  return n;
-}
+// Use safeId instead of safeIdPart
+const safeIdPart = safeId;
 
 export function renderCollectionsManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
