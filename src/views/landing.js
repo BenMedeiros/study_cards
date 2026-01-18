@@ -52,9 +52,10 @@ export function renderLanding({ store, onNavigate }) {
   };
 
   grid.append(
-    mkTool({ idPrefix: 'landing-flashcards', title: 'Flashcards', hint: 'V0: shows all fields for each entry.', goTo: '/flashcards' }),
-    mkTool({ idPrefix: 'landing-crossword', title: 'Crossword', hint: 'Scaffolded', goTo: '/crossword' }),
-    mkTool({ idPrefix: 'landing-wordsearch', title: 'Word Search', hint: 'Scaffolded', goTo: '/wordsearch' })
+    mkTool({ idPrefix: 'landing-flashcards', title: 'Flashcards', hint: 'Browse and review all fields.', goTo: '/flashcards' }),
+    mkTool({ idPrefix: 'landing-qa-cards', title: 'QA Cards', hint: 'Type answers with romaji conversion.', goTo: '/qa-cards' }),
+    mkTool({ idPrefix: 'landing-crossword', title: 'Crossword', hint: 'Generate crossword puzzles.', goTo: '/crossword' }),
+    mkTool({ idPrefix: 'landing-wordsearch', title: 'Word Search', hint: 'Coming soon.', goTo: '/wordsearch' })
   );
 
   card.append(h2, p, grid);

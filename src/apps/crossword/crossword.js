@@ -387,6 +387,12 @@ function buildCrossword(words, { size = 13, maxWords = 12 } = {}) {
   return { size: Math.max(outH, outW), width: outW, height: outH, grid: outGrid, placed: numberedPlaced };
 }
 
+export function getDefaultSettings() {
+  return {
+    maxWords: 14,
+  };
+}
+
 export function renderCrossword({ store }) {
   const el = document.createElement('div');
   el.id = 'crossword-root';

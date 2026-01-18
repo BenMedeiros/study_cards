@@ -1,5 +1,6 @@
 import { renderLanding } from './views/landing.js';
 import { renderFlashcards } from './apps/flashcards/flashcards.js';
+import { renderQaCards } from './apps/qaCards/qaCards.js';
 import { renderCrossword } from './apps/crossword/crossword.js';
 import { renderSettings } from './views/settings.js';
 import { renderCollectionsManager } from './views/collections.js';
@@ -102,6 +103,7 @@ export function createAppShell({ store, onNavigate }) {
     const route = getCurrentRoute();
     const appId =
       route.pathname === '/flashcards' ? 'flashcards' :
+      route.pathname === '/qa-cards' ? 'qaCards' :
       route.pathname === '/crossword' ? 'crossword' :
       null;
 
@@ -109,30 +111,15 @@ export function createAppShell({ store, onNavigate }) {
     if (appId) {
       settingsBadge = document.createElement('div');
       settingsBadge.className = 'badge';
-      settingsBadge.id = 'hdr-mode-badge';
+      settingsBadge.id = 'hdr-settings-badge';
 
       const settingsLabel = document.createElement('span');
       settingsLabel.className = 'badge-muted';
-      settingsLabel.id = 'hdr-mode-label';
-      settingsLabel.textContent = 'Mode:';
-
-      const presets = store.getAppSettingsPresets?.(appId) ?? [];
-      const activePresetId = store.getActiveAppSettingsPresetId?.(appId);
-      
-      const settingsSelect = createDropdown({
-        items: presets.map(p => ({ value: p.id, label: p.name })),
-        value: activePresetId,
-        onChange: async (value) => {
-          await store.setActiveAppSettingsPresetId(appId, value);
-          renderHeader();
-          renderRoute(getCurrentRoute());
-        }
-      });
-      settingsSelect.id = 'hdr-mode-select';
+      settingsLabel.textContent = 'Settings:';
 
       const settingsGear = document.createElement('button');
       settingsGear.className = 'icon-button';
-      settingsGear.id = 'hdr-mode-gear';
+      settingsGear.id = 'hdr-settings-gear';
       settingsGear.type = 'button';
       settingsGear.title = 'Edit settings';
       settingsGear.textContent = '⚙';
@@ -140,35 +127,7 @@ export function createAppShell({ store, onNavigate }) {
         onNavigate(`/settings?app=${encodeURIComponent(appId)}`);
       });
 
-      settingsBadge.append(settingsLabel, settingsSelect, settingsGear);
-
-      // Crossword quick control: max words (lives in the header badge now)
-      if (appId === 'crossword') {
-        const wordsLabel = document.createElement('span');
-        wordsLabel.className = 'badge-muted';
-        wordsLabel.id = 'hdr-crossword-words-label';
-        wordsLabel.textContent = 'Words:';
-
-        const wordsInput = document.createElement('input');
-        wordsInput.className = 'input-small';
-        wordsInput.id = 'hdr-crossword-words-input';
-        wordsInput.name = 'crosswordMaxWords';
-        wordsInput.type = 'number';
-        wordsInput.min = '4';
-        wordsInput.max = '30';
-        wordsInput.step = '1';
-        const data = store.getActiveAppSettingsData?.('crossword') ?? {};
-        wordsInput.value = String(Number(data.maxWords ?? 14));
-        wordsInput.addEventListener('change', async () => {
-          const next = Math.max(4, Math.min(30, Math.floor(Number(wordsInput.value) || 14)));
-          wordsInput.value = String(next);
-          await store.updateActiveAppSettingsData('crossword', { maxWords: next });
-          renderHeader();
-          renderRoute(getCurrentRoute());
-        });
-
-        settingsBadge.append(wordsLabel, wordsInput);
-      }
+      settingsBadge.append(settingsLabel, settingsGear);
     }
 
     const refreshBackend = document.createElement('button');
@@ -200,6 +159,7 @@ export function createAppShell({ store, onNavigate }) {
     const links = [
       { href: '#/', label: 'Home' },
       { href: '#/flashcards', label: 'Flashcards' },
+      { href: '#/qa-cards', label: 'QA Cards' },
       { href: '#/crossword', label: 'Crossword' },
       { href: '#/wordsearch', label: 'Word Search' },
       { href: '#/collections', label: 'Collections' },
@@ -239,6 +199,14 @@ export function createAppShell({ store, onNavigate }) {
       return;
     }
 
+    if (route.pathname === '/qa-cards') {
+      main.append(renderQaCards({ store }));
+      return;
+    }
+    if (route.pathname === '/qa-cards') {
+      main.append(renderQaCards({ store }));
+      return;
+    }
     if (route.pathname === '/crossword') {
       main.append(renderCrossword({ store }));
       return;

@@ -9,6 +9,16 @@ function shuffleArray(array) {
   return shuffled;
 }
 
+export function getDefaultSettings() {
+  return {
+    displayFieldKeys: null,  // null = show all fields
+    randomize: false,
+    batchEnabled: false,
+    batchSize: 10,
+    batchLoop: true,
+  };
+}
+
 export function renderFlashcards({ store }) {
   const el = document.createElement('div');
   el.id = 'flashcards-root';
@@ -24,22 +34,21 @@ export function renderFlashcards({ store }) {
     return el;
   }
 
-  const settings = store.getActiveAppSettingsData?.('flashcards') ?? {};
+  const settings = store.getAppSettings('flashcards');
+  
   let workingEntries = settings.randomize ? shuffleArray(active.entries) : active.entries;
   let batches = [];
   let currentBatchIndex = 0;
   let index = 0;
   let shownAt = nowMs();
   let batchStartTime = nowMs();
-  let submitTimer = null;
-  let feedbackMode = false;
-  let userAnswer = '';
-  let isCorrect = false;
-  let batchResults = []; // Track timing for each card: { entry, timeMs, wasCorrect }
+  let batchCompleted = false;
+  let batchResults = [];
   
   function resetBatchResults() {
     batchResults = [];
     batchStartTime = nowMs();
+    batchCompleted = false;
   }
 
   function createBatches() {
@@ -63,9 +72,9 @@ export function renderFlashcards({ store }) {
     createBatches();
     currentBatchIndex = 0;
     index = 0;
+    resetBatchResults();
   }
 
-  // Initialize batches if enabled
   if (settings.batchEnabled) {
     createBatches();
   }
@@ -78,22 +87,20 @@ export function renderFlashcards({ store }) {
       return false;
     }
     
-    // Check if we're trying to go past the end
     if (index >= total) {
-      if (settings.batchEnabled && !settings.batchLoop) {
-        // Don't loop - keep at last card
+      const shouldLoop = settings.batchLoop !== false;
+      if (settings.batchEnabled && !shouldLoop) {
         index = total - 1;
-        return true; // Signal completion
+        return true;
       }
-      // Loop back to start
       index = index % total;
     } else if (index < 0) {
       index = (index + total) % total;
     }
-    return false; // Not completed
+    return false;
   }
 
-  function renderStandardCard(body, entry, settings) {
+  function renderCard(body, entry, settings) {
     const wantedKeys = Array.isArray(settings.displayFieldKeys) ? settings.displayFieldKeys : null;
     const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
     const visible = wantedKeys ? fields.filter((f) => wantedKeys.includes(f.key)) : fields;
@@ -112,232 +119,106 @@ export function renderFlashcards({ store }) {
       body.append(row);
     }
   }
-
-  function renderSimpleCard(body, entry, settings) {
-    const questionField = settings.questionField || 'kanji';
-    const answerField = settings.answerField || 'reading';
-    const questionValue = entry[questionField] ?? '';
-
-    console.log('[SimpleCard] Settings:', settings);
-    console.log('[SimpleCard] Question field:', questionField, '=', questionValue);
-    console.log('[SimpleCard] Answer field:', answerField, '=', entry[answerField]);
-
-    const container = document.createElement('div');
-    container.className = 'simple-card-container';
-
-    const question = document.createElement('div');
-    question.className = 'simple-card-question';
-    question.textContent = questionValue;
-
-    const inputWrapper = document.createElement('div');
-    inputWrapper.className = 'simple-card-input-wrapper';
-
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'simple-card-input';
-    input.placeholder = 'Type your answer...';
-    input.value = userAnswer;
-    input.autocomplete = 'off';
-
-    const submitMethod = settings.submitMethod || 'timer';
-    const timerSeconds = settings.submitTimerSeconds || 3;
-
-    console.log('[SimpleCard] Submit method:', submitMethod, 'Timer:', timerSeconds + 's');
-
-    function handleSubmit() {
-      if (submitTimer) {
-        clearTimeout(submitTimer);
-        submitTimer = null;
-      }
-
-      const correctAnswer = String(entry[answerField] ?? '').trim();
-      userAnswer = input.value.trim();
-      isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
-
-      store.logEvent({
-        type: 'flashcards.answer_submitted',
-        collectionId: active.metadata.id,
-        entryId: entry?.id ?? null,
-        questionField,
-        answerField,
-        userAnswer,
-        correctAnswer,
-        isCorrect,
-        msOnCard: Math.round(nowMs() - shownAt),
-      }).catch(() => {});
-
-      if (settings.autoAdvance && isCorrect) {
-        // Auto advance to next card
-        userAnswer = '';
-        feedbackMode = false;
-        index += 1;
-        const completed = clampIndex();
-        if (completed) {
-          // Show completion instead of rendering next card
-          feedbackMode = true;
-          index -= 1; // Go back to last card
-        }
-        shownAt = nowMs();
-        render();
-      } else {
-        feedbackMode = true;
-        render();
-      }
-    }
-
-    function resetTimer() {
-      if (submitTimer) {
-        clearTimeout(submitTimer);
-      }
-      if (submitMethod === 'timer' && input.value.trim()) {
-        submitTimer = setTimeout(handleSubmit, timerSeconds * 1000);
-      }
-    }
-
-    input.addEventListener('input', (e) => {
-      userAnswer = e.target.value;
-      console.log('[SimpleCard] Input:', userAnswer, 'Method:', submitMethod);
-
-      if (submitMethod === 'timer') {
-        resetTimer();
-      } else if (submitMethod === 'auto_correct') {
-        const correctAnswer = String(entry[answerField] ?? '').trim();
-        if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
-          handleSubmit();
-        }
-      }
-    });
-
-    input.addEventListener('keydown', (e) => {
-      if (submitMethod === 'enter' && e.key === 'Enter') {
-        e.preventDefault();
-        handleSubmit();
-      } else if (submitMethod === 'space' && e.key === ' ') {
-        // For space, we submit on keydown to prevent space from being added
-        e.preventDefault();
-        handleSubmit();
-      }
-    });
-
-    inputWrapper.append(input);
-    container.append(question, inputWrapper);
-    body.append(container);
-
-    // Focus input after render
-    setTimeout(() => input.focus(), 0);
-  }
-
-  function renderSimpleCardFeedback(body, entry, settings) {
-    const questionField = settings.questionField || 'kanji';
-    const answerField = settings.answerField || 'reading';
-    const onSubmitAction = settings.onSubmitAction || 'show_full_card';
-    const showFieldsOnSubmit = settings.showFieldsOnSubmit;
-
-    const container = document.createElement('div');
-    container.className = 'simple-card-feedback';
-
-    const statusBadge = document.createElement('div');
-    statusBadge.className = `feedback-badge ${isCorrect ? 'correct' : 'incorrect'}`;
-    statusBadge.textContent = isCorrect ? '✓ Correct' : '✗ Incorrect';
-    container.append(statusBadge);
-
-    if (onSubmitAction === 'show_field_only') {
-      // Just show the submitted field and whether it's correct
-      const answerDisplay = document.createElement('div');
-      answerDisplay.className = 'feedback-answer';
-      answerDisplay.innerHTML = `
-        <div class="feedback-label">Your answer:</div>
-        <div class="feedback-value ${isCorrect ? 'correct' : 'incorrect'}">${userAnswer || '(empty)'}</div>
-        <div class="feedback-label">Correct answer:</div>
-        <div class="feedback-value correct">${entry[answerField] ?? ''}</div>
-      `;
-      container.append(answerDisplay);
-    } else {
-      // Show full card with all specified fields
+  
+  function renderBatchSummary(body, controls) {
+    const totalTime = nowMs() - batchStartTime;
+    const totalSeconds = Math.round(totalTime / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    
+    body.innerHTML = '';
+    controls.innerHTML = '';
+    
+    const summary = document.createElement('div');
+    summary.style.padding = '20px';
+    
+    const header = document.createElement('h3');
+    header.textContent = 'Batch Complete!';
+    header.style.textAlign = 'center';
+    header.style.marginBottom = '20px';
+    summary.append(header);
+    
+    const totalTimeDiv = document.createElement('div');
+    totalTimeDiv.style.textAlign = 'center';
+    totalTimeDiv.style.marginBottom = '20px';
+    totalTimeDiv.style.fontSize = '18px';
+    totalTimeDiv.innerHTML = `<strong>Total Time:</strong> ${minutes}m ${seconds}s`;
+    summary.append(totalTimeDiv);
+    
+    if (batchResults.length > 0) {
+      const resultsHeader = document.createElement('h4');
+      resultsHeader.textContent = 'Card Times:';
+      resultsHeader.style.marginBottom = '12px';
+      summary.append(resultsHeader);
+      
+      const resultsList = document.createElement('div');
+      resultsList.style.display = 'flex';
+      resultsList.style.flexDirection = 'column';
+      resultsList.style.gap = '8px';
+      resultsList.style.maxHeight = '400px';
+      resultsList.style.overflowY = 'auto';
+      
       const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
-      const wantedKeys = Array.isArray(showFieldsOnSubmit) ? showFieldsOnSubmit : null;
-      const visible = wantedKeys ? fields.filter((f) => wantedKeys.includes(f.key)) : fields;
-
-      const fieldsContainer = document.createElement('div');
-      fieldsContainer.className = 'feedback-fields';
-
-      for (const field of visible) {
-        const row = document.createElement('div');
-        row.className = 'kv';
-        const key = document.createElement('div');
-        key.className = 'k';
-        key.textContent = field.label ?? field.key;
-
-        const val = document.createElement('div');
-        val.textContent = entry[field.key] ?? '';
-
-        // Highlight the answer field
-        if (field.key === answerField) {
-          val.className = isCorrect ? 'correct' : 'incorrect';
-        }
-
-        row.append(key, val);
-        fieldsContainer.append(row);
+      const firstField = fields[0]?.key ?? '';
+      
+      for (let i = 0; i < batchResults.length; i++) {
+        const result = batchResults[i];
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'kv';
+        cardDiv.style.padding = '8px';
+        cardDiv.style.backgroundColor = 'var(--panel)';
+        cardDiv.style.borderRadius = '4px';
+        
+        const displayValue = result.entry[firstField] ?? '';
+        
+        const cardInfo = document.createElement('div');
+        cardInfo.style.flex = '1';
+        cardInfo.style.display = 'flex';
+        cardInfo.style.alignItems = 'center';
+        cardInfo.style.gap = '8px';
+        
+        const cardNumber = document.createElement('span');
+        cardNumber.style.fontWeight = 'bold';
+        cardNumber.style.minWidth = '30px';
+        cardNumber.textContent = `${i + 1}.`;
+        
+        const cardContent = document.createElement('span');
+        cardContent.textContent = String(displayValue).substring(0, 70);
+        if (String(displayValue).length > 70) cardContent.textContent += '...';
+        
+        cardInfo.append(cardNumber, cardContent);
+        
+        const timeSpan = document.createElement('div');
+        timeSpan.className = 'badge';
+        const cardSeconds = Math.round(result.timeMs / 1000);
+        timeSpan.textContent = cardSeconds < 60 ? `${cardSeconds}s` : `${Math.floor(cardSeconds / 60)}m ${cardSeconds % 60}s`;
+        
+        cardDiv.append(cardInfo, timeSpan);
+        resultsList.append(cardDiv);
       }
-
-      // Show user's answer if incorrect
-      if (!isCorrect) {
-        const userRow = document.createElement('div');
-        userRow.className = 'kv';
-        const key = document.createElement('div');
-        key.className = 'k';
-        key.textContent = 'Your answer:';
-
-        const val = document.createElement('div');
-        val.className = 'incorrect';
-        val.textContent = userAnswer || '(empty)';
-
-        userRow.append(key, val);
-        fieldsContainer.prepend(userRow);
-      }
-
-      container.append(fieldsContainer);
+      
+      summary.append(resultsList);
     }
-
-    body.append(container);
+    
+    body.append(summary);
+    
+    const restartBtn = document.createElement('button');
+    restartBtn.className = 'button';
+    restartBtn.textContent = 'Restart Batch';
+    restartBtn.addEventListener('click', () => {
+      index = 0;
+      resetBatchResults();
+      shownAt = nowMs();
+      render();
+    });
+    
+    controls.append(restartBtn);
   }
 
   function render() {
-    const newSettings = store.getActiveAppSettingsData?.('flashcards') ?? {};
-    
-    // Re-shuffle if randomize setting changed
-    if (newSettings.randomize !== settings.randomize) {
-      settings.randomize = newSettings.randomize;
-      workingEntries = settings.randomize ? shuffleArray(active.entries) : active.entries;
-      if (settings.batchEnabled) {
-        createBatches();
-        currentBatchIndex = 0;
-      }
-      index = 0;
-    }
-    
-    // Recreate batches if batch settings changed
-    if (newSettings.batchEnabled !== settings.batchEnabled || 
-        (newSettings.batchEnabled && newSettings.batchSize !== settings.batchSize)) {
-      settings.batchEnabled = newSettings.batchEnabled;
-      settings.batchSize = newSettings.batchSize;
-      settings.batchLoop = newSettings.batchLoop;
-      if (settings.batchEnabled) {
-        createBatches();
-        currentBatchIndex = 0;
-      }
-      index = 0;
-    }
-    
-    // Sync batchLoop setting
-    if (newSettings.batchLoop !== settings.batchLoop) {
-      settings.batchLoop = newSettings.batchLoop;
-    }
-    
     const batchEntries = getCurrentBatchEntries();
     const entry = batchEntries[index];
     const total = batchEntries.length;
-    const isSimpleCard = newSettings.style === 'simple_card';
 
     wrapper.innerHTML = '';
 
@@ -357,7 +238,6 @@ export function renderFlashcards({ store }) {
 
     headerRow.append(title, pos);
 
-    // Batch selector (if batch mode enabled)
     let batchSelector = null;
     if (settings.batchEnabled && batches.length > 0) {
       batchSelector = document.createElement('div');
@@ -384,20 +264,18 @@ export function renderFlashcards({ store }) {
       batchSelect.addEventListener('change', () => {
         currentBatchIndex = Number(batchSelect.value);
         index = 0;
-        feedbackMode = false;
+        resetBatchResults();
         render();
       });
 
       batchSelector.append(batchLabel, batchSelect);
 
-      // Reshuffle button (if randomize is enabled)
       if (settings.randomize) {
         const reshuffleBtn = document.createElement('button');
         reshuffleBtn.className = 'button';
         reshuffleBtn.textContent = '🔀 Reshuffle';
         reshuffleBtn.addEventListener('click', () => {
           reshuffleBatches();
-          feedbackMode = false;
           render();
         });
         batchSelector.append(reshuffleBtn);
@@ -407,107 +285,82 @@ export function renderFlashcards({ store }) {
     const body = document.createElement('div');
     body.id = 'flashcards-body';
     body.style.marginTop = '10px';
-
-    if (!entry) {
-      body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
-    } else if (isSimpleCard && !feedbackMode) {
-      renderSimpleCard(body, entry, newSettings);
-    } else if (isSimpleCard && feedbackMode) {
-      renderSimpleCardFeedback(body, entry, newSettings);
-    } else {
-      renderStandardCard(body, entry, newSettings);
-    }
-
+    
     const controls = document.createElement('div');
     controls.className = 'row';
     controls.id = 'flashcards-controls';
     controls.style.marginTop = '12px';
 
-    if (isSimpleCard && feedbackMode) {
-      // In feedback mode, show continue button
-      const continueBtn = document.createElement('button');
-      continueBtn.className = 'button';
-      continueBtn.textContent = 'Continue';
-      continueBtn.addEventListener('click', () => {
-        feedbackMode = false;
-        userAnswer = '';
-        index += 1;
-        const completed = clampIndex();
-        if (completed) {
-          // Batch complete - show completion message
-          index -= 1; // Stay on last card
-          body.innerHTML = '<div style="text-align: center; padding: 40px;"><h3>Batch Complete!</h3><p class="hint">You\'ve completed all cards in this batch.</p></div>';
-          continueBtn.textContent = 'Restart Batch';
-          continueBtn.onclick = () => {
-            index = 0;
-            feedbackMode = false;
-            userAnswer = '';
-            render();
-          };
-          return;
-        }
-        shownAt = nowMs();
-        render();
-      });
-      controls.append(continueBtn);
-    } else if (isSimpleCard && !feedbackMode) {
-      // In answer mode, no prev/next buttons
-      // User submits via input field
-    } else {
-      // Standard flashcard prev/next controls
-      const prev = document.createElement('button');
-      prev.className = 'button';
-      prev.id = 'flashcards-prev';
-      prev.name = 'prev';
-      prev.textContent = 'Prev';
-
-      const next = document.createElement('button');
-      next.className = 'button';
-      next.id = 'flashcards-next';
-      next.name = 'next';
-      next.textContent = 'Next';
-
-      prev.addEventListener('click', async () => {
-        await store.logEvent({
-          type: 'flashcards.next',
-          direction: 'prev',
-          collectionId: active.metadata.id,
-          entryId: entry?.id ?? null,
-          msOnCard: Math.round(nowMs() - shownAt),
-        });
-        index -= 1;
-        clampIndex();
-        shownAt = nowMs();
-        render();
-      });
-
-      next.addEventListener('click', async () => {
-        await store.logEvent({
-          type: 'flashcards.next',
-          direction: 'next',
-          collectionId: active.metadata.id,
-          entryId: entry?.id ?? null,
-          msOnCard: Math.round(nowMs() - shownAt),
-        });
-        index += 1;
-        const completed = clampIndex();
-        if (completed) {
-          // Show completion message
-          body.innerHTML = '<div style="text-align: center; padding: 40px;"><h3>Batch Complete!</h3><p class="hint">You\'ve completed all cards in this batch.</p></div>';
-          next.textContent = 'Restart Batch';
-          next.onclick = async () => {
-            index = 0;
-            shownAt = nowMs();
-            render();
-          };
-          return;
-        }
-        shownAt = nowMs();
-        render();
-      });
-
-      controls.append(prev, next);
+    if (batchCompleted) {
+      renderBatchSummary(body, controls);
+      if (batchSelector) {
+        wrapper.append(headerRow, batchSelector, body, controls);
+      } else {
+        wrapper.append(headerRow, body, controls);
+      }
+      return;
     }
+
+    if (!entry) {
+      body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
+    } else {
+      renderCard(body, entry, settings);
+    }
+
+    const prev = document.createElement('button');
+    prev.className = 'button';
+    prev.id = 'flashcards-prev';
+    prev.name = 'prev';
+    prev.textContent = 'Prev';
+
+    const next = document.createElement('button');
+    next.className = 'button';
+    next.id = 'flashcards-next';
+    next.name = 'next';
+    next.textContent = 'Next';
+
+    prev.addEventListener('click', async () => {
+      await store.logEvent({
+        type: 'flashcards.prev',
+        collectionId: active.metadata.id,
+        entryId: entry?.id ?? null,
+        msOnCard: Math.round(nowMs() - shownAt),
+      });
+      index -= 1;
+      clampIndex();
+      shownAt = nowMs();
+      render();
+    });
+
+    next.addEventListener('click', async () => {
+      const timeOnCard = Math.round(nowMs() - shownAt);
+      await store.logEvent({
+        type: 'flashcards.next',
+        collectionId: active.metadata.id,
+        entryId: entry?.id ?? null,
+        msOnCard: timeOnCard,
+      });
+      
+      if (settings.batchEnabled) {
+        batchResults.push({
+          entry,
+          timeMs: timeOnCard,
+        });
+      }
+      
+      index += 1;
+      const completed = clampIndex();
+      if (completed) {
+        index -= 1;
+        batchCompleted = true;
+        render();
+        return;
+      }
+      shownAt = nowMs();
+      render();
+    });
+
+    controls.append(prev, next);
 
     if (batchSelector) {
       wrapper.append(headerRow, batchSelector, body, controls);
@@ -519,7 +372,6 @@ export function renderFlashcards({ store }) {
   clampIndex();
   render();
 
-  // Session events
   store.logEvent({ type: 'flashcards.opened', collectionId: active.metadata.id }).catch(() => {});
 
   el.append(wrapper);

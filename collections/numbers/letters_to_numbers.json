@@ -7,7 +7,8 @@
     "fields": [
       { "key": "letter", "label": "Letter", "type": "string" },
       { "key": "number", "label": "Number", "type": "number" }
-    ]
+    ],
+    "settings": {}
   },
   "entries": [
     { "id": "A", "letter": "A", "number": 1 },

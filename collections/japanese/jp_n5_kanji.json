@@ -8,7 +8,8 @@
       { "key": "kanji", "label": "Kanji", "type": "string" },
       { "key": "reading", "label": "Reading", "type": "string" },
       { "key": "meaning", "label": "Meaning", "type": "string" }
-    ]
+    ],
+    "settings": {}
   },
   "entries": [
     { "id": "日", "kanji": "日", "reading": "ひ", "meaning": "sun; day" },
