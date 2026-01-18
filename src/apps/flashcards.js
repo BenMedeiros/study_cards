@@ -1,4 +1,4 @@
-import { nowMs } from '../../utils/helpers.js';
+import { nowMs } from '../utils/helpers.js';
 
 export function renderFlashcards({ store }) {
   const el = document.createElement('div');

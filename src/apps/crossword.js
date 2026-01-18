@@ -1,5 +1,4 @@
-
-import { isHiraganaOrKatakana, convertRomajiIncremental, splitKana } from '../../utils/japanese.js';
+import { isHiraganaOrKatakana, convertRomajiIncremental, splitKana } from '../utils/japanese.js';
 
 function normalizeAnswer(reading) {
   // Minimal: keep only kana; remove spaces/slashes/etc.
@@ -237,12 +236,6 @@ function buildCrossword(words, { size = 13, maxWords = 12 } = {}) {
   return { size: Math.max(outH, outW), width: outW, height: outH, grid: outGrid, placed: numberedPlaced };
 }
 
-export function getDefaultSettings() {
-  return {
-    maxWords: 14,
-  };
-}
-
 export function renderCrossword({ store }) {
   const el = document.createElement('div');
   el.id = 'crossword-root';
@@ -258,6 +251,8 @@ export function renderCrossword({ store }) {
     return el;
   }
 
+  let maxWords = 14; // Default max words
+
   function getWordList() {
     return (active.entries ?? []).map((e) => ({
       id: e.id,
@@ -268,28 +263,26 @@ export function renderCrossword({ store }) {
   }
 
   function generatePuzzle() {
-    const data = store.getActiveAppSettingsData?.('crossword') ?? {};
-    const requested = Number(data.maxWords ?? 14);
     const list = getWordList();
 
     const valid = list
       .map((w) => ({ ...w, answer: normalizeAnswer(w.reading) }))
       .filter((w) => splitKana(w.answer).length >= 2);
 
-    const maxWords = Math.max(4, Math.min(Math.floor(requested || 14), valid.length || 4));
+    const actualMaxWords = Math.max(4, Math.min(Math.floor(maxWords || 14), valid.length || 4));
 
     // The placement is heuristic, so one attempt may place fewer than maxWords.
     // Try multiple randomized builds and keep the best result.
     let best = null;
     const attempts = 30;
     for (let i = 0; i < attempts; i++) {
-      const p = buildCrossword(valid, { size: 13, maxWords });
+      const p = buildCrossword(valid, { size: 13, maxWords: actualMaxWords });
       if (!best || (p?.placed?.length ?? 0) > (best?.placed?.length ?? 0)) best = p;
-      if ((best?.placed?.length ?? 0) >= maxWords) break;
+      if ((best?.placed?.length ?? 0) >= actualMaxWords) break;
     }
 
-    best.maxWords = maxWords;
-    best.requestedMaxWords = requested;
+    best.maxWords = actualMaxWords;
+    best.requestedMaxWords = maxWords;
     return best;
   }
 
@@ -311,6 +304,24 @@ export function renderCrossword({ store }) {
     actions.className = 'row';
     actions.id = 'crossword-actions';
 
+    const maxWordsLabel = document.createElement('span');
+    maxWordsLabel.className = 'hint';
+    maxWordsLabel.textContent = 'Max words:';
+
+    const maxWordsInput = document.createElement('input');
+    maxWordsInput.type = 'number';
+    maxWordsInput.className = 'button';
+    maxWordsInput.style.width = '60px';
+    maxWordsInput.min = '4';
+    maxWordsInput.max = '30';
+    maxWordsInput.value = String(maxWords);
+    maxWordsInput.addEventListener('change', () => {
+      const val = parseInt(maxWordsInput.value, 10);
+      if (val >= 4 && val <= 30) {
+        maxWords = val;
+      }
+    });
+
     const newBtn = document.createElement('button');
     newBtn.className = 'button';
     newBtn.id = 'crossword-new';
@@ -329,7 +340,7 @@ export function renderCrossword({ store }) {
     revealBtn.name = 'reveal';
     revealBtn.textContent = 'Reveal';
 
-    actions.append(newBtn, checkBtn, revealBtn);
+    actions.append(maxWordsLabel, maxWordsInput, newBtn, checkBtn, revealBtn);
     header.append(title, actions);
 
     const hint = document.createElement('div');
@@ -337,8 +348,8 @@ export function renderCrossword({ store }) {
     hint.id = 'crossword-hint';
     hint.style.marginTop = '8px';
     const placedCount = puzzle?.placed?.length ?? 0;
-    const maxWords = puzzle?.maxWords ?? Number((store.getActiveAppSettingsData?.('crossword') ?? {}).maxWords ?? 14);
-    hint.textContent = `Clue = kanji. Fill = reading (kana). Type romaji (e.g. kyo -> きょ). Placed: ${placedCount}/${maxWords}`;
+    const targetMaxWords = puzzle?.maxWords ?? maxWords;
+    hint.textContent = `Clue = kanji. Fill = reading (kana). Type romaji (e.g. kyo -> きょ). Placed: ${placedCount}/${targetMaxWords}`;
 
     const body = document.createElement('div');
     body.className = 'crossword';

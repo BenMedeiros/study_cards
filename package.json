@@ -2,17 +2,15 @@
   "name": "study_cards",
   "version": "1.0.0",
   "private": true,
-  "main": "index.js",
   "scripts": {
-    "dev": "node --watch apps/api/server.js",
-    "dev:plain": "node apps/api/server.js",
+    "dev": "npx http-server -p 3000 -c-1",
     "test": "echo \"No tests yet\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
-  "dependencies": {
-    "express": "^5.2.1"
+  "devDependencies": {
+    "http-server": "^14.1.1"
   }
 }

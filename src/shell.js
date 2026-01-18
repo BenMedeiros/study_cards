@@ -1,8 +1,7 @@
 import { renderLanding } from './views/landing.js';
-import { renderFlashcards } from './apps/flashcards/flashcards.js';
-import { renderQaCards } from './apps/qaCards/qaCards.js';
-import { renderCrossword } from './apps/crossword/crossword.js';
-import { renderSettings } from './views/settings.js';
+import { renderFlashcards } from './apps/flashcards.js';
+import { renderQaCards } from './apps/qaCards.js';
+import { renderCrossword } from './apps/crossword.js';
 import { renderCollectionsManager } from './views/collections.js';
 import { renderPlaceholderTool } from './views/placeholder.js';
 import { createDropdown } from './components/dropdown.js';
@@ -10,8 +9,6 @@ import { createDropdown } from './components/dropdown.js';
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
   el.id = 'shell-root';
-
-  let isCheckingBackend = false;
 
   const header = document.createElement('div');
   header.className = 'header';
@@ -66,12 +63,6 @@ export function createAppShell({ store, onNavigate }) {
     right.className = 'header-right';
     right.id = 'hdr-right';
 
-    const backendBadge = document.createElement('div');
-    backendBadge.className = 'badge';
-    backendBadge.id = 'hdr-backend-badge';
-    const backendState = store.getBackendState();
-    backendBadge.textContent = backendState.label;
-
     const collectionBadge = document.createElement('div');
     collectionBadge.className = 'badge';
     collectionBadge.id = 'hdr-collection-badge';
@@ -108,28 +99,7 @@ export function createAppShell({ store, onNavigate }) {
 
     collectionBadge.append(collectionLabel, collectionSelect, collectionGear);
 
-    const refreshBackend = document.createElement('button');
-    refreshBackend.className = 'button';
-    refreshBackend.id = 'hdr-backend-recheck';
-    refreshBackend.textContent = isCheckingBackend ? 'Checking…' : 'Recheck backend';
-    if (isCheckingBackend) {
-      refreshBackend.disabled = true;
-      refreshBackend.classList.add('is-checking');
-      refreshBackend.setAttribute('aria-busy', 'true');
-    }
-    refreshBackend.addEventListener('click', async () => {
-      isCheckingBackend = true;
-      renderHeader();
-      try {
-        await store.refreshBackendState();
-      } finally {
-        isCheckingBackend = false;
-        renderHeader();
-      }
-    });
-
     right.append(collectionBadge);
-    right.append(backendBadge, refreshBackend);
     headerInner.append(brand, right);
 
     nav.innerHTML = '';
@@ -140,7 +110,6 @@ export function createAppShell({ store, onNavigate }) {
       { href: '#/crossword', label: 'Crossword' },
       { href: '#/wordsearch', label: 'Word Search' },
       { href: '#/collections', label: 'Collections' },
-      { href: '#/settings', label: 'Settings' },
     ];
 
     const currentPath = getCurrentRoute().pathname;
@@ -187,11 +156,6 @@ export function createAppShell({ store, onNavigate }) {
 
     if (route.pathname === '/wordsearch') {
       main.append(renderPlaceholderTool({ title: 'Word Search', hint: 'Scaffolded — coming soon.' }));
-      return;
-    }
-
-    if (route.pathname === '/settings') {
-      main.append(renderSettings({ store, onNavigate, route }));
       return;
     }
 

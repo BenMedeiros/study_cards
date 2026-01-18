@@ -1,6 +1,6 @@
-import { nowMs } from '../../utils/helpers.js';
-import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } from '../../utils/japanese.js';
-import { createDropdown } from '../../components/dropdown.js';
+import { nowMs } from '../utils/helpers.js';
+import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } from '../utils/japanese.js';
+import { createDropdown } from '../components/dropdown.js';
 
 export function renderQaCards({ store }) {
   const el = document.createElement('div');

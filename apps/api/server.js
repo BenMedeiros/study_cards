@@ -19,16 +19,11 @@ app.get('/styles.css', (req, res) => {
 
 app.use('/src', express.static(path.join(repoRoot, 'src')));
 
-// Serve settings seed files (and optional local overrides) as static assets.
-app.use('/settings', express.static(path.join(repoRoot, 'settings')));
-
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, mode: 'local', ts: new Date().toISOString() });
 });
 
 const collectionsDir = path.join(repoRoot, 'collections');
-const dataDir = path.join(repoRoot, 'data');
-const localSettingsPath = path.join(dataDir, 'settings.local.json');
 
 // Serve collections as static files under /collections so the web UI can fetch them.
 app.use('/collections', express.static(collectionsDir));
@@ -97,32 +92,6 @@ app.post('/api/sync/pushCollection', async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ error: String(err?.message ?? err) });
-  }
-});
-
-// Save settings for a specific collection to its .settings.json file
-app.post('/api/sync/pushSettings', async (req, res) => {
-  try {
-    const { collectionId, settingsPath, settings } = req.body;
-    
-    if (!collectionId || !settingsPath) {
-      return res.status(400).json({ ok: false, error: 'Missing collectionId or settingsPath' });
-    }
-
-    // Convert relative path to absolute
-    // settingsPath comes as './collections/japanese/jp_n5_kanji.settings.json'
-    const relPath = settingsPath.replace(/^\.\//, '');
-    const fullPath = path.join(repoRoot, relPath);
-
-    // Ensure directory exists
-    await fs.mkdir(path.dirname(fullPath), { recursive: true });
-
-    // Write settings file
-    await fs.writeFile(fullPath, JSON.stringify(settings, null, 2) + '\n', 'utf8');
-    
-    return res.json({ ok: true });
-  } catch (err) {
-    return res.status(500).json({ ok: false, error: String(err?.message ?? err) });
   }
 });
 
