@@ -1,6 +1,10 @@
 {
   "qaCards": {
-    "submitMethod": "auto_correct"
+    "submitMethod": "auto_correct",
+    "batchEnabled": true,
+    "randomize": true,
+    "autoAdvance": true,
+    "batchLoop": false
   },
   "flashcards": {
     "randomize": true,

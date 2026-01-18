@@ -250,6 +250,7 @@ export function renderQaCards({ store }) {
 
     const container = document.createElement('div');
     container.className = 'simple-card-container';
+    container.style.position = 'relative';
 
     const question = document.createElement('div');
     question.className = 'simple-card-question';
@@ -257,11 +258,23 @@ export function renderQaCards({ store }) {
 
     const inputWrapper = document.createElement('div');
     inputWrapper.className = 'simple-card-input-wrapper';
+    
+    // Add card type label in bottom right
+    const cardLabel = document.createElement('div');
+    cardLabel.style.position = 'absolute';
+    cardLabel.style.bottom = '8px';
+    cardLabel.style.right = '12px';
+    cardLabel.style.fontSize = '11px';
+    cardLabel.style.color = 'var(--muted)';
+    cardLabel.style.opacity = '0.6';
+    cardLabel.textContent = 'QuestionCard';
+    container.append(cardLabel);
 
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'simple-card-input';
-    input.placeholder = 'Type your answer...';
+    const answerFieldObj = fields.find(f => f.key === answerField);
+    input.placeholder = `Answer: ${answerFieldObj?.label || answerField}`;
     input.value = userAnswer;
     input.autocomplete = 'off';
     input.dataset.romajiBuffer = '';
@@ -449,14 +462,28 @@ export function renderQaCards({ store }) {
     const answerField = settings.answerField || (fields[1]?.key ?? 'answer');
     const onSubmitAction = settings.onSubmitAction || 'show_full_card';
     const showFieldsOnSubmit = settings.showFieldsOnSubmit;
+    const questionValue = entry[questionField] ?? '';
 
     const container = document.createElement('div');
     container.className = 'simple-card-feedback';
-
-    const statusBadge = document.createElement('div');
-    statusBadge.className = `feedback-badge ${isCorrect ? 'correct' : 'incorrect'}`;
-    statusBadge.textContent = isCorrect ? '✓ Correct' : '✗ Incorrect';
-    container.append(statusBadge);
+    container.style.position = 'relative';
+    
+    // Show question field prominently
+    const question = document.createElement('div');
+    question.className = 'simple-card-question';
+    question.textContent = questionValue;
+    container.append(question);
+    
+    // Add card type label in bottom right
+    const cardLabel = document.createElement('div');
+    cardLabel.style.position = 'absolute';
+    cardLabel.style.bottom = '8px';
+    cardLabel.style.right = '12px';
+    cardLabel.style.fontSize = '11px';
+    cardLabel.style.color = 'var(--muted)';
+    cardLabel.style.opacity = '0.6';
+    cardLabel.textContent = 'FeedbackCard';
+    container.append(cardLabel);
 
     if (onSubmitAction === 'show_field_only') {
       const answerDisplay = document.createElement('div');
@@ -525,12 +552,24 @@ export function renderQaCards({ store }) {
     
     const summary = document.createElement('div');
     summary.style.padding = '20px';
+    summary.style.position = 'relative';
     
     const header = document.createElement('h3');
     header.textContent = 'Batch Complete!';
     header.style.textAlign = 'center';
     header.style.marginBottom = '20px';
     summary.append(header);
+    
+    // Add card type label in bottom right
+    const cardLabel = document.createElement('div');
+    cardLabel.style.position = 'absolute';
+    cardLabel.style.bottom = '8px';
+    cardLabel.style.right = '12px';
+    cardLabel.style.fontSize = '11px';
+    cardLabel.style.color = 'var(--muted)';
+    cardLabel.style.opacity = '0.6';
+    cardLabel.textContent = 'SummaryCard';
+    summary.append(cardLabel);
     
     const totalTimeDiv = document.createElement('div');
     totalTimeDiv.style.textAlign = 'center';
@@ -549,8 +588,6 @@ export function renderQaCards({ store }) {
       resultsList.style.display = 'flex';
       resultsList.style.flexDirection = 'column';
       resultsList.style.gap = '8px';
-      resultsList.style.maxHeight = '400px';
-      resultsList.style.overflowY = 'auto';
       
       const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
       const questionField = settings.questionField || (fields[0]?.key ?? '');

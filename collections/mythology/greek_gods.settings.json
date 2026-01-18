@@ -1,1 +1,10 @@
-{}
+{
+  "qaCards": {
+    "answerField": "englishName",
+    "randomize": true,
+    "batchEnabled": true,
+    "batchSize": 4,
+    "batchLoop": false,
+    "submitMethod": "auto_correct"
+  }
+}
