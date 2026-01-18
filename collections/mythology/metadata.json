@@ -3,10 +3,12 @@
   "commonFields": [
     { "key": "englishName", "label": "English Name", "type": "string" },
     { "key": "greekName", "label": "Greek Name", "type": "string" },
+    { "key": "greekPronunciation", "label": "Greek Pron.", "type": "string" },
     { "key": "latinName", "label": "Latin Name", "type": "string" },
+    { "key": "latinPronunciation", "label": "Latin Pron.", "type": "string" },
     { "key": "godOf", "label": "God Of", "type": "string" },
     { "key": "powers", "label": "Powers", "type": "string" },
-    { "key": "physicalDescription", "label": "Physical Description", "type": "string" },
+    { "key": "physicalDescription", "label": "Physical Desc.", "type": "string" },
     { "key": "source", "label": "Source", "type": "string" }
   ]
 }

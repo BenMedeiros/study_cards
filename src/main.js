@@ -9,20 +9,24 @@ const store = createStore();
 const shell = createAppShell({ store, onNavigate: navigateTo });
 root.append(shell.el);
 
-installHashRouter({
-  onRoute: (route) => {
-    store.syncCollectionFromURL(route);
-    shell.renderRoute(route);
-  },
-});
-
 // Default route
 if (!location.hash) {
   navigateTo('/');
 }
 
-// Start background initialization (storage, collections, backend check)
+// Initialize store FIRST, then set up router
 store.initialize().then(() => {
+  // Now that collections are loaded, sync from URL and set up router
+  const initialRoute = shell.getCurrentRoute();
+  store.syncCollectionFromURL(initialRoute);
+  
+  installHashRouter({
+    onRoute: (route) => {
+      store.syncCollectionFromURL(route);
+      shell.renderRoute(route);
+    },
+  });
+  
   shell.renderHeader();
-  shell.renderRoute(shell.getCurrentRoute());
+  shell.renderRoute(initialRoute);
 });

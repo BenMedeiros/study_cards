@@ -1,6 +1,7 @@
 import { nowMs } from '../utils/helpers.js';
 import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } from '../utils/japanese.js';
 import { createDropdown } from '../components/dropdown.js';
+import { createSpeakerButton } from '../components/speaker.js';
 
 export function renderQaCards({ store }) {
   const el = document.createElement('div');
@@ -218,13 +219,32 @@ export function renderQaCards({ store }) {
       key.textContent = field.label ?? field.key;
 
       const val = document.createElement('div');
-      val.textContent = entry[field.key] ?? '';
+      const fieldValue = entry[field.key] ?? '';
+      val.textContent = fieldValue;
 
       if (field.key === answerField) {
         val.className = isCorrect ? 'correct' : 'incorrect';
       }
 
-      row.append(key, val);
+      // Add speaker button for Japanese fields only
+      const shouldHaveSpeaker = ['kanji', 'reading'].includes(field.key);
+      if (shouldHaveSpeaker && fieldValue) {
+        const speakerBtn = createSpeakerButton({
+          text: fieldValue,
+          fieldKey: field.key,
+          collectionCategory: active.metadata.category
+        });
+        
+        const valWrapper = document.createElement('div');
+        valWrapper.style.display = 'flex';
+        valWrapper.style.alignItems = 'center';
+        valWrapper.appendChild(val);
+        valWrapper.appendChild(speakerBtn);
+        row.append(key, valWrapper);
+      } else {
+        row.append(key, val);
+      }
+
       fieldsContainer.append(row);
     }
 
