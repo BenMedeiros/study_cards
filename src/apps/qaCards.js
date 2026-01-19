@@ -39,7 +39,6 @@ export function renderQaCards({ store }) {
 
     const container = document.createElement('div');
     container.className = 'simple-card-container';
-    container.style.position = 'relative';
 
     const question = document.createElement('div');
     question.className = 'simple-card-question';
@@ -262,30 +261,14 @@ export function renderQaCards({ store }) {
     wrapper.innerHTML = '';
     wrapper.tabIndex = 0; // Make wrapper focusable for Enter key
 
-    const headerRow = document.createElement('div');
-    headerRow.className = 'row';
-    headerRow.id = 'qa-cards-header';
+    const cornerCaption = document.createElement('div');
+    cornerCaption.className = 'card-corner-caption';
+    cornerCaption.textContent = total ? `${index + 1} / ${total}` : 'Empty';
 
-    const title = document.createElement('h2');
-    title.id = 'qa-cards-title';
-    title.style.margin = '0';
-    title.style.fontSize = '18px';
-    title.textContent = `QA Cards — ${active.metadata.name}`;
-
-    const pos = document.createElement('div');
-    pos.className = 'badge';
-    pos.id = 'qa-cards-position';
-    pos.textContent = total ? `${index + 1} / ${total}` : 'Empty';
-
-    headerRow.append(title, pos);
-
-    // Tools row with field selectors
+    // Tools row with position and field selectors
     const toolsRow = document.createElement('div');
-    toolsRow.className = 'row';
+    toolsRow.className = 'cardtools-row';
     toolsRow.id = 'qa-cards-tools';
-    toolsRow.style.marginTop = '10px';
-    toolsRow.style.gap = '8px';
-    toolsRow.style.alignItems = 'center';
 
     const questionLabel = document.createElement('span');
     questionLabel.className = 'hint';
@@ -360,14 +343,13 @@ export function renderQaCards({ store }) {
 
     const body = document.createElement('div');
     body.id = 'qa-cards-body';
-    body.style.marginTop = '10px';
 
     if (completed) {
       body.innerHTML = `
         <div class="simple-card-feedback">
           <h3>🎉 Completed!</h3>
           <p>You've finished all ${total} cards in this collection.</p>
-          <button class="button" id="restart-btn" style="margin-top: 16px;">Start Over</button>
+          <button class="button" id="restart-btn" >Start Over</button>
         </div>
       `;
       setTimeout(() => {
@@ -391,7 +373,7 @@ export function renderQaCards({ store }) {
       renderCard(body, entry);
     }
 
-    wrapper.append(headerRow, toolsRow, body);
+    wrapper.append(cornerCaption, toolsRow, body);
   }
 
   render();

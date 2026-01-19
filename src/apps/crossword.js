@@ -292,16 +292,11 @@ export function renderCrossword({ store }) {
     wrapper.innerHTML = '';
 
     const header = document.createElement('div');
-    header.className = 'row';
-    header.id = 'crossword-header';
-
-    const title = document.createElement('h2');
-    title.id = 'crossword-title';
-    title.style.margin = '0';
-    title.textContent = `Crossword — ${active.metadata.name}`;
+    header.className = 'cardtools-row';
+    header.id = 'crossword-tools';
 
     const actions = document.createElement('div');
-    actions.className = 'row';
+    actions.className = 'row crossword-actions';
     actions.id = 'crossword-actions';
 
     const maxWordsLabel = document.createElement('span');
@@ -310,8 +305,7 @@ export function renderCrossword({ store }) {
 
     const maxWordsInput = document.createElement('input');
     maxWordsInput.type = 'number';
-    maxWordsInput.className = 'button';
-    maxWordsInput.style.width = '60px';
+    maxWordsInput.className = 'button crossword-max-words';
     maxWordsInput.min = '4';
     maxWordsInput.max = '30';
     maxWordsInput.value = String(maxWords);
@@ -341,12 +335,11 @@ export function renderCrossword({ store }) {
     revealBtn.textContent = 'Reveal';
 
     actions.append(maxWordsLabel, maxWordsInput, newBtn, checkBtn, revealBtn);
-    header.append(title, actions);
+    header.append(actions);
 
     const hint = document.createElement('div');
-    hint.className = 'hint';
+    hint.className = 'hint crossword-hint';
     hint.id = 'crossword-hint';
-    hint.style.marginTop = '8px';
     const placedCount = puzzle?.placed?.length ?? 0;
     const targetMaxWords = puzzle?.maxWords ?? maxWords;
     hint.textContent = `Clue = kanji. Fill = reading (kana). Type romaji (e.g. kyo -> きょ). Placed: ${placedCount}/${targetMaxWords}`;

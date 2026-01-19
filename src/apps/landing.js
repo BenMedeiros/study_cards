@@ -55,6 +55,7 @@ export function renderLanding({ store, onNavigate }) {
     mkTool({ idPrefix: 'landing-flashcards', title: 'Flashcards', hint: 'Browse and review all fields.', goTo: '/flashcards' }),
     mkTool({ idPrefix: 'landing-qa-cards', title: 'QA Cards', hint: 'Type answers with romaji conversion.', goTo: '/qa-cards' }),
     mkTool({ idPrefix: 'landing-crossword', title: 'Crossword', hint: 'Generate crossword puzzles.', goTo: '/crossword' }),
+    mkTool({ idPrefix: 'landing-data', title: 'Data', hint: 'View collection entries in table format.', goTo: '/data' }),
     mkTool({ idPrefix: 'landing-wordsearch', title: 'Word Search', hint: 'Coming soon.', goTo: '/wordsearch' })
   );
 

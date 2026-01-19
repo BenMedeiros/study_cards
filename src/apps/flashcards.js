@@ -43,30 +43,20 @@ export function renderFlashcards({ store }) {
 
     wrapper.innerHTML = '';
 
-    const headerRow = document.createElement('div');
-    headerRow.className = 'row';
-    headerRow.id = 'flashcards-header';
+    const cornerCaption = document.createElement('div');
+    cornerCaption.className = 'card-corner-caption';
+    cornerCaption.textContent = total ? `${index + 1} / ${total}` : 'Empty';
 
-    const title = document.createElement('h2');
-    title.id = 'flashcards-title';
-    title.style.margin = '0';
-    title.textContent = `Flashcards — ${active.metadata.name}`;
-
-    const pos = document.createElement('div');
-    pos.className = 'badge';
-    pos.id = 'flashcards-position';
-    pos.textContent = total ? `${index + 1} / ${total}` : 'Empty';
-
-    headerRow.append(title, pos);
+    const toolsRow = document.createElement('div');
+    toolsRow.className = 'cardtools-row';
+    toolsRow.id = 'flashcards-tools';
 
     const body = document.createElement('div');
     body.id = 'flashcards-body';
-    body.style.marginTop = '10px';
-    
+  
     const controls = document.createElement('div');
-    controls.className = 'row';
+    controls.className = 'cardtools-row cardtools-bottom';
     controls.id = 'flashcards-controls';
-    controls.style.marginTop = '12px';
 
     if (!entry) {
       body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
@@ -106,14 +96,7 @@ export function renderFlashcards({ store }) {
 
     controls.append(prev, next);
     
-    const keyHint = document.createElement('div');
-    keyHint.className = 'hint';
-    keyHint.style.fontSize = '11px';
-    keyHint.style.marginTop = '6px';
-    keyHint.style.textAlign = 'center';
-    keyHint.textContent = 'Use ← → arrow keys to navigate';
-    
-    wrapper.append(headerRow, body, controls, keyHint);
+    wrapper.append(cornerCaption, toolsRow, body, controls);
   }
 
   render();

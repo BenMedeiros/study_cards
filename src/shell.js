@@ -1,9 +1,10 @@
-import { renderLanding } from './views/landing.js';
+import { renderLanding } from './apps/landing.js';
 import { renderFlashcards } from './apps/flashcards.js';
 import { renderQaCards } from './apps/qaCards.js';
 import { renderCrossword } from './apps/crossword.js';
-import { renderCollectionsManager } from './views/collections.js';
-import { renderPlaceholderTool } from './views/placeholder.js';
+import { renderCollectionsManager } from './apps/collections.js';
+import { renderData } from './apps/data.js';
+import { renderPlaceholderTool } from './apps/placeholder.js';
 import { createDropdown } from './components/dropdown.js';
 
 export function createAppShell({ store, onNavigate }) {
@@ -37,8 +38,6 @@ export function createAppShell({ store, onNavigate }) {
     const brand = document.createElement('div');
     brand.className = 'brand';
     brand.id = 'hdr-brand';
-    brand.style.cursor = 'pointer';
-    brand.title = 'Click to collapse/expand header';
 
     const brandTitle = document.createElement('div');
     brandTitle.className = 'brand-title';
@@ -51,13 +50,6 @@ export function createAppShell({ store, onNavigate }) {
     brandSubtitle.textContent = 'Local-first study tools';
 
     brand.append(brandTitle, brandSubtitle);
-    
-    // Add collapse toggle
-    brand.addEventListener('click', () => {
-      const right = document.getElementById('hdr-right');
-      const isCollapsed = right.style.display === 'none';
-      right.style.display = isCollapsed ? 'flex' : 'none';
-    });
 
     const right = document.createElement('div');
     right.className = 'header-right';
@@ -87,21 +79,24 @@ export function createAppShell({ store, onNavigate }) {
     collectionLabel.id = 'hdr-collection-label';
     collectionLabel.textContent = 'Collection:';
 
-    const collectionGear = document.createElement('button');
-    collectionGear.className = 'icon-button';
-    collectionGear.id = 'hdr-collection-gear';
-    collectionGear.type = 'button';
-    collectionGear.title = 'Manage collections';
-    collectionGear.textContent = '⚙';
-    collectionGear.addEventListener('click', () => {
-      const id = store.getActiveCollectionId();
-      onNavigate(`/collections${id ? `?collection=${encodeURIComponent(id)}` : ''}`);
-    });
-
-    collectionBadge.append(collectionLabel, collectionSelect, collectionGear);
+    collectionBadge.append(collectionLabel, collectionSelect);
 
     right.append(collectionBadge);
     headerInner.append(brand, right);
+
+    // On mobile, use SK if collection name is long, otherwise show full brand name
+    if (window.innerWidth <= 768) {
+      const activeCollection = collections.find(c => c.metadata.id === activeId);
+      const collectionName = activeCollection?.metadata?.name || '';
+      
+      if (collectionName.length > 20) {
+        headerInner.classList.add('compact-brand');
+      } else {
+        headerInner.classList.remove('compact-brand');
+      }
+    } else {
+      headerInner.classList.remove('compact-brand');
+    }
 
     nav.innerHTML = '';
     const links = [
@@ -110,6 +105,7 @@ export function createAppShell({ store, onNavigate }) {
       { href: '#/qa-cards', label: 'QA Cards' },
       { href: '#/crossword', label: 'Crossword' },
       { href: '#/wordsearch', label: 'Word Search' },
+      { href: '#/data', label: 'Data' },
       { href: '#/collections', label: 'Collections' },
     ];
 
@@ -157,6 +153,11 @@ export function createAppShell({ store, onNavigate }) {
 
     if (route.pathname === '/wordsearch') {
       main.append(renderPlaceholderTool({ title: 'Word Search', hint: 'Scaffolded — coming soon.' }));
+      return;
+    }
+
+    if (route.pathname === '/data') {
+      main.append(renderData({ store }));
       return;
     }
 

@@ -173,6 +173,17 @@ input[type="number"].button::-webkit-inner-spin-button {
   border-radius: 14px;
   padding: 14px;
   background: rgba(255, 255, 255, 0.03);
+  position: relative;
+}
+
+.card-corner-caption {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 500;
+  line-height: 1;
 }
 
 .grid {
@@ -669,4 +680,127 @@ select:hover {
 .feedback-fields .kv div.incorrect {
   color: #fca5a5;
   font-weight: 600;
+}
+
+/* Cardtools row for app controls */
+.cardtools-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cardtools-bottom {
+  border-bottom: none;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+  padding: 12px 0;
+}
+
+/* App-specific styles */
+#flashcards-body {
+  margin-top: 10px;
+}
+
+#qa-question-select,
+#qa-answer-select {
+  min-width: 120px;
+}
+
+.feedback-value-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crossword-actions {
+  gap: 8px;
+}
+
+.crossword-max-words {
+  width: 60px;
+}
+
+.crossword-hint {
+  margin-top: 8px;
+}
+
+.crossword-clue-heading {
+  margin-top: 0;
+}
+
+/* Mobile-optimized button layout */
+@media (max-width: 768px) {
+  .cardtools-bottom .button {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .cardtools-bottom {
+    gap: 12px;
+  }
+
+  /* Hide arrow key hints on mobile */
+  .hint:has(> *) {
+    display: contents;
+  }
+
+  /* Single row header on mobile */
+  .header-inner {
+    padding: 8px 12px;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  /* SK brand on mobile - start with compact, expand if room */
+  .brand {
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+
+  /* Always hide subtitle on mobile */
+  .brand-subtitle {
+    display: none;
+  }
+
+  /* Show SK when compact-brand class is present */
+  .header-inner.compact-brand .brand-title {
+    font-size: 0;
+  }
+
+  .header-inner.compact-brand .brand-title::after {
+    content: 'SK';
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* Collection badge takes remaining space */
+  .header-right {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    justify-content: flex-end;
+  }
+
+  #hdr-collection-badge {
+    flex: 0 1 auto;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  #hdr-collection-select {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .custom-dropdown-button {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
