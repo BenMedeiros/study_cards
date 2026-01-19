@@ -8,6 +8,10 @@
  * @returns {HTMLTableElement}
  */
 export function createTable({ headers, rows, className = '', id }) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'table-wrapper';
+  if (id) wrapper.id = `${id}-wrapper`;
+  
   const table = document.createElement('table');
   table.className = `table ${className}`.trim();
   if (id) table.id = id;
@@ -46,5 +50,6 @@ export function createTable({ headers, rows, className = '', id }) {
   }
 
   table.append(thead, tbody);
-  return table;
+  wrapper.append(table);
+  return wrapper;
 }

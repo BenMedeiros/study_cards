@@ -170,10 +170,13 @@ input[type="number"].button::-webkit-inner-spin-button {
 
 .card {
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 0.875rem;
+  padding: 0.875rem;
   background: rgba(255, 255, 255, 0.03);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 11rem);
 }
 
 .card-corner-caption {
@@ -277,14 +280,34 @@ input[type="number"].button::-webkit-inner-spin-button {
 .table th,
 .table td {
   border-bottom: 1px solid var(--border);
-  padding: 8px 8px;
+  padding: 0.5rem;
   vertical-align: top;
+  word-wrap: break-word;
+  max-width: 18.75rem;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+  box-shadow: 0 1px 0 var(--border);
 }
 
 .table th {
   color: var(--muted);
   font-weight: 600;
   text-align: left;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  flex: 1;
+  position: relative;
+  max-height: calc(100vh - 12rem);
 }
 
 .textarea {
@@ -686,17 +709,19 @@ select:hover {
 .cardtools-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.5rem;
   align-items: center;
-  padding: 10px 0;
+  padding: 0.625rem 0;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
 
 .cardtools-bottom {
   border-bottom: none;
   border-top: 1px solid var(--border);
   margin-top: auto;
-  padding: 12px 0;
+  padding: 0.75rem 0;
+  flex-shrink: 0;
 }
 
 /* App-specific styles */
