@@ -5,6 +5,7 @@ import { renderCrossword } from './apps/crossword.js';
 import { renderCollectionsManager } from './apps/collections.js';
 import { renderData } from './apps/data.js';
 import { renderPlaceholderTool } from './apps/placeholder.js';
+import { renderKanjiStudyCard } from './apps/kanjiStudyCard.js';
 import { createDropdown } from './components/dropdown.js';
 
 export function createAppShell({ store, onNavigate }) {
@@ -105,6 +106,7 @@ export function createAppShell({ store, onNavigate }) {
       { href: '#/qa-cards', label: 'QA Cards' },
       { href: '#/crossword', label: 'Crossword' },
       { href: '#/wordsearch', label: 'Word Search' },
+      { href: '#/kanji', label: 'Kanji Study' },
       { href: '#/data', label: 'Data' },
       { href: '#/collections', label: 'Collections' },
     ];
@@ -153,6 +155,11 @@ export function createAppShell({ store, onNavigate }) {
 
     if (route.pathname === '/wordsearch') {
       main.append(renderPlaceholderTool({ title: 'Word Search', hint: 'Scaffolded — coming soon.' }));
+      return;
+    }
+
+    if (route.pathname === '/kanji') {
+      main.append(renderKanjiStudyCard({ store }));
       return;
     }
 
