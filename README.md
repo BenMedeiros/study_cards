@@ -1,78 +1,85 @@
 # Study Cards
 
-Vanilla JavaScript study tools with two ways to run:
+Local-first, vanilla JavaScript study tools — single-page app with hash routing and client-side collections.
 
-- **Static** (GitHub Pages): read-only collections from the repo
-- **Local backend** (Express server): full read/write with persistent storage
+Features
+- Multiple study apps built on the same collections model
+  - Flashcards — browse fields, batch navigation, randomize support
+  - QA Cards — type answers (with romaji→hiragana support in some collections)
+  - Crossword — generate crosswords from collection entries
+  - Collections Manager — view and edit collections (client-side)
+  - Data viewer — raw collection JSON browser
+- Static-first: runs entirely in the browser with JSON collection files
+- Simple dev server for local development (no backend required)
 
-## Apps
+Quickstart (local)
+1. Install dependencies:
+   npm install
+2. Start the local server:
+   npm run dev
+3. Open the app in your browser:
+   http://127.0.0.1:3000/#/
 
-- **Flashcards**: Browse all fields, navigate through entries with batch support
-- **QA Cards**: Type answers with automatic romaji-to-hiragana conversion  
-- **Crossword**: Generate crossword puzzles from collection entries
+Notes
+- The app is served statically. The repo's dev script uses http-server (see package.json).
+- Collections are loaded from the collections/ folder and from collections/index.json.
 
-## Architecture
+Collections and metadata
+- Collections are listed in collections/index.json (array of relative paths).
+- Individual collections typically live under collections/<category>/<collection>.json.
+- Category-level metadata (e.g., collections/<language>/metadata.json) provides shared "commonFields" and category info.
+- When a collection sits inside a category folder, category metadata is merged into the collection at load time: category commonFields are prepended unless the collection overrides them.
 
-### Collections
-Collections are stored in `collections/*.json` with structure:
-```json
+Example collection shape
+```
 {
   "metadata": {
-    "id": "...",
-    "name": "...",
-    "fields": [...],
+    "id": "my-collection",
+    "name": "My Collection",
+    "fields": [
+      { "key": "front", "label": "Front" },
+      { "key": "back", "label": "Back" }
+    ],
     "settings": {
       "flashcards": { "randomize": true },
-      "qaCards": { "submitMethod": "enter" },
-      "crossword": { "maxWords": 20 }
+      "qaCards": { "submitMethod": "enter" }
     }
   },
-  "entries": [...]
+  "entries": [
+    { "front": "Question 1", "back": "Answer 1" }
+  ]
 }
 ```
 
-Settings are per-collection and per-app. Only non-default values are stored.
+Settings model
+- Each app exposes default settings (in code) and collections store only non-default overrides in metadata.
+- The store removes settings equal to defaults to minimize saved data.
 
-### Settings Model
-Each app exports `getDefaultSettings()` which provides default configuration.
-User settings override defaults and are stored in the collection's metadata.
-When a setting equals the default, it's automatically removed (minimizes saved data).
+Architecture highlights
+- Hash-based routing: src/router.js
+- App shell and header: src/shell.js
+- Central store and collection loading/merging: src/store.js
+- Entry point: index.html → src/main.js
+- Dev server: npm run dev (http-server)
 
-## Local Development
+Project structure (top-level)
+- apps/             — optional server code (unused for static mode)
+- collections/      — collection JSON files and category metadata
+- src/              — client source
+  - apps/           — app implementations (flashcards, qaCards, crossword, landing, collections, data, placeholder)
+  - components/     — reusable UI components
+  - utils/          — helpers
+  - router.js
+  - shell.js
+  - store.js
+  - main.js
+- index.html
+- styles.css
+- package.json
 
-1. Install dependencies:
-   ```
-   npm install
-   ```
+Development notes
+- The app initializes the store, loads collections listed in collections/index.json, merges category metadata, then mounts the shell and installs the hash router.
+- The store updates the URL query parameter `collection` when the active collection changes.
 
-2. Start the local server:
-   ```
-   npm run dev
-   ```
-
-3. Open `http://127.0.0.1:3000/#/`
-
-## GitHub Pages Deployment
-
-In GitHub repo settings, set **Pages** to deploy from the `main` branch `/ (root)`.
-
-The static mode loads collections from JSON files and works entirely client-side.
-
-## Project Structure
-
-```
-├── apps/api/          # Express backend server
-├── collections/       # Collection JSON files
-├── src/
-│   ├── apps/          # App implementations
-│   │   ├── flashcards/
-│   │   ├── qaCards/   # QA mode with romaji conversion
-│   │   └── crossword/
-│   ├── views/         # UI views (landing, settings, etc)
-│   ├── utils/         # Utilities (backend detection, time, etc)
-│   ├── router.js      # Hash-based routing
-│   ├── shell.js       # App shell and header
-│   └── store.js       # State management
-├── index.html         # Entry point
-└── styles.css         # Global styles
-```
+Deployment
+- The repo is static and can be deployed via GitHub Pages (configure Pages to serve from the master branch root) or any static host.
