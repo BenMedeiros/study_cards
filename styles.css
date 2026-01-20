@@ -179,6 +179,58 @@ input[type="number"].button::-webkit-inner-spin-button {
   max-height: calc(100vh - 11rem);
 }
 
+/* Kanji study specific tweaks */
+.kanji-card {
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 20rem;
+  width: min(48rem, 100%);
+  margin: 0 auto;
+  max-width: 30rem;
+}
+
+.kanji-card .kanji-top-left {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.kanji-card .kanji-center { display:flex; align-items:center; justify-content:center; padding: 1rem 0; width:100%; }
+.kanji-card .kanji-main {
+  font-size: 5rem;
+  line-height: 1;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text);
+  word-break: keep-all;
+}
+
+.kanji-card .kanji-bottom-left,
+.kanji-card .kanji-bottom-right {
+  position: absolute;
+  bottom: 0.75rem;
+  font-size: 1.25rem;
+  color: var(--muted);
+  max-width: 60%;
+}
+
+.kanji-card .kanji-bottom-left { left: 0.75rem; }
+.kanji-card .kanji-bottom-right { right: 0rem; }
+
+/* Visual mode: kanji-only — hide non-kanji text but keep speaker visible and spacing */
+.kanji-card.kanji-only .kanji-bottom-left,
+.kanji-card.kanji-only .kanji-bottom-right {
+  color: transparent !important;
+}
+
+
+/* Make sure icon button in top-right fits visually */
+.kanji-card .kanji-top-left .icon-button { padding: 0.25rem; font-size: 1rem; }
+
 .card-corner-caption {
   position: absolute;
   top: 0.625rem;
@@ -195,6 +247,27 @@ input[type="number"].button::-webkit-inner-spin-button {
   grid-template-columns: repeat(auto-fit, minmax(13.75rem, 1fr));
   gap: 0.75rem;
 }
+
+/* Small caption-style footer for kanji controls (sibling under the card) */
+.kanji-footer-caption {
+  margin: 0.75rem auto 0;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  width: min(48rem, 100%);
+}
+
+/* Tools bar above kanji card */
+.kanji-tools {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  width: min(48rem, 100%);
+  margin: 0 auto 0.5rem auto;
+}
+.kanji-tools .button { padding: 0.375rem 0.6rem; }
+.kanji-tools .icon-button { font-size: 1.125rem; }
 
 .kv {
   display: grid;
@@ -385,6 +458,8 @@ details {
   .card {
     padding: 1rem;
   }
+
+  .kanji-main { font-size: 4rem; }
   
   /* Mobile button adjustments */
   .button {
@@ -482,6 +557,13 @@ select:hover {
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
   z-index: 1000;
   padding: 0.25rem 0;
+}
+
+@media (min-width: 769px) {
+  /* Limit dropdown width on desktop so it doesn't grow too wide */
+  .custom-dropdown-menu {
+    max-width: 20rem;
+  }
 }
 
 .custom-dropdown-option {

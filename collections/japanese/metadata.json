@@ -1,5 +1,5 @@
 {
-  "language": "japanese",
+  "category": "japanese",
   "commonFields": [
     { "key": "kanji", "label": "Kanji", "type": "string" },
     { "key": "reading", "label": "Reading", "type": "string" },

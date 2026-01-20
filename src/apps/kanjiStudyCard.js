@@ -1,94 +1,94 @@
 import { nowMs } from '../utils/helpers.js';
+import { createSpeakerButton } from '../components/speaker.js';
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
   el.id = 'kanji-study-root';
 
-  const wrapper = document.createElement('div');
-  wrapper.className = 'card kanji-card';
-  wrapper.id = 'kanji-card';
-
-  const active = store.getActiveCollection();
-  if (!active) {
-    wrapper.innerHTML = '<h2>Kanji Study</h2><p class="hint">No active collection.</p>';
-    el.append(wrapper);
-    return el;
-  }
-
-  let entries = active.entries || [];
+  // Simple state
+  let entries = [];
   let index = 0;
+  let viewMode = 'kanji-only';
   let shownAt = nowMs();
 
+  // Helpers
   function getFieldValue(entry, keys) {
+    if (!entry) return '';
     for (const k of keys) {
       if (entry[k]) return entry[k];
     }
     return '';
   }
 
+  // Root UI pieces
+  const tools = document.createElement('div');
+  tools.className = 'kanji-tools';
+
+  const shuffleBtn = document.createElement('button');
+  shuffleBtn.type = 'button';
+  shuffleBtn.className = 'btn small';
+  shuffleBtn.textContent = '🔀 Shuffle';
+
+  const toggleBtn = document.createElement('button');
+  toggleBtn.type = 'button';
+  toggleBtn.className = 'btn small';
+  toggleBtn.textContent = 'Show Full';
+
+  tools.append(shuffleBtn, toggleBtn);
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'kanji-card-wrapper';
+  wrapper.tabIndex = 0; // so it can receive keyboard focus
+
+  // Outer card container to get .card styling (border, background, padding)
+  const card = document.createElement('div');
+  card.className = 'card kanji-card';
+
+  // render a single card body
   function renderCard(body, entry) {
     body.innerHTML = '';
 
-    // Top-right caption area with small "Type" label and an input for typing practice
-    const topRight = document.createElement('div');
-    topRight.className = 'kanji-top-right caption';
+    // top-left: speaker
+    const topLeft = document.createElement('div');
+    topLeft.className = 'kanji-top-left';
+    const speakText = getFieldValue(entry, ['reading', 'kana', 'word', 'text']) || getFieldValue(entry, ['kanji']);
+    const speaker = createSpeakerButton(speakText);
+    topLeft.append(speaker);
 
-    const captionLabel = document.createElement('span');
-    captionLabel.className = 'caption-label';
-    captionLabel.textContent = 'Type';
-
-    const captionInput = document.createElement('input');
-    captionInput.className = 'caption-input';
-    captionInput.type = 'text';
-    captionInput.placeholder = '';
-    captionInput.setAttribute('aria-label', 'Type to practice reading or meaning');
-
-    topRight.append(captionLabel, captionInput);
-
-    // Centered kanji element
+    // main kanji centered
     const kanjiWrap = document.createElement('div');
-    kanjiWrap.className = 'kanji-center';
+    kanjiWrap.className = 'kanji-main-wrap';
+    const kanjiMain = document.createElement('div');
+    kanjiMain.className = 'kanji-main';
+    kanjiMain.textContent = getFieldValue(entry, ['kanji', 'character', 'text']) || '';
+    kanjiWrap.append(kanjiMain);
 
-    const kanjiText = document.createElement('div');
-    kanjiText.className = 'kanji-main';
-
-    // Heuristics for main fields (kanji first, fallback to first field value)
-    const kanjiValue = getFieldValue(entry, ['kanji', 'word', 'term']) || '';
-    kanjiText.textContent = kanjiValue;
-
-    kanjiWrap.append(kanjiText);
-
-    // Bottom-left reading
+    // bottom-left reading
     const bottomLeft = document.createElement('div');
     bottomLeft.className = 'kanji-bottom-left muted';
     bottomLeft.textContent = getFieldValue(entry, ['reading', 'kana', 'onyomi', 'kunyomi']) || '';
 
-    // Bottom-right meaning
+    // bottom-right meaning
     const bottomRight = document.createElement('div');
     bottomRight.className = 'kanji-bottom-right muted';
     bottomRight.textContent = getFieldValue(entry, ['meaning', 'definition', 'gloss']) || '';
 
-    body.append(topRight, kanjiWrap, bottomLeft, bottomRight);
+    body.append(topLeft, kanjiWrap, bottomLeft, bottomRight);
+  }
 
-    // Focus input for quick typing
-    setTimeout(() => captionInput.focus(), 0);
-
-    // Optional: reveal helper on Enter (no evaluation logic by default)
-    captionInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        // simple visual feedback: briefly flash border
-        captionInput.classList.add('submitted');
-        setTimeout(() => captionInput.classList.remove('submitted'), 400);
-      }
-    });
+  function refreshEntriesFromStore() {
+    const active = store.getActiveCollection();
+    entries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
+    index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
   }
 
   function render() {
-    const entry = entries[index];
-    const total = entries.length;
+    refreshEntriesFromStore();
 
     wrapper.innerHTML = '';
+
+    const entry = entries[index];
+    const total = entries.length;
 
     const cornerCaption = document.createElement('div');
     cornerCaption.className = 'card-corner-caption';
@@ -97,9 +97,8 @@ export function renderKanjiStudyCard({ store }) {
     const body = document.createElement('div');
     body.id = 'kanji-body';
 
-    const controls = document.createElement('div');
-    controls.className = 'cardtools-row cardtools-bottom';
-    controls.id = 'kanji-controls';
+    if (viewMode === 'kanji-only') wrapper.classList.add('kanji-only');
+    else wrapper.classList.remove('kanji-only');
 
     if (!entry) {
       body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
@@ -107,40 +106,38 @@ export function renderKanjiStudyCard({ store }) {
       renderCard(body, entry);
     }
 
-    const prev = document.createElement('button');
-    prev.className = 'button';
-    prev.id = 'kanji-prev';
-    prev.name = 'prev';
-    prev.textContent = 'Prev';
-
-    const next = document.createElement('button');
-    next.className = 'button';
-    next.id = 'kanji-next';
-    next.name = 'next';
-    next.textContent = 'Next';
-
-    prev.addEventListener('click', async () => {
-      if (index > 0) {
-        index -= 1;
-        shownAt = nowMs();
-        render();
-      }
-    });
-
-    next.addEventListener('click', async () => {
-      if (index < total - 1) {
-        index += 1;
-        shownAt = nowMs();
-        render();
-      }
-    });
-
-    controls.append(prev, next);
-
-    wrapper.append(cornerCaption, body, controls);
+    wrapper.append(cornerCaption, body);
   }
 
+  // Initial population
+  refreshEntriesFromStore();
   render();
+
+  // Footer caption (below the card)
+  const footer = document.createElement('div');
+  footer.className = 'kanji-footer-caption';
+  footer.id = 'kanji-controls';
+  footer.textContent = '← / →: navigate  •  ↑: kanji only  •  ↓: full';
+
+  card.appendChild(wrapper);
+  el.append(tools, card, footer);
+
+  // Tools behaviour
+  shuffleBtn.addEventListener('click', () => {
+    for (let i = entries.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [entries[i], entries[j]] = [entries[j], entries[i]];
+    }
+    index = 0;
+    viewMode = 'kanji-only';
+    render();
+  });
+
+  toggleBtn.addEventListener('click', () => {
+    viewMode = viewMode === 'kanji-only' ? 'full' : 'kanji-only';
+    toggleBtn.textContent = viewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
+    render();
+  });
 
   // Keyboard navigation
   const keyHandler = (e) => {
@@ -149,6 +146,7 @@ export function renderKanjiStudyCard({ store }) {
       if (index > 0) {
         index -= 1;
         shownAt = nowMs();
+        viewMode = 'kanji-only';
         render();
       }
     } else if (e.key === 'ArrowRight') {
@@ -156,25 +154,62 @@ export function renderKanjiStudyCard({ store }) {
       if (index < entries.length - 1) {
         index += 1;
         shownAt = nowMs();
+        viewMode = 'kanji-only';
         render();
       }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      viewMode = 'kanji-only';
+      render();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      viewMode = 'full';
+      render();
     }
   };
 
   wrapper.addEventListener('keydown', keyHandler);
   document.addEventListener('keydown', keyHandler);
 
-  // Cleanup on unmount
-  setTimeout(() => {
-    const observer = new MutationObserver((mutations) => {
-      if (!document.body.contains(wrapper)) {
-        document.removeEventListener('keydown', keyHandler);
-        observer.disconnect();
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-  }, 100);
+  // Touch / swipe handling for mobile
+  let touchStartX = 0;
+  let touchStartY = 0;
+  const threshold = 30; // px
 
-  el.append(wrapper);
+  wrapper.addEventListener('touchstart', (ev) => {
+    const t = ev.touches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+  }, { passive: true });
+
+  wrapper.addEventListener('touchend', (ev) => {
+    const t = ev.changedTouches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > threshold) {
+      if (dx < 0) {
+        if (index < entries.length - 1) { index += 1; shownAt = nowMs(); viewMode = 'kanji-only'; render(); }
+      } else {
+        if (index > 0) { index -= 1; shownAt = nowMs(); viewMode = 'kanji-only'; render(); }
+      }
+    } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > threshold) {
+      if (dy < 0) { // swipe up
+        viewMode = 'kanji-only'; render();
+      } else { // swipe down
+        viewMode = 'full'; render();
+      }
+    }
+  }, { passive: true });
+
+  // Cleanup on unmount
+  const observer = new MutationObserver(() => {
+    if (!document.body.contains(el)) {
+      document.removeEventListener('keydown', keyHandler);
+      observer.disconnect();
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // expose element so the shell can mount it
   return el;
 }

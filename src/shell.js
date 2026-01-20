@@ -100,13 +100,18 @@ export function createAppShell({ store, onNavigate }) {
     }
 
     nav.innerHTML = '';
+    // Show the Kanji Study link only when the active collection is Japanese
+    const activeCollection = store.getCollections().find(c => c.metadata.id === store.getActiveCollectionId());
+    const activeCategory = activeCollection?.metadata?.category || '';
+
     const links = [
       { href: '#/', label: 'Home' },
       { href: '#/flashcards', label: 'Flashcards' },
       { href: '#/qa-cards', label: 'QA Cards' },
       { href: '#/crossword', label: 'Crossword' },
       { href: '#/wordsearch', label: 'Word Search' },
-      { href: '#/kanji', label: 'Kanji Study' },
+      // only include Kanji when active collection category is japanese
+      ...(activeCategory.toLowerCase() === 'japanese' ? [{ href: '#/kanji', label: 'Kanji Study' }] : []),
       { href: '#/data', label: 'Data' },
       { href: '#/collections', label: 'Collections' },
     ];
@@ -159,6 +164,14 @@ export function createAppShell({ store, onNavigate }) {
     }
 
     if (route.pathname === '/kanji') {
+      const active = store.getActiveCollection();
+      const category = active?.metadata?.category || '';
+      if (category.toLowerCase() !== 'japanese') {
+        // redirect to home if the active collection isn't Japanese
+        onNavigate('/');
+        return;
+      }
+
       main.append(renderKanjiStudyCard({ store }));
       return;
     }

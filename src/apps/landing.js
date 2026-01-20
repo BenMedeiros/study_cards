@@ -59,6 +59,12 @@ export function renderLanding({ store, onNavigate }) {
     mkTool({ idPrefix: 'landing-wordsearch', title: 'Word Search', hint: 'Coming soon.', goTo: '/wordsearch' })
   );
 
+  // If the active collection is Japanese, add Kanji Study to the landing grid
+  const activeCategory = active?.metadata?.category || '';
+  if (activeCategory.toLowerCase() === 'japanese') {
+    grid.appendChild(mkTool({ idPrefix: 'landing-kanji', title: 'Kanji Study', hint: 'Study kanji (centered, reading bottom-left, meaning bottom-right).', goTo: '/kanji' }));
+  }
+
   card.append(h2, p, grid);
 
   card.addEventListener('click', (e) => {
