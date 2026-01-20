@@ -10,6 +10,7 @@ export function renderKanjiStudyCard({ store }) {
   let index = 0;
   let viewMode = 'kanji-only';
   let shownAt = nowMs();
+    let isShuffled = false;
 
   // Helpers
   function getFieldValue(entry, keys) {
@@ -83,7 +84,9 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   function render() {
+      if (!isShuffled) {
     refreshEntriesFromStore();
+      }
 
     wrapper.innerHTML = '';
 
@@ -130,6 +133,7 @@ export function renderKanjiStudyCard({ store }) {
     }
     index = 0;
     viewMode = 'kanji-only';
+      isShuffled = true;
     render();
   });
 
