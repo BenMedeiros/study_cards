@@ -187,7 +187,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   color: var(--muted);
   font-weight: 500;
   line-height: 1;
-  z-index: 20;
+  
 }
 
 .grid {
@@ -285,8 +285,23 @@ input[type="number"].button::-webkit-inner-spin-button {
   border-bottom: 1px solid var(--border);
   padding: 0.5rem;
   vertical-align: top;
-  word-wrap: break-word;
   max-width: 18.75rem;
+  text-wrap-mode: nowrap;
+}
+
+.table td.col-meaning {
+  text-wrap-mode: wrap;
+  min-width: 20rem;
+  word-break: keep-all;
+}
+
+.table td.col-god-of,
+.table td.col-powers,
+.table td.col-physical-desc,
+.table td.col-source {
+  text-wrap-mode: wrap;
+  min-width: 12rem;
+  word-break: keep-all;
 }
 
 .table thead {
@@ -294,7 +309,6 @@ input[type="number"].button::-webkit-inner-spin-button {
   top: 0;
   background: rgba(17, 24, 39, 0.95);
   backdrop-filter: blur(8px);
-  z-index: 10;
   box-shadow: 0 1px 0 var(--border);
 }
 
