@@ -12,6 +12,7 @@ export function renderKanjiStudyCard({ store }) {
   let defaultViewMode = 'kanji-only'; // controls what is shown when changing cards
   let shownAt = nowMs();
   let isShuffled = false;
+  let autoSpeakKanji = false;
 
   // Helpers
   function getFieldValue(entry, keys) {
@@ -36,7 +37,33 @@ export function renderKanjiStudyCard({ store }) {
   toggleBtn.className = 'btn small';
   toggleBtn.textContent = 'Show Full';
 
-  tools.append(shuffleBtn, toggleBtn);
+  // New: Auto-speak Kanji toggle button
+  const autoSpeakBtn = document.createElement('button');
+  autoSpeakBtn.type = 'button';
+  autoSpeakBtn.className = 'btn small';
+  autoSpeakBtn.textContent = '🔊 Auto Speak Kanji';
+
+  tools.append(shuffleBtn, toggleBtn, autoSpeakBtn);
+  // Helper to speak kanji
+  // Use speech directly for auto-speak
+  function speakKanji(entry) {
+    const kanjiText = getFieldValue(entry, ['kanji', 'character', 'text']) || '';
+    if (kanjiText) {
+      // Use the same language logic as speaker button
+      // Default to ja-JP for kanji
+      let lang = 'ja-JP';
+      // If entry has a fieldKey or collectionCategory, you could use getLanguageCode
+      // But for kanji, ja-JP is correct
+      import('../utils/speech.js').then(({ speak }) => {
+        speak(kanjiText, lang);
+      });
+    }
+  }
+  // Auto-speak button behavior
+  autoSpeakBtn.addEventListener('click', () => {
+    autoSpeakKanji = !autoSpeakKanji;
+    autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Speaking Kanji: ON' : '🔊 Auto Speak Kanji';
+  });
 
   const wrapper = document.createElement('div');
   wrapper.className = 'kanji-card-wrapper';
@@ -155,6 +182,7 @@ export function renderKanjiStudyCard({ store }) {
         shownAt = nowMs();
         viewMode = defaultViewMode;
         render();
+        if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
       }
     } else if (e.key === 'ArrowRight') {
       e.preventDefault();
@@ -163,6 +191,7 @@ export function renderKanjiStudyCard({ store }) {
         shownAt = nowMs();
         viewMode = defaultViewMode;
         render();
+        if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
       }
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
@@ -195,9 +224,21 @@ export function renderKanjiStudyCard({ store }) {
     const dy = t.clientY - touchStartY;
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > threshold) {
       if (dx < 0) {
-        if (index < entries.length - 1) { index += 1; shownAt = nowMs(); viewMode = defaultViewMode; render(); }
+        if (index < entries.length - 1) {
+          index += 1;
+          shownAt = nowMs();
+          viewMode = defaultViewMode;
+          render();
+          if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
+        }
       } else {
-        if (index > 0) { index -= 1; shownAt = nowMs(); viewMode = defaultViewMode; render(); }
+        if (index > 0) {
+          index -= 1;
+          shownAt = nowMs();
+          viewMode = defaultViewMode;
+          render();
+          if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
+        }
       }
     } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > threshold) {
       if (dy < 0) { // swipe up
