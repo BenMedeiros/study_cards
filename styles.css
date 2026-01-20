@@ -221,6 +221,11 @@ input[type="number"].button::-webkit-inner-spin-button {
 .kanji-card .kanji-bottom-left { left: 0.75rem; }
 .kanji-card .kanji-bottom-right { right: 0rem; }
 
+.kanji-card-wrapper.kanji-only .kanji-bottom-left,
+.kanji-card-wrapper.kanji-only .kanji-bottom-right {
+  color: transparent !important;
+}
+
 /* Visual mode: kanji-only — hide non-kanji text but keep speaker visible and spacing */
 .kanji-card.kanji-only .kanji-bottom-left,
 .kanji-card.kanji-only .kanji-bottom-right {

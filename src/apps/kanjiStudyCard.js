@@ -8,9 +8,10 @@ export function renderKanjiStudyCard({ store }) {
   // Simple state
   let entries = [];
   let index = 0;
-  let viewMode = 'kanji-only';
+  let viewMode = 'kanji-only'; // current card view
+  let defaultViewMode = 'kanji-only'; // controls what is shown when changing cards
   let shownAt = nowMs();
-    let isShuffled = false;
+  let isShuffled = false;
 
   // Helpers
   function getFieldValue(entry, keys) {
@@ -120,7 +121,7 @@ export function renderKanjiStudyCard({ store }) {
   const footer = document.createElement('div');
   footer.className = 'kanji-footer-caption';
   footer.id = 'kanji-controls';
-  footer.textContent = '← / →: navigate  •  ↑: kanji only  •  ↓: full';
+  footer.textContent = '← / →: navigate  •  ↑: full  •  ↓: kanji only';
 
   card.appendChild(wrapper);
   el.append(tools, card, footer);
@@ -132,14 +133,16 @@ export function renderKanjiStudyCard({ store }) {
       [entries[i], entries[j]] = [entries[j], entries[i]];
     }
     index = 0;
-    viewMode = 'kanji-only';
-      isShuffled = true;
+    viewMode = defaultViewMode;
+    isShuffled = true;
     render();
   });
 
   toggleBtn.addEventListener('click', () => {
-    viewMode = viewMode === 'kanji-only' ? 'full' : 'kanji-only';
-    toggleBtn.textContent = viewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
+    defaultViewMode = defaultViewMode === 'kanji-only' ? 'full' : 'kanji-only';
+    toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
+    // When toggling, also update current card to match default
+    viewMode = defaultViewMode;
     render();
   });
 
@@ -150,7 +153,7 @@ export function renderKanjiStudyCard({ store }) {
       if (index > 0) {
         index -= 1;
         shownAt = nowMs();
-        viewMode = 'kanji-only';
+        viewMode = defaultViewMode;
         render();
       }
     } else if (e.key === 'ArrowRight') {
@@ -158,16 +161,16 @@ export function renderKanjiStudyCard({ store }) {
       if (index < entries.length - 1) {
         index += 1;
         shownAt = nowMs();
-        viewMode = 'kanji-only';
+        viewMode = defaultViewMode;
         render();
       }
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      viewMode = 'kanji-only';
+      viewMode = 'full';
       render();
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      viewMode = 'full';
+      viewMode = 'kanji-only';
       render();
     }
   };
@@ -192,15 +195,15 @@ export function renderKanjiStudyCard({ store }) {
     const dy = t.clientY - touchStartY;
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > threshold) {
       if (dx < 0) {
-        if (index < entries.length - 1) { index += 1; shownAt = nowMs(); viewMode = 'kanji-only'; render(); }
+        if (index < entries.length - 1) { index += 1; shownAt = nowMs(); viewMode = defaultViewMode; render(); }
       } else {
-        if (index > 0) { index -= 1; shownAt = nowMs(); viewMode = 'kanji-only'; render(); }
+        if (index > 0) { index -= 1; shownAt = nowMs(); viewMode = defaultViewMode; render(); }
       }
     } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > threshold) {
       if (dy < 0) { // swipe up
-        viewMode = 'kanji-only'; render();
-      } else { // swipe down
         viewMode = 'full'; render();
+      } else { // swipe down
+        viewMode = 'kanji-only'; render();
       }
     }
   }, { passive: true });
