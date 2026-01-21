@@ -9,17 +9,18 @@
       "label": "Type", 
       "type": "enum",
       "values": [
-        "noun",
-        "ichidan-verb",
-        "godan-verb",
-        "irregular-verb",
-        "i-adjective",
-        "na-adjective",
-        "particle",
-        "expression",
-        "counter",
-        "adverb",
-        "conjunction"
+      "noun",
+      "ichidan-verb",
+      "godan-verb",
+      "irregular-verb",
+      "i-adjective",
+      "na-adjective",
+      "particle",
+      "expression",
+      "counter",
+      "adverb",
+      "conjunction",
+      "descriptive-phrase"
       ]
     }
   ]

@@ -76,5 +76,23 @@
     { "id": "生", "kanji": "生", "reading": "せい", "meaning": "life; birth", "type": "noun" },
     { "id": "年", "kanji": "年", "reading": "とし", "meaning": "year", "type": "noun" },
     { "id": "時", "kanji": "時", "reading": "とき", "meaning": "time", "type": "noun" }
+      ,
+      { "id": "車", "kanji": "車", "reading": "くるま", "meaning": "car; vehicle", "type": "noun" },
+      { "id": "電", "kanji": "電", "reading": "でん", "meaning": "electricity", "type": "noun" },
+      { "id": "校", "kanji": "校", "reading": "こう", "meaning": "school", "type": "noun" },
+      { "id": "午", "kanji": "午", "reading": "ご", "meaning": "noon", "type": "noun" },
+      { "id": "半", "kanji": "半", "reading": "はん", "meaning": "half", "type": "noun" },
+      { "id": "毎", "kanji": "毎", "reading": "まい", "meaning": "every", "type": "noun" },
+      { "id": "何", "kanji": "何", "reading": "なに", "meaning": "what", "type": "noun" },
+      { "id": "曜", "kanji": "曜", "reading": "よう", "meaning": "day of the week", "type": "noun" },
+      { "id": "書", "kanji": "書", "reading": "しょ", "meaning": "write; book", "type": "noun" },
+      { "id": "聞", "kanji": "聞", "reading": "きく", "meaning": "hear; ask", "type": "noun" },
+      { "id": "食", "kanji": "食", "reading": "たべる", "meaning": "eat", "type": "noun" },
+      { "id": "飲", "kanji": "飲", "reading": "のむ", "meaning": "drink", "type": "noun" },
+      { "id": "話", "kanji": "話", "reading": "はなす", "meaning": "talk; speak", "type": "noun" },
+      { "id": "語", "kanji": "語", "reading": "ご", "meaning": "language; word", "type": "noun" },
+      { "id": "買", "kanji": "買", "reading": "かう", "meaning": "buy", "type": "noun" },
+      { "id": "会", "kanji": "会", "reading": "あう", "meaning": "meet", "type": "noun" },
+      { "id": "休", "kanji": "休", "reading": "やすむ", "meaning": "rest", "type": "noun" }
   ]
 }
