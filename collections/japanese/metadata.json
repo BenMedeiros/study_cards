@@ -10,6 +10,10 @@
       "type": "enum",
       "values": [
       "noun",
+      "standalone-noun",
+      "compound-morpheme",
+      "verb-stem",
+      "numeral",
       "ichidan-verb",
       "godan-verb",
       "irregular-verb",

@@ -1,8 +1,11 @@
 {
   "collections": [
     "japanese/jp_n5_kanji.json",
+    "japanese/jp_n5_suru_nouns.json",
+    "japanese/jp_n5_verbs.json",
+    "japanese/jp_n5_verbs_compound.json",
     "japanese/jp_linguistic_terms.json",
-    "japanese/jp_vocab_linguistic_kanji.json",
+    "japanese/jp_linguistic_terms_supplement.json",
     "numbers/letters_to_numbers.json",
     "mythology/greek_gods.json"
   ]
