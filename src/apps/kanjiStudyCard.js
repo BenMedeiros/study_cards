@@ -24,8 +24,8 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   // Root UI pieces
-  const tools = document.createElement('div');
-  tools.className = 'kanji-tools';
+  const headerTools = document.createElement('div');
+  headerTools.className = 'kanji-header-tools';
 
   const shuffleBtn = document.createElement('button');
   shuffleBtn.type = 'button';
@@ -43,7 +43,7 @@ export function renderKanjiStudyCard({ store }) {
   autoSpeakBtn.className = 'btn small';
   autoSpeakBtn.textContent = '🔊 Auto Speak Kanji';
 
-  tools.append(shuffleBtn, toggleBtn, autoSpeakBtn);
+  headerTools.append(shuffleBtn, toggleBtn, autoSpeakBtn);
 
   // Footer controls
   const footerControls = document.createElement('div');
@@ -52,22 +52,22 @@ export function renderKanjiStudyCard({ store }) {
   const prevBtn = document.createElement('button');
   prevBtn.type = 'button';
   prevBtn.className = 'btn';
-  prevBtn.textContent = '← Prev';
+  prevBtn.innerHTML = '<span class="icon">←</span><span class="text">Prev</span>';
 
   const revealBtn = document.createElement('button');
   revealBtn.type = 'button';
   revealBtn.className = 'btn';
-  revealBtn.textContent = 'Reveal';
+  revealBtn.innerHTML = '<span class="icon"></span><span class="text">Reveal</span>';
 
   const soundBtn = document.createElement('button');
   soundBtn.type = 'button';
   soundBtn.className = 'btn';
-  soundBtn.textContent = '🔊 Sound';
+  soundBtn.innerHTML = '<span class="icon">🔊</span><span class="text">Sound</span>';
 
   const nextBtn = document.createElement('button');
   nextBtn.type = 'button';
   nextBtn.className = 'btn';
-  nextBtn.textContent = 'Next →';
+  nextBtn.innerHTML = '<span class="icon">→</span><span class="text">Next</span>';
 
   footerControls.append(prevBtn, revealBtn, soundBtn, nextBtn);
   // Helper to speak kanji
@@ -170,7 +170,7 @@ export function renderKanjiStudyCard({ store }) {
   footer.textContent = '← / →: navigate  •  ↑: full  •  ↓: kanji only';
 
   card.appendChild(wrapper);
-  el.append(tools, card);
+  el.append(headerTools, card);
   el.append(footerControls);
   // Footer controls event listeners
   prevBtn.addEventListener('click', () => {
