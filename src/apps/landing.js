@@ -26,38 +26,36 @@ export function renderLanding({ store, onNavigate }) {
   grid.className = 'grid';
   grid.id = 'landing-grid';
 
-  const mkTool = ({ idPrefix, title, hint, goTo }) => {
-    const toolCard = document.createElement('div');
-    toolCard.className = 'card';
-    toolCard.id = `${idPrefix}-card`;
+    const mkTool = ({ idPrefix, title, hint, goTo }) => {
+      const toolCard = document.createElement('div');
+      toolCard.className = 'card';
+      toolCard.id = `${idPrefix}-card`;
 
-    const h3 = document.createElement('h3');
-    h3.id = `${idPrefix}-title`;
-    h3.textContent = title;
+      const h3 = document.createElement('h3');
+      h3.id = `${idPrefix}-title`;
+      h3.textContent = title;
 
-    const ph = document.createElement('p');
-    ph.className = 'hint';
-    ph.id = `${idPrefix}-hint`;
-    ph.textContent = hint;
+      const ph = document.createElement('p');
+      ph.className = 'hint';
+      ph.id = `${idPrefix}-hint`;
+      ph.textContent = hint;
 
-    const btn = document.createElement('button');
-    btn.className = 'button';
-    btn.id = `${idPrefix}-open`;
-    btn.name = `${idPrefix}-open`;
-    btn.textContent = 'Open';
-    btn.setAttribute('data-go', goTo);
+      const btn = document.createElement('button');
+      btn.className = 'button';
+      btn.id = `${idPrefix}-open`;
+      btn.name = `${idPrefix}-open`;
+      btn.textContent = 'Open';
+      btn.setAttribute('data-go', goTo);
 
-    toolCard.append(h3, ph, btn);
-    return toolCard;
-  };
+      toolCard.append(h3, ph, btn);
+      return toolCard;
+    };
 
-  grid.append(
-    mkTool({ idPrefix: 'landing-flashcards', title: 'Flashcards', hint: 'Browse and review all fields.', goTo: '/flashcards' }),
-    mkTool({ idPrefix: 'landing-qa-cards', title: 'QA Cards', hint: 'Type answers with romaji conversion.', goTo: '/qa-cards' }),
-    mkTool({ idPrefix: 'landing-crossword', title: 'Crossword', hint: 'Generate crossword puzzles.', goTo: '/crossword' }),
-    mkTool({ idPrefix: 'landing-data', title: 'Data', hint: 'View collection entries in table format.', goTo: '/data' }),
-    mkTool({ idPrefix: 'landing-wordsearch', title: 'Word Search', hint: 'Coming soon.', goTo: '/wordsearch' })
-  );
+    grid.append(
+      mkTool({ idPrefix: 'landing-flashcards', title: 'Flashcards', hint: 'Browse and review all fields.', goTo: '/flashcards' }),
+      mkTool({ idPrefix: 'landing-qa-cards', title: 'QA Cards', hint: 'Type answers with romaji conversion.', goTo: '/qa-cards' }),
+      mkTool({ idPrefix: 'landing-data', title: 'Data', hint: 'View collection entries in table format.', goTo: '/data' })
+    );
 
   // If the active collection is Japanese, add Kanji Study to the landing grid
   const activeCategory = active?.metadata?.category || '';

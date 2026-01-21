@@ -44,6 +44,32 @@ export function renderKanjiStudyCard({ store }) {
   autoSpeakBtn.textContent = '🔊 Auto Speak Kanji';
 
   tools.append(shuffleBtn, toggleBtn, autoSpeakBtn);
+
+  // Footer controls
+  const footerControls = document.createElement('div');
+  footerControls.className = 'kanji-footer-controls';
+
+  const prevBtn = document.createElement('button');
+  prevBtn.type = 'button';
+  prevBtn.className = 'btn';
+  prevBtn.textContent = '← Prev';
+
+  const revealBtn = document.createElement('button');
+  revealBtn.type = 'button';
+  revealBtn.className = 'btn';
+  revealBtn.textContent = 'Reveal';
+
+  const soundBtn = document.createElement('button');
+  soundBtn.type = 'button';
+  soundBtn.className = 'btn';
+  soundBtn.textContent = '🔊 Sound';
+
+  const nextBtn = document.createElement('button');
+  nextBtn.type = 'button';
+  nextBtn.className = 'btn';
+  nextBtn.textContent = 'Next →';
+
+  footerControls.append(prevBtn, revealBtn, soundBtn, nextBtn);
   // Helper to speak kanji
   // Use speech directly for auto-speak
   function speakKanji(entry) {
@@ -77,13 +103,6 @@ export function renderKanjiStudyCard({ store }) {
   function renderCard(body, entry) {
     body.innerHTML = '';
 
-    // top-left: speaker
-    const topLeft = document.createElement('div');
-    topLeft.className = 'kanji-top-left';
-    const speakText = getFieldValue(entry, ['reading', 'kana', 'word', 'text']) || getFieldValue(entry, ['kanji']);
-    const speaker = createSpeakerButton(speakText);
-    topLeft.append(speaker);
-
     // main kanji centered
     const kanjiWrap = document.createElement('div');
     kanjiWrap.className = 'kanji-main-wrap';
@@ -102,7 +121,7 @@ export function renderKanjiStudyCard({ store }) {
     bottomRight.className = 'kanji-bottom-right muted';
     bottomRight.textContent = getFieldValue(entry, ['meaning', 'definition', 'gloss']) || '';
 
-    body.append(topLeft, kanjiWrap, bottomLeft, bottomRight);
+    body.append(kanjiWrap, bottomLeft, bottomRight);
   }
 
   function refreshEntriesFromStore() {
@@ -151,7 +170,41 @@ export function renderKanjiStudyCard({ store }) {
   footer.textContent = '← / →: navigate  •  ↑: full  •  ↓: kanji only';
 
   card.appendChild(wrapper);
-  el.append(tools, card, footer);
+  el.append(tools, card);
+  el.append(footerControls);
+  // Footer controls event listeners
+  prevBtn.addEventListener('click', () => {
+    if (index > 0) {
+      index -= 1;
+      shownAt = nowMs();
+      viewMode = defaultViewMode;
+      render();
+      if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (index < entries.length - 1) {
+      index += 1;
+      shownAt = nowMs();
+      viewMode = defaultViewMode;
+      render();
+      if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
+    }
+  });
+
+  revealBtn.addEventListener('click', () => {
+    viewMode = 'full';
+    render();
+  });
+
+  soundBtn.addEventListener('click', () => {
+    const entry = entries[index];
+    const speakText = getFieldValue(entry, ['reading', 'kana', 'word', 'text']) || getFieldValue(entry, ['kanji']);
+    import('../utils/speech.js').then(({ speak }) => {
+      speak(speakText, 'ja-JP');
+    });
+  });
 
   // Tools behaviour
   shuffleBtn.addEventListener('click', () => {
@@ -207,47 +260,7 @@ export function renderKanjiStudyCard({ store }) {
   wrapper.addEventListener('keydown', keyHandler);
   document.addEventListener('keydown', keyHandler);
 
-  // Touch / swipe handling for mobile
-  let touchStartX = 0;
-  let touchStartY = 0;
-  const threshold = 30; // px
 
-  wrapper.addEventListener('touchstart', (ev) => {
-    const t = ev.touches[0];
-    touchStartX = t.clientX;
-    touchStartY = t.clientY;
-  }, { passive: true });
-
-  wrapper.addEventListener('touchend', (ev) => {
-    const t = ev.changedTouches[0];
-    const dx = t.clientX - touchStartX;
-    const dy = t.clientY - touchStartY;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > threshold) {
-      if (dx < 0) {
-        if (index < entries.length - 1) {
-          index += 1;
-          shownAt = nowMs();
-          viewMode = defaultViewMode;
-          render();
-          if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
-        }
-      } else {
-        if (index > 0) {
-          index -= 1;
-          shownAt = nowMs();
-          viewMode = defaultViewMode;
-          render();
-          if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
-        }
-      }
-    } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > threshold) {
-      if (dy < 0) { // swipe up
-        viewMode = 'full'; render();
-      } else { // swipe down
-        viewMode = 'kanji-only'; render();
-      }
-    }
-  }, { passive: true });
 
   // Cleanup on unmount
   const observer = new MutationObserver(() => {
