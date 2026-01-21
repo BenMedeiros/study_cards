@@ -111,6 +111,11 @@ export function renderKanjiStudyCard({ store }) {
     kanjiMain.textContent = getFieldValue(entry, ['kanji', 'character', 'text']) || '';
     kanjiWrap.append(kanjiMain);
 
+    // top-left type (styled and toggled like bottom-right meaning)
+    const topLeft = document.createElement('div');
+    topLeft.className = 'kanji-top-left muted';
+    topLeft.textContent = getFieldValue(entry, ['type']) || '';
+
     // bottom-left reading
     const bottomLeft = document.createElement('div');
     bottomLeft.className = 'kanji-bottom-left muted';
@@ -121,7 +126,7 @@ export function renderKanjiStudyCard({ store }) {
     bottomRight.className = 'kanji-bottom-right muted';
     bottomRight.textContent = getFieldValue(entry, ['meaning', 'definition', 'gloss']) || '';
 
-    body.append(kanjiWrap, bottomLeft, bottomRight);
+    body.append(topLeft, kanjiWrap, bottomLeft, bottomRight);
   }
 
   function refreshEntriesFromStore() {

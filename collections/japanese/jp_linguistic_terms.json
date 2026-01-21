@@ -7,7 +7,7 @@
   },
   "entries": [
     { "id": "拗音", "kanji": "拗音", "reading": "ようおん", "meaning": "contracted sound (e.g., きょ/しゃ)", "type": "noun" },
-    { "id": "促音", "kanji": "促音", "reading": "そくおん", "meaning": "ssmall っ (geminate consonant marker)", "type": "noun" },
+    { "id": "促音", "kanji": "促音", "reading": "そくおん", "meaning": "small っ (geminate consonant marker)", "type": "noun" },
     { "id": "長音", "kanji": "長音", "reading": "ちょうおん", "meaning": "long vowel marker (ー)", "type": "noun" },
     { "id": "撥音", "kanji": "撥音", "reading": "はつおん", "meaning": "the ん sound (syllabic 'n')", "type": "noun" },
     { "id": "清音", "kanji": "清音", "reading": "せいおん", "meaning": "unvoiced/plain kana (か, き, く...)", "type": "noun" },

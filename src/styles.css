@@ -257,9 +257,13 @@ input[type="number"].button::-webkit-inner-spin-button {
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
+  font-size: 1.25rem;
+  color: var(--muted);
+  max-width: 60%;
+  /* Match bottom-right style */
   display: flex;
-  gap: 0.5rem;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .kanji-card .kanji-center { display:flex; align-items:center; justify-content:center; padding: 1rem 0; width:100%; }
@@ -284,12 +288,15 @@ input[type="number"].button::-webkit-inner-spin-button {
 .kanji-card .kanji-bottom-left { left: 0.75rem; }
 .kanji-card .kanji-bottom-right { right: 0rem; }
 
+/* Hide non-kanji text in kanji-only mode (top-left, bottom-left, bottom-right) */
+.kanji-card-wrapper.kanji-only .kanji-top-left,
 .kanji-card-wrapper.kanji-only .kanji-bottom-left,
 .kanji-card-wrapper.kanji-only .kanji-bottom-right {
   color: transparent !important;
 }
 
 /* Visual mode: kanji-only — hide non-kanji text but keep speaker visible and spacing */
+.kanji-card.kanji-only .kanji-top-left,
 .kanji-card.kanji-only .kanji-bottom-left,
 .kanji-card.kanji-only .kanji-bottom-right {
   color: transparent !important;
