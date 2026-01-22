@@ -13,25 +13,7 @@
   font-size: 1.05rem;
   font-weight: 600;
 }
-@media (max-width: 768px) {
-  .kanji-footer-controls {
-    left: 0;
-    right: 0;
-    width: 100vw;
-    padding-left: 0;
-    padding-right: 0;
-  }
-  .kanji-footer-controls .btn {
-    font-size: 0.85rem;
-    padding: 0.5rem 0.5rem;
-  }
-  .kanji-footer-controls .btn .text {
-    font-size: 0.85rem;
-  }
-  .kanji-footer-controls .btn .icon {
-    font-size: 1.05rem;
-  }
-}
+/* mobile rules for kanji-footer-controls moved to consolidated @media block at end of file */
 /* Kanji Study Card Footer Controls */
 .kanji-footer-controls {
   position: fixed;
@@ -341,7 +323,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
   background: rgba(17, 24, 39, 0.97);
   border-radius: 0.75rem;
   box-shadow: 0 2px 12px 0 rgba(96, 165, 250, 0.08);
@@ -893,5 +875,16 @@ select:hover {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  /* Kanji header tools - tighter padding on mobile */
+  .kanji-header-tools .btn {
+    padding: 0.3rem 0.5rem;
+  }
+ 
+  .kanji-footer-controls .btn .text {
+    font-size: 0.85rem;
+  }
+  .kanji-footer-controls .btn .icon {
+    font-size: 1.05rem;
   }
 }

@@ -41,6 +41,16 @@ export function createStore() {
       history.replaceState(null, '', newHash);
     }
     
+    // Persist shell-level UI state (active collection) to the shared session map
+    try {
+      const session = loadSessionState();
+      session.shell = session.shell || {};
+      session.shell.activeCollectionId = state.activeCollectionId;
+      saveSessionState(session);
+    } catch (e) {
+      // ignore
+    }
+
     notify();
   }
 
@@ -147,7 +157,8 @@ export function createStore() {
       state.collections = seed;
 
       if (!state.activeCollectionId && state.collections.length > 0) {
-        state.activeCollectionId = state.collections[0]?.metadata?.id ?? null;
+        // Persist via setter so session state is updated
+        await setActiveCollectionId(state.collections[0]?.metadata?.id ?? null);
       }
     } catch (err) {
       console.error(`Failed to initialize collections: ${err.message}`);
@@ -163,8 +174,8 @@ export function createStore() {
     if (collectionId && collectionId !== state.activeCollectionId) {
       const exists = state.collections.some(c => c.metadata.id === collectionId);
       if (exists) {
-        state.activeCollectionId = collectionId;
-        notify();
+        // Use the setter so the change is persisted to session state and URL updated consistently
+        setActiveCollectionId(collectionId);
       }
     }
   }
@@ -173,16 +184,56 @@ export function createStore() {
   // Consolidated session UI state under one top-level key so all apps share one site map.
   const SESSION_KEY = 'studyUIState';
 
+  // Pretty-printer for session logs: prints arrays compactly on one line,
+  // but keeps objects multi-line for readability.
+  function prettySession(obj, indentSize = 2, level = 0) {
+    try {
+      const pad = (n) => ' '.repeat(n * indentSize);
+      const recurse = (val, lvl) => {
+        if (val === null) return 'null';
+        if (Array.isArray(val)) return JSON.stringify(val);
+        if (typeof val === 'object') {
+          const keys = Object.keys(val);
+          if (keys.length === 0) return '{}';
+          const parts = keys.map(k => `${pad(lvl+1)}"${k}": ${recurse(val[k], lvl+1)}`);
+          return `{
+${parts.join(',\n')}
+${pad(lvl)}}`;
+        }
+        return JSON.stringify(val);
+      };
+      return recurse(obj, level);
+    } catch (e) {
+      try { return JSON.stringify(obj); } catch (_) { return String(obj); }
+    }
+  }
+
   function loadSessionState() {
     try {
       const raw = sessionStorage.getItem(SESSION_KEY);
       if (!raw) return {};
       try {
         const parsed = JSON.parse(raw);
-        console.debug('[Store] loadSessionState', JSON.stringify(parsed, null, 2));
+        console.debug('[Store] loadSessionState', prettySession(parsed));
         return parsed || {};
       } catch (e) {
         console.debug('[Store] loadSessionState - invalid JSON', raw);
+        return {};
+      }
+    } catch (e) {
+      return {};
+    }
+  }
+
+  // Internal read that does not log. Use this for save/update flows to avoid noisy load logs.
+  function readSessionState() {
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (!raw) return {};
+      try {
+        const parsed = JSON.parse(raw);
+        return parsed || {};
+      } catch (e) {
         return {};
       }
     } catch (e) {
@@ -194,7 +245,7 @@ export function createStore() {
     try {
       const raw = JSON.stringify(obj);
       sessionStorage.setItem(SESSION_KEY, raw);
-      console.debug('[Store] saveSessionState', JSON.stringify(obj, null, 2));
+      console.debug('[Store] saveSessionState', prettySession(obj));
     } catch (e) {
       // ignore
     }
@@ -202,19 +253,48 @@ export function createStore() {
 
   function loadKanjiUIState() {
     const session = loadSessionState();
-    return session.kanjiStudyCard || null;
+    const k = session.kanjiStudyCard;
+    if (!k) return null;
+    // determine active collection id (prefer in-memory state)
+    const collId = state.activeCollectionId || (session.shell && session.shell.activeCollectionId) || null;
+    const collState = (collId && k.collections && k.collections[collId]) ? k.collections[collId] : {};
+    return {
+      // global UI prefs
+      fontWeight: k.fontWeight,
+      defaultViewMode: k.defaultViewMode,
+      autoSpeak: k.autoSpeak,
+      // per-collection or fallback
+      isShuffled: typeof collState.isShuffled === 'boolean' ? collState.isShuffled : k.isShuffled,
+      order: (collState && typeof collState.order !== 'undefined') ? collState.order : k.order || null,
+      currentIndex: (collState && typeof collState.currentIndex === 'number') ? collState.currentIndex : (typeof k.currentIndex === 'number' ? k.currentIndex : 0),
+    };
   }
 
   function saveKanjiUIState(stateObj) {
-    const session = loadSessionState();
-    session.kanjiStudyCard = stateObj || null;
+    const session = readSessionState();
+    session.kanjiStudyCard = session.kanjiStudyCard || {};
+    const k = session.kanjiStudyCard;
+    // Persist global UI prefs
+    k.fontWeight = stateObj.fontWeight;
+    k.defaultViewMode = stateObj.defaultViewMode;
+    k.autoSpeak = stateObj.autoSpeak;
+    // Persist per-collection state for order/currentIndex/isShuffled
+    const collId = state.activeCollectionId || (session.shell && session.shell.activeCollectionId) || null;
+    if (collId) {
+      k.collections = k.collections || {};
+      k.collections[collId] = k.collections[collId] || {};
+      k.collections[collId].order = stateObj.order || null;
+      k.collections[collId].currentIndex = stateObj.currentIndex;
+      k.collections[collId].isShuffled = !!stateObj.isShuffled;
+    }
+    // Do not store per-collection state at the top-level anymore;
+    // per-collection values live only under `kanjiStudyCard.collections`.
     saveSessionState(session);
   }
 
   return {
     subscribe,
     initialize,
-
     getCollections,
     getActiveCollectionId,
     getActiveCollection,
