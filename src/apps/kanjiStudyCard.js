@@ -13,6 +13,7 @@ export function renderKanjiStudyCard({ store }) {
   let shownAt = nowMs();
   let isShuffled = false;
   let autoSpeakKanji = false;
+  let currentFontWeight = 'normal'; // cycles through: bold -> normal -> lighter
 
   // Helpers
   function getFieldValue(entry, keys) {
@@ -37,13 +38,21 @@ export function renderKanjiStudyCard({ store }) {
   toggleBtn.className = 'btn small';
   toggleBtn.textContent = 'Show Full';
 
+  // Bold toggle button (cycles font weight)
+  const boldBtn = document.createElement('button');
+  boldBtn.type = 'button';
+  boldBtn.className = 'btn small';
+  boldBtn.textContent = 'B';
+  boldBtn.title = `Font weight: ${currentFontWeight}`;
+  boldBtn.style.fontWeight = currentFontWeight;
+
   // New: Auto-speak Kanji toggle button
   const autoSpeakBtn = document.createElement('button');
   autoSpeakBtn.type = 'button';
   autoSpeakBtn.className = 'btn small';
   autoSpeakBtn.textContent = '🔊 Auto Speak Kanji';
 
-  headerTools.append(shuffleBtn, toggleBtn, autoSpeakBtn);
+  headerTools.append(shuffleBtn, toggleBtn, boldBtn, autoSpeakBtn);
 
   // Footer controls
   const footerControls = document.createElement('div');
@@ -91,6 +100,17 @@ export function renderKanjiStudyCard({ store }) {
     autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Speaking Kanji: ON' : '🔊 Auto Speak Kanji';
   });
 
+  // Bold toggle behaviour: cycle ['lighter','normal','bolder']
+  boldBtn.addEventListener('click', () => {
+    const cycle = ['lighter', 'normal', 'bolder'];
+    const idx = cycle.indexOf(currentFontWeight);
+    const next = cycle[(idx + 1) % cycle.length];
+    currentFontWeight = next;
+    boldBtn.style.fontWeight = currentFontWeight;
+    boldBtn.title = `Font weight: ${currentFontWeight}`;
+    render();
+  });
+
   const wrapper = document.createElement('div');
   wrapper.className = 'kanji-card-wrapper';
   wrapper.tabIndex = 0; // so it can receive keyboard focus
@@ -109,6 +129,8 @@ export function renderKanjiStudyCard({ store }) {
     const kanjiMain = document.createElement('div');
     kanjiMain.className = 'kanji-main';
     kanjiMain.textContent = getFieldValue(entry, ['kanji', 'character', 'text']) || '';
+    // Apply current font weight preference
+    kanjiMain.style.fontWeight = currentFontWeight;
     kanjiWrap.append(kanjiMain);
 
     // top-left type (styled and toggled like bottom-right meaning)
