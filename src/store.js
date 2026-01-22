@@ -169,6 +169,48 @@ export function createStore() {
     }
   }
 
+  // UI state persistence helpers (delegated sessionStorage access)
+  // Consolidated session UI state under one top-level key so all apps share one site map.
+  const SESSION_KEY = 'studyUIState';
+
+  function loadSessionState() {
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (!raw) return {};
+      try {
+        const parsed = JSON.parse(raw);
+        console.debug('[Store] loadSessionState', JSON.stringify(parsed, null, 2));
+        return parsed || {};
+      } catch (e) {
+        console.debug('[Store] loadSessionState - invalid JSON', raw);
+        return {};
+      }
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveSessionState(obj) {
+    try {
+      const raw = JSON.stringify(obj);
+      sessionStorage.setItem(SESSION_KEY, raw);
+      console.debug('[Store] saveSessionState', JSON.stringify(obj, null, 2));
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  function loadKanjiUIState() {
+    const session = loadSessionState();
+    return session.kanjiStudyCard || null;
+  }
+
+  function saveKanjiUIState(stateObj) {
+    const session = loadSessionState();
+    session.kanjiStudyCard = stateObj || null;
+    saveSessionState(session);
+  }
+
   return {
     subscribe,
     initialize,
@@ -178,5 +220,7 @@ export function createStore() {
     getActiveCollection,
     setActiveCollectionId,
     syncCollectionFromURL,
+    loadKanjiUIState,
+    saveKanjiUIState,
   };
 }

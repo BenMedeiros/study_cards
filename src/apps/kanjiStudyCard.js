@@ -14,6 +14,7 @@ export function renderKanjiStudyCard({ store }) {
   let isShuffled = false;
   let autoSpeakKanji = false;
   let currentFontWeight = 'normal'; // cycles through: bold -> normal -> lighter
+  // cycles through: bold -> normal
   let savedUI = null;
   let uiStateRestored = false; // ensure saved UI (index/order) is applied only once
   let originalEntries = [];
@@ -28,17 +29,13 @@ export function renderKanjiStudyCard({ store }) {
     return '';
   }
 
-  // sessionStorage helpers for UI state
+  // Delegate UI state persistence to the central store (store.saveKanjiUIState / store.loadKanjiUIState)
   function loadUIState() {
-    try {
-      const raw = sessionStorage.getItem('kanjiUIState');
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) {
-      return null;
-    }
+    return (store && typeof store.loadKanjiUIState === 'function') ? store.loadKanjiUIState() : null;
   }
 
   function saveUIState() {
+    if (!(store && typeof store.saveKanjiUIState === 'function')) return;
     try {
       const state = {
         isShuffled: !!isShuffled,
@@ -48,7 +45,7 @@ export function renderKanjiStudyCard({ store }) {
         order: currentOrder || null,
         currentIndex: index,
       };
-      sessionStorage.setItem('kanjiUIState', JSON.stringify(state));
+      store.saveKanjiUIState(state);
     } catch (e) {
       // ignore
     }
@@ -88,7 +85,8 @@ export function renderKanjiStudyCard({ store }) {
   savedUI = loadUIState();
   if (savedUI) {
     if (savedUI.fontWeight) {
-      currentFontWeight = savedUI.fontWeight;
+      // normalize older values (e.g. 'lighter') to 'normal'
+      currentFontWeight = savedUI.fontWeight === 'bold' ? 'bold' : 'normal';
       boldBtn.title = `Font weight: ${currentFontWeight}`;
     }
     if (typeof savedUI.autoSpeak === 'boolean') {
@@ -108,17 +106,6 @@ export function renderKanjiStudyCard({ store }) {
   function updateBoldBtnVisual() {
     boldBtn.style.fontWeight = currentFontWeight;
     boldBtn.title = `Font weight: ${currentFontWeight}`;
-    // Simple, fixed rgba variants per request:
-    // - lighter font -> slightly stronger background
-    // - bold font -> slightly subtler background
-    if (currentFontWeight === 'lighter') {
-      boldBtn.style.backgroundColor = 'rgba(96, 165, 250, 0.15)';
-    } else if (currentFontWeight === 'bold') {
-      boldBtn.style.backgroundColor = 'rgba(96, 165, 250, 0.03)';
-    } else {
-      boldBtn.style.backgroundColor = '';
-    }
-    boldBtn.style.transition = 'background-color 140ms ease';
   }
   // ensure visuals match initial state
   updateBoldBtnVisual();
@@ -172,7 +159,7 @@ export function renderKanjiStudyCard({ store }) {
 
   // Bold toggle behaviour: cycle ['bold','normal','lighter'] (default: normal)
   boldBtn.addEventListener('click', () => {
-    const cycle = ['bold', 'normal', 'lighter'];
+    const cycle = ['bold', 'normal'];
     const idx = cycle.indexOf(currentFontWeight);
     const next = cycle[(idx + 1) % cycle.length];
     currentFontWeight = next;
@@ -224,18 +211,15 @@ export function renderKanjiStudyCard({ store }) {
   function refreshEntriesFromStore() {
     const active = store.getActiveCollection();
     originalEntries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
-    console.debug('[KanjiStudy] refreshEntriesFromStore: found originalEntries', { count: originalEntries.length });
     // If we have a saved order and it matches the number of entries, apply it
     if (savedUI && savedUI.order && Array.isArray(savedUI.order) && savedUI.order.length === originalEntries.length) {
       currentOrder = savedUI.order.slice();
       entries = currentOrder.map(i => originalEntries[i]);
       isShuffled = true;
-      console.debug('[KanjiStudy] refreshEntriesFromStore: applied saved order', { orderLen: currentOrder.length });
     } else if (currentOrder && Array.isArray(currentOrder) && currentOrder.length === originalEntries.length) {
       // apply in-memory currentOrder (fallback)
       entries = currentOrder.map(i => originalEntries[i]);
       isShuffled = true;
-      console.debug('[KanjiStudy] refreshEntriesFromStore: applied in-memory order', { orderLen: currentOrder.length });
     } else {
       entries = [...originalEntries];
       isShuffled = false;
@@ -246,25 +230,20 @@ export function renderKanjiStudyCard({ store }) {
     if (!uiStateRestored && savedUI && typeof savedUI.currentIndex === 'number') {
       index = savedUI.currentIndex;
       uiStateRestored = true;
-      console.debug('[KanjiStudy] refreshEntriesFromStore: restored saved index (initial)', { savedIndex: savedUI.currentIndex });
     }
     const prevIndex = index;
     index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
-    if (index !== prevIndex) console.debug('[KanjiStudy] refreshEntriesFromStore: clamped index', { prevIndex, newIndex: index, entriesLength: entries.length });
+    if (index !== prevIndex) {/* index clamped */}
   }
 
   // Navigation / control helpers to avoid duplicated logic
   function goToIndex(newIndex) {
-    console.debug('[KanjiStudy] goToIndex requested', { newIndex, currentIndex: index, entriesLength: entries.length });
-    if (newIndex < 0 || newIndex >= entries.length) {
-      console.debug('[KanjiStudy] goToIndex aborted - out of bounds', { newIndex, entriesLength: entries.length });
-      return;
-    }
+    if (newIndex < 0 || newIndex >= entries.length) return;
     const prev = index;
     index = newIndex;
     shownAt = nowMs();
     viewMode = defaultViewMode;
-    console.debug('[KanjiStudy] goToIndex applied', { prev, index });
+    // index updated
     render();
     if (autoSpeakKanji && entries[index]) speakEntry(entries[index]);
     // persist current index so it's restored when navigating back
@@ -306,7 +285,7 @@ export function renderKanjiStudyCard({ store }) {
       if (!isShuffled) {
     refreshEntriesFromStore();
       }
-    console.debug('[KanjiStudy] render', { index, entriesLength: entries.length, isShuffled, viewMode });
+    // render
 
     wrapper.innerHTML = '';
 
@@ -346,15 +325,9 @@ export function renderKanjiStudyCard({ store }) {
   el.append(headerTools, card);
   el.append(footerControls);
   // Footer controls event listeners
-  prevBtn.addEventListener('click', () => {
-    console.debug('[KanjiStudy] Prev clicked', { index, entriesLength: entries.length });
-    showPrev();
-  });
+  prevBtn.addEventListener('click', showPrev);
 
-  nextBtn.addEventListener('click', () => {
-    console.debug('[KanjiStudy] Next clicked', { index, entriesLength: entries.length });
-    showNext();
-  });
+  nextBtn.addEventListener('click', showNext);
 
   revealBtn.addEventListener('click', revealFull);
 
