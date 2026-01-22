@@ -15,6 +15,7 @@ export function renderKanjiStudyCard({ store }) {
   let autoSpeakKanji = false;
   let currentFontWeight = 'normal'; // cycles through: bold -> normal -> lighter
   let savedUI = null;
+  let uiStateRestored = false; // ensure saved UI (index/order) is applied only once
   let originalEntries = [];
   let currentOrder = null; // array of indices mapping to originalEntries
 
@@ -223,33 +224,47 @@ export function renderKanjiStudyCard({ store }) {
   function refreshEntriesFromStore() {
     const active = store.getActiveCollection();
     originalEntries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
+    console.debug('[KanjiStudy] refreshEntriesFromStore: found originalEntries', { count: originalEntries.length });
     // If we have a saved order and it matches the number of entries, apply it
     if (savedUI && savedUI.order && Array.isArray(savedUI.order) && savedUI.order.length === originalEntries.length) {
       currentOrder = savedUI.order.slice();
       entries = currentOrder.map(i => originalEntries[i]);
       isShuffled = true;
+      console.debug('[KanjiStudy] refreshEntriesFromStore: applied saved order', { orderLen: currentOrder.length });
     } else if (currentOrder && Array.isArray(currentOrder) && currentOrder.length === originalEntries.length) {
       // apply in-memory currentOrder (fallback)
       entries = currentOrder.map(i => originalEntries[i]);
       isShuffled = true;
+      console.debug('[KanjiStudy] refreshEntriesFromStore: applied in-memory order', { orderLen: currentOrder.length });
     } else {
       entries = [...originalEntries];
       isShuffled = false;
       currentOrder = null;
     }
     // If a saved index exists, restore it (will be clamped to valid range)
-    if (savedUI && typeof savedUI.currentIndex === 'number') {
+    // Only apply saved index once on initial load to avoid overwriting runtime navigation
+    if (!uiStateRestored && savedUI && typeof savedUI.currentIndex === 'number') {
       index = savedUI.currentIndex;
+      uiStateRestored = true;
+      console.debug('[KanjiStudy] refreshEntriesFromStore: restored saved index (initial)', { savedIndex: savedUI.currentIndex });
     }
+    const prevIndex = index;
     index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+    if (index !== prevIndex) console.debug('[KanjiStudy] refreshEntriesFromStore: clamped index', { prevIndex, newIndex: index, entriesLength: entries.length });
   }
 
   // Navigation / control helpers to avoid duplicated logic
   function goToIndex(newIndex) {
-    if (newIndex < 0 || newIndex >= entries.length) return;
+    console.debug('[KanjiStudy] goToIndex requested', { newIndex, currentIndex: index, entriesLength: entries.length });
+    if (newIndex < 0 || newIndex >= entries.length) {
+      console.debug('[KanjiStudy] goToIndex aborted - out of bounds', { newIndex, entriesLength: entries.length });
+      return;
+    }
+    const prev = index;
     index = newIndex;
     shownAt = nowMs();
     viewMode = defaultViewMode;
+    console.debug('[KanjiStudy] goToIndex applied', { prev, index });
     render();
     if (autoSpeakKanji && entries[index]) speakEntry(entries[index]);
     // persist current index so it's restored when navigating back
@@ -291,6 +306,7 @@ export function renderKanjiStudyCard({ store }) {
       if (!isShuffled) {
     refreshEntriesFromStore();
       }
+    console.debug('[KanjiStudy] render', { index, entriesLength: entries.length, isShuffled, viewMode });
 
     wrapper.innerHTML = '';
 
@@ -330,9 +346,15 @@ export function renderKanjiStudyCard({ store }) {
   el.append(headerTools, card);
   el.append(footerControls);
   // Footer controls event listeners
-  prevBtn.addEventListener('click', showPrev);
+  prevBtn.addEventListener('click', () => {
+    console.debug('[KanjiStudy] Prev clicked', { index, entriesLength: entries.length });
+    showPrev();
+  });
 
-  nextBtn.addEventListener('click', showNext);
+  nextBtn.addEventListener('click', () => {
+    console.debug('[KanjiStudy] Next clicked', { index, entriesLength: entries.length });
+    showNext();
+  });
 
   revealBtn.addEventListener('click', revealFull);
 
