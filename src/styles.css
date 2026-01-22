@@ -518,51 +518,7 @@ details {
   margin-top: 0.625rem;
 }
 
-@media (max-width: 860px) {
-  .split { grid-template-columns: 1fr; }
-  .pane-left { position: static; top: auto; }
-  
-  /* Mobile header adjustments */
-  .header-inner {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  
-  .header-right {
-    flex-wrap: wrap;
-    width: 100%;
-    gap: 0.5rem;
-  }
-  
-  .badge {
-    font-size: 0.75rem;
-    padding: 0.3125rem 0.5rem;
-  }
-  
-  /* Ensure navigation doesn't break layout */
-  .nav {
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-  }
-  
-  .nav a {
-    font-size: 0.875rem;
-    padding: 0.3125rem 0.5rem;
-  }
-  
-  /* Mobile card adjustments */
-  .card {
-    padding: 1rem;
-  }
 
-  .kanji-main { font-size: 4rem; }
-  
-  /* Mobile button adjustments */
-  .button {
-    font-size: 0.875rem;
-    padding: 0.4375rem 0.5625rem;
-  }
-}
 
 select {
   padding: 0.5rem 0.625rem;
@@ -762,11 +718,6 @@ select:hover {
 
 .cw-clue:last-child {
   border-bottom: none;
-}
-
-@media (max-width: 860px) {
-  .crossword { grid-template-columns: 1fr; }
-  .crossword-grid { justify-content: center; }
 }
 
 /* ============================================
