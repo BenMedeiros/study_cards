@@ -1,0 +1,73 @@
+{
+  "metadata": {
+    "id": "pokemon_starters",
+    "name": "Pokémon Starters (Kanto)",
+    "description": "First-generation Kanto starter Pokémon (Bulbasaur through Blastoise). Type kanji use the official Japanese main-series game terminology; verified against Bulbapedia and Pokémon Database.",
+    "version": 1
+  },
+  "entries": [
+    {
+      "englishName": "Bulbasaur",
+      "japaneseName": "フシギダネ",
+      "pokedexNumber": 1,
+      "type": ["草", "毒"],
+      "japaneseNameRoots": ["不思議", "種"]
+    },
+    {
+      "englishName": "Ivysaur",
+      "japaneseName": "フシギソウ",
+      "pokedexNumber": 2,
+      "type": ["草", "毒"],
+      "japaneseNameRoots": ["不思議", "草"]
+    },
+    {
+      "englishName": "Venusaur",
+      "japaneseName": "フシギバナ",
+      "pokedexNumber": 3,
+      "type": ["草", "毒"],
+      "japaneseNameRoots": ["不思議", "花"]
+    },
+    {
+      "englishName": "Charmander",
+      "japaneseName": "ヒトカゲ",
+      "pokedexNumber": 4,
+      "type": ["炎"],
+      "japaneseNameRoots": ["火", "カゲ"]
+    },
+    {
+      "englishName": "Charmeleon",
+      "japaneseName": "リザード",
+      "pokedexNumber": 5,
+      "type": ["炎"],
+      "japaneseNameRoots": ["リザード"]
+    },
+    {
+      "englishName": "Charizard",
+      "japaneseName": "リザードン",
+      "pokedexNumber": 6,
+      "type": ["炎", "飛行"],
+      "japaneseNameRoots": ["リザード"]
+    },
+    {
+      "englishName": "Squirtle",
+      "japaneseName": "ゼニガメ",
+      "pokedexNumber": 7,
+      "type": ["水"],
+      "japaneseNameRoots": ["銭", "亀"]
+    },
+    {
+      "englishName": "Wartortle",
+      "japaneseName": "カメール",
+      "pokedexNumber": 8,
+      "type": ["水"],
+      "japaneseNameRoots": ["亀", "甲羅"]
+    },
+    {
+      "englishName": "Blastoise",
+      "japaneseName": "カメックス",
+      "pokedexNumber": 9,
+      "type": ["水"],
+      "japaneseNameRoots": ["亀", "砲"]
+    }
+  ]
+}

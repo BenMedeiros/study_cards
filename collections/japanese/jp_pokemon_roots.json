@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "id": "jp_pokemon_roots",
+    "name": "Pokemon name-root & type tokens (Japanese)",
+    "description": "Canonical kanji and katakana tokens used as Pokémon type labels and name roots (used by the pokemon collection).",
+    "version": 1
+  },
+  "entries": [
+    { "id": "不思議", "kanji": "不思議", "reading": "ふしぎ", "meaning": "mysterious", "type": "standalone-noun" },
+    { "id": "種", "kanji": "種", "reading": "たね", "meaning": "seed", "type": "standalone-noun" },
+    { "id": "草", "kanji": "草", "reading": "くさ", "meaning": "grass", "type": "standalone-noun" },
+    { "id": "花", "kanji": "花", "reading": "はな", "meaning": "flower", "type": "standalone-noun" },
+    { "id": "火", "kanji": "火", "reading": "ひ", "meaning": "fire", "type": "standalone-noun" },
+    { "id": "リザード", "kanji": "リザード", "reading": "リザード", "meaning": "lizard (loanword, katakana)", "type": "standalone-noun" },
+    { "id": "カゲ", "kanji": "カゲ", "reading": "カゲ", "meaning": "kage (name-root in ヒトカゲ)", "type": "standalone-noun" },
+    { "id": "銭", "kanji": "銭", "reading": "ぜに", "meaning": "coin", "type": "standalone-noun" },
+    { "id": "亀", "kanji": "亀", "reading": "かめ", "meaning": "turtle", "type": "standalone-noun" },
+    { "id": "甲羅", "kanji": "甲羅", "reading": "こうら", "meaning": "shell", "type": "standalone-noun" },
+    { "id": "砲", "kanji": "砲", "reading": "ほう", "meaning": "cannon; artillery", "type": "standalone-noun" }
+  ]
+}

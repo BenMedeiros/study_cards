@@ -47,8 +47,14 @@ export function createStore() {
   async function loadLanguageMetadata(languagePath) {
     const metadataUrl = `./collections/${languagePath}/metadata.json`;
     const res = await fetch(metadataUrl, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`Required metadata.json not found: ${metadataUrl}`);
-    return await res.json();
+    if (!res.ok) throw new Error(`Required metadata.json not found: ${metadataUrl} (status ${res.status})`);
+    try {
+      const text = await res.text();
+      if (!text) throw new Error(`Empty metadata.json at ${metadataUrl}`);
+      return JSON.parse(text);
+    } catch (err) {
+      throw new Error(`Failed to parse metadata.json at ${metadataUrl}: ${err.message}`);
+    }
   }
 
   function mergeMetadata(collection, categoryMetadata) {
@@ -75,8 +81,15 @@ export function createStore() {
 
   async function loadSeedCollections() {
     const indexRes = await fetch('./collections/index.json', { cache: 'no-store' });
-    if (!indexRes.ok) throw new Error('Failed to load collections index');
-    const index = await indexRes.json();
+    if (!indexRes.ok) throw new Error(`Failed to load collections index (status ${indexRes.status})`);
+    let index;
+    try {
+      const indexText = await indexRes.text();
+      if (!indexText) throw new Error('collections/index.json is empty');
+      index = JSON.parse(indexText);
+    } catch (err) {
+      throw new Error(`Failed to parse collections/index.json: ${err.message}`);
+    }
     const paths = Array.isArray(index?.collections) ? index.collections : [];
     
     // Cache category metadata by folder
@@ -90,8 +103,18 @@ export function createStore() {
         console.warn(`Failed to load collection: ${relPath}`);
         continue;
       }
-      
-      let data = await res.json();
+      let data;
+      try {
+        const txt = await res.text();
+        if (!txt) {
+          console.warn(`Collection file is empty, skipping: ${relPath}`);
+          continue;
+        }
+        data = JSON.parse(txt);
+      } catch (err) {
+        console.warn(`Invalid JSON in collection ${relPath}: ${err.message}`);
+        continue;
+      }
       
       // Extract category folder from path
       const pathParts = relPath.split('/');
@@ -100,10 +123,15 @@ export function createStore() {
         
         // Load category metadata if not cached
         if (!(categoryFolder in metadataCache)) {
-          metadataCache[categoryFolder] = await loadLanguageMetadata(categoryFolder);
+          try {
+            metadataCache[categoryFolder] = await loadLanguageMetadata(categoryFolder);
+          } catch (err) {
+            console.warn(`Failed to load category metadata for ${categoryFolder}: ${err.message}`);
+            metadataCache[categoryFolder] = { commonFields: [], category: categoryFolder };
+          }
         }
-        
-        const categoryMetadata = metadataCache[categoryFolder];
+
+        const categoryMetadata = metadataCache[categoryFolder] || { commonFields: [], category: categoryFolder };
         data = mergeMetadata(data, categoryMetadata);
       }
       
@@ -114,11 +142,17 @@ export function createStore() {
   }
 
   async function initialize() {
-    const seed = await loadSeedCollections();
-    state.collections = seed;
+    try {
+      const seed = await loadSeedCollections();
+      state.collections = seed;
 
-    if (!state.activeCollectionId && state.collections.length > 0) {
-      state.activeCollectionId = state.collections[0]?.metadata?.id ?? null;
+      if (!state.activeCollectionId && state.collections.length > 0) {
+        state.activeCollectionId = state.collections[0]?.metadata?.id ?? null;
+      }
+    } catch (err) {
+      console.error(`Failed to initialize collections: ${err.message}`);
+      state.collections = [];
+      state.activeCollectionId = null;
     }
 
     notify();

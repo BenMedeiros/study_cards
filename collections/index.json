@@ -6,7 +6,9 @@
     "japanese/jp_n5_verbs_compound.json",
     "japanese/jp_linguistic_terms.json",
     "japanese/jp_linguistic_terms_supplement.json",
+    "japanese/jp_pokemon_roots.json",
     "numbers/letters_to_numbers.json",
-    "mythology/greek_gods.json"
+    "mythology/greek_gods.json",
+    "pokemon/pokemon_starters.json"
   ]
 }

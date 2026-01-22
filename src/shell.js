@@ -1,7 +1,6 @@
 import { renderLanding } from './apps/landing.js';
 import { renderFlashcards } from './apps/flashcards.js';
 import { renderQaCards } from './apps/qaCards.js';
-import { renderCrossword } from './apps/crossword.js';
 import { renderCollectionsManager } from './apps/collections.js';
 import { renderData } from './apps/data.js';
 import { renderPlaceholderTool } from './apps/placeholder.js';
@@ -108,8 +107,6 @@ export function createAppShell({ store, onNavigate }) {
       { href: '#/', label: 'Home' },
       { href: '#/flashcards', label: 'Flashcards' },
       { href: '#/qa-cards', label: 'QA Cards' },
-      { href: '#/crossword', label: 'Crossword' },
-      { href: '#/wordsearch', label: 'Word Search' },
       // only include Kanji when active collection category is japanese
       ...(activeCategory.toLowerCase() === 'japanese' ? [{ href: '#/kanji', label: 'Kanji Study' }] : []),
       { href: '#/data', label: 'Data' },
@@ -153,15 +150,7 @@ export function createAppShell({ store, onNavigate }) {
       main.append(renderQaCards({ store, onNavigate }));
       return;
     }
-    if (route.pathname === '/crossword') {
-      main.append(renderCrossword({ store }));
-      return;
-    }
-
-    if (route.pathname === '/wordsearch') {
-      main.append(renderPlaceholderTool({ title: 'Word Search', hint: 'Scaffolded — coming soon.' }));
-      return;
-    }
+    // Crossword and Word Search routes removed
 
     if (route.pathname === '/kanji') {
       const active = store.getActiveCollection();

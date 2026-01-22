@@ -1,12 +1,13 @@
 {
   "category": "japanese",
   "commonFields": [
-    { "key": "kanji", "label": "Kanji", "type": "string" },
-    { "key": "reading", "label": "Reading", "type": "string" },
-    { "key": "meaning", "label": "Meaning", "type": "string" },
+    { "key": "kanji", "label": "Kanji", "jp_label": "漢字", "type": "string" },
+    { "key": "reading", "label": "Reading", "jp_label": "読み", "type": "string" },
+    { "key": "meaning", "label": "Meaning", "jp_label": "意味", "type": "string" },
     { 
       "key": "type", 
       "label": "Type", 
+      "jp_label": "種類",
       "type": "enum",
       "values": [
       "noun",
