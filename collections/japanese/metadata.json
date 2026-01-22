@@ -1,31 +1,46 @@
 {
   "category": "japanese",
   "commonFields": [
-    { "key": "kanji", "label": "Kanji", "jp_label": "漢字", "type": "string" },
-    { "key": "reading", "label": "Reading", "jp_label": "読み", "type": "string" },
-    { "key": "meaning", "label": "Meaning", "jp_label": "意味", "type": "string" },
-    { 
-      "key": "type", 
-      "label": "Type", 
+    {
+      "key": "kanji",
+      "label": "Kanji",
+      "jp_label": "漢字",
+      "type": "string"
+    },
+    {
+      "key": "reading",
+      "label": "Reading",
+      "jp_label": "読み",
+      "type": "string"
+    },
+    {
+      "key": "meaning",
+      "label": "Meaning",
+      "jp_label": "意味",
+      "type": "string"
+    },
+    {
+      "key": "type",
+      "label": "Type",
       "jp_label": "種類",
       "type": "enum",
       "values": [
-      "noun",
-      "standalone-noun",
-      "compound-morpheme",
-      "verb-stem",
-      "numeral",
-      "ichidan-verb",
-      "godan-verb",
-      "irregular-verb",
-      "i-adjective",
-      "na-adjective",
-      "particle",
-      "expression",
-      "counter",
-      "adverb",
-      "conjunction",
-      "descriptive-phrase"
+        "noun",
+        "standalone-noun",
+        "compound-morpheme",
+        "verb-stem",
+        "numeral",
+        "ichidan-verb",
+        "godan-verb",
+        "irregular-verb",
+        "i-adjective",
+        "na-adjective",
+        "particle",
+        "expression",
+        "counter",
+        "adverb",
+        "conjunction",
+        "descriptive-phrase"
       ]
     }
   ]

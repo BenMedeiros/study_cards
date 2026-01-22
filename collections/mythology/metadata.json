@@ -1,15 +1,65 @@
 {
   "category": "mythology",
   "commonFields": [
-    { "key": "englishName", "label": "English Name", "jp_label": "英語名", "type": "string" },
-    { "key": "greekName", "label": "Greek Name", "jp_label": "ギリシャ名", "type": "string" },
-    { "key": "greekPronunciation", "label": "Greek Pron.", "jp_label": "ギリシャ語発音", "type": "string" },
-    { "key": "latinName", "label": "Latin Name", "jp_label": "ラテン名", "type": "string" },
-    { "key": "latinPronunciation", "label": "Latin Pron.", "jp_label": "ラテン語発音", "type": "string" },
-    { "key": "japaneseName", "label": "Japanese Name", "jp_label": "日本語名", "type": "string" },
-    { "key": "godOf", "label": "God Of", "jp_label": "担当領域", "type": "string" },
-    { "key": "powers", "label": "Powers", "jp_label": "能力", "type": "string" },
-    { "key": "physicalDescription", "label": "Physical Desc.", "jp_label": "外見", "type": "string" },
-    { "key": "source", "label": "Source", "jp_label": "出典", "type": "string" }
+    {
+      "key": "englishName",
+      "label": "English Name",
+      "jp_label": "英語名",
+      "type": "string"
+    },
+    {
+      "key": "greekName",
+      "label": "Greek Name",
+      "jp_label": "ギリシャ名",
+      "type": "string"
+    },
+    {
+      "key": "greekPronunciation",
+      "label": "Greek Pron.",
+      "jp_label": "ギリシャ語発音",
+      "type": "string"
+    },
+    {
+      "key": "latinName",
+      "label": "Latin Name",
+      "jp_label": "ラテン名",
+      "type": "string"
+    },
+    {
+      "key": "latinPronunciation",
+      "label": "Latin Pron.",
+      "jp_label": "ラテン語発音",
+      "type": "string"
+    },
+    {
+      "key": "japaneseName",
+      "label": "Japanese Name",
+      "jp_label": "日本語名",
+      "type": "string"
+    },
+    {
+      "key": "godOf",
+      "label": "God Of",
+      "jp_label": "担当領域",
+      "type": "string"
+    },
+    {
+      "key": "powers",
+      "label": "Powers",
+      "jp_label": "能力",
+      "type": "string"
+    },
+    {
+      "key": "physicalDescription",
+      "label": "Physical Desc.",
+      "jp_label": "外見",
+      "type": "string"
+    },
+    {
+      "key": "source",
+      "label": "Source",
+      "jp_label": "出典",
+      "type": "string"
+    }
   ]
 }

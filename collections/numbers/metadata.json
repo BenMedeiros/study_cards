@@ -1,7 +1,17 @@
 {
   "category": "numbers",
   "commonFields": [
-    { "key": "letter", "label": "Letter", "jp_label": "文字", "type": "string" },
-    { "key": "number", "label": "Number", "jp_label": "数", "type": "number" }
+    {
+      "key": "letter",
+      "label": "Letter",
+      "jp_label": "文字",
+      "type": "string"
+    },
+    {
+      "key": "number",
+      "label": "Number",
+      "jp_label": "数",
+      "type": "number"
+    }
   ]
 }
