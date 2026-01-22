@@ -1,5 +1,5 @@
 import { nowMs } from '../utils/helpers.js';
-import { createSpeakerButton } from '../components/speaker.js';
+import { speak, getLanguageCode } from '../utils/speech.js';
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
@@ -14,6 +14,9 @@ export function renderKanjiStudyCard({ store }) {
   let isShuffled = false;
   let autoSpeakKanji = false;
   let currentFontWeight = 'normal'; // cycles through: bold -> normal -> lighter
+  let savedUI = null;
+  let originalEntries = [];
+  let currentOrder = null; // array of indices mapping to originalEntries
 
   // Helpers
   function getFieldValue(entry, keys) {
@@ -22,6 +25,32 @@ export function renderKanjiStudyCard({ store }) {
       if (entry[k]) return entry[k];
     }
     return '';
+  }
+
+  // sessionStorage helpers for UI state
+  function loadUIState() {
+    try {
+      const raw = sessionStorage.getItem('kanjiUIState');
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveUIState() {
+    try {
+      const state = {
+        isShuffled: !!isShuffled,
+        defaultViewMode: defaultViewMode,
+        fontWeight: currentFontWeight,
+        autoSpeak: !!autoSpeakKanji,
+        order: currentOrder || null,
+        currentIndex: index,
+      };
+      sessionStorage.setItem('kanjiUIState', JSON.stringify(state));
+    } catch (e) {
+      // ignore
+    }
   }
 
   // Root UI pieces
@@ -54,6 +83,45 @@ export function renderKanjiStudyCard({ store }) {
 
   headerTools.append(shuffleBtn, toggleBtn, boldBtn, autoSpeakBtn);
 
+  // Apply saved UI state (visuals only here) — will apply shuffle after entries load
+  savedUI = loadUIState();
+  if (savedUI) {
+    if (savedUI.fontWeight) {
+      currentFontWeight = savedUI.fontWeight;
+      boldBtn.title = `Font weight: ${currentFontWeight}`;
+    }
+    if (typeof savedUI.autoSpeak === 'boolean') {
+      autoSpeakKanji = !!savedUI.autoSpeak;
+      autoSpeakBtn.setAttribute('aria-pressed', String(!!autoSpeakKanji));
+      autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto Speak: ON' : '🔊 Auto Speak Kanji';
+    }
+    if (savedUI.defaultViewMode) {
+      defaultViewMode = savedUI.defaultViewMode;
+      toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
+    }
+    // Ensure the active viewMode matches the saved default so the initial render uses it
+    viewMode = defaultViewMode;
+  }
+
+  // Visual helper for bold button background + weight
+  function updateBoldBtnVisual() {
+    boldBtn.style.fontWeight = currentFontWeight;
+    boldBtn.title = `Font weight: ${currentFontWeight}`;
+    // Simple, fixed rgba variants per request:
+    // - lighter font -> slightly stronger background
+    // - bold font -> slightly subtler background
+    if (currentFontWeight === 'lighter') {
+      boldBtn.style.backgroundColor = 'rgba(96, 165, 250, 0.15)';
+    } else if (currentFontWeight === 'bold') {
+      boldBtn.style.backgroundColor = 'rgba(96, 165, 250, 0.03)';
+    } else {
+      boldBtn.style.backgroundColor = '';
+    }
+    boldBtn.style.transition = 'background-color 140ms ease';
+  }
+  // ensure visuals match initial state
+  updateBoldBtnVisual();
+
   // Footer controls
   const footerControls = document.createElement('div');
   footerControls.className = 'kanji-footer-controls';
@@ -79,36 +147,37 @@ export function renderKanjiStudyCard({ store }) {
   nextBtn.innerHTML = '<span class="icon">→</span><span class="text">Next</span>';
 
   footerControls.append(prevBtn, revealBtn, soundBtn, nextBtn);
-  // Helper to speak kanji
-  // Use speech directly for auto-speak
-  function speakKanji(entry) {
-    const kanjiText = getFieldValue(entry, ['kanji', 'character', 'text']) || '';
-    if (kanjiText) {
-      // Use the same language logic as speaker button
-      // Default to ja-JP for kanji
-      let lang = 'ja-JP';
-      // If entry has a fieldKey or collectionCategory, you could use getLanguageCode
-      // But for kanji, ja-JP is correct
-      import('../utils/speech.js').then(({ speak }) => {
-        speak(kanjiText, lang);
-      });
-    }
+  // Unified speak helper: prefer reading/word/kana, fall back to kanji/character/text
+  function speakEntry(entry) {
+    if (!entry) return;
+    const primary = getFieldValue(entry, ['reading', 'kana', 'word', 'text']);
+    const fallback = getFieldValue(entry, ['kanji', 'character', 'text']);
+    const speakText = primary || fallback || '';
+    if (!speakText) return;
+    const fieldKey = primary ? 'reading' : 'kanji';
+    const lang = getLanguageCode(fieldKey);
+    speak(speakText, lang);
   }
   // Auto-speak button behavior
+  autoSpeakBtn.setAttribute('aria-pressed', 'false');
   autoSpeakBtn.addEventListener('click', () => {
     autoSpeakKanji = !autoSpeakKanji;
-    autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Speaking Kanji: ON' : '🔊 Auto Speak Kanji';
+    autoSpeakBtn.setAttribute('aria-pressed', String(!!autoSpeakKanji));
+    autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto Speak: ON' : '🔊 Auto Speak Kanji';
+    // Speak current entry immediately when enabling
+    if (autoSpeakKanji && entries[index]) speakEntry(entries[index]);
+    saveUIState();
   });
 
-  // Bold toggle behaviour: cycle ['lighter','normal','bolder']
+  // Bold toggle behaviour: cycle ['bold','normal','lighter'] (default: normal)
   boldBtn.addEventListener('click', () => {
-    const cycle = ['lighter', 'normal', 'bolder'];
+    const cycle = ['bold', 'normal', 'lighter'];
     const idx = cycle.indexOf(currentFontWeight);
     const next = cycle[(idx + 1) % cycle.length];
     currentFontWeight = next;
-    boldBtn.style.fontWeight = currentFontWeight;
-    boldBtn.title = `Font weight: ${currentFontWeight}`;
+    updateBoldBtnVisual();
     render();
+    saveUIState();
   });
 
   const wrapper = document.createElement('div');
@@ -153,8 +222,69 @@ export function renderKanjiStudyCard({ store }) {
 
   function refreshEntriesFromStore() {
     const active = store.getActiveCollection();
-    entries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
+    originalEntries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
+    // If we have a saved order and it matches the number of entries, apply it
+    if (savedUI && savedUI.order && Array.isArray(savedUI.order) && savedUI.order.length === originalEntries.length) {
+      currentOrder = savedUI.order.slice();
+      entries = currentOrder.map(i => originalEntries[i]);
+      isShuffled = true;
+    } else if (currentOrder && Array.isArray(currentOrder) && currentOrder.length === originalEntries.length) {
+      // apply in-memory currentOrder (fallback)
+      entries = currentOrder.map(i => originalEntries[i]);
+      isShuffled = true;
+    } else {
+      entries = [...originalEntries];
+      isShuffled = false;
+      currentOrder = null;
+    }
+    // If a saved index exists, restore it (will be clamped to valid range)
+    if (savedUI && typeof savedUI.currentIndex === 'number') {
+      index = savedUI.currentIndex;
+    }
     index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+  }
+
+  // Navigation / control helpers to avoid duplicated logic
+  function goToIndex(newIndex) {
+    if (newIndex < 0 || newIndex >= entries.length) return;
+    index = newIndex;
+    shownAt = nowMs();
+    viewMode = defaultViewMode;
+    render();
+    if (autoSpeakKanji && entries[index]) speakEntry(entries[index]);
+    // persist current index so it's restored when navigating back
+    saveUIState();
+  }
+
+  function showPrev() { goToIndex(index - 1); }
+  function showNext() { goToIndex(index + 1); }
+  function revealFull() { viewMode = 'full'; render(); }
+  function showKanjiOnly() { viewMode = 'kanji-only'; render(); }
+  function speakCurrent() { if (entries[index]) speakEntry(entries[index]); }
+
+  function shuffleEntries() {
+    // Build a permutation of indices based on originalEntries
+    const n = originalEntries.length;
+    const indices = Array.from({ length: n }, (_, i) => i);
+    for (let i = n - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    currentOrder = indices;
+    entries = currentOrder.map(i => originalEntries[i]);
+    index = 0;
+    viewMode = defaultViewMode;
+    isShuffled = true;
+    render();
+    saveUIState();
+  }
+
+  function toggleDefaultViewMode() {
+    defaultViewMode = defaultViewMode === 'kanji-only' ? 'full' : 'kanji-only';
+    toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
+    viewMode = defaultViewMode;
+    render();
+    saveUIState();
   }
 
   function render() {
@@ -186,7 +316,7 @@ export function renderKanjiStudyCard({ store }) {
     wrapper.append(cornerCaption, body);
   }
 
-  // Initial population
+  // Initial population — refresh entries and render (saved order is applied in refresh)
   refreshEntriesFromStore();
   render();
 
@@ -200,87 +330,36 @@ export function renderKanjiStudyCard({ store }) {
   el.append(headerTools, card);
   el.append(footerControls);
   // Footer controls event listeners
-  prevBtn.addEventListener('click', () => {
-    if (index > 0) {
-      index -= 1;
-      shownAt = nowMs();
-      viewMode = defaultViewMode;
-      render();
-      if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
-    }
-  });
+  prevBtn.addEventListener('click', showPrev);
 
-  nextBtn.addEventListener('click', () => {
-    if (index < entries.length - 1) {
-      index += 1;
-      shownAt = nowMs();
-      viewMode = defaultViewMode;
-      render();
-      if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
-    }
-  });
+  nextBtn.addEventListener('click', showNext);
 
-  revealBtn.addEventListener('click', () => {
-    viewMode = 'full';
-    render();
-  });
+  revealBtn.addEventListener('click', revealFull);
 
   soundBtn.addEventListener('click', () => {
     const entry = entries[index];
-    const speakText = getFieldValue(entry, ['reading', 'kana', 'word', 'text']) || getFieldValue(entry, ['kanji']);
-    import('../utils/speech.js').then(({ speak }) => {
-      speak(speakText, 'ja-JP');
-    });
+    // Use the same unified speak flow
+    speakEntry(entry);
   });
 
   // Tools behaviour
-  shuffleBtn.addEventListener('click', () => {
-    for (let i = entries.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [entries[i], entries[j]] = [entries[j], entries[i]];
-    }
-    index = 0;
-    viewMode = defaultViewMode;
-    isShuffled = true;
-    render();
-  });
-
-  toggleBtn.addEventListener('click', () => {
-    defaultViewMode = defaultViewMode === 'kanji-only' ? 'full' : 'kanji-only';
-    toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
-    // When toggling, also update current card to match default
-    viewMode = defaultViewMode;
-    render();
-  });
+  shuffleBtn.addEventListener('click', shuffleEntries);
+  toggleBtn.addEventListener('click', toggleDefaultViewMode);
 
   // Keyboard navigation
   const keyHandler = (e) => {
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
-      if (index > 0) {
-        index -= 1;
-        shownAt = nowMs();
-        viewMode = defaultViewMode;
-        render();
-        if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
-      }
+      showPrev();
     } else if (e.key === 'ArrowRight') {
       e.preventDefault();
-      if (index < entries.length - 1) {
-        index += 1;
-        shownAt = nowMs();
-        viewMode = defaultViewMode;
-        render();
-        if (autoSpeakKanji && entries[index]) speakKanji(entries[index]);
-      }
+      showNext();
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      viewMode = 'full';
-      render();
+      revealFull();
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      viewMode = 'kanji-only';
-      render();
+      showKanjiOnly();
     }
   };
 
