@@ -7,13 +7,13 @@
     "japanese/jp_n5_verbs_compound.json",
     "japanese/jp_linguistic_terms.json",
     "japanese/jp_linguistic_terms_supplement.json",
-    "japanese/jp_pokemon_roots.json",
     "linguistics/synonymy.json",
     "numbers/letters_to_numbers.json",
     "mythology/chthonic.json",
     "mythology/primordials.json",
     "mythology/olympians.json",
     "mythology/titans.json",
+    "japanese/jp_pokemon_roots.json",
     "pokemon/pokemon_starters.json"
   ]
 }
