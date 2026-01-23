@@ -184,29 +184,7 @@ export function createStore() {
   // Consolidated session UI state under one top-level key so all apps share one site map.
   const SESSION_KEY = 'studyUIState';
 
-  // Pretty-printer for session logs: prints arrays compactly on one line,
-  // but keeps objects multi-line for readability.
-  function prettySession(obj, indentSize = 2, level = 0) {
-    try {
-      const pad = (n) => ' '.repeat(n * indentSize);
-      const recurse = (val, lvl) => {
-        if (val === null) return 'null';
-        if (Array.isArray(val)) return JSON.stringify(val);
-        if (typeof val === 'object') {
-          const keys = Object.keys(val);
-          if (keys.length === 0) return '{}';
-          const parts = keys.map(k => `${pad(lvl+1)}"${k}": ${recurse(val[k], lvl+1)}`);
-          return `{
-${parts.join(',\n')}
-${pad(lvl)}}`;
-        }
-        return JSON.stringify(val);
-      };
-      return recurse(obj, level);
-    } catch (e) {
-      try { return JSON.stringify(obj); } catch (_) { return String(obj); }
-    }
-  }
+  // Session logging: log objects directly (no custom pretty-printer)
 
   function loadSessionState() {
     try {
@@ -214,7 +192,7 @@ ${pad(lvl)}}`;
       if (!raw) return {};
       try {
         const parsed = JSON.parse(raw);
-        console.debug('[Store] loadSessionState', prettySession(parsed));
+        console.debug('[Store] loadSessionState', parsed);
         return parsed || {};
       } catch (e) {
         console.debug('[Store] loadSessionState - invalid JSON', raw);
@@ -245,7 +223,7 @@ ${pad(lvl)}}`;
     try {
       const raw = JSON.stringify(obj);
       sessionStorage.setItem(SESSION_KEY, raw);
-      console.debug('[Store] saveSessionState', prettySession(obj));
+      console.debug('[Store] saveSessionState', obj);
     } catch (e) {
       // ignore
     }

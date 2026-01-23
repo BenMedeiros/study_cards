@@ -1,5 +1,6 @@
 import { nowMs } from '../utils/helpers.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
+import { createAutoplayControls } from '../components/autoplay.js';
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
@@ -14,6 +15,8 @@ export function renderKanjiStudyCard({ store }) {
   let isShuffled = false;
   let autoSpeakKanji = false;
   let currentFontWeight = 'normal'; // cycles through: bold -> normal -> lighter
+  let isAutoPlaying = false;
+  let autoplayConfig = null; // will be defaulted from savedUI or component defaults
   // cycles through: bold -> normal
   let savedUI = null;
   let uiStateRestored = false; // ensure saved UI (index/order) is applied only once
@@ -44,6 +47,8 @@ export function renderKanjiStudyCard({ store }) {
         autoSpeak: !!autoSpeakKanji,
         order: currentOrder || null,
         currentIndex: index,
+        autoplay: autoplayConfig || null,
+        isAutoPlaying: !!isAutoPlaying,
       };
       store.saveKanjiUIState(state);
     } catch (e) {
@@ -94,6 +99,13 @@ export function renderKanjiStudyCard({ store }) {
       autoSpeakBtn.setAttribute('aria-pressed', String(!!autoSpeakKanji));
       autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto Speak: ON' : '🔊 Auto Speak Kanji';
     }
+    // Load autoplay settings if present
+    if (savedUI.autoplay) {
+      autoplayConfig = savedUI.autoplay;
+    }
+    if (typeof savedUI.isAutoPlaying === 'boolean') {
+      isAutoPlaying = !!savedUI.isAutoPlaying;
+    }
     if (savedUI.defaultViewMode) {
       defaultViewMode = savedUI.defaultViewMode;
       toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
@@ -109,6 +121,9 @@ export function renderKanjiStudyCard({ store }) {
   }
   // ensure visuals match initial state
   updateBoldBtnVisual();
+
+  // Ensure autoplayConfig has a default object if not loaded from savedUI
+  if (!autoplayConfig) autoplayConfig = null;
 
   // Footer controls
   const footerControls = document.createElement('div');
@@ -156,6 +171,23 @@ export function renderKanjiStudyCard({ store }) {
     if (autoSpeakKanji && entries[index]) speakEntry(entries[index]);
     saveUIState();
   });
+
+  // Autoplay controls: create grouped play/gear control and hook into play loop
+  const autoplayControlsEl = createAutoplayControls({
+    sequence: Array.isArray(autoplayConfig) ? autoplayConfig : (autoplayConfig ? autoplayConfig : []),
+    isPlaying: !!isAutoPlaying,
+    onTogglePlay: (play) => {
+      isAutoPlaying = !!play;
+      saveUIState();
+      if (isAutoPlaying) startAutoplay();
+    },
+    onSequenceChange: (seq) => {
+      autoplayConfig = Array.isArray(seq) ? seq.slice() : [];
+      saveUIState();
+    }
+  });
+  // place autoplay controls at start of headerTools, grouped visually
+  headerTools.insertBefore(autoplayControlsEl, shuffleBtn);
 
   // Bold toggle behaviour: cycle ['bold','normal','lighter'] (default: normal)
   boldBtn.addEventListener('click', () => {
@@ -273,6 +305,64 @@ export function renderKanjiStudyCard({ store }) {
     saveUIState();
   }
 
+  // small sleep helper
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Autoplay loop: performs configured sequence for each card
+  let _autoplayAbort = false;
+  async function startAutoplay() {
+    _autoplayAbort = false;
+    // ensure we don't spawn multiple loops
+    if (!isAutoPlaying) return;
+    // default sequence if none configured
+    const defaultSequence = [
+      { action: 'next' },
+      { action: 'wait', ms: 2000 },
+      { action: 'sound' },
+      { action: 'wait', ms: 1000 },
+      { action: 'reveal' }
+    ];
+
+    while (isAutoPlaying && !_autoplayAbort) {
+      const seq = Array.isArray(autoplayConfig) && autoplayConfig.length ? autoplayConfig.slice() : defaultSequence.slice();
+
+      for (const step of seq) {
+        if (!isAutoPlaying || _autoplayAbort) break;
+        if (step.action === 'next') {
+          // advance and wrap to start when reaching end
+          if (index >= entries.length - 1) {
+            goToIndex(0);
+          } else {
+            showNext();
+          }
+        } else if (step.action === 'prev') {
+          showPrev();
+        } else if (step.action === 'sound') {
+          speakCurrent();
+        } else if (step.action === 'reveal') {
+          revealFull();
+        } else if (step.action === 'wait') {
+          await sleep(Number(step.ms) || 0);
+        }
+
+        // small pacing gap between actions
+        await sleep(80);
+        if (!document.body.contains(el)) {
+          isAutoPlaying = false;
+          saveUIState();
+          _autoplayAbort = true;
+          break;
+        }
+      }
+      // after running full sequence, yield briefly to avoid tight loop
+      await sleep(200);
+    }
+    // update any UI state (play button) via saved state
+    saveUIState();
+  }
+
   function toggleDefaultViewMode() {
     defaultViewMode = defaultViewMode === 'kanji-only' ? 'full' : 'kanji-only';
     toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
@@ -314,6 +404,9 @@ export function renderKanjiStudyCard({ store }) {
   // Initial population — refresh entries and render (saved order is applied in refresh)
   refreshEntriesFromStore();
   render();
+
+  // start autoplay automatically if saved state requested and a sequence exists
+  if (isAutoPlaying && Array.isArray(autoplayConfig) && autoplayConfig.length) startAutoplay();
 
   // Footer caption (below the card)
   const footer = document.createElement('div');
