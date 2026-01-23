@@ -2,8 +2,8 @@
   "metadata": {
     "id": "pokemon_starters",
     "name": "Pokémon Starters (Kanto)",
-    "description": "First-generation Kanto starter Pokémon (Bulbasaur through Blastoise). Type kanji use the official Japanese main-series game terminology; verified against Bulbapedia and Pokémon Database.",
-    "version": 1
+    "description": "First-generation Kanto starter Pokémon and first 26 Pokémon. Type kanji use the official Japanese main-series game terminology; verified against Bulbapedia and Pokémon Database.",
+    "version": 2
   },
   "entries": [
     {
@@ -68,6 +68,125 @@
       "pokedexNumber": 9,
       "type": ["水"],
       "japaneseNameRoots": ["亀", "砲"]
+    },
+    {
+      "englishName": "Caterpie",
+      "japaneseName": "キャタピー",
+      "pokedexNumber": 10,
+      "type": ["虫"],
+      "japaneseNameRoots": ["キャタピラー"]
+    },
+    {
+      "englishName": "Metapod",
+      "japaneseName": "トランセル",
+      "pokedexNumber": 11,
+      "type": ["虫"],
+      "japaneseNameRoots": ["トランス", "セル"]
+    },
+    {
+      "englishName": "Butterfree",
+      "japaneseName": "バタフリー",
+      "pokedexNumber": 12,
+      "type": ["虫", "飛行"],
+      "japaneseNameRoots": ["バタフライ"]
+    },
+    {
+      "englishName": "Weedle",
+      "japaneseName": "ビードル",
+      "pokedexNumber": 13,
+      "type": ["虫", "毒"],
+      "japaneseNameRoots": ["ビートル"]
+    },
+    {
+      "englishName": "Kakuna",
+      "japaneseName": "コクーン",
+      "pokedexNumber": 14,
+      "type": ["虫", "毒"],
+      "japaneseNameRoots": ["コクーン"]
+    },
+    {
+      "englishName": "Beedrill",
+      "japaneseName": "スピアー",
+      "pokedexNumber": 15,
+      "type": ["虫", "毒"],
+      "japaneseNameRoots": ["スピア"]
+    },
+    {
+      "englishName": "Pidgey",
+      "japaneseName": "ポッポ",
+      "pokedexNumber": 16,
+      "type": ["通常", "飛行"],
+      "japaneseNameRoots": ["鳩"]
+    },
+    {
+      "englishName": "Pidgeotto",
+      "japaneseName": "ピジョン",
+      "pokedexNumber": 17,
+      "type": ["通常", "飛行"],
+      "japaneseNameRoots": ["鳩"]
+    },
+    {
+      "englishName": "Pidgeot",
+      "japaneseName": "ピジョット",
+      "pokedexNumber": 18,
+      "type": ["通常", "飛行"],
+      "japaneseNameRoots": ["鳩"]
+    },
+    {
+      "englishName": "Rattata",
+      "japaneseName": "コラッタ",
+      "pokedexNumber": 19,
+      "type": ["通常"],
+      "japaneseNameRoots": ["ラット"]
+    },
+    {
+      "englishName": "Raticate",
+      "japaneseName": "ラッタ",
+      "pokedexNumber": 20,
+      "type": ["通常"],
+      "japaneseNameRoots": ["ラット"]
+    },
+    {
+      "englishName": "Spearow",
+      "japaneseName": "オニスズメ",
+      "pokedexNumber": 21,
+      "type": ["通常", "飛行"],
+      "japaneseNameRoots": ["鬼", "雀"]
+    },
+    {
+      "englishName": "Fearow",
+      "japaneseName": "オニドリル",
+      "pokedexNumber": 22,
+      "type": ["通常", "飛行"],
+      "japaneseNameRoots": ["鬼", "ドリル"]
+    },
+    {
+      "englishName": "Ekans",
+      "japaneseName": "アーボ",
+      "pokedexNumber": 23,
+      "type": ["毒"],
+      "japaneseNameRoots": ["蛇"]
+    },
+    {
+      "englishName": "Arbok",
+      "japaneseName": "アーボック",
+      "pokedexNumber": 24,
+      "type": ["毒"],
+      "japaneseNameRoots": ["蛇"]
+    },
+    {
+      "englishName": "Pikachu",
+      "japaneseName": "ピカチュウ",
+      "pokedexNumber": 25,
+      "type": ["電気"],
+      "japaneseNameRoots": ["ピカ", "チュウ"]
+    },
+    {
+      "englishName": "Raichu",
+      "japaneseName": "ライチュウ",
+      "pokedexNumber": 26,
+      "type": ["電気"],
+      "japaneseNameRoots": ["雷", "チュウ"]
     }
   ]
 }
