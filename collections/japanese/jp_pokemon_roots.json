@@ -1,57 +1,279 @@
 {
   "metadata": {
-    "id": "jp_pokemon_roots",
     "name": "Pokemon name-root & type tokens (Japanese)",
     "description": "Canonical kanji and katakana tokens used as Pokémon type labels and name roots (used by the pokemon collection).",
     "version": 1
   },
   "entries": [
-    { "id": "不思議", "kanji": "不思議", "reading": "ふしぎ", "meaning": "mysterious", "type": "standalone-noun" },
-    { "id": "種", "kanji": "種", "reading": "たね", "meaning": "seed", "type": "standalone-noun" },
-    { "id": "草", "kanji": "草", "reading": "くさ", "meaning": "grass", "type": "standalone-noun" },
-    { "id": "花", "kanji": "花", "reading": "はな", "meaning": "flower", "type": "standalone-noun" },
-    { "id": "火", "kanji": "火", "reading": "ひ", "meaning": "fire", "type": "standalone-noun" },
-    { "id": "銭", "kanji": "銭", "reading": "ぜに", "meaning": "coin", "type": "standalone-noun" },
-    { "id": "蜥蜴", "kanji": "蜥蜴", "reading": "とかげ", "meaning": "lizard", "type": "standalone-noun" },
-    { "id": "毒", "kanji": "毒", "reading": "どく", "meaning": "poison", "type": "standalone-noun" },
-    { "id": "炎", "kanji": "炎", "reading": "ほのお", "meaning": "flame; fire", "type": "standalone-noun" },
-    { "id": "飛行", "kanji": "飛行", "reading": "ひこう", "meaning": "flying", "type": "standalone-noun" },
-    { "id": "水", "kanji": "水", "reading": "みず", "meaning": "water", "type": "standalone-noun" },
-    { "id": "亀", "kanji": "亀", "reading": "かめ", "meaning": "turtle", "type": "standalone-noun" },
-    { "id": "甲羅", "kanji": "甲羅", "reading": "こうら", "meaning": "shell", "type": "standalone-noun" },
-    { "id": "砲", "kanji": "砲", "reading": "ほう", "meaning": "cannon; artillery", "type": "standalone-noun" }
-    ,
-    { "id": "虫", "kanji": "虫", "reading": "むし", "meaning": "insect", "type": "standalone-noun" },
-    { "id": "通常", "kanji": "通常", "reading": "つうじょう", "meaning": "normal; usual", "type": "standalone-noun" },
-    { "id": "電気", "kanji": "電気", "reading": "でんき", "meaning": "electricity; electric", "type": "standalone-noun" },
-    { "id": "リザード", "kanji": "リザード", "reading": "リザード", "meaning": "lizard (katakana loanword)", "type": "standalone-noun" },
-    { "id": "キャタピラー", "kanji": "キャタピラー", "reading": "キャタピラー", "meaning": "caterpillar (katakana loanword)", "type": "standalone-noun" },
-    { "id": "トランス", "kanji": "トランス", "reading": "トランス", "meaning": "trans- (katakana morpheme)", "type": "compound-morpheme" },
-    { "id": "セル", "kanji": "セル", "reading": "セル", "meaning": "cell (katakana)", "type": "standalone-noun" },
-    { "id": "バタフライ", "kanji": "バタフライ", "reading": "バタフライ", "meaning": "butterfly (katakana)", "type": "standalone-noun" },
-    { "id": "ビートル", "kanji": "ビートル", "reading": "ビートル", "meaning": "beetle (katakana)", "type": "standalone-noun" },
-    { "id": "コクーン", "kanji": "コクーン", "reading": "コクーン", "meaning": "cocoon (katakana)", "type": "standalone-noun" },
-    { "id": "スピア", "kanji": "スピア", "reading": "スピア", "meaning": "spear (katakana)", "type": "standalone-noun" },
-    { "id": "鳩", "kanji": "鳩", "reading": "はと", "meaning": "pigeon; dove", "type": "standalone-noun" },
-    { "id": "ラット", "kanji": "ラット", "reading": "ラット", "meaning": "rat (katakana)", "type": "standalone-noun" },
-    { "id": "鬼", "kanji": "鬼", "reading": "おに", "meaning": "demon; ogre", "type": "standalone-noun" },
-    { "id": "雀", "kanji": "雀", "reading": "すずめ", "meaning": "sparrow", "type": "standalone-noun" },
-    { "id": "蛇", "kanji": "蛇", "reading": "へび", "meaning": "snake", "type": "standalone-noun" },
-    { "id": "ピカ", "kanji": "ピカ", "reading": "ピカ", "meaning": "onomatopoeic 'sparkle/flash' (name fragment)", "type": "expression" },
-    { "id": "チュウ", "kanji": "チュウ", "reading": "チュウ", "meaning": "onomatopoeic 'chu' (mouse squeak/name fragment)", "type": "standalone-noun" },
-    { "id": "雷", "kanji": "雷", "reading": "かみなり", "meaning": "thunder; lightning", "type": "standalone-noun" },
-    { "id": "ドリル", "kanji": "ドリル", "reading": "ドリル", "meaning": "drill (katakana)", "type": "standalone-noun" },
-
-    { "id": "不", "kanji": "不", "reading": "ふ", "meaning": "negative prefix 'not'", "type": "compound-morpheme" },
-    { "id": "思", "kanji": "思", "reading": "し", "meaning": "think; thought (component)", "type": "standalone-noun" },
-    { "id": "議", "kanji": "議", "reading": "ぎ", "meaning": "deliberation; discussion (component)", "type": "compound-morpheme" },
-    { "id": "飛", "kanji": "飛", "reading": "ひ", "meaning": "to fly (component)", "type": "standalone-noun" },
-    { "id": "行", "kanji": "行", "reading": "こう", "meaning": "to go; act (component)", "type": "standalone-noun" },
-    { "id": "甲", "kanji": "甲", "reading": "こう", "meaning": "shell; armor (component)", "type": "standalone-noun" },
-    { "id": "羅", "kanji": "羅", "reading": "ら", "meaning": "gauze/net; often used in compounds (component)", "type": "compound-morpheme" },
-    { "id": "通", "kanji": "通", "reading": "つう", "meaning": "pass; commute (component)", "type": "standalone-noun" },
-    { "id": "常", "kanji": "常", "reading": "じょう", "meaning": "usual; normal (component)", "type": "standalone-noun" },
-    { "id": "電", "kanji": "電", "reading": "でん", "meaning": "electricity (component)", "type": "standalone-noun" },
-    { "id": "気", "kanji": "気", "reading": "き", "meaning": "spirit; air; energy (component)", "type": "standalone-noun" }
+    {
+      "kanji": "不思議",
+      "reading": "ふしぎ",
+      "meaning": "mysterious",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "種",
+      "reading": "たね",
+      "meaning": "seed",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "草",
+      "reading": "くさ",
+      "meaning": "grass",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "花",
+      "reading": "はな",
+      "meaning": "flower",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "火",
+      "reading": "ひ",
+      "meaning": "fire",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "銭",
+      "reading": "ぜに",
+      "meaning": "coin",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "蜥蜴",
+      "reading": "とかげ",
+      "meaning": "lizard",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "毒",
+      "reading": "どく",
+      "meaning": "poison",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "炎",
+      "reading": "ほのお",
+      "meaning": "flame; fire",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "飛行",
+      "reading": "ひこう",
+      "meaning": "flying",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "水",
+      "reading": "みず",
+      "meaning": "water",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "亀",
+      "reading": "かめ",
+      "meaning": "turtle",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "甲羅",
+      "reading": "こうら",
+      "meaning": "shell",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "砲",
+      "reading": "ほう",
+      "meaning": "cannon; artillery",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "虫",
+      "reading": "むし",
+      "meaning": "insect",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "通常",
+      "reading": "つうじょう",
+      "meaning": "normal; usual",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "電気",
+      "reading": "でんき",
+      "meaning": "electricity; electric",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "リザード",
+      "reading": "リザード",
+      "meaning": "lizard (katakana loanword)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "キャタピラー",
+      "reading": "キャタピラー",
+      "meaning": "caterpillar (katakana loanword)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "トランス",
+      "reading": "トランス",
+      "meaning": "trans- (katakana morpheme)",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "セル",
+      "reading": "セル",
+      "meaning": "cell (katakana)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "バタフライ",
+      "reading": "バタフライ",
+      "meaning": "butterfly (katakana)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "ビートル",
+      "reading": "ビートル",
+      "meaning": "beetle (katakana)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "コクーン",
+      "reading": "コクーン",
+      "meaning": "cocoon (katakana)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "スピア",
+      "reading": "スピア",
+      "meaning": "spear (katakana)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "鳩",
+      "reading": "はと",
+      "meaning": "pigeon; dove",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "ラット",
+      "reading": "ラット",
+      "meaning": "rat (katakana)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "鬼",
+      "reading": "おに",
+      "meaning": "demon; ogre",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "雀",
+      "reading": "すずめ",
+      "meaning": "sparrow",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "蛇",
+      "reading": "へび",
+      "meaning": "snake",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "ピカ",
+      "reading": "ピカ",
+      "meaning": "onomatopoeic 'sparkle/flash' (name fragment)",
+      "type": "expression"
+    },
+    {
+      "kanji": "チュウ",
+      "reading": "チュウ",
+      "meaning": "onomatopoeic 'chu' (mouse squeak/name fragment)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "雷",
+      "reading": "かみなり",
+      "meaning": "thunder; lightning",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "ドリル",
+      "reading": "ドリル",
+      "meaning": "drill (katakana)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "不",
+      "reading": "ふ",
+      "meaning": "negative prefix 'not'",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "思",
+      "reading": "し",
+      "meaning": "think; thought (component)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "議",
+      "reading": "ぎ",
+      "meaning": "deliberation; discussion (component)",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "飛",
+      "reading": "ひ",
+      "meaning": "to fly (component)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "行",
+      "reading": "こう",
+      "meaning": "to go; act (component)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "甲",
+      "reading": "こう",
+      "meaning": "shell; armor (component)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "羅",
+      "reading": "ら",
+      "meaning": "gauze/net; often used in compounds (component)",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "通",
+      "reading": "つう",
+      "meaning": "pass; commute (component)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "常",
+      "reading": "じょう",
+      "meaning": "usual; normal (component)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "電",
+      "reading": "でん",
+      "meaning": "electricity (component)",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "気",
+      "reading": "き",
+      "meaning": "spirit; air; energy (component)",
+      "type": "standalone-noun"
+    }
   ]
 }

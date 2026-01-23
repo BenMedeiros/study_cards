@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "name": "Japanese N5 Kanji Verbs",
+    "description": "For each N5 kanji, lists 2-3 of the most common verbs that use that kanji. Each entry is a word, with its kanji, reading, and meaning. Only include valid standalone vocabulary items.",
+    "version": 1
+  },
+  "entries": [
+    {
+      "kanji": "食べる",
+      "reading": "たべる",
+      "meaning": "to eat",
+      "type": "ichidan-verb"
+    },
+    {
+      "kanji": "飲む",
+      "reading": "のむ",
+      "meaning": "to drink",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "聞く",
+      "reading": "きく",
+      "meaning": "to hear; to ask",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "買う",
+      "reading": "かう",
+      "meaning": "to buy",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "会う",
+      "reading": "あう",
+      "meaning": "to meet",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "話す",
+      "reading": "はなす",
+      "meaning": "to speak; to talk",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "書く",
+      "reading": "かく",
+      "meaning": "to write",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "休む",
+      "reading": "やすむ",
+      "meaning": "to rest; to be absent",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "学ぶ",
+      "reading": "まなぶ",
+      "meaning": "to learn; to study",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "語る",
+      "reading": "かたる",
+      "meaning": "to narrate; to talk about",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "生む",
+      "reading": "うむ",
+      "meaning": "to give birth; to produce",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "空く",
+      "reading": "あく",
+      "meaning": "to become empty; to be vacant",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "上がる",
+      "reading": "あがる",
+      "meaning": "to rise; to go up",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "下がる",
+      "reading": "さがる",
+      "meaning": "to fall; to go down; to step back",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "外す",
+      "reading": "はずす",
+      "meaning": "to remove; to unfasten; to be away",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "空ける",
+      "reading": "あける",
+      "meaning": "to make empty; to vacate; to open (transitive)",
+      "type": "ichidan-verb"
+    },
+    {
+      "kanji": "開く",
+      "reading": "あく",
+      "meaning": "to open; to become open (intransitive)",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "開ける",
+      "reading": "あける",
+      "meaning": "to open (transitive)",
+      "type": "ichidan-verb"
+    }
+  ]
+}

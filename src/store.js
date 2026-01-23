@@ -5,7 +5,10 @@ export function createStore() {
 
   const state = {
     collections: [],
+    // Path-like key, e.g. "japanese/jp_n5_verbs.json"
     activeCollectionId: null,
+    // Folder-browsing tree derived from collections/index.json
+    collectionTree: null,
   };
 
   function notify() {
@@ -26,7 +29,7 @@ export function createStore() {
   }
 
   function getActiveCollection() {
-    return state.collections.find((c) => c.metadata.id === state.activeCollectionId) ?? null;
+    return state.collections.find((c) => c.key === state.activeCollectionId) ?? null;
   }
 
   async function setActiveCollectionId(id) {
@@ -54,28 +57,84 @@ export function createStore() {
     notify();
   }
 
-  async function loadLanguageMetadata(languagePath) {
-    const metadataUrl = `./collections/${languagePath}/metadata.json`;
-    const res = await fetch(metadataUrl, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`Required metadata.json not found: ${metadataUrl} (status ${res.status})`);
-    try {
-      const text = await res.text();
-      if (!text) throw new Error(`Empty metadata.json at ${metadataUrl}`);
-      return JSON.parse(text);
-    } catch (err) {
-      throw new Error(`Failed to parse metadata.json at ${metadataUrl}: ${err.message}`);
+  function normalizeFolderPath(folderPath) {
+    const p = String(folderPath || '').replace(/^\/+/, '').replace(/\/+$/, '');
+    return p;
+  }
+
+  function dirname(path) {
+    const parts = String(path || '').split('/').filter(Boolean);
+    if (parts.length <= 1) return '';
+    parts.pop();
+    return parts.join('/');
+  }
+
+  function basename(path) {
+    const parts = String(path || '').split('/').filter(Boolean);
+    return parts.length ? parts[parts.length - 1] : '';
+  }
+
+  function titleFromFilename(filename) {
+    return String(filename || '')
+      .replace(/\.json$/i, '')
+      .replace(/[_-]+/g, ' ')
+      .trim();
+  }
+
+  async function tryLoadFolderMetadata(folderPath) {
+    const folder = normalizeFolderPath(folderPath);
+    const base = folder ? `./collections/${folder}` : './collections';
+
+    // Prefer `_metadata.json` so it sorts first in folders.
+    const candidates = [`${base}/_metadata.json`, `${base}/metadata.json`];
+
+    for (const metadataUrl of candidates) {
+      const res = await fetch(metadataUrl, { cache: 'no-store' });
+      if (!res.ok) continue;
+      try {
+        const text = await res.text();
+        if (!text) continue;
+        return JSON.parse(text);
+      } catch (err) {
+        console.warn(`Failed to parse folder metadata at ${metadataUrl}: ${err.message}`);
+        return null;
+      }
     }
+
+    return null;
+  }
+
+  async function loadInheritedFolderMetadata(folderPath, cache) {
+    const folder = normalizeFolderPath(folderPath);
+    if (folder in cache) return cache[folder];
+
+    const direct = await tryLoadFolderMetadata(folder);
+    if (direct) {
+      cache[folder] = direct;
+      return direct;
+    }
+
+    const parent = dirname(folder);
+    if (parent === folder) {
+      cache[folder] = null;
+      return null;
+    }
+
+    const inherited = folder ? await loadInheritedFolderMetadata(parent, cache) : null;
+    cache[folder] = inherited;
+    return inherited;
   }
 
   function mergeMetadata(collection, categoryMetadata) {
     // Start with common fields, then add collection-specific fields
-    const commonFieldKeys = new Set(categoryMetadata.commonFields.map(f => f.key));
+    const commonFields = Array.isArray(categoryMetadata?.commonFields) ? categoryMetadata.commonFields : [];
+    const commonFieldKeys = new Set(commonFields.map(f => f.key));
     const collectionFields = collection.metadata?.fields || [];
     const collectionFieldKeys = new Set(collectionFields.map(f => f.key));
     
     // Use common fields, but allow collection to override
     const mergedFields = [
-      ...categoryMetadata.commonFields.filter(f => !collectionFieldKeys.has(f.key)),
+      ...commonFields.filter(f => !collectionFieldKeys.has(f.key)),
       ...collectionFields
     ];
     
@@ -84,9 +143,75 @@ export function createStore() {
       metadata: {
         ...collection.metadata,
         fields: mergedFields,
-        category: categoryMetadata.category || categoryMetadata.language
+        category: categoryMetadata?.category || categoryMetadata?.language
       }
     };
+  }
+
+  function buildCollectionTreeFromPaths(paths) {
+    const root = { type: 'dir', name: '', path: '', dirs: new Map(), files: new Map() };
+
+    for (const relPath of paths) {
+      const parts = String(relPath || '').split('/').filter(Boolean);
+      if (parts.length === 0) continue;
+      let node = root;
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        const isLast = i === parts.length - 1;
+        if (!isLast) {
+          if (!node.dirs.has(part)) {
+            const nextPath = node.path ? `${node.path}/${part}` : part;
+            node.dirs.set(part, { type: 'dir', name: part, path: nextPath, dirs: new Map(), files: new Map() });
+          }
+          node = node.dirs.get(part);
+        } else {
+          node.files.set(part, relPath);
+        }
+      }
+    }
+
+    return root;
+  }
+
+  function findTreeNode(dirPath) {
+    const folder = normalizeFolderPath(dirPath);
+    const root = state.collectionTree;
+    if (!root) return null;
+    if (!folder) return root;
+
+    const parts = folder.split('/').filter(Boolean);
+    let node = root;
+    for (const p of parts) {
+      const next = node.dirs.get(p);
+      if (!next) return null;
+      node = next;
+    }
+    return node;
+  }
+
+  function listCollectionDir(dirPath) {
+    const folder = normalizeFolderPath(dirPath);
+    const node = findTreeNode(folder);
+
+    const parentDir = folder ? dirname(folder) : null;
+
+    if (!node) {
+      return { dir: folder, parentDir, folders: [], files: [] };
+    }
+
+    const folders = Array.from(node.dirs.values())
+      .map(d => ({ name: d.name, path: d.path, label: d.name }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    const files = Array.from(node.files.entries())
+      .map(([filename, key]) => {
+        const loaded = state.collections.find(c => c.key === key);
+        const label = loaded?.metadata?.name || titleFromFilename(filename);
+        return { filename, key, label };
+      })
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    return { dir: folder, parentDir, folders, files };
   }
 
   async function loadSeedCollections() {
@@ -101,8 +226,11 @@ export function createStore() {
       throw new Error(`Failed to parse collections/index.json: ${err.message}`);
     }
     const paths = Array.isArray(index?.collections) ? index.collections : [];
-    
-    // Cache category metadata by folder
+
+    // Build a folder tree for browsing (independent of JSON validity).
+    state.collectionTree = buildCollectionTreeFromPaths(paths);
+
+    // Cache folder metadata (inherited resolution) by folder path
     const metadataCache = {};
     
     const loaded = [];
@@ -125,27 +253,23 @@ export function createStore() {
         console.warn(`Invalid JSON in collection ${relPath}: ${err.message}`);
         continue;
       }
-      
-      // Extract category folder from path
-      const pathParts = relPath.split('/');
-      if (pathParts.length > 1) {
-        const categoryFolder = pathParts[0];
-        
-        // Load category metadata if not cached
-        if (!(categoryFolder in metadataCache)) {
-          try {
-            metadataCache[categoryFolder] = await loadLanguageMetadata(categoryFolder);
-          } catch (err) {
-            console.warn(`Failed to load category metadata for ${categoryFolder}: ${err.message}`);
-            metadataCache[categoryFolder] = { commonFields: [], category: categoryFolder };
-          }
-        }
 
-        const categoryMetadata = metadataCache[categoryFolder] || { commonFields: [], category: categoryFolder };
-        data = mergeMetadata(data, categoryMetadata);
+      // Path-based key replaces metadata.id
+      const key = relPath;
+
+      // Apply inherited folder metadata (nearest `_metadata.json` up the folder chain)
+      const folderPath = dirname(relPath);
+      const folderMetadata = (await loadInheritedFolderMetadata(folderPath, metadataCache)) || { commonFields: [], category: folderPath.split('/')[0] || '' };
+      data = mergeMetadata(data, folderMetadata);
+
+      // Ensure required bits exist, and avoid relying on metadata.id.
+      data.metadata = data.metadata || {};
+      if (!data.metadata.name) {
+        data.metadata.name = titleFromFilename(basename(relPath));
       }
-      
-      loaded.push(data);
+      // If legacy metadata.id exists, keep it but do not use it anywhere.
+
+      loaded.push({ ...data, key });
     }
 
     return loaded;
@@ -156,9 +280,20 @@ export function createStore() {
       const seed = await loadSeedCollections();
       state.collections = seed;
 
-      if (!state.activeCollectionId && state.collections.length > 0) {
+      // Restore from session if possible (before defaulting to first)
+      let restored = null;
+      try {
+        const session = loadSessionState();
+        restored = session?.shell?.activeCollectionId || null;
+      } catch (e) {
+        restored = null;
+      }
+
+      if (restored && state.collections.some(c => c.key === restored)) {
+        await setActiveCollectionId(restored);
+      } else if (!state.activeCollectionId && state.collections.length > 0) {
         // Persist via setter so session state is updated
-        await setActiveCollectionId(state.collections[0]?.metadata?.id ?? null);
+        await setActiveCollectionId(state.collections[0]?.key ?? null);
       }
     } catch (err) {
       console.error(`Failed to initialize collections: ${err.message}`);
@@ -172,7 +307,7 @@ export function createStore() {
   function syncCollectionFromURL(route) {
     const collectionId = route.query.get('collection');
     if (collectionId && collectionId !== state.activeCollectionId) {
-      const exists = state.collections.some(c => c.metadata.id === collectionId);
+      const exists = state.collections.some(c => c.key === collectionId);
       if (exists) {
         // Use the setter so the change is persisted to session state and URL updated consistently
         setActiveCollectionId(collectionId);
@@ -278,6 +413,26 @@ export function createStore() {
     getActiveCollection,
     setActiveCollectionId,
     syncCollectionFromURL,
+    listCollectionDir,
+    getCollectionBrowserPath: () => {
+      try {
+        const session = loadSessionState();
+        const p = session?.shell?.collectionBrowserPath;
+        return typeof p === 'string' ? p : null;
+      } catch (e) {
+        return null;
+      }
+    },
+    setCollectionBrowserPath: (path) => {
+      try {
+        const session = readSessionState();
+        session.shell = session.shell || {};
+        session.shell.collectionBrowserPath = String(path || '');
+        saveSessionState(session);
+      } catch (e) {
+        // ignore
+      }
+    },
     loadKanjiUIState,
     saveKanjiUIState,
   };

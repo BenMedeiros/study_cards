@@ -1,32 +1,141 @@
 {
   "metadata": {
-    "id": "jp_n5_suru_nouns",
     "name": "Japanese N5 Suru Nouns",
     "description": "Nouns that commonly take する (suru-verbs). These are the noun forms only (no 'する').",
     "version": 1
   },
   "entries": [
-    { "id": "勉強", "kanji": "勉強", "reading": "べんきょう", "meaning": "study", "type": "noun" },
-    { "id": "入学", "kanji": "入学", "reading": "にゅうがく", "meaning": "entrance to school; matriculation", "type": "noun" },
-    { "id": "学習", "kanji": "学習", "reading": "がくしゅう", "meaning": "learning; study", "type": "noun" },
-    { "id": "会話", "kanji": "会話", "reading": "かいわ", "meaning": "conversation", "type": "noun" },
-    { "id": "会議", "kanji": "会議", "reading": "かいぎ", "meaning": "meeting; conference", "type": "noun" },
-    { "id": "電話", "kanji": "電話", "reading": "でんわ", "meaning": "telephone; phone call", "type": "noun" },
-    { "id": "読書", "kanji": "読書", "reading": "どくしょ", "meaning": "reading (books)", "type": "noun" },
-    { "id": "書き込み", "kanji": "書き込み", "reading": "かきこみ", "meaning": "writing/posting (a comment)", "type": "noun" },
-    { "id": "食事", "kanji": "食事", "reading": "しょくじ", "meaning": "meal", "type": "noun" },
-    { "id": "飲食", "kanji": "飲食", "reading": "いんしょく", "meaning": "eating and drinking", "type": "noun" },
-    { "id": "買い物", "kanji": "買い物", "reading": "かいもの", "meaning": "shopping; purchases", "type": "noun" },
-    { "id": "売買", "kanji": "売買", "reading": "ばいばい", "meaning": "trade; buying and selling", "type": "noun" },
-    { "id": "語学", "kanji": "語学", "reading": "ごがく", "meaning": "language study", "type": "noun" },
-    { "id": "命名", "kanji": "命名", "reading": "めいめい", "meaning": "naming; christening", "type": "noun" },
-    { "id": "出生", "kanji": "出生", "reading": "しゅっしょう", "meaning": "birth; being born (formal)", "type": "noun" },
-    { "id": "年越し", "kanji": "年越し", "reading": "としこし", "meaning": "New Year's Eve; passing the year", "type": "noun" },
-    { "id": "確認", "kanji": "確認", "reading": "かくにん", "meaning": "confirmation; check", "type": "noun" },
-    { "id": "運転", "kanji": "運転", "reading": "うんてん", "meaning": "driving; operation", "type": "noun" },
-    { "id": "空想", "kanji": "空想", "reading": "くうそう", "meaning": "fantasy; daydream", "type": "noun" },
-    { "id": "休憩", "kanji": "休憩", "reading": "きゅうけい", "meaning": "rest; break", "type": "noun" },
-    { "id": "休業", "kanji": "休業", "reading": "きゅうぎょう", "meaning": "suspension of business; closed", "type": "noun" },
-    { "id": "半分", "kanji": "半分", "reading": "はんぶん", "meaning": "half; one half", "type": "noun" }
+    {
+      "kanji": "勉強",
+      "reading": "べんきょう",
+      "meaning": "study",
+      "type": "noun"
+    },
+    {
+      "kanji": "入学",
+      "reading": "にゅうがく",
+      "meaning": "entrance to school; matriculation",
+      "type": "noun"
+    },
+    {
+      "kanji": "学習",
+      "reading": "がくしゅう",
+      "meaning": "learning; study",
+      "type": "noun"
+    },
+    {
+      "kanji": "会話",
+      "reading": "かいわ",
+      "meaning": "conversation",
+      "type": "noun"
+    },
+    {
+      "kanji": "会議",
+      "reading": "かいぎ",
+      "meaning": "meeting; conference",
+      "type": "noun"
+    },
+    {
+      "kanji": "電話",
+      "reading": "でんわ",
+      "meaning": "telephone; phone call",
+      "type": "noun"
+    },
+    {
+      "kanji": "読書",
+      "reading": "どくしょ",
+      "meaning": "reading (books)",
+      "type": "noun"
+    },
+    {
+      "kanji": "書き込み",
+      "reading": "かきこみ",
+      "meaning": "writing/posting (a comment)",
+      "type": "noun"
+    },
+    {
+      "kanji": "食事",
+      "reading": "しょくじ",
+      "meaning": "meal",
+      "type": "noun"
+    },
+    {
+      "kanji": "飲食",
+      "reading": "いんしょく",
+      "meaning": "eating and drinking",
+      "type": "noun"
+    },
+    {
+      "kanji": "買い物",
+      "reading": "かいもの",
+      "meaning": "shopping; purchases",
+      "type": "noun"
+    },
+    {
+      "kanji": "売買",
+      "reading": "ばいばい",
+      "meaning": "trade; buying and selling",
+      "type": "noun"
+    },
+    {
+      "kanji": "語学",
+      "reading": "ごがく",
+      "meaning": "language study",
+      "type": "noun"
+    },
+    {
+      "kanji": "命名",
+      "reading": "めいめい",
+      "meaning": "naming; christening",
+      "type": "noun"
+    },
+    {
+      "kanji": "出生",
+      "reading": "しゅっしょう",
+      "meaning": "birth; being born (formal)",
+      "type": "noun"
+    },
+    {
+      "kanji": "年越し",
+      "reading": "としこし",
+      "meaning": "New Year's Eve; passing the year",
+      "type": "noun"
+    },
+    {
+      "kanji": "確認",
+      "reading": "かくにん",
+      "meaning": "confirmation; check",
+      "type": "noun"
+    },
+    {
+      "kanji": "運転",
+      "reading": "うんてん",
+      "meaning": "driving; operation",
+      "type": "noun"
+    },
+    {
+      "kanji": "空想",
+      "reading": "くうそう",
+      "meaning": "fantasy; daydream",
+      "type": "noun"
+    },
+    {
+      "kanji": "休憩",
+      "reading": "きゅうけい",
+      "meaning": "rest; break",
+      "type": "noun"
+    },
+    {
+      "kanji": "休業",
+      "reading": "きゅうぎょう",
+      "meaning": "suspension of business; closed",
+      "type": "noun"
+    },
+    {
+      "kanji": "半分",
+      "reading": "はんぶん",
+      "meaning": "half; one half",
+      "type": "noun"
+    }
   ]
 }

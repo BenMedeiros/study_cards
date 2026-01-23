@@ -1,13 +1,11 @@
 {
   "metadata": {
-    "id": "greek_titans",
     "name": "Greek Titans",
     "description": "Titanic generation and related figures",
     "version": 1
   },
   "entries": [
     {
-      "id": "cronus",
       "englishName": "Cronus",
       "greekName": "Κρόνος",
       "greekPronunciation": "KROH-nos",
@@ -22,7 +20,6 @@
       "notes": "Leader of the Titans; father of Zeus, Poseidon, Hades; overthrown by his children in the Titanomachy."
     },
     {
-      "id": "rhea",
       "englishName": "Rhea",
       "greekName": "Ῥέα",
       "greekPronunciation": "RAY-uh",
@@ -37,7 +34,6 @@
       "notes": "Wife of Cronus and mother of the first-generation Olympians; hid Zeus to save him from Cronus."
     },
     {
-      "id": "prometheus",
       "englishName": "Prometheus",
       "greekName": "Προμηθεύς",
       "greekPronunciation": "proh-MEE-thee-us",
@@ -52,7 +48,6 @@
       "notes": "Stole fire for humans and suffered for it; culture-hero figure with varied myths about his punishment and role."
     },
     {
-      "id": "atlas",
       "englishName": "Atlas",
       "greekName": "Ἄτλας",
       "greekPronunciation": "AT-las",
@@ -67,7 +62,6 @@
       "notes": "Punished after the Titanomachy to hold up the sky; later mythic roles include encounters with Heracles."
     },
     {
-      "id": "oceanus",
       "englishName": "Oceanus",
       "greekName": "Ὠκεανός",
       "greekPronunciation": "oh-keh-ah-NOS",
@@ -82,7 +76,6 @@
       "notes": "Titanic personification of the great river encircling the world; husband of Tethys and father of river gods and Oceanids."
     },
     {
-      "id": "coeus",
       "englishName": "Coeus",
       "greekName": "Κοῖος",
       "greekPronunciation": "KOH-ee-os",
@@ -97,7 +90,6 @@
       "notes": "Less prominent Titan; associated with the intellect and sometimes with the north."
     },
     {
-      "id": "crius",
       "englishName": "Crius",
       "greekName": "Κριός",
       "greekPronunciation": "KREE-us",
@@ -112,7 +104,6 @@
       "notes": "Obscure Titan with few myths; part of the original Titan generation."
     },
     {
-      "id": "hyperion",
       "englishName": "Hyperion",
       "greekName": "Ὑπερίων",
       "greekPronunciation": "hy-PEER-ee-on",
@@ -127,7 +118,6 @@
       "notes": "Father of Helios, Selene, and Eos in some genealogies; sometimes conflated with solar figures."
     },
     {
-      "id": "iapetus",
       "englishName": "Iapetus",
       "greekName": "Ἰαπετός",
       "greekPronunciation": "yah-peh-TOHS",
@@ -142,7 +132,6 @@
       "notes": "Father of Prometheus, Epimetheus, Atlas, and Menoetius; connected to human condition myths."
     },
     {
-      "id": "theia",
       "englishName": "Theia",
       "greekName": "Θεία",
       "greekPronunciation": "THEE-uh",
@@ -157,7 +146,6 @@
       "notes": "Mother of Helios, Selene, and Eos in some traditions; associated with sight and heavenly light."
     },
     {
-      "id": "themis",
       "englishName": "Themis",
       "greekName": "Θέμις",
       "greekPronunciation": "THEH-mis",
@@ -172,7 +160,6 @@
       "notes": "Goddess of justice and order; mother of the Horae (Seasons) and the Moirai (Fates) in some accounts."
     },
     {
-      "id": "mnemosyne",
       "englishName": "Mnemosyne",
       "greekName": "Μνημοσύνη",
       "greekPronunciation": "mneh-mo-SY-nee",
@@ -187,7 +174,6 @@
       "notes": "Mother of the Nine Muses by Zeus; foundational to poetic tradition."
     },
     {
-      "id": "phoebe",
       "englishName": "Phoebe",
       "greekName": "Φοίβη",
       "greekPronunciation": "FOH-bee",
@@ -202,7 +188,6 @@
       "notes": "Associated with prophetic power; grandmother of Apollo and Artemis in some genealogies."
     },
     {
-      "id": "tethys",
       "englishName": "Tethys",
       "greekName": "Τηθύς",
       "greekPronunciation": "TEH-this",

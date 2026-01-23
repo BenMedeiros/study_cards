@@ -1,0 +1,189 @@
+{
+  "metadata": {
+    "name": "30 Common MU-Ending Godan Verbs",
+    "description": "A corrected list of 30 high-frequency Japanese godan verbs ending in む (mu).",
+    "version": 1
+  },
+  "entries": [
+    {
+      "kanji": "飲む",
+      "reading": "のむ",
+      "meaning": "to drink",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "読む",
+      "reading": "よむ",
+      "meaning": "to read",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "休む",
+      "reading": "やすむ",
+      "meaning": "to rest; to be absent",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "住む",
+      "reading": "すむ",
+      "meaning": "to live; to reside",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "頼む",
+      "reading": "たのむ",
+      "meaning": "to request; to ask",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "包む",
+      "reading": "つつむ",
+      "meaning": "to wrap; to cover",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "掴む",
+      "reading": "つかむ",
+      "meaning": "to grasp; to seize",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "組む",
+      "reading": "くむ",
+      "meaning": "to assemble; to pair; to cross arms",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "踏む",
+      "reading": "ふむ",
+      "meaning": "to step on",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "悩む",
+      "reading": "なやむ",
+      "meaning": "to worry; to be troubled",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "止む",
+      "reading": "やむ",
+      "meaning": "to stop (rain, sound)",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "望む",
+      "reading": "のぞむ",
+      "meaning": "to hope; to desire; to face",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "積む",
+      "reading": "つむ",
+      "meaning": "to pile up; to load",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "編む",
+      "reading": "あむ",
+      "meaning": "to knit; to braid",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "悔やむ",
+      "reading": "くやむ",
+      "meaning": "to regret",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "痛む",
+      "reading": "いたむ",
+      "meaning": "to hurt; to feel pain",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "悼む",
+      "reading": "いたむ",
+      "meaning": "to mourn",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "恨む",
+      "reading": "うらむ",
+      "meaning": "to resent; to hold a grudge",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "睨む",
+      "reading": "にらむ",
+      "meaning": "to glare at",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "噤む",
+      "reading": "つぐむ",
+      "meaning": "to shut one’s mouth",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "慎む",
+      "reading": "つつしむ",
+      "meaning": "to be careful; to refrain",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "傷む",
+      "reading": "いたむ",
+      "meaning": "to spoil; to go bad (food)",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "悔む",
+      "reading": "くやむ",
+      "meaning": "to repent; to regret",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "営む",
+      "reading": "いとなむ",
+      "meaning": "to run (a business); to operate",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "望む",
+      "reading": "のぞむ",
+      "meaning": "to look out over; to face",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "富む",
+      "reading": "とむ",
+      "meaning": "to be rich in; to abound in",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "歪む",
+      "reading": "ゆがむ",
+      "meaning": "to warp; to become distorted",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "滲む",
+      "reading": "にじむ",
+      "meaning": "to blur; to smudge; to ooze",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "縮む",
+      "reading": "ちぢむ",
+      "meaning": "to shrink",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "悄む",
+      "reading": "しょげむ",
+      "meaning": "to be dejected; to lose heart",
+      "type": "godan-verb"
+    }
+  ]
+}

@@ -5,7 +5,7 @@ import { renderCollectionsManager } from './apps/collections.js';
 import { renderData } from './apps/data.js';
 import { renderPlaceholderTool } from './apps/placeholder.js';
 import { renderKanjiStudyCard } from './apps/kanjiStudyCard.js';
-import { createDropdown } from './components/dropdown.js';
+import { createCollectionBrowserDropdown } from './components/collectionBrowser.js';
 
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
@@ -62,12 +62,10 @@ export function createAppShell({ store, onNavigate }) {
     const collections = store.getCollections();
     const activeId = store.getActiveCollectionId();
 
-    const collectionSelect = createDropdown({
-      items: collections.map(c => ({ value: c.metadata.id, label: c.metadata.name })),
-      value: activeId,
-      onChange: async (value) => {
+    const collectionSelect = createCollectionBrowserDropdown({
+      store,
+      onSelect: async (value) => {
         await store.setActiveCollectionId(value);
-        renderHeader();
         const currentRoute = getCurrentRoute();
         renderRoute(currentRoute);
       }
@@ -86,7 +84,7 @@ export function createAppShell({ store, onNavigate }) {
 
     // On mobile, use SK if collection name is long, otherwise show full brand name
     if (window.innerWidth <= 768) {
-      const activeCollection = collections.find(c => c.metadata.id === activeId);
+      const activeCollection = collections.find(c => c.key === activeId);
       const collectionName = activeCollection?.metadata?.name || '';
       
       if (collectionName.length > 20) {
@@ -100,7 +98,7 @@ export function createAppShell({ store, onNavigate }) {
 
     nav.innerHTML = '';
     // Show the Kanji Study link only when the active collection is Japanese
-    const activeCollection = store.getCollections().find(c => c.metadata.id === store.getActiveCollectionId());
+    const activeCollection = store.getCollections().find(c => c.key === store.getActiveCollectionId());
     const activeCategory = activeCollection?.metadata?.category || '';
 
     const links = [

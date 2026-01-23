@@ -69,6 +69,8 @@ export function renderKanjiStudyCard({ store }) {
   toggleBtn.type = 'button';
   toggleBtn.className = 'btn small';
   toggleBtn.textContent = 'Show Full';
+  // Active when default view mode is "full"
+  toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
 
   // Bold toggle button (cycles font weight)
   const boldBtn = document.createElement('button');
@@ -77,6 +79,7 @@ export function renderKanjiStudyCard({ store }) {
   boldBtn.textContent = 'B';
   boldBtn.title = `Font weight: ${currentFontWeight}`;
   boldBtn.style.fontWeight = currentFontWeight;
+  boldBtn.setAttribute('aria-pressed', String(currentFontWeight === 'bold'));
 
   // New: Auto-speak Kanji toggle button
   const autoSpeakBtn = document.createElement('button');
@@ -109,6 +112,7 @@ export function renderKanjiStudyCard({ store }) {
     if (savedUI.defaultViewMode) {
       defaultViewMode = savedUI.defaultViewMode;
       toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
+      toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
     }
     // Ensure the active viewMode matches the saved default so the initial render uses it
     viewMode = defaultViewMode;
@@ -118,6 +122,7 @@ export function renderKanjiStudyCard({ store }) {
   function updateBoldBtnVisual() {
     boldBtn.style.fontWeight = currentFontWeight;
     boldBtn.title = `Font weight: ${currentFontWeight}`;
+    boldBtn.setAttribute('aria-pressed', String(currentFontWeight === 'bold'));
   }
   // ensure visuals match initial state
   updateBoldBtnVisual();
@@ -366,6 +371,7 @@ export function renderKanjiStudyCard({ store }) {
   function toggleDefaultViewMode() {
     defaultViewMode = defaultViewMode === 'kanji-only' ? 'full' : 'kanji-only';
     toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
+    toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
     viewMode = defaultViewMode;
     render();
     saveUIState();

@@ -2,9 +2,9 @@
   "collections": [
     "japanese/jp_n5_kanji.json",
     "japanese/jp_n5_suru_nouns.json",
-    "japanese/jp_n5_verbs.json",
-    "japanese/jp_n5_verbs_mu.json",
-    "japanese/jp_n5_verbs_compound.json",
+    "japanese/verbs/jp_n5_verbs.json",
+    "japanese/verbs/jp_n5_verbs_mu.json",
+    "japanese/verbs/jp_n5_verbs_compound.json",
     "japanese/jp_linguistic_terms.json",
     "japanese/jp_linguistic_terms_supplement.json",
     "linguistics/synonymy.json",

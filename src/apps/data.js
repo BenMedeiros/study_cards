@@ -21,14 +21,11 @@ export function renderData({ store }) {
   const entries = Array.isArray(active.entries) ? active.entries : [];
 
   // Build table headers from fields
-  const headers = ['ID', ...fields.map(f => f.label || f.key)];
+  const headers = fields.map(f => f.label || f.key);
 
   // Build table rows from entries
   const rows = entries.map(entry => {
-    return [
-      entry.id ?? '',
-      ...fields.map(f => entry[f.key] ?? '')
-    ];
+    return fields.map(f => entry[f.key] ?? '');
   });
 
   const table = createTable({
@@ -43,7 +40,12 @@ export function renderData({ store }) {
     children: [table]
   });
 
-  root.append(dataCard);
+  // Show the full path to the currently displayed collection file.
+  const pathLabel = active?.key ? `Path: ${active.key}` : 'Path: (unknown)';
+  root.append(
+    el('div', { className: 'hint', text: pathLabel }),
+    dataCard
+  );
   
   return root;
 }

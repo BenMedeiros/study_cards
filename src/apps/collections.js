@@ -8,7 +8,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   const collections = store.getCollections();
 
   // Build table headers
-  const headers = ['Name', 'ID', 'Entries', 'Description'];
+  const headers = ['Name', 'Path', 'Entries', 'Description'];
 
   // Build table rows
   const rows = collections.map(c => {
@@ -16,8 +16,8 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     const entryCount = Array.isArray(c.entries) ? c.entries.length : 0;
     
     return [
-      meta.name ?? meta.id,
-      meta.id,
+      meta.name ?? c.key,
+      c.key,
       entryCount,
       meta.description ?? ''
     ];

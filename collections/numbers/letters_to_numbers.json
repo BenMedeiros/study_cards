@@ -1,36 +1,113 @@
 {
   "metadata": {
-    "id": "letters_to_numbers",
     "name": "Letters to Numbers",
     "description": "A=1, B=2, ... (v0 seed)",
     "version": 1
   },
   "entries": [
-    { "id": "A", "letter": "A", "number": 1 },
-    { "id": "B", "letter": "B", "number": 2 },
-    { "id": "C", "letter": "C", "number": 3 },
-    { "id": "D", "letter": "D", "number": 4 },
-    { "id": "E", "letter": "E", "number": 5 },
-    { "id": "F", "letter": "F", "number": 6 },
-    { "id": "G", "letter": "G", "number": 7 },
-    { "id": "H", "letter": "H", "number": 8 },
-    { "id": "I", "letter": "I", "number": 9 },
-    { "id": "J", "letter": "J", "number": 10 },
-    { "id": "K", "letter": "K", "number": 11 },
-    { "id": "L", "letter": "L", "number": 12 },
-    { "id": "M", "letter": "M", "number": 13 },
-    { "id": "N", "letter": "N", "number": 14 },
-    { "id": "O", "letter": "O", "number": 15 },
-    { "id": "P", "letter": "P", "number": 16 },
-    { "id": "Q", "letter": "Q", "number": 17 },
-    { "id": "R", "letter": "R", "number": 18 },
-    { "id": "S", "letter": "S", "number": 19 },
-    { "id": "T", "letter": "T", "number": 20 },
-    { "id": "U", "letter": "U", "number": 21 },
-    { "id": "V", "letter": "V", "number": 22 },
-    { "id": "W", "letter": "W", "number": 23 },
-    { "id": "X", "letter": "X", "number": 24 },
-    { "id": "Y", "letter": "Y", "number": 25 },
-    { "id": "Z", "letter": "Z", "number": 26 }
+    {
+      "letter": "A",
+      "number": 1
+    },
+    {
+      "letter": "B",
+      "number": 2
+    },
+    {
+      "letter": "C",
+      "number": 3
+    },
+    {
+      "letter": "D",
+      "number": 4
+    },
+    {
+      "letter": "E",
+      "number": 5
+    },
+    {
+      "letter": "F",
+      "number": 6
+    },
+    {
+      "letter": "G",
+      "number": 7
+    },
+    {
+      "letter": "H",
+      "number": 8
+    },
+    {
+      "letter": "I",
+      "number": 9
+    },
+    {
+      "letter": "J",
+      "number": 10
+    },
+    {
+      "letter": "K",
+      "number": 11
+    },
+    {
+      "letter": "L",
+      "number": 12
+    },
+    {
+      "letter": "M",
+      "number": 13
+    },
+    {
+      "letter": "N",
+      "number": 14
+    },
+    {
+      "letter": "O",
+      "number": 15
+    },
+    {
+      "letter": "P",
+      "number": 16
+    },
+    {
+      "letter": "Q",
+      "number": 17
+    },
+    {
+      "letter": "R",
+      "number": 18
+    },
+    {
+      "letter": "S",
+      "number": 19
+    },
+    {
+      "letter": "T",
+      "number": 20
+    },
+    {
+      "letter": "U",
+      "number": 21
+    },
+    {
+      "letter": "V",
+      "number": 22
+    },
+    {
+      "letter": "W",
+      "number": 23
+    },
+    {
+      "letter": "X",
+      "number": 24
+    },
+    {
+      "letter": "Y",
+      "number": 25
+    },
+    {
+      "letter": "Z",
+      "number": 26
+    }
   ]
 }

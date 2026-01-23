@@ -1,13 +1,11 @@
 {
   "metadata": {
-    "id": "greek_chthonic",
     "name": "Greek Chthonic Figures",
     "description": "Underworld and chthonic deities",
     "version": 1
   },
   "entries": [
     {
-      "id": "hades",
       "englishName": "Hades",
       "greekName": "ᾍδης",
       "greekPronunciation": "HAY-deez",
@@ -22,7 +20,6 @@
       "notes": "Ruler of the underworld and husband of Persephone; sometimes counted among the Olympians but primarily a chthonic (underworld) deity with distinct cults and attributes."
     },
     {
-      "id": "persephone",
       "englishName": "Persephone",
       "greekName": "Περσεφόνη",
       "greekPronunciation": "per-seh-FOH-nee",
@@ -37,7 +34,6 @@
       "notes": "Daughter of Demeter; her abduction by Hades explains seasonal cycles; central to Eleusinian rites."
     },
     {
-      "id": "hecate",
       "englishName": "Hecate",
       "greekName": "Ἑκάτη",
       "greekPronunciation": "heh-KAH-tee",
@@ -52,7 +48,6 @@
       "notes": "Liminal and chthonic goddess associated with magic and crossroads; later syncretized into various cults."
     },
     {
-      "id": "thanatos",
       "englishName": "Thanatos",
       "greekName": "Θάνατος",
       "greekPronunciation": "THAH-nah-tos",
@@ -67,7 +62,6 @@
       "notes": "Personification of death; brother of Hypnos; distinct from violent death personifications and from Hades."
     },
     {
-      "id": "hypnos",
       "englishName": "Hypnos",
       "greekName": "Ὕπνος",
       "greekPronunciation": "HIP-nos",
@@ -82,7 +76,6 @@
       "notes": "Brother of Thanatos; appears in Homeric epics and later poetic traditions."
     },
     {
-      "id": "erinyes",
       "englishName": "Erinyes",
       "greekName": "Ἐρινύες",
       "greekPronunciation": "eh-RIN-yeez",
@@ -97,7 +90,6 @@
       "notes": "Also called Furies; chthonic agents of moral retribution with strong cultic presence."
     },
     {
-      "id": "styx",
       "englishName": "Styx",
       "greekName": "Στύξ",
       "greekPronunciation": "STICKS",

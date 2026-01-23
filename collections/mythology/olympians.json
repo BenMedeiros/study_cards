@@ -1,13 +1,11 @@
 {
   "metadata": {
-    "id": "greek_olympians",
     "name": "Greek Olympians",
     "description": "Olympian deities",
     "version": 1
   },
   "entries": [
     {
-      "id": "zeus",
       "englishName": "Zeus",
       "greekName": "Ζεύς",
       "greekPronunciation": "ZEFS",
@@ -22,7 +20,6 @@
       "notes": "Leader of the Olympians; son of Cronus and Rhea; overthrew the Titans; central father-figure with many offspring and myth variants."
     },
     {
-      "id": "hera",
       "englishName": "Hera",
       "greekName": "Ἥρα",
       "greekPronunciation": "HEH-rah",
@@ -37,7 +34,6 @@
       "notes": "Sister and wife of Zeus; patron of marriage and familial order; appears in many myths as a jealous protector of marriages."
     },
     {
-      "id": "poseidon",
       "englishName": "Poseidon",
       "greekName": "Ποσειδῶν",
       "greekPronunciation": "poh-say-DOHN",
@@ -52,7 +48,6 @@
       "notes": "Brother of Zeus and Hades; associated strongly with horses and seismic activity; numerous local cults and epithets."
     },
     {
-      "id": "athena",
       "englishName": "Athena",
       "greekName": "Ἀθηνᾶ",
       "greekPronunciation": "ah-theh-NAH",
@@ -67,7 +62,6 @@
       "notes": "Born fully armed from Zeus's head in most traditions; patron of Athens and crafts; associated with civic wisdom rather than chaotic war."
     },
     {
-      "id": "apollo",
       "englishName": "Apollo",
       "greekName": "Ἀπόλλων",
       "greekPronunciation": "ah-POL-ohn",
@@ -82,7 +76,6 @@
       "notes": "Multi-domain deity; later classical sources often equate him with Helios (sun), though originally distinct; patron of prophecy (Delphi) and the arts."
     },
     {
-      "id": "artemis",
       "englishName": "Artemis",
       "greekName": "Ἄρτεμις",
       "greekPronunciation": "AR-teh-mis",
@@ -97,7 +90,6 @@
       "notes": "Twin sister of Apollo; virgin goddess associated with childbirth, wild spaces, and the moon (often linked with Selene)."
     },
     {
-      "id": "ares",
       "englishName": "Ares",
       "greekName": "Ἄρης",
       "greekPronunciation": "AH-rehs",
@@ -112,7 +104,6 @@
       "notes": "Represents the brutal, chaotic side of war; often unpopular among gods and mortals; famously paired with Aphrodite in myth."
     },
     {
-      "id": "aphrodite",
       "englishName": "Aphrodite",
       "greekName": "Ἀφροδίτη",
       "greekPronunciation": "af-roh-DYE-teh",
@@ -127,7 +118,6 @@
       "notes": "Two major origin stories: Hesiod describes her as born from sea-foam after Uranus's castration; other traditions (Homeric) present her as daughter of Zeus and Dione."
     },
     {
-      "id": "hephaestus",
       "englishName": "Hephaestus",
       "greekName": "Ἥφαιστος",
       "greekPronunciation": "heh-FYE-stos",
@@ -142,7 +132,6 @@
       "notes": "Divine smith; in some myths thrown from Olympus and crippled; associated with volcanoes and metalworking; husband or consort relationships vary by source."
     },
     {
-      "id": "hermes",
       "englishName": "Hermes",
       "greekName": "Ἑρμῆς",
       "greekPronunciation": "her-MAYZ",
@@ -157,7 +146,6 @@
       "notes": "Son of Zeus and Maia; messenger and psychopomp; trickster and patron of boundaries, travelers, and commerce."
     },
     {
-      "id": "demeter",
       "englishName": "Demeter",
       "greekName": "Δημήτηρ",
       "greekPronunciation": "deh-MAY-ter",
@@ -172,7 +160,6 @@
       "notes": "Mother of Persephone; her search for Persephone explains the seasons; central in the Eleusinian Mysteries."
     },
     {
-      "id": "dionysus",
       "englishName": "Dionysus",
       "greekName": "Διόνυσος",
       "greekPronunciation": "dye-oh-NYE-sus",
@@ -187,7 +174,6 @@
       "notes": "Often called 'twice-born' (son of Zeus and Semele); associated with ecstatic cults, theater, and the vine; origins and cult practices vary regionally."
     },
     {
-      "id": "hestia",
       "englishName": "Hestia",
       "greekName": "Ἑστία",
       "greekPronunciation": "hes-TEE-ah",

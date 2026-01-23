@@ -347,6 +347,11 @@ input[type="number"].button::-webkit-inner-spin-button {
   border-color: var(--accent);
 }
 
+/* Active Kanji header tool buttons (play/show-full/bold/auto-speak) */
+.kanji-header-tools .btn[aria-pressed="true"] {
+  border-color: rgba(255, 255, 255, 0.92);
+}
+
 /* Autoplay controls (grouped play + gear) */
 .btn-group {
   display: inline-flex;
@@ -655,6 +660,12 @@ select:hover {
 
 .custom-dropdown-option:hover {
   background: rgba(96, 165, 250, 0.15);
+}
+
+.custom-dropdown-option[data-kind="up"] {
+  color: var(--muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
 }
 
 .custom-dropdown-option.selected {

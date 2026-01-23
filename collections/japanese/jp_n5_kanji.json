@@ -1,98 +1,483 @@
 {
   "metadata": {
-    "id": "jp_n5_kanji",
     "name": "Japanese N5 Kanji",
     "description": "Single-kanji basics for N5. Each entry should be a single kanji, with its most basic kun'yomi (native Japanese reading) or on'yomi (Sino-Japanese reading). Do not include okurigana or full verb forms (e.g., use 'たべ' or 'しょく' for 食, not 'たべる').",
     "version": 1
   },
   "entries": [
-    { "id": "日", "kanji": "日", "reading": "ひ", "meaning": "sun; day", "type": "standalone-noun" },
-    { "id": "月", "kanji": "月", "reading": "つき", "meaning": "moon; month", "type": "standalone-noun" },
-    { "id": "人", "kanji": "人", "reading": "ひと", "meaning": "person", "type": "standalone-noun" },
-    { "id": "水", "kanji": "水", "reading": "みず", "meaning": "water", "type": "standalone-noun" },
-
-    { "id": "山", "kanji": "山", "reading": "やま", "meaning": "mountain", "type": "standalone-noun" },
-    { "id": "川", "kanji": "川", "reading": "かわ", "meaning": "river", "type": "standalone-noun" },
-    { "id": "木", "kanji": "木", "reading": "き", "meaning": "tree", "type": "standalone-noun" },
-    { "id": "林", "kanji": "林", "reading": "はやし", "meaning": "woods", "type": "standalone-noun" },
-    { "id": "森", "kanji": "森", "reading": "もり", "meaning": "forest", "type": "standalone-noun" },
-    { "id": "火", "kanji": "火", "reading": "ひ", "meaning": "fire", "type": "standalone-noun" },
-    { "id": "土", "kanji": "土", "reading": "つち", "meaning": "soil", "type": "standalone-noun" },
-    { "id": "金", "kanji": "金", "reading": "かね", "meaning": "money; gold", "type": "standalone-noun" },
-    { "id": "雨", "kanji": "雨", "reading": "あめ", "meaning": "rain", "type": "standalone-noun" },
-    { "id": "空", "kanji": "空", "reading": "そら", "meaning": "sky", "type": "standalone-noun" },
-    { "id": "天", "kanji": "天", "reading": "てん", "meaning": "heaven", "type": "standalone-noun" },
-    { "id": "気", "kanji": "気", "reading": "き", "meaning": "spirit; mood", "type": "standalone-noun" },
-
-    { "id": "口", "kanji": "口", "reading": "くち", "meaning": "mouth", "type": "standalone-noun" },
-    { "id": "目", "kanji": "目", "reading": "め", "meaning": "eye", "type": "standalone-noun" },
-    { "id": "耳", "kanji": "耳", "reading": "みみ", "meaning": "ear", "type": "standalone-noun" },
-    { "id": "手", "kanji": "手", "reading": "て", "meaning": "hand", "type": "standalone-noun" },
-    { "id": "足", "kanji": "足", "reading": "あし", "meaning": "foot; leg", "type": "standalone-noun" },
-    { "id": "首", "kanji": "首", "reading": "くび", "meaning": "neck", "type": "standalone-noun" },
-    { "id": "心", "kanji": "心", "reading": "こころ", "meaning": "heart; mind", "type": "standalone-noun" },
-    { "id": "声", "kanji": "声", "reading": "こえ", "meaning": "voice", "type": "standalone-noun" },
-
-    { "id": "子", "kanji": "子", "reading": "こ", "meaning": "child", "type": "standalone-noun" },
-    { "id": "女", "kanji": "女", "reading": "おんな", "meaning": "woman", "type": "standalone-noun" },
-    { "id": "男", "kanji": "男", "reading": "おとこ", "meaning": "man", "type": "standalone-noun" },
-    { "id": "母", "kanji": "母", "reading": "はは", "meaning": "mother", "type": "standalone-noun" },
-    { "id": "父", "kanji": "父", "reading": "ちち", "meaning": "father", "type": "standalone-noun" },
-    { "id": "友", "kanji": "友", "reading": "とも", "meaning": "friend", "type": "standalone-noun" },
-
-    { "id": "上", "kanji": "上", "reading": "うえ", "meaning": "up; above", "type": "standalone-noun" },
-    { "id": "下", "kanji": "下", "reading": "した", "meaning": "down; below", "type": "standalone-noun" },
-    { "id": "中", "kanji": "中", "reading": "なか", "meaning": "inside; middle", "type": "standalone-noun" },
-    { "id": "外", "kanji": "外", "reading": "そと", "meaning": "outside", "type": "standalone-noun" },
-    { "id": "右", "kanji": "右", "reading": "みぎ", "meaning": "right", "type": "standalone-noun" },
-    { "id": "左", "kanji": "左", "reading": "ひだり", "meaning": "left", "type": "standalone-noun" },
-    { "id": "前", "kanji": "前", "reading": "まえ", "meaning": "front; before", "type": "standalone-noun" },
-    { "id": "後", "kanji": "後", "reading": "うしろ", "meaning": "behind; after", "type": "standalone-noun" },
-    { "id": "東", "kanji": "東", "reading": "ひがし", "meaning": "east", "type": "standalone-noun" },
-    { "id": "西", "kanji": "西", "reading": "にし", "meaning": "west", "type": "standalone-noun" },
-    { "id": "南", "kanji": "南", "reading": "みなみ", "meaning": "south", "type": "standalone-noun" },
-    { "id": "北", "kanji": "北", "reading": "きた", "meaning": "north", "type": "standalone-noun" },
-
-    { "id": "一", "kanji": "一", "reading": "いち", "meaning": "one", "type": "numeral" },
-    { "id": "二", "kanji": "二", "reading": "に", "meaning": "two", "type": "numeral" },
-    { "id": "三", "kanji": "三", "reading": "さん", "meaning": "three", "type": "numeral" },
-    { "id": "四", "kanji": "四", "reading": "よん", "meaning": "four", "type": "numeral" },
-    { "id": "五", "kanji": "五", "reading": "ご", "meaning": "five", "type": "numeral" },
-    { "id": "六", "kanji": "六", "reading": "ろく", "meaning": "six", "type": "numeral" },
-    { "id": "七", "kanji": "七", "reading": "なな", "meaning": "seven", "type": "numeral" },
-    { "id": "八", "kanji": "八", "reading": "はち", "meaning": "eight", "type": "numeral" },
-    { "id": "九", "kanji": "九", "reading": "きゅう", "meaning": "nine", "type": "numeral" },
-    { "id": "十", "kanji": "十", "reading": "じゅう", "meaning": "ten", "type": "numeral" },
-
-    { "id": "犬", "kanji": "犬", "reading": "いぬ", "meaning": "dog", "type": "standalone-noun" },
-    { "id": "猫", "kanji": "猫", "reading": "ねこ", "meaning": "cat", "type": "standalone-noun" },
-    { "id": "魚", "kanji": "魚", "reading": "さかな", "meaning": "fish", "type": "standalone-noun" },
-    { "id": "鳥", "kanji": "鳥", "reading": "とり", "meaning": "bird", "type": "standalone-noun" },
-
-    { "id": "本", "kanji": "本", "reading": "ほん", "meaning": "book", "type": "standalone-noun" },
-    { "id": "名", "kanji": "名", "reading": "な", "meaning": "name", "type": "standalone-noun" },
-    { "id": "学", "kanji": "学", "reading": "がく", "meaning": "study; learning", "type": "compound-morpheme" },
-    { "id": "先", "kanji": "先", "reading": "さき", "meaning": "ahead; previous", "type": "standalone-noun" },
-    { "id": "生", "kanji": "生", "reading": "せい", "meaning": "life; birth", "type": "standalone-noun" },
-    { "id": "年", "kanji": "年", "reading": "とし", "meaning": "year", "type": "standalone-noun" },
-    { "id": "時", "kanji": "時", "reading": "とき", "meaning": "time", "type": "standalone-noun" }
-      ,
-      { "id": "車", "kanji": "車", "reading": "くるま", "meaning": "car; vehicle", "type": "standalone-noun" },
-      { "id": "電", "kanji": "電", "reading": "でん", "meaning": "electricity", "type": "compound-morpheme" },
-      { "id": "校", "kanji": "校", "reading": "こう", "meaning": "school", "type": "compound-morpheme" },
-      { "id": "午", "kanji": "午", "reading": "ご", "meaning": "noon", "type": "standalone-noun" },
-      { "id": "半", "kanji": "半", "reading": "はん", "meaning": "half", "type": "standalone-noun" },
-      { "id": "毎", "kanji": "毎", "reading": "まい", "meaning": "every", "type": "compound-morpheme" },
-      { "id": "何", "kanji": "何", "reading": "なに", "meaning": "what", "type": "standalone-noun" },
-      { "id": "曜", "kanji": "曜", "reading": "よう", "meaning": "day of the week", "type": "compound-morpheme" },
-      { "id": "書", "kanji": "書", "reading": "しょ", "meaning": "write; book", "type": "compound-morpheme" },
-      { "id": "聞", "kanji": "聞", "reading": "き", "meaning": "hear; ask", "type": "verb-stem" },
-      { "id": "食", "kanji": "食", "reading": "たべ", "meaning": "eat", "type": "verb-stem" },
-      { "id": "飲", "kanji": "飲", "reading": "の", "meaning": "drink", "type": "verb-stem" },
-      { "id": "話", "kanji": "話", "reading": "はなし", "meaning": "talk; speak", "type": "standalone-noun" },
-      { "id": "語", "kanji": "語", "reading": "ご", "meaning": "language; word", "type": "compound-morpheme" },
-      { "id": "買", "kanji": "買", "reading": "か", "meaning": "buy", "type": "verb-stem" },
-      { "id": "会", "kanji": "会", "reading": "かい", "meaning": "meet", "type": "compound-morpheme" },
-      { "id": "休", "kanji": "休", "reading": "やす", "meaning": "rest", "type": "standalone-noun" }
+    {
+      "kanji": "月",
+      "reading": "つき",
+      "meaning": "moon; month",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "人",
+      "reading": "ひと",
+      "meaning": "person",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "水",
+      "reading": "みず",
+      "meaning": "water",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "山",
+      "reading": "やま",
+      "meaning": "mountain",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "川",
+      "reading": "かわ",
+      "meaning": "river",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "木",
+      "reading": "き",
+      "meaning": "tree",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "林",
+      "reading": "はやし",
+      "meaning": "woods",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "森",
+      "reading": "もり",
+      "meaning": "forest",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "火",
+      "reading": "ひ",
+      "meaning": "fire",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "土",
+      "reading": "つち",
+      "meaning": "soil",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "金",
+      "reading": "かね",
+      "meaning": "money; gold",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "雨",
+      "reading": "あめ",
+      "meaning": "rain",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "空",
+      "reading": "そら",
+      "meaning": "sky",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "天",
+      "reading": "てん",
+      "meaning": "heaven",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "気",
+      "reading": "き",
+      "meaning": "spirit; mood",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "口",
+      "reading": "くち",
+      "meaning": "mouth",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "目",
+      "reading": "め",
+      "meaning": "eye",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "耳",
+      "reading": "みみ",
+      "meaning": "ear",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "手",
+      "reading": "て",
+      "meaning": "hand",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "足",
+      "reading": "あし",
+      "meaning": "foot; leg",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "首",
+      "reading": "くび",
+      "meaning": "neck",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "心",
+      "reading": "こころ",
+      "meaning": "heart; mind",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "声",
+      "reading": "こえ",
+      "meaning": "voice",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "子",
+      "reading": "こ",
+      "meaning": "child",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "女",
+      "reading": "おんな",
+      "meaning": "woman",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "男",
+      "reading": "おとこ",
+      "meaning": "man",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "母",
+      "reading": "はは",
+      "meaning": "mother",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "父",
+      "reading": "ちち",
+      "meaning": "father",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "友",
+      "reading": "とも",
+      "meaning": "friend",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "上",
+      "reading": "うえ",
+      "meaning": "up; above",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "下",
+      "reading": "した",
+      "meaning": "down; below",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "中",
+      "reading": "なか",
+      "meaning": "inside; middle",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "外",
+      "reading": "そと",
+      "meaning": "outside",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "右",
+      "reading": "みぎ",
+      "meaning": "right",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "左",
+      "reading": "ひだり",
+      "meaning": "left",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "前",
+      "reading": "まえ",
+      "meaning": "front; before",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "後",
+      "reading": "うしろ",
+      "meaning": "behind; after",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "東",
+      "reading": "ひがし",
+      "meaning": "east",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "西",
+      "reading": "にし",
+      "meaning": "west",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "南",
+      "reading": "みなみ",
+      "meaning": "south",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "北",
+      "reading": "きた",
+      "meaning": "north",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "一",
+      "reading": "いち",
+      "meaning": "one",
+      "type": "numeral"
+    },
+    {
+      "kanji": "二",
+      "reading": "に",
+      "meaning": "two",
+      "type": "numeral"
+    },
+    {
+      "kanji": "三",
+      "reading": "さん",
+      "meaning": "three",
+      "type": "numeral"
+    },
+    {
+      "kanji": "四",
+      "reading": "よん",
+      "meaning": "four",
+      "type": "numeral"
+    },
+    {
+      "kanji": "五",
+      "reading": "ご",
+      "meaning": "five",
+      "type": "numeral"
+    },
+    {
+      "kanji": "六",
+      "reading": "ろく",
+      "meaning": "six",
+      "type": "numeral"
+    },
+    {
+      "kanji": "七",
+      "reading": "なな",
+      "meaning": "seven",
+      "type": "numeral"
+    },
+    {
+      "kanji": "八",
+      "reading": "はち",
+      "meaning": "eight",
+      "type": "numeral"
+    },
+    {
+      "kanji": "九",
+      "reading": "きゅう",
+      "meaning": "nine",
+      "type": "numeral"
+    },
+    {
+      "kanji": "十",
+      "reading": "じゅう",
+      "meaning": "ten",
+      "type": "numeral"
+    },
+    {
+      "kanji": "犬",
+      "reading": "いぬ",
+      "meaning": "dog",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "猫",
+      "reading": "ねこ",
+      "meaning": "cat",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "魚",
+      "reading": "さかな",
+      "meaning": "fish",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "鳥",
+      "reading": "とり",
+      "meaning": "bird",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "本",
+      "reading": "ほん",
+      "meaning": "book",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "名",
+      "reading": "な",
+      "meaning": "name",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "学",
+      "reading": "がく",
+      "meaning": "study; learning",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "先",
+      "reading": "さき",
+      "meaning": "ahead; previous",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "生",
+      "reading": "せい",
+      "meaning": "life; birth",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "年",
+      "reading": "とし",
+      "meaning": "year",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "時",
+      "reading": "とき",
+      "meaning": "time",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "車",
+      "reading": "くるま",
+      "meaning": "car; vehicle",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "電",
+      "reading": "でん",
+      "meaning": "electricity",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "校",
+      "reading": "こう",
+      "meaning": "school",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "午",
+      "reading": "ご",
+      "meaning": "noon",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "半",
+      "reading": "はん",
+      "meaning": "half",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "毎",
+      "reading": "まい",
+      "meaning": "every",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "何",
+      "reading": "なに",
+      "meaning": "what",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "曜",
+      "reading": "よう",
+      "meaning": "day of the week",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "書",
+      "reading": "しょ",
+      "meaning": "write; book",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "聞",
+      "reading": "き",
+      "meaning": "hear; ask",
+      "type": "verb-stem"
+    },
+    {
+      "kanji": "食",
+      "reading": "たべ",
+      "meaning": "eat",
+      "type": "verb-stem"
+    },
+    {
+      "kanji": "飲",
+      "reading": "の",
+      "meaning": "drink",
+      "type": "verb-stem"
+    },
+    {
+      "kanji": "話",
+      "reading": "はなし",
+      "meaning": "talk; speak",
+      "type": "standalone-noun"
+    },
+    {
+      "kanji": "語",
+      "reading": "ご",
+      "meaning": "language; word",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "買",
+      "reading": "か",
+      "meaning": "buy",
+      "type": "verb-stem"
+    },
+    {
+      "kanji": "会",
+      "reading": "かい",
+      "meaning": "meet",
+      "type": "compound-morpheme"
+    },
+    {
+      "kanji": "休",
+      "reading": "やす",
+      "meaning": "rest",
+      "type": "standalone-noun"
+    }
   ]
 }

@@ -1,13 +1,11 @@
 {
   "metadata": {
-    "id": "greek_primordials",
     "name": "Greek Primordials",
     "description": "Primordial beings from Greek cosmogony",
     "version": 1
   },
   "entries": [
     {
-      "id": "gaia",
       "englishName": "Gaia",
       "greekName": "Γαῖα",
       "greekPronunciation": "GUY-uh",
@@ -22,7 +20,6 @@
       "notes": "Primordial mother goddess; birthed the Titans and many creatures; central in cosmogony myths."
     },
     {
-      "id": "uranus",
       "englishName": "Uranus",
       "greekName": "Οὐρανός",
       "greekPronunciation": "yoo-RAH-nos",
@@ -37,7 +34,6 @@
       "notes": "Consort of Gaia; father of the Titans; overthrown by his son Cronus."
     },
     {
-      "id": "nyx",
       "englishName": "Nyx",
       "greekName": "Νύξ",
       "greekPronunciation": "niks",
@@ -52,7 +48,6 @@
       "notes": "Powerful primordial deity; mother of many personifications (Hypnos, Thanatos, etc.); worshiped in mysterious, often chthonic rites."
     },
     {
-      "id": "chaos",
       "englishName": "Chaos",
       "greekName": "Χάος",
       "greekPronunciation": "KAY-os",
@@ -67,7 +62,6 @@
       "notes": "The original gap or void in Hesiod's cosmogony; parent of some early forces in the cosmos."
     },
     {
-      "id": "tartarus",
       "englishName": "Tartarus",
       "greekName": "Τάρταρος",
       "greekPronunciation": "TAR-tar-os",
@@ -82,7 +76,6 @@
       "notes": "Both a place and a primordial power; used as the deepest part of the underworld and a prison for enemies of the gods."
     },
     {
-      "id": "erebus",
       "englishName": "Erebus",
       "greekName": "Ἔρεβος",
       "greekPronunciation": "EH-reh-bos",
@@ -97,7 +90,6 @@
       "notes": "Primordial embodiment of darkness, often paired with Nyx; parent of several chthonic personifications."
     },
     {
-      "id": "aether",
       "englishName": "Aether",
       "greekName": "Αἰθήρ",
       "greekPronunciation": "AY-thur",
@@ -112,7 +104,6 @@
       "notes": "Represents the bright, upper atmosphere and is parent to other celestial personifications."
     },
     {
-      "id": "hemera",
       "englishName": "Hemera",
       "greekName": "Ἡμέρα",
       "greekPronunciation": "HEH-meh-rah",
@@ -127,7 +118,6 @@
       "notes": "Daughter of Erebus and Nyx in some accounts; alternates with Nyx in cosmogonic roles."
     },
     {
-      "id": "eros",
       "englishName": "Eros",
       "greekName": "Ἔρως",
       "greekPronunciation": "EH-ros",
