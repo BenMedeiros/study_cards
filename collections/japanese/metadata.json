@@ -24,6 +24,7 @@
       "label": "Type",
       "jp_label": "種類",
       "type": "enum",
+      "description": "How to choose: use 'standalone-noun' when the kanji can appear as a standalone word without okurigana. If it cannot stand alone but commonly appears as a verb stem (requires okurigana), use 'verb-stem'. Otherwise use 'compound-morpheme' for bound/on-yomi uses in compounds. Other values cover adjectives, particles, counters, etc.",
       "values": [
         "noun",
         "standalone-noun",
