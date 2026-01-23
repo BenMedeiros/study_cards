@@ -8,6 +8,7 @@
     "japanese/jp_linguistic_terms.json",
     "japanese/jp_linguistic_terms_supplement.json",
     "japanese/jp_pokemon_roots.json",
+    "linguistics/synonymy.json",
     "numbers/letters_to_numbers.json",
     "mythology/chthonic.json",
     "mythology/primordials.json",

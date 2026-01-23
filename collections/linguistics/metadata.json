@@ -1,0 +1,38 @@
+{
+  "category": "linguistics",
+  "commonFields": [
+    {
+      "key": "term",
+      "label": "Term",
+      "jp_label": "用語",
+      "type": "string"
+    },
+    {
+      "key": "primary_field",
+      "label": "Primary Field",
+      "jp_label": "主要分野",
+      "type": "string",
+      "description": "Broad discipline or area (e.g., Linguistics, Computational linguistics)."
+    },
+    {
+      "key": "subfield",
+      "label": "Subfield",
+      "jp_label": "サブ分野",
+      "type": "string",
+      "description": "Specific subfield or topic (e.g., Semantics, Pragmatics)."
+    },
+    {
+      "key": "definition",
+      "label": "Definition",
+      "jp_label": "定義",
+      "type": "string"
+    },
+    {
+      "key": "compressed_definition",
+      "label": "Compressed Definition",
+      "jp_label": "圧縮定義",
+      "type": "string",
+      "description": "A concise version of the definition for quick recall."
+    }
+  ]
+}
