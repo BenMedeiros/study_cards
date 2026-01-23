@@ -38,6 +38,22 @@
       "type": "string"
     },
     {
+      "key": "classification",
+      "label": "Classification",
+      "jp_label": "クラス",
+      "type": "enum",
+      "description": "Classification such as Olympian, Titan, Primordial, Chthonic, etc.",
+      "values": [
+        "Olympian",
+        "Titan",
+        "Primordial",
+        "Chthonic",
+        "Personification",
+        "Hero",
+        "Other"
+      ]
+    },
+    {
       "key": "godOf",
       "label": "God Of",
       "jp_label": "担当領域",
@@ -59,6 +75,12 @@
       "key": "source",
       "label": "Source",
       "jp_label": "出典",
+      "type": "string"
+    },
+    {
+      "key": "notes",
+      "label": "Notes",
+      "jp_label": "備考",
       "type": "string"
     }
   ]
