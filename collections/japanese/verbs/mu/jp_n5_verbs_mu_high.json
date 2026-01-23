@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "name": "MU-Ending Godan Verbs (High Frequency)",
+    "description": "10 high-frequency Japanese godan verbs ending in む (mu).",
+    "version": 1
+  },
+  "entries": [
+    {
+      "kanji": "飲む",
+      "reading": "のむ",
+      "meaning": "to drink",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "読む",
+      "reading": "よむ",
+      "meaning": "to read",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "休む",
+      "reading": "やすむ",
+      "meaning": "to rest; to be absent",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "住む",
+      "reading": "すむ",
+      "meaning": "to live; to reside",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "頼む",
+      "reading": "たのむ",
+      "meaning": "to request; to ask",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "包む",
+      "reading": "つつむ",
+      "meaning": "to wrap; to cover",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "掴む",
+      "reading": "つかむ",
+      "meaning": "to grasp; to seize",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "組む",
+      "reading": "くむ",
+      "meaning": "to assemble; to pair; to cross arms",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "踏む",
+      "reading": "ふむ",
+      "meaning": "to step on",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "悩む",
+      "reading": "なやむ",
+      "meaning": "to worry; to be troubled",
+      "type": "godan-verb"
+    }
+  ]
+}

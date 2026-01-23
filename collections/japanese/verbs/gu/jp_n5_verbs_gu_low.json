@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "name": "GU-Ending Godan Verbs (Next 10)",
+    "description": "10 additional Japanese godan verbs ending in ぐ (gu).",
+    "version": 1
+  },
+  "entries": [
+    {
+      "kanji": "嗅ぐ",
+      "reading": "かぐ",
+      "meaning": "to smell; to sniff",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "継ぐ",
+      "reading": "つぐ",
+      "meaning": "to succeed; to inherit",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "塞ぐ",
+      "reading": "ふさぐ",
+      "meaning": "to block; to close up",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "担ぐ",
+      "reading": "かつぐ",
+      "meaning": "to shoulder; to carry",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "剥ぐ",
+      "reading": "はぐ",
+      "meaning": "to peel off",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "仰ぐ",
+      "reading": "あおぐ",
+      "meaning": "to look up (to); to revere",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "漕ぐ",
+      "reading": "こぐ",
+      "meaning": "to row; to pedal",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "貢ぐ",
+      "reading": "みつぐ",
+      "meaning": "to contribute; to support",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "紡ぐ",
+      "reading": "つむぐ",
+      "meaning": "to spin (thread); to weave; to build (a story)",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "削ぐ",
+      "reading": "そぐ",
+      "meaning": "to shave off; to pare down",
+      "type": "godan-verb"
+    }
+  ]
+}

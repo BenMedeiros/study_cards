@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "name": "GU-Ending Godan Verbs (Top 10)",
+    "description": "10 high-usage Japanese godan verbs ending in ぐ (gu).",
+    "version": 1
+  },
+  "entries": [
+    {
+      "kanji": "泳ぐ",
+      "reading": "およぐ",
+      "meaning": "to swim",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "急ぐ",
+      "reading": "いそぐ",
+      "meaning": "to hurry",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "脱ぐ",
+      "reading": "ぬぐ",
+      "meaning": "to take off (clothes)",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "防ぐ",
+      "reading": "ふせぐ",
+      "meaning": "to prevent; to defend",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "稼ぐ",
+      "reading": "かせぐ",
+      "meaning": "to earn (money)",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "騒ぐ",
+      "reading": "さわぐ",
+      "meaning": "to make noise; to make a fuss",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "繋ぐ",
+      "reading": "つなぐ",
+      "meaning": "to connect; to link",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "注ぐ",
+      "reading": "そそぐ",
+      "meaning": "to pour; to concentrate (effort)",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "研ぐ",
+      "reading": "とぐ",
+      "meaning": "to sharpen; to polish",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "濯ぐ",
+      "reading": "すすぐ",
+      "meaning": "to rinse",
+      "type": "godan-verb"
+    }
+  ]
+}

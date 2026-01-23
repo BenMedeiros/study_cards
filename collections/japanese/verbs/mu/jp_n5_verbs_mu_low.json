@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "name": "MU-Ending Godan Verbs (Low Frequency)",
+    "description": "10 lower-frequency Japanese godan verbs ending in む (mu).",
+    "version": 1
+  },
+  "entries": [
+    {
+      "kanji": "悔やむ",
+      "reading": "くやむ",
+      "meaning": "to regret",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "悼む",
+      "reading": "いたむ",
+      "meaning": "to mourn",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "噤む",
+      "reading": "つぐむ",
+      "meaning": "to shut one’s mouth",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "悔む",
+      "reading": "くやむ",
+      "meaning": "to repent; to regret",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "望む",
+      "reading": "のぞむ",
+      "meaning": "to look out over; to face",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "富む",
+      "reading": "とむ",
+      "meaning": "to be rich in; to abound in",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "歪む",
+      "reading": "ゆがむ",
+      "meaning": "to warp; to become distorted",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "滲む",
+      "reading": "にじむ",
+      "meaning": "to blur; to smudge; to ooze",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "縮む",
+      "reading": "ちぢむ",
+      "meaning": "to shrink",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "悄む",
+      "reading": "しょげむ",
+      "meaning": "to be dejected; to lose heart",
+      "type": "godan-verb"
+    }
+  ]
+}

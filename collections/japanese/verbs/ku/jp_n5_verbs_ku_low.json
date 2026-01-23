@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "name": "KU-Ending Godan Verbs (Next 10)",
+    "description": "10 additional Japanese godan verbs ending in く (ku).",
+    "version": 1
+  },
+  "entries": [
+    {
+      "kanji": "働く",
+      "reading": "はたらく",
+      "meaning": "to work",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "届く",
+      "reading": "とどく",
+      "meaning": "to reach; to be delivered",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "泣く",
+      "reading": "なく",
+      "meaning": "to cry",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "焼く",
+      "reading": "やく",
+      "meaning": "to bake; to grill; to burn",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "叩く",
+      "reading": "たたく",
+      "meaning": "to hit; to strike",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "解く",
+      "reading": "とく",
+      "meaning": "to solve; to untie",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "効く",
+      "reading": "きく",
+      "meaning": "to be effective",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "磨く",
+      "reading": "みがく",
+      "meaning": "to polish; to brush",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "咲く",
+      "reading": "さく",
+      "meaning": "to bloom",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "抱く",
+      "reading": "だく",
+      "meaning": "to hug; to hold",
+      "type": "godan-verb"
+    }
+  ]
+}

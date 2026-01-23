@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "name": "KU-Ending Godan Verbs (Top 10)",
+    "description": "10 high-usage Japanese godan verbs ending in く (ku).",
+    "version": 1
+  },
+  "entries": [
+    {
+      "kanji": "行く",
+      "reading": "いく",
+      "meaning": "to go",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "書く",
+      "reading": "かく",
+      "meaning": "to write",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "聞く",
+      "reading": "きく",
+      "meaning": "to listen; to ask",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "歩く",
+      "reading": "あるく",
+      "meaning": "to walk",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "開く",
+      "reading": "あく",
+      "meaning": "to open (intransitive)",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "開く",
+      "reading": "ひらく",
+      "meaning": "to open; to hold (an event)",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "置く",
+      "reading": "おく",
+      "meaning": "to put; to place",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "着く",
+      "reading": "つく",
+      "meaning": "to arrive",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "付く",
+      "reading": "つく",
+      "meaning": "to be attached; to stick",
+      "type": "godan-verb"
+    },
+    {
+      "kanji": "続く",
+      "reading": "つづく",
+      "meaning": "to continue",
+      "type": "godan-verb"
+    }
+  ]
+}
