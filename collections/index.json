@@ -1,4 +1,11 @@
 {
+  "folderMetadata": {
+    "japanese": "japanese/_metadata.json",
+    "linguistics": "linguistics/_metadata.json",
+    "numbers": "numbers/_metadata.json",
+    "mythology": "mythology/_metadata.json",
+    "pokemon": "pokemon/_metadata.json"
+  },
   "collections": [
     "japanese/jp_n5_kanji.json",
     "japanese/jp_n5_suru_nouns.json",

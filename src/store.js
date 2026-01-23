@@ -81,15 +81,69 @@ export function createStore() {
       .trim();
   }
 
-  async function tryLoadFolderMetadata(folderPath) {
-    const folder = normalizeFolderPath(folderPath);
-    const base = folder ? `./collections/${folder}` : './collections';
+  function normalizeIndexRelativePath(p) {
+    let s = String(p || '').trim();
+    if (!s) return '';
+    s = s.replace(/^\.\//, '');
+    s = s.replace(/^collections\//, '');
+    return s;
+  }
 
-    // Prefer `_metadata.json` so it sorts first in folders.
+  function buildFolderMetadataMap(folderMetadata) {
+    // folderMetadata can be:
+    // - { "japanese": "japanese/_metadata.json", "numbers": "_metadata.json", ... }
+    // Keys are folder paths relative to ./collections ("" means root).
+    // Values can be relative paths (with or without the folder prefix).
+    if (!folderMetadata || typeof folderMetadata !== 'object') return null;
+
+    const map = new Map();
+    for (const [rawFolder, rawFile] of Object.entries(folderMetadata)) {
+      const folder = normalizeFolderPath(rawFolder);
+      let fileRel = normalizeIndexRelativePath(rawFile);
+      if (!fileRel) continue;
+
+      // If the value is just a filename (e.g. "_metadata.json"), interpret it as inside the folder.
+      if (!fileRel.includes('/')) {
+        fileRel = folder ? `${folder}/${fileRel}` : fileRel;
+      }
+
+      map.set(folder, fileRel);
+    }
+
+    return map;
+  }
+
+  async function tryLoadFolderMetadata(folderPath, folderMetadataMap) {
+    const folder = normalizeFolderPath(folderPath);
+    // If index provides an explicit mapping, only load what it declares (no guesswork / no 404 probing).
+    if (folderMetadataMap instanceof Map) {
+      const rel = folderMetadataMap.get(folder);
+      if (!rel) return null;
+
+      const metadataUrl = `./collections/${rel}`;
+      try {
+        const res = await fetch(metadataUrl, { cache: 'no-store' });
+        if (!res.ok) return null;
+        const text = await res.text();
+        if (!text) return null;
+        return JSON.parse(text);
+      } catch (err) {
+        console.warn(`Failed to load folder metadata at ${metadataUrl}: ${err.message}`);
+        return null;
+      }
+    }
+
+    // Fallback behavior (legacy): probe for `_metadata.json` then `metadata.json`.
+    const base = folder ? `./collections/${folder}` : './collections';
     const candidates = [`${base}/_metadata.json`, `${base}/metadata.json`];
 
     for (const metadataUrl of candidates) {
-      const res = await fetch(metadataUrl, { cache: 'no-store' });
+      let res;
+      try {
+        res = await fetch(metadataUrl, { cache: 'no-store' });
+      } catch (err) {
+        continue;
+      }
       if (!res.ok) continue;
       try {
         const text = await res.text();
@@ -104,11 +158,11 @@ export function createStore() {
     return null;
   }
 
-  async function loadInheritedFolderMetadata(folderPath, cache) {
+  async function loadInheritedFolderMetadata(folderPath, cache, folderMetadataMap) {
     const folder = normalizeFolderPath(folderPath);
     if (folder in cache) return cache[folder];
 
-    const direct = await tryLoadFolderMetadata(folder);
+    const direct = await tryLoadFolderMetadata(folder, folderMetadataMap);
     if (direct) {
       cache[folder] = direct;
       return direct;
@@ -120,7 +174,7 @@ export function createStore() {
       return null;
     }
 
-    const inherited = folder ? await loadInheritedFolderMetadata(parent, cache) : null;
+    const inherited = folder ? await loadInheritedFolderMetadata(parent, cache, folderMetadataMap) : null;
     cache[folder] = inherited;
     return inherited;
   }
@@ -227,6 +281,9 @@ export function createStore() {
     }
     const paths = Array.isArray(index?.collections) ? index.collections : [];
 
+    // Optional: explicit folder metadata location map to avoid probing missing files.
+    const folderMetadataMap = buildFolderMetadataMap(index?.folderMetadata);
+
     // Build a folder tree for browsing (independent of JSON validity).
     state.collectionTree = buildCollectionTreeFromPaths(paths);
 
@@ -259,7 +316,7 @@ export function createStore() {
 
       // Apply inherited folder metadata (nearest `_metadata.json` up the folder chain)
       const folderPath = dirname(relPath);
-      const folderMetadata = (await loadInheritedFolderMetadata(folderPath, metadataCache)) || { commonFields: [], category: folderPath.split('/')[0] || '' };
+      const folderMetadata = (await loadInheritedFolderMetadata(folderPath, metadataCache, folderMetadataMap)) || { commonFields: [], category: folderPath.split('/')[0] || '' };
       data = mergeMetadata(data, folderMetadata);
 
       // Ensure required bits exist, and avoid relying on metadata.id.
