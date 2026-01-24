@@ -122,7 +122,7 @@ export function createStore() {
 
       const metadataUrl = `./collections/${rel}`;
       try {
-        const res = await fetch(metadataUrl, { cache: 'no-store' });
+        const res = await fetch(metadataUrl);
         if (!res.ok) return null;
         const text = await res.text();
         if (!text) return null;
@@ -140,7 +140,7 @@ export function createStore() {
     for (const metadataUrl of candidates) {
       let res;
       try {
-        res = await fetch(metadataUrl, { cache: 'no-store' });
+        res = await fetch(metadataUrl);
       } catch (err) {
         continue;
       }
@@ -269,7 +269,7 @@ export function createStore() {
   }
 
   async function loadSeedCollections() {
-    const indexRes = await fetch('./collections/index.json', { cache: 'no-store' });
+    const indexRes = await fetch('./collections/index.json');
     if (!indexRes.ok) throw new Error(`Failed to load collections index (status ${indexRes.status})`);
     let index;
     try {
@@ -293,7 +293,7 @@ export function createStore() {
     const loaded = [];
     for (const relPath of paths) {
       const url = `./collections/${relPath}`;
-      const res = await fetch(url, { cache: 'no-store' });
+      const res = await fetch(url);
       if (!res.ok) {
         console.warn(`Failed to load collection: ${relPath}`);
         continue;

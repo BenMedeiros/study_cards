@@ -11,7 +11,7 @@ export async function detectBackend() {
   const timeout = setTimeout(() => controller.abort(), 600);
 
   try {
-    const res = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+    const res = await fetch(url, { signal: controller.signal });
     if (!res.ok) return { connected: false, label: 'Backend: not connected' };
     const json = await res.json().catch(() => null);
     const mode = json?.mode ?? 'local';
