@@ -393,7 +393,7 @@ input[type="number"].button::-webkit-inner-spin-button {
 
 /* Smaller overlay on mobile */
 @media (max-width: 640px) {
-  .autoplay-overlay { flex-direction: column; min-width: 18rem; }
+  .autoplay-overlay {  min-width: 18rem; }
   .autoplay-left, .autoplay-right { width: 100%; border-right: none; }
 }
 
@@ -834,6 +834,22 @@ select:hover {
 /* App-specific styles */
 #flashcards-body {
   margin-top: 0.625rem;
+}
+
+/* Flashcards: larger values, smaller labels */
+#flashcards-body .kv {
+  grid-template-columns: 6.25rem 1fr;
+  align-items: baseline;
+}
+
+#flashcards-body .kv .k {
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+#flashcards-body .kv .v {
+  font-size: x-large;
+  line-height: 1.2;
 }
 
 #qa-question-select,

@@ -30,6 +30,7 @@ export function renderFlashcards({ store }) {
       key.textContent = field.label ?? field.key;
 
       const val = document.createElement('div');
+      val.className = 'v';
       val.textContent = entry[field.key] ?? '';
 
       row.append(key, val);

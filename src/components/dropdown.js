@@ -26,6 +26,21 @@ export function createDropdown({ items, value, onChange, className = '' }) {
   menu.style.left = '0px';
   menu.style.top = '0px';
   menu.style.zIndex = '1000';
+
+  const isOpen = () => menu.style.display === 'block';
+
+  function onCloseOverlaysEvent() {
+    if (isOpen()) closeMenu({ focusButton: true });
+  }
+
+  function closeMenu({ focusButton = false } = {}) {
+    menu.style.display = 'none';
+    container.classList.remove('open');
+    window.removeEventListener('resize', positionMenu);
+    window.removeEventListener('scroll', positionMenu);
+    document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);
+    if (focusButton) button.focus();
+  }
   
   for (const item of items) {
     const option = document.createElement('div');
@@ -47,8 +62,7 @@ export function createDropdown({ items, value, onChange, className = '' }) {
       button.textContent = item.label;
       
       // Close menu
-      menu.style.display = 'none';
-      container.classList.remove('open');
+      closeMenu();
       
       // Trigger callback
       if (onChange) {
@@ -61,7 +75,10 @@ export function createDropdown({ items, value, onChange, className = '' }) {
   
   button.addEventListener('click', (e) => {
     e.stopPropagation();
-    const isOpen = menu.style.display === 'block';
+    // Close other overlays (e.g., autoplay settings) before opening.
+    document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
+
+    const open = isOpen();
     
     // Close all other dropdowns
     document.querySelectorAll('.custom-dropdown-menu').forEach(m => {
@@ -72,17 +89,15 @@ export function createDropdown({ items, value, onChange, className = '' }) {
     });
     
     // Toggle this dropdown
-    if (!isOpen) {
+    if (!open) {
       menu.style.display = 'block';
       container.classList.add('open');
       positionMenu();
       window.addEventListener('resize', positionMenu);
       window.addEventListener('scroll', positionMenu, { passive: true });
+      document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
     } else {
-      menu.style.display = 'none';
-      container.classList.remove('open');
-      window.removeEventListener('resize', positionMenu);
-      window.removeEventListener('scroll', positionMenu);
+      closeMenu();
     }
   });
 
@@ -128,10 +143,7 @@ export function createDropdown({ items, value, onChange, className = '' }) {
   // Close dropdown when clicking outside
   const closeOnClickOutside = (e) => {
     if (!container.contains(e.target) && !menu.contains(e.target)) {
-      menu.style.display = 'none';
-      container.classList.remove('open');
-      window.removeEventListener('resize', positionMenu);
-      window.removeEventListener('scroll', positionMenu);
+      closeMenu();
     }
   };
   

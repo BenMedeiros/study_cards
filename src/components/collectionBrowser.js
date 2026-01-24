@@ -41,6 +41,13 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
   menu.style.top = '0px';
   menu.style.zIndex = '1000';
 
+  function onCloseOverlaysEvent() {
+    if (menu.style.display === 'block') {
+      close();
+      button.focus();
+    }
+  }
+
   function getButtonLabel() {
     const active = store.getActiveCollection();
     if (active?.metadata?.name) return active.metadata.name;
@@ -192,6 +199,7 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
 
     window.addEventListener('resize', positionMenu);
     window.addEventListener('scroll', positionMenu, { passive: true });
+    document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
   }
 
   function close() {
@@ -199,10 +207,14 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     container.classList.remove('open');
     window.removeEventListener('resize', positionMenu);
     window.removeEventListener('scroll', positionMenu);
+    document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);
   }
 
   button.addEventListener('click', (e) => {
     e.stopPropagation();
+
+    // Close other overlays (e.g., autoplay settings) before opening.
+    document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
 
     const isOpen = menu.style.display === 'block';
 

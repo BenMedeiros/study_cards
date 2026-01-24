@@ -11,6 +11,16 @@ export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
   el.id = 'shell-root';
 
+  // Global key handling: keep document-level listeners centralized here.
+  // Components should subscribe to `ui:closeOverlays` when they are open.
+  function onGlobalKeyDown(e) {
+    if (e.key === 'Escape') {
+      document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
+    }
+  }
+
+  document.addEventListener('keydown', onGlobalKeyDown);
+
   const header = document.createElement('div');
   header.className = 'header';
   header.id = 'shell-header';

@@ -26,6 +26,10 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
   overlay.style.zIndex = '1200';
   overlay.style.display = 'none';
 
+  function onCloseOverlaysEvent() {
+    if (overlay.style.display !== 'none') hideOverlay();
+  }
+
   function buildOverlay() {
     overlay.innerHTML = '';
     const left = el('div', { className: 'autoplay-left' });
@@ -126,11 +130,7 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
 
     renderSequence();
 
-    const closeBtn = el('button', { className: 'btn', text: 'Close' });
-    closeBtn.type = 'button';
-    closeBtn.addEventListener('click', () => hideOverlay());
-
-    right.append(seqTitle, seqList, closeBtn);
+    right.append(seqTitle, seqList);
 
     overlay.append(left, right);
   }
@@ -143,6 +143,7 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
     overlay.style.display = 'flex';
     overlay.removeAttribute('aria-hidden');
     setTimeout(() => document.addEventListener('click', onDocClick), 0);
+    document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
   }
 
   function hideOverlay() {
@@ -161,6 +162,7 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
     // mark hidden for screen readers
     overlay.setAttribute('aria-hidden', 'true');
     document.removeEventListener('click', onDocClick);
+    document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);
   }
 
   function onDocClick(e) {
