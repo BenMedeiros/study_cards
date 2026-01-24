@@ -74,6 +74,7 @@ export function createAppShell({ store, onNavigate }) {
 
     const collectionSelect = createCollectionBrowserDropdown({
       store,
+      className: 'align-right',
       onSelect: async (value) => {
         await store.setActiveCollectionId(value);
         const currentRoute = getCurrentRoute();

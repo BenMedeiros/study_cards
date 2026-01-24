@@ -27,7 +27,6 @@ function titleFromFilename(filename) {
 export function createCollectionBrowserDropdown({ store, className = '', onSelect }) {
   const container = document.createElement('div');
   container.className = `custom-dropdown ${className}`;
-  container.style.position = 'relative';
 
   const button = document.createElement('button');
   button.type = 'button';
@@ -35,14 +34,9 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
 
   const menu = document.createElement('div');
   menu.className = 'custom-dropdown-menu';
-  menu.style.display = 'none';
-  menu.style.position = 'fixed';
-  menu.style.left = '0px';
-  menu.style.top = '0px';
-  menu.style.zIndex = '1000';
 
   function onCloseOverlaysEvent() {
-    if (menu.style.display === 'block') {
+    if (container.classList.contains('open')) {
       close();
       button.focus();
     }
@@ -101,14 +95,12 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
       if (kind === 'up') {
         setCurrentDir(value);
         renderMenu();
-        positionMenu();
         return;
       }
 
       if (kind === 'folder') {
         setCurrentDir(value);
         renderMenu();
-        positionMenu();
         return;
       }
 
@@ -159,54 +151,17 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     }
   }
 
-  function positionMenu() {
-    const docW = window.innerWidth;
-    const docH = window.innerHeight;
-    const btnRect = button.getBoundingClientRect();
-
-    const prevDisplay = menu.style.display;
-    const prevVisibility = menu.style.visibility;
-    menu.style.visibility = 'hidden';
-    menu.style.display = 'block';
-    const menuRect = menu.getBoundingClientRect();
-
-    let desiredLeft = btnRect.right - menuRect.width;
-    if (desiredLeft < 0) desiredLeft = btnRect.left;
-    if (desiredLeft + menuRect.width > docW) desiredLeft = Math.max(0, docW - menuRect.width);
-    menu.style.left = `${Math.round(desiredLeft)}px`;
-
-    if (btnRect.bottom + menuRect.height > docH && btnRect.top - menuRect.height >= 0) {
-      const upwardTop = btnRect.top - menuRect.height;
-      menu.style.top = `${Math.round(upwardTop)}px`;
-    } else {
-      menu.style.top = `${Math.round(btnRect.bottom)}px`;
-    }
-
-    menu.style.minWidth = `${Math.max(Math.round(btnRect.width), Math.round(menuRect.width))}px`;
-
-    menu.style.display = prevDisplay;
-    menu.style.visibility = prevVisibility;
-  }
-
   function open() {
     syncDirFromState();
     button.textContent = getButtonLabel();
     renderMenu();
 
-    menu.style.display = 'block';
     container.classList.add('open');
-    positionMenu();
-
-    window.addEventListener('resize', positionMenu);
-    window.addEventListener('scroll', positionMenu, { passive: true });
     document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
   }
 
   function close() {
-    menu.style.display = 'none';
     container.classList.remove('open');
-    window.removeEventListener('resize', positionMenu);
-    window.removeEventListener('scroll', positionMenu);
     document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);
   }
 
@@ -216,13 +171,10 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     // Close other overlays (e.g., autoplay settings) before opening.
     document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
 
-    const isOpen = menu.style.display === 'block';
+    const isOpen = container.classList.contains('open');
 
-    document.querySelectorAll('.custom-dropdown-menu').forEach(m => {
-      m.style.display = 'none';
-    });
-    document.querySelectorAll('.custom-dropdown').forEach(d => {
-      d.classList.remove('open');
+    document.querySelectorAll('.custom-dropdown.open').forEach(d => {
+      if (d !== container) d.classList.remove('open');
     });
 
     if (!isOpen) open();

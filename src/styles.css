@@ -629,18 +629,32 @@ select:hover {
 }
 
 .custom-dropdown-menu {
+  min-width: -webkit-fill-available; /* cool - makes sure the dropdown is at least as big as the parent el so our dropdown isn't tiny width */
+  display: none;
   position: absolute;
   top: calc(100% + 0.25rem);
   left: 0;
-  min-width: 100%;
+  /* width: max(10rem, 100%);  forced the text to be ..., nnow grows freely*/
+  max-width: min(20rem, 90vw);
   max-height: 18.75rem;
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 0.625rem;
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
   z-index: 1000;
   padding: 0.25rem 0;
+}
+
+.custom-dropdown.open .custom-dropdown-menu {
+  display: block;
+}
+
+/* When a dropdown is near the right edge (e.g., header), align menu to the right. */
+.custom-dropdown.align-right .custom-dropdown-menu {
+  left: auto;
+  right: 0;
 }
 
 @media (min-width: 769px) {
@@ -656,6 +670,8 @@ select:hover {
   color: var(--text);
   transition: background 0.15s;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .custom-dropdown-option:hover {
