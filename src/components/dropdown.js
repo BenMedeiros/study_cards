@@ -5,9 +5,10 @@
  * @param {string} options.value - Currently selected value
  * @param {Function} options.onChange - Callback when selection changes
  * @param {string} options.className - Optional CSS class
+ * @param {boolean} options.closeOverlaysOnOpen - If true, dispatches ui:closeOverlays before opening.
  * @returns {HTMLElement} Custom dropdown element
  */
-export function createDropdown({ items, value, onChange, className = '' }) {
+export function createDropdown({ items, value, onChange, className = '', closeOverlaysOnOpen = true }) {
   const container = document.createElement('div');
   container.className = `custom-dropdown ${className}`;
   
@@ -43,6 +44,9 @@ export function createDropdown({ items, value, onChange, className = '' }) {
     option.dataset.value = item.value;
     
     option.addEventListener('click', () => {
+      // Keep internal value in sync for keyboard navigation
+      value = item.value;
+
       // Update selected state
       menu.querySelectorAll('.custom-dropdown-option').forEach(opt => {
         opt.classList.remove('selected');
@@ -67,7 +71,10 @@ export function createDropdown({ items, value, onChange, className = '' }) {
   button.addEventListener('click', (e) => {
     e.stopPropagation();
     // Close other overlays (e.g., autoplay settings) before opening.
-    document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
+    // Some dropdowns live inside overlays (e.g. shell settings) and should not close them.
+    if (closeOverlaysOnOpen) {
+      document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
+    }
 
     const open = isOpen();
     

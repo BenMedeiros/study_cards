@@ -462,6 +462,50 @@ export function createStore() {
     saveSessionState(session);
   }
 
+  function getShellVoiceSettings() {
+    try {
+      const session = readSessionState();
+      const v = session?.shell?.voice;
+      return (v && typeof v === 'object') ? { ...v } : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function setShellVoiceSettings(patch) {
+    try {
+      const session = readSessionState();
+      session.shell = session.shell || {};
+      const prev = (session.shell.voice && typeof session.shell.voice === 'object') ? session.shell.voice : {};
+
+      const patchObj = (patch && typeof patch === 'object') ? patch : {};
+      const next = { ...prev, ...patchObj };
+
+      // Deep-merge per-language voice settings
+      if (patchObj.engVoice && typeof patchObj.engVoice === 'object') {
+        const prevEng = (prev.engVoice && typeof prev.engVoice === 'object') ? prev.engVoice : {};
+        next.engVoice = { ...prevEng, ...patchObj.engVoice };
+      }
+      if (patchObj.jpVoice && typeof patchObj.jpVoice === 'object') {
+        const prevJp = (prev.jpVoice && typeof prev.jpVoice === 'object') ? prev.jpVoice : {};
+        next.jpVoice = { ...prevJp, ...patchObj.jpVoice };
+      }
+
+      // Normalize empties to null to keep session clean
+      for (const key of ['engVoice', 'jpVoice']) {
+        const obj = next[key];
+        if (!obj || typeof obj !== 'object') continue;
+        if (obj.voiceURI === '') obj.voiceURI = null;
+        if (obj.voiceName === '') obj.voiceName = null;
+      }
+
+      session.shell.voice = next;
+      saveSessionState(session);
+    } catch (e) {
+      // ignore
+    }
+  }
+
   return {
     subscribe,
     initialize,
@@ -490,6 +534,8 @@ export function createStore() {
         // ignore
       }
     },
+    getShellVoiceSettings,
+    setShellVoiceSettings,
     loadKanjiUIState,
     saveKanjiUIState,
   };

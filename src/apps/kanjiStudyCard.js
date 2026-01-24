@@ -68,8 +68,9 @@ export function renderKanjiStudyCard({ store }) {
   const toggleBtn = document.createElement('button');
   toggleBtn.type = 'button';
   toggleBtn.className = 'btn small';
-  toggleBtn.textContent = 'Show Full';
-  // Active when default view mode is "full"
+  // Details toggle: Off when showing kanji-only; On when showing full details
+  toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Details: Off' : 'Details: On';
+  toggleBtn.title = 'Toggle details';
   toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
 
   // Bold toggle button (cycles font weight)
@@ -85,7 +86,8 @@ export function renderKanjiStudyCard({ store }) {
   const autoSpeakBtn = document.createElement('button');
   autoSpeakBtn.type = 'button';
   autoSpeakBtn.className = 'btn small';
-  autoSpeakBtn.textContent = '🔊 Auto Speak Kanji';
+  autoSpeakBtn.textContent = '🔊 Auto-speak: Off';
+  autoSpeakBtn.title = 'Toggle auto-speak';
 
   headerTools.append(shuffleBtn, toggleBtn, boldBtn, autoSpeakBtn);
 
@@ -100,7 +102,7 @@ export function renderKanjiStudyCard({ store }) {
     if (typeof savedUI.autoSpeak === 'boolean') {
       autoSpeakKanji = !!savedUI.autoSpeak;
       autoSpeakBtn.setAttribute('aria-pressed', String(!!autoSpeakKanji));
-      autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto Speak: ON' : '🔊 Auto Speak Kanji';
+      autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto-speak: On' : '🔊 Auto-speak: Off';
     }
     // Load autoplay settings if present
     if (savedUI.autoplay) {
@@ -111,7 +113,7 @@ export function renderKanjiStudyCard({ store }) {
     }
     if (savedUI.defaultViewMode) {
       defaultViewMode = savedUI.defaultViewMode;
-      toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
+      toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Details: Off' : 'Details: On';
       toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
     }
     // Ensure the active viewMode matches the saved default so the initial render uses it
@@ -171,7 +173,7 @@ export function renderKanjiStudyCard({ store }) {
   autoSpeakBtn.addEventListener('click', () => {
     autoSpeakKanji = !autoSpeakKanji;
     autoSpeakBtn.setAttribute('aria-pressed', String(!!autoSpeakKanji));
-    autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto Speak: ON' : '🔊 Auto Speak Kanji';
+    autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto-speak: On' : '🔊 Auto-speak: Off';
     // Speak current entry immediately when enabling
     if (autoSpeakKanji && entries[index]) speakEntry(entries[index]);
     saveUIState();
@@ -370,7 +372,7 @@ export function renderKanjiStudyCard({ store }) {
 
   function toggleDefaultViewMode() {
     defaultViewMode = defaultViewMode === 'kanji-only' ? 'full' : 'kanji-only';
-    toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Show Full' : 'Show Kanji';
+    toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Details: Off' : 'Details: On';
     toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
     viewMode = defaultViewMode;
     render();

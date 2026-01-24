@@ -149,6 +149,104 @@ a:hover { text-decoration: underline; }
   background: rgba(96, 165, 250, 0.08);
 }
 
+/* Shell settings popover */
+.shell-settings {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.shell-settings-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  min-width: 20rem;
+  max-width: min(26rem, 92vw);
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  box-shadow: 0 8px 32px rgba(2,6,23,0.6);
+  z-index: 1100;
+}
+
+.shell-settings.open .shell-settings-menu {
+  display: block;
+}
+
+.shell-settings-title {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.shell-settings-section {
+  border-top: 1px solid var(--border);
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.shell-settings-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.shell-settings-section-title {
+  font-weight: 700;
+  margin: 0.25rem 0 0.25rem;
+}
+
+/* Compact spacing inside the settings menu only */
+.shell-settings-menu .kv {
+  grid-template-columns: 6.75rem 1fr;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+}
+
+.shell-settings-menu .k {
+  font-size: 0.8rem;
+}
+
+.shell-settings-menu .button {
+  padding: 0.4rem 0.55rem;
+}
+
+.shell-settings-menu .custom-dropdown-button {
+  padding: 0.4rem 1.65rem 0.4rem 0.55rem;
+  min-width: 0;
+}
+
+.shell-settings-menu .shell-settings-actions {
+  margin-top: 0;
+}
+
+.shell-settings-menu .slider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shell-settings-menu .slider {
+  width: 100%;
+}
+
+.shell-settings-menu .slider-value {
+  min-width: 2.75rem;
+  text-align: right;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.shell-settings-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
 .input-small {
   width: 4.75rem;
   padding: 0.375rem 0.5rem;
@@ -176,6 +274,7 @@ a:hover { text-decoration: underline; }
 }
 
 input[type="number"].button {
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 
@@ -672,6 +771,12 @@ select:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media (min-width: 500px) {
+  .shell-settings-menu .custom-dropdown {
+    font-size: small;
+  }
 }
 
 .custom-dropdown-option:hover {
