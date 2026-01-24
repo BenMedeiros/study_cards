@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "name": "Pragmatics & Context",
+    "description": "Context-dependent meaning, usage, register, and pragmatic change.",
+    "version": 1
+  },
+  "entries": [
+    {
+      "term": "Pragmatics",
+      "primary_field": "Linguistics",
+      "subfield": "Pragmatics",
+      "definition": "Study of how context, speaker intention, and situational factors influence interpretation",
+      "compressed_definition": "Context-dependent meaning study"
+    },
+    {
+      "term": "Context",
+      "primary_field": "Linguistics",
+      "subfield": "Pragmatics",
+      "definition": "Situational, social, and linguistic factors surrounding an utterance that affect meaning",
+      "compressed_definition": "Situational factors affecting meaning"
+    },
+    {
+      "term": "Usage",
+      "primary_field": "Linguistics",
+      "subfield": "Pragmatics",
+      "definition": "Patterns and norms of how speakers actually employ words and expressions in communication",
+      "compressed_definition": "Actual language use"
+    },
+    {
+      "term": "Pragmatic drift",
+      "primary_field": "Linguistics",
+      "subfield": "Pragmatics",
+      "definition": "Context-driven change in language meaning over time",
+      "compressed_definition": "Contextual meaning shift"
+    },
+    {
+      "term": "Register",
+      "primary_field": "Linguistics",
+      "subfield": "Sociolinguistics",
+      "definition": "Variation in language style depending on context, formality, or audience",
+      "compressed_definition": "Language style variation"
+    },
+    {
+      "term": "Register mismatch",
+      "primary_field": "Linguistics",
+      "subfield": "Sociolinguistics",
+      "definition": "Inappropriate alignment between expected and actual register",
+      "compressed_definition": "Mismatched language style"
+    },
+    {
+      "term": "Metalinguistic usage",
+      "primary_field": "Linguistics",
+      "subfield": "Pragmatics",
+      "definition": "Using language to describe or analyze language itself",
+      "compressed_definition": "Language about language"
+    }
+    ,
+    {
+      "term": "Speech act",
+      "primary_field": "Linguistics",
+      "subfield": "Pragmatics",
+      "definition": "An utterance that performs an action (e.g., asserting, questioning, promising) rather than simply describing a state of affairs",
+      "compressed_definition": "Utterance-as-action"
+    },
+    {
+      "term": "Implicature",
+      "primary_field": "Linguistics",
+      "subfield": "Pragmatics",
+      "definition": "Meaning inferred from context and conversational maxims that is not explicitly stated",
+      "compressed_definition": "Contextual inferred meaning"
+    },
+    {
+      "term": "Deixis",
+      "primary_field": "Linguistics",
+      "subfield": "Pragmatics",
+      "definition": "Words or phrases (like 'here', 'you', 'now') whose meaning depends on the context of the utterance",
+      "compressed_definition": "Context-dependent referential words"
+    }
+  ]
+}

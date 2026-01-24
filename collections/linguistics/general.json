@@ -1,0 +1,87 @@
+{
+  "metadata": {
+    "name": "General & Applied",
+    "description": "General English words used in the linguistics context and applied/computational entries.",
+    "version": 1
+  },
+  "entries": [
+    {
+      "term": "Linguistics",
+      "primary_field": "Linguistics",
+      "subfield": null,
+      "definition": "Scientific study of human language, its structure, function, and use",
+      "compressed_definition": "Scientific study of language"
+    },
+    {
+      "term": "Pragmatic",
+      "primary_field": "General",
+      "subfield": null,
+      "definition": "Dealing with practical considerations or realistic approaches rather than theoretical ones",
+      "compressed_definition": "Practical or realistic"
+    },
+    {
+      "term": "Metalinguistic",
+      "primary_field": "General",
+      "subfield": null,
+      "definition": "Referring to language itself, or reflecting on language use",
+      "compressed_definition": "Language about language"
+    },
+    {
+      "term": "Lexicography",
+      "primary_field": "Applied linguistics",
+      "subfield": null,
+      "definition": "The practice of compiling, writing, and editing dictionaries",
+      "compressed_definition": "Dictionary compilation"
+    },
+    {
+      "term": "Distributional semantics",
+      "primary_field": "Computational linguistics",
+      "subfield": "NLP",
+      "definition": "Modeling meaning based on patterns of word usage in corpora",
+      "compressed_definition": "Meaning from word usage"
+    },
+    {
+      "term": "Epistemic",
+      "primary_field": "General",
+      "subfield": null,
+      "definition": "Relating to knowledge or the degree of certainty of information",
+      "compressed_definition": "Knowledge-related or certainty-related"
+    },
+    {
+      "term": "Epistemic status",
+      "primary_field": "Philosophy of language",
+      "subfield": "Semantics",
+      "definition": "Degree of certainty or justification implied by language",
+      "compressed_definition": "Degree of certainty"
+    }
+    ,
+    {
+      "term": "Phonology",
+      "primary_field": "Linguistics",
+      "subfield": "Phonology",
+      "definition": "Study of the systematic organization of sounds in languages",
+      "compressed_definition": "Study of sound systems"
+    },
+    {
+      "term": "Phoneme",
+      "primary_field": "Linguistics",
+      "subfield": "Phonology",
+      "definition": "The smallest contrastive unit of sound in a language that distinguishes meaning",
+      "compressed_definition": "Smallest contrastive sound unit"
+    },
+    {
+      "term": "Morphology",
+      "primary_field": "Linguistics",
+      "subfield": "Morphology",
+      "definition": "Study of the structure and formation of words (morphemes, inflection, derivation)",
+      "compressed_definition": "Study of word structure"
+    },
+    {
+      "term": "Syntax",
+      "primary_field": "Linguistics",
+      "subfield": "Syntax",
+      "definition": "Study of sentence structure and how words combine to form grammatical sentences",
+      "compressed_definition": "Study of sentence structure"
+    }
+  ]
+}

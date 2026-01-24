@@ -1,0 +1,116 @@
+{
+  "metadata": {
+    "name": "Semantics",
+    "description": "Core semantics glossary and historical semantics entries.",
+    "version": 1
+  },
+  "entries": [
+    {
+      "term": "Semantics",
+      "primary_field": "Linguistics",
+      "subfield": "Semantics",
+      "definition": "Study of meaning in language, including how words, phrases, and sentences convey sense",
+      "compressed_definition": "Study of linguistic meaning"
+    },
+    {
+      "term": "Meaning",
+      "primary_field": "Linguistics",
+      "subfield": "Semantics",
+      "definition": "The concept or content expressed by a linguistic form, independent of context",
+      "compressed_definition": "Concept expressed by language"
+    },
+    {
+      "term": "Reference",
+      "primary_field": "Linguistics",
+      "subfield": "Semantics",
+      "definition": "Relation between linguistic expressions and the objects, events, or concepts they denote",
+      "compressed_definition": "Word-world relation"
+    },
+    {
+      "term": "Denotation",
+      "primary_field": "Linguistics",
+      "subfield": "Semantics",
+      "definition": "Literal or primary meaning of a word or expression",
+      "compressed_definition": "Literal word meaning"
+    },
+    {
+      "term": "Connotation",
+      "primary_field": "Linguistics",
+      "subfield": "Semantics",
+      "definition": "Secondary, associated, or emotional meaning carried by a word beyond literal denotation",
+      "compressed_definition": "Associated or implied meaning"
+    },
+    {
+      "term": "Semantic features",
+      "primary_field": "Linguistics",
+      "subfield": "Semantics",
+      "definition": "Minimal components that distinguish word meanings",
+      "compressed_definition": "Minimal meaning components"
+    },
+    {
+      "term": "Feature-based definition",
+      "primary_field": "Linguistics",
+      "subfield": "Semantics",
+      "definition": "Defining meaning via a set of semantic features",
+      "compressed_definition": "Definition by semantic features"
+    },
+    {
+      "term": "Semantic change",
+      "primary_field": "Linguistics",
+      "subfield": "Historical semantics",
+      "definition": "Changes in word meaning over time",
+      "compressed_definition": "Meaning change over time"
+    },
+    {
+      "term": "Semantic drift",
+      "primary_field": "Linguistics",
+      "subfield": "Historical semantics",
+      "definition": "Gradual shift in meaning of a word",
+      "compressed_definition": "Slow meaning shift"
+    },
+    {
+      "term": "Semantic shift",
+      "primary_field": "Linguistics",
+      "subfield": "Historical semantics",
+      "definition": "Compact term for general change in word meaning",
+      "compressed_definition": "Word meaning change"
+    },
+    {
+      "term": "Semantic weakening",
+      "primary_field": "Linguistics",
+      "subfield": "Historical semantics",
+      "definition": "Loss of semantic strength or specificity",
+      "compressed_definition": "Meaning becomes weaker"
+    },
+    {
+      "term": "Semasiology",
+      "primary_field": "Linguistics",
+      "subfield": "Semantics",
+      "definition": "Study of meaning from word forms to senses",
+      "compressed_definition": "Word meaning study"
+    }
+    ,
+    {
+      "term": "Entailment",
+      "primary_field": "Linguistics",
+      "subfield": "Semantics",
+      "definition": "A truth-preserving relation where the truth of one sentence guarantees the truth of another",
+      "compressed_definition": "Truth-preserving relation"
+    },
+    {
+      "term": "Presupposition",
+      "primary_field": "Linguistics",
+      "subfield": "Semantics",
+      "definition": "Background assumptions taken for granted by an utterance that must hold for it to be appropriate",
+      "compressed_definition": "Background assumption of an utterance"
+    },
+    {
+      "term": "Anaphora",
+      "primary_field": "Linguistics",
+      "subfield": "Semantics",
+      "definition": "The use of expressions (like pronouns) that depend on another expression for their interpretation",
+      "compressed_definition": "Reference dependent expression"
+    }
+  ]
+}
+
