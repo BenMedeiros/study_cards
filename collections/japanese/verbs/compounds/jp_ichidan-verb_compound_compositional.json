@@ -1,0 +1,24 @@
+{
+  "metadata": {
+    "name": "Japanese Compound Verbs — ichidan — compositional",
+    "description": "Productive ichidan compound verbs built transparently from parts; final element is ichidan.",
+    "version": 1
+  },
+  "defaults": {
+    "type": "ichidan-verb",
+    "verbType": "compound",
+    "compoundType": "compositional"
+  },
+  "entries": [
+    { "kanji": "飲み比べる", "reading": "のみくらべる", "meaning": "to compare drinks; taste test" },
+    { "kanji": "買い替える", "reading": "かいかえる", "meaning": "to replace by buying a new one" },
+    { "kanji": "書き換える", "reading": "かきかえる", "meaning": "to rewrite; to reword" },
+    { "kanji": "引き受ける", "reading": "ひきうける", "meaning": "to take on; to undertake" },
+    { "kanji": "見届ける", "reading": "みとどける", "meaning": "to see something through; to witness to completion" },
+    { "kanji": "取り替える", "reading": "とりかえる", "meaning": "to exchange; to replace" },
+    { "kanji": "受け止める", "reading": "うけとめる", "meaning": "to catch; to receive (emotion/information)" },
+    { "kanji": "取り入れる", "reading": "とりいれる", "meaning": "to adopt; to incorporate" },
+    { "kanji": "書き直せる", "reading": "かきなおせる", "meaning": "can rewrite (useful example form)" },
+    { "kanji": "試し見る", "reading": "ためしみる", "meaning": "to try looking/try seeing (rare example)" }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "metadata": {
+    "name": "Japanese Compound Verbs — godan — compositional",
+    "description": "Productive compound verbs built transparently from parts; final element is godan.",
+    "version": 1
+  },
+  "defaults": {
+    "type": "godan-verb",
+    "verbType": "compound",
+    "compoundType": "compositional"
+  },
+  "entries": [
+    { "kanji": "書き直す", "reading": "かきなおす", "meaning": "to rewrite; to correct writing" },
+    { "kanji": "聞き直す", "reading": "ききなおす", "meaning": "to ask again; to check by asking" },
+    { "kanji": "見直す", "reading": "みなおす", "meaning": "to review; to reconsider" },
+    { "kanji": "書き足す", "reading": "かきたす", "meaning": "to add writing; to add a note" },
+    { "kanji": "飛び出す", "reading": "とびだす", "meaning": "to jump out; to rush out" },
+    { "kanji": "逃げ出す", "reading": "にげだす", "meaning": "to run away; to escape" },
+    { "kanji": "引き返す", "reading": "ひきかえす", "meaning": "to go back; to return" },
+    { "kanji": "割り振る", "reading": "わりふる", "meaning": "to allocate; to distribute" },
+    { "kanji": "切り落とす", "reading": "きりおとす", "meaning": "to cut off; to cut away" },
+    { "kanji": "立ち去る", "reading": "たちさる", "meaning": "to leave; to depart" }
+  ]
+}

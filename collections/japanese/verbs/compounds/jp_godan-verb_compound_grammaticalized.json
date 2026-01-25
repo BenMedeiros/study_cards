@@ -1,0 +1,24 @@
+{
+  "metadata": {
+    "name": "Japanese Compound Verbs — godan — grammaticalized",
+    "description": "Common compounds where the final godan element is grammaticalized (mutual/auxiliary-like).",
+    "version": 1
+  },
+  "defaults": {
+    "type": "godan-verb",
+    "verbType": "compound",
+    "compoundType": "grammaticalized"
+  },
+  "entries": [
+    { "kanji": "話し合う", "reading": "はなしあう", "meaning": "to discuss; to talk together" },
+    { "kanji": "語り合う", "reading": "かたりあう", "meaning": "to talk together; exchange stories" },
+    { "kanji": "助け合う", "reading": "たすけあう", "meaning": "to help each other" },
+    { "kanji": "分け合う", "reading": "わけあう", "meaning": "to share; to divide among" },
+    { "kanji": "言い合う", "reading": "いいあう", "meaning": "to tell each other; to argue/exchange words" },
+    { "kanji": "折り合う", "reading": "おりあう", "meaning": "to compromise; to come to terms" },
+    { "kanji": "呼び合う", "reading": "よびあう", "meaning": "to call to one another; to call each other" },
+    { "kanji": "触れ合う", "reading": "ふれあう", "meaning": "to come into contact; to interact" },
+    { "kanji": "取り合う", "reading": "とりあう", "meaning": "to compete for; to take in turns; to deal with" },
+    { "kanji": "協力し合う", "reading": "きょうりょくしあう", "meaning": "to cooperate with one another" }
+  ]
+}
