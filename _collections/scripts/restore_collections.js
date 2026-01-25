@@ -21,14 +21,49 @@ async function ensureDir(p) {
 async function writeFileIfAllowed(filePath, content, overwrite) {
   try {
     const exists = await fs.stat(filePath).then(() => true).catch(() => false);
-    if (exists && !overwrite) {
-      return { skipped: true, reason: 'exists' };
+    // If the file exists and overwrite not requested, normally skip.
+    // However, we want to ensure `_metadata.json` is kept up-to-date: if the
+    // contents differ, rewrite it even without `--overwrite` so metadata is
+    // rebuilt when changed in the aggregated file.
+    if (exists) {
+      if (!overwrite && path.basename(filePath) !== '_metadata.json') {
+        return { skipped: true, reason: 'exists' };
+      }
+      // Read existing content to compare
+      try {
+        const existingTxt = await fs.readFile(filePath, 'utf8');
+        let existing;
+        try { existing = JSON.parse(existingTxt); } catch (e) { existing = existingTxt; }
+        if (deepEqual(existing, content)) return { skipped: true, reason: 'identical' };
+        // If different and either overwrite is true or it's _metadata.json, fallthrough to write
+      } catch (e) {
+        // Couldn't read/parse existing file; proceed to write
+      }
     }
     await fs.writeFile(filePath, JSON.stringify(content, null, 2), 'utf8');
     return { written: true };
   } catch (err) {
     return { error: err.message };
   }
+}
+
+function deepEqual(a, b) {
+  if (a === b) return true;
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
+    if (Array.isArray(a) !== Array.isArray(b)) return false;
+    if (Array.isArray(a)) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) if (!deepEqual(a[i], b[i])) return false;
+      return true;
+    }
+    const ka = Object.keys(a).sort();
+    const kb = Object.keys(b).sort();
+    if (ka.length !== kb.length) return false;
+    for (let i = 0; i < ka.length; i++) if (ka[i] !== kb[i]) return false;
+    for (const k of ka) if (!deepEqual(a[k], b[k])) return false;
+    return true;
+  }
+  return false;
 }
 
 async function restoreAggregated(aggregatedPath, options) {
@@ -66,6 +101,8 @@ async function restoreAggregated(aggregatedPath, options) {
     }
   }
   // If there is top-level _metadata, write it to targetBase/_metadata.json
+  // Ensure target directory exists so metadata can be written on first run
+  await ensureDir(targetBase);
   if (parsed && parsed._metadata !== undefined) {
     const metaPath = path.join(targetBase, '_metadata.json');
     if (options.dryRun) {
