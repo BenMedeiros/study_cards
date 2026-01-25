@@ -1,0 +1,153 @@
+{
+  "metadata": {
+    "name": "Greek Alphabet",
+    "description": "Classical Greek letters with lowercase, uppercase, and names.",
+    "version": 1
+  },
+  "entries": [
+    {
+      "lowercase": "α",
+      "uppercase": "Α",
+      "classical_greek_name": "alpha",
+      "notes": "Classical /a/, modern /a/; vowel"
+    },
+    {
+      "lowercase": "β",
+      "uppercase": "Β",
+      "classical_greek_name": "beta",
+      "notes": "Classical /b/, modern /v/"
+    },
+    {
+      "lowercase": "γ",
+      "uppercase": "Γ",
+      "classical_greek_name": "gamma",
+      "notes": "Classical /g/; before front vowels /γ/ softens to /ʝ/"
+    },
+    {
+      "lowercase": "δ",
+      "uppercase": "Δ",
+      "classical_greek_name": "delta",
+      "notes": "Classical /d/, modern /ð/ (like 'th' in 'this')"
+    },
+    {
+      "lowercase": "ε",
+      "uppercase": "Ε",
+      "classical_greek_name": "epsilon",
+      "notes": "Short /e/ vowel"
+    },
+    {
+      "lowercase": "ζ",
+      "uppercase": "Ζ",
+      "classical_greek_name": "zeta",
+      "notes": "Classical /zd/ or /dz/, modern /z/"
+    },
+    {
+      "lowercase": "η",
+      "uppercase": "Η",
+      "classical_greek_name": "eta",
+      "notes": "Long /ɛː/ in Classical, modern /i/"
+    },
+    {
+      "lowercase": "θ",
+      "uppercase": "Θ",
+      "classical_greek_name": "theta",
+      "notes": "Classical /tʰ/, modern /θ/ (like 'th' in 'think')"
+    },
+    {
+      "lowercase": "ι",
+      "uppercase": "Ι",
+      "classical_greek_name": "iota",
+      "notes": "Short /i/ vowel"
+    },
+    {
+      "lowercase": "κ",
+      "uppercase": "Κ",
+      "classical_greek_name": "kappa",
+      "notes": "Classical /k/, modern /k/"
+    },
+    {
+      "lowercase": "λ",
+      "uppercase": "Λ",
+      "classical_greek_name": "lambda",
+      "notes": "Classical /l/, consonant"
+    },
+    {
+      "lowercase": "μ",
+      "uppercase": "Μ",
+      "classical_greek_name": "mu",
+      "notes": "Classical /m/, consonant"
+    },
+    {
+      "lowercase": "ν",
+      "uppercase": "Ν",
+      "classical_greek_name": "nu",
+      "notes": "Classical /n/, consonant"
+    },
+    {
+      "lowercase": "ξ",
+      "uppercase": "Ξ",
+      "classical_greek_name": "xi",
+      "notes": "Classical /ks/, consonant cluster"
+    },
+    {
+      "lowercase": "ο",
+      "uppercase": "Ο",
+      "classical_greek_name": "omicron",
+      "notes": "Short /o/ vowel"
+    },
+    {
+      "lowercase": "π",
+      "uppercase": "Π",
+      "classical_greek_name": "pi",
+      "notes": "Classical /p/, consonant"
+    },
+    {
+      "lowercase": "ρ",
+      "uppercase": "Ρ",
+      "classical_greek_name": "rho",
+      "notes": "Classical /r/, trilled; can be aspirated /rh/ word-initially"
+    },
+    {
+      "lowercase": "σ",
+      "uppercase": "Σ",
+      "classical_greek_name": "sigma",
+      "notes": "Classical /s/; final form ς in word-final position"
+    },
+    {
+      "lowercase": "τ",
+      "uppercase": "Τ",
+      "classical_greek_name": "tau",
+      "notes": "Classical /t/, consonant"
+    },
+    {
+      "lowercase": "υ",
+      "uppercase": "Υ",
+      "classical_greek_name": "upsilon",
+      "notes": "Classical /y/ front rounded vowel, modern /i/"
+    },
+    {
+      "lowercase": "φ",
+      "uppercase": "Φ",
+      "classical_greek_name": "phi",
+      "notes": "Classical /pʰ/, aspirated; modern /f/"
+    },
+    {
+      "lowercase": "χ",
+      "uppercase": "Χ",
+      "classical_greek_name": "chi",
+      "notes": "Classical /kʰ/, aspirated; modern /x/"
+    },
+    {
+      "lowercase": "ψ",
+      "uppercase": "Ψ",
+      "classical_greek_name": "psi",
+      "notes": "Classical /ps/, consonant cluster"
+    },
+    {
+      "lowercase": "ω",
+      "uppercase": "Ω",
+      "classical_greek_name": "omega",
+      "notes": "Long /ɔː/ vowel in Classical, modern /o/"
+    }
+  ]
+}
