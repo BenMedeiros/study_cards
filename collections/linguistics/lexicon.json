@@ -67,8 +67,7 @@
       "subfield": "Lexical semantics",
       "definition": "Preferred co-occurrence of words in natural language",
       "compressed_definition": "Common word co-occurrence"
-    }
-    ,
+    },
     {
       "term": "Lexeme",
       "primary_field": "Linguistics",
