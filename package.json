@@ -6,7 +6,7 @@
     "dev": "npx http-server -p 3000 -c-1",
     "test": "echo \"No tests yet\"",
     "collection_aggregate": "node _collections/scripts/aggregate_collections.js",
-    "collection_rebuild_index": "node _collections/scripts/rebuild_index.js"
+    "build": "node _collections/scripts/rebuild_index.js"
   },
   "keywords": [],
   "author": "",

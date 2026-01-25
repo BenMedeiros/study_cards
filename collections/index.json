@@ -1,12 +1,15 @@
 {
   "folderMetadata": {
+    "greek": "greek/_metadata.json",
     "japanese": "japanese/_metadata.json",
+    "languageHistory": "languageHistory/_metadata.json",
     "linguistics": "linguistics/_metadata.json",
     "mythology": "mythology/_metadata.json",
     "numbers": "numbers/_metadata.json",
     "pokemon": "pokemon/_metadata.json"
   },
   "collections": [
+    "greek/greek_alphabet.json",
     "japanese/all/jp_linguistic_terms.json",
     "japanese/all/jp_linguistic_terms_supplement.json",
     "japanese/all/jp_n5_kanji.json",
@@ -33,8 +36,12 @@
     "japanese/verbs/godan-verb/su/jp_n5_verbs_su.json",
     "japanese/verbs/godan-verb/u/jp_n5_verbs_u.json",
     "japanese/verbs/ichidan-verb/jp_n5_verbs_ichidan.json",
+    "languageHistory/english.json",
+    "languageHistory/greek.json",
+    "languageHistory/japanese.json",
     "linguistics/foundational.json",
     "linguistics/lexical.json",
+    "linguistics/orthography_diacritics.json",
     "linguistics/pragmatics.json",
     "linguistics/semantics.json",
     "mythology/chthonic.json",
