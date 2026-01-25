@@ -755,13 +755,6 @@ select:hover {
   right: 0;
 }
 
-@media (min-width: 769px) {
-  /* Limit dropdown width on desktop so it doesn't grow too wide */
-  .custom-dropdown-menu {
-    max-width: 20rem;
-  }
-}
-
 .custom-dropdown-option {
   padding: 0.5rem 0.75rem;
   cursor: pointer;
