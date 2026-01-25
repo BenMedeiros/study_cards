@@ -4,24 +4,24 @@
     "description": "Common compound verbs and suru-verbs that include kanji from the N5 kanji list.",
     "version": 1
   },
+  "defaults": {
+    "type": "godan-verb"
+  },
   "entries": [
     {
       "kanji": "出会う",
       "reading": "であう",
-      "meaning": "to meet (by chance)",
-      "type": "godan-verb"
+      "meaning": "to meet (by chance)"
     },
     {
       "kanji": "書き直す",
       "reading": "かきなおす",
-      "meaning": "to rewrite; to correct writing",
-      "type": "godan-verb"
+      "meaning": "to rewrite; to correct writing"
     },
     {
       "kanji": "聞き取る",
       "reading": "ききとる",
-      "meaning": "to catch (what someone says)",
-      "type": "godan-verb"
+      "meaning": "to catch (what someone says)"
     },
     {
       "kanji": "聞こえる",
@@ -32,8 +32,7 @@
     {
       "kanji": "食べ歩く",
       "reading": "たべあるく",
-      "meaning": "to eat one's way around (restaurants)",
-      "type": "godan-verb"
+      "meaning": "to eat one's way around (restaurants)"
     },
     {
       "kanji": "飲み比べる",
@@ -50,8 +49,7 @@
     {
       "kanji": "話し合う",
       "reading": "はなしあう",
-      "meaning": "to discuss; talk together",
-      "type": "godan-verb"
+      "meaning": "to discuss; talk together"
     },
     {
       "kanji": "話しかける",
@@ -62,14 +60,12 @@
     {
       "kanji": "語り合う",
       "reading": "かたりあう",
-      "meaning": "to talk together; exchange stories",
-      "type": "godan-verb"
+      "meaning": "to talk together; exchange stories"
     },
     {
       "kanji": "名乗る",
       "reading": "なのる",
-      "meaning": "to give one's name; to introduce oneself",
-      "type": "godan-verb"
+      "meaning": "to give one's name; to introduce oneself"
     },
     {
       "kanji": "名付ける",
@@ -86,32 +82,27 @@
     {
       "kanji": "生きる",
       "reading": "いきる",
-      "meaning": "to live",
-      "type": "godan-verb"
+      "meaning": "to live"
     },
     {
       "kanji": "車を買う",
       "reading": "くるまをかう",
-      "meaning": "to buy a car",
-      "type": "godan-verb"
+      "meaning": "to buy a car"
     },
     {
       "kanji": "電車に乗る",
       "reading": "でんしゃにのる",
-      "meaning": "to ride the train",
-      "type": "godan-verb"
+      "meaning": "to ride the train"
     },
     {
       "kanji": "毎日使う",
       "reading": "まいにちつかう",
-      "meaning": "to use every day",
-      "type": "godan-verb"
+      "meaning": "to use every day"
     },
     {
       "kanji": "何か言う",
       "reading": "なにかいう",
-      "meaning": "to say something",
-      "type": "godan-verb"
+      "meaning": "to say something"
     }
   ]
 }

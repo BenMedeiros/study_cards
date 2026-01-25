@@ -321,6 +321,19 @@ export function createStore() {
       const folderMetadata = (await loadInheritedFolderMetadata(folderPath, metadataCache, folderMetadataMap)) || { fields: [], category: folderPath.split('/')[0] || '' };
       data = mergeMetadata(data, folderMetadata);
 
+      // Apply collection-level defaults to entries (shallow merge where entry lacks the key)
+      if (data && data.defaults && Array.isArray(data.entries)) {
+        const defs = data.defaults;
+        data.entries = data.entries.map((entry) => {
+          if (!entry || typeof entry !== 'object') return entry;
+          const merged = { ...entry };
+          for (const [k, v] of Object.entries(defs)) {
+            if (typeof merged[k] === 'undefined') merged[k] = v;
+          }
+          return merged;
+        });
+      }
+
       // Ensure required bits exist, and avoid relying on metadata.id.
       data.metadata = data.metadata || {};
       if (!data.metadata.name) {

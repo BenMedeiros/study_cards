@@ -4,66 +4,59 @@
     "description": "10 lower-frequency Japanese godan verbs ending in む (mu).",
     "version": 1
   },
+  "defaults": {
+    "type": "godan-verb"
+  },
   "entries": [
     {
       "kanji": "悔やむ",
       "reading": "くやむ",
-      "meaning": "to regret",
-      "type": "godan-verb"
+      "meaning": "to regret"
     },
     {
       "kanji": "悼む",
       "reading": "いたむ",
-      "meaning": "to mourn",
-      "type": "godan-verb"
+      "meaning": "to mourn"
     },
     {
       "kanji": "噤む",
       "reading": "つぐむ",
-      "meaning": "to shut one’s mouth",
-      "type": "godan-verb"
+      "meaning": "to shut one’s mouth"
     },
     {
       "kanji": "悔む",
       "reading": "くやむ",
-      "meaning": "to repent; to regret",
-      "type": "godan-verb"
+      "meaning": "to repent; to regret"
     },
     {
       "kanji": "望む",
       "reading": "のぞむ",
-      "meaning": "to look out over; to face",
-      "type": "godan-verb"
+      "meaning": "to look out over; to face"
     },
     {
       "kanji": "富む",
       "reading": "とむ",
-      "meaning": "to be rich in; to abound in",
-      "type": "godan-verb"
+      "meaning": "to be rich in; to abound in"
     },
     {
       "kanji": "歪む",
       "reading": "ゆがむ",
-      "meaning": "to warp; to become distorted",
-      "type": "godan-verb"
+      "meaning": "to warp; to become distorted"
     },
     {
       "kanji": "滲む",
       "reading": "にじむ",
-      "meaning": "to blur; to smudge; to ooze",
-      "type": "godan-verb"
+      "meaning": "to blur; to smudge; to ooze"
     },
     {
       "kanji": "縮む",
       "reading": "ちぢむ",
-      "meaning": "to shrink",
-      "type": "godan-verb"
+      "meaning": "to shrink"
     },
     {
       "kanji": "悄む",
       "reading": "しょげむ",
-      "meaning": "to be dejected; to lose heart",
-      "type": "godan-verb"
+      "meaning": "to be dejected; to lose heart"
     }
   ]
 }

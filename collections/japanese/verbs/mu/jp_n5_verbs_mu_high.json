@@ -4,66 +4,59 @@
     "description": "10 high-frequency Japanese godan verbs ending in む (mu).",
     "version": 1
   },
+  "defaults": {
+    "type": "godan-verb"
+  },
   "entries": [
     {
       "kanji": "飲む",
       "reading": "のむ",
-      "meaning": "to drink",
-      "type": "godan-verb"
+      "meaning": "to drink"
     },
     {
       "kanji": "読む",
       "reading": "よむ",
-      "meaning": "to read",
-      "type": "godan-verb"
+      "meaning": "to read"
     },
     {
       "kanji": "休む",
       "reading": "やすむ",
-      "meaning": "to rest; to be absent",
-      "type": "godan-verb"
+      "meaning": "to rest; to be absent"
     },
     {
       "kanji": "住む",
       "reading": "すむ",
-      "meaning": "to live; to reside",
-      "type": "godan-verb"
+      "meaning": "to live; to reside"
     },
     {
       "kanji": "頼む",
       "reading": "たのむ",
-      "meaning": "to request; to ask",
-      "type": "godan-verb"
+      "meaning": "to request; to ask"
     },
     {
       "kanji": "包む",
       "reading": "つつむ",
-      "meaning": "to wrap; to cover",
-      "type": "godan-verb"
+      "meaning": "to wrap; to cover"
     },
     {
       "kanji": "掴む",
       "reading": "つかむ",
-      "meaning": "to grasp; to seize",
-      "type": "godan-verb"
+      "meaning": "to grasp; to seize"
     },
     {
       "kanji": "組む",
       "reading": "くむ",
-      "meaning": "to assemble; to pair; to cross arms",
-      "type": "godan-verb"
+      "meaning": "to assemble; to pair; to cross arms"
     },
     {
       "kanji": "踏む",
       "reading": "ふむ",
-      "meaning": "to step on",
-      "type": "godan-verb"
+      "meaning": "to step on"
     },
     {
       "kanji": "悩む",
       "reading": "なやむ",
-      "meaning": "to worry; to be troubled",
-      "type": "godan-verb"
+      "meaning": "to worry; to be troubled"
     }
   ]
 }

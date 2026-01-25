@@ -4,66 +4,59 @@
     "description": "10 high-usage Japanese godan verbs ending in ぐ (gu).",
     "version": 1
   },
+  "defaults": {
+    "type": "godan-verb"
+  },
   "entries": [
     {
       "kanji": "泳ぐ",
       "reading": "およぐ",
-      "meaning": "to swim",
-      "type": "godan-verb"
+      "meaning": "to swim"
     },
     {
       "kanji": "急ぐ",
       "reading": "いそぐ",
-      "meaning": "to hurry",
-      "type": "godan-verb"
+      "meaning": "to hurry"
     },
     {
       "kanji": "脱ぐ",
       "reading": "ぬぐ",
-      "meaning": "to take off (clothes)",
-      "type": "godan-verb"
+      "meaning": "to take off (clothes)"
     },
     {
       "kanji": "防ぐ",
       "reading": "ふせぐ",
-      "meaning": "to prevent; to defend",
-      "type": "godan-verb"
+      "meaning": "to prevent; to defend"
     },
     {
       "kanji": "稼ぐ",
       "reading": "かせぐ",
-      "meaning": "to earn (money)",
-      "type": "godan-verb"
+      "meaning": "to earn (money)"
     },
     {
       "kanji": "騒ぐ",
       "reading": "さわぐ",
-      "meaning": "to make noise; to make a fuss",
-      "type": "godan-verb"
+      "meaning": "to make noise; to make a fuss"
     },
     {
       "kanji": "繋ぐ",
       "reading": "つなぐ",
-      "meaning": "to connect; to link",
-      "type": "godan-verb"
+      "meaning": "to connect; to link"
     },
     {
       "kanji": "注ぐ",
       "reading": "そそぐ",
-      "meaning": "to pour; to concentrate (effort)",
-      "type": "godan-verb"
+      "meaning": "to pour; to concentrate (effort)"
     },
     {
       "kanji": "研ぐ",
       "reading": "とぐ",
-      "meaning": "to sharpen; to polish",
-      "type": "godan-verb"
+      "meaning": "to sharpen; to polish"
     },
     {
       "kanji": "濯ぐ",
       "reading": "すすぐ",
-      "meaning": "to rinse",
-      "type": "godan-verb"
+      "meaning": "to rinse"
     }
   ]
 }

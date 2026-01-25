@@ -4,66 +4,59 @@
     "description": "10 additional Japanese godan verbs ending in ぐ (gu).",
     "version": 1
   },
+  "defaults": {
+    "type": "godan-verb"
+  },
   "entries": [
     {
       "kanji": "嗅ぐ",
       "reading": "かぐ",
-      "meaning": "to smell; to sniff",
-      "type": "godan-verb"
+      "meaning": "to smell; to sniff"
     },
     {
       "kanji": "継ぐ",
       "reading": "つぐ",
-      "meaning": "to succeed; to inherit",
-      "type": "godan-verb"
+      "meaning": "to succeed; to inherit"
     },
     {
       "kanji": "塞ぐ",
       "reading": "ふさぐ",
-      "meaning": "to block; to close up",
-      "type": "godan-verb"
+      "meaning": "to block; to close up"
     },
     {
       "kanji": "担ぐ",
       "reading": "かつぐ",
-      "meaning": "to shoulder; to carry",
-      "type": "godan-verb"
+      "meaning": "to shoulder; to carry"
     },
     {
       "kanji": "剥ぐ",
       "reading": "はぐ",
-      "meaning": "to peel off",
-      "type": "godan-verb"
+      "meaning": "to peel off"
     },
     {
       "kanji": "仰ぐ",
       "reading": "あおぐ",
-      "meaning": "to look up (to); to revere",
-      "type": "godan-verb"
+      "meaning": "to look up (to); to revere"
     },
     {
       "kanji": "漕ぐ",
       "reading": "こぐ",
-      "meaning": "to row; to pedal",
-      "type": "godan-verb"
+      "meaning": "to row; to pedal"
     },
     {
       "kanji": "貢ぐ",
       "reading": "みつぐ",
-      "meaning": "to contribute; to support",
-      "type": "godan-verb"
+      "meaning": "to contribute; to support"
     },
     {
       "kanji": "紡ぐ",
       "reading": "つむぐ",
-      "meaning": "to spin (thread); to weave; to build (a story)",
-      "type": "godan-verb"
+      "meaning": "to spin (thread); to weave; to build (a story)"
     },
     {
       "kanji": "削ぐ",
       "reading": "そぐ",
-      "meaning": "to shave off; to pare down",
-      "type": "godan-verb"
+      "meaning": "to shave off; to pare down"
     }
   ]
 }
