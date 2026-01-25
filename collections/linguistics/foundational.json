@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "name": "Foundational & Methodological",
+    "description": "General-purpose linguistic, methodological, and academic terms used across subfields.",
+    "version": 3
+  },
+  "entries": [
+    {
+      "term": "Linguistics",
+      "study": "Linguistics",
+      "definition": "The scientific study of human language, including its structure, meaning, and use.",
+      "compressed_definition": "Scientific study of language"
+    },
+    {
+      "term": "Pragmatic",
+      "study": "General / Linguistics",
+      "definition": "Concerned with practical use or real-world application rather than abstract theory.",
+      "compressed_definition": "Practical or use-oriented"
+    },
+    {
+      "term": "Metalinguistic",
+      "study": "Linguistics",
+      "definition": "Referring to language itself or the analysis of language using language.",
+      "compressed_definition": "Language about language"
+    },
+    {
+      "term": "Pedagogical",
+      "study": "Applied linguistics / Education",
+      "definition": "Relating to teaching, learning, or instructional design.",
+      "compressed_definition": "Teaching-related",
+      "examples": [
+        "Pedagogical examples prioritize clarity over completeness."
+      ],
+      "notes": "Often contrasted with descriptive or theoretical approaches."
+    },
+    {
+      "term": "Exhaustive",
+      "study": "General / Methodology",
+      "definition": "Including all possible members or cases; leaving nothing out.",
+      "compressed_definition": "Complete; all-inclusive",
+      "examples": [
+        "An exhaustive list of verb senses is impractical."
+      ],
+      "notes": "Pedagogical resources are intentionally non-exhaustive."
+    },
+    {
+      "term": "Diagnostic",
+      "study": "Linguistics / Methodology",
+      "definition": "Serving to identify or distinguish linguistic categories or relations.",
+      "compressed_definition": "Category-identifying",
+      "examples": [
+        "The 'is-a-kind-of' test is diagnostic for hyponymy."
+      ]
+    }
+  ]
+}

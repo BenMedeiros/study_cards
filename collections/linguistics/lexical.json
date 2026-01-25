@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "name": "Lexical Semantics & Lexicon",
+    "description": "Word meaning, sense structure, and lexical relations.",
+    "version": 3
+  },
+  "entries": [
+    {
+      "term": "Lexical semantics",
+      "study": "Linguistics / Semantics",
+      "definition": "The study of word meanings, sense distinctions, and relationships among words.",
+      "compressed_definition": "Study of word meaning"
+    },
+    {
+      "term": "Sense",
+      "study": "Lexical semantics",
+      "definition": "A distinct meaning associated with a word form in a particular context or usage.",
+      "compressed_definition": "Specific word meaning"
+    },
+    {
+      "term": "Lexeme",
+      "study": "Lexical semantics",
+      "definition": "An abstract unit of lexical meaning encompassing all inflected forms of a word.",
+      "compressed_definition": "Abstract lexical unit"
+    },
+    {
+      "term": "Lemma",
+      "study": "Lexical semantics",
+      "definition": "The canonical dictionary form representing a lexeme.",
+      "compressed_definition": "Dictionary headword"
+    },
+    {
+      "term": "Synonymy",
+      "study": "Lexical semantics",
+      "definition": "A relation between words with similar meanings.",
+      "compressed_definition": "Similarity of meaning"
+    },
+    {
+      "term": "Near-synonymy",
+      "study": "Lexical semantics",
+      "definition": "Partial synonymy where words differ in connotation, register, or usage.",
+      "compressed_definition": "Partial similarity"
+    },
+    {
+      "term": "Polysemy",
+      "study": "Lexical semantics",
+      "definition": "A single word having multiple related meanings.",
+      "compressed_definition": "Multiple related meanings",
+      "examples": [
+        "run (move quickly)",
+        "run (manage a business)"
+      ],
+      "notes": "Polysemy explains why one word form can participate in multiple hyponymy relations."
+    },
+    {
+      "term": "Homonymy",
+      "study": "Lexical semantics",
+      "definition": "The relationship between words that share a form but have unrelated meanings.",
+      "compressed_definition": "Same form, unrelated meanings"
+    },
+    {
+      "term": "Hypernym",
+      "study": "Lexical semantics",
+      "definition": "A word with a broad meaning that subsumes more specific words.",
+      "compressed_definition": "General parent term",
+      "examples": [
+        "cook → boil, fry, bake",
+        "vehicle → car, bicycle"
+      ]
+    },
+    {
+      "term": "Hyponym",
+      "study": "Lexical semantics",
+      "definition": "A word whose meaning is included within the meaning of a more general term.",
+      "compressed_definition": "More specific category member",
+      "examples": [
+        "boil is a hyponym of cook",
+        "murder is a hyponym of kill"
+      ],
+      "notes": "Hyponymy is many-to-one at the sense level."
+    },
+    {
+      "term": "Troponymy",
+      "study": "Lexical semantics",
+      "definition": "A verb-specific subtype of hyponymy where the verb encodes manner of action.",
+      "compressed_definition": "Verb hyponymy with manner",
+      "examples": [
+        "whisper → speak",
+        "sprint → run",
+        "boil → cook"
+      ],
+      "notes": "Not all verb hyponyms are troponyms; manner must be specified."
+    },
+    {
+      "term": "Lexical gap",
+      "study": "Lexical semantics",
+      "definition": "A concept for which a language lacks a conventional word.",
+      "compressed_definition": "Missing word for a concept"
+    }
+  ]
+}

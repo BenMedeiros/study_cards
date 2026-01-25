@@ -8,18 +8,10 @@
       "type": "string"
     },
     {
-      "key": "primary_field",
-      "label": "Primary Field",
-      "jp_label": "主要分野",
-      "type": "string",
-      "description": "Broad discipline or area (e.g., Linguistics, Computational linguistics)."
-    },
-    {
-      "key": "subfield",
-      "label": "Subfield",
-      "jp_label": "サブ分野",
-      "type": "string",
-      "description": "Specific subfield or topic (e.g., Semantics, Pragmatics)."
+      "key": "study",
+      "label": "Study Area",
+      "jp_label": "研究分野",
+      "type": "string"
     },
     {
       "key": "definition",
@@ -31,8 +23,19 @@
       "key": "compressed_definition",
       "label": "Compressed Definition",
       "jp_label": "圧縮定義",
-      "type": "string",
-      "description": "A concise version of the definition for quick recall."
+      "type": "string"
+    },
+    {
+      "key": "examples",
+      "label": "Examples",
+      "jp_label": "例",
+      "type": "array"
+    },
+    {
+      "key": "notes",
+      "label": "Notes",
+      "jp_label": "補足",
+      "type": "string"
     }
   ]
 }

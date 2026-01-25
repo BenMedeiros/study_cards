@@ -1,79 +1,51 @@
 {
   "metadata": {
     "name": "Pragmatics & Context",
-    "description": "Context-dependent meaning, usage, register, and pragmatic change.",
-    "version": 1
+    "description": "Contextual meaning, inference, and language use.",
+    "version": 3
   },
   "entries": [
     {
       "term": "Pragmatics",
-      "primary_field": "Linguistics",
-      "subfield": "Pragmatics",
-      "definition": "Study of how context, speaker intention, and situational factors influence interpretation",
-      "compressed_definition": "Context-dependent meaning study"
+      "study": "Linguistics / Pragmatics",
+      "definition": "The study of how context, intention, and situation affect meaning.",
+      "compressed_definition": "Context-dependent meaning"
     },
     {
       "term": "Context",
-      "primary_field": "Linguistics",
-      "subfield": "Pragmatics",
-      "definition": "Situational, social, and linguistic factors surrounding an utterance that affect meaning",
-      "compressed_definition": "Situational factors affecting meaning"
+      "study": "Pragmatics",
+      "definition": "Situational, social, and linguistic factors surrounding an utterance.",
+      "compressed_definition": "Meaning-shaping situation"
     },
     {
       "term": "Usage",
-      "primary_field": "Linguistics",
-      "subfield": "Pragmatics",
-      "definition": "Patterns and norms of how speakers actually employ words and expressions in communication",
+      "study": "Pragmatics",
+      "definition": "How language is actually used by speakers in real contexts.",
       "compressed_definition": "Actual language use"
     },
     {
-      "term": "Pragmatic drift",
-      "primary_field": "Linguistics",
-      "subfield": "Pragmatics",
-      "definition": "Context-driven change in language meaning over time",
-      "compressed_definition": "Contextual meaning shift"
-    },
-    {
       "term": "Register",
-      "primary_field": "Linguistics",
-      "subfield": "Sociolinguistics",
-      "definition": "Variation in language style depending on context, formality, or audience",
-      "compressed_definition": "Language style variation"
-    },
-    {
-      "term": "Register mismatch",
-      "primary_field": "Linguistics",
-      "subfield": "Sociolinguistics",
-      "definition": "Inappropriate alignment between expected and actual register",
-      "compressed_definition": "Mismatched language style"
-    },
-    {
-      "term": "Metalinguistic usage",
-      "primary_field": "Linguistics",
-      "subfield": "Pragmatics",
-      "definition": "Using language to describe or analyze language itself",
-      "compressed_definition": "Language about language"
+      "study": "Sociolinguistics / Pragmatics",
+      "definition": "Variation in language style depending on context or audience.",
+      "compressed_definition": "Style variation"
     },
     {
       "term": "Speech act",
-      "primary_field": "Linguistics",
-      "subfield": "Pragmatics",
-      "definition": "An utterance that performs an action (e.g., asserting, questioning, promising) rather than simply describing a state of affairs",
+      "study": "Pragmatics",
+      "definition": "An utterance that performs an action rather than merely describing.",
       "compressed_definition": "Utterance-as-action"
     },
     {
       "term": "Implicature",
-      "primary_field": "Linguistics",
-      "subfield": "Pragmatics",
-      "definition": "Meaning inferred from context and conversational maxims that is not explicitly stated",
-      "compressed_definition": "Contextual inferred meaning"
+      "study": "Pragmatics",
+      "definition": "Meaning inferred from context rather than explicitly stated.",
+      "compressed_definition": "Inferred meaning"
     },
     {
       "term": "Deixis",
-      "primary_field": "Linguistics",
-      "subfield": "Pragmatics",
-      "definition": "Words or phrases (like 'here', 'you', 'now') whose meaning depends on the context of the utterance",
-      "compressed_definition": "Context-dependent referential words"
+      "study": "Pragmatics",
+      "definition": "Context-dependent expressions such as person, place, or time references.",
+      "compressed_definition": "Context-dependent reference"
     }
   ]
 }
