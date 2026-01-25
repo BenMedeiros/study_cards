@@ -1,0 +1,31 @@
+{
+    "metadata": {
+        "name": "Japanese N5 Compound Verbs (ichidan)",
+        "description": "Common compound verbs (ichidan) from the original N5 compound verbs set.",
+        "version": 2
+    },
+    "defaults": {
+        "verbType": "compound",
+        "type": "ichidan-verb"
+    },
+    "entries": [
+        {
+            "kanji": "飲み比べる",
+            "reading": "のみくらべる",
+            "meaning": "to compare drinks; taste test",
+            "compoundType": "compositional"
+        },
+        {
+            "kanji": "買い替える",
+            "reading": "かいかえる",
+            "meaning": "to replace by buying a new one",
+            "compoundType": "compositional"
+        },
+        {
+            "kanji": "話しかける",
+            "reading": "はなしかける",
+            "meaning": "to address; to speak to someone",
+            "compoundType": "grammaticalized"
+        }
+    ]
+}

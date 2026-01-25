@@ -24,7 +24,7 @@
       "label": "Type",
       "jp_label": "種類",
       "type": "enum",
-      "description": "How to choose: use 'standalone-noun' when the kanji can appear as a standalone word without okurigana. If it cannot stand alone but commonly appears as a verb stem (requires okurigana), use 'verb-stem'. Otherwise use 'compound-morpheme' for bound/on-yomi uses in compounds. Other values cover adjectives, particles, counters, etc.",
+      "description": "How to choose: use 'standalone-noun' when the kanji can appear as a standalone word without okurigana. Use 'verb-stem' for kanji forming part of a verb. Use 'compound-morpheme' for bound/on-yomi uses in compounds. Use 'sentence' or 'phrase' for multi-word units or full clauses. Other values cover adjectives, particles, counters, etc.",
       "values": {
         "noun": "A standalone noun not requiring okurigana.",
         "standalone-noun": "Kanji that can appear as a word by itself without okurigana.",
@@ -37,11 +37,13 @@
         "i-adjective": "い形容詞.",
         "na-adjective": "な形容詞.",
         "particle": "Function word / particle.",
-        "expression": "Full phrase or expression rather than a lexical word.",
+        "expression": "Fixed multi-word phrase (idiomatic or conventional).",
+        "descriptive-phrase": "Descriptive phrase, often multi-word.",
+        "sentence": "A full grammatical sentence, usually contains subject/object/verb.",
+        "phrase-sentence": "A phrase that is a complete clause or predicate-object unit.",
         "counter": "Japanese counter word.",
         "adverb": "Adverb (副詞).",
-        "conjunction": "Conjunction / connective.",
-        "descriptive-phrase": "Descriptive phrase, often multi-word."
+        "conjunction": "Conjunction / connective."
       }
     },
     {
@@ -49,12 +51,12 @@
       "label": "Verb Type",
       "jp_label": "動詞タイプ",
       "type": "enum",
-      "description": "Classifies the structural type of the verb or entry.",
+      "description": "Classifies the structural type of lexical verbs only (single verbs, not sentences). Use only if type is 'ichidan-verb', 'godan-verb', or 'irregular-verb'.",
       "values": {
         "simple": "A standalone lexical verb (e.g., 飲む, 生きる).",
         "compound": "Compound verb formed from two verbs or stem+verb.",
         "suru": "Suru-verb (サ変動詞).",
-        "expression": "Sentence-like phrase, not a lexical verb."
+        "expression": "Sentence-like phrase, not a lexical verb (rare usage; usually better classified as type='sentence')."
       }
     },
     {

@@ -2,8 +2,10 @@
   "metadata": { "name": "Japanese N5 Godan Verbs (-ru)", "level": "N5", "version": 1 },
   "defaults": { "type": "godan-verb", "ending": "ru" },
   "entries": [
-    { "kanji": "語る", "reading": "かたる", "meaning": "to narrate; to talk about" },
     { "kanji": "上がる", "reading": "あがる", "meaning": "to rise; to go up" },
-    { "kanji": "下がる", "reading": "さがる", "meaning": "to fall; to go down; to step back" }
+    { "kanji": "生きる", "reading": "いきる", "meaning": "to live" },
+    { "kanji": "語る", "reading": "かたる", "meaning": "to narrate; to talk about" },
+    { "kanji": "下がる", "reading": "さがる", "meaning": "to fall; to go down; to step back" },
+    { "kanji": "名乗る", "reading": "なのる", "meaning": "to give one's name; to introduce oneself" }
   ]
 }
