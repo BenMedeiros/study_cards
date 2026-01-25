@@ -43,15 +43,15 @@
       "jp_label": "クラス",
       "type": "enum",
       "description": "Classification such as Olympian, Titan, Primordial, Chthonic, etc.",
-      "values": [
-        "Olympian",
-        "Titan",
-        "Primordial",
-        "Chthonic",
-        "Personification",
-        "Hero",
-        "Other"
-      ]
+      "values": {
+        "Olympian": "Major gods traditionally associated with Mount Olympus.",
+        "Titan": "Pre-Olympian elder deities who ruled before the Olympians.",
+        "Primordial": "Primordial forces or beings from the origin of the cosmos.",
+        "Chthonic": "Deities or spirits associated with the underworld or earth.",
+        "Personification": "Personified concepts (e.g., Victory, Justice).",
+        "Hero": "Mortals or demigods famed for heroic deeds.",
+        "Other": "Other classifications not covered by the above categories."
+      }
     },
     {
       "key": "godOf",

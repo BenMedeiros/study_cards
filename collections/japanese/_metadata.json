@@ -25,24 +25,51 @@
       "jp_label": "種類",
       "type": "enum",
       "description": "How to choose: use 'standalone-noun' when the kanji can appear as a standalone word without okurigana. If it cannot stand alone but commonly appears as a verb stem (requires okurigana), use 'verb-stem'. Otherwise use 'compound-morpheme' for bound/on-yomi uses in compounds. Other values cover adjectives, particles, counters, etc.",
-      "values": [
-        "noun",
-        "standalone-noun",
-        "compound-morpheme",
-        "verb-stem",
-        "numeral",
-        "ichidan-verb",
-        "godan-verb",
-        "irregular-verb",
-        "i-adjective",
-        "na-adjective",
-        "particle",
-        "expression",
-        "counter",
-        "adverb",
-        "conjunction",
-        "descriptive-phrase"
-      ]
+      "values": {
+        "noun": "A standalone noun not requiring okurigana.",
+        "standalone-noun": "Kanji that can appear as a word by itself without okurigana.",
+        "compound-morpheme": "Kanji that only appears in compounds (bound or on-yomi usage).",
+        "verb-stem": "Kanji that appears as part of a verb stem requiring okurigana.",
+        "numeral": "Numbers / counters used in counting.",
+        "ichidan-verb": "一段動詞 (vowel-stem verb).",
+        "godan-verb": "五段動詞 (consonant-stem verb).",
+        "irregular-verb": "Irregular verbs (する, 来る, etc.).",
+        "i-adjective": "い形容詞.",
+        "na-adjective": "な形容詞.",
+        "particle": "Function word / particle.",
+        "expression": "Full phrase or expression rather than a lexical word.",
+        "counter": "Japanese counter word.",
+        "adverb": "Adverb (副詞).",
+        "conjunction": "Conjunction / connective.",
+        "descriptive-phrase": "Descriptive phrase, often multi-word."
+      }
+    },
+    {
+      "key": "verbType",
+      "label": "Verb Type",
+      "jp_label": "動詞タイプ",
+      "type": "enum",
+      "description": "Classifies the structural type of the verb or entry.",
+      "values": {
+        "simple": "A standalone lexical verb (e.g., 飲む, 生きる).",
+        "compound": "Compound verb formed from two verbs or stem+verb.",
+        "suru": "Suru-verb (サ変動詞).",
+        "expression": "Sentence-like phrase, not a lexical verb."
+      }
+    },
+    {
+      "key": "compoundType",
+      "label": "Compound Type",
+      "jp_label": "複合動詞タイプ",
+      "type": "enum",
+      "description": "Specifies the linguistic nature of a compound verb. Only applicable if verbType is 'compound'.",
+      "values": {
+        "compositional": "Derived by rule; meaning fully predictable from components.",
+        "lexical": "Stored in the lexicon; meaning not derivable by rule.",
+        "aspectual": "Encodes phase, completion, or continuation of the action.",
+        "grammaticalized": "Second verb loses original lexical meaning, functions as a grammatical/auxiliary operator.",
+        "hybrid": "Partially productive but conventionalized; semi-lexical."
+      }
     }
   ]
 }
