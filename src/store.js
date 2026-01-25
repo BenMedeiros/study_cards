@@ -9,6 +9,8 @@ export function createStore() {
     activeCollectionId: null,
     // Folder-browsing tree derived from collections/index.json
     collectionTree: null,
+    // Ephemeral UI: do not persist this to sessionStorage
+    collectionBrowserPath: null,
   };
 
   function notify() {
@@ -516,23 +518,12 @@ export function createStore() {
     syncCollectionFromURL,
     listCollectionDir,
     getCollectionBrowserPath: () => {
-      try {
-        const session = loadSessionState();
-        const p = session?.shell?.collectionBrowserPath;
-        return typeof p === 'string' ? p : null;
-      } catch (e) {
-        return null;
-      }
+      return (typeof state.collectionBrowserPath === 'string') ? state.collectionBrowserPath : null;
     },
     setCollectionBrowserPath: (path) => {
-      try {
-        const session = readSessionState();
-        session.shell = session.shell || {};
-        session.shell.collectionBrowserPath = String(path || '');
-        saveSessionState(session);
-      } catch (e) {
-        // ignore
-      }
+      state.collectionBrowserPath = typeof path === 'string' ? path : String(path || '');
+      // Ephemeral UI change: do not notify subscribers to avoid
+      // re-rendering the shell while dropdowns/overlays are open.
     },
     getShellVoiceSettings,
     setShellVoiceSettings,

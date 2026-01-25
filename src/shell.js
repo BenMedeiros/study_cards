@@ -163,6 +163,16 @@ export function createAppShell({ store, onNavigate }) {
   el.append(header);
   el.append(main);
 
+  // Local cache of store-derived values to avoid synchronous store reads
+  // during header render. This keeps renderHeader fast and only updates
+  // when the store emits changes.
+  const cached = {
+    collections: Array.isArray(store.getCollections?.()) ? store.getCollections() : [],
+    activeId: typeof store.getActiveCollectionId === 'function' ? store.getActiveCollectionId() : null,
+    activeCollection: typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : null,
+    voiceState: getVoiceState(),
+  };
+
   function renderHeader() {
     headerInner.innerHTML = '';
 
@@ -190,8 +200,8 @@ export function createAppShell({ store, onNavigate }) {
     collectionBadge.className = 'badge';
     collectionBadge.id = 'hdr-collection-badge';
 
-    const collections = store.getCollections();
-    const activeId = store.getActiveCollectionId();
+    const collections = cached.collections;
+    const activeId = cached.activeId;
 
     const collectionSelect = createCollectionBrowserDropdown({
       store,
@@ -522,7 +532,7 @@ export function createAppShell({ store, onNavigate }) {
 
     nav.innerHTML = '';
     // Show the Kanji Study link only when the active collection is Japanese
-    const activeCollection = store.getCollections().find(c => c.key === store.getActiveCollectionId());
+    const activeCollection = cached.activeCollection || collections.find(c => c.key === activeId);
     const activeCategory = activeCollection?.metadata?.category || '';
 
     const links = [
@@ -601,6 +611,13 @@ export function createAppShell({ store, onNavigate }) {
   }
 
   store.subscribe(() => {
+    // Refresh cached values then re-render header
+    try {
+      cached.collections = Array.isArray(store.getCollections?.()) ? store.getCollections() : cached.collections;
+      cached.activeId = typeof store.getActiveCollectionId === 'function' ? store.getActiveCollectionId() : cached.activeId;
+      cached.activeCollection = typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : cached.activeCollection;
+      cached.voiceState = getVoiceState();
+    } catch (err) {}
     renderHeader();
   });
 

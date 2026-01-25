@@ -54,7 +54,9 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
 
   function syncDirFromState() {
     const fromStore = store.getCollectionBrowserPath?.();
-    if (typeof fromStore === 'string') {
+    // Only respect an explicit, non-empty path from the store. Empty
+    // string means "no preference" so fall back to the active collection.
+    if (typeof fromStore === 'string' && fromStore.length > 0) {
       currentDir = fromStore;
       return;
     }
@@ -305,6 +307,12 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
       delete container._captureKeyHandler;
     }
     try { menu.blur(); } catch (err) {}
+    // Clear ephemeral store path so next open defaults to active collection
+    try {
+      if (store && typeof store.setCollectionBrowserPath === 'function') {
+        store.setCollectionBrowserPath('');
+      }
+    } catch (err) {}
     document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);
   }
 
