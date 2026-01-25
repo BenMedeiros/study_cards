@@ -94,9 +94,9 @@ async function main() {
     const indexPath = path.join(outDir, 'index.json');
     await fs.writeFile(indexPath, JSON.stringify({ generated: results }, null, 2), 'utf8');
     console.log(`Wrote ${indexPath}`);
-    console.log('To restore a single collection (dry-run):');
+    console.log('\nTo restore a single collection (dry-run):');
     console.log('  node _collections/scripts/restore_collections.js --input _collections/<collection>.json --dry-run');
-    console.log('To restore and overwrite existing files:');
+    console.log('\nTo restore and overwrite existing files:');
     console.log('  node _collections/scripts/restore_collections.js --input _collections/<collection>.json --overwrite');
   } catch (err) {
     console.error('Error aggregating collections:', err);
