@@ -1,0 +1,9 @@
+{
+  "metadata": { "name": "Japanese N5 Ichidan Verbs", "level": "N5", "version": 1 },
+  "defaults": { "type": "ichidan-verb" },
+  "entries": [
+    { "kanji": "食べる", "reading": "たべる", "meaning": "to eat" },
+    { "kanji": "空ける", "reading": "あける", "meaning": "to make empty; to vacate; to open (transitive)" },
+    { "kanji": "開ける", "reading": "あける", "meaning": "to open (transitive)" }
+  ]
+}

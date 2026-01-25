@@ -1,0 +1,8 @@
+{
+  "metadata": { "name": "Japanese N5 Godan Verbs (-su)", "level": "N5", "version": 1 },
+  "defaults": { "type": "godan-verb", "ending": "su" },
+  "entries": [
+    { "kanji": "話す", "reading": "はなす", "meaning": "to speak; to talk" },
+    { "kanji": "外す", "reading": "はずす", "meaning": "to remove; to unfasten; to be away" }
+  ]
+}
