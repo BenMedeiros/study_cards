@@ -181,14 +181,14 @@ export function createStore() {
 
   function mergeMetadata(collection, categoryMetadata) {
     // Start with common fields, then add collection-specific fields
-    const commonFields = Array.isArray(categoryMetadata?.commonFields) ? categoryMetadata.commonFields : [];
-    const commonFieldKeys = new Set(commonFields.map(f => f.key));
+    const fields = Array.isArray(categoryMetadata?.fields) ? categoryMetadata.fields : [];
+    const commonFieldKeys = new Set(fields.map(f => f.key));
     const collectionFields = collection.metadata?.fields || [];
     const collectionFieldKeys = new Set(collectionFields.map(f => f.key));
     
     // Use common fields, but allow collection to override
     const mergedFields = [
-      ...commonFields.filter(f => !collectionFieldKeys.has(f.key)),
+      ...fields.filter(f => !collectionFieldKeys.has(f.key)),
       ...collectionFields
     ];
     
@@ -316,7 +316,7 @@ export function createStore() {
 
       // Apply inherited folder metadata (nearest `_metadata.json` up the folder chain)
       const folderPath = dirname(relPath);
-      const folderMetadata = (await loadInheritedFolderMetadata(folderPath, metadataCache, folderMetadataMap)) || { commonFields: [], category: folderPath.split('/')[0] || '' };
+      const folderMetadata = (await loadInheritedFolderMetadata(folderPath, metadataCache, folderMetadataMap)) || { fields: [], category: folderPath.split('/')[0] || '' };
       data = mergeMetadata(data, folderMetadata);
 
       // Ensure required bits exist, and avoid relying on metadata.id.

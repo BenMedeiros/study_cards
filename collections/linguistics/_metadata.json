@@ -1,6 +1,6 @@
 {
   "category": "linguistics",
-  "commonFields": [
+  "fields": [
     {
       "key": "term",
       "label": "Term",

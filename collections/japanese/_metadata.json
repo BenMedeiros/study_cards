@@ -1,6 +1,6 @@
 {
   "category": "japanese",
-  "commonFields": [
+  "fields": [
     {
       "key": "kanji",
       "label": "Kanji",

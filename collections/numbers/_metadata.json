@@ -1,6 +1,6 @@
 {
   "category": "numbers",
-  "commonFields": [
+  "fields": [
     {
       "key": "letter",
       "label": "Letter",

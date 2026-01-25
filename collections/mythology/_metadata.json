@@ -1,6 +1,6 @@
 {
   "category": "mythology",
-  "commonFields": [
+  "fields": [
     {
       "key": "englishName",
       "label": "English Name",

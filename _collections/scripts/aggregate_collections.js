@@ -57,8 +57,16 @@ async function aggregateCollection(collectionPath, collectionName) {
       console.warn(`Skipping ${f}: ${err.message}`);
     }
   }
+  // Wrap folder contents into a `collections` property and expose top-level _metadata if present
+  const wrapped = {};
+  if (root.hasOwnProperty('_metadata')) {
+    wrapped._metadata = root._metadata;
+    delete root._metadata;
+  }
+  wrapped.collections = root;
+
   const outPath = path.join(outDir, `${collectionName}.json`);
-  await fs.writeFile(outPath, JSON.stringify(root, null, 2), 'utf8');
+  await fs.writeFile(outPath, JSON.stringify(wrapped, null, 2), 'utf8');
   return outPath;
 }
 
@@ -86,6 +94,10 @@ async function main() {
     const indexPath = path.join(outDir, 'index.json');
     await fs.writeFile(indexPath, JSON.stringify({ generated: results }, null, 2), 'utf8');
     console.log(`Wrote ${indexPath}`);
+    console.log('To restore a single collection (dry-run):');
+    console.log('  node _collections/scripts/restore_collections.js --input _collections/<collection>.json --dry-run');
+    console.log('To restore and overwrite existing files:');
+    console.log('  node _collections/scripts/restore_collections.js --input _collections/<collection>.json --overwrite');
   } catch (err) {
     console.error('Error aggregating collections:', err);
     process.exitCode = 1;

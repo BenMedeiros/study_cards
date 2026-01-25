@@ -1,7 +1,7 @@
 {
   "category": "pokemon",
   "source": "Official Japanese main-series game text (Game Freak / Nintendo); verified against Bulbapedia and Pokémon Database",
-  "commonFields": [
+  "fields": [
     {
       "key": "englishName",
       "label": "English Name",

@@ -37,6 +37,9 @@ async function restoreAggregated(aggregatedPath, options) {
   const txt = await fs.readFile(aggregatedPath, 'utf8');
   const parsed = JSON.parse(txt);
 
+  // Support aggregator's wrapper: { collections: { ... }, _metadata?: ... }
+  const source = parsed.collections && isPlainObject(parsed.collections) ? parsed.collections : parsed;
+
   const actions = [];
 
   async function recurse(obj, curPath) {
@@ -62,8 +65,18 @@ async function restoreAggregated(aggregatedPath, options) {
       }
     }
   }
+  // If there is top-level _metadata, write it to targetBase/_metadata.json
+  if (parsed && parsed._metadata !== undefined) {
+    const metaPath = path.join(targetBase, '_metadata.json');
+    if (options.dryRun) {
+      actions.push({ action: 'write', path: metaPath });
+    } else {
+      const res = await writeFileIfAllowed(metaPath, parsed._metadata, options.overwrite);
+      actions.push(Object.assign({ action: 'write', path: metaPath }, res));
+    }
+  }
 
-  await recurse(parsed, targetBase);
+  await recurse(source, targetBase);
   return actions;
 }
 
