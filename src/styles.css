@@ -113,7 +113,6 @@ a:hover { text-decoration: underline; }
 .header-right {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
   flex-wrap: wrap;
   justify-content: flex-end;
 }
@@ -728,13 +727,13 @@ select:hover {
 }
 
 .custom-dropdown-menu {
-  min-width: -webkit-fill-available; /* cool - makes sure the dropdown is at least as big as the parent el so our dropdown isn't tiny width */
+  /* ensure dropdown is at least the width of the trigger, but never wider than viewport */
+  min-width: 100%;
   display: none;
   position: absolute;
   top: calc(100% + 0.25rem);
   left: 0;
-  /* width: max(10rem, 100%);  forced the text to be ..., nnow grows freely*/
-  max-width: min(20rem, 90vw);
+  max-width: calc(100vw - 1rem);
   max-height: 18.75rem;
   overflow-y: auto;
   overflow-x: hidden;
@@ -935,7 +934,6 @@ select:hover {
 
 /* Cardtools row for app controls */
 .cardtools-row {
-  display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
@@ -1054,7 +1052,7 @@ select:hover {
     flex: 0 1 auto;
     width: auto;
     min-width: 0;
-    max-width: 100%;
+    max-width: 80%;
   }
 
   #hdr-collection-select {

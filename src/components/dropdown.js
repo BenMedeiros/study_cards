@@ -30,6 +30,7 @@ export function createDropdown({ items, value, onChange, className = '', closeOv
 
   function closeMenu({ focusButton = false } = {}) {
     container.classList.remove('open');
+    container.classList.remove('align-right');
     document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);
     if (focusButton) button.focus();
   }
@@ -78,15 +79,30 @@ export function createDropdown({ items, value, onChange, className = '', closeOv
 
     const open = isOpen();
     
-    // Close all other dropdowns
+    // Close all other dropdowns and clear their alignment
     document.querySelectorAll('.custom-dropdown.open').forEach(d => {
-      if (d !== container) d.classList.remove('open');
+      if (d !== container) {
+        d.classList.remove('open');
+        d.classList.remove('align-right');
+      }
     });
-    
+
     // Toggle this dropdown
     if (!open) {
       container.classList.add('open');
       document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
+
+      // After opening, measure the menu and align to the right if it would overflow the viewport.
+      // Use a microtask to ensure styles are applied and menu is rendered.
+      Promise.resolve().then(() => {
+        const rect = menu.getBoundingClientRect();
+        const margin = 8; // keep a small gap from the viewport edge
+        if (rect.right > (window.innerWidth - margin) || rect.left < 0) {
+          container.classList.add('align-right');
+        } else {
+          container.classList.remove('align-right');
+        }
+      });
     } else {
       closeMenu();
     }

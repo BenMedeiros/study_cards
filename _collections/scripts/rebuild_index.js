@@ -34,6 +34,8 @@ async function rebuildIndex() {
       folderMetadata[top] = posixRel;
       continue;
     }
+    // skip the generated top-level index.json so it doesn't appear in collections
+    if (posixRel === 'index.json') continue;
     collections.push(posixRel);
   }
 

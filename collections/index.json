@@ -7,7 +7,6 @@
     "pokemon": "pokemon/_metadata.json"
   },
   "collections": [
-    "index.json",
     "japanese/all/jp_linguistic_terms.json",
     "japanese/all/jp_linguistic_terms_supplement.json",
     "japanese/all/jp_n5_kanji.json",
