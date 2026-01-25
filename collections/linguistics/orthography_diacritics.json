@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "name": "Orthography, Diacritics & Writing Systems",
+    "description": "Terms related to writing systems, diacritics, and orthographic conventions, including Ancient and Modern Greek.",
+    "version": 1
+  },
+  "entries": [
+    {
+      "term": "Orthography",
+      "study": "Linguistics / Writing Systems",
+      "definition": "The set of conventions for writing a language, including spelling, capitalization, and punctuation.",
+      "compressed_definition": "Writing conventions",
+      "examples": [
+        "Modern Greek orthography uses only the tonos accent, unlike Ancient Greek which used multiple diacritics."
+      ]
+    },
+    {
+      "term": "Diacritic",
+      "study": "Linguistics / Writing Systems",
+      "definition": "A mark added to a letter to indicate a modification in pronunciation, stress, or tone.",
+      "compressed_definition": "Pronunciation/tonal mark",
+      "examples": [
+        "The acute accent in Ancient Greek is a type of diacritic."
+      ]
+    },
+    {
+      "term": "Digraph",
+      "study": "Linguistics / Orthography",
+      "definition": "A sequence of two letters representing a single phoneme or a single orthographic unit (grapheme), e.g. 'sh' in English representing /ʃ/.",
+      "compressed_definition": "Two-letter grapheme for one sound",
+      "examples": [
+        "English 'sh' → /ʃ/",
+        "Spanish 'll' historically → /ʎ/ (varies by dialect)"
+      ],
+      "notes": "Digraphs contrast with single-letter graphemes and with consonant clusters where each letter maps to a separate phoneme."
+    },
+    {
+      "term": "Tonos",
+      "study": "Linguistics / Greek",
+      "definition": "A diacritic (´) used in Modern Greek to indicate the stressed syllable of a word.",
+      "compressed_definition": "Modern Greek stress mark",
+      "examples": [
+        "In Modern Greek, 'πόλις' (city) has the tonos on the first syllable."
+      ]
+    },
+    {
+      "term": "Acute accent",
+      "study": "Linguistics / Greek",
+      "definition": "A diacritic (´) used in Ancient Greek to indicate a rising pitch on a syllable.",
+      "compressed_definition": "Rising pitch mark",
+      "examples": [
+        "ἄνθρωπος (man) has an acute accent on the first syllable."
+      ]
+    },
+    {
+      "term": "Grave accent",
+      "study": "Linguistics / Greek",
+      "definition": "A diacritic (`) in Ancient Greek that indicates a lowering of pitch, often replacing an acute at the end of a word.",
+      "compressed_definition": "Lowering pitch mark",
+      "examples": [
+        "ποιητῆς becomes ποιητῆ` in certain Ancient Greek contexts."
+      ]
+    },
+    {
+      "term": "Circumflex",
+      "study": "Linguistics / Greek",
+      "definition": "A diacritic (ˆ) in Ancient Greek showing a rising then falling pitch on a long vowel or diphthong.",
+      "compressed_definition": "Rising-falling pitch mark",
+      "examples": [
+        "νῦν (now) has a circumflex on the vowel."
+      ]
+    },
+    {
+      "term": "Breathing mark",
+      "study": "Linguistics / Greek",
+      "definition": "A diacritic in Ancient Greek placed over initial vowels or rho: rough (῾) for an 'h' sound, smooth (᾿) for no sound.",
+      "compressed_definition": "Initial vowel/Rho mark",
+      "examples": [
+        "ἑλληνικός (Greek) has a rough breathing on the first vowel."
+      ]
+    },
+    {
+      "term": "Pitch accent",
+      "study": "Linguistics / Phonology",
+      "definition": "A system in which the relative pitch of a syllable determines word stress, as in Ancient Greek.",
+      "compressed_definition": "Syllable pitch system",
+      "examples": [
+        "Ancient Greek distinguishes meaning based on pitch accent, unlike Modern Greek stress accent."
+      ]
+    },
+    {
+      "term": "Stress accent",
+      "study": "Linguistics / Phonology",
+      "definition": "A system in which the loudness or emphasis of a syllable determines word stress, as in Modern Greek.",
+      "compressed_definition": "Syllable emphasis system",
+      "examples": [
+        "In Modern Greek, πόλις has the stress on the first syllable indicated by the tonos."
+      ]
+    }
+  ]
+}

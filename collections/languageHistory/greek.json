@@ -1,0 +1,57 @@
+{
+  "metadata": {
+    "name": "Greek Language History",
+    "description": "Stages of Greek from Ancient to Modern",
+    "version": 2
+  },
+  "entries": [
+    {
+      "language": "Greek",
+      "stage": "Ancient/Classical",
+      "dates": "9th–4th century BCE",
+      "usage": "Literature, philosophy, drama, historical texts",
+      "orthography": "24 letters; pitch accent; diacritics: acute, grave, circumflex, rough/smooth breathing",
+      "pronunciation": "β = /b/, γ = /g/, δ = /d/, θ = /tʰ/, φ = /pʰ/, χ = /kʰ/; long vs short vowels mattered",
+      "grammar": "Complex morphology; optative mood; dual number; multiple tenses",
+      "notableTexts": "Homer, Plato, Sophocles",
+      "phoneticExample": "Ὅμηρος: ἄνδρα μοι ἔννεπε, Μοῦσα… / ˈhomɛːros ˈandra moi ˈennepe, ˈmusa…",
+      "notes": "Classical Greek forms the basis of most later Greek scholarship and literature."
+    },
+    {
+      "language": "Greek",
+      "stage": "Koine",
+      "dates": "4th century BCE–4th century CE",
+      "usage": "Common spoken and written Greek; biblical texts; Hellenistic literature",
+      "orthography": "24 letters; diacritics simplified over time",
+      "pronunciation": "Shift toward stress accent; β → /v/ begins; γ softening",
+      "grammar": "Simplified morphology; optative less common; dative merges with genitive",
+      "notableTexts": "Septuagint, New Testament, early Hellenistic poetry",
+      "phoneticExample": "Ἐν ἀρχῇ ἦν ὁ λόγος / en arˈkʰɛː ɛːn ho ˈloɡos",
+      "notes": "Lingua franca of the eastern Mediterranean after Alexander the Great."
+    },
+    {
+      "language": "Greek",
+      "stage": "Medieval / Byzantine",
+      "dates": "5th–15th century CE",
+      "usage": "Liturgy, administration, literature",
+      "orthography": "Diacritics largely abandoned; monotonic writing emerges later",
+      "pronunciation": "Stress accent; β = /v/, γ = /ɣ/, δ = /ð/; vowels simplified",
+      "grammar": "Further morphological simplification",
+      "notableTexts": "Byzantine chronicles, liturgical texts",
+      "phoneticExample": "Κωνσταντῖνος ἐποίησεν… / konsˈtan.tinos eˈpoisen…",
+      "notes": "Transition period bridging Koine and Modern Greek; strong liturgical influence."
+    },
+    {
+      "language": "Greek",
+      "stage": "Modern",
+      "dates": "15th century CE–present",
+      "usage": "Spoken language, modern literature, official Greek",
+      "orthography": "24 letters; monotonic system with tonos (´); sigma has final form ς",
+      "pronunciation": "Stress accent; η, ι, υ, ει, οι → /i/; consonants: φ = /f/, θ = /θ/, χ = /x/, γ = /ɣ/",
+      "grammar": "Simplified morphology; modern tense and mood system",
+      "notableTexts": "Modern novels, newspapers, official documents",
+      "phoneticExample": "Καλημέρα! / ka.liˈme.ra!",
+      "notes": "Standard Modern Greek based on Demotic, official since 1976."
+    }
+  ]
+}

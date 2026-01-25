@@ -1,0 +1,57 @@
+{
+  "metadata": {
+    "name": "Japanese Language History",
+    "description": "Stages of Japanese from Old to Modern",
+    "version": 2
+  },
+  "entries": [
+    {
+      "language": "Japanese",
+      "stage": "Old Japanese (上代日本語)",
+      "dates": "8th century CE and earlier",
+      "usage": "Poetry (Manyoshu), inscriptions, early chronicles",
+      "orthography": "Man’yōgana (Chinese characters used phonetically)",
+      "pronunciation": "Eight-vowel system, pitch accent system",
+      "grammar": "Complex verb endings, case particles, honorific forms in nascent form",
+      "notableTexts": "Kojiki, Nihon Shoki, Manyoshu",
+      "phoneticExample": "天皇の命 / Ama-no-kami no mikoto / ama no kami no mikoto",
+      "notes": "Earliest attested form of Japanese; influenced by Chinese in writing."
+    },
+    {
+      "language": "Japanese",
+      "stage": "Classical Japanese (中古日本語)",
+      "dates": "9th–12th century CE",
+      "usage": "Court literature, poetry, official documents",
+      "orthography": "Kanji + kana; kana syllabary emerges",
+      "pronunciation": "Eight-vowel system reduces; pitch accent develops",
+      "grammar": "Refined verb conjugations; keigo (polite forms) develop; auxiliary verbs stabilize",
+      "notableTexts": "Genji Monogatari, Heike Monogatari",
+      "phoneticExample": "いづれの御時にか / izure no on toki ni ka / idzure no on toki ni ka",
+      "notes": "Language of Heian court literature; literary style differs from spoken language."
+    },
+    {
+      "language": "Japanese",
+      "stage": "Early Modern Japanese (近世日本語)",
+      "dates": "17th–19th century CE",
+      "usage": "Literature, official documents, oral speech",
+      "orthography": "Modern kana orthography begins; kanji usage expands",
+      "pronunciation": "Seven-vowel system; pitch accent begins approximating modern forms",
+      "grammar": "Verb endings simplified; honorifics system standardized",
+      "notableTexts": "Oku no Hosomichi, Kabuki plays",
+      "phoneticExample": "奥の細道 / Oku no Hosomichi / oku no hosomichi",
+      "notes": "Transition toward modern language; Edo-period vernacular emerges."
+    },
+    {
+      "language": "Japanese",
+      "stage": "Modern Japanese (現代日本語)",
+      "dates": "19th century CE–present",
+      "usage": "Spoken and written language, literature, media, official",
+      "orthography": "Modern kanji, hiragana, katakana; romanization used academically",
+      "pronunciation": "Modern pitch accent; standard Tokyo dialect phonology",
+      "grammar": "Simplified morphology; modern verb and adjective conjugation; keigo system standardized",
+      "notableTexts": "Modern novels, newspapers, official documents",
+      "phoneticExample": "こんにちは / konnichiwa / kon.ni.tɕi.wa",
+      "notes": "Contemporary Japanese; official standard based on Tokyo dialect; spoken and written converge."
+    }
+  ]
+}
