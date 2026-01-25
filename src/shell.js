@@ -26,12 +26,121 @@ export function createAppShell({ store, onNavigate }) {
   // Global key handling: keep document-level listeners centralized here.
   // Components should subscribe to `ui:closeOverlays` when they are open.
   function onGlobalKeyDown(e) {
+    // Escape closes overlays (existing behavior)
     if (e.key === 'Escape') {
       document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
+      return;
+    }
+    // Prioritize the collection browser when it's open — let it handle nav keys.
+    const navKeys = ['ArrowUp', 'ArrowDown', 'Enter', ' ', 'ArrowLeft', 'ArrowRight'];
+    const container = document.getElementById('hdr-collection-select');
+    if (container && container.classList.contains('open') && navKeys.includes(e.key)) {
+      const menu = container.querySelector('.custom-dropdown-menu');
+      if (!menu) return;
+
+      const options = Array.from(menu.querySelectorAll('.custom-dropdown-option'));
+      if (options.length === 0) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      // current keyboard-focused index (persist on the container element)
+      let idx = Number(container.dataset.kbIndex);
+      if (!Number.isFinite(idx) || idx < 0 || idx >= options.length) {
+        const sel = options.findIndex(o => o.classList.contains('selected'));
+        idx = sel >= 0 ? sel : 0;
+      }
+
+      function setFocused(i) {
+        options.forEach(o => o.classList.remove('keyboard-focus'));
+        const opt = options[Math.max(0, Math.min(options.length - 1, i))];
+        if (opt) {
+          opt.classList.add('keyboard-focus');
+          opt.scrollIntoView({ block: 'nearest' });
+          container.dataset.kbIndex = String(Array.prototype.indexOf.call(options, opt));
+        }
+      }
+
+      if (e.key === 'ArrowDown') {
+        idx = Math.min(idx + 1, options.length - 1);
+        setFocused(idx);
+        return;
+      }
+
+      if (e.key === 'ArrowUp') {
+        idx = Math.max(idx - 1, 0);
+        setFocused(idx);
+        return;
+      }
+
+      if (e.key === 'Enter' || e.key === ' ') {
+        const opt = options[idx];
+        if (opt) opt.click();
+        delete container.dataset.kbIndex;
+        return;
+      }
+
+      if (e.key === 'ArrowRight') {
+        const opt = options[idx];
+        if (opt && opt.dataset.kind === 'folder') opt.click();
+        return;
+      }
+
+      if (e.key === 'ArrowLeft') {
+        const upOpt = menu.querySelector('.custom-dropdown-option[data-kind="up"]');
+        if (upOpt) upOpt.click();
+        return;
+      }
+    }
+
+    // If no collection browser is open, delegate to registered app handlers.
+    // Handlers are called in LIFO order (last-registered first). If a handler
+    // returns true, it handled the event and we stop further processing.
+    if (typeof appKeyHandlers !== 'undefined' && Array.isArray(appKeyHandlers) && appKeyHandlers.length) {
+      for (let i = appKeyHandlers.length - 1; i >= 0; i--) {
+        try {
+          const h = appKeyHandlers[i];
+          if (typeof h.handler === 'function') {
+            const handled = h.handler(e);
+            if (handled) {
+              return;
+            }
+          }
+        } catch (err) {
+          // swallow
+        }
+      }
     }
   }
 
   document.addEventListener('keydown', onGlobalKeyDown);
+
+  // App-level key handler registry. Apps register a handler so shell can
+  // delegate keyboard events to the active app. Handlers should return
+  // `true` if they handled the event and want to stop further processing.
+  const appKeyHandlers = [];
+
+  document.addEventListener('app:registerKeyHandler', (ev) => {
+    try {
+      const { id, handler } = ev.detail || {};
+      if (!id || typeof handler !== 'function') return;
+      // Remove existing with same id then push to top
+      for (let i = appKeyHandlers.length - 1; i >= 0; i--) {
+        if (appKeyHandlers[i].id === id) appKeyHandlers.splice(i, 1);
+      }
+      appKeyHandlers.push({ id, handler });
+    } catch (err) {}
+  });
+
+  document.addEventListener('app:unregisterKeyHandler', (ev) => {
+    try {
+      const id = ev.detail?.id;
+      if (!id) return;
+      for (let i = appKeyHandlers.length - 1; i >= 0; i--) {
+        if (appKeyHandlers[i].id === id) appKeyHandlers.splice(i, 1);
+      }
+    } catch (err) {}
+  });
 
   const header = document.createElement('div');
   header.className = 'header';

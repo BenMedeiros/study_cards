@@ -122,14 +122,33 @@ export function renderFlashcards({ store }) {
   };
 
   wrapper.addEventListener('keydown', keyHandler);
-  // Also listen at document level for better UX
-  document.addEventListener('keydown', keyHandler);
+  // Register the handler with the shell so shell controls app-level keyboard handling.
+  // The handler should return true when it handled the event to stop further processing.
+  const registerFlashcardsHandler = () => {
+    const wrapped = (e) => {
+      try {
+        keyHandler(e);
+        // keyHandler calls e.preventDefault when it handles keys; return true if default prevented
+        return e.defaultPrevented === true;
+      } catch (err) {
+        return false;
+      }
+    };
+    document.dispatchEvent(new CustomEvent('app:registerKeyHandler', { detail: { id: 'flashcards', handler: wrapped } }));
+  };
+
+  const unregisterFlashcardsHandler = () => {
+    document.dispatchEvent(new CustomEvent('app:unregisterKeyHandler', { detail: { id: 'flashcards' } }));
+  };
+
+  // Register now for app-level handling
+  setTimeout(registerFlashcardsHandler, 0);
   
   // Cleanup on unmount (not perfect but helps)
   setTimeout(() => {
     const observer = new MutationObserver((mutations) => {
       if (!document.body.contains(wrapper)) {
-        document.removeEventListener('keydown', keyHandler);
+        unregisterFlashcardsHandler();
         observer.disconnect();
       }
     });

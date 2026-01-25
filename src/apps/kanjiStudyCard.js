@@ -460,14 +460,31 @@ export function renderKanjiStudyCard({ store }) {
   };
 
   wrapper.addEventListener('keydown', keyHandler);
-  document.addEventListener('keydown', keyHandler);
+  // Register the handler with the shell so shell controls app-level keyboard handling.
+  const registerKanjiHandler = () => {
+    const wrapped = (e) => {
+      try {
+        keyHandler(e);
+        return e.defaultPrevented === true;
+      } catch (err) {
+        return false;
+      }
+    };
+    document.dispatchEvent(new CustomEvent('app:registerKeyHandler', { detail: { id: 'kanjiStudy', handler: wrapped } }));
+  };
+
+  const unregisterKanjiHandler = () => {
+    document.dispatchEvent(new CustomEvent('app:unregisterKeyHandler', { detail: { id: 'kanjiStudy' } }));
+  };
+
+  setTimeout(registerKanjiHandler, 0);
 
 
 
   // Cleanup on unmount
   const observer = new MutationObserver(() => {
     if (!document.body.contains(el)) {
-      document.removeEventListener('keydown', keyHandler);
+      unregisterKanjiHandler();
       observer.disconnect();
     }
   });

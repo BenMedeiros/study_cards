@@ -34,7 +34,8 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
 
   const menu = document.createElement('div');
   menu.className = 'custom-dropdown-menu';
-
+  // menu.tabIndex = -1; // make focusable so we can capture key events when open
+  // tab index was making a weird focus ring appear 
   function onCloseOverlaysEvent() {
     if (container.classList.contains('open')) {
       close();
@@ -93,12 +94,17 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
       e.stopPropagation();
 
       if (kind === 'up') {
+        // Remember the directory we are leaving so when we re-render the
+        // parent listing we can focus the folder we came from.
+        container.dataset.kbDesired = currentDir || '';
         setCurrentDir(value);
         renderMenu();
         return;
       }
 
       if (kind === 'folder') {
+        // When entering a folder, focus the 'up' option in the new listing.
+        container.dataset.kbDesired = 'up';
         setCurrentDir(value);
         renderMenu();
         return;
@@ -149,19 +155,156 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     if (listing.folders.length === 0 && listing.files.length === 0) {
       addOption({ label: '(empty)', kind: 'noop', value: '', disabled: true });
     }
+
+    // Restore keyboard-focused index if requested, otherwise keep existing index
+    const desired = container.dataset.kbDesired;
+    let focusIndex = -1;
+    const options = Array.from(menu.querySelectorAll('.custom-dropdown-option'));
+    if (typeof desired === 'string' && desired.length > 0) {
+      if (desired === 'up') {
+        focusIndex = options.findIndex(o => o.dataset.kind === 'up');
+      } else {
+        // desired is a path: focus the folder option matching that path
+        focusIndex = options.findIndex(o => o.dataset.value === desired);
+      }
+    }
+
+    // If no desired index, try to reuse previous index stored on container
+    if (focusIndex === -1 && typeof container.dataset.kbIndex === 'string') {
+      const prev = Number(container.dataset.kbIndex);
+      if (Number.isFinite(prev) && prev >= 0 && prev < options.length) focusIndex = prev;
+    }
+
+    // If still nothing, default to the selected file or first option
+    if (focusIndex === -1) {
+      const sel = options.findIndex(o => o.classList.contains('selected'));
+      focusIndex = sel >= 0 ? sel : (options.length ? 0 : -1);
+    }
+
+    // Apply keyboard-focus class
+    options.forEach(o => o.classList.remove('keyboard-focus'));
+    if (focusIndex >= 0 && options[focusIndex]) {
+      options[focusIndex].classList.add('keyboard-focus');
+      container.dataset.kbIndex = String(focusIndex);
+      options[focusIndex].scrollIntoView({ block: 'nearest' });
+    } else {
+      delete container.dataset.kbIndex;
+    }
+
+    // Clear desired flag after applying
+    delete container.dataset.kbDesired;
   }
 
   function open() {
     syncDirFromState();
     button.textContent = getButtonLabel();
     renderMenu();
-
     container.classList.add('open');
     document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
+
+    // focus the menu so it receives key events first and they don't leak to the app
+    setTimeout(() => {
+      try { menu.focus(); } catch (err) {}
+    }, 0);
+
+    // attach a local key handler on the menu to intercept navigation keys
+    if (!menu._localKeyHandler) {
+      menu._localKeyHandler = (e) => {
+        const navKeys = ['ArrowUp','ArrowDown','Enter',' ','ArrowLeft','ArrowRight','Escape'];
+        if (!navKeys.includes(e.key)) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        const options = Array.from(menu.querySelectorAll('.custom-dropdown-option'));
+        if (options.length === 0) return;
+
+        let idx = Number(container.dataset.kbIndex);
+        if (!Number.isFinite(idx) || idx < 0 || idx >= options.length) {
+          const sel = options.findIndex(o => o.classList.contains('selected'));
+          idx = sel >= 0 ? sel : 0;
+        }
+
+        if (e.key === 'ArrowDown') {
+          idx = Math.min(idx + 1, options.length - 1);
+          options.forEach(o => o.classList.remove('keyboard-focus'));
+          options[idx].classList.add('keyboard-focus');
+          options[idx].scrollIntoView({ block: 'nearest' });
+          container.dataset.kbIndex = String(idx);
+          return;
+        }
+
+        if (e.key === 'ArrowUp') {
+          idx = Math.max(idx - 1, 0);
+          options.forEach(o => o.classList.remove('keyboard-focus'));
+          options[idx].classList.add('keyboard-focus');
+          options[idx].scrollIntoView({ block: 'nearest' });
+          container.dataset.kbIndex = String(idx);
+          return;
+        }
+
+        if (e.key === 'Enter' || e.key === ' ') {
+          const opt = options[idx];
+          if (opt) opt.click();
+          return;
+        }
+
+        if (e.key === 'ArrowRight') {
+          const opt = options[idx];
+          if (opt && opt.dataset.kind === 'folder') {
+            opt.click();
+          }
+          return;
+        }
+
+        if (e.key === 'ArrowLeft') {
+          const upOpt = menu.querySelector('.custom-dropdown-option[data-kind="up"]');
+          if (upOpt) upOpt.click();
+          return;
+        }
+
+        if (e.key === 'Escape') {
+          close();
+          button.focus();
+          return;
+        }
+      };
+      menu.addEventListener('keydown', menu._localKeyHandler);
+    }
+
+    // Also add a document-level capturing handler so keys are intercepted
+    // before other document listeners (e.g., flashcards) can react.
+    if (!container._captureKeyHandler) {
+      container._captureKeyHandler = (e) => {
+        const navKeys = ['ArrowUp','ArrowDown','Enter',' ','ArrowLeft','ArrowRight','Escape'];
+        if (!navKeys.includes(e.key)) return;
+        // Allow events that originate inside this dropdown (so the menu handlers run).
+        // Only intercept keys when the active element is outside the container.
+        if (container.classList.contains('open') && !container.contains(document.activeElement)) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      };
+      document.addEventListener('keydown', container._captureKeyHandler, true);
+    }
   }
 
   function close() {
     container.classList.remove('open');
+    // cleanup keyboard focus metadata and classes
+    delete container.dataset.kbIndex;
+    delete container.dataset.kbDesired;
+    if (menu) menu.querySelectorAll('.custom-dropdown-option').forEach(o => o.classList.remove('keyboard-focus'));
+    // remove local key handler and blur menu so background gets keys again
+    if (menu && menu._localKeyHandler) {
+      menu.removeEventListener('keydown', menu._localKeyHandler);
+      delete menu._localKeyHandler;
+    }
+    // remove the capturing document handler
+    if (container && container._captureKeyHandler) {
+      document.removeEventListener('keydown', container._captureKeyHandler, true);
+      delete container._captureKeyHandler;
+    }
+    try { menu.blur(); } catch (err) {}
     document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);
   }
 

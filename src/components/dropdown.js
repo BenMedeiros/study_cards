@@ -32,6 +32,11 @@ export function createDropdown({ items, value, onChange, className = '', closeOv
     container.classList.remove('open');
     container.classList.remove('align-right');
     document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);
+    // remove dropdown-specific keyboard handler if present
+    if (container._ddKeyHandler) {
+      document.removeEventListener('keydown', container._ddKeyHandler);
+      delete container._ddKeyHandler;
+    }
     if (focusButton) button.focus();
   }
   
@@ -102,6 +107,61 @@ export function createDropdown({ items, value, onChange, className = '', closeOv
         } else {
           container.classList.remove('align-right');
         }
+      });
+      // Setup keyboard navigation for the opened menu
+      Promise.resolve().then(() => {
+        const options = Array.from(menu.querySelectorAll('.custom-dropdown-option'));
+        const selIndex = options.findIndex(o => o.classList.contains('selected'));
+        const initIndex = selIndex >= 0 ? selIndex : (options.length ? 0 : -1);
+        if (initIndex >= 0) {
+          options.forEach(o => o.classList.remove('keyboard-focus'));
+          options[initIndex].classList.add('keyboard-focus');
+          container.dataset.kbIndex = String(initIndex);
+        }
+
+        const ddKeyHandler = (e) => {
+          if (!container.classList.contains('open')) return;
+          const key = e.key;
+          if (!['ArrowDown','ArrowUp','Enter',' '].includes(key)) return;
+          e.preventDefault();
+          e.stopPropagation();
+
+          const opts = Array.from(menu.querySelectorAll('.custom-dropdown-option'));
+          if (opts.length === 0) return;
+          let idx = Number(container.dataset.kbIndex);
+          if (!Number.isFinite(idx) || idx < 0 || idx >= opts.length) {
+            const s = opts.findIndex(o => o.classList.contains('selected'));
+            idx = s >= 0 ? s : 0;
+          }
+
+          if (key === 'ArrowDown') {
+            idx = Math.min(idx + 1, opts.length - 1);
+            opts.forEach(o => o.classList.remove('keyboard-focus'));
+            opts[idx].classList.add('keyboard-focus');
+            opts[idx].scrollIntoView({ block: 'nearest' });
+            container.dataset.kbIndex = String(idx);
+            return;
+          }
+
+          if (key === 'ArrowUp') {
+            idx = Math.max(idx - 1, 0);
+            opts.forEach(o => o.classList.remove('keyboard-focus'));
+            opts[idx].classList.add('keyboard-focus');
+            opts[idx].scrollIntoView({ block: 'nearest' });
+            container.dataset.kbIndex = String(idx);
+            return;
+          }
+
+          if (key === 'Enter' || key === ' ') {
+            const opt = opts[idx];
+            if (opt) opt.click();
+            delete container.dataset.kbIndex;
+            return;
+          }
+        };
+
+        container._ddKeyHandler = ddKeyHandler;
+        document.addEventListener('keydown', ddKeyHandler);
       });
     } else {
       closeMenu();

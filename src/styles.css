@@ -782,6 +782,12 @@ select:hover {
   background: rgba(96, 165, 250, 0.15);
 }
 
+/* Keyboard-focused option when navigating dropdowns via arrow keys */
+.custom-dropdown-option.keyboard-focus {
+  background: rgba(96, 165, 250, 0.18);
+  outline: 1px solid rgba(96, 165, 250, 0.35);
+}
+
 .custom-dropdown-option[data-kind="up"] {
   color: var(--muted);
   font-weight: 600;
@@ -796,7 +802,6 @@ select:hover {
 
 .custom-dropdown-option.selected::after {
   content: ' ✓';
-  float: right;
   margin-left: 0.75rem;
 }
 /* Crossword and wordsearch app styles removed */
