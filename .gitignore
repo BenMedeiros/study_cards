@@ -1,2 +1,7 @@
 node_modules/
 data/settings.local.json
+
+# Ignore all generated collections except scripts
+/_collections/*
+!/_collections/scripts/
+!/_collections/scripts/**

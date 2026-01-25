@@ -1,0 +1,97 @@
+const fs = require('fs').promises;
+const path = require('path');
+
+// `collections` is at the repository root; compute its path from this script's location
+const collectionsDir = path.resolve(__dirname, '..', '..', 'collections');
+// write aggregated outputs into the _collections folder (one level up)
+const outDir = path.resolve(__dirname, '..');
+
+async function isDirectory(p) {
+  try {
+    const st = await fs.stat(p);
+    return st.isDirectory();
+  } catch (e) {
+    return false;
+  }
+}
+
+async function walkJsonFiles(dir) {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  const files = [];
+  for (const ent of entries) {
+    const full = path.join(dir, ent.name);
+    if (ent.isDirectory()) {
+      const sub = await walkJsonFiles(full);
+      files.push(...sub);
+    } else if (ent.isFile() && ent.name.toLowerCase().endsWith('.json')) {
+      files.push(full);
+    }
+  }
+  return files;
+}
+
+function setNested(root, relParts, value) {
+  let cur = root;
+  for (let i = 0; i < relParts.length - 1; i++) {
+    const p = relParts[i];
+    if (!(p in cur)) cur[p] = {};
+    cur = cur[p];
+  }
+  cur[relParts[relParts.length - 1]] = value;
+}
+
+async function aggregateCollection(collectionPath, collectionName) {
+  const files = await walkJsonFiles(collectionPath);
+  const root = {};
+  for (const f of files) {
+    const rel = path.relative(collectionPath, f);
+    const parts = rel.split(path.sep).map((p, i, arr) => {
+      if (i === arr.length - 1) return path.basename(p, '.json');
+      return p;
+    });
+    try {
+      const txt = await fs.readFile(f, 'utf8');
+      const parsed = JSON.parse(txt);
+      setNested(root, parts, parsed);
+    } catch (err) {
+      console.warn(`Skipping ${f}: ${err.message}`);
+    }
+  }
+  const outPath = path.join(outDir, `${collectionName}.json`);
+  await fs.writeFile(outPath, JSON.stringify(root, null, 2), 'utf8');
+  return outPath;
+}
+
+async function main() {
+  try {
+    const entries = await fs.readdir(collectionsDir, { withFileTypes: true });
+    const collections = [];
+    for (const ent of entries) {
+      const full = path.join(collectionsDir, ent.name);
+      if (ent.isDirectory()) {
+        collections.push({ name: ent.name, path: full });
+      } else if (ent.isFile() && ent.name.toLowerCase().endsWith('.json')) {
+        const name = path.basename(ent.name, '.json');
+        collections.push({ name, path: collectionsDir });
+      }
+    }
+
+    const results = [];
+    for (const c of collections) {
+      const out = await aggregateCollection(c.path, c.name);
+      results.push(out);
+      console.log(`Wrote ${out}`);
+    }
+
+    const indexPath = path.join(outDir, 'index.json');
+    await fs.writeFile(indexPath, JSON.stringify({ generated: results }, null, 2), 'utf8');
+    console.log(`Wrote ${indexPath}`);
+  } catch (err) {
+    console.error('Error aggregating collections:', err);
+    process.exitCode = 1;
+  }
+}
+
+if (require.main === module) main();
+
+module.exports = { aggregateCollection, walkJsonFiles };
