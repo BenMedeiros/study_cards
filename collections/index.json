@@ -6,7 +6,8 @@
     "linguistics": "linguistics/_metadata.json",
     "mythology": "mythology/_metadata.json",
     "numbers": "numbers/_metadata.json",
-    "pokemon": "pokemon/_metadata.json"
+    "pokemon": "pokemon/_metadata.json",
+    "programming": "programming/_metadata.json"
   },
   "collections": [
     "greek/greek_alphabet.json",
@@ -49,6 +50,9 @@
     "mythology/primordials.json",
     "mythology/titans.json",
     "numbers/letters_to_numbers.json",
-    "pokemon/pokemon_starters.json"
+    "pokemon/pokemon_starters.json",
+    "programming/programming_languages.json",
+    "programming/sql_engines.json",
+    "programming/web_technologies.json"
   ]
 }

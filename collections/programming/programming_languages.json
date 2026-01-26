@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "name": "Programming Languages",
+    "description": "Key programming languages with year created, typical current version, and reason for popularity. Update versions as needed."
+  },
+  "entries": [
+    {
+      "language": "JavaScript",
+      "year": 1995,
+      "currentVersion": "ECMAScript 2023/ES14",
+      "basedOn": "Scripting for the web; standardized as ECMAScript; runtimes like Node.js expanded server-side use"
+    },
+    {
+      "language": "Python",
+      "year": 1991,
+      "currentVersion": "3.12",
+      "basedOn": "Emphasis on readability and simplicity; strong ecosystem for data science, web, and automation"
+    },
+    {
+      "language": "Java",
+      "year": 1995,
+      "currentVersion": "21 (LTS)",
+      "basedOn": "Write-once-run-anywhere JVM design; strong enterprise tooling and libraries"
+    },
+    {
+      "language": "C",
+      "year": 1972,
+      "currentVersion": "C18",
+      "basedOn": "Designed for systems programming with minimal runtime and direct memory control"
+    },
+    {
+      "language": "C++",
+      "year": 1985,
+      "currentVersion": "C++23/C++20",
+      "basedOn": "Adds higher-level abstractions to C while keeping performance for systems and applications"
+    },
+    {
+      "language": "C#",
+      "year": 2000,
+      "currentVersion": "11",
+      "basedOn": "Designed by Microsoft for the .NET ecosystem; strong tooling and multi-platform use (including Unity)"
+    },
+    {
+      "language": "Go",
+      "year": 2009,
+      "currentVersion": "1.20+",
+      "basedOn": "Simplicity and fast builds with a concurrency model (goroutines) targeted at cloud services"
+    },
+    {
+      "language": "Rust",
+      "year": 2010,
+      "currentVersion": "1.x (stable)",
+      "basedOn": "Memory-safety and zero-cost abstractions without a garbage collector, for safe systems programming"
+    },
+    {
+      "language": "TypeScript",
+      "year": 2012,
+      "currentVersion": "5.x",
+      "basedOn": "Typed superset of JavaScript that compiles to JS to improve reliability in large codebases"
+    },
+    {
+      "language": "Ruby",
+      "year": 1995,
+      "currentVersion": "3.2",
+      "basedOn": "Design focused on developer happiness; Rails popularized it for web development"
+    },
+    {
+      "language": "PHP",
+      "year": 1995,
+      "currentVersion": "8.2+",
+      "basedOn": "Originally built for web templating and server-side scripting; widespread via CMSes like WordPress"
+    },
+    {
+      "language": "Swift",
+      "year": 2014,
+      "currentVersion": "5.8+",
+      "basedOn": "Modern language created by Apple with safety and performance features for Apple platforms"
+    },
+    {
+      "language": "Kotlin",
+      "year": 2011,
+      "currentVersion": "1.8+",
+      "basedOn": "Modern JVM language with concise syntax and official Android platform support"
+    }
+  ]
+}

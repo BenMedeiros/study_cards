@@ -1,0 +1,25 @@
+{
+  "category": "programming",
+  "fields": [
+    {
+      "key": "language",
+      "label": "Language / Name",
+      "type": "string"
+    },
+    {
+      "key": "year",
+      "label": "Year Created",
+      "type": "number"
+    },
+    {
+      "key": "currentVersion",
+      "label": "Current Version",
+      "type": "string"
+    },
+    {
+      "key": "basedOn",
+      "label": "Based On / Comes From",
+      "type": "string"
+    }
+  ]
+}
