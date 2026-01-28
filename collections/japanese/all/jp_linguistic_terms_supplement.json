@@ -1,153 +1,64 @@
 {
   "metadata": {
     "name": "Linguistic Term Kanji Supplement",
-    "description": "Popular vocabulary featuring kanji from Japanese linguistic terminology",
-    "version": 1
+    "description": "Popular vocabulary featuring kanji from Japanese linguistic terminology (with recursive component entries)",
+    "version": 2
   },
   "entries": [
-    {
-      "kanji": "促進",
-      "reading": "そくしん",
-      "meaning": "promotion; acceleration",
-      "type": "noun"
-    },
-    {
-      "kanji": "促す",
-      "reading": "うながす",
-      "meaning": "to urge; to prompt",
-      "type": "godan-verb"
-    },
-    {
-      "kanji": "長い",
-      "reading": "ながい",
-      "meaning": "long",
-      "type": "i-adjective"
-    },
-    {
-      "kanji": "社長",
-      "reading": "しゃちょう",
-      "meaning": "company president",
-      "type": "noun"
-    },
-    {
-      "kanji": "部長",
-      "reading": "ぶちょう",
-      "meaning": "department head",
-      "type": "noun"
-    },
-    {
-      "kanji": "成長",
-      "reading": "せいちょう",
-      "meaning": "growth",
-      "type": "noun"
-    },
-    {
-      "kanji": "清い",
-      "reading": "きよい",
-      "meaning": "pure; clean",
-      "type": "i-adjective"
-    },
-    {
-      "kanji": "清潔",
-      "reading": "せいけつ",
-      "meaning": "clean; sanitary",
-      "type": "na-adjective"
-    },
-    {
-      "kanji": "濁る",
-      "reading": "にごる",
-      "meaning": "to become muddy; cloudy",
-      "type": "godan-verb"
-    },
-    {
-      "kanji": "半分",
-      "reading": "はんぶん",
-      "meaning": "half",
-      "type": "noun"
-    },
-    {
-      "kanji": "半ば",
-      "reading": "なかば",
-      "meaning": "middle; halfway",
-      "type": "noun"
-    },
-    {
-      "kanji": "平日",
-      "reading": "へいじつ",
-      "meaning": "weekday",
-      "type": "noun"
-    },
-    {
-      "kanji": "平和",
-      "reading": "へいわ",
-      "meaning": "peace",
-      "type": "noun"
-    },
-    {
-      "kanji": "平気",
-      "reading": "へいき",
-      "meaning": "calm; composed; alright",
-      "type": "na-adjective"
-    },
-    {
-      "kanji": "仮定",
-      "reading": "かてい",
-      "meaning": "assumption; hypothesis",
-      "type": "noun"
-    },
-    {
-      "kanji": "片方",
-      "reading": "かたほう",
-      "meaning": "one side; one of a pair",
-      "type": "noun"
-    },
-    {
-      "kanji": "片付ける",
-      "reading": "かたづける",
-      "meaning": "to tidy up; to put away",
-      "type": "ichidan-verb"
-    },
-    {
-      "kanji": "漢方",
-      "reading": "かんぽう",
-      "meaning": "Chinese medicine; traditional medicine",
-      "type": "noun"
-    },
-    {
-      "kanji": "読む",
-      "reading": "よむ",
-      "meaning": "to read",
-      "type": "godan-verb"
-    },
-    {
-      "kanji": "読書",
-      "reading": "どくしょ",
-      "meaning": "reading (books)",
-      "type": "noun"
-    },
-    {
-      "kanji": "訓練",
-      "reading": "くんれん",
-      "meaning": "training; drill",
-      "type": "noun"
-    },
-    {
-      "kanji": "送る",
-      "reading": "おくる",
-      "meaning": "to send",
-      "type": "godan-verb"
-    },
-    {
-      "kanji": "送料",
-      "reading": "そうりょう",
-      "meaning": "shipping fee; postage",
-      "type": "noun"
-    },
-    {
-      "kanji": "見送る",
-      "reading": "みおくる",
-      "meaning": "to see off; to postpone",
-      "type": "godan-verb"
-    }
+    { "kanji": "促進", "reading": "そくしん", "meaning": "promotion; acceleration", "type": "noun" },
+    { "kanji": "促す", "reading": "うながす", "meaning": "to urge; to prompt", "type": "godan-verb" },
+    { "kanji": "長い", "reading": "ながい", "meaning": "long", "type": "i-adjective" },
+    { "kanji": "社長", "reading": "しゃちょう", "meaning": "company president", "type": "noun" },
+    { "kanji": "部長", "reading": "ぶちょう", "meaning": "department head", "type": "noun" },
+    { "kanji": "成長", "reading": "せいちょう", "meaning": "growth", "type": "noun" },
+    { "kanji": "清い", "reading": "きよい", "meaning": "pure; clean", "type": "i-adjective" },
+    { "kanji": "清潔", "reading": "せいけつ", "meaning": "clean; sanitary", "type": "na-adjective" },
+    { "kanji": "濁る", "reading": "にごる", "meaning": "to become muddy; cloudy", "type": "godan-verb" },
+    { "kanji": "半分", "reading": "はんぶん", "meaning": "half", "type": "noun" },
+    { "kanji": "半ば", "reading": "なかば", "meaning": "middle; halfway", "type": "noun" },
+    { "kanji": "平日", "reading": "へいじつ", "meaning": "weekday", "type": "noun" },
+    { "kanji": "平和", "reading": "へいわ", "meaning": "peace", "type": "noun" },
+    { "kanji": "平気", "reading": "へいき", "meaning": "calm; composed; alright", "type": "na-adjective" },
+    { "kanji": "仮定", "reading": "かてい", "meaning": "assumption; hypothesis", "type": "noun" },
+    { "kanji": "片方", "reading": "かたほう", "meaning": "one side; one of a pair", "type": "noun" },
+    { "kanji": "片付ける", "reading": "かたづける", "meaning": "to tidy up; to put away", "type": "ichidan-verb" },
+    { "kanji": "漢方", "reading": "かんぽう", "meaning": "Chinese medicine; traditional medicine", "type": "noun" },
+    { "kanji": "読む", "reading": "よむ", "meaning": "to read", "type": "godan-verb" },
+    { "kanji": "読書", "reading": "どくしょ", "meaning": "reading (books)", "type": "noun" },
+    { "kanji": "訓練", "reading": "くんれん", "meaning": "training; drill", "type": "noun" },
+    { "kanji": "送る", "reading": "おくる", "meaning": "to send", "type": "godan-verb" },
+    { "kanji": "送料", "reading": "そうりょう", "meaning": "shipping fee; postage", "type": "noun" },
+    { "kanji": "見送る", "reading": "みおくる", "meaning": "to see off; to postpone", "type": "godan-verb" },
+
+    { "kanji": "促", "reading": "ソク", "meaning": "urge; prompt; hasten", "type": "kanji" },
+    { "kanji": "進", "reading": "シン", "meaning": "advance; progress", "type": "kanji" },
+    { "kanji": "長", "reading": "チョウ", "meaning": "long; leader; head", "type": "kanji" },
+    { "kanji": "社", "reading": "シャ", "meaning": "company; shrine", "type": "kanji" },
+    { "kanji": "部", "reading": "ブ", "meaning": "section; department; part", "type": "kanji" },
+    { "kanji": "成", "reading": "セイ", "meaning": "become; form; achieve", "type": "kanji" },
+    { "kanji": "清", "reading": "セイ", "meaning": "pure; clean; clear", "type": "kanji" },
+    { "kanji": "潔", "reading": "ケツ", "meaning": "clean; pure; righteous", "type": "kanji" },
+    { "kanji": "濁", "reading": "ダク", "meaning": "muddy; turbid; voiced (phonetics)", "type": "kanji" },
+    { "kanji": "半", "reading": "ハン", "meaning": "half", "type": "kanji" },
+    { "kanji": "分", "reading": "ブン", "meaning": "part; minute; divide", "type": "kanji" },
+    { "kanji": "平", "reading": "ヘイ", "meaning": "flat; calm; ordinary", "type": "kanji" },
+    { "kanji": "日", "reading": "ニチ", "meaning": "day; sun", "type": "kanji" },
+    { "kanji": "和", "reading": "ワ", "meaning": "harmony; peace; Japan/Japanese style", "type": "kanji" },
+    { "kanji": "気", "reading": "キ", "meaning": "spirit; mind; air; feeling", "type": "kanji" },
+    { "kanji": "仮", "reading": "カ", "meaning": "temporary; provisional; assumption", "type": "kanji" },
+    { "kanji": "定", "reading": "テイ", "meaning": "decide; set; fixed", "type": "kanji" },
+    { "kanji": "片", "reading": "ヘン", "meaning": "one-sided; fragment; piece", "type": "kanji" },
+    { "kanji": "方", "reading": "ホウ", "meaning": "direction; side; method; person (polite)", "type": "kanji" },
+    { "kanji": "付", "reading": "フ", "meaning": "attach; add; append", "type": "kanji" },
+    { "kanji": "漢", "reading": "カン", "meaning": "Han/Chinese; Sino-", "type": "kanji" },
+    { "kanji": "読", "reading": "ドク", "meaning": "read", "type": "kanji" },
+    { "kanji": "書", "reading": "ショ", "meaning": "write; book", "type": "kanji" },
+    { "kanji": "訓", "reading": "クン", "meaning": "instruction; training; kun-reading", "type": "kanji" },
+    { "kanji": "練", "reading": "レン", "meaning": "practice; train; refine", "type": "kanji" },
+    { "kanji": "送", "reading": "ソウ", "meaning": "send; see off", "type": "kanji" },
+    { "kanji": "料", "reading": "リョウ", "meaning": "fee; materials; charge", "type": "kanji" },
+    { "kanji": "見", "reading": "ケン", "meaning": "see; look; view", "type": "kanji" },
+
+    { "kanji": "付ける", "reading": "つける", "meaning": "to attach; to add; to turn on (a device)", "type": "ichidan-verb" }
   ]
 }

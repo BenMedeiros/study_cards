@@ -2,61 +2,90 @@
   "metadata": {
     "name": "GU-Ending Godan Verbs (Top 10)",
     "description": "10 high-usage Japanese godan verbs ending in ぐ (gu).",
-    "version": 1
+    "version": 2
   },
   "defaults": {
     "type": "godan-verb"
   },
   "entries": [
-    {
-      "kanji": "泳ぐ",
-      "reading": "およぐ",
-      "meaning": "to swim"
-    },
-    {
-      "kanji": "急ぐ",
-      "reading": "いそぐ",
-      "meaning": "to hurry"
-    },
-    {
-      "kanji": "脱ぐ",
-      "reading": "ぬぐ",
-      "meaning": "to take off (clothes)"
-    },
-    {
-      "kanji": "防ぐ",
-      "reading": "ふせぐ",
-      "meaning": "to prevent; to defend"
-    },
-    {
-      "kanji": "稼ぐ",
-      "reading": "かせぐ",
-      "meaning": "to earn (money)"
-    },
-    {
-      "kanji": "騒ぐ",
-      "reading": "さわぐ",
-      "meaning": "to make noise; to make a fuss"
-    },
-    {
-      "kanji": "繋ぐ",
-      "reading": "つなぐ",
-      "meaning": "to connect; to link"
-    },
-    {
-      "kanji": "注ぐ",
-      "reading": "そそぐ",
-      "meaning": "to pour; to concentrate (effort)"
-    },
-    {
-      "kanji": "研ぐ",
-      "reading": "とぐ",
-      "meaning": "to sharpen; to polish"
-    },
-    {
-      "kanji": "濯ぐ",
-      "reading": "すすぐ",
-      "meaning": "to rinse"
-    }
+    { "kanji": "泳ぐ", "reading": "およぐ", "meaning": "to swim" },
+    { "kanji": "泳ぎます", "reading": "およぎます", "meaning": "to swim (polite)" },
+    { "kanji": "泳がない", "reading": "およがない", "meaning": "to not swim" },
+    { "kanji": "泳いだ", "reading": "およいだ", "meaning": "swam" },
+    { "kanji": "泳いで", "reading": "およいで", "meaning": "swimming" },
+    { "kanji": "泳げる", "reading": "およげる", "meaning": "can swim" },
+    { "kanji": "泳ごう", "reading": "およごう", "meaning": "let’s swim" },
+
+    { "kanji": "急ぐ", "reading": "いそぐ", "meaning": "to hurry" },
+    { "kanji": "急ぎます", "reading": "いそぎます", "meaning": "to hurry (polite)" },
+    { "kanji": "急がない", "reading": "いそがない", "meaning": "to not hurry" },
+    { "kanji": "急いだ", "reading": "いそいだ", "meaning": "hurried" },
+    { "kanji": "急いで", "reading": "いそいで", "meaning": "hurrying" },
+    { "kanji": "急げる", "reading": "いそげる", "meaning": "can hurry" },
+    { "kanji": "急ごう", "reading": "いそごう", "meaning": "let’s hurry" },
+
+    { "kanji": "脱ぐ", "reading": "ぬぐ", "meaning": "to take off (clothes)" },
+    { "kanji": "脱ぎます", "reading": "ぬぎます", "meaning": "to take off (clothes) (polite)" },
+    { "kanji": "脱がない", "reading": "ぬがない", "meaning": "to not take off (clothes)" },
+    { "kanji": "脱いだ", "reading": "ぬいだ", "meaning": "took off (clothes)" },
+    { "kanji": "脱いで", "reading": "ぬいで", "meaning": "taking off (clothes)" },
+    { "kanji": "脱げる", "reading": "ぬげる", "meaning": "can take off (clothes)" },
+    { "kanji": "脱ごう", "reading": "ぬごう", "meaning": "let’s take off (clothes)" },
+
+    { "kanji": "防ぐ", "reading": "ふせぐ", "meaning": "to prevent; to defend" },
+    { "kanji": "防ぎます", "reading": "ふせぎます", "meaning": "to prevent; to defend (polite)" },
+    { "kanji": "防がない", "reading": "ふせがない", "meaning": "to not prevent; to not defend" },
+    { "kanji": "防いだ", "reading": "ふせいだ", "meaning": "prevented; defended" },
+    { "kanji": "防いで", "reading": "ふせいで", "meaning": "preventing; defending" },
+    { "kanji": "防げる", "reading": "ふせげる", "meaning": "can prevent; can defend" },
+    { "kanji": "防ごう", "reading": "ふせごう", "meaning": "let’s prevent; let’s defend" },
+
+    { "kanji": "稼ぐ", "reading": "かせぐ", "meaning": "to earn (money)" },
+    { "kanji": "稼ぎます", "reading": "かせぎます", "meaning": "to earn (money) (polite)" },
+    { "kanji": "稼がない", "reading": "かせがない", "meaning": "to not earn (money)" },
+    { "kanji": "稼いだ", "reading": "かせいだ", "meaning": "earned (money)" },
+    { "kanji": "稼いで", "reading": "かせいで", "meaning": "earning (money)" },
+    { "kanji": "稼げる", "reading": "かせげる", "meaning": "can earn (money)" },
+    { "kanji": "稼ごう", "reading": "かせごう", "meaning": "let’s earn (money)" },
+
+    { "kanji": "騒ぐ", "reading": "さわぐ", "meaning": "to make noise; to make a fuss" },
+    { "kanji": "騒ぎます", "reading": "さわぎます", "meaning": "to make noise; to make a fuss (polite)" },
+    { "kanji": "騒がない", "reading": "さわがない", "meaning": "to not make noise; to not make a fuss" },
+    { "kanji": "騒いだ", "reading": "さわいだ", "meaning": "made noise; made a fuss" },
+    { "kanji": "騒いで", "reading": "さわいで", "meaning": "making noise; making a fuss" },
+    { "kanji": "騒げる", "reading": "さわげる", "meaning": "can make noise; can make a fuss" },
+    { "kanji": "騒ごう", "reading": "さわごう", "meaning": "let’s make noise; let’s make a fuss" },
+
+    { "kanji": "繋ぐ", "reading": "つなぐ", "meaning": "to connect; to link" },
+    { "kanji": "繋ぎます", "reading": "つなぎます", "meaning": "to connect; to link (polite)" },
+    { "kanji": "繋がない", "reading": "つながない", "meaning": "to not connect; to not link" },
+    { "kanji": "繋いだ", "reading": "つないだ", "meaning": "connected; linked" },
+    { "kanji": "繋いで", "reading": "つないで", "meaning": "connecting; linking" },
+    { "kanji": "繋げる", "reading": "つなげる", "meaning": "can connect; can link" },
+    { "kanji": "繋ごう", "reading": "つなごう", "meaning": "let’s connect; let’s link" },
+
+    { "kanji": "注ぐ", "reading": "そそぐ", "meaning": "to pour; to devote (effort)" },
+    { "kanji": "注ぎます", "reading": "そそぎます", "meaning": "to pour; to devote (effort) (polite)" },
+    { "kanji": "注がない", "reading": "そそがない", "meaning": "to not pour; to not devote (effort)" },
+    { "kanji": "注いだ", "reading": "そそいだ", "meaning": "poured; devoted (effort)" },
+    { "kanji": "注いで", "reading": "そそいで", "meaning": "pouring; devoting (effort)" },
+    { "kanji": "注げる", "reading": "そそげる", "meaning": "can pour; can devote (effort)" },
+    { "kanji": "注ごう", "reading": "そそごう", "meaning": "let’s pour; let’s devote (effort)" },
+
+    { "kanji": "研ぐ", "reading": "とぐ", "meaning": "to sharpen; to polish" },
+    { "kanji": "研ぎます", "reading": "とぎます", "meaning": "to sharpen; to polish (polite)" },
+    { "kanji": "研がない", "reading": "とがない", "meaning": "to not sharpen; to not polish" },
+    { "kanji": "研いだ", "reading": "といだ", "meaning": "sharpened; polished" },
+    { "kanji": "研いで", "reading": "といで", "meaning": "sharpening; polishing" },
+    { "kanji": "研げる", "reading": "とげる", "meaning": "can sharpen; can polish" },
+    { "kanji": "研ごう", "reading": "とごう", "meaning": "let’s sharpen; let’s polish" },
+
+    { "kanji": "濯ぐ", "reading": "すすぐ", "meaning": "to rinse" },
+    { "kanji": "濯ぎます", "reading": "すすぎます", "meaning": "to rinse (polite)" },
+    { "kanji": "濯がない", "reading": "すすがない", "meaning": "to not rinse" },
+    { "kanji": "濯いだ", "reading": "すすいだ", "meaning": "rinsed" },
+    { "kanji": "濯いで", "reading": "すすいで", "meaning": "rinsing" },
+    { "kanji": "濯げる", "reading": "すすげる", "meaning": "can rinse" },
+    { "kanji": "濯ごう", "reading": "すすごう", "meaning": "let’s rinse" }
   ]
 }
