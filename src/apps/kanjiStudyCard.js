@@ -1,6 +1,7 @@
 import { nowMs } from '../utils/helpers.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
 import { createAutoplayControls } from '../components/autoplay.js';
+import { createSpeakerButton } from '../components/speaker.js';
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
@@ -215,6 +216,10 @@ export function renderKanjiStudyCard({ store }) {
   const card = document.createElement('div');
   card.className = 'card kanji-card';
 
+  // Example card (created once, shown/hidden as needed)
+  const exampleCard = document.createElement('div');
+  exampleCard.className = 'card kanji-example-card';
+
   // render a single card body
   function renderCard(body, entry) {
     body.innerHTML = '';
@@ -224,9 +229,17 @@ export function renderKanjiStudyCard({ store }) {
     kanjiWrap.className = 'kanji-main-wrap';
     const kanjiMain = document.createElement('div');
     kanjiMain.className = 'kanji-main';
-    kanjiMain.textContent = getFieldValue(entry, ['kanji', 'character', 'text']) || '';
+    const text = getFieldValue(entry, ['kanji', 'character', 'text']) || '';
+    kanjiMain.textContent = text;
     // Apply current font weight preference
     kanjiMain.style.fontWeight = currentFontWeight;
+    // Auto-scale font size based on text length (3 tiers)
+    const length = text.length;
+    let fontSize = 5; // base size in rem
+    if (length > 6) fontSize = 3.5;
+    else if(length > 5) fontSize = 3.75;
+    else if (length > 4) fontSize = 4;
+    kanjiMain.style.fontSize = `${fontSize}rem`;
     kanjiWrap.append(kanjiMain);
 
     // top-left type (styled and toggled like bottom-right meaning)
@@ -407,6 +420,36 @@ export function renderKanjiStudyCard({ store }) {
     }
 
     wrapper.append(cornerCaption, body);
+
+    // Show/hide example card based on entry.example
+    if (entry && entry.example) {
+      exampleCard.innerHTML = '';
+      
+      // Label row with speaker button
+      const exampleHeader = document.createElement('div');
+      exampleHeader.className = 'kanji-example-header';
+      
+      const exampleLabel = document.createElement('div');
+      exampleLabel.className = 'muted kanji-example-label';
+      exampleLabel.textContent = 'Example Sentence';
+      
+      const speakerBtn = createSpeakerButton({ 
+        text: entry.example,
+        fieldKey: 'reading'
+      });
+      
+      exampleHeader.append(exampleLabel, speakerBtn);
+      
+      // Example text
+      const exampleText = document.createElement('div');
+      exampleText.className = 'kanji-example-text';
+      exampleText.textContent = entry.example;
+      
+      exampleCard.append(exampleHeader, exampleText);
+      exampleCard.style.display = 'block';
+    } else {
+      exampleCard.style.display = 'none';
+    }
   }
 
   // Initial population — refresh entries and render (saved order is applied in refresh)
@@ -423,7 +466,7 @@ export function renderKanjiStudyCard({ store }) {
   footer.textContent = '← / →: navigate  •  ↑: full  •  ↓: kanji only';
 
   card.appendChild(wrapper);
-  el.append(headerTools, card);
+  el.append(headerTools, card, exampleCard);
   el.append(footerControls);
   // Footer controls event listeners
   prevBtn.addEventListener('click', showPrev);

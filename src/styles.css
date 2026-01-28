@@ -333,6 +333,31 @@ input[type="number"].button::-webkit-inner-spin-button {
   max-width: 30rem;
 }
 
+.kanji-example-card {
+  padding: 1rem;
+  width: min(48rem, 100%);
+  margin: 1rem auto 0;
+  max-width: 30rem;
+}
+
+.kanji-example-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.kanji-example-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.kanji-example-text {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
 .kanji-card .kanji-top-left {
   position: absolute;
   top: 0.75rem;
