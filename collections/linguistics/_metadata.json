@@ -5,37 +5,71 @@
       "key": "term",
       "label": "Term",
       "jp_label": "用語",
-      "type": "string"
-    },
-    {
-      "key": "study",
-      "label": "Study Area",
-      "jp_label": "研究分野",
-      "type": "string"
+      "type": "string",
+      "description": "Canonical name of the concept. Use title case for multiword terms (e.g., 'Subordinate clause'). Must be unique across the dataset."
     },
     {
       "key": "definition",
       "label": "Definition",
       "jp_label": "定義",
-      "type": "string"
+      "type": "string",
+      "description": "Primary explanation of the concept in plain English. Should stand alone without relying on examples. Avoid circularity unless unavoidable; prefer definitional clarity over completeness."
     },
     {
       "key": "compressed_definition",
       "label": "Compressed Definition",
       "jp_label": "圧縮定義",
-      "type": "string"
+      "type": "string",
+      "description": "Short memory-oriented paraphrase (typically 2–6 words). Should preserve the core meaning and be usable as a flashcard back."
+    },
+    {
+      "key": "tags",
+      "label": "Tags",
+      "jp_label": "タグ",
+      "type": "array",
+      "description": "Flexible categorization (subfield, theme, pedagogy). Use a small set of stable tokens (e.g., 'Syntax', 'Semantics', 'methodology'). Not a prose description."
     },
     {
       "key": "examples",
       "label": "Examples",
       "jp_label": "例",
-      "type": "array"
+      "type": "array",
+      "description": "Optional clarifying examples. Each example MUST be one of: (1) a diagnostic question, (2) a contrast pair (X vs Y), or (3) a boundary case. If none add value beyond the definition, omit (use an empty array). Do not include merely 'the term used in a sentence' examples."
     },
     {
       "key": "notes",
       "label": "Notes",
       "jp_label": "補足",
-      "type": "string"
+      "type": "string",
+      "description": "Optional details, caveats, scope limits, or theoretical remarks. Use to record ambiguity, competing analyses, or implementation guidance."
+    },
+    {
+      "key": "links",
+      "label": "Links",
+      "jp_label": "リンク",
+      "type": "array",
+      "description": "Concept links (terms) related to this entry. Prefer links that meaningfully support understanding (contrast classes, components, close neighbors). A link is 'external' if it does not resolve to any defined term in the dataset."
     }
-  ]
+  ],
+  "description": "Structured linguistic knowledge as a cross-collection concept graph. Each entry defines a term and links to related terms; a link is 'external' if it does not resolve to any defined term in the dataset.",
+  "tags": [
+    "linguistics",
+    "knowledge graph",
+    "concept modeling",
+    "lexical semantics",
+    "syntax",
+    "semantics",
+    "pragmatics",
+    "phonology",
+    "orthography"
+  ],
+  "example_policy": {
+    "rule": "Examples must clarify the concept, not merely use the term in a sentence.",
+    "allowed_types": [
+      "diagnostic_question",
+      "contrast_pair",
+      "boundary_case"
+    ],
+    "otherwise": "omit"
+  }
 }

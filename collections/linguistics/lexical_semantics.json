@@ -1,0 +1,226 @@
+{
+  "metadata": {
+    "name": "Lexical Semantics & Lexicon",
+    "description": "Word meaning, sense structure, and lexical relations.",
+    "version": 9,
+    "tags": [
+      "lexical semantics",
+      "lexicon",
+      "word meaning"
+    ]
+  },
+  "entries": [
+    {
+      "term": "Lexical semantics",
+      "definition": "The study of word meanings, sense distinctions, and relationships among words.",
+      "compressed_definition": "Study of word meaning",
+      "links": [
+        "Sense",
+        "Synonymy",
+        "Polysemy",
+        "Hyponym",
+        "Context"
+      ],
+      "examples": [
+        "How many meanings does the word 'run' have?",
+        "Are 'big' and 'large' interchangeable in all contexts?"
+      ],
+      "tags": [
+        "Linguistics",
+        "Semantics",
+        "lexical_semantics"
+      ]
+    },
+    {
+      "term": "Sense",
+      "definition": "A distinct meaning associated with a word form in a particular context or usage.",
+      "compressed_definition": "Specific word meaning",
+      "links": [
+        "Polysemy",
+        "Homonymy",
+        "Synonymy",
+        "Hyponym",
+        "Lexeme",
+        "word form",
+        "Context",
+        "Usage"
+      ],
+      "examples": [
+        "paper (material) vs paper (newspaper)",
+        "bank (financial institution) vs bank (river edge)"
+      ],
+      "tags": [
+        "Lexical semantics",
+        "lexical_semantics"
+      ]
+    },
+    {
+      "term": "Lexeme",
+      "definition": "An abstract lexical unit that groups together the inflected forms that belong to the same vocabulary item.",
+      "compressed_definition": "Abstract lexical unit",
+      "links": [
+        "Lemma",
+        "Sense",
+        "dictionary entry",
+        "inflection",
+        "morphology"
+      ],
+      "examples": [],
+      "tags": [
+        "Lexical semantics",
+        "lexical_semantics"
+      ]
+    },
+    {
+      "term": "Lemma",
+      "definition": "The canonical dictionary form used to represent a lexeme.",
+      "compressed_definition": "Dictionary headword",
+      "links": [
+        "Lexeme",
+        "canonical form",
+        "corpus"
+      ],
+      "examples": [],
+      "tags": [
+        "Lexical semantics",
+        "lexical_semantics"
+      ]
+    },
+    {
+      "term": "Synonymy",
+      "definition": "A relation between expressions whose meanings are very similar in a given context.",
+      "compressed_definition": "Similarity of meaning",
+      "links": [
+        "Sense",
+        "Near-synonymy",
+        "Register",
+        "Context"
+      ],
+      "examples": [],
+      "tags": [
+        "Lexical semantics",
+        "lexical_semantics"
+      ]
+    },
+    {
+      "term": "Near-synonymy",
+      "definition": "Partial synonymy where expressions overlap in meaning but differ in connotation, register, or typical usage.",
+      "compressed_definition": "Partial similarity",
+      "links": [
+        "Synonymy",
+        "Connotation",
+        "collocation",
+        "Register",
+        "Usage"
+      ],
+      "examples": [],
+      "tags": [
+        "Lexical semantics",
+        "lexical_semantics"
+      ]
+    },
+    {
+      "term": "Polysemy",
+      "definition": "A single word form having multiple related senses.",
+      "compressed_definition": "Multiple related meanings",
+      "links": [
+        "Sense",
+        "Homonymy",
+        "meaning extension"
+      ],
+      "examples": [],
+      "tags": [
+        "Lexical semantics",
+        "lexical_semantics"
+      ]
+    },
+    {
+      "term": "Homonymy",
+      "definition": "The relationship between expressions that share a form but have unrelated meanings.",
+      "compressed_definition": "Same form, unrelated meanings",
+      "links": [
+        "Sense",
+        "Polysemy",
+        "lexical ambiguity",
+        "etymology"
+      ],
+      "examples": [
+        "bat (animal) vs bat (sports equipment)"
+      ],
+      "tags": [
+        "Lexical semantics",
+        "lexical_semantics"
+      ]
+    },
+    {
+      "term": "Hypernym",
+      "definition": "A more general term whose meaning subsumes the meaning of more specific terms.",
+      "compressed_definition": "General parent term",
+      "links": [
+        "Hyponym",
+        "Sense",
+        "semantic hierarchy",
+        "taxonomic relation"
+      ],
+      "examples": [
+        "vehicle → car, bicycle",
+        "cook → boil, fry, bake"
+      ],
+      "tags": [
+        "Lexical semantics",
+        "lexical_semantics"
+      ]
+    },
+    {
+      "term": "Hyponym",
+      "definition": "A more specific term whose meaning is included within the meaning of a more general term.",
+      "compressed_definition": "More specific category member",
+      "links": [
+        "Hypernym",
+        "Sense",
+        "Troponymy",
+        "semantic entailment"
+      ],
+      "examples": [],
+      "tags": [
+        "Lexical semantics",
+        "lexical_semantics"
+      ]
+    },
+    {
+      "term": "Troponymy",
+      "definition": "A verb-specific subtype of hyponymy where the more specific verb encodes the manner of the more general action.",
+      "compressed_definition": "Verb hyponymy with manner",
+      "links": [
+        "Hyponym",
+        "event structure"
+      ],
+      "examples": [
+        "whisper → speak",
+        "sprint → run"
+      ],
+      "tags": [
+        "Lexical semantics",
+        "lexical_semantics"
+      ]
+    },
+    {
+      "term": "Lexical gap",
+      "definition": "A concept for which a language lacks a conventional single-word expression.",
+      "compressed_definition": "Missing word for a concept",
+      "examples": [],
+      "links": [
+        "lexicalization",
+        "paraphrase",
+        "multiword expression",
+        "cross-linguistic comparison",
+        "lexicon",
+        "concept"
+      ],
+      "tags": [
+        "Lexical semantics",
+        "lexical_semantics"
+      ]
+    }
+  ]
+}

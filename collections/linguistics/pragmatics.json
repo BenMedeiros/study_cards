@@ -2,50 +2,120 @@
   "metadata": {
     "name": "Pragmatics & Context",
     "description": "Contextual meaning, inference, and language use.",
-    "version": 3
+    "version": 4,
+    "tags": [
+      "pragmatics",
+      "context",
+      "language use"
+    ]
   },
   "entries": [
     {
       "term": "Pragmatics",
-      "study": "Linguistics / Pragmatics",
       "definition": "The study of how context, intention, and situation affect meaning.",
-      "compressed_definition": "Context-dependent meaning"
+      "compressed_definition": "Context-dependent meaning",
+      "examples": [],
+      "links": [
+        "Context",
+        "Usage",
+        "Implicature",
+        "Speech act",
+        "Deixis",
+        "Register"
+      ],
+      "tags": [
+        "Linguistics",
+        "Pragmatics",
+        "pragmatics"
+      ]
     },
     {
       "term": "Context",
-      "study": "Pragmatics",
       "definition": "Situational, social, and linguistic factors surrounding an utterance.",
-      "compressed_definition": "Meaning-shaping situation"
+      "compressed_definition": "Meaning-shaping situation",
+      "examples": [],
+      "links": [
+        "Pragmatics",
+        "Implicature",
+        "Deixis",
+        "Register"
+      ],
+      "tags": [
+        "Pragmatics",
+        "pragmatics"
+      ]
     },
     {
       "term": "Usage",
-      "study": "Pragmatics",
       "definition": "How language is actually used by speakers in real contexts.",
-      "compressed_definition": "Actual language use"
+      "compressed_definition": "Actual language use",
+      "examples": [],
+      "links": [
+        "Context",
+        "Pragmatics",
+        "Register"
+      ],
+      "tags": [
+        "Pragmatics",
+        "pragmatics"
+      ]
     },
     {
       "term": "Register",
-      "study": "Sociolinguistics / Pragmatics",
       "definition": "Variation in language style depending on context or audience.",
-      "compressed_definition": "Style variation"
+      "compressed_definition": "Style variation",
+      "examples": [],
+      "links": [
+        "Context",
+        "Usage"
+      ],
+      "tags": [
+        "Sociolinguistics",
+        "Pragmatics",
+        "pragmatics"
+      ]
     },
     {
       "term": "Speech act",
-      "study": "Pragmatics",
       "definition": "An utterance that performs an action rather than merely describing.",
-      "compressed_definition": "Utterance-as-action"
+      "compressed_definition": "Utterance-as-action",
+      "examples": [],
+      "links": [
+        "Pragmatics",
+        "Context"
+      ],
+      "tags": [
+        "Pragmatics",
+        "pragmatics"
+      ]
     },
     {
       "term": "Implicature",
-      "study": "Pragmatics",
       "definition": "Meaning inferred from context rather than explicitly stated.",
-      "compressed_definition": "Inferred meaning"
+      "compressed_definition": "Inferred meaning",
+      "examples": [],
+      "links": [
+        "Context",
+        "Pragmatics"
+      ],
+      "tags": [
+        "Pragmatics",
+        "pragmatics"
+      ]
     },
     {
       "term": "Deixis",
-      "study": "Pragmatics",
       "definition": "Context-dependent expressions such as person, place, or time references.",
-      "compressed_definition": "Context-dependent reference"
+      "compressed_definition": "Context-dependent reference",
+      "examples": [],
+      "links": [
+        "Context",
+        "Pragmatics"
+      ],
+      "tags": [
+        "Pragmatics",
+        "pragmatics"
+      ]
     }
   ]
 }

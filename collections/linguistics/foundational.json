@@ -2,54 +2,117 @@
   "metadata": {
     "name": "Foundational & Methodological",
     "description": "General-purpose linguistic, methodological, and academic terms used across subfields.",
-    "version": 3
+    "version": 4,
+    "tags": [
+      "foundational",
+      "methodology",
+      "academic terms"
+    ]
   },
   "entries": [
     {
       "term": "Linguistics",
-      "study": "Linguistics",
       "definition": "The scientific study of human language, including its structure, meaning, and use.",
-      "compressed_definition": "Scientific study of language"
+      "compressed_definition": "Scientific study of language",
+      "examples": [],
+      "links": [
+        "Semantics",
+        "Syntax",
+        "Phonology",
+        "Pragmatics",
+        "Morphology"
+      ],
+      "tags": [
+        "Linguistics",
+        "foundational"
+      ]
     },
     {
       "term": "Pragmatic",
-      "study": "General / Linguistics",
       "definition": "Concerned with practical use or real-world application rather than abstract theory.",
-      "compressed_definition": "Practical or use-oriented"
+      "compressed_definition": "Practical or use-oriented",
+      "examples": [],
+      "links": [
+        "Pragmatics",
+        "Context"
+      ],
+      "tags": [
+        "General",
+        "Linguistics",
+        "foundational"
+      ]
     },
     {
       "term": "Metalinguistic",
-      "study": "Linguistics",
       "definition": "Referring to language itself or the analysis of language using language.",
-      "compressed_definition": "Language about language"
+      "compressed_definition": "Language about language",
+      "examples": [],
+      "links": [
+        "Linguistics",
+        "metalanguage"
+      ],
+      "tags": [
+        "Linguistics",
+        "foundational"
+      ]
     },
     {
       "term": "Pedagogical",
-      "study": "Applied linguistics / Education",
       "definition": "Relating to teaching, learning, or instructional design.",
       "compressed_definition": "Teaching-related",
       "examples": [
-        "Pedagogical examples prioritize clarity over completeness."
+        "Pedagogical vs descriptive: is the goal to teach learners or to document real usage?",
+        "Should an example prioritize clarity for students even if it is not fully natural?"
       ],
-      "notes": "Often contrasted with descriptive or theoretical approaches."
+      "notes": "Often contrasted with descriptive or theoretical approaches.",
+      "links": [
+        "Exhaustive",
+        "curriculum",
+        "learning objective"
+      ],
+      "tags": [
+        "Applied linguistics",
+        "Education",
+        "foundational"
+      ]
     },
     {
       "term": "Exhaustive",
-      "study": "General / Methodology",
       "definition": "Including all possible members or cases; leaving nothing out.",
       "compressed_definition": "Complete; all-inclusive",
       "examples": [
-        "An exhaustive list of verb senses is impractical."
+        "Is this list intended to include every possible case, or only representative ones?",
+        "Selective vs exhaustive: top-10 senses vs every attested sense."
       ],
-      "notes": "Pedagogical resources are intentionally non-exhaustive."
+      "notes": "Pedagogical resources are intentionally non-exhaustive.",
+      "links": [
+        "Pedagogical",
+        "Sense",
+        "coverage"
+      ],
+      "tags": [
+        "General",
+        "Methodology",
+        "foundational"
+      ]
     },
     {
       "term": "Diagnostic",
-      "study": "Linguistics / Methodology",
       "definition": "Serving to identify or distinguish linguistic categories or relations.",
       "compressed_definition": "Category-identifying",
       "examples": [
-        "The 'is-a-kind-of' test is diagnostic for hyponymy."
+        "Does this test distinguish category A from category B, or does it apply to both (making it non-diagnostic)?"
+      ],
+      "links": [
+        "Linguistics",
+        "Hyponym",
+        "test",
+        "classification"
+      ],
+      "tags": [
+        "Linguistics",
+        "Methodology",
+        "foundational"
       ]
     }
   ]

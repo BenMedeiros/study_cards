@@ -1,0 +1,97 @@
+{
+  "metadata": {
+    "name": "Phonology & Prosody",
+    "description": "Sound structure and prosodic systems such as stress and pitch accent.",
+    "version": 2,
+    "tags": [
+      "phonology",
+      "prosody",
+      "stress",
+      "pitch"
+    ]
+  },
+  "entries": [
+    {
+      "term": "Pitch accent",
+      "definition": "A system in which the relative pitch of a syllable determines word stress, as in Ancient Greek.",
+      "compressed_definition": "Syllable pitch system",
+      "examples": [
+        "Ancient Greek distinguishes meaning based on pitch accent, unlike Modern Greek stress accent."
+      ],
+      "links": [
+        "Stress accent",
+        "Syllable",
+        "Pitch",
+        "Accent system"
+      ],
+      "tags": [
+        "Linguistics",
+        "Phonology",
+        "phonology_prosody"
+      ]
+    },
+    {
+      "term": "Stress accent",
+      "definition": "A system in which the loudness or emphasis of a syllable determines word stress, as in Modern Greek.",
+      "compressed_definition": "Syllable emphasis system",
+      "examples": [],
+      "links": [
+        "Tonos",
+        "Syllable",
+        "Stress",
+        "Accent system"
+      ],
+      "tags": [
+        "Linguistics",
+        "Phonology",
+        "phonology_prosody"
+      ]
+    },
+    {
+      "term": "Stress",
+      "definition": "Prominence of a syllable relative to others in a word (often realized through loudness, duration, or pitch).",
+      "compressed_definition": "Syllable prominence",
+      "examples": [],
+      "links": [
+        "Syllable"
+      ],
+      "tags": [
+        "phonology_prosody"
+      ]
+    },
+    {
+      "term": "Syllable",
+      "definition": "A rhythmic unit of speech typically built around a vowel peak and optionally surrounding consonants.",
+      "compressed_definition": "Rhythmic speech unit",
+      "examples": [],
+      "links": [],
+      "tags": [
+        "phonology_prosody"
+      ]
+    },
+    {
+      "term": "Pitch",
+      "definition": "The perceived highness or lowness of a sound, correlated with fundamental frequency (F0).",
+      "compressed_definition": "Perceived frequency height",
+      "examples": [],
+      "links": [],
+      "tags": [
+        "phonology_prosody"
+      ]
+    },
+    {
+      "term": "Accent system",
+      "definition": "A language’s way of assigning prominence or tonal/pitch patterns to syllables or words (e.g., stress accent vs pitch accent).",
+      "compressed_definition": "How prominence is assigned",
+      "examples": [],
+      "links": [
+        "Stress accent",
+        "Pitch accent",
+        "Stress"
+      ],
+      "tags": [
+        "phonology_prosody"
+      ]
+    }
+  ]
+}

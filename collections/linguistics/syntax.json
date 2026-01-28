@@ -1,0 +1,186 @@
+{
+  "metadata": {
+    "name": "Syntax",
+    "description": "Clause/phrase structure and relations such as embedding and subordination.",
+    "version": 2,
+    "tags": [
+      "syntax",
+      "structure",
+      "clauses",
+      "phrases"
+    ]
+  },
+  "entries": [
+    {
+      "term": "Predicate",
+      "definition": "The part of a clause that expresses a property, relation, or action attributed to one or more arguments.",
+      "compressed_definition": "What is asserted",
+      "links": [
+        "Clause",
+        "Predicate phrase",
+        "argument",
+        "property",
+        "relation",
+        "event",
+        "valency"
+      ],
+      "examples": [],
+      "tags": [
+        "Syntax",
+        "Semantics",
+        "syntax"
+      ]
+    },
+    {
+      "term": "Clause",
+      "definition": "A grammatical unit organized around a predicate and its arguments.",
+      "compressed_definition": "Predicate with arguments",
+      "links": [
+        "Predicate",
+        "Composed clause",
+        "Subordinate clause",
+        "argument structure",
+        "Embedding",
+        "subordination",
+        "coordination",
+        "finite verb"
+      ],
+      "examples": [],
+      "tags": [
+        "Syntax",
+        "syntax"
+      ]
+    },
+    {
+      "term": "Phrase",
+      "definition": "A syntactic unit built around a head word and its dependents.",
+      "compressed_definition": "Head-centered unit",
+      "links": [
+        "Predicate phrase",
+        "Head word",
+        "Dependent",
+        "Constituent"
+      ],
+      "examples": [],
+      "tags": [
+        "Syntax",
+        "syntax"
+      ]
+    },
+    {
+      "term": "Predicate phrase",
+      "definition": "A phrase that functions as the predicate of a clause.",
+      "compressed_definition": "Predicate as a phrase",
+      "links": [
+        "Predicate",
+        "Phrase",
+        "Clause",
+        "complement",
+        "adjunct",
+        "phrase-structure grammar"
+      ],
+      "examples": [],
+      "tags": [
+        "Syntax",
+        "syntax"
+      ]
+    },
+    {
+      "term": "Composed clause",
+      "definition": "A clause formed by combining multiple clauses through coordination or subordination.",
+      "compressed_definition": "Clause built from clauses",
+      "links": [
+        "Clause",
+        "Subordinate clause",
+        "complex sentence",
+        "compound sentence"
+      ],
+      "examples": [],
+      "tags": [
+        "Syntax",
+        "syntax"
+      ]
+    },
+    {
+      "term": "Subordinate clause",
+      "definition": "A clause that is embedded within another clause and functions as a dependent constituent.",
+      "compressed_definition": "Dependent embedded clause",
+      "links": [
+        "Clause",
+        "Embedding",
+        "complement clause",
+        "relative clause",
+        "adverbial clause"
+      ],
+      "examples": [],
+      "tags": [
+        "Syntax",
+        "syntax"
+      ]
+    },
+    {
+      "term": "Syntactic unit",
+      "definition": "A constituent treated as a coherent piece of syntactic structure (e.g., a word, phrase, or clause) that can function as a unit in grammar.",
+      "compressed_definition": "Coherent grammatical constituent",
+      "examples": [],
+      "links": [
+        "Constituent"
+      ],
+      "tags": [
+        "syntax"
+      ]
+    },
+    {
+      "term": "Head word",
+      "definition": "The central word in a phrase that determines the phrase’s category and core grammatical properties (e.g., a noun heads a noun phrase).",
+      "compressed_definition": "Central word of a phrase",
+      "examples": [],
+      "links": [
+        "Phrase",
+        "Constituent"
+      ],
+      "tags": [
+        "syntax"
+      ]
+    },
+    {
+      "term": "Dependent",
+      "definition": "A word or phrase that depends on a head and modifies or completes it (e.g., adjectives modifying a noun).",
+      "compressed_definition": "Modifier/complement of a head",
+      "examples": [],
+      "links": [
+        "Head word",
+        "Phrase"
+      ],
+      "tags": [
+        "syntax"
+      ]
+    },
+    {
+      "term": "Constituent",
+      "definition": "A sequence of words that forms a unit in syntactic structure (often diagnosable by tests like substitution or movement).",
+      "compressed_definition": "Unit in syntactic structure",
+      "examples": [],
+      "links": [
+        "Syntactic unit",
+        "Phrase"
+      ],
+      "tags": [
+        "syntax"
+      ]
+    },
+    {
+      "term": "Embedding",
+      "definition": "A structural relation where one clause or phrase occurs inside another as a component (e.g., a subordinate clause inside a main clause).",
+      "compressed_definition": "Structure inside structure",
+      "examples": [],
+      "links": [
+        "Clause",
+        "Subordinate clause"
+      ],
+      "tags": [
+        "syntax"
+      ]
+    }
+  ]
+}

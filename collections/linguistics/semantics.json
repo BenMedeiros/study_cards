@@ -2,44 +2,126 @@
   "metadata": {
     "name": "Semantics",
     "description": "Core meaning relations and meaning change.",
-    "version": 3
+    "version": 4,
+    "tags": [
+      "semantics",
+      "meaning relations"
+    ]
   },
   "entries": [
     {
       "term": "Semantics",
-      "study": "Linguistics / Semantics",
       "definition": "The study of meaning in language.",
-      "compressed_definition": "Study of meaning"
+      "compressed_definition": "Study of meaning",
+      "examples": [],
+      "links": [
+        "Denotation",
+        "Connotation",
+        "Entailment",
+        "Presupposition",
+        "Anaphora",
+        "Pragmatics"
+      ],
+      "tags": [
+        "Linguistics",
+        "Semantics",
+        "semantics"
+      ]
     },
     {
       "term": "Denotation",
-      "study": "Semantics",
       "definition": "The literal or core meaning of a word or expression.",
-      "compressed_definition": "Literal meaning"
+      "compressed_definition": "Literal meaning",
+      "examples": [],
+      "links": [
+        "Semantics",
+        "Connotation",
+        "reference",
+        "Truth conditions"
+      ],
+      "tags": [
+        "Semantics",
+        "semantics"
+      ]
     },
     {
       "term": "Connotation",
-      "study": "Semantics",
       "definition": "Associated or secondary meanings beyond literal sense.",
-      "compressed_definition": "Associated meaning"
+      "compressed_definition": "Associated meaning",
+      "examples": [],
+      "links": [
+        "Semantics",
+        "Denotation",
+        "Sense",
+        "affect",
+        "Register"
+      ],
+      "tags": [
+        "Semantics",
+        "semantics"
+      ]
     },
     {
       "term": "Entailment",
-      "study": "Semantics",
       "definition": "A relation where the truth of one statement guarantees another.",
-      "compressed_definition": "Truth-preserving relation"
+      "compressed_definition": "Truth-preserving relation",
+      "examples": [],
+      "links": [
+        "Semantics",
+        "Presupposition",
+        "logic",
+        "inference",
+        "Truth conditions"
+      ],
+      "tags": [
+        "Semantics",
+        "semantics"
+      ]
     },
     {
       "term": "Presupposition",
-      "study": "Semantics",
       "definition": "Background assumptions required for an utterance to be appropriate.",
-      "compressed_definition": "Background assumption"
+      "compressed_definition": "Background assumption",
+      "examples": [],
+      "links": [
+        "Semantics",
+        "Entailment",
+        "common ground",
+        "Context"
+      ],
+      "tags": [
+        "Semantics",
+        "semantics"
+      ]
     },
     {
       "term": "Anaphora",
-      "study": "Semantics",
       "definition": "Reference that depends on another expression for interpretation.",
-      "compressed_definition": "Dependent reference"
+      "compressed_definition": "Dependent reference",
+      "examples": [],
+      "links": [
+        "Semantics",
+        "coreference",
+        "antecedent",
+        "pronoun"
+      ],
+      "tags": [
+        "Semantics",
+        "semantics"
+      ]
+    },
+    {
+      "term": "Truth conditions",
+      "definition": "The conditions under which a sentence would be true; a common way of modeling sentence meaning in formal semantics.",
+      "compressed_definition": "What makes a sentence true",
+      "examples": [],
+      "links": [
+        "Semantics",
+        "Entailment"
+      ],
+      "tags": [
+        "semantics"
+      ]
     }
   ]
 }
