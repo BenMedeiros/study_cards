@@ -327,7 +327,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  min-height: 20rem;
+  min-height: 17rem;
   width: min(48rem, 100%);
   margin: 0 auto;
   max-width: 30rem;
@@ -344,18 +344,32 @@ input[type="number"].button::-webkit-inner-spin-button {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
 }
 
 .kanji-example-label {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.7rem;
 }
 
 .kanji-example-text {
   font-size: 1.25rem;
   line-height: 1.6;
   color: var(--text);
+}
+
+.kanji-example-notes {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.5rem;
+  line-height: 1.6;
+}
+
+.kanji-example-notes li {
+  margin-bottom: 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--text);
+}
+
+.kanji-example-notes li:last-child {
+  margin-bottom: 0;
 }
 
 .kanji-card .kanji-top-left {
