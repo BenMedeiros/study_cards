@@ -1,0 +1,369 @@
+{
+  "metadata": {
+    "name": "Japanese Nouns (200)",
+    "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
+    "version": 1
+  },
+  "entries": [
+    {
+      "kanji": "電話番号",
+      "reading": "でんわばんごう",
+      "meaning": "phone number",
+      "type": "noun"
+    },
+    {
+      "kanji": "充電",
+      "reading": "じゅうでん",
+      "meaning": "charging (a battery)",
+      "type": "noun"
+    },
+    {
+      "kanji": "電池",
+      "reading": "でんち",
+      "meaning": "battery",
+      "type": "noun"
+    },
+    {
+      "kanji": "画面",
+      "reading": "がめん",
+      "meaning": "screen",
+      "type": "noun"
+    },
+    {
+      "kanji": "設定",
+      "reading": "せってい",
+      "meaning": "settings; configuration",
+      "type": "noun"
+    },
+    {
+      "kanji": "番号札",
+      "reading": "ばんごうふだ",
+      "meaning": "number ticket; queue ticket",
+      "type": "noun"
+    },
+    {
+      "kanji": "領収書",
+      "reading": "りょうしゅうしょ",
+      "meaning": "receipt",
+      "type": "noun"
+    },
+    {
+      "kanji": "交通",
+      "reading": "こうつう",
+      "meaning": "traffic; transportation",
+      "type": "noun"
+    },
+    {
+      "kanji": "渋滞",
+      "reading": "じゅうたい",
+      "meaning": "traffic jam",
+      "type": "noun"
+    },
+    {
+      "kanji": "事故現場",
+      "reading": "じこげんば",
+      "meaning": "accident site",
+      "type": "noun"
+    },
+    {
+      "kanji": "注意書き",
+      "reading": "ちゅういがき",
+      "meaning": "caution note; fine print",
+      "type": "noun"
+    },
+    {
+      "kanji": "規則",
+      "reading": "きそく",
+      "meaning": "rule; regulation",
+      "type": "noun"
+    },
+    {
+      "kanji": "法律",
+      "reading": "ほうりつ",
+      "meaning": "law",
+      "type": "noun"
+    },
+    {
+      "kanji": "契約",
+      "reading": "けいやく",
+      "meaning": "contract",
+      "type": "noun"
+    },
+    {
+      "kanji": "申込",
+      "reading": "もうしこみ",
+      "meaning": "application; sign-up",
+      "type": "noun"
+    },
+    {
+      "kanji": "手続き",
+      "reading": "てつづき",
+      "meaning": "procedure; process",
+      "type": "noun"
+    },
+    {
+      "kanji": "受付",
+      "reading": "うけつけ",
+      "meaning": "reception; front desk",
+      "type": "noun"
+    },
+    {
+      "kanji": "番号順",
+      "reading": "ばんごうじゅん",
+      "meaning": "numerical order",
+      "type": "noun"
+    },
+    {
+      "kanji": "列",
+      "reading": "れつ",
+      "meaning": "line; queue",
+      "type": "noun"
+    },
+    {
+      "kanji": "順番",
+      "reading": "じゅんばん",
+      "meaning": "turn; order",
+      "type": "noun"
+    },
+    {
+      "kanji": "会場",
+      "reading": "かいじょう",
+      "meaning": "venue; site",
+      "type": "noun"
+    },
+    {
+      "kanji": "場所",
+      "reading": "ばしょ",
+      "meaning": "place; location",
+      "type": "noun"
+    },
+    {
+      "kanji": "近所",
+      "reading": "きんじょ",
+      "meaning": "neighborhood; vicinity",
+      "type": "noun"
+    },
+    {
+      "kanji": "方向",
+      "reading": "ほうこう",
+      "meaning": "direction",
+      "type": "noun"
+    },
+    {
+      "kanji": "左右",
+      "reading": "さゆう",
+      "meaning": "left and right",
+      "type": "noun"
+    },
+    {
+      "kanji": "右",
+      "reading": "みぎ",
+      "meaning": "right",
+      "type": "noun"
+    },
+    {
+      "kanji": "左",
+      "reading": "ひだり",
+      "meaning": "left",
+      "type": "noun"
+    },
+    {
+      "kanji": "前",
+      "reading": "まえ",
+      "meaning": "front; before",
+      "type": "noun"
+    },
+    {
+      "kanji": "後ろ",
+      "reading": "うしろ",
+      "meaning": "back; behind",
+      "type": "noun"
+    },
+    {
+      "kanji": "上",
+      "reading": "うえ",
+      "meaning": "top; above",
+      "type": "noun"
+    },
+    {
+      "kanji": "下",
+      "reading": "した",
+      "meaning": "bottom; below",
+      "type": "noun"
+    },
+    {
+      "kanji": "中",
+      "reading": "なか",
+      "meaning": "inside; middle",
+      "type": "noun"
+    },
+    {
+      "kanji": "外",
+      "reading": "そと",
+      "meaning": "outside",
+      "type": "noun"
+    },
+    {
+      "kanji": "近く",
+      "reading": "ちかく",
+      "meaning": "nearby; vicinity",
+      "type": "noun"
+    },
+    {
+      "kanji": "遠く",
+      "reading": "とおく",
+      "meaning": "far away; distance",
+      "type": "noun"
+    },
+    {
+      "kanji": "隣",
+      "reading": "となり",
+      "meaning": "next door; next to",
+      "type": "noun"
+    },
+    {
+      "kanji": "向こう",
+      "reading": "むこう",
+      "meaning": "over there; the other side",
+      "type": "noun"
+    },
+    {
+      "kanji": "周り",
+      "reading": "まわり",
+      "meaning": "around; surroundings",
+      "type": "noun"
+    },
+    {
+      "kanji": "角",
+      "reading": "かど",
+      "meaning": "corner",
+      "type": "noun"
+    },
+    {
+      "kanji": "入口",
+      "reading": "いりぐち",
+      "meaning": "entrance",
+      "type": "noun"
+    },
+    {
+      "kanji": "出口",
+      "reading": "でぐち",
+      "meaning": "exit",
+      "type": "noun"
+    },
+    {
+      "kanji": "階段",
+      "reading": "かいだん",
+      "meaning": "stairs",
+      "type": "noun"
+    },
+    {
+      "kanji": "風呂",
+      "reading": "ふろ",
+      "meaning": "bath",
+      "type": "noun"
+    },
+    {
+      "kanji": "洗面所",
+      "reading": "せんめんじょ",
+      "meaning": "washroom; sink area",
+      "type": "noun"
+    },
+    {
+      "kanji": "寝室",
+      "reading": "しんしつ",
+      "meaning": "bedroom",
+      "type": "noun"
+    },
+    {
+      "kanji": "居間",
+      "reading": "いま",
+      "meaning": "living room",
+      "type": "noun"
+    },
+    {
+      "kanji": "廊下",
+      "reading": "ろうか",
+      "meaning": "hallway",
+      "type": "noun"
+    },
+    {
+      "kanji": "庭",
+      "reading": "にわ",
+      "meaning": "garden; yard",
+      "type": "noun"
+    },
+    {
+      "kanji": "建物",
+      "reading": "たてもの",
+      "meaning": "building",
+      "type": "noun"
+    },
+    {
+      "kanji": "部品",
+      "reading": "ぶひん",
+      "meaning": "parts; components",
+      "type": "noun"
+    },
+    {
+      "kanji": "道具",
+      "reading": "どうぐ",
+      "meaning": "tool",
+      "type": "noun"
+    },
+    {
+      "kanji": "鍵",
+      "reading": "かぎ",
+      "meaning": "key; lock",
+      "type": "noun"
+    },
+    {
+      "kanji": "傘",
+      "reading": "かさ",
+      "meaning": "umbrella",
+      "type": "noun"
+    },
+    {
+      "kanji": "靴",
+      "reading": "くつ",
+      "meaning": "shoes",
+      "type": "noun"
+    },
+    {
+      "kanji": "服",
+      "reading": "ふく",
+      "meaning": "clothes",
+      "type": "noun"
+    },
+    {
+      "kanji": "上着",
+      "reading": "うわぎ",
+      "meaning": "jacket; outerwear",
+      "type": "noun"
+    },
+    {
+      "kanji": "帽子",
+      "reading": "ぼうし",
+      "meaning": "hat; cap",
+      "type": "noun"
+    },
+    {
+      "kanji": "眼鏡",
+      "reading": "めがね",
+      "meaning": "glasses",
+      "type": "noun"
+    },
+    {
+      "kanji": "時計",
+      "reading": "とけい",
+      "meaning": "clock; watch",
+      "type": "noun"
+    },
+    {
+      "kanji": "かばん",
+      "reading": "かばん",
+      "meaning": "bag",
+      "type": "noun"
+    }
+  ]
+}

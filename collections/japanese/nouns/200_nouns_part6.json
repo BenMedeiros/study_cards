@@ -1,10 +1,28 @@
 {
   "metadata": {
-    "name": "Japanese N5 Suru Nouns",
-    "description": "Nouns that commonly take する (suru-verbs). These are the noun forms only (no 'する').",
+    "name": "Japanese Nouns (200)",
+    "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
     "version": 1
   },
   "entries": [
+    {
+      "kanji": "荷物",
+      "reading": "にもつ",
+      "meaning": "luggage; baggage",
+      "type": "noun"
+    },
+    {
+      "kanji": "切手",
+      "reading": "きって",
+      "meaning": "stamp",
+      "type": "noun"
+    },
+    {
+      "kanji": "お釣り",
+      "reading": "おつり",
+      "meaning": "change (money)",
+      "type": "noun"
+    },
     {
       "kanji": "勉強",
       "reading": "べんきょう",

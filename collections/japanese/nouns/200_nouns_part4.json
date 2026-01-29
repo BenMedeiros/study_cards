@@ -1,0 +1,369 @@
+{
+  "metadata": {
+    "name": "Japanese Nouns (200)",
+    "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
+    "version": 1
+  },
+  "entries": [
+    {
+      "kanji": "自然",
+      "reading": "しぜん",
+      "meaning": "nature",
+      "type": "noun"
+    },
+    {
+      "kanji": "環境",
+      "reading": "かんきょう",
+      "meaning": "environment",
+      "type": "noun"
+    },
+    {
+      "kanji": "空気",
+      "reading": "くうき",
+      "meaning": "air; atmosphere",
+      "type": "noun"
+    },
+    {
+      "kanji": "水道",
+      "reading": "すいどう",
+      "meaning": "water supply; plumbing",
+      "type": "noun"
+    },
+    {
+      "kanji": "電気",
+      "reading": "でんき",
+      "meaning": "electricity; light",
+      "type": "noun"
+    },
+    {
+      "kanji": "料金",
+      "reading": "りょうきん",
+      "meaning": "fee; charge",
+      "type": "noun"
+    },
+    {
+      "kanji": "値段",
+      "reading": "ねだん",
+      "meaning": "price",
+      "type": "noun"
+    },
+    {
+      "kanji": "無料",
+      "reading": "むりょう",
+      "meaning": "free of charge",
+      "type": "noun"
+    },
+    {
+      "kanji": "注文",
+      "reading": "ちゅうもん",
+      "meaning": "order (at a restaurant)",
+      "type": "noun"
+    },
+    {
+      "kanji": "料理",
+      "reading": "りょうり",
+      "meaning": "cooking; cuisine",
+      "type": "noun"
+    },
+    {
+      "kanji": "朝食",
+      "reading": "ちょうしょく",
+      "meaning": "breakfast",
+      "type": "noun"
+    },
+    {
+      "kanji": "昼食",
+      "reading": "ちゅうしょく",
+      "meaning": "lunch",
+      "type": "noun"
+    },
+    {
+      "kanji": "夕食",
+      "reading": "ゆうしょく",
+      "meaning": "dinner",
+      "type": "noun"
+    },
+    {
+      "kanji": "飲み物",
+      "reading": "のみもの",
+      "meaning": "drink; beverage",
+      "type": "noun"
+    },
+    {
+      "kanji": "食べ物",
+      "reading": "たべもの",
+      "meaning": "food",
+      "type": "noun"
+    },
+    {
+      "kanji": "味",
+      "reading": "あじ",
+      "meaning": "taste; flavor",
+      "type": "noun"
+    },
+    {
+      "kanji": "匂い",
+      "reading": "におい",
+      "meaning": "smell; odor",
+      "type": "noun"
+    },
+    {
+      "kanji": "色",
+      "reading": "いろ",
+      "meaning": "color",
+      "type": "noun"
+    },
+    {
+      "kanji": "形",
+      "reading": "かたち",
+      "meaning": "shape; form",
+      "type": "noun"
+    },
+    {
+      "kanji": "高さ",
+      "reading": "たかさ",
+      "meaning": "height",
+      "type": "noun"
+    },
+    {
+      "kanji": "大きさ",
+      "reading": "おおきさ",
+      "meaning": "size",
+      "type": "noun"
+    },
+    {
+      "kanji": "重さ",
+      "reading": "おもさ",
+      "meaning": "weight",
+      "type": "noun"
+    },
+    {
+      "kanji": "長さ",
+      "reading": "ながさ",
+      "meaning": "length",
+      "type": "noun"
+    },
+    {
+      "kanji": "幅",
+      "reading": "はば",
+      "meaning": "width; breadth",
+      "type": "noun"
+    },
+    {
+      "kanji": "数字",
+      "reading": "すうじ",
+      "meaning": "number; numeral",
+      "type": "noun"
+    },
+    {
+      "kanji": "計算",
+      "reading": "けいさん",
+      "meaning": "calculation",
+      "type": "noun"
+    },
+    {
+      "kanji": "説明",
+      "reading": "せつめい",
+      "meaning": "explanation",
+      "type": "noun"
+    },
+    {
+      "kanji": "案内",
+      "reading": "あんない",
+      "meaning": "guidance; information",
+      "type": "noun"
+    },
+    {
+      "kanji": "連絡",
+      "reading": "れんらく",
+      "meaning": "contact; communication",
+      "type": "noun"
+    },
+    {
+      "kanji": "約束",
+      "reading": "やくそく",
+      "meaning": "promise; appointment",
+      "type": "noun"
+    },
+    {
+      "kanji": "相談",
+      "reading": "そうだん",
+      "meaning": "consultation; advice",
+      "type": "noun"
+    },
+    {
+      "kanji": "意見",
+      "reading": "いけん",
+      "meaning": "opinion",
+      "type": "noun"
+    },
+    {
+      "kanji": "考え",
+      "reading": "かんがえ",
+      "meaning": "thought; idea",
+      "type": "noun"
+    },
+    {
+      "kanji": "気持ち",
+      "reading": "きもち",
+      "meaning": "feeling",
+      "type": "noun"
+    },
+    {
+      "kanji": "心",
+      "reading": "こころ",
+      "meaning": "heart; mind",
+      "type": "noun"
+    },
+    {
+      "kanji": "夢",
+      "reading": "ゆめ",
+      "meaning": "dream",
+      "type": "noun"
+    },
+    {
+      "kanji": "希望",
+      "reading": "きぼう",
+      "meaning": "hope; wish",
+      "type": "noun"
+    },
+    {
+      "kanji": "目標",
+      "reading": "もくひょう",
+      "meaning": "goal; target",
+      "type": "noun"
+    },
+    {
+      "kanji": "結果",
+      "reading": "けっか",
+      "meaning": "result",
+      "type": "noun"
+    },
+    {
+      "kanji": "原因",
+      "reading": "げんいん",
+      "meaning": "cause",
+      "type": "noun"
+    },
+    {
+      "kanji": "経験",
+      "reading": "けいけん",
+      "meaning": "experience",
+      "type": "noun"
+    },
+    {
+      "kanji": "練習",
+      "reading": "れんしゅう",
+      "meaning": "practice; training",
+      "type": "noun"
+    },
+    {
+      "kanji": "努力",
+      "reading": "どりょく",
+      "meaning": "effort",
+      "type": "noun"
+    },
+    {
+      "kanji": "成長",
+      "reading": "せいちょう",
+      "meaning": "growth; development",
+      "type": "noun"
+    },
+    {
+      "kanji": "変化",
+      "reading": "へんか",
+      "meaning": "change",
+      "type": "noun"
+    },
+    {
+      "kanji": "準備",
+      "reading": "じゅんび",
+      "meaning": "preparation",
+      "type": "noun"
+    },
+    {
+      "kanji": "開始",
+      "reading": "かいし",
+      "meaning": "start; beginning",
+      "type": "noun"
+    },
+    {
+      "kanji": "終了",
+      "reading": "しゅうりょう",
+      "meaning": "end; finish",
+      "type": "noun"
+    },
+    {
+      "kanji": "途中",
+      "reading": "とちゅう",
+      "meaning": "on the way; halfway",
+      "type": "noun"
+    },
+    {
+      "kanji": "最後",
+      "reading": "さいご",
+      "meaning": "last; end",
+      "type": "noun"
+    },
+    {
+      "kanji": "最初",
+      "reading": "さいしょ",
+      "meaning": "first; beginning",
+      "type": "noun"
+    },
+    {
+      "kanji": "以上",
+      "reading": "いじょう",
+      "meaning": "more than; above; that's all",
+      "type": "noun"
+    },
+    {
+      "kanji": "以下",
+      "reading": "いか",
+      "meaning": "less than; below",
+      "type": "noun"
+    },
+    {
+      "kanji": "場合",
+      "reading": "ばあい",
+      "meaning": "case; situation",
+      "type": "noun"
+    },
+    {
+      "kanji": "理由書",
+      "reading": "りゆうしょ",
+      "meaning": "written statement of reasons",
+      "type": "noun"
+    },
+    {
+      "kanji": "書類",
+      "reading": "しょるい",
+      "meaning": "documents; paperwork",
+      "type": "noun"
+    },
+    {
+      "kanji": "身分証",
+      "reading": "みぶんしょう",
+      "meaning": "ID card; identification",
+      "type": "noun"
+    },
+    {
+      "kanji": "番号",
+      "reading": "ばんごう",
+      "meaning": "number; ID number",
+      "type": "noun"
+    },
+    {
+      "kanji": "携帯",
+      "reading": "けいたい",
+      "meaning": "mobile phone (short for 携帯電話)",
+      "type": "noun"
+    },
+    {
+      "kanji": "携帯電話",
+      "reading": "けいたいでんわ",
+      "meaning": "cell phone",
+      "type": "noun"
+    }
+  ]
+}

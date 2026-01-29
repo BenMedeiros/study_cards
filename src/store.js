@@ -11,7 +11,15 @@ export function createStore() {
     collectionTree: null,
     // Ephemeral UI: do not persist this to sessionStorage
     collectionBrowserPath: null,
+    // available collection paths discovered from index.json (not yet loaded)
+    _availableCollectionPaths: [],
   };
+
+  // Folder metadata helpers/storage used for lazy loads
+  let folderMetadataMap = null;
+  const metadataCache = {};
+  // Track in-flight collection fetch promises to avoid duplicate fetches
+  const pendingLoads = new Map();
 
   function notify() {
     for (const fn of subs) fn();
@@ -36,6 +44,18 @@ export function createStore() {
 
   async function setActiveCollectionId(id) {
     if (state.activeCollectionId === id) return;
+    // If activating a collection that hasn't been loaded yet, load it first.
+    if (id) {
+      const alreadyLoaded = state.collections.some(c => c.key === id);
+      if (!alreadyLoaded) {
+        try {
+          await loadCollection(id);
+        } catch (err) {
+          console.warn(`[Store] Failed to load collection ${id}: ${err.message}`);
+          return; // do not switch active collection if load failed
+        }
+      }
+    }
     state.activeCollectionId = id;
     
     // Update URL with new collection
@@ -284,42 +304,59 @@ export function createStore() {
     const paths = Array.isArray(index?.collections) ? index.collections : [];
 
     // Optional: explicit folder metadata location map to avoid probing missing files.
-    const folderMetadataMap = buildFolderMetadataMap(index?.folderMetadata);
+    folderMetadataMap = buildFolderMetadataMap(index?.folderMetadata);
 
     // Build a folder tree for browsing (independent of JSON validity).
     state.collectionTree = buildCollectionTreeFromPaths(paths);
 
-    // Cache folder metadata (inherited resolution) by folder path
-    const metadataCache = {};
-    
-    const loaded = [];
-    for (const relPath of paths) {
-      const url = `./collections/${relPath}`;
-      const res = await fetch(url);
-      if (!res.ok) {
-        console.warn(`Failed to load collection: ${relPath}`);
-        continue;
+    // Keep list of available paths but do NOT fetch each collection now.
+    state._availableCollectionPaths = paths.slice();
+
+    // Notify so UI can render collection browser immediately.
+    notify();
+
+    return paths;
+  }
+
+  async function loadCollection(key) {
+    if (!key) throw new Error('collection key required');
+    // If already loaded, return it
+    const existing = state.collections.find(c => c.key === key);
+    if (existing) return existing;
+
+    // If a load is in-flight, return the same promise
+    if (pendingLoads.has(key)) return pendingLoads.get(key);
+
+    const p = (async () => {
+      // Only allow loading known paths (avoid fetching arbitrary files)
+      if (!state._availableCollectionPaths.includes(key)) {
+        throw new Error(`Collection not found in index: ${key}`);
       }
+
+      const url = `./collections/${key}`;
+      let res;
+      try {
+        res = await fetch(url);
+      } catch (err) {
+        throw new Error(`Failed to fetch collection ${key}: ${err.message}`);
+      }
+      if (!res.ok) {
+        throw new Error(`Failed to load collection ${key} (status ${res.status})`);
+      }
+
       let data;
       try {
         const txt = await res.text();
-        if (!txt) {
-          console.warn(`Collection file is empty, skipping: ${relPath}`);
-          continue;
-        }
+        if (!txt) throw new Error('empty response');
         data = JSON.parse(txt);
       } catch (err) {
-        console.warn(`Invalid JSON in collection ${relPath}: ${err.message}`);
-        continue;
+        throw new Error(`Invalid JSON in collection ${key}: ${err.message}`);
       }
 
-      // Path-based key replaces metadata.id
-      const key = relPath;
-
       // Apply inherited folder metadata (nearest `_metadata.json` up the folder chain)
-      const folderPath = dirname(relPath);
-      const folderMetadata = (await loadInheritedFolderMetadata(folderPath, metadataCache, folderMetadataMap)) || { fields: [], category: folderPath.split('/')[0] || '' };
-      data = mergeMetadata(data, folderMetadata);
+      const folderPath = dirname(key);
+      const fm = (await loadInheritedFolderMetadata(folderPath, metadataCache, folderMetadataMap)) || { fields: [], category: folderPath.split('/')[0] || '' };
+      data = mergeMetadata(data, fm);
 
       // Apply collection-level defaults to entries (shallow merge where entry lacks the key)
       if (data && data.defaults && Array.isArray(data.entries)) {
@@ -337,20 +374,36 @@ export function createStore() {
       // Ensure required bits exist, and avoid relying on metadata.id.
       data.metadata = data.metadata || {};
       if (!data.metadata.name) {
-        data.metadata.name = titleFromFilename(basename(relPath));
+        data.metadata.name = titleFromFilename(basename(key));
       }
-      // If legacy metadata.id exists, keep it but do not use it anywhere.
 
-      loaded.push({ ...data, key });
+      const record = { ...data, key };
+      state.collections.push(record);
+      // Keep collections consistent order with available list where possible
+      state.collections.sort((a, b) => {
+        const ai = state._availableCollectionPaths.indexOf(a.key);
+        const bi = state._availableCollectionPaths.indexOf(b.key);
+        return ai - bi;
+      });
+
+      notify();
+      return record;
+    })();
+
+    pendingLoads.set(key, p);
+    try {
+      const result = await p;
+      return result;
+    } finally {
+      pendingLoads.delete(key);
     }
-
-    return loaded;
   }
 
   async function initialize() {
     try {
-      const seed = await loadSeedCollections();
-      state.collections = seed;
+      const paths = await loadSeedCollections();
+      // Do not eagerly load collection JSONs; start with none loaded.
+      state.collections = [];
 
       // Restore from session if possible (before defaulting to first)
       let restored = null;
@@ -361,11 +414,11 @@ export function createStore() {
         restored = null;
       }
 
-      if (restored && state.collections.some(c => c.key === restored)) {
+      if (restored && state._availableCollectionPaths.includes(restored)) {
         await setActiveCollectionId(restored);
-      } else if (!state.activeCollectionId && state.collections.length > 0) {
+      } else if (!state.activeCollectionId && Array.isArray(paths) && paths.length > 0) {
         // Persist via setter so session state is updated
-        await setActiveCollectionId(state.collections[0]?.key ?? null);
+        await setActiveCollectionId(paths[0]);
       }
     } catch (err) {
       console.error(`Failed to initialize collections: ${err.message}`);
@@ -379,11 +432,9 @@ export function createStore() {
   function syncCollectionFromURL(route) {
     const collectionId = route.query.get('collection');
     if (collectionId && collectionId !== state.activeCollectionId) {
-      const exists = state.collections.some(c => c.key === collectionId);
-      if (exists) {
-        // Use the setter so the change is persisted to session state and URL updated consistently
-        setActiveCollectionId(collectionId);
-      }
+      // Attempt to activate the collection. `setActiveCollectionId` will
+      // lazily load it if necessary.
+      setActiveCollectionId(collectionId);
     }
   }
 
@@ -530,6 +581,7 @@ export function createStore() {
     setActiveCollectionId,
     syncCollectionFromURL,
     listCollectionDir,
+    loadCollection,
     getCollectionBrowserPath: () => {
       return (typeof state.collectionBrowserPath === 'string') ? state.collectionBrowserPath : null;
     },

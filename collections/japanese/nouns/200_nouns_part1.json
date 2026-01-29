@@ -1,0 +1,369 @@
+{
+  "metadata": {
+    "name": "Japanese Nouns (200)",
+    "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
+    "version": 1
+  },
+  "entries": [
+    {
+      "kanji": "学校",
+      "reading": "がっこう",
+      "meaning": "school",
+      "type": "noun"
+    },
+    {
+      "kanji": "学生",
+      "reading": "がくせい",
+      "meaning": "student",
+      "type": "noun"
+    },
+    {
+      "kanji": "先生",
+      "reading": "せんせい",
+      "meaning": "teacher; instructor",
+      "type": "noun"
+    },
+    {
+      "kanji": "友達",
+      "reading": "ともだち",
+      "meaning": "friend",
+      "type": "noun"
+    },
+    {
+      "kanji": "家族",
+      "reading": "かぞく",
+      "meaning": "family",
+      "type": "noun"
+    },
+    {
+      "kanji": "両親",
+      "reading": "りょうしん",
+      "meaning": "parents",
+      "type": "noun"
+    },
+    {
+      "kanji": "母",
+      "reading": "はは",
+      "meaning": "mother (my)",
+      "type": "noun"
+    },
+    {
+      "kanji": "父",
+      "reading": "ちち",
+      "meaning": "father (my)",
+      "type": "noun"
+    },
+    {
+      "kanji": "兄",
+      "reading": "あに",
+      "meaning": "older brother (my)",
+      "type": "noun"
+    },
+    {
+      "kanji": "姉",
+      "reading": "あね",
+      "meaning": "older sister (my)",
+      "type": "noun"
+    },
+    {
+      "kanji": "弟",
+      "reading": "おとうと",
+      "meaning": "younger brother",
+      "type": "noun"
+    },
+    {
+      "kanji": "妹",
+      "reading": "いもうと",
+      "meaning": "younger sister",
+      "type": "noun"
+    },
+    {
+      "kanji": "子ども",
+      "reading": "こども",
+      "meaning": "child",
+      "type": "noun"
+    },
+    {
+      "kanji": "大人",
+      "reading": "おとな",
+      "meaning": "adult",
+      "type": "noun"
+    },
+    {
+      "kanji": "人",
+      "reading": "ひと",
+      "meaning": "person",
+      "type": "noun"
+    },
+    {
+      "kanji": "名前",
+      "reading": "なまえ",
+      "meaning": "name",
+      "type": "noun"
+    },
+    {
+      "kanji": "住所",
+      "reading": "じゅうしょ",
+      "meaning": "address",
+      "type": "noun"
+    },
+    {
+      "kanji": "国",
+      "reading": "くに",
+      "meaning": "country",
+      "type": "noun"
+    },
+    {
+      "kanji": "町",
+      "reading": "まち",
+      "meaning": "town; city",
+      "type": "noun"
+    },
+    {
+      "kanji": "村",
+      "reading": "むら",
+      "meaning": "village",
+      "type": "noun"
+    },
+    {
+      "kanji": "駅",
+      "reading": "えき",
+      "meaning": "station",
+      "type": "noun"
+    },
+    {
+      "kanji": "電車",
+      "reading": "でんしゃ",
+      "meaning": "train",
+      "type": "noun"
+    },
+    {
+      "kanji": "地下鉄",
+      "reading": "ちかてつ",
+      "meaning": "subway",
+      "type": "noun"
+    },
+    {
+      "kanji": "車",
+      "reading": "くるま",
+      "meaning": "car",
+      "type": "noun"
+    },
+    {
+      "kanji": "自転車",
+      "reading": "じてんしゃ",
+      "meaning": "bicycle",
+      "type": "noun"
+    },
+    {
+      "kanji": "道",
+      "reading": "みち",
+      "meaning": "road; way",
+      "type": "noun"
+    },
+    {
+      "kanji": "交差点",
+      "reading": "こうさてん",
+      "meaning": "intersection",
+      "type": "noun"
+    },
+    {
+      "kanji": "信号",
+      "reading": "しんごう",
+      "meaning": "traffic light; signal",
+      "type": "noun"
+    },
+    {
+      "kanji": "橋",
+      "reading": "はし",
+      "meaning": "bridge",
+      "type": "noun"
+    },
+    {
+      "kanji": "公園",
+      "reading": "こうえん",
+      "meaning": "park",
+      "type": "noun"
+    },
+    {
+      "kanji": "病院",
+      "reading": "びょういん",
+      "meaning": "hospital",
+      "type": "noun"
+    },
+    {
+      "kanji": "薬",
+      "reading": "くすり",
+      "meaning": "medicine",
+      "type": "noun"
+    },
+    {
+      "kanji": "医者",
+      "reading": "いしゃ",
+      "meaning": "doctor",
+      "type": "noun"
+    },
+    {
+      "kanji": "会社",
+      "reading": "かいしゃ",
+      "meaning": "company",
+      "type": "noun"
+    },
+    {
+      "kanji": "社員",
+      "reading": "しゃいん",
+      "meaning": "employee",
+      "type": "noun"
+    },
+    {
+      "kanji": "仕事",
+      "reading": "しごと",
+      "meaning": "work; job",
+      "type": "noun"
+    },
+    {
+      "kanji": "会計",
+      "reading": "かいけい",
+      "meaning": "bill; accounting",
+      "type": "noun"
+    },
+    {
+      "kanji": "店",
+      "reading": "みせ",
+      "meaning": "shop; store",
+      "type": "noun"
+    },
+    {
+      "kanji": "銀行",
+      "reading": "ぎんこう",
+      "meaning": "bank",
+      "type": "noun"
+    },
+    {
+      "kanji": "郵便局",
+      "reading": "ゆうびんきょく",
+      "meaning": "post office",
+      "type": "noun"
+    },
+    {
+      "kanji": "図書館",
+      "reading": "としょかん",
+      "meaning": "library",
+      "type": "noun"
+    },
+    {
+      "kanji": "美術館",
+      "reading": "びじゅつかん",
+      "meaning": "art museum",
+      "type": "noun"
+    },
+    {
+      "kanji": "映画館",
+      "reading": "えいがかん",
+      "meaning": "movie theater",
+      "type": "noun"
+    },
+    {
+      "kanji": "店員",
+      "reading": "てんいん",
+      "meaning": "clerk; store staff",
+      "type": "noun"
+    },
+    {
+      "kanji": "客",
+      "reading": "きゃく",
+      "meaning": "customer; guest",
+      "type": "noun"
+    },
+    {
+      "kanji": "お金",
+      "reading": "おかね",
+      "meaning": "money",
+      "type": "noun"
+    },
+    {
+      "kanji": "財布",
+      "reading": "さいふ",
+      "meaning": "wallet",
+      "type": "noun"
+    },
+    {
+      "kanji": "切符",
+      "reading": "きっぷ",
+      "meaning": "ticket",
+      "type": "noun"
+    },
+    {
+      "kanji": "予約",
+      "reading": "よやく",
+      "meaning": "reservation",
+      "type": "noun"
+    },
+    {
+      "kanji": "予定",
+      "reading": "よてい",
+      "meaning": "plan; schedule",
+      "type": "noun"
+    },
+    {
+      "kanji": "時間",
+      "reading": "じかん",
+      "meaning": "time; hour",
+      "type": "noun"
+    },
+    {
+      "kanji": "今日",
+      "reading": "きょう",
+      "meaning": "today",
+      "type": "noun"
+    },
+    {
+      "kanji": "明日",
+      "reading": "あした",
+      "meaning": "tomorrow",
+      "type": "noun"
+    },
+    {
+      "kanji": "昨日",
+      "reading": "きのう",
+      "meaning": "yesterday",
+      "type": "noun"
+    },
+    {
+      "kanji": "今週",
+      "reading": "こんしゅう",
+      "meaning": "this week",
+      "type": "noun"
+    },
+    {
+      "kanji": "来週",
+      "reading": "らいしゅう",
+      "meaning": "next week",
+      "type": "noun"
+    },
+    {
+      "kanji": "先週",
+      "reading": "せんしゅう",
+      "meaning": "last week",
+      "type": "noun"
+    },
+    {
+      "kanji": "今月",
+      "reading": "こんげつ",
+      "meaning": "this month",
+      "type": "noun"
+    },
+    {
+      "kanji": "来月",
+      "reading": "らいげつ",
+      "meaning": "next month",
+      "type": "noun"
+    },
+    {
+      "kanji": "去年",
+      "reading": "きょねん",
+      "meaning": "last year",
+      "type": "noun"
+    }
+  ]
+}

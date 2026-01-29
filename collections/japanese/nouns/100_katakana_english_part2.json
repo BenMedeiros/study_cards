@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "name": "Common Katakana Nouns (English-Origin Only) Top 100",
+    "description": "High-frequency katakana nouns in Japanese that are specifically loanwords from English (excluding Portuguese, French, Italian, etc.).",
+    "version": 2
+  },
+  "entries": [
+    {
+      "kanji": "バス",
+      "reading": "ばす",
+      "meaning": "bus",
+      "type": "noun"
+    },
+    {
+      "kanji": "パン",
+      "reading": "ぱん",
+      "meaning": "bread",
+      "type": "noun"
+    },
+    {
+      "kanji": "カタカナ",
+      "reading": "かたかな",
+      "meaning": "katakana",
+      "type": "noun"
+    },
+    {
+      "kanji": "ガス",
+      "reading": "がす",
+      "meaning": "gas",
+      "type": "noun"
+    },
+    {
+      "kanji": "エレベーター",
+      "reading": "えれべーたー",
+      "meaning": "elevator",
+      "type": "noun"
+    },
+    {
+      "kanji": "コート",
+      "reading": "こーと",
+      "meaning": "coat",
+      "type": "noun"
+    }
+  ]
+}
