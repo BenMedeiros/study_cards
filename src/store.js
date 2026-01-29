@@ -203,6 +203,20 @@ export function createStore() {
     return inherited;
   }
 
+  // Public helper: return the inherited folder metadata for a collection key or folder path.
+  // This exposes the result of `loadInheritedFolderMetadata` (cached) so UI can show
+  // the root/_metadata.json values that apply to a collection.
+  async function getInheritedFolderMetadata(collectionKeyOrFolder) {
+    if (!collectionKeyOrFolder) return null;
+    // If caller passed a collection key (contains '/'), treat it as a path and get its dirname
+    const folder = (typeof collectionKeyOrFolder === 'string' && collectionKeyOrFolder.includes('/'))
+      ? dirname(collectionKeyOrFolder)
+      : normalizeFolderPath(collectionKeyOrFolder);
+
+    const meta = await loadInheritedFolderMetadata(folder, metadataCache, folderMetadataMap);
+    return meta || null;
+  }
+
   function mergeMetadata(collection, categoryMetadata) {
     // Start with common fields, then add collection-specific fields
     const fields = Array.isArray(categoryMetadata?.fields) ? categoryMetadata.fields : [];
@@ -620,5 +634,6 @@ export function createStore() {
     setShellVoiceSettings,
     loadKanjiUIState,
     saveKanjiUIState,
+    getInheritedFolderMetadata,
   };
 }

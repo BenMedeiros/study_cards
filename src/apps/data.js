@@ -34,10 +34,55 @@ export function renderData({ store }) {
     id: 'data-table'
   });
 
+  // Collapsible metadata sections (each collapsible individually)
+  const wrapper = el('div', { className: 'collection-metadata' });
+
+  const collMetaDetails = el('details', {
+    className: 'metadata-details',
+    children: [
+      el('summary', { text: 'Collection metadata' }),
+      el('pre', { text: JSON.stringify(active.metadata || {}, null, 2) })
+    ]
+  });
+
+  const defaultsDetails = el('details', {
+    className: 'defaults-details',
+    children: [
+      el('summary', { text: 'Collection defaults' }),
+      el('pre', { text: JSON.stringify(active.defaults || {}, null, 2) })
+    ]
+  });
+
+  const folderMetaDetails = el('details', {
+    className: 'folder-meta-details',
+    children: [
+      el('summary', { text: 'Inherited folder _metadata.json' }),
+      el('pre', { id: 'folder-meta-pre', text: 'Loading...' })
+    ]
+  });
+
+  wrapper.append(collMetaDetails, defaultsDetails, folderMetaDetails);
+
+  // Load inherited folder metadata asynchronously via the store API
+  if (store && typeof store.getInheritedFolderMetadata === 'function') {
+    store.getInheritedFolderMetadata(active.key)
+      .then(folderMeta => {
+        const pre = wrapper.querySelector('#folder-meta-pre');
+        if (pre) pre.textContent = folderMeta ? JSON.stringify(folderMeta, null, 2) : 'None';
+      })
+      .catch(() => {
+        const pre = wrapper.querySelector('#folder-meta-pre');
+        if (pre) pre.textContent = 'Error loading folder metadata';
+      });
+  } else {
+    const pre = wrapper.querySelector('#folder-meta-pre');
+    if (pre) pre.textContent = 'Unavailable';
+  }
+
   const dataCard = card({
     id: 'data-card',
     cornerCaption: `${entries.length} Entries`,
-    children: [table]
+    children: [wrapper, table]
   });
 
   // Show the full path to the currently displayed collection file.
