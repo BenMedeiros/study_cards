@@ -670,6 +670,14 @@ input[type="number"].button::-webkit-inner-spin-button {
   max-height: calc(100vh - 12rem);
 }
 
+/* Highlight rows that are in the current study subset */
+.table tbody tr.in-study td {
+  background: rgba(96, 165, 250, 0.06);
+}
+.table tbody tr.in-study td.col-kanji {
+  background: rgba(96, 165, 250, 0.08);
+}
+
 .textarea {
   width: 100%;
   min-height: 16.25rem;
