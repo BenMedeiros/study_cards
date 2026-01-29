@@ -540,7 +540,8 @@ export function createStore() {
       autoSpeak: k.autoSpeak,
       // per-collection or fallback
       isShuffled: typeof collState.isShuffled === 'boolean' ? collState.isShuffled : k.isShuffled,
-      order: (collState && typeof collState.order !== 'undefined') ? collState.order : k.order || null,
+      // compact deterministic seed for a seeded permutation
+      order_hash_int: (collState && typeof collState.order_hash_int === 'number') ? collState.order_hash_int : (typeof k.order_hash_int === 'number' ? k.order_hash_int : null),
       currentIndex: (collState && typeof collState.currentIndex === 'number') ? collState.currentIndex : (typeof k.currentIndex === 'number' ? k.currentIndex : 0),
     };
   }
@@ -558,7 +559,8 @@ export function createStore() {
     if (collId) {
       k.collections = k.collections || {};
       k.collections[collId] = k.collections[collId] || {};
-      k.collections[collId].order = stateObj.order || null;
+      // Persist only compact integer seed for deterministic shuffle
+      k.collections[collId].order_hash_int = (typeof stateObj.order_hash_int === 'number') ? stateObj.order_hash_int : null;
       k.collections[collId].currentIndex = stateObj.currentIndex;
       k.collections[collId].isShuffled = !!stateObj.isShuffled;
     }
