@@ -21,7 +21,7 @@ async function walk(dir) {
 async function rebuildIndex() {
   const files = await walk(collectionsDir);
   const folderMetadata = {};
-  const collections = [];
+  const collectionsFiles = [];
 
   for (const f of files) {
     const rel = path.relative(collectionsDir, f);
@@ -36,15 +36,85 @@ async function rebuildIndex() {
     }
     // skip the generated top-level index.json so it doesn't appear in collections
     if (posixRel === 'index.json') continue;
-    collections.push(posixRel);
+    collectionsFiles.push(posixRel);
   }
 
-  collections.sort();
+  // Read each collection's metadata.name/description/entries and build display names
+  const entries = [];
+  for (const posixRel of collectionsFiles) {
+    const full = path.join(collectionsDir, posixRel.split('/').join(path.sep));
+    const parts = posixRel.split('/');
+    const parent = parts.slice(0, -1).join('/') || '.';
+    const baseNameNoExt = path.basename(posixRel, '.json');
+    let metaName = null;
+    let description = null;
+    let entryCount = null;
+    let parsedJson = null;
+    try {
+      const txt = await fs.readFile(full, 'utf8');
+      const json = JSON.parse(txt);
+      parsedJson = json;
+      if (json && json.metadata && typeof json.metadata.name === 'string') {
+        metaName = json.metadata.name.trim();
+      }
+      if (json && json.metadata && typeof json.metadata.description === 'string') {
+        description = json.metadata.description.trim();
+      }
+      if (json && Array.isArray(json.entries)) {
+        entryCount = json.entries.length;
+      }
+    } catch (e) {
+      // ignore parse/read errors and fall back to filename
+    }
+    entries.push({ path: posixRel, parent, baseNameNoExt, metaName, description, entryCount, parsedJson, full });
+  }
 
-  const out = { folderMetadata, collections };
+  // Determine duplicates within each immediate folder and create display names
+  const nameCountsByParent = {};
+  for (const e of entries) {
+    const key = e.parent;
+    const nameKey = e.metaName || e.baseNameNoExt;
+    nameCountsByParent[key] = nameCountsByParent[key] || {};
+    nameCountsByParent[key][nameKey] = (nameCountsByParent[key][nameKey] || 0) + 1;
+  }
+
+  const collectionsWithNames = [];
+  for (const e of entries) {
+    const base = e.metaName || e.baseNameNoExt;
+    const count = (nameCountsByParent[e.parent] && nameCountsByParent[e.parent][base]) || 0;
+    const displayName = count > 1 ? `${base} (${e.baseNameNoExt})` : base;
+    // If an existing metadata.name must be disambiguated, update the file and log it
+    if (count > 1 && e.metaName && e.parsedJson) {
+      console.log(`Disambiguating metadata.name for ${e.path}: "${e.metaName}" -> "${displayName}"`);
+      try {
+        const json = e.parsedJson;
+        if (json && json.metadata && json.metadata.name === e.metaName) {
+          json.metadata.name = displayName;
+          await fs.writeFile(e.full, JSON.stringify(json, null, 2), 'utf8');
+          console.log(`Wrote updated metadata.name to ${e.path}`);
+        } else {
+          console.log(`Skipped writing ${e.path}: metadata.name changed since read`);
+        }
+      } catch (err) {
+        console.error(`Failed to update ${e.path}:`, err);
+      }
+    }
+    // Build lightweight collection record for index
+    collectionsWithNames.push({
+      path: e.path,
+      name: displayName,
+      description: e.description || null,
+      entries: (typeof e.entryCount === 'number') ? e.entryCount : null
+    });
+  }
+
+  // Sort by path for deterministic output
+  collectionsWithNames.sort((a, b) => a.path.localeCompare(b.path));
+
+  const out = { folderMetadata, collections: collectionsWithNames };
   const outPath = path.join(collectionsDir, 'index.json');
   await fs.writeFile(outPath, JSON.stringify(out, null, 2), 'utf8');
-  console.log(`Rebuilt ${outPath} (${collections.length} entries)`);
+  console.log(`Rebuilt ${outPath} (${collectionsFiles.length} entries)`);
 }
 
 if (require.main === module) rebuildIndex().catch(err => {

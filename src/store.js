@@ -18,6 +18,8 @@ export function createStore() {
   // Folder metadata helpers/storage used for lazy loads
   let folderMetadataMap = null;
   const metadataCache = {};
+  // map of available collection path -> lightweight metadata from index.json
+  let availableCollectionsMap = new Map();
   // Track in-flight collection fetch promises to avoid duplicate fetches
   const pendingLoads = new Map();
 
@@ -301,7 +303,10 @@ export function createStore() {
     } catch (err) {
       throw new Error(`Failed to parse collections/index.json: ${err.message}`);
     }
-    const paths = Array.isArray(index?.collections) ? index.collections : [];
+    // Index may contain either an array of paths (legacy) or an array of
+    // objects { path, name, description, entries } produced by rebuild_index.js.
+    const rawCollections = Array.isArray(index?.collections) ? index.collections : [];
+    const paths = rawCollections.map(c => (typeof c === 'string' ? c : (c.path || ''))).filter(Boolean);
 
     // Optional: explicit folder metadata location map to avoid probing missing files.
     folderMetadataMap = buildFolderMetadataMap(index?.folderMetadata);
@@ -312,10 +317,30 @@ export function createStore() {
     // Keep list of available paths but do NOT fetch each collection now.
     state._availableCollectionPaths = paths.slice();
 
+    // Build a map of path -> metadata records for quick access in the UI.
+    availableCollectionsMap = new Map();
+    for (const raw of rawCollections) {
+      if (typeof raw === 'string') {
+        availableCollectionsMap.set(raw, { path: raw, name: null, description: null, entries: null });
+      } else if (raw && typeof raw.path === 'string') {
+        availableCollectionsMap.set(raw.path, {
+          path: raw.path,
+          name: raw.name || null,
+          description: raw.description || null,
+          entries: (typeof raw.entries === 'number') ? raw.entries : null
+        });
+      }
+    }
+
     // Notify so UI can render collection browser immediately.
     notify();
 
     return paths;
+  }
+
+  // Return lightweight collection records from the index (preserves index order)
+  function getAvailableCollections() {
+    return state._availableCollectionPaths.map(p => availableCollectionsMap.get(p) || { path: p, name: null, description: null, entries: null });
   }
 
   async function loadCollection(key) {
@@ -576,6 +601,7 @@ export function createStore() {
     subscribe,
     initialize,
     getCollections,
+    getAvailableCollections,
     getActiveCollectionId,
     getActiveCollection,
     setActiveCollectionId,

@@ -5,21 +5,19 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
   root.id = 'collections-root';
 
-  const collections = store.getCollections();
+  const collections = store.getAvailableCollections();
 
   // Build table headers
   const headers = ['Name', 'Path', 'Entries', 'Description'];
 
   // Build table rows
   const rows = collections.map(c => {
-    const meta = c.metadata ?? {};
-    const entryCount = Array.isArray(c.entries) ? c.entries.length : 0;
-    
+    const entryCount = (typeof c.entries === 'number') ? c.entries : (c.entries ? c.entries : 0);
     return [
-      meta.name ?? c.key,
-      c.key,
+      c.name || c.path,
+      c.path,
       entryCount,
-      meta.description ?? ''
+      c.description || ''
     ];
   });
 

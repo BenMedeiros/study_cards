@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "name": "Lexical Semantics & Lexicon",
+    "name": "Lexical Semantics & Lexicon (lexical)",
     "description": "Word meaning, sense structure, and lexical relations.",
     "version": 8,
     "external_links_index": [
@@ -52,7 +52,12 @@
       "study": "Linguistics / Semantics",
       "definition": "The study of word meanings, sense distinctions, and relationships among words.",
       "compressed_definition": "Study of word meaning",
-      "links": ["Sense", "Synonymy", "Polysemy", "Hyponym"],
+      "links": [
+        "Sense",
+        "Synonymy",
+        "Polysemy",
+        "Hyponym"
+      ],
       "examples": [
         "How many meanings does the word 'run' have?",
         "Are 'big' and 'large' interchangeable in all contexts?"
@@ -63,8 +68,17 @@
       "study": "Lexical semantics",
       "definition": "A distinct meaning associated with a word form in a particular context or usage.",
       "compressed_definition": "Specific word meaning",
-      "links": ["Polysemy", "Homonymy", "Synonymy", "Hyponym"],
-      "external_links": ["word form", "context", "usage"],
+      "links": [
+        "Polysemy",
+        "Homonymy",
+        "Synonymy",
+        "Hyponym"
+      ],
+      "external_links": [
+        "word form",
+        "context",
+        "usage"
+      ],
       "examples": [
         "paper (material) vs paper (newspaper)",
         "bank (financial institution) vs bank (river edge)"
@@ -75,8 +89,12 @@
       "study": "Lexical semantics",
       "definition": "An abstract lexical unit that groups together the inflected forms that belong to the same vocabulary item.",
       "compressed_definition": "Abstract lexical unit",
-      "links": ["Lemma"],
-      "external_links": ["dictionary entry"],
+      "links": [
+        "Lemma"
+      ],
+      "external_links": [
+        "dictionary entry"
+      ],
       "examples": [
         "RUN: run / runs / ran / running",
         "GO: go / goes / went / going"
@@ -87,8 +105,13 @@
       "study": "Lexical semantics",
       "definition": "The canonical dictionary form used to represent a lexeme.",
       "compressed_definition": "Dictionary headword",
-      "links": ["Lexeme"],
-      "external_links": ["canonical form", "corpus"],
+      "links": [
+        "Lexeme"
+      ],
+      "external_links": [
+        "canonical form",
+        "corpus"
+      ],
       "examples": [
         "ran and running are listed under the lemma run",
         "better and best are listed under the lemma good"
@@ -99,8 +122,13 @@
       "study": "Lexical semantics",
       "definition": "A relation between expressions whose meanings are very similar in a given context.",
       "compressed_definition": "Similarity of meaning",
-      "links": ["Sense", "Near-synonymy"],
-      "external_links": ["register"],
+      "links": [
+        "Sense",
+        "Near-synonymy"
+      ],
+      "external_links": [
+        "register"
+      ],
       "examples": [
         "sofa ~ couch",
         "buy ~ purchase"
@@ -111,8 +139,13 @@
       "study": "Lexical semantics",
       "definition": "Partial synonymy where expressions overlap in meaning but differ in connotation, register, or typical usage.",
       "compressed_definition": "Partial similarity",
-      "links": ["Synonymy"],
-      "external_links": ["connotation", "collocation"],
+      "links": [
+        "Synonymy"
+      ],
+      "external_links": [
+        "connotation",
+        "collocation"
+      ],
       "examples": [
         "child ~ kid",
         "slim ~ skinny"
@@ -123,8 +156,12 @@
       "study": "Lexical semantics",
       "definition": "A single word form having multiple related senses.",
       "compressed_definition": "Multiple related meanings",
-      "links": ["Sense"],
-      "external_links": ["meaning extension"],
+      "links": [
+        "Sense"
+      ],
+      "external_links": [
+        "meaning extension"
+      ],
       "examples": [
         "run (move quickly / manage / operate)",
         "head (body part / leader / top)"
@@ -135,8 +172,13 @@
       "study": "Lexical semantics",
       "definition": "The relationship between expressions that share a form but have unrelated meanings.",
       "compressed_definition": "Same form, unrelated meanings",
-      "links": ["Sense"],
-      "external_links": ["lexical ambiguity", "etymology"],
+      "links": [
+        "Sense"
+      ],
+      "external_links": [
+        "lexical ambiguity",
+        "etymology"
+      ],
       "examples": [
         "bat (animal) vs bat (sports equipment)"
       ]
@@ -146,8 +188,13 @@
       "study": "Lexical semantics",
       "definition": "A more general term whose meaning subsumes the meaning of more specific terms.",
       "compressed_definition": "General parent term",
-      "links": ["Hyponym"],
-      "external_links": ["semantic hierarchy", "taxonomic relation"],
+      "links": [
+        "Hyponym"
+      ],
+      "external_links": [
+        "semantic hierarchy",
+        "taxonomic relation"
+      ],
       "examples": [
         "vehicle → car, bicycle",
         "cook → boil, fry, bake"
@@ -158,8 +205,14 @@
       "study": "Lexical semantics",
       "definition": "A more specific term whose meaning is included within the meaning of a more general term.",
       "compressed_definition": "More specific category member",
-      "links": ["Hypernym", "Sense", "Troponymy"],
-      "external_links": ["semantic entailment"],
+      "links": [
+        "Hypernym",
+        "Sense",
+        "Troponymy"
+      ],
+      "external_links": [
+        "semantic entailment"
+      ],
       "examples": [
         "boil is a hyponym of cook",
         "murder is a hyponym of kill"
@@ -170,8 +223,12 @@
       "study": "Lexical semantics",
       "definition": "A verb-specific subtype of hyponymy where the more specific verb encodes the manner of the more general action.",
       "compressed_definition": "Verb hyponymy with manner",
-      "links": ["Hyponym"],
-      "external_links": ["event structure"],
+      "links": [
+        "Hyponym"
+      ],
+      "external_links": [
+        "event structure"
+      ],
       "examples": [
         "whisper → speak",
         "sprint → run"
@@ -182,7 +239,12 @@
       "study": "Lexical semantics",
       "definition": "A concept for which a language lacks a conventional single-word expression.",
       "compressed_definition": "Missing word for a concept",
-      "external_links": ["lexicalization", "paraphrase", "multiword expression", "cross-linguistic comparison"],
+      "external_links": [
+        "lexicalization",
+        "paraphrase",
+        "multiword expression",
+        "cross-linguistic comparison"
+      ],
       "examples": [
         "English lacks a single word for 'older sibling'",
         "Some languages lack a single word for 'the day after tomorrow'"
@@ -193,8 +255,17 @@
       "study": "Syntax / Semantics",
       "definition": "The part of a clause that expresses a property, relation, or action attributed to one or more arguments.",
       "compressed_definition": "What is asserted",
-      "links": ["Clause", "Predicate phrase"],
-      "external_links": ["argument", "property", "relation", "event", "valency"],
+      "links": [
+        "Clause",
+        "Predicate phrase"
+      ],
+      "external_links": [
+        "argument",
+        "property",
+        "relation",
+        "event",
+        "valency"
+      ],
       "examples": [
         "runs",
         "is tall",
@@ -206,8 +277,18 @@
       "study": "Syntax",
       "definition": "A grammatical unit organized around a predicate and its arguments.",
       "compressed_definition": "Predicate with arguments",
-      "links": ["Predicate", "Composed clause", "Subordinate clause"],
-      "external_links": ["argument structure", "embedding", "subordination", "coordination", "finite verb"],
+      "links": [
+        "Predicate",
+        "Composed clause",
+        "Subordinate clause"
+      ],
+      "external_links": [
+        "argument structure",
+        "embedding",
+        "subordination",
+        "coordination",
+        "finite verb"
+      ],
       "examples": [
         "She runs.",
         "because it was raining"
@@ -218,8 +299,14 @@
       "study": "Syntax",
       "definition": "A syntactic unit built around a head word and its dependents.",
       "compressed_definition": "Head-centered unit",
-      "links": ["Predicate phrase"],
-      "external_links": ["head", "dependent", "constituent"],
+      "links": [
+        "Predicate phrase"
+      ],
+      "external_links": [
+        "head",
+        "dependent",
+        "constituent"
+      ],
       "examples": [
         "the red book",
         "in the morning"
@@ -230,8 +317,15 @@
       "study": "Syntax",
       "definition": "A phrase that functions as the predicate of a clause.",
       "compressed_definition": "Predicate as a phrase",
-      "links": ["Predicate", "Phrase"],
-      "external_links": ["complement", "adjunct", "phrase-structure grammar"],
+      "links": [
+        "Predicate",
+        "Phrase"
+      ],
+      "external_links": [
+        "complement",
+        "adjunct",
+        "phrase-structure grammar"
+      ],
       "examples": [
         "ate breakfast",
         "is reading a book"
@@ -242,8 +336,14 @@
       "study": "Syntax",
       "definition": "A clause formed by combining multiple clauses through coordination or subordination.",
       "compressed_definition": "Clause built from clauses",
-      "links": ["Clause", "Subordinate clause"],
-      "external_links": ["complex sentence", "compound sentence"],
+      "links": [
+        "Clause",
+        "Subordinate clause"
+      ],
+      "external_links": [
+        "complex sentence",
+        "compound sentence"
+      ],
       "examples": [
         "I stayed home because it was raining.",
         "She called, and he answered."
@@ -254,8 +354,15 @@
       "study": "Syntax",
       "definition": "A clause that is embedded within another clause and functions as a dependent constituent.",
       "compressed_definition": "Dependent embedded clause",
-      "links": ["Clause"],
-      "external_links": ["embedding", "complement clause", "relative clause", "adverbial clause"],
+      "links": [
+        "Clause"
+      ],
+      "external_links": [
+        "embedding",
+        "complement clause",
+        "relative clause",
+        "adverbial clause"
+      ],
       "examples": [
         "because it was raining",
         "that he was late",

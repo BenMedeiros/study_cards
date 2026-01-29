@@ -10,61 +10,341 @@
     "programming": "programming/_metadata.json"
   },
   "collections": [
-    "greek/greek_alphabet.json",
-    "japanese/all/jp_linguistic_terms.json",
-    "japanese/all/jp_linguistic_terms_supplement.json",
-    "japanese/all/jp_n5_kanji.json",
-    "japanese/all/jp_pokemon_roots.json",
-    "japanese/all/jp_sentences.json",
-    "japanese/nouns/100_katakana_english_part1.json",
-    "japanese/nouns/100_katakana_english_part2.json",
-    "japanese/nouns/200_nouns_part1.json",
-    "japanese/nouns/200_nouns_part2.json",
-    "japanese/nouns/200_nouns_part3.json",
-    "japanese/nouns/200_nouns_part4.json",
-    "japanese/nouns/200_nouns_part5.json",
-    "japanese/nouns/200_nouns_part6.json",
-    "japanese/sentences/testing.json",
-    "japanese/verbs/compounds/jp_godan-verb_compound_compositional.json",
-    "japanese/verbs/compounds/jp_godan-verb_compound_grammaticalized.json",
-    "japanese/verbs/compounds/jp_godan-verb_compound_hybrid.json",
-    "japanese/verbs/compounds/jp_godan-verb_compound_lexical.json",
-    "japanese/verbs/compounds/jp_ichidan-verb_compound_compositional.json",
-    "japanese/verbs/compounds/jp_ichidan-verb_compound_grammaticalized.json",
-    "japanese/verbs/godan-verb/bu/jp_n5_verbs_bu.json",
-    "japanese/verbs/godan-verb/gu/jp_n5_verbs_gu_high.json",
-    "japanese/verbs/godan-verb/gu/jp_n5_verbs_gu_low.json",
-    "japanese/verbs/godan-verb/ku/jp_n5_verbs_ku.json",
-    "japanese/verbs/godan-verb/ku/jp_n5_verbs_ku_high.json",
-    "japanese/verbs/godan-verb/ku/jp_n5_verbs_ku_low.json",
-    "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu.json",
-    "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu_high.json",
-    "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu_low.json",
-    "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu_medium.json",
-    "japanese/verbs/godan-verb/ru/jp_n5_verbs_ru.json",
-    "japanese/verbs/godan-verb/su/jp_n5_verbs_su.json",
-    "japanese/verbs/godan-verb/u/jp_n5_verbs_u.json",
-    "japanese/verbs/ichidan-verb/jp_n5_verbs_ichidan.json",
-    "languageHistory/english.json",
-    "languageHistory/greek.json",
-    "languageHistory/japanese.json",
-    "linguistics/foundational.json",
-    "linguistics/lexical.json",
-    "linguistics/lexical_semantics.json",
-    "linguistics/orthography_diacritics.json",
-    "linguistics/orthography_greek.json",
-    "linguistics/phonology_prosody.json",
-    "linguistics/pragmatics.json",
-    "linguistics/semantics.json",
-    "linguistics/syntax.json",
-    "mythology/chthonic.json",
-    "mythology/olympians.json",
-    "mythology/primordials.json",
-    "mythology/titans.json",
-    "numbers/letters_to_numbers.json",
-    "pokemon/pokemon_starters.json",
-    "programming/programming_languages.json",
-    "programming/sql_engines.json",
-    "programming/web_technologies.json"
+    {
+      "path": "greek/greek_alphabet.json",
+      "name": "Greek Alphabet",
+      "description": "Classical Greek letters with lowercase, uppercase, and names.",
+      "entries": 24
+    },
+    {
+      "path": "japanese/all/jp_linguistic_terms_supplement.json",
+      "name": "Linguistic Term Kanji Supplement",
+      "description": "Popular vocabulary featuring kanji from Japanese linguistic terminology (with recursive component entries)",
+      "entries": 53
+    },
+    {
+      "path": "japanese/all/jp_linguistic_terms.json",
+      "name": "Linguistic Terms",
+      "description": "Terminology for Japanese phonetics, writing systems, and grammar",
+      "entries": 34
+    },
+    {
+      "path": "japanese/all/jp_n5_kanji.json",
+      "name": "Japanese N5 Kanji",
+      "description": "Single-kanji basics for N5. Each entry should be a single kanji, with its most basic kun'yomi (native Japanese reading) or on'yomi (Sino-Japanese reading). Do not include okurigana or full verb forms (e.g., use 'たべ' or 'しょく' for 食, not 'たべる').",
+      "entries": 79
+    },
+    {
+      "path": "japanese/all/jp_pokemon_roots.json",
+      "name": "Pokemon name-root & type tokens (Japanese)",
+      "description": "Canonical kanji and katakana tokens used as Pokémon type labels and name roots (used by the pokemon collection).",
+      "entries": 45
+    },
+    {
+      "path": "japanese/all/jp_sentences.json",
+      "name": "Japanese N5 Sentences",
+      "description": "Common sentences that include kanji from the N5 kanji list.",
+      "entries": 4
+    },
+    {
+      "path": "japanese/nouns/100_katakana_english_part1.json",
+      "name": "Common Katakana Nouns (English-Origin Only) Top 100 pt1",
+      "description": "High-frequency katakana nouns in Japanese that are specifically loanwords from English (excluding Portuguese, French, Italian, etc.).",
+      "entries": 60
+    },
+    {
+      "path": "japanese/nouns/100_katakana_english_part2.json",
+      "name": "Common Katakana Nouns (English-Origin Only) Top 100 p2",
+      "description": "High-frequency katakana nouns in Japanese that are specifically loanwords from English (excluding Portuguese, French, Italian, etc.).",
+      "entries": 6
+    },
+    {
+      "path": "japanese/nouns/200_nouns_part1.json",
+      "name": "Japanese Nouns (200) (200_nouns_part1)",
+      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
+      "entries": 60
+    },
+    {
+      "path": "japanese/nouns/200_nouns_part2.json",
+      "name": "Japanese Nouns (200) (200_nouns_part2)",
+      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
+      "entries": 60
+    },
+    {
+      "path": "japanese/nouns/200_nouns_part3.json",
+      "name": "Japanese Nouns (200) (200_nouns_part3)",
+      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
+      "entries": 60
+    },
+    {
+      "path": "japanese/nouns/200_nouns_part4.json",
+      "name": "Japanese Nouns (200) (200_nouns_part4)",
+      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
+      "entries": 60
+    },
+    {
+      "path": "japanese/nouns/200_nouns_part5.json",
+      "name": "Japanese Nouns (200) (200_nouns_part5)",
+      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
+      "entries": 60
+    },
+    {
+      "path": "japanese/nouns/200_nouns_part6.json",
+      "name": "Japanese Nouns (200) (200_nouns_part6)",
+      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
+      "entries": 25
+    },
+    {
+      "path": "japanese/sentences/testing.json",
+      "name": "testing",
+      "description": null,
+      "entries": null
+    },
+    {
+      "path": "japanese/verbs/compounds/jp_godan-verb_compound_compositional.json",
+      "name": "Japanese Compound Verbs — godan — compositional",
+      "description": "Productive compound verbs built transparently from parts; final element is godan.",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/compounds/jp_godan-verb_compound_grammaticalized.json",
+      "name": "Japanese Compound Verbs — godan — grammaticalized",
+      "description": "Common compounds where the final godan element is grammaticalized (mutual/auxiliary-like).",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/compounds/jp_godan-verb_compound_hybrid.json",
+      "name": "Japanese Compound Verbs — godan — hybrid",
+      "description": "Frequent hybrid compound verbs (partly productive, partly conventionalized); final element is godan.",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/compounds/jp_godan-verb_compound_lexical.json",
+      "name": "Japanese Compound Verbs — godan — lexical",
+      "description": "Curated frequent lexicalized compound verbs whose final element is godan.",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/compounds/jp_ichidan-verb_compound_compositional.json",
+      "name": "Japanese Compound Verbs — ichidan — compositional",
+      "description": "Productive ichidan compound verbs built transparently from parts; final element is ichidan.",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/compounds/jp_ichidan-verb_compound_grammaticalized.json",
+      "name": "Japanese Compound Verbs — ichidan — grammaticalized",
+      "description": "Ichidan compounds where the final element is grammaticalized (auxiliary-like or polite/functional uses).",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/godan-verb/bu/jp_n5_verbs_bu.json",
+      "name": "Japanese N5 Godan Verbs (-bu)",
+      "description": null,
+      "entries": 1
+    },
+    {
+      "path": "japanese/verbs/godan-verb/gu/jp_n5_verbs_gu_high.json",
+      "name": "GU-Ending Godan Verbs (Top 10)",
+      "description": "10 high-usage Japanese godan verbs ending in ぐ (gu).",
+      "entries": 70
+    },
+    {
+      "path": "japanese/verbs/godan-verb/gu/jp_n5_verbs_gu_low.json",
+      "name": "GU-Ending Godan Verbs (Next 10)",
+      "description": "10 additional Japanese godan verbs ending in ぐ (gu).",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/godan-verb/ku/jp_n5_verbs_ku_high.json",
+      "name": "KU-Ending Godan Verbs (Top 10)",
+      "description": "10 high-usage Japanese godan verbs ending in く (ku).",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/godan-verb/ku/jp_n5_verbs_ku_low.json",
+      "name": "KU-Ending Godan Verbs (Next 10)",
+      "description": "10 additional Japanese godan verbs ending in く (ku).",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/godan-verb/ku/jp_n5_verbs_ku.json",
+      "name": "Japanese N5 Godan Verbs (-ku)",
+      "description": null,
+      "entries": 4
+    },
+    {
+      "path": "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu_high.json",
+      "name": "MU-Ending Godan Verbs (High Frequency)",
+      "description": "10 high-frequency Japanese godan verbs ending in む (mu).",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu_low.json",
+      "name": "MU-Ending Godan Verbs (Low Frequency)",
+      "description": "10 lower-frequency Japanese godan verbs ending in む (mu).",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu_medium.json",
+      "name": "MU-Ending Godan Verbs (Medium Frequency)",
+      "description": "10 medium-frequency Japanese godan verbs ending in む (mu).",
+      "entries": 10
+    },
+    {
+      "path": "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu.json",
+      "name": "Japanese N5 Godan Verbs (-mu)",
+      "description": null,
+      "entries": 3
+    },
+    {
+      "path": "japanese/verbs/godan-verb/ru/jp_n5_verbs_ru.json",
+      "name": "Japanese N5 Godan Verbs (-ru)",
+      "description": null,
+      "entries": 5
+    },
+    {
+      "path": "japanese/verbs/godan-verb/su/jp_n5_verbs_su.json",
+      "name": "Japanese N5 Godan Verbs (-su)",
+      "description": null,
+      "entries": 2
+    },
+    {
+      "path": "japanese/verbs/godan-verb/u/jp_n5_verbs_u.json",
+      "name": "Japanese N5 Godan Verbs (-u)",
+      "description": null,
+      "entries": 2
+    },
+    {
+      "path": "japanese/verbs/ichidan-verb/jp_n5_verbs_ichidan.json",
+      "name": "Japanese N5 Ichidan Verbs",
+      "description": null,
+      "entries": 6
+    },
+    {
+      "path": "languageHistory/english.json",
+      "name": "English Language History",
+      "description": "Stages of English from Old to Modern",
+      "entries": 4
+    },
+    {
+      "path": "languageHistory/greek.json",
+      "name": "Greek Language History",
+      "description": "Stages of Greek from Ancient to Modern",
+      "entries": 4
+    },
+    {
+      "path": "languageHistory/japanese.json",
+      "name": "Japanese Language History",
+      "description": "Stages of Japanese from Old to Modern",
+      "entries": 4
+    },
+    {
+      "path": "linguistics/foundational.json",
+      "name": "Foundational & Methodological",
+      "description": "General-purpose linguistic, methodological, and academic terms used across subfields.",
+      "entries": 6
+    },
+    {
+      "path": "linguistics/lexical_semantics.json",
+      "name": "Lexical Semantics & Lexicon (lexical_semantics)",
+      "description": "Word meaning, sense structure, and lexical relations.",
+      "entries": 12
+    },
+    {
+      "path": "linguistics/lexical.json",
+      "name": "Lexical Semantics & Lexicon (lexical)",
+      "description": "Word meaning, sense structure, and lexical relations.",
+      "entries": 18
+    },
+    {
+      "path": "linguistics/orthography_diacritics.json",
+      "name": "Orthography, Diacritics & Writing Systems (orthography_diacritics)",
+      "description": "Terms related to writing systems, diacritics, and orthographic conventions, including Ancient and Modern Greek.",
+      "entries": 10
+    },
+    {
+      "path": "linguistics/orthography_greek.json",
+      "name": "Orthography, Diacritics & Writing Systems (orthography_greek)",
+      "description": "Terms related to writing systems, diacritics, and orthographic conventions, including Ancient and Modern Greek.",
+      "entries": 8
+    },
+    {
+      "path": "linguistics/phonology_prosody.json",
+      "name": "Phonology & Prosody",
+      "description": "Sound structure and prosodic systems such as stress and pitch accent.",
+      "entries": 6
+    },
+    {
+      "path": "linguistics/pragmatics.json",
+      "name": "Pragmatics & Context",
+      "description": "Contextual meaning, inference, and language use.",
+      "entries": 7
+    },
+    {
+      "path": "linguistics/semantics.json",
+      "name": "Semantics",
+      "description": "Core meaning relations and meaning change.",
+      "entries": 7
+    },
+    {
+      "path": "linguistics/syntax.json",
+      "name": "Syntax",
+      "description": "Clause/phrase structure and relations such as embedding and subordination.",
+      "entries": 11
+    },
+    {
+      "path": "mythology/chthonic.json",
+      "name": "Greek Chthonic Figures",
+      "description": "Underworld and chthonic deities",
+      "entries": 7
+    },
+    {
+      "path": "mythology/olympians.json",
+      "name": "Greek Olympians",
+      "description": "Olympian deities",
+      "entries": 13
+    },
+    {
+      "path": "mythology/primordials.json",
+      "name": "Greek Primordials",
+      "description": "Primordial beings from Greek cosmogony",
+      "entries": 9
+    },
+    {
+      "path": "mythology/titans.json",
+      "name": "Greek Titans",
+      "description": "Titanic generation and related figures",
+      "entries": 14
+    },
+    {
+      "path": "numbers/letters_to_numbers.json",
+      "name": "Letters to Numbers",
+      "description": "A=1, B=2, ... (v0 seed)",
+      "entries": 26
+    },
+    {
+      "path": "pokemon/pokemon_starters.json",
+      "name": "Pokémon Starters (Kanto)",
+      "description": "First-generation Kanto starter Pokémon and first 26 Pokémon. Type kanji use the official Japanese main-series game terminology; verified against Bulbapedia and Pokémon Database.",
+      "entries": 26
+    },
+    {
+      "path": "programming/programming_languages.json",
+      "name": "Programming Languages",
+      "description": "Key programming languages with year created, typical current version, and reason for popularity. Update versions as needed.",
+      "entries": 13
+    },
+    {
+      "path": "programming/sql_engines.json",
+      "name": "SQL & Engines",
+      "description": "The SQL language and several major SQL engines / implementations",
+      "entries": 5
+    },
+    {
+      "path": "programming/web_technologies.json",
+      "name": "Web Technologies",
+      "description": "HTML, CSS, WebAssembly and other browser/platform technologies useful for web development",
+      "entries": 3
+    }
   ]
 }

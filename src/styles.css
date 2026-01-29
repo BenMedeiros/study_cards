@@ -627,6 +627,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   text-wrap-mode: nowrap;
 }
 
+
 .table td.col-meaning {
   text-wrap-mode: wrap;
   min-width: 20rem;
@@ -636,7 +637,10 @@ input[type="number"].button::-webkit-inner-spin-button {
 .table td.col-god-of,
 .table td.col-powers,
 .table td.col-physical-desc,
-.table td.col-source {
+.table td.col-source,
+.table td.col-name,
+.table td.col-path,
+.table td.col-description {
   text-wrap-mode: wrap;
   min-width: 12rem;
   word-break: keep-all;

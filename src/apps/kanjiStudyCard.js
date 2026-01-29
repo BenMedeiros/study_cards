@@ -23,6 +23,7 @@ export function renderKanjiStudyCard({ store }) {
   let uiStateRestored = false; // ensure saved UI (index/order) is applied only once
   let originalEntries = [];
   let currentOrder = null; // array of indices mapping to originalEntries
+  let orderHashInt = null; // deterministic seed for shuffle (preferred persisted form)
 
   // Helpers
   function getFieldValue(entry, keys) {
@@ -46,7 +47,8 @@ export function renderKanjiStudyCard({ store }) {
         defaultViewMode: defaultViewMode,
         fontWeight: currentFontWeight,
         autoSpeak: !!autoSpeakKanji,
-        order: currentOrder || null,
+        // Persist a small integer seed to avoid saving large arrays
+          order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
         currentIndex: index,
         autoplay: autoplayConfig || null,
         isAutoPlaying: !!isAutoPlaying,
@@ -263,13 +265,16 @@ export function renderKanjiStudyCard({ store }) {
   function refreshEntriesFromStore() {
     const active = store.getActiveCollection();
     originalEntries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
-    // If we have a saved order and it matches the number of entries, apply it
-    if (savedUI && savedUI.order && Array.isArray(savedUI.order) && savedUI.order.length === originalEntries.length) {
-      currentOrder = savedUI.order.slice();
+    // Apply deterministic order if a persisted seed exists
+    const n = originalEntries.length;
+    if (savedUI && typeof savedUI.order_hash_int === 'number' && n > 0) {
+      orderHashInt = savedUI.order_hash_int;
+      currentOrder = seededPermutation(n, orderHashInt);
       entries = currentOrder.map(i => originalEntries[i]);
       isShuffled = true;
-    } else if (currentOrder && Array.isArray(currentOrder) && currentOrder.length === originalEntries.length) {
-      // apply in-memory currentOrder (fallback)
+    } else if (typeof orderHashInt === 'number' && n > 0) {
+      // in-memory seed present (e.g. user shuffled during this session)
+      currentOrder = seededPermutation(n, orderHashInt);
       entries = currentOrder.map(i => originalEntries[i]);
       isShuffled = true;
     } else {
@@ -324,14 +329,22 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   function shuffleEntries() {
-    // Build a permutation of indices based on originalEntries
+    // Build a deterministic permutation from a random integer seed.
     const n = originalEntries.length;
-    const indices = Array.from({ length: n }, (_, i) => i);
-    for (let i = n - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [indices[i], indices[j]] = [indices[j], indices[i]];
+    if (n === 0) return;
+
+    // generate a 32-bit seed (prefer crypto RNG)
+    let seed;
+    try {
+      const a = new Uint32Array(1);
+      window.crypto.getRandomValues(a);
+      seed = a[0] >>> 0;
+    } catch (e) {
+      seed = Math.floor(Math.random() * 0x100000000) >>> 0;
     }
-    currentOrder = indices;
+
+    orderHashInt = seed;
+    currentOrder = seededPermutation(n, orderHashInt);
     entries = currentOrder.map(i => originalEntries[i]);
     index = 0;
     viewMode = defaultViewMode;
@@ -343,6 +356,26 @@ export function renderKanjiStudyCard({ store }) {
   // small sleep helper
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Deterministic PRNG (32-bit) and seeded Fisher-Yates permutation
+  function mulberry32(a) {
+    return function() {
+      let t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function seededPermutation(n, seed) {
+    const rng = mulberry32(seed >>> 0);
+    const arr = Array.from({ length: n }, (_, i) => i);
+    for (let i = n - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
   }
 
   // Autoplay loop: performs configured sequence for each card
