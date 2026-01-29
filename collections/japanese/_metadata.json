@@ -20,6 +20,24 @@
       "type": "string"
     },
     {
+      "key": "origin",
+      "label": "Origin",
+      "jp_label": "語源",
+      "type": "enum",
+      "description": "(for katakana only rn) Etymological source of the word. Use 'English' for direct loans with near 1:1 meaning. Use 'English-derived' when the Japanese meaning is narrowed or shifted. Use 'Wasei-eigo' for Japanese-made English coinages. Use other languages only when the source is clearly not English.",
+      "values": {
+        "English": "Direct loan from English with mostly equivalent meaning.",
+        "English-derived": "Loan from English with semantic narrowing or shift in Japanese.",
+        "Wasei-eigo": "Japanese coinage built from English elements.",
+        "Portuguese": "Loanword originating from Portuguese.",
+        "Dutch": "Loanword originating from Dutch.",
+        "French": "Loanword originating from French.",
+        "German": "Loanword originating from German.",
+        "Japanese": "Native Japanese word or internal formation.",
+        "Other": "Loanword from another language not listed."
+      }
+    },
+    {
       "key": "type",
       "label": "Type",
       "jp_label": "種類",

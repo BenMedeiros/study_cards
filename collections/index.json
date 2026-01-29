@@ -48,15 +48,9 @@
     },
     {
       "path": "japanese/nouns/100_katakana_english_part1.json",
-      "name": "Common Katakana Nouns (English-Origin Only) Top 100 pt1",
-      "description": "High-frequency katakana nouns in Japanese that are specifically loanwords from English (excluding Portuguese, French, Italian, etc.).",
-      "entries": 60
-    },
-    {
-      "path": "japanese/nouns/100_katakana_english_part2.json",
-      "name": "Common Katakana Nouns (English-Origin Only) Top 100 p2",
-      "description": "High-frequency katakana nouns in Japanese that are specifically loanwords from English (excluding Portuguese, French, Italian, etc.).",
-      "entries": 6
+      "name": "Common Katakana Nouns (loanwords & wasei-eigo)",
+      "description": "High-frequency katakana nouns in Japanese (loanwords from various languages and Japanese coinages / wasei-eigo).",
+      "entries": 66
     },
     {
       "path": "japanese/nouns/200_nouns_part1.json",

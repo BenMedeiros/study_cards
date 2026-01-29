@@ -1,369 +1,159 @@
 {
   "metadata": {
-    "name": "Common Katakana Nouns (English-Origin Only) Top 100 pt1",
-    "description": "High-frequency katakana nouns in Japanese that are specifically loanwords from English (excluding Portuguese, French, Italian, etc.).",
-    "version": 2
+    "name": "Common Katakana Nouns (loanwords & wasei-eigo)",
+    "description": "High-frequency katakana nouns in Japanese (loanwords from various languages and Japanese coinages / wasei-eigo).",
+    "version": 3
+  },
+  "defaults": {
+    "type": "noun",
+    "origin": "English"
   },
   "entries": [
-    {
-      "kanji": "ホテル",
-      "reading": "ホテル",
-      "meaning": "hotel",
-      "type": "noun"
-    },
-    {
-      "kanji": "レストラン",
-      "reading": "レストラン",
-      "meaning": "restaurant",
-      "type": "noun"
-    },
-    {
-      "kanji": "サンドイッチ",
-      "reading": "サンドイッチ",
-      "meaning": "sandwich",
-      "type": "noun"
-    },
-    {
-      "kanji": "ハンバーガー",
-      "reading": "ハンバーガー",
-      "meaning": "hamburger",
-      "type": "noun"
-    },
-    {
-      "kanji": "ジュース",
-      "reading": "ジュース",
-      "meaning": "juice",
-      "type": "noun"
-    },
-    {
-      "kanji": "ミルク",
-      "reading": "ミルク",
-      "meaning": "milk",
-      "type": "noun"
-    },
-    {
-      "kanji": "バター",
-      "reading": "バター",
-      "meaning": "butter",
-      "type": "noun"
-    },
-    {
-      "kanji": "チーズ",
-      "reading": "チーズ",
-      "meaning": "cheese",
-      "type": "noun"
-    },
-    {
-      "kanji": "ステーキ",
-      "reading": "ステーキ",
-      "meaning": "steak",
-      "type": "noun"
-    },
-    {
-      "kanji": "スープ",
-      "reading": "スープ",
-      "meaning": "soup",
-      "type": "noun"
-    },
-    {
-      "kanji": "サラダ",
-      "reading": "サラダ",
-      "meaning": "salad",
-      "type": "noun"
-    },
-    {
-      "kanji": "デザート",
-      "reading": "デザート",
-      "meaning": "dessert",
-      "type": "noun"
-    },
-    {
-      "kanji": "アイスクリーム",
-      "reading": "アイスクリーム",
-      "meaning": "ice cream",
-      "type": "noun"
-    },
-    {
-      "kanji": "ケーキ",
-      "reading": "ケーキ",
-      "meaning": "cake",
-      "type": "noun"
-    },
-    {
-      "kanji": "クッキー",
-      "reading": "クッキー",
-      "meaning": "cookie",
-      "type": "noun"
-    },
-    {
-      "kanji": "チップ",
-      "reading": "チップ",
-      "meaning": "chip; tip",
-      "type": "noun"
-    },
-    {
-      "kanji": "ソース",
-      "reading": "ソース",
-      "meaning": "sauce",
-      "type": "noun"
-    },
-    {
-      "kanji": "メニュー",
-      "reading": "メニュー",
-      "meaning": "menu",
-      "type": "noun"
-    },
+    { "kanji": "ホテル", "reading": "ホテル", "meaning": "hotel" },
+    { "kanji": "レストラン", "reading": "レストラン", "meaning": "restaurant" },
+    { "kanji": "サンドイッチ", "reading": "サンドイッチ", "meaning": "sandwich" },
+    { "kanji": "ハンバーガー", "reading": "ハンバーガー", "meaning": "hamburger" },
+    { "kanji": "ジュース", "reading": "ジュース", "meaning": "juice" },
+    { "kanji": "ミルク", "reading": "ミルク", "meaning": "milk" },
+    { "kanji": "バター", "reading": "バター", "meaning": "butter" },
+    { "kanji": "チーズ", "reading": "チーズ", "meaning": "cheese" },
+    { "kanji": "ステーキ", "reading": "ステーキ", "meaning": "steak" },
+    { "kanji": "スープ", "reading": "スープ", "meaning": "soup" },
+    { "kanji": "サラダ", "reading": "サラダ", "meaning": "salad" },
+    { "kanji": "デザート", "reading": "デザート", "meaning": "dessert" },
+    { "kanji": "アイスクリーム", "reading": "アイスクリーム", "meaning": "ice cream" },
+    { "kanji": "ケーキ", "reading": "ケーキ", "meaning": "cake" },
+    { "kanji": "クッキー", "reading": "クッキー", "meaning": "cookie" },
+    { "kanji": "チップ", "reading": "チップ", "meaning": "chip; tip" },
+    { "kanji": "ソース", "reading": "ソース", "meaning": "sauce" },
+    { "kanji": "メニュー", "reading": "メニュー", "meaning": "menu" },
+
     {
       "kanji": "サービス",
       "reading": "サービス",
-      "meaning": "service; complimentary extra",
-      "type": "noun"
+      "meaning": "complimentary extra; free item",
+      "origin": "English-derived"
     },
-    {
-      "kanji": "サイズ",
-      "reading": "サイズ",
-      "meaning": "size",
-      "type": "noun"
-    },
-    {
-      "kanji": "カラー",
-      "reading": "カラー",
-      "meaning": "color",
-      "type": "noun"
-    },
-    {
-      "kanji": "デザイン",
-      "reading": "デザイン",
-      "meaning": "design",
-      "type": "noun"
-    },
-    {
-      "kanji": "ブランド",
-      "reading": "ブランド",
-      "meaning": "brand",
-      "type": "noun"
-    },
-    {
-      "kanji": "ショップ",
-      "reading": "ショップ",
-      "meaning": "shop",
-      "type": "noun"
-    },
+
+    { "kanji": "サイズ", "reading": "サイズ", "meaning": "size" },
+    { "kanji": "カラー", "reading": "カラー", "meaning": "color" },
+    { "kanji": "デザイン", "reading": "デザイン", "meaning": "design" },
+    { "kanji": "ブランド", "reading": "ブランド", "meaning": "brand" },
+    { "kanji": "ショップ", "reading": "ショップ", "meaning": "shop" },
+
     {
       "kanji": "コンビニ",
       "reading": "コンビニ",
       "meaning": "convenience store",
-      "type": "noun"
+      "origin": "English-derived"
     },
     {
       "kanji": "スーパー",
       "reading": "スーパー",
       "meaning": "supermarket",
-      "type": "noun"
+      "origin": "English-derived"
     },
     {
       "kanji": "ビル",
       "reading": "ビル",
-      "meaning": "building",
-      "type": "noun"
+      "meaning": "office building",
+      "origin": "English-derived"
     },
-    {
-      "kanji": "ドア",
-      "reading": "ドア",
-      "meaning": "door",
-      "type": "noun"
-    },
-    {
-      "kanji": "ベッド",
-      "reading": "ベッド",
-      "meaning": "bed",
-      "type": "noun"
-    },
-    {
-      "kanji": "シャワー",
-      "reading": "シャワー",
-      "meaning": "shower",
-      "type": "noun"
-    },
+
+    { "kanji": "ドア", "reading": "ドア", "meaning": "door" },
+    { "kanji": "ベッド", "reading": "ベッド", "meaning": "bed" },
+    { "kanji": "シャワー", "reading": "シャワー", "meaning": "shower" },
+
     {
       "kanji": "トイレ",
       "reading": "トイレ",
-      "meaning": "toilet; restroom",
-      "type": "noun"
+      "meaning": "restroom",
+      "origin": "English-derived"
     },
-    {
-      "kanji": "タオル",
-      "reading": "タオル",
-      "meaning": "towel",
-      "type": "noun"
-    },
-    {
-      "kanji": "ソファ",
-      "reading": "ソファ",
-      "meaning": "sofa",
-      "type": "noun"
-    },
-    {
-      "kanji": "テーブル",
-      "reading": "テーブル",
-      "meaning": "table",
-      "type": "noun"
-    },
-    {
-      "kanji": "イス",
-      "reading": "イス",
-      "meaning": "chair",
-      "type": "noun"
-    },
-    {
-      "kanji": "ライト",
-      "reading": "ライト",
-      "meaning": "light",
-      "type": "noun"
-    },
-    {
-      "kanji": "ボタン",
-      "reading": "ボタン",
-      "meaning": "button",
-      "type": "noun"
-    },
-    {
-      "kanji": "カード",
-      "reading": "カード",
-      "meaning": "card",
-      "type": "noun"
-    },
-    {
-      "kanji": "ポイント",
-      "reading": "ポイント",
-      "meaning": "point",
-      "type": "noun"
-    },
-    {
-      "kanji": "セール",
-      "reading": "セール",
-      "meaning": "sale",
-      "type": "noun"
-    },
-    {
-      "kanji": "ゲーム",
-      "reading": "ゲーム",
-      "meaning": "game",
-      "type": "noun"
-    },
-    {
-      "kanji": "スポーツ",
-      "reading": "スポーツ",
-      "meaning": "sports",
-      "type": "noun"
-    },
-    {
-      "kanji": "チーム",
-      "reading": "チーム",
-      "meaning": "team",
-      "type": "noun"
-    },
-    {
-      "kanji": "プレー",
-      "reading": "プレー",
-      "meaning": "play",
-      "type": "noun"
-    },
-    {
-      "kanji": "テスト",
-      "reading": "テスト",
-      "meaning": "test",
-      "type": "noun"
-    },
-    {
-      "kanji": "クラス",
-      "reading": "クラス",
-      "meaning": "class",
-      "type": "noun"
-    },
-    {
-      "kanji": "メンバー",
-      "reading": "メンバー",
-      "meaning": "member",
-      "type": "noun"
-    },
-    {
-      "kanji": "リーダー",
-      "reading": "リーダー",
-      "meaning": "leader",
-      "type": "noun"
-    },
-    {
-      "kanji": "ルール",
-      "reading": "ルール",
-      "meaning": "rule",
-      "type": "noun"
-    },
+
+    { "kanji": "タオル", "reading": "タオル", "meaning": "towel" },
+    { "kanji": "ソファ", "reading": "ソファ", "meaning": "sofa" },
+    { "kanji": "テーブル", "reading": "テーブル", "meaning": "table" },
+    { "kanji": "イス", "reading": "イス", "meaning": "chair" },
+    { "kanji": "ライト", "reading": "ライト", "meaning": "light" },
+    { "kanji": "ボタン", "reading": "ボタン", "meaning": "button" },
+    { "kanji": "カード", "reading": "カード", "meaning": "card" },
+    { "kanji": "ポイント", "reading": "ポイント", "meaning": "point" },
+    { "kanji": "セール", "reading": "セール", "meaning": "sale" },
+    { "kanji": "ゲーム", "reading": "ゲーム", "meaning": "game" },
+    { "kanji": "スポーツ", "reading": "スポーツ", "meaning": "sports" },
+    { "kanji": "チーム", "reading": "チーム", "meaning": "team" },
+    { "kanji": "プレー", "reading": "プレー", "meaning": "play" },
+    { "kanji": "テスト", "reading": "テスト", "meaning": "test" },
+    { "kanji": "クラス", "reading": "クラス", "meaning": "class" },
+    { "kanji": "メンバー", "reading": "メンバー", "meaning": "member" },
+    { "kanji": "リーダー", "reading": "リーダー", "meaning": "leader" },
+    { "kanji": "ルール", "reading": "ルール", "meaning": "rule" },
+
     {
       "kanji": "ミス",
       "reading": "ミス",
-      "meaning": "mistake",
-      "type": "noun"
+      "meaning": "mistake; blunder",
+      "origin": "English-derived"
     },
-    {
-      "kanji": "スマートフォン",
-      "reading": "スマートフォン",
-      "meaning": "smartphone",
-      "type": "noun"
-    },
-    {
-      "kanji": "コンピューター",
-      "reading": "コンピューター",
-      "meaning": "computer",
-      "type": "noun"
-    },
+
+    { "kanji": "スマートフォン", "reading": "スマートフォン", "meaning": "smartphone" },
+    { "kanji": "コンピューター", "reading": "コンピューター", "meaning": "computer" },
+
     {
       "kanji": "パソコン",
       "reading": "パソコン",
       "meaning": "personal computer",
-      "type": "noun"
+      "origin": "Wasei-eigo"
     },
+
     {
       "kanji": "アプリ",
       "reading": "アプリ",
-      "meaning": "application (app)",
-      "type": "noun"
+      "meaning": "mobile app",
+      "origin": "English-derived"
     },
     {
       "kanji": "ソフト",
       "reading": "ソフト",
-      "meaning": "software",
-      "type": "noun"
+      "meaning": "software program",
+      "origin": "English-derived"
     },
-    {
-      "kanji": "データ",
-      "reading": "データ",
-      "meaning": "data",
-      "type": "noun"
-    },
+
+    { "kanji": "データ", "reading": "データ", "meaning": "data" },
+
     {
       "kanji": "ネット",
       "reading": "ネット",
-      "meaning": "internet; net",
-      "type": "noun"
+      "meaning": "the internet",
+      "origin": "English-derived"
     },
     {
       "kanji": "メール",
       "reading": "メール",
       "meaning": "email",
-      "type": "noun"
+      "origin": "English-derived"
+    },
+
+    { "kanji": "リンク", "reading": "リンク", "meaning": "link" },
+    { "kanji": "サイト", "reading": "サイト", "meaning": "website" },
+    { "kanji": "バス", "reading": "ばす", "meaning": "bus" },
+
+    {
+      "kanji": "パン",
+      "reading": "ぱん",
+      "meaning": "bread",
+      "origin": "Portuguese"
     },
     {
-      "kanji": "リンク",
-      "reading": "リンク",
-      "meaning": "link",
-      "type": "noun"
+      "kanji": "カタカナ",
+      "reading": "かたかな",
+      "meaning": "katakana",
+      "origin": "Japanese"
     },
-    {
-      "kanji": "サイト",
-      "reading": "サイト",
-      "meaning": "website",
-      "type": "noun"
-    }
+
+    { "kanji": "ガス", "reading": "がす", "meaning": "gas" },
+    { "kanji": "エレベーター", "reading": "えれべーたー", "meaning": "elevator" },
+    { "kanji": "コート", "reading": "こーと", "meaning": "coat" }
   ]
 }
