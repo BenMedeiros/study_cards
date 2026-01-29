@@ -5,8 +5,17 @@ import { el } from '../components/dom.js';
 export function renderData({ store }) {
   const root = document.createElement('div');
   root.id = 'data-root';
-
   const active = store.getActiveCollection();
+
+  // Controls: Study 10 button (advances per-collection study window by 10)
+  const controls = document.createElement('div');
+  controls.className = 'data-controls';
+  const studyBtn = document.createElement('button');
+  studyBtn.type = 'button';
+  studyBtn.className = 'btn';
+  studyBtn.textContent = 'Study 10';
+  controls.appendChild(studyBtn);
+  root.appendChild(controls);
   
   if (!active) {
     const emptyCard = card({
@@ -16,6 +25,22 @@ export function renderData({ store }) {
     root.append(emptyCard);
     return root;
   }
+
+  // Hook up Study 10 button for active collection
+  studyBtn.addEventListener('click', () => {
+    const coll = store.getActiveCollection();
+    if (!coll) return;
+    const entries = Array.isArray(coll.entries) ? coll.entries : [];
+    const n = entries.length;
+    if (n === 0) return;
+    const saved = store.loadKanjiUIState ? store.loadKanjiUIState() : null;
+    const currentStart = (saved && typeof saved.studyStart === 'number') ? saved.studyStart : 0;
+    const nextStart = (currentStart + 10) % n;
+    // Persist via central store (will save under active collection)
+    if (typeof store.saveKanjiUIState === 'function') {
+      store.saveKanjiUIState({ studyStart: nextStart });
+    }
+  });
 
   const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
   const entries = Array.isArray(active.entries) ? active.entries : [];

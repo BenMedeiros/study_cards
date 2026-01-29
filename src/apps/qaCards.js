@@ -1,4 +1,5 @@
 import { nowMs } from '../utils/helpers.js';
+import { getCollectionView } from '../utils/collectionManagement.js';
 import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } from '../utils/japanese.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createSpeakerButton } from '../components/speaker.js';
@@ -22,7 +23,9 @@ export function renderQaCards({ store }) {
   let questionField = fields[0]?.key ?? 'question';
   let answerField = fields[1]?.key ?? 'answer';
   
-  let entries = active.entries;
+  // derive entries view (study window + shuffle) from shared util
+  const collState = (store && typeof store.loadCollectionState === 'function') ? store.loadCollectionState(active?.key) : null;
+  let entries = getCollectionView(active.entries, collState, { windowSize: 10 }).entries;
   let index = 0;
   let shownAt = nowMs();
   let feedbackMode = false;

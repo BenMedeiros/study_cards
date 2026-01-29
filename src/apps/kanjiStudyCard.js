@@ -2,6 +2,7 @@ import { nowMs } from '../utils/helpers.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
 import { createAutoplayControls } from '../components/autoplay.js';
 import { createSpeakerButton } from '../components/speaker.js';
+import { getCollectionView } from '../utils/collectionManagement.js';
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
@@ -265,23 +266,13 @@ export function renderKanjiStudyCard({ store }) {
   function refreshEntriesFromStore() {
     const active = store.getActiveCollection();
     originalEntries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
-    // Apply deterministic order if a persisted seed exists
-    const n = originalEntries.length;
-    if (savedUI && typeof savedUI.order_hash_int === 'number' && n > 0) {
-      orderHashInt = savedUI.order_hash_int;
-      currentOrder = seededPermutation(n, orderHashInt);
-      entries = currentOrder.map(i => originalEntries[i]);
-      isShuffled = true;
-    } else if (typeof orderHashInt === 'number' && n > 0) {
-      // in-memory seed present (e.g. user shuffled during this session)
-      currentOrder = seededPermutation(n, orderHashInt);
-      entries = currentOrder.map(i => originalEntries[i]);
-      isShuffled = true;
-    } else {
-      entries = [...originalEntries];
-      isShuffled = false;
-      currentOrder = null;
-    }
+    // Use shared collection management to build the view (study window + shuffle)
+    const collState = (store && typeof store.loadCollectionState === 'function') ? store.loadCollectionState(active?.key) : null;
+    const view = getCollectionView(originalEntries, collState, { windowSize: 10 });
+    entries = Array.isArray(view.entries) ? view.entries.slice() : [];
+    isShuffled = !!view.isShuffled;
+    orderHashInt = view.order_hash_int || null;
+    currentOrder = null;
     // If a saved index exists, restore it (will be clamped to valid range)
     // Only apply saved index once on initial load to avoid overwriting runtime navigation
     if (!uiStateRestored && savedUI && typeof savedUI.currentIndex === 'number') {
@@ -329,7 +320,6 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   function shuffleEntries() {
-    // Build a deterministic permutation from a random integer seed.
     const n = originalEntries.length;
     if (n === 0) return;
 
@@ -344,13 +334,22 @@ export function renderKanjiStudyCard({ store }) {
     }
 
     orderHashInt = seed;
-    currentOrder = seededPermutation(n, orderHashInt);
-    entries = currentOrder.map(i => originalEntries[i]);
+    // persist per-collection state via store helper so other apps see it
+    const active = store.getActiveCollection ? store.getActiveCollection() : null;
+    const key = active && active.key ? active.key : null;
+    if (key && store && typeof store.saveCollectionState === 'function') {
+      store.saveCollectionState(key, { order_hash_int: seed, isShuffled: true, currentIndex: 0 });
+    } else if (typeof store.saveKanjiUIState === 'function') {
+      // fallback for older store implementations
+      store.saveKanjiUIState({ order_hash_int: seed, isShuffled: true, currentIndex: 0 });
+    }
+
+    // rebuild view from saved collection state
+    refreshEntriesFromStore();
     index = 0;
     viewMode = defaultViewMode;
     isShuffled = true;
     render();
-    saveUIState();
   }
 
   // small sleep helper
@@ -358,25 +357,7 @@ export function renderKanjiStudyCard({ store }) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // Deterministic PRNG (32-bit) and seeded Fisher-Yates permutation
-  function mulberry32(a) {
-    return function() {
-      let t = a += 0x6D2B79F5;
-      t = Math.imul(t ^ (t >>> 15), t | 1);
-      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-
-  function seededPermutation(n, seed) {
-    const rng = mulberry32(seed >>> 0);
-    const arr = Array.from({ length: n }, (_, i) => i);
-    for (let i = n - 1; i > 0; i--) {
-      const j = Math.floor(rng() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
+  // PRNG and permutation moved to shared util `src/utils/collectionManagement.js`
 
   // Autoplay loop: performs configured sequence for each card
   let _autoplayAbort = false;

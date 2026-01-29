@@ -528,46 +528,78 @@ export function createStore() {
 
   function loadKanjiUIState() {
     const session = loadSessionState();
-    const k = session.kanjiStudyCard;
-    if (!k) return null;
+    // app-level kanjiStudyCard settings moved under session.apps.kanjistudycard
+    const app = (session.apps && session.apps.kanjistudycard) ? session.apps.kanjistudycard : {};
     // determine active collection id (prefer in-memory state)
     const collId = state.activeCollectionId || (session.shell && session.shell.activeCollectionId) || null;
-    const collState = (collId && k.collections && k.collections[collId]) ? k.collections[collId] : {};
+    const collState = (session.collections && collId && session.collections[collId]) ? session.collections[collId] : {};
     return {
-      // global UI prefs
-      fontWeight: k.fontWeight,
-      defaultViewMode: k.defaultViewMode,
-      autoSpeak: k.autoSpeak,
+      // global UI prefs (app-scoped)
+      fontWeight: app.fontWeight,
+      defaultViewMode: app.defaultViewMode,
+      autoSpeak: app.autoSpeak,
       // per-collection or fallback
-      isShuffled: typeof collState.isShuffled === 'boolean' ? collState.isShuffled : k.isShuffled,
-      // compact deterministic seed for a seeded permutation
-      order_hash_int: (collState && typeof collState.order_hash_int === 'number') ? collState.order_hash_int : (typeof k.order_hash_int === 'number' ? k.order_hash_int : null),
-      currentIndex: (collState && typeof collState.currentIndex === 'number') ? collState.currentIndex : (typeof k.currentIndex === 'number' ? k.currentIndex : 0),
+      isShuffled: typeof collState.isShuffled === 'boolean' ? collState.isShuffled : (typeof app.isShuffled === 'boolean' ? app.isShuffled : false),
+      // compact deterministic seed for a seeded permutation (per-collection)
+      order_hash_int: (collState && typeof collState.order_hash_int === 'number') ? collState.order_hash_int : (typeof app.order_hash_int === 'number' ? app.order_hash_int : null),
+      // optional study window start index (relative to unshuffled original entries)
+      studyStart: (collState && typeof collState.studyStart === 'number') ? collState.studyStart : (typeof app.studyStart === 'number' ? app.studyStart : null),
+      currentIndex: (collState && typeof collState.currentIndex === 'number') ? collState.currentIndex : (typeof app.currentIndex === 'number' ? app.currentIndex : 0),
     };
   }
 
   function saveKanjiUIState(stateObj) {
     const session = readSessionState();
-    session.kanjiStudyCard = session.kanjiStudyCard || {};
-    const k = session.kanjiStudyCard;
-    // Persist global UI prefs
-    k.fontWeight = stateObj.fontWeight;
-    k.defaultViewMode = stateObj.defaultViewMode;
-    k.autoSpeak = stateObj.autoSpeak;
-    // Persist per-collection state for order/currentIndex/isShuffled
+    // App-scoped UI settings for kanjiStudyCard go under session.apps.kanjistudycard
+    session.apps = session.apps || {};
+    session.apps.kanjistudycard = session.apps.kanjistudycard || {};
+    const app = session.apps.kanjistudycard;
+    // Persist global UI prefs (app-scoped)
+    app.fontWeight = stateObj.fontWeight;
+    app.defaultViewMode = stateObj.defaultViewMode;
+    app.autoSpeak = stateObj.autoSpeak;
+    // Persist per-collection state under session.collections
     const collId = state.activeCollectionId || (session.shell && session.shell.activeCollectionId) || null;
     if (collId) {
-      k.collections = k.collections || {};
-      k.collections[collId] = k.collections[collId] || {};
+      session.collections = session.collections || {};
+      session.collections[collId] = session.collections[collId] || {};
       // Persist only compact integer seed for deterministic shuffle
-      k.collections[collId].order_hash_int = (typeof stateObj.order_hash_int === 'number') ? stateObj.order_hash_int : null;
-      k.collections[collId].currentIndex = stateObj.currentIndex;
-      k.collections[collId].isShuffled = !!stateObj.isShuffled;
+      session.collections[collId].order_hash_int = (typeof stateObj.order_hash_int === 'number') ? stateObj.order_hash_int : null;
+      // Persist study window start index when provided
+      if (typeof stateObj.studyStart === 'number') {
+        session.collections[collId].studyStart = stateObj.studyStart;
+      }
+      session.collections[collId].currentIndex = stateObj.currentIndex;
+      session.collections[collId].isShuffled = !!stateObj.isShuffled;
     }
     // Do not store per-collection state at the top-level anymore;
     // per-collection values live only under `kanjiStudyCard.collections`.
     saveSessionState(session);
   }
+
+  // Helpers to read/write collection-scoped state directly
+  function loadCollectionState(collId) {
+    try {
+      const session = readSessionState();
+      if (!session.collections) return null;
+      return session.collections[collId] || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveCollectionState(collId, patch) {
+    try {
+      const session = readSessionState();
+      session.collections = session.collections || {};
+      const prev = session.collections[collId] || {};
+      session.collections[collId] = { ...prev, ...(patch || {}) };
+      saveSessionState(session);
+    } catch (e) {
+      // ignore
+    }
+  }
+
 
   function getShellVoiceSettings() {
     try {
@@ -624,6 +656,8 @@ export function createStore() {
     syncCollectionFromURL,
     listCollectionDir,
     loadCollection,
+      loadCollectionState,
+      saveCollectionState,
     getCollectionBrowserPath: () => {
       return (typeof state.collectionBrowserPath === 'string') ? state.collectionBrowserPath : null;
     },
