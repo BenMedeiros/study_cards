@@ -8,152 +8,130 @@
     {
       "kanji": "荷物",
       "reading": "にもつ",
-      "meaning": "luggage; baggage",
-      "type": "noun"
+      "meaning": "luggage; baggage"
     },
     {
       "kanji": "切手",
       "reading": "きって",
-      "meaning": "stamp",
-      "type": "noun"
+      "meaning": "stamp"
     },
     {
       "kanji": "お釣り",
       "reading": "おつり",
-      "meaning": "change (money)",
-      "type": "noun"
+      "meaning": "change (money)"
     },
     {
       "kanji": "勉強",
       "reading": "べんきょう",
-      "meaning": "study",
-      "type": "noun"
+      "meaning": "study"
     },
     {
       "kanji": "入学",
       "reading": "にゅうがく",
-      "meaning": "entrance to school; matriculation",
-      "type": "noun"
+      "meaning": "entrance to school; matriculation"
     },
     {
       "kanji": "学習",
       "reading": "がくしゅう",
-      "meaning": "learning; study",
-      "type": "noun"
+      "meaning": "learning; study"
     },
     {
       "kanji": "会話",
       "reading": "かいわ",
-      "meaning": "conversation",
-      "type": "noun"
+      "meaning": "conversation"
     },
     {
       "kanji": "会議",
       "reading": "かいぎ",
-      "meaning": "meeting; conference",
-      "type": "noun"
+      "meaning": "meeting; conference"
     },
     {
       "kanji": "電話",
       "reading": "でんわ",
-      "meaning": "telephone; phone call",
-      "type": "noun"
+      "meaning": "telephone; phone call"
     },
     {
       "kanji": "読書",
       "reading": "どくしょ",
-      "meaning": "reading (books)",
-      "type": "noun"
+      "meaning": "reading (books)"
     },
     {
       "kanji": "書き込み",
       "reading": "かきこみ",
-      "meaning": "writing/posting (a comment)",
-      "type": "noun"
+      "meaning": "writing/posting (a comment)"
     },
     {
       "kanji": "食事",
       "reading": "しょくじ",
-      "meaning": "meal",
-      "type": "noun"
+      "meaning": "meal"
     },
     {
       "kanji": "飲食",
       "reading": "いんしょく",
-      "meaning": "eating and drinking",
-      "type": "noun"
+      "meaning": "eating and drinking"
     },
     {
       "kanji": "買い物",
       "reading": "かいもの",
-      "meaning": "shopping; purchases",
-      "type": "noun"
+      "meaning": "shopping; purchases"
     },
     {
       "kanji": "売買",
       "reading": "ばいばい",
-      "meaning": "trade; buying and selling",
-      "type": "noun"
+      "meaning": "trade; buying and selling"
     },
     {
       "kanji": "語学",
       "reading": "ごがく",
-      "meaning": "language study",
-      "type": "noun"
+      "meaning": "language study"
     },
     {
       "kanji": "命名",
       "reading": "めいめい",
-      "meaning": "naming; christening",
-      "type": "noun"
+      "meaning": "naming; christening"
     },
     {
       "kanji": "出生",
       "reading": "しゅっしょう",
-      "meaning": "birth; being born (formal)",
-      "type": "noun"
+      "meaning": "birth; being born (formal)"
     },
     {
       "kanji": "年越し",
       "reading": "としこし",
-      "meaning": "New Year's Eve; passing the year",
-      "type": "noun"
+      "meaning": "New Year's Eve; passing the year"
     },
     {
       "kanji": "確認",
       "reading": "かくにん",
-      "meaning": "confirmation; check",
-      "type": "noun"
+      "meaning": "confirmation; check"
     },
     {
       "kanji": "運転",
       "reading": "うんてん",
-      "meaning": "driving; operation",
-      "type": "noun"
+      "meaning": "driving; operation"
     },
     {
       "kanji": "空想",
       "reading": "くうそう",
-      "meaning": "fantasy; daydream",
-      "type": "noun"
+      "meaning": "fantasy; daydream"
     },
     {
       "kanji": "休憩",
       "reading": "きゅうけい",
-      "meaning": "rest; break",
-      "type": "noun"
+      "meaning": "rest; break"
     },
     {
       "kanji": "休業",
       "reading": "きゅうぎょう",
-      "meaning": "suspension of business; closed",
-      "type": "noun"
+      "meaning": "suspension of business; closed"
     },
     {
       "kanji": "半分",
       "reading": "はんぶん",
-      "meaning": "half; one half",
-      "type": "noun"
+      "meaning": "half; one half"
     }
-  ]
+  ],
+  "defaults": {
+    "type": "noun"
+  }
 }

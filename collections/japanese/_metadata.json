@@ -20,6 +20,14 @@
       "type": "string"
     },
     {
+      "key": "example",
+      "label": "Example",
+      "jp_label": "例文",
+      "type": "object",
+      "description": "Optional example sentence(s). Expected shape: { ja: string, en: string, notes: [string] }",
+      "notes": "Use `ja` for the Japanese sentence, `en` for an English gloss/translation, and `notes` for short usage notes or tips."
+    },
+    {
       "key": "origin",
       "label": "Origin",
       "jp_label": "語源",

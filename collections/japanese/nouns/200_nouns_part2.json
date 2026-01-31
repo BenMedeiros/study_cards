@@ -8,362 +8,305 @@
     {
       "kanji": "今年",
       "reading": "ことし",
-      "meaning": "this year",
-      "type": "noun"
+      "meaning": "this year"
     },
     {
       "kanji": "来年",
       "reading": "らいねん",
-      "meaning": "next year",
-      "type": "noun"
+      "meaning": "next year"
     },
     {
       "kanji": "朝",
       "reading": "あさ",
-      "meaning": "morning",
-      "type": "noun"
+      "meaning": "morning"
     },
     {
       "kanji": "昼",
       "reading": "ひる",
-      "meaning": "daytime; noon",
-      "type": "noun"
+      "meaning": "daytime; noon"
     },
     {
       "kanji": "夜",
       "reading": "よる",
-      "meaning": "night",
-      "type": "noun"
+      "meaning": "night"
     },
     {
       "kanji": "週末",
       "reading": "しゅうまつ",
-      "meaning": "weekend",
-      "type": "noun"
+      "meaning": "weekend"
     },
     {
       "kanji": "季節",
       "reading": "きせつ",
-      "meaning": "season",
-      "type": "noun"
+      "meaning": "season"
     },
     {
       "kanji": "春",
       "reading": "はる",
-      "meaning": "spring",
-      "type": "noun"
+      "meaning": "spring"
     },
     {
       "kanji": "夏",
       "reading": "なつ",
-      "meaning": "summer",
-      "type": "noun"
+      "meaning": "summer"
     },
     {
       "kanji": "秋",
       "reading": "あき",
-      "meaning": "autumn; fall",
-      "type": "noun"
+      "meaning": "autumn; fall"
     },
     {
       "kanji": "冬",
       "reading": "ふゆ",
-      "meaning": "winter",
-      "type": "noun"
+      "meaning": "winter"
     },
     {
       "kanji": "天気",
       "reading": "てんき",
-      "meaning": "weather",
-      "type": "noun"
+      "meaning": "weather"
     },
     {
       "kanji": "雨",
       "reading": "あめ",
-      "meaning": "rain",
-      "type": "noun"
+      "meaning": "rain"
     },
     {
       "kanji": "雪",
       "reading": "ゆき",
-      "meaning": "snow",
-      "type": "noun"
+      "meaning": "snow"
     },
     {
       "kanji": "風",
       "reading": "かぜ",
-      "meaning": "wind",
-      "type": "noun"
+      "meaning": "wind"
     },
     {
       "kanji": "空",
       "reading": "そら",
-      "meaning": "sky",
-      "type": "noun"
+      "meaning": "sky"
     },
     {
       "kanji": "雲",
       "reading": "くも",
-      "meaning": "cloud",
-      "type": "noun"
+      "meaning": "cloud"
     },
     {
       "kanji": "星",
       "reading": "ほし",
-      "meaning": "star",
-      "type": "noun"
+      "meaning": "star"
     },
     {
       "kanji": "月",
       "reading": "つき",
-      "meaning": "moon; month",
-      "type": "noun"
+      "meaning": "moon; month"
     },
     {
       "kanji": "太陽",
       "reading": "たいよう",
-      "meaning": "sun",
-      "type": "noun"
+      "meaning": "sun"
     },
     {
       "kanji": "山",
       "reading": "やま",
-      "meaning": "mountain",
-      "type": "noun"
+      "meaning": "mountain"
     },
     {
       "kanji": "川",
       "reading": "かわ",
-      "meaning": "river",
-      "type": "noun"
+      "meaning": "river"
     },
     {
       "kanji": "海",
       "reading": "うみ",
-      "meaning": "sea; ocean",
-      "type": "noun"
+      "meaning": "sea; ocean"
     },
     {
       "kanji": "池",
       "reading": "いけ",
-      "meaning": "pond",
-      "type": "noun"
+      "meaning": "pond"
     },
     {
       "kanji": "湖",
       "reading": "みずうみ",
-      "meaning": "lake",
-      "type": "noun"
+      "meaning": "lake"
     },
     {
       "kanji": "森",
       "reading": "もり",
-      "meaning": "forest",
-      "type": "noun"
+      "meaning": "forest"
     },
     {
       "kanji": "林",
       "reading": "はやし",
-      "meaning": "woods; grove",
-      "type": "noun"
+      "meaning": "woods; grove"
     },
     {
       "kanji": "木",
       "reading": "き",
-      "meaning": "tree; wood",
-      "type": "noun"
+      "meaning": "tree; wood"
     },
     {
       "kanji": "花",
       "reading": "はな",
-      "meaning": "flower",
-      "type": "noun"
+      "meaning": "flower"
     },
     {
       "kanji": "草",
       "reading": "くさ",
-      "meaning": "grass; weeds",
-      "type": "noun"
+      "meaning": "grass; weeds"
     },
     {
       "kanji": "葉",
       "reading": "は",
-      "meaning": "leaf",
-      "type": "noun"
+      "meaning": "leaf"
     },
     {
       "kanji": "犬",
       "reading": "いぬ",
-      "meaning": "dog",
-      "type": "noun"
+      "meaning": "dog"
     },
     {
       "kanji": "猫",
       "reading": "ねこ",
-      "meaning": "cat",
-      "type": "noun"
+      "meaning": "cat"
     },
     {
       "kanji": "鳥",
       "reading": "とり",
-      "meaning": "bird",
-      "type": "noun"
+      "meaning": "bird"
     },
     {
       "kanji": "魚",
       "reading": "さかな",
-      "meaning": "fish",
-      "type": "noun"
+      "meaning": "fish"
     },
     {
       "kanji": "虫",
       "reading": "むし",
-      "meaning": "insect; bug",
-      "type": "noun"
+      "meaning": "insect; bug"
     },
     {
       "kanji": "牛",
       "reading": "うし",
-      "meaning": "cow; cattle",
-      "type": "noun"
+      "meaning": "cow; cattle"
     },
     {
       "kanji": "馬",
       "reading": "うま",
-      "meaning": "horse",
-      "type": "noun"
+      "meaning": "horse"
     },
     {
       "kanji": "羊",
       "reading": "ひつじ",
-      "meaning": "sheep",
-      "type": "noun"
+      "meaning": "sheep"
     },
     {
       "kanji": "肉",
       "reading": "にく",
-      "meaning": "meat",
-      "type": "noun"
+      "meaning": "meat"
     },
     {
       "kanji": "野菜",
       "reading": "やさい",
-      "meaning": "vegetable",
-      "type": "noun"
+      "meaning": "vegetable"
     },
     {
       "kanji": "果物",
       "reading": "くだもの",
-      "meaning": "fruit",
-      "type": "noun"
+      "meaning": "fruit"
     },
     {
       "kanji": "米",
       "reading": "こめ",
-      "meaning": "rice (uncooked)",
-      "type": "noun"
+      "meaning": "rice (uncooked)"
     },
     {
       "kanji": "ご飯",
       "reading": "ごはん",
-      "meaning": "rice; meal",
-      "type": "noun"
+      "meaning": "rice; meal"
     },
     {
       "kanji": "水",
       "reading": "みず",
-      "meaning": "water",
-      "type": "noun"
+      "meaning": "water"
     },
     {
       "kanji": "お茶",
       "reading": "おちゃ",
-      "meaning": "tea",
-      "type": "noun"
+      "meaning": "tea"
     },
     {
       "kanji": "牛乳",
       "reading": "ぎゅうにゅう",
-      "meaning": "milk",
-      "type": "noun"
+      "meaning": "milk"
     },
     {
       "kanji": "砂糖",
       "reading": "さとう",
-      "meaning": "sugar",
-      "type": "noun"
+      "meaning": "sugar"
     },
     {
       "kanji": "塩",
       "reading": "しお",
-      "meaning": "salt",
-      "type": "noun"
+      "meaning": "salt"
     },
     {
       "kanji": "油",
       "reading": "あぶら",
-      "meaning": "oil",
-      "type": "noun"
+      "meaning": "oil"
     },
     {
       "kanji": "皿",
       "reading": "さら",
-      "meaning": "plate; dish",
-      "type": "noun"
+      "meaning": "plate; dish"
     },
     {
       "kanji": "茶碗",
       "reading": "ちゃわん",
-      "meaning": "rice bowl",
-      "type": "noun"
+      "meaning": "rice bowl"
     },
     {
       "kanji": "箸",
       "reading": "はし",
-      "meaning": "chopsticks",
-      "type": "noun"
+      "meaning": "chopsticks"
     },
     {
       "kanji": "包丁",
       "reading": "ほうちょう",
-      "meaning": "kitchen knife",
-      "type": "noun"
+      "meaning": "kitchen knife"
     },
     {
       "kanji": "台所",
       "reading": "だいどころ",
-      "meaning": "kitchen",
-      "type": "noun"
+      "meaning": "kitchen"
     },
     {
       "kanji": "冷蔵庫",
       "reading": "れいぞうこ",
-      "meaning": "refrigerator",
-      "type": "noun"
+      "meaning": "refrigerator"
     },
     {
       "kanji": "電子レンジ",
       "reading": "でんしれんじ",
-      "meaning": "microwave",
-      "type": "noun"
+      "meaning": "microwave"
     },
     {
       "kanji": "鍋",
       "reading": "なべ",
-      "meaning": "pot",
-      "type": "noun"
+      "meaning": "pot"
     },
     {
       "kanji": "掃除",
       "reading": "そうじ",
-      "meaning": "cleaning",
-      "type": "noun"
+      "meaning": "cleaning"
     },
     {
       "kanji": "洗濯",
       "reading": "せんたく",
-      "meaning": "laundry",
-      "type": "noun"
+      "meaning": "laundry"
     }
-  ]
+  ],
+  "defaults": {
+    "type": "noun"
+  }
 }

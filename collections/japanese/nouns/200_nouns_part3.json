@@ -8,362 +8,305 @@
     {
       "kanji": "洗剤",
       "reading": "せんざい",
-      "meaning": "detergent",
-      "type": "noun"
+      "meaning": "detergent"
     },
     {
       "kanji": "布団",
       "reading": "ふとん",
-      "meaning": "futon; bedding",
-      "type": "noun"
+      "meaning": "futon; bedding"
     },
     {
       "kanji": "部屋",
       "reading": "へや",
-      "meaning": "room",
-      "type": "noun"
+      "meaning": "room"
     },
     {
       "kanji": "家",
       "reading": "いえ",
-      "meaning": "house; home",
-      "type": "noun"
+      "meaning": "house; home"
     },
     {
       "kanji": "玄関",
       "reading": "げんかん",
-      "meaning": "entryway",
-      "type": "noun"
+      "meaning": "entryway"
     },
     {
       "kanji": "窓",
       "reading": "まど",
-      "meaning": "window",
-      "type": "noun"
+      "meaning": "window"
     },
     {
       "kanji": "床",
       "reading": "ゆか",
-      "meaning": "floor",
-      "type": "noun"
+      "meaning": "floor"
     },
     {
       "kanji": "天井",
       "reading": "てんじょう",
-      "meaning": "ceiling",
-      "type": "noun"
+      "meaning": "ceiling"
     },
     {
       "kanji": "壁",
       "reading": "かべ",
-      "meaning": "wall",
-      "type": "noun"
+      "meaning": "wall"
     },
     {
       "kanji": "机",
       "reading": "つくえ",
-      "meaning": "desk",
-      "type": "noun"
+      "meaning": "desk"
     },
     {
       "kanji": "椅子",
       "reading": "いす",
-      "meaning": "chair",
-      "type": "noun"
+      "meaning": "chair"
     },
     {
       "kanji": "本棚",
       "reading": "ほんだな",
-      "meaning": "bookshelf",
-      "type": "noun"
+      "meaning": "bookshelf"
     },
     {
       "kanji": "本",
       "reading": "ほん",
-      "meaning": "book",
-      "type": "noun"
+      "meaning": "book"
     },
     {
       "kanji": "新聞",
       "reading": "しんぶん",
-      "meaning": "newspaper",
-      "type": "noun"
+      "meaning": "newspaper"
     },
     {
       "kanji": "雑誌",
       "reading": "ざっし",
-      "meaning": "magazine",
-      "type": "noun"
+      "meaning": "magazine"
     },
     {
       "kanji": "手紙",
       "reading": "てがみ",
-      "meaning": "letter",
-      "type": "noun"
+      "meaning": "letter"
     },
     {
       "kanji": "地図",
       "reading": "ちず",
-      "meaning": "map",
-      "type": "noun"
+      "meaning": "map"
     },
     {
       "kanji": "写真",
       "reading": "しゃしん",
-      "meaning": "photo; picture",
-      "type": "noun"
+      "meaning": "photo; picture"
     },
     {
       "kanji": "映画",
       "reading": "えいが",
-      "meaning": "movie; film",
-      "type": "noun"
+      "meaning": "movie; film"
     },
     {
       "kanji": "音楽",
       "reading": "おんがく",
-      "meaning": "music",
-      "type": "noun"
+      "meaning": "music"
     },
     {
       "kanji": "歌",
       "reading": "うた",
-      "meaning": "song",
-      "type": "noun"
+      "meaning": "song"
     },
     {
       "kanji": "声",
       "reading": "こえ",
-      "meaning": "voice",
-      "type": "noun"
+      "meaning": "voice"
     },
     {
       "kanji": "言葉",
       "reading": "ことば",
-      "meaning": "word; language",
-      "type": "noun"
+      "meaning": "word; language"
     },
     {
       "kanji": "日本語",
       "reading": "にほんご",
-      "meaning": "Japanese (language)",
-      "type": "noun"
+      "meaning": "Japanese (language)"
     },
     {
       "kanji": "英語",
       "reading": "えいご",
-      "meaning": "English (language)",
-      "type": "noun"
+      "meaning": "English (language)"
     },
     {
       "kanji": "意味",
       "reading": "いみ",
-      "meaning": "meaning",
-      "type": "noun"
+      "meaning": "meaning"
     },
     {
       "kanji": "漢字",
       "reading": "かんじ",
-      "meaning": "kanji",
-      "type": "noun"
+      "meaning": "kanji"
     },
     {
       "kanji": "ひらがな",
       "reading": "ひらがな",
-      "meaning": "hiragana",
-      "type": "noun"
+      "meaning": "hiragana"
     },
     {
       "kanji": "文法",
       "reading": "ぶんぽう",
-      "meaning": "grammar",
-      "type": "noun"
+      "meaning": "grammar"
     },
     {
       "kanji": "宿題",
       "reading": "しゅくだい",
-      "meaning": "homework",
-      "type": "noun"
+      "meaning": "homework"
     },
     {
       "kanji": "試験",
       "reading": "しけん",
-      "meaning": "exam",
-      "type": "noun"
+      "meaning": "exam"
     },
     {
       "kanji": "点数",
       "reading": "てんすう",
-      "meaning": "score; points",
-      "type": "noun"
+      "meaning": "score; points"
     },
     {
       "kanji": "問題",
       "reading": "もんだい",
-      "meaning": "problem; question",
-      "type": "noun"
+      "meaning": "problem; question"
     },
     {
       "kanji": "答え",
       "reading": "こたえ",
-      "meaning": "answer",
-      "type": "noun"
+      "meaning": "answer"
     },
     {
       "kanji": "質問",
       "reading": "しつもん",
-      "meaning": "question (to ask)",
-      "type": "noun"
+      "meaning": "question (to ask)"
     },
     {
       "kanji": "例",
       "reading": "れい",
-      "meaning": "example",
-      "type": "noun"
+      "meaning": "example"
     },
     {
       "kanji": "理由",
       "reading": "りゆう",
-      "meaning": "reason",
-      "type": "noun"
+      "meaning": "reason"
     },
     {
       "kanji": "方法",
       "reading": "ほうほう",
-      "meaning": "method; way",
-      "type": "noun"
+      "meaning": "method; way"
     },
     {
       "kanji": "注意",
       "reading": "ちゅうい",
-      "meaning": "attention; caution",
-      "type": "noun"
+      "meaning": "attention; caution"
     },
     {
       "kanji": "安全",
       "reading": "あんぜん",
-      "meaning": "safety",
-      "type": "noun"
+      "meaning": "safety"
     },
     {
       "kanji": "危険",
       "reading": "きけん",
-      "meaning": "danger",
-      "type": "noun"
+      "meaning": "danger"
     },
     {
       "kanji": "事故",
       "reading": "じこ",
-      "meaning": "accident",
-      "type": "noun"
+      "meaning": "accident"
     },
     {
       "kanji": "病気",
       "reading": "びょうき",
-      "meaning": "illness",
-      "type": "noun"
+      "meaning": "illness"
     },
     {
       "kanji": "熱",
       "reading": "ねつ",
-      "meaning": "fever; heat",
-      "type": "noun"
+      "meaning": "fever; heat"
     },
     {
       "kanji": "薬局",
       "reading": "やっきょく",
-      "meaning": "pharmacy",
-      "type": "noun"
+      "meaning": "pharmacy"
     },
     {
       "kanji": "保険",
       "reading": "ほけん",
-      "meaning": "insurance",
-      "type": "noun"
+      "meaning": "insurance"
     },
     {
       "kanji": "健康",
       "reading": "けんこう",
-      "meaning": "health",
-      "type": "noun"
+      "meaning": "health"
     },
     {
       "kanji": "運動",
       "reading": "うんどう",
-      "meaning": "exercise; physical activity",
-      "type": "noun"
+      "meaning": "exercise; physical activity"
     },
     {
       "kanji": "散歩",
       "reading": "さんぽ",
-      "meaning": "walk; stroll",
-      "type": "noun"
+      "meaning": "walk; stroll"
     },
     {
       "kanji": "旅行",
       "reading": "りょこう",
-      "meaning": "travel; trip",
-      "type": "noun"
+      "meaning": "travel; trip"
     },
     {
       "kanji": "出発",
       "reading": "しゅっぱつ",
-      "meaning": "departure",
-      "type": "noun"
+      "meaning": "departure"
     },
     {
       "kanji": "到着",
       "reading": "とうちゃく",
-      "meaning": "arrival",
-      "type": "noun"
+      "meaning": "arrival"
     },
     {
       "kanji": "空港",
       "reading": "くうこう",
-      "meaning": "airport",
-      "type": "noun"
+      "meaning": "airport"
     },
     {
       "kanji": "飛行機",
       "reading": "ひこうき",
-      "meaning": "airplane",
-      "type": "noun"
+      "meaning": "airplane"
     },
     {
       "kanji": "部屋代",
       "reading": "へやだい",
-      "meaning": "room charge",
-      "type": "noun"
+      "meaning": "room charge"
     },
     {
       "kanji": "観光",
       "reading": "かんこう",
-      "meaning": "sightseeing",
-      "type": "noun"
+      "meaning": "sightseeing"
     },
     {
       "kanji": "名所",
       "reading": "めいしょ",
-      "meaning": "famous place; landmark",
-      "type": "noun"
+      "meaning": "famous place; landmark"
     },
     {
       "kanji": "文化",
       "reading": "ぶんか",
-      "meaning": "culture",
-      "type": "noun"
+      "meaning": "culture"
     },
     {
       "kanji": "歴史",
       "reading": "れきし",
-      "meaning": "history",
-      "type": "noun"
+      "meaning": "history"
     },
     {
       "kanji": "世界",
       "reading": "せかい",
-      "meaning": "world",
-      "type": "noun"
+      "meaning": "world"
     }
-  ]
+  ],
+  "defaults": {
+    "type": "noun"
+  }
 }

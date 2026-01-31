@@ -22,6 +22,16 @@ Each collection JSON should follow this shape:
 - `defaults`: Optional. Any key/value pairs here are applied to each `entry` if the entry does not already define that key. This allows you to set common properties like `type` at collection-level and only override when needed per entry.
 - `entries`: Array of objects representing cards/rows. Each entry may override values from `defaults`.
 
+Validation
+- **Validator script:** `_collections/scripts/validate_collections.js` scans `collections/` and warns about any entry properties not present in the nearest `_metadata.json`'s `fields` array. Undefined properties are permitted but will be reported as warnings to help keep collections consistent.
+- **Usage:**
+  - Run: `node _collections/scripts/validate_collections.js` from the repo root.
+  - Options: `--root <path>` to point at a different collections folder, `--only <subpath>` to validate a single collection subfolder.
+
+Best practices
+- **Defaults vs entries:** Use `defaults` for repeated primitive values (strings/numbers/booleans). Avoid storing complex nested objects in `defaults`.
+- **Keep entries minimal:** Store per-item data in `entries`; put shared values in `defaults` or `_metadata.json`.
+
 **Behavior in code**
 - The app reads `collections/index.json` and loads each path.
 - Folder metadata (`_metadata.json`) is inherited from the nearest parent folder.

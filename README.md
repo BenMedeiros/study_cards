@@ -30,6 +30,12 @@ Collections and metadata
 - Category-level metadata (e.g., collections/<language>/metadata.json) provides shared "commonFields" and category info.
 - When a collection sits inside a category folder, category metadata is merged into the collection at load time: category commonFields are prepended unless the collection overrides them.
 
+Collections tooling
+- Aggregation: `node _collections/scripts/aggregate_collections.js` writes aggregated JSON into `_collections/aggregates`.
+- Restore: `node _collections/scripts/restore_collections.js --input _collections/aggregates/<collection>.json [--dry-run] [--overwrite]` restores files into `collections/`.
+- Extraction: `node _collections/scripts/extract_defaults_japanese.js` extracts common entry fields into `defaults` for Japanese files.
+- Validation: `node _collections/scripts/validate_collections.js` validates entries against the nearest `_metadata.json` and warns for undefined properties.
+
 Example collection shape
 ```
 {

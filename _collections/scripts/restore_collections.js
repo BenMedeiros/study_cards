@@ -1,7 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const aggregatedDir = path.resolve(__dirname, '..'); // _collections
+const aggregatedDir = path.resolve(__dirname, '..', 'aggregates'); // _collections/aggregates
 const collectionsDir = path.resolve(__dirname, '..', '..', 'collections');
 
 function isPlainObject(v) {
@@ -118,7 +118,7 @@ async function restoreAggregated(aggregatedPath, options) {
 }
 
 function usage() {
-  console.log('Usage: node restore_collections.js [--input <aggregated.json>] [--dry-run] [--overwrite]');
+  console.log('Usage: node restore_collections.js [--input <aggregates/<aggregated>.json>] [--dry-run] [--overwrite]');
 }
 
 async function main() {

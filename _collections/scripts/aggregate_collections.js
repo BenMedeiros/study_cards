@@ -3,8 +3,8 @@ const path = require('path');
 
 // `collections` is at the repository root; compute its path from this script's location
 const collectionsDir = path.resolve(__dirname, '..', '..', 'collections');
-// write aggregated outputs into the _collections folder (one level up)
-const outDir = path.resolve(__dirname, '..');
+// write aggregated outputs into the _collections/aggregates folder
+const outDir = path.resolve(__dirname, '..', 'aggregates');
 
 async function isDirectory(p) {
   try {
@@ -72,6 +72,8 @@ async function aggregateCollection(collectionPath, collectionName) {
 
 async function main() {
   try {
+    // ensure output directory exists
+    await fs.mkdir(outDir, { recursive: true });
     const entries = await fs.readdir(collectionsDir, { withFileTypes: true });
     const collections = [];
     for (const ent of entries) {
@@ -95,9 +97,9 @@ async function main() {
     await fs.writeFile(indexPath, JSON.stringify({ generated: results }, null, 2), 'utf8');
     console.log(`Wrote ${indexPath}`);
     console.log('\nTo restore a single collection (dry-run):');
-    console.log('  node _collections/scripts/restore_collections.js --input _collections/<collection>.json --dry-run');
+    console.log('  node _collections/scripts/restore_collections.js --input _collections/aggregates/<collection>.json --dry-run');
     console.log('\nTo restore and overwrite existing files:');
-    console.log('  node _collections/scripts/restore_collections.js --input _collections/<collection>.json --overwrite');
+    console.log('  node _collections/scripts/restore_collections.js --input _collections/aggregates/<collection>.json --overwrite');
   } catch (err) {
     console.error('Error aggregating collections:', err);
     process.exitCode = 1;
