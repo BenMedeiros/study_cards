@@ -20,7 +20,44 @@ export function renderFlashcards({ store }) {
   function refreshFromStore() {
     active = store.getActiveCollection();
     const collState = (store && typeof store.loadCollectionState === 'function') ? store.loadCollectionState(active?.key) : null;
-    entries = getCollectionView(active?.entries, collState, { windowSize: 10 }).entries;
+    const view = getCollectionView(active?.entries, collState, { windowSize: 10 });
+    let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
+
+    // Apply optional per-collection filters using global learned/focus lists.
+    let skipLearned = false;
+    let focusOnly = false;
+    if (typeof collState?.studyFilter === 'string') {
+      const raw = String(collState.studyFilter || '').trim();
+      const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
+      const set = new Set(parts);
+      skipLearned = set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned');
+      focusOnly = set.has('focusOnly') || set.has('focus_only') || set.has('focus') || set.has('morePractice') || set.has('more_practice');
+    } else {
+      // legacy
+      skipLearned = !!collState?.skipLearned;
+      focusOnly = !!collState?.focusOnly;
+    }
+    if (skipLearned || focusOnly) {
+      const filtered = [];
+      for (const entry of nextEntries) {
+        const v = (entry && typeof entry === 'object') ? (entry.kanji || entry.character || entry.text || '') : '';
+        const s = String(v || '').trim();
+        if (!s) {
+          filtered.push(entry);
+          continue;
+        }
+        if (skipLearned && typeof store.isKanjiLearned === 'function') {
+          if (store.isKanjiLearned(s)) continue;
+        }
+        if (focusOnly && typeof store.isKanjiFocus === 'function') {
+          if (!store.isKanjiFocus(s)) continue;
+        }
+        filtered.push(entry);
+      }
+      nextEntries = filtered;
+    }
+
+    entries = nextEntries;
     index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
   }
 

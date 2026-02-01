@@ -25,6 +25,7 @@ export function renderKanjiStudyCard({ store }) {
   let originalEntries = [];
   let currentOrder = null; // array of indices mapping to originalEntries
   let orderHashInt = null; // deterministic seed for shuffle (preferred persisted form)
+  let viewIndices = []; // indices into originalEntries for the current rendered entries array
 
   // Helpers
   function getFieldValue(entry, keys) {
@@ -33,6 +34,10 @@ export function renderKanjiStudyCard({ store }) {
       if (entry[k]) return entry[k];
     }
     return '';
+  }
+
+  function getPrimaryKanjiValue(entry) {
+    return getFieldValue(entry, ['kanji', 'character', 'text']) || '';
   }
 
   // Delegate UI state persistence to the central store (store.saveKanjiUIState / store.loadKanjiUIState)
@@ -160,7 +165,19 @@ export function renderKanjiStudyCard({ store }) {
   nextBtn.className = 'btn';
   nextBtn.innerHTML = '<span class="icon">→</span><span class="text">Next</span>';
 
-  footerControls.append(prevBtn, revealBtn, soundBtn, nextBtn);
+  const learnedBtn = document.createElement('button');
+  learnedBtn.type = 'button';
+  learnedBtn.className = 'btn';
+  learnedBtn.innerHTML = '<span class="icon">✅</span><span class="text">Learned</span>';
+  learnedBtn.setAttribute('aria-pressed', 'false');
+
+  const practiceBtn = document.createElement('button');
+  practiceBtn.type = 'button';
+  practiceBtn.className = 'btn';
+  practiceBtn.innerHTML = '<span class="icon">🎯</span><span class="text">Practice</span>';
+  practiceBtn.setAttribute('aria-pressed', 'false');
+
+  footerControls.append(prevBtn, revealBtn, soundBtn, learnedBtn, practiceBtn, nextBtn);
   // Unified speak helper: prefer reading/word/kana, fall back to kanji/character/text
   function speakEntry(entry) {
     if (!entry) return;
@@ -267,9 +284,82 @@ export function renderKanjiStudyCard({ store }) {
     const active = store.getActiveCollection();
     originalEntries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
     // Use shared collection management to build the view (study window + shuffle)
-    const collState = (store && typeof store.loadCollectionState === 'function') ? store.loadCollectionState(active?.key) : null;
+    const key = active?.key;
+    let collState = (store && typeof store.loadCollectionState === 'function') ? (store.loadCollectionState(key) || {}) : {};
+
+    let skipLearned = false;
+    let focusOnly = false;
+    if (typeof collState?.studyFilter === 'string') {
+      const raw = String(collState.studyFilter || '').trim();
+      const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
+      const set = new Set(parts);
+      skipLearned = set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned');
+      focusOnly = set.has('focusOnly') || set.has('focus_only') || set.has('focus') || set.has('morePractice') || set.has('more_practice');
+    } else {
+      // legacy
+      skipLearned = !!collState?.skipLearned;
+      focusOnly = !!collState?.focusOnly;
+    }
+
+    // If we have an explicit removable study set, prune it when filters are enabled.
+    if (key && Array.isArray(collState.studyIndices) && (skipLearned || focusOnly)) {
+      const next = collState.studyIndices.filter((rawIdx) => {
+        const idx = Number(rawIdx);
+        if (!Number.isFinite(idx)) return false;
+        const entry = originalEntries[idx];
+        const v = getPrimaryKanjiValue(entry);
+        if (!v) return true;
+        if (skipLearned && typeof store.isKanjiLearned === 'function') {
+          if (store.isKanjiLearned(v)) return false;
+        }
+        if (focusOnly && typeof store.isKanjiFocus === 'function') {
+          if (!store.isKanjiFocus(v)) return false;
+        }
+        return true;
+      });
+      if (next.length !== collState.studyIndices.length) {
+        try {
+          if (store && typeof store.saveCollectionState === 'function') {
+            store.saveCollectionState(key, { studyIndices: next });
+          }
+        } catch (e) {
+          // ignore
+        }
+        collState = { ...collState, studyIndices: next };
+      }
+    }
+
     const view = getCollectionView(originalEntries, collState, { windowSize: 10 });
-    entries = Array.isArray(view.entries) ? view.entries.slice() : [];
+    let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
+    let nextIndices = Array.isArray(view.indices) ? view.indices.slice() : [];
+
+    // Apply filters to the rendered view even when not using studyIndices.
+    if (skipLearned || focusOnly) {
+      const filteredEntries = [];
+      const filteredIndices = [];
+      for (let i = 0; i < nextEntries.length; i++) {
+        const entry = nextEntries[i];
+        const v = getPrimaryKanjiValue(entry);
+        if (!v) {
+          filteredEntries.push(entry);
+          filteredIndices.push(nextIndices[i]);
+          continue;
+        }
+        if (skipLearned && typeof store.isKanjiLearned === 'function') {
+          if (store.isKanjiLearned(v)) continue;
+        }
+        if (focusOnly && typeof store.isKanjiFocus === 'function') {
+          if (!store.isKanjiFocus(v)) continue;
+        }
+        filteredEntries.push(entry);
+        filteredIndices.push(nextIndices[i]);
+      }
+      nextEntries = filteredEntries;
+      nextIndices = filteredIndices;
+    }
+
+    entries = nextEntries;
+    viewIndices = nextIndices;
     isShuffled = !!view.isShuffled;
     orderHashInt = view.order_hash_int || null;
     currentOrder = null;
@@ -310,6 +400,50 @@ export function renderKanjiStudyCard({ store }) {
     }
   }
   function speakCurrent() { if (entries[index]) speakEntry(entries[index]); }
+
+  function updateMarkButtons() {
+    const entry = entries[index];
+    const v = getPrimaryKanjiValue(entry);
+    const isLearned = !!(store && typeof store.isKanjiLearned === 'function' && v) ? store.isKanjiLearned(v) : false;
+    const isFocus = !!(store && typeof store.isKanjiFocus === 'function' && v) ? store.isKanjiFocus(v) : false;
+
+    learnedBtn.classList.toggle('state-learned', isLearned);
+    practiceBtn.classList.toggle('state-focus', isFocus);
+
+    learnedBtn.setAttribute('aria-pressed', String(!!isLearned));
+    practiceBtn.setAttribute('aria-pressed', String(!!isFocus));
+  }
+
+  function removeCurrentFromStudySubsetIfPresent(overrideOriginalIdx = null) {
+    try {
+      const active = store.getActiveCollection?.();
+      const key = active?.key;
+      if (!key) return false;
+      const collState = (store && typeof store.loadCollectionState === 'function') ? (store.loadCollectionState(key) || {}) : {};
+      if (!Array.isArray(collState.studyIndices)) return false;
+
+      const originalIdx = (overrideOriginalIdx !== null && Number.isFinite(Number(overrideOriginalIdx)))
+        ? Number(overrideOriginalIdx)
+        : (Number.isFinite(Number(viewIndices[index])) ? Number(viewIndices[index]) : null);
+      if (originalIdx === null) return false;
+
+      const next = collState.studyIndices.filter(i => Number(i) !== Number(originalIdx));
+      if (next.length === collState.studyIndices.length) return false;
+
+      if (store && typeof store.saveCollectionState === 'function') {
+        store.saveCollectionState(key, { studyIndices: next });
+      }
+
+      // Refresh immediately so the card disappears from the current set.
+      refreshEntriesFromStore();
+      index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+      render();
+      saveUIState();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
   function updateRevealButton() {
     if (viewMode === 'full') {
@@ -527,6 +661,9 @@ export function renderKanjiStudyCard({ store }) {
     
     // Update reveal button text based on current viewMode
     updateRevealButton();
+
+    // Update learned/focus button state
+    updateMarkButtons();
   }
 
   // Initial population — refresh entries and render (saved order is applied in refresh)
@@ -581,6 +718,60 @@ export function renderKanjiStudyCard({ store }) {
     const entry = entries[index];
     // Use the same unified speak flow
     speakEntry(entry);
+  });
+
+  learnedBtn.addEventListener('click', () => {
+    const entry = entries[index];
+    const v = getPrimaryKanjiValue(entry);
+    if (!v) return;
+    // Capture the original index before toggling learned.
+    // toggleKanjiLearned() notifies subscribers synchronously, which can refresh entries/viewIndices
+    // and otherwise cause us to remove the *next* item from the study subset.
+    const originalIdxBefore = Number.isFinite(Number(viewIndices[index])) ? Number(viewIndices[index]) : null;
+    if (store && typeof store.toggleKanjiLearned === 'function') {
+      const nowLearned = store.toggleKanjiLearned(v);
+      updateMarkButtons();
+      // If we just marked learned while studying a removable subset, remove it.
+      if (nowLearned) {
+        const removed = removeCurrentFromStudySubsetIfPresent(originalIdxBefore);
+        // If we're in skip-learned mode without a removable subset, refresh so we move past it.
+        if (!removed) {
+          try {
+            const active = store.getActiveCollection?.();
+            const key = active?.key;
+            const collState = (store && typeof store.loadCollectionState === 'function') ? (store.loadCollectionState(key) || {}) : {};
+            let skipLearnedMode = false;
+            if (typeof collState?.studyFilter === 'string') {
+              const raw = String(collState.studyFilter || '').trim();
+              const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
+              const set = new Set(parts);
+              skipLearnedMode = set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned');
+            } else {
+              // legacy
+              skipLearnedMode = !!collState?.skipLearned;
+            }
+            if (skipLearnedMode) {
+              refreshEntriesFromStore();
+              index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+              render();
+              saveUIState();
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+      }
+    }
+  });
+
+  practiceBtn.addEventListener('click', () => {
+    const entry = entries[index];
+    const v = getPrimaryKanjiValue(entry);
+    if (!v) return;
+    if (store && typeof store.toggleKanjiFocus === 'function') {
+      store.toggleKanjiFocus(v);
+      updateMarkButtons();
+    }
   });
 
   // Tools behaviour

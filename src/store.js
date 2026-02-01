@@ -7,7 +7,7 @@ export function createStore() {
 
   // IndexedDB-backed persistence (with localStorage fallback).
   // Store schema:
-  // - kv: { key: 'shell'|'apps', value: object }
+  // - kv: { key: 'shell'|'apps'|'learned_kanji'|'focus_on_kanji', value: object|array }
   // - collections: { id: '<collectionId>', value: object }
   let persistenceReady = false;
   let idbAvailable = false;
@@ -18,13 +18,21 @@ export function createStore() {
     shell: {},
     apps: {},
     collections: {},
+    kv: {
+      learned_kanji: [],
+      focus_on_kanji: [],
+    },
   };
+
+  let learnedKanjiSet = new Set();
+  let focusKanjiSet = new Set();
 
   let flushTimer = null;
   let flushInFlight = null;
   let dirtyShell = false;
   let dirtyApps = false;
   const dirtyCollections = new Set();
+  const dirtyKv = new Set();
 
   async function ensurePersistence() {
     if (persistenceReady) return;
@@ -70,6 +78,7 @@ export function createStore() {
       shell: uiState.shell || {},
       collections: uiState.collections || {},
       apps: uiState.apps || {},
+      kv: uiState.kv || {},
     };
   }
 
@@ -93,11 +102,13 @@ export function createStore() {
       const doShell = dirtyShell;
       const doApps = dirtyApps;
       const colls = Array.from(dirtyCollections);
+      const kvKeys = Array.from(dirtyKv);
 
       // Clear dirty flags optimistically; if persistence fails we will fall back.
       dirtyShell = false;
       dirtyApps = false;
       dirtyCollections.clear();
+      dirtyKv.clear();
 
       await ensurePersistence();
 
@@ -108,6 +119,11 @@ export function createStore() {
           const puts = [];
           if (doShell) puts.push(idbPut('kv', { key: 'shell', value: uiState.shell || {} }));
           if (doApps) puts.push(idbPut('kv', { key: 'apps', value: uiState.apps || {} }));
+          for (const k of kvKeys) {
+            if (k === 'learned_kanji' || k === 'focus_on_kanji') {
+              puts.push(idbPut('kv', { key: k, value: uiState.kv?.[k] || [] }));
+            }
+          }
           for (const id of colls) {
             puts.push(idbPut('collections', { id, value: uiState.collections?.[id] || {} }));
           }
@@ -142,6 +158,115 @@ export function createStore() {
     // available collection paths discovered from index.json (not yet loaded)
     _availableCollectionPaths: [],
   };
+
+  function normalizeKanjiValue(v) {
+    const s = String(v ?? '').trim();
+    return s;
+  }
+
+  function syncKanjiSetsFromArrays() {
+    const learnedArr = Array.isArray(uiState?.kv?.learned_kanji) ? uiState.kv.learned_kanji : [];
+    const focusArr = Array.isArray(uiState?.kv?.focus_on_kanji) ? uiState.kv.focus_on_kanji : [];
+    learnedKanjiSet = new Set(learnedArr.map(normalizeKanjiValue).filter(Boolean));
+    focusKanjiSet = new Set(focusArr.map(normalizeKanjiValue).filter(Boolean));
+    // Enforce mutual exclusion at load time.
+    for (const v of learnedKanjiSet) {
+      if (focusKanjiSet.has(v)) focusKanjiSet.delete(v);
+    }
+    uiState.kv.learned_kanji = Array.from(learnedKanjiSet);
+    uiState.kv.focus_on_kanji = Array.from(focusKanjiSet);
+  }
+
+  function persistKanjiSetsToArrays() {
+    uiState.kv = uiState.kv || {};
+    uiState.kv.learned_kanji = Array.from(learnedKanjiSet);
+    uiState.kv.focus_on_kanji = Array.from(focusKanjiSet);
+  }
+
+  function isKanjiLearned(v) {
+    const s = normalizeKanjiValue(v);
+    if (!s) return false;
+    return learnedKanjiSet.has(s);
+  }
+
+  function isKanjiFocus(v) {
+    const s = normalizeKanjiValue(v);
+    if (!s) return false;
+    return focusKanjiSet.has(s);
+  }
+
+  function toggleKanjiLearned(v) {
+    const s = normalizeKanjiValue(v);
+    if (!s) return false;
+
+    if (learnedKanjiSet.has(s)) {
+      learnedKanjiSet.delete(s);
+    } else {
+      learnedKanjiSet.add(s);
+      focusKanjiSet.delete(s);
+    }
+
+    persistKanjiSetsToArrays();
+    dirtyKv.add('learned_kanji');
+    dirtyKv.add('focus_on_kanji');
+    scheduleFlush();
+    notify();
+    return learnedKanjiSet.has(s);
+  }
+
+  function toggleKanjiFocus(v) {
+    const s = normalizeKanjiValue(v);
+    if (!s) return false;
+
+    if (focusKanjiSet.has(s)) {
+      focusKanjiSet.delete(s);
+    } else {
+      focusKanjiSet.add(s);
+      learnedKanjiSet.delete(s);
+    }
+
+    persistKanjiSetsToArrays();
+    dirtyKv.add('learned_kanji');
+    dirtyKv.add('focus_on_kanji');
+    scheduleFlush();
+    notify();
+    return focusKanjiSet.has(s);
+  }
+
+  function clearLearnedKanji() {
+    try {
+      learnedKanjiSet.clear();
+      // Do not clear focus set.
+      persistKanjiSetsToArrays();
+      dirtyKv.add('learned_kanji');
+      scheduleFlush({ immediate: true });
+      notify();
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  function clearLearnedKanjiForValues(values) {
+    try {
+      if (!Array.isArray(values) || values.length === 0) return;
+      const toClear = new Set(values.map(normalizeKanjiValue).filter(Boolean));
+      if (toClear.size === 0) return;
+
+      let changed = false;
+      for (const v of toClear) {
+        if (learnedKanjiSet.delete(v)) changed = true;
+      }
+      if (!changed) return;
+
+      // Do not clear focus set.
+      persistKanjiSetsToArrays();
+      dirtyKv.add('learned_kanji');
+      scheduleFlush({ immediate: true });
+      notify();
+    } catch (e) {
+      // ignore
+    }
+  }
 
   // Folder metadata helpers/storage used for lazy loads
   let folderMetadataMap = null;
@@ -993,11 +1118,17 @@ export function createStore() {
           const { idbGet, idbGetAll } = await import('./utils/idb.js');
           const shellRec = await idbGet('kv', 'shell');
           const appsRec = await idbGet('kv', 'apps');
+          const learnedRec = await idbGet('kv', 'learned_kanji');
+          const focusRec = await idbGet('kv', 'focus_on_kanji');
           const collRecs = await idbGetAll('collections');
           loaded = {
             shell: (shellRec && shellRec.value && typeof shellRec.value === 'object') ? shellRec.value : {},
             apps: (appsRec && appsRec.value && typeof appsRec.value === 'object') ? appsRec.value : {},
             collections: {},
+            kv: {
+              learned_kanji: Array.isArray(learnedRec?.value) ? learnedRec.value : [],
+              focus_on_kanji: Array.isArray(focusRec?.value) ? focusRec.value : [],
+            },
           };
           for (const r of (Array.isArray(collRecs) ? collRecs : [])) {
             if (!r || typeof r !== 'object') continue;
@@ -1012,11 +1143,15 @@ export function createStore() {
         }
       }
       if (!loaded) {
-        loaded = loadFromLocalStorageFallback() || { shell: {}, apps: {}, collections: {} };
+        loaded = loadFromLocalStorageFallback() || { shell: {}, apps: {}, collections: {}, kv: {} };
       }
       uiState.shell = (loaded.shell && typeof loaded.shell === 'object') ? loaded.shell : {};
       uiState.apps = (loaded.apps && typeof loaded.apps === 'object') ? loaded.apps : {};
       uiState.collections = (loaded.collections && typeof loaded.collections === 'object') ? loaded.collections : {};
+      uiState.kv = (loaded.kv && typeof loaded.kv === 'object') ? loaded.kv : { learned_kanji: [], focus_on_kanji: [] };
+      if (!Array.isArray(uiState.kv.learned_kanji)) uiState.kv.learned_kanji = [];
+      if (!Array.isArray(uiState.kv.focus_on_kanji)) uiState.kv.focus_on_kanji = [];
+      syncKanjiSetsFromArrays();
 
       const paths = await loadSeedCollections();
       // Do not eagerly load collection JSONs; start with none loaded.
@@ -1196,6 +1331,12 @@ export function createStore() {
     getActiveCollection,
     getLastRoute,
     setLastRoute,
+    isKanjiLearned,
+    isKanjiFocus,
+    toggleKanjiLearned,
+    toggleKanjiFocus,
+    clearLearnedKanji,
+    clearLearnedKanjiForValues,
     setActiveCollectionId,
     syncCollectionFromURL,
     listCollectionDir,

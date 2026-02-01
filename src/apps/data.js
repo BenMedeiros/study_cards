@@ -7,6 +7,27 @@ export function renderData({ store }) {
   root.id = 'data-root';
   const active = store.getActiveCollection();
 
+  let skipLearned = false;
+  let focusOnly = false;
+
+  function parseStudyFilter(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return { skipLearned: false, focusOnly: false };
+    const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
+    const set = new Set(parts);
+    return {
+      skipLearned: set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned'),
+      focusOnly: set.has('focusOnly') || set.has('focus_only') || set.has('focus') || set.has('morePractice') || set.has('more_practice'),
+    };
+  }
+
+  function serializeStudyFilter({ skipLearned, focusOnly }) {
+    const parts = [];
+    if (skipLearned) parts.push('skipLearned');
+    if (focusOnly) parts.push('focusOnly');
+    return parts.join(',');
+  }
+
   // Controls: Study 10 / Study All buttons grouped like kanji header tools
   const controls = document.createElement('div');
   controls.className = 'kanji-header-tools';
@@ -30,12 +51,30 @@ export function renderData({ store }) {
   studyAllBtn.className = 'btn small';
   studyAllBtn.textContent = 'Study All';
 
+  const skipLearnedBtn = document.createElement('button');
+  skipLearnedBtn.type = 'button';
+  skipLearnedBtn.className = 'btn small';
+  skipLearnedBtn.textContent = 'Skip Learned';
+  skipLearnedBtn.setAttribute('aria-pressed', 'false');
+
+  const focusOnlyBtn = document.createElement('button');
+  focusOnlyBtn.type = 'button';
+  focusOnlyBtn.className = 'btn small';
+  focusOnlyBtn.textContent = 'Focus: More Practice';
+  focusOnlyBtn.setAttribute('aria-pressed', 'false');
+
+  const clearLearnedBtn = document.createElement('button');
+  clearLearnedBtn.type = 'button';
+  clearLearnedBtn.className = 'btn small';
+  clearLearnedBtn.textContent = 'Clear Learned';
+  clearLearnedBtn.title = 'Remove Learned flags for items in this collection';
+
   const studyLabel = document.createElement('div');
   studyLabel.className = 'hint';
   studyLabel.style.alignSelf = 'center';
   studyLabel.textContent = '';
 
-  controls.append(studyBtn, studyAllBtn, shuffleBtn, clearShuffleBtn, studyLabel);
+  controls.append(studyBtn, studyAllBtn, skipLearnedBtn, focusOnlyBtn, shuffleBtn, clearShuffleBtn, clearLearnedBtn, studyLabel);
   root.appendChild(controls);
   
   if (!active) {
@@ -45,6 +84,22 @@ export function renderData({ store }) {
     });
     root.append(emptyCard);
     return root;
+  }
+
+  // Load persisted filter toggles from collection state.
+  try {
+    const saved = readCollState();
+    if (typeof saved?.studyFilter === 'string') {
+      const parsed = parseStudyFilter(saved.studyFilter);
+      skipLearned = !!parsed.skipLearned;
+      focusOnly = !!parsed.focusOnly;
+    } else {
+      // Legacy booleans
+      skipLearned = !!saved?.skipLearned;
+      focusOnly = !!saved?.focusOnly;
+    }
+  } catch (e) {
+    // ignore
   }
 
   // Helpers to read/save per-collection state
@@ -65,6 +120,117 @@ export function renderData({ store }) {
     if (typeof store.saveKanjiUIState === 'function') return store.saveKanjiUIState(patch);
   }
 
+  function getEntryKanjiValue(entry) {
+    if (!entry || typeof entry !== 'object') return '';
+    for (const k of ['kanji', 'character', 'text', 'word', 'reading', 'kana']) {
+      const v = entry[k];
+      if (typeof v === 'string' && v.trim()) return v.trim();
+    }
+    return '';
+  }
+
+  function passesFilters(entry) {
+    const v = getEntryKanjiValue(entry);
+    if (!v) return true;
+    if (skipLearned && typeof store.isKanjiLearned === 'function') {
+      if (store.isKanjiLearned(v)) return false;
+    }
+    if (focusOnly && typeof store.isKanjiFocus === 'function') {
+      if (!store.isKanjiFocus(v)) return false;
+    }
+    return true;
+  }
+
+  function updateFilterButtons() {
+    skipLearnedBtn.classList.toggle('active', !!skipLearned);
+    focusOnlyBtn.classList.toggle('active', !!focusOnly);
+    skipLearnedBtn.setAttribute('aria-pressed', String(!!skipLearned));
+    focusOnlyBtn.setAttribute('aria-pressed', String(!!focusOnly));
+  }
+
+  function persistFilters() {
+    writeCollState({
+      studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }),
+      // keep legacy keys nulled to reduce confusion
+      skipLearned: null,
+      focusOnly: null,
+    });
+  }
+
+  function pruneStudyIndicesToFilters() {
+    try {
+      const coll = store.getActiveCollection();
+      if (!coll) return;
+      const saved = readCollState() || {};
+      if (!Array.isArray(saved.studyIndices)) return;
+      if (!(skipLearned || focusOnly)) return;
+
+      const next = saved.studyIndices
+        .map(i => Number(i))
+        .filter(Number.isFinite)
+        .filter(i => i >= 0 && i < allEntries.length)
+        .filter(i => passesFilters(allEntries[i]));
+
+      if (next.length !== saved.studyIndices.length) {
+        writeCollState({ studyIndices: next });
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
+  const allEntries = Array.isArray(active.entries) ? active.entries : [];
+  let rowToOriginalIndex = [];
+
+  function getVisibleOriginalIndices() {
+    const out = [];
+    for (let i = 0; i < allEntries.length; i++) {
+      if (passesFilters(allEntries[i])) out.push(i);
+    }
+    return out;
+  }
+
+  const tableMount = document.createElement('div');
+  tableMount.id = 'data-table-mount';
+
+  skipLearnedBtn.addEventListener('click', () => {
+    skipLearned = !skipLearned;
+    persistFilters();
+    pruneStudyIndicesToFilters();
+    updateFilterButtons();
+    renderTable();
+    updateStudyLabel();
+    markStudyRows();
+  });
+
+  focusOnlyBtn.addEventListener('click', () => {
+    focusOnly = !focusOnly;
+    persistFilters();
+    pruneStudyIndicesToFilters();
+    updateFilterButtons();
+    renderTable();
+    updateStudyLabel();
+    markStudyRows();
+  });
+
+  clearLearnedBtn.addEventListener('click', () => {
+    try {
+      const coll = store?.getActiveCollection?.();
+      const entries = Array.isArray(coll?.entries) ? coll.entries : [];
+      const values = entries.map(getEntryKanjiValue).filter(Boolean);
+
+      if (store && typeof store.clearLearnedKanjiForValues === 'function') {
+        store.clearLearnedKanjiForValues(values);
+      } else if (store && typeof store.clearLearnedKanji === 'function') {
+        // fallback (older store API)
+        store.clearLearnedKanji();
+      }
+    } catch (e) {
+      // ignore
+    }
+  });
+
   // Hook up Study 10 button for active collection
   studyBtn.addEventListener('click', () => {
     const coll = store.getActiveCollection();
@@ -73,9 +239,28 @@ export function renderData({ store }) {
     const n = entries.length;
     if (n === 0) return;
     const saved = readCollState();
-    const currentStart = (saved && typeof saved.studyStart === 'number') ? saved.studyStart : 0;
-    const nextStart = (currentStart + 10) % n;
-    writeCollState({ studyStart: nextStart });
+
+    // Use studyStart as a cursor for selecting the next subset.
+    const cursor = (saved && typeof saved.studyStart === 'number') ? saved.studyStart : 0;
+    const picked = [];
+    let lastIdx = null;
+    for (let i = 0; i < n; i++) {
+      const idx = (cursor + i) % n;
+      const entry = entries[idx];
+      if (!passesFilters(entry)) continue;
+      picked.push(idx);
+      lastIdx = idx;
+      if (picked.length >= 10) break;
+    }
+
+    const nextCursor = (lastIdx === null) ? cursor : ((lastIdx + 1) % n);
+    writeCollState({
+      studyIndices: picked,
+      studyStart: nextCursor,
+      studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }),
+      skipLearned: null,
+      focusOnly: null,
+    });
     // update label immediately
     updateStudyLabel();
     // update table highlighting immediately
@@ -85,7 +270,13 @@ export function renderData({ store }) {
 
   studyAllBtn.addEventListener('click', () => {
     // Clear studyStart to indicate full study set
-    writeCollState({ studyStart: null });
+    writeCollState({
+      studyStart: null,
+      studyIndices: null,
+      studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }),
+      skipLearned: null,
+      focusOnly: null,
+    });
     updateStudyLabel();
     markStudyRows();
   });
@@ -117,33 +308,81 @@ export function renderData({ store }) {
     }
     const saved = readCollState();
     const n = Array.isArray(coll.entries) ? coll.entries.length : 0;
+    const visibleCount = getVisibleOriginalIndices().length;
     if (n === 0) {
       studyLabel.textContent = '';
       return;
     }
-    if (saved && typeof saved.studyStart === 'number') {
+    if (saved && Array.isArray(saved.studyIndices)) {
+      const flags = [
+        focusOnly ? 'focus' : null,
+        skipLearned ? 'skip learned' : null,
+      ].filter(Boolean);
+      const suffix = flags.length ? ` • ${flags.join(', ')}` : '';
+      studyLabel.textContent = `Study: ${saved.studyIndices.length} selected${suffix}`;
+    } else if (saved && typeof saved.studyStart === 'number') {
       studyLabel.textContent = `Study start: ${saved.studyStart} (10)`;
     } else {
-      studyLabel.textContent = 'Study: All';
+      const flags = [
+        focusOnly ? 'focus' : null,
+        skipLearned ? 'skip learned' : null,
+      ].filter(Boolean);
+      const suffix = flags.length ? ` • ${flags.join(', ')}` : '';
+      if (flags.length) {
+        studyLabel.textContent = `Study: All (${visibleCount}/${n})${suffix}`;
+      } else {
+        studyLabel.textContent = 'Study: All';
+      }
     }
   }
 
-  const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
-  const entries = Array.isArray(active.entries) ? active.entries : [];
-
   // Build table headers from fields
-  const headers = fields.map(f => f.label || f.key);
+  const headers = [{ key: 'status', label: '' }, ...fields.map(f => f.label || f.key)];
 
-  // Build table rows from entries
-  const rows = entries.map(entry => {
-    return fields.map(f => entry[f.key] ?? '');
-  });
+  function renderTable() {
+    const visibleIdxs = getVisibleOriginalIndices();
+    rowToOriginalIndex = visibleIdxs.slice();
+    const visibleEntries = visibleIdxs.map(i => allEntries[i]);
 
-  const table = createTable({
-    headers,
-    rows,
-    id: 'data-table'
-  });
+    const rows = visibleEntries.map(entry => {
+      const v = getEntryKanjiValue(entry);
+      const learned = (v && typeof store.isKanjiLearned === 'function') ? store.isKanjiLearned(v) : false;
+      const focus = (v && typeof store.isKanjiFocus === 'function') ? store.isKanjiFocus(v) : false;
+
+      const icon = document.createElement('span');
+      icon.className = 'kanji-status-icon';
+      if (learned) {
+        icon.textContent = '✓';
+        icon.classList.add('learned');
+        icon.title = 'Learned';
+      } else if (focus) {
+        icon.textContent = '🎯';
+        icon.classList.add('focus');
+        icon.title = 'More practice';
+      } else {
+        icon.textContent = '';
+        icon.title = '';
+      }
+
+      return [icon, ...fields.map(f => entry[f.key] ?? '')];
+    });
+
+    const tbl = createTable({ headers, rows, id: 'data-table' });
+    tableMount.innerHTML = '';
+    tableMount.append(tbl);
+
+    // Update corner caption if present.
+    try {
+      const corner = root.querySelector('#data-card .card-corner-caption');
+      if (corner) {
+        const total = allEntries.length;
+        const visible = visibleIdxs.length;
+        corner.textContent = (skipLearned || focusOnly) ? `${visible}/${total} Entries` : `${total} Entries`;
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
 
   // Highlight rows that are part of the current study subset
   function markStudyRows() {
@@ -152,7 +391,9 @@ export function renderData({ store }) {
     const collState = (typeof store.loadCollectionState === 'function') ? store.loadCollectionState(coll.key) : (store.loadKanjiUIState ? store.loadKanjiUIState() : null);
     const n = Array.isArray(coll.entries) ? coll.entries.length : 0;
     let subsetIndices = null;
-    if (collState && typeof collState.studyStart === 'number') {
+    if (collState && Array.isArray(collState.studyIndices)) {
+      subsetIndices = new Set(collState.studyIndices.map(i => Number(i)).filter(Number.isFinite));
+    } else if (collState && typeof collState.studyStart === 'number') {
       subsetIndices = new Set();
       for (let i = 0; i < 10; i++) subsetIndices.add((collState.studyStart + i) % n);
     } else if (collState && collState.studyStart === null) {
@@ -160,22 +401,54 @@ export function renderData({ store }) {
       subsetIndices = new Set(Array.from({ length: n }, (_, i) => i));
     }
 
-    const wrapperEl = table;
+    const wrapperEl = tableMount;
     const tbl = wrapperEl.querySelector('table');
     if (!tbl) return;
     const tbody = tbl.querySelector('tbody');
     if (!tbody) return;
     Array.from(tbody.querySelectorAll('tr')).forEach((tr, rowIndex) => {
+      // Update learned/focus icon in the leftmost column.
+      try {
+        const originalIndex = rowToOriginalIndex[rowIndex];
+        const entry = (typeof originalIndex === 'number') ? allEntries[originalIndex] : null;
+        const v = getEntryKanjiValue(entry);
+        const learned = (v && typeof store.isKanjiLearned === 'function') ? store.isKanjiLearned(v) : false;
+        const focus = (v && typeof store.isKanjiFocus === 'function') ? store.isKanjiFocus(v) : false;
+
+        const firstCell = tr.querySelector('td');
+        const icon = firstCell ? firstCell.querySelector('.kanji-status-icon') : null;
+        if (icon) {
+          icon.classList.remove('learned', 'focus');
+          if (learned) {
+            icon.textContent = '✓';
+            icon.classList.add('learned');
+            icon.title = 'Learned';
+          } else if (focus) {
+            icon.textContent = '🎯';
+            icon.classList.add('focus');
+            icon.title = 'More practice';
+          } else {
+            icon.textContent = '';
+            icon.title = '';
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+
       if (!subsetIndices) {
         tr.classList.remove('in-study');
         return;
       }
-      if (subsetIndices.has(rowIndex)) tr.classList.add('in-study');
+      const originalIndex = rowToOriginalIndex[rowIndex];
+      if (subsetIndices.has(originalIndex)) tr.classList.add('in-study');
       else tr.classList.remove('in-study');
     });
   }
 
   // initial label + marking
+  updateFilterButtons();
+  renderTable();
   updateStudyLabel();
   markStudyRows();
 
@@ -185,6 +458,22 @@ export function renderData({ store }) {
     try {
       unsub = store.subscribe(() => {
         // update label and highlighting when collection/session state changes
+        try {
+          const saved = readCollState();
+          if (typeof saved?.studyFilter === 'string') {
+            const parsed = parseStudyFilter(saved.studyFilter);
+            skipLearned = !!parsed.skipLearned;
+            focusOnly = !!parsed.focusOnly;
+          } else {
+            skipLearned = !!saved?.skipLearned;
+            focusOnly = !!saved?.focusOnly;
+          }
+        } catch (e) {
+          // ignore
+        }
+        updateFilterButtons();
+        pruneStudyIndicesToFilters();
+        renderTable();
         updateStudyLabel();
         markStudyRows();
       });
@@ -247,8 +536,8 @@ export function renderData({ store }) {
 
   const dataCard = card({
     id: 'data-card',
-    cornerCaption: `${entries.length} Entries`,
-    children: [wrapper, table]
+    cornerCaption: `${allEntries.length} Entries`,
+    children: [wrapper, tableMount]
   });
 
   // Show the full path to the currently displayed collection file.

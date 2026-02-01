@@ -30,17 +30,54 @@ export function buildStudyWindow(originalEntries, studyStart, windowSize = 10) {
   return window;
 }
 
+function normalizeStudyIndices(indices, n) {
+  if (!Array.isArray(indices) || n <= 0) return null;
+  const out = [];
+  const seen = new Set();
+  for (const raw of indices) {
+    const i = Number(raw);
+    if (!Number.isFinite(i)) continue;
+    const idx = Math.trunc(i);
+    if (idx < 0 || idx >= n) continue;
+    if (seen.has(idx)) continue;
+    seen.add(idx);
+    out.push(idx);
+  }
+  return out;
+}
+
+function buildStudyWindowIndices(n, studyStart, windowSize) {
+  if (n <= 0) return [];
+  if (typeof studyStart !== 'number' || isNaN(studyStart)) {
+    return Array.from({ length: n }, (_, i) => i);
+  }
+  const out = [];
+  for (let i = 0; i < windowSize; i++) {
+    out.push((studyStart + i) % n);
+  }
+  return out;
+}
+
 // Given original entries and a collection-state object (may contain order_hash_int and studyStart),
 // return the view that apps should render: entries array and metadata.
 export function getCollectionView(originalEntries, collState = {}, opts = { windowSize: 10 }) {
+  const n = Array.isArray(originalEntries) ? originalEntries.length : 0;
   const studyStart = (collState && typeof collState.studyStart === 'number') ? collState.studyStart : null;
-  const baseEntries = (studyStart !== null) ? buildStudyWindow(originalEntries, studyStart, opts.windowSize) : (Array.isArray(originalEntries) ? originalEntries.slice() : []);
+
+  // If an explicit removable subset is provided, prefer it.
+  const explicit = normalizeStudyIndices(collState?.studyIndices, n);
+  const baseIndices = explicit !== null
+    ? explicit
+    : ((studyStart !== null) ? buildStudyWindowIndices(n, studyStart, opts.windowSize) : Array.from({ length: n }, (_, i) => i));
+
+  const baseEntries = baseIndices.map(i => originalEntries[i]).filter(Boolean);
   const m = baseEntries.length;
   const orderHashInt = (collState && typeof collState.order_hash_int === 'number') ? collState.order_hash_int : null;
   if (orderHashInt !== null && m > 0) {
     const perm = seededPermutation(m, orderHashInt);
     const entries = perm.map(i => baseEntries[i]);
-    return { entries, isShuffled: true, order_hash_int: orderHashInt, studyStart };
+    const indices = perm.map(i => baseIndices[i]);
+    return { entries, indices, isShuffled: true, order_hash_int: orderHashInt, studyStart, studyIndices: explicit };
   }
-  return { entries: baseEntries, isShuffled: false, order_hash_int: null, studyStart };
+  return { entries: baseEntries, indices: baseIndices.slice(), isShuffled: false, order_hash_int: null, studyStart, studyIndices: explicit };
 }
