@@ -4,14 +4,17 @@ function clampNumber(value, { min, max, fallback }) {
   return Math.min(max, Math.max(min, n));
 }
 
+let voiceSettingsGetter = null;
+
+// Allow the app shell/store to provide voice settings without this module
+// reaching into storage directly.
+export function setVoiceSettingsGetter(getter) {
+  voiceSettingsGetter = (typeof getter === 'function') ? getter : null;
+}
+
 function loadPersistedVoiceSettings() {
-  // Read from the shared session UI state written by the store.
-  // Kept local to this module so callers don't need direct store access.
   try {
-    const raw = sessionStorage.getItem('studyUIState');
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    const v = parsed?.shell?.voice;
+    const v = voiceSettingsGetter ? voiceSettingsGetter() : null;
     return (v && typeof v === 'object') ? v : null;
   } catch (e) {
     return null;

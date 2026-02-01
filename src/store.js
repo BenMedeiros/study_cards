@@ -1,6 +1,134 @@
 import { nowIso, uuid } from './utils/helpers.js';
 
 export function createStore() {
+  // Persistent UI state (previously stored in sessionStorage under `studyUIState`).
+  // Kept in-memory for fast synchronous reads; flushed to durable storage async.
+  const PERSIST_KEY = 'studyUIState';
+
+  // IndexedDB-backed persistence (with localStorage fallback).
+  // Store schema:
+  // - kv: { key: 'shell'|'apps', value: object }
+  // - collections: { id: '<collectionId>', value: object }
+  let persistenceReady = false;
+  let idbAvailable = false;
+  let idbBroken = false;
+
+  // In-memory UI state cache. Apps read/write through store methods.
+  const uiState = {
+    shell: {},
+    apps: {},
+    collections: {},
+  };
+
+  let flushTimer = null;
+  let flushInFlight = null;
+  let dirtyShell = false;
+  let dirtyApps = false;
+  const dirtyCollections = new Set();
+
+  async function ensurePersistence() {
+    if (persistenceReady) return;
+    // Dynamic import so store still loads in environments without IndexedDB.
+    try {
+      const mod = await import('./utils/idb.js');
+      idbAvailable = !!mod?.isIndexedDBAvailable?.();
+      if (idbAvailable) {
+        await mod.openStudyDb().catch((e) => {
+          idbBroken = true;
+          console.warn('[Store] IndexedDB unavailable, falling back to localStorage', e);
+        });
+      }
+    } catch (e) {
+      idbAvailable = false;
+      idbBroken = true;
+    }
+    persistenceReady = true;
+  }
+
+  function loadFromLocalStorageFallback() {
+    try {
+      const raw = localStorage.getItem(PERSIST_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return (parsed && typeof parsed === 'object') ? parsed : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveToLocalStorageFallback(obj) {
+    try {
+      localStorage.setItem(PERSIST_KEY, JSON.stringify(obj));
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  function snapshotUiState() {
+    // Produce a plain object for persistence/debugging.
+    return {
+      shell: uiState.shell || {},
+      collections: uiState.collections || {},
+      apps: uiState.apps || {},
+    };
+  }
+
+  function scheduleFlush({ immediate = false } = {}) {
+    // Debounce frequent updates (e.g. currentIndex changes).
+    if (flushTimer) {
+      clearTimeout(flushTimer);
+      flushTimer = null;
+    }
+    const delay = immediate ? 0 : 800;
+    flushTimer = setTimeout(() => {
+      flushTimer = null;
+      flushPersistedState();
+    }, delay);
+  }
+
+  async function flushPersistedState() {
+    if (flushInFlight) return flushInFlight;
+
+    flushInFlight = (async () => {
+      const doShell = dirtyShell;
+      const doApps = dirtyApps;
+      const colls = Array.from(dirtyCollections);
+
+      // Clear dirty flags optimistically; if persistence fails we will fall back.
+      dirtyShell = false;
+      dirtyApps = false;
+      dirtyCollections.clear();
+
+      await ensurePersistence();
+
+      // IndexedDB path (preferred)
+      if (idbAvailable && !idbBroken) {
+        try {
+          const { idbPut } = await import('./utils/idb.js');
+          const puts = [];
+          if (doShell) puts.push(idbPut('kv', { key: 'shell', value: uiState.shell || {} }));
+          if (doApps) puts.push(idbPut('kv', { key: 'apps', value: uiState.apps || {} }));
+          for (const id of colls) {
+            puts.push(idbPut('collections', { id, value: uiState.collections?.[id] || {} }));
+          }
+          if (puts.length) await Promise.all(puts);
+          return;
+        } catch (e) {
+          idbBroken = true;
+          console.warn('[Store] IndexedDB write failed, falling back to localStorage', e);
+        }
+      }
+
+      // Fallback: store full snapshot in localStorage.
+      // This is less efficient but keeps data durable if IDB is unavailable.
+      saveToLocalStorageFallback(snapshotUiState());
+    })().finally(() => {
+      flushInFlight = null;
+    });
+
+    return flushInFlight;
+  }
+
   const subs = new Set();
 
   const state = {
@@ -9,7 +137,7 @@ export function createStore() {
     activeCollectionId: null,
     // Folder-browsing tree derived from collections/index.json
     collectionTree: null,
-    // Ephemeral UI: do not persist this to sessionStorage
+    // Ephemeral UI: do not persist this to durable storage
     collectionBrowserPath: null,
     // available collection paths discovered from index.json (not yet loaded)
     _availableCollectionPaths: [],
@@ -58,41 +186,105 @@ export function createStore() {
     return state.collections.find((c) => c.key === state.activeCollectionId) ?? null;
   }
 
+  function syncHashCollectionParam(collectionId) {
+    // Only update the URL if a hash route is already present. This prevents
+    // initialization from creating a default '#/?collection=...' hash which
+    // would block restoring the persisted lastRoute.
+    if (!location.hash) return;
+
+    const raw = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
+    const path = raw.startsWith('/') ? raw : '/';
+    const [pathname, search = ''] = path.split('?');
+    const query = new URLSearchParams(search);
+
+    const id = (typeof collectionId === 'string' && collectionId) ? collectionId : null;
+    if (id) query.set('collection', id);
+    else query.delete('collection');
+
+    const nextSearch = query.toString();
+    const newHash = nextSearch ? `#${pathname}?${nextSearch}` : `#${pathname}`;
+    if (location.hash !== newHash) {
+      history.replaceState(null, '', newHash);
+    }
+  }
+
+  function getLastRoute() {
+    try {
+      const v = uiState?.shell?.lastRoute;
+      return (typeof v === 'string' && v.trim()) ? v : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function setLastRoute(routeOrPath) {
+    try {
+      let path = null;
+      if (routeOrPath && typeof routeOrPath === 'object') {
+        const pathname = typeof routeOrPath.pathname === 'string' ? routeOrPath.pathname : '/';
+        const query = routeOrPath.query;
+        const search = (query && typeof query.toString === 'function') ? query.toString() : '';
+        path = search ? `${pathname}?${search}` : pathname;
+      } else {
+        path = String(routeOrPath || '').trim();
+      }
+
+      if (!path) return;
+      if (!path.startsWith('/')) path = `/${path.replace(/^#+/, '')}`;
+
+      uiState.shell = uiState.shell || {};
+      if (uiState.shell.lastRoute === path) return;
+      uiState.shell.lastRoute = path;
+      dirtyShell = true;
+      scheduleFlush();
+    } catch (e) {
+      // ignore
+    }
+  }
+
   async function setActiveCollectionId(id) {
-    if (state.activeCollectionId === id) return;
+    const nextId = id || null;
+    const same = state.activeCollectionId === nextId;
+
     // If activating a collection that hasn't been loaded yet, load it first.
-    if (id) {
-      const alreadyLoaded = state.collections.some(c => c.key === id);
+    if (!same && nextId) {
+      const alreadyLoaded = state.collections.some(c => c.key === nextId);
       if (!alreadyLoaded) {
         try {
-          await loadCollection(id);
+          await loadCollection(nextId);
         } catch (err) {
-          console.warn(`[Store] Failed to load collection ${id}: ${err.message}`);
+          console.warn(`[Store] Failed to load collection ${nextId}: ${err.message}`);
           return; // do not switch active collection if load failed
         }
       }
     }
-    state.activeCollectionId = id;
-    
-    // Update URL with new collection
-    const currentHash = location.hash || '#/';
-    const [path] = currentHash.slice(1).split('?');
-    const newHash = id ? `#${path}?collection=${encodeURIComponent(id)}` : `#${path}`;
-    if (location.hash !== newHash) {
-      history.replaceState(null, '', newHash);
+
+    if (!same) {
+      state.activeCollectionId = nextId;
+    }
+
+    // Keep the current URL in sync (preserving other query params).
+    try {
+      syncHashCollectionParam(nextId);
+    } catch (e) {
+      // ignore
     }
     
-    // Persist shell-level UI state (active collection) to the shared session map
+    // Persist shell-level UI state (active collection) via the durable UI state cache.
     try {
-      const session = loadSessionState();
-      session.shell = session.shell || {};
-      session.shell.activeCollectionId = state.activeCollectionId;
-      saveSessionState(session);
+      uiState.shell = uiState.shell || {};
+      uiState.shell.activeCollectionId = state.activeCollectionId;
+      // If a route exists, keep lastRoute aligned with the current hash.
+      if (location.hash) {
+        uiState.shell.lastRoute = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
+      }
+      dirtyShell = true;
+      scheduleFlush();
     } catch (e) {
       // ignore
     }
 
-    notify();
+    if (!same) notify();
   }
 
   function normalizeFolderPath(folderPath) {
@@ -793,15 +985,47 @@ export function createStore() {
 
   async function initialize() {
     try {
+      // Load persisted UI state (durable across browser restarts).
+      await ensurePersistence();
+      let loaded = null;
+      if (idbAvailable && !idbBroken) {
+        try {
+          const { idbGet, idbGetAll } = await import('./utils/idb.js');
+          const shellRec = await idbGet('kv', 'shell');
+          const appsRec = await idbGet('kv', 'apps');
+          const collRecs = await idbGetAll('collections');
+          loaded = {
+            shell: (shellRec && shellRec.value && typeof shellRec.value === 'object') ? shellRec.value : {},
+            apps: (appsRec && appsRec.value && typeof appsRec.value === 'object') ? appsRec.value : {},
+            collections: {},
+          };
+          for (const r of (Array.isArray(collRecs) ? collRecs : [])) {
+            if (!r || typeof r !== 'object') continue;
+            const id = r.id;
+            if (!id) continue;
+            const v = r.value;
+            if (v && typeof v === 'object') loaded.collections[id] = v;
+          }
+        } catch (e) {
+          idbBroken = true;
+          console.warn('[Store] IndexedDB read failed, falling back to localStorage', e);
+        }
+      }
+      if (!loaded) {
+        loaded = loadFromLocalStorageFallback() || { shell: {}, apps: {}, collections: {} };
+      }
+      uiState.shell = (loaded.shell && typeof loaded.shell === 'object') ? loaded.shell : {};
+      uiState.apps = (loaded.apps && typeof loaded.apps === 'object') ? loaded.apps : {};
+      uiState.collections = (loaded.collections && typeof loaded.collections === 'object') ? loaded.collections : {};
+
       const paths = await loadSeedCollections();
       // Do not eagerly load collection JSONs; start with none loaded.
       state.collections = [];
 
-      // Restore from session if possible (before defaulting to first)
+      // Restore from persisted UI state if possible (before defaulting to first)
       let restored = null;
       try {
-        const session = loadSessionState();
-        restored = session?.shell?.activeCollectionId || null;
+        restored = uiState?.shell?.activeCollectionId || null;
       } catch (e) {
         restored = null;
       }
@@ -823,6 +1047,20 @@ export function createStore() {
     }
 
     notify();
+
+    // Flush any outstanding persistence work when the tab is backgrounded/closed.
+    try {
+      window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          scheduleFlush({ immediate: true });
+        }
+      });
+      window.addEventListener('pagehide', () => {
+        scheduleFlush({ immediate: true });
+      });
+    } catch (e) {
+      // ignore
+    }
   }
 
   function syncCollectionFromURL(route) {
@@ -834,62 +1072,13 @@ export function createStore() {
     }
   }
 
-  // UI state persistence helpers (delegated sessionStorage access)
-  // Consolidated session UI state under one top-level key so all apps share one site map.
-  const SESSION_KEY = 'studyUIState';
-
-  // Session logging: log objects directly (no custom pretty-printer)
-
-  function loadSessionState() {
-    try {
-      const raw = sessionStorage.getItem(SESSION_KEY);
-      if (!raw) return {};
-      try {
-        const parsed = JSON.parse(raw);
-        console.debug('[Store] loadSessionState', parsed);
-        return parsed || {};
-      } catch (e) {
-        console.debug('[Store] loadSessionState - invalid JSON', raw);
-        return {};
-      }
-    } catch (e) {
-      return {};
-    }
-  }
-
-  // Internal read that does not log. Use this for save/update flows to avoid noisy load logs.
-  function readSessionState() {
-    try {
-      const raw = sessionStorage.getItem(SESSION_KEY);
-      if (!raw) return {};
-      try {
-        const parsed = JSON.parse(raw);
-        return parsed || {};
-      } catch (e) {
-        return {};
-      }
-    } catch (e) {
-      return {};
-    }
-  }
-
-  function saveSessionState(obj) {
-    try {
-      const raw = JSON.stringify(obj);
-      sessionStorage.setItem(SESSION_KEY, raw);
-      console.debug('[Store] saveSessionState', obj);
-    } catch (e) {
-      // ignore
-    }
-  }
+  // UI state persistence: in-memory cache + async flush to durable storage.
+  // All store getters remain synchronous by reading from `uiState`.
 
   function loadKanjiUIState() {
-    const session = loadSessionState();
-    // app-level kanjiStudyCard settings moved under session.apps.kanjistudycard
-    const app = (session.apps && session.apps.kanjistudycard) ? session.apps.kanjistudycard : {};
-    // determine active collection id (prefer in-memory state)
-    const collId = state.activeCollectionId || (session.shell && session.shell.activeCollectionId) || null;
-    const collState = (session.collections && collId && session.collections[collId]) ? session.collections[collId] : {};
+    const app = (uiState.apps && uiState.apps.kanjistudycard) ? uiState.apps.kanjistudycard : {};
+    const collId = state.activeCollectionId || uiState?.shell?.activeCollectionId || null;
+    const collState = (uiState.collections && collId && uiState.collections[collId]) ? uiState.collections[collId] : {};
     return {
       // global UI prefs (app-scoped)
       fontWeight: app.fontWeight,
@@ -906,40 +1095,37 @@ export function createStore() {
   }
 
   function saveKanjiUIState(stateObj) {
-    const session = readSessionState();
-    // App-scoped UI settings for kanjiStudyCard go under session.apps.kanjistudycard
-    session.apps = session.apps || {};
-    session.apps.kanjistudycard = session.apps.kanjistudycard || {};
-    const app = session.apps.kanjistudycard;
+    uiState.apps = uiState.apps || {};
+    uiState.apps.kanjistudycard = uiState.apps.kanjistudycard || {};
+    const app = uiState.apps.kanjistudycard;
     // Persist global UI prefs (app-scoped)
     app.fontWeight = stateObj.fontWeight;
     app.defaultViewMode = stateObj.defaultViewMode;
     app.autoSpeak = stateObj.autoSpeak;
     // Persist per-collection state under session.collections
-    const collId = state.activeCollectionId || (session.shell && session.shell.activeCollectionId) || null;
+    const collId = state.activeCollectionId || uiState?.shell?.activeCollectionId || null;
     if (collId) {
-      session.collections = session.collections || {};
-      session.collections[collId] = session.collections[collId] || {};
+      uiState.collections = uiState.collections || {};
+      uiState.collections[collId] = uiState.collections[collId] || {};
       // Persist only compact integer seed for deterministic shuffle
-      session.collections[collId].order_hash_int = (typeof stateObj.order_hash_int === 'number') ? stateObj.order_hash_int : null;
+      uiState.collections[collId].order_hash_int = (typeof stateObj.order_hash_int === 'number') ? stateObj.order_hash_int : null;
       // Persist study window start index when provided
       if (typeof stateObj.studyStart === 'number') {
-        session.collections[collId].studyStart = stateObj.studyStart;
+        uiState.collections[collId].studyStart = stateObj.studyStart;
       }
-      session.collections[collId].currentIndex = stateObj.currentIndex;
-      session.collections[collId].isShuffled = !!stateObj.isShuffled;
+      uiState.collections[collId].currentIndex = stateObj.currentIndex;
+      uiState.collections[collId].isShuffled = !!stateObj.isShuffled;
+      dirtyCollections.add(collId);
     }
-    // Do not store per-collection state at the top-level anymore;
-    // per-collection values live only under `kanjiStudyCard.collections`.
-    saveSessionState(session);
+    dirtyApps = true;
+    scheduleFlush();
   }
 
   // Helpers to read/write collection-scoped state directly
   function loadCollectionState(collId) {
     try {
-      const session = readSessionState();
-      if (!session.collections) return null;
-      return session.collections[collId] || null;
+      if (!uiState.collections) return null;
+      return uiState.collections[collId] || null;
     } catch (e) {
       return null;
     }
@@ -947,11 +1133,11 @@ export function createStore() {
 
   function saveCollectionState(collId, patch) {
     try {
-      const session = readSessionState();
-      session.collections = session.collections || {};
-      const prev = session.collections[collId] || {};
-      session.collections[collId] = { ...prev, ...(patch || {}) };
-      saveSessionState(session);
+      uiState.collections = uiState.collections || {};
+      const prev = uiState.collections[collId] || {};
+      uiState.collections[collId] = { ...prev, ...(patch || {}) };
+      dirtyCollections.add(collId);
+      scheduleFlush();
     } catch (e) {
       // ignore
     }
@@ -960,8 +1146,7 @@ export function createStore() {
 
   function getShellVoiceSettings() {
     try {
-      const session = readSessionState();
-      const v = session?.shell?.voice;
+      const v = uiState?.shell?.voice;
       return (v && typeof v === 'object') ? { ...v } : null;
     } catch (e) {
       return null;
@@ -970,9 +1155,8 @@ export function createStore() {
 
   function setShellVoiceSettings(patch) {
     try {
-      const session = readSessionState();
-      session.shell = session.shell || {};
-      const prev = (session.shell.voice && typeof session.shell.voice === 'object') ? session.shell.voice : {};
+      uiState.shell = uiState.shell || {};
+      const prev = (uiState.shell.voice && typeof uiState.shell.voice === 'object') ? uiState.shell.voice : {};
 
       const patchObj = (patch && typeof patch === 'object') ? patch : {};
       const next = { ...prev, ...patchObj };
@@ -995,8 +1179,9 @@ export function createStore() {
         if (obj.voiceName === '') obj.voiceName = null;
       }
 
-      session.shell.voice = next;
-      saveSessionState(session);
+      uiState.shell.voice = next;
+      dirtyShell = true;
+      scheduleFlush();
     } catch (e) {
       // ignore
     }
@@ -1009,6 +1194,8 @@ export function createStore() {
     getAvailableCollections,
     getActiveCollectionId,
     getActiveCollection,
+    getLastRoute,
+    setLastRoute,
     setActiveCollectionId,
     syncCollectionFromURL,
     listCollectionDir,
