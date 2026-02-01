@@ -23,61 +23,61 @@
       "entries": null
     },
     {
-      "path": "japanese/nouns/_grouped/compound-morpheme__katakana.json",
+      "path": "japanese/nouns/compound-morpheme__katakana.json",
       "name": "Japanese (compound-morpheme) (katakana)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='compound-morpheme' and orthography='katakana'.",
       "entries": 1
     },
     {
-      "path": "japanese/nouns/_grouped/compound-morpheme.json",
+      "path": "japanese/nouns/compound-morpheme.json",
       "name": "Japanese (compound-morpheme)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='compound-morpheme'.",
       "entries": 11
     },
     {
-      "path": "japanese/nouns/_grouped/descriptive-phrase.json",
+      "path": "japanese/nouns/descriptive-phrase.json",
       "name": "Japanese (descriptive-phrase)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='descriptive-phrase'.",
       "entries": 1
     },
     {
-      "path": "japanese/nouns/_grouped/expression__katakana.json",
+      "path": "japanese/nouns/expression__katakana.json",
       "name": "Japanese (expression) (katakana)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='expression' and orthography='katakana'.",
       "entries": 2
     },
     {
-      "path": "japanese/nouns/_grouped/i-adjective.json",
+      "path": "japanese/nouns/i-adjective.json",
       "name": "Japanese (i-adjective)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='i-adjective'.",
       "entries": 2
     },
     {
-      "path": "japanese/nouns/_grouped/kanji__katakana.json",
+      "path": "japanese/nouns/kanji__katakana.json",
       "name": "Japanese (kanji) (katakana)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='kanji' and orthography='katakana'.",
       "entries": 28
     },
     {
-      "path": "japanese/nouns/_grouped/na-adjective.json",
+      "path": "japanese/nouns/na-adjective.json",
       "name": "Japanese (na-adjective)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='na-adjective'.",
-      "entries": 4
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='na-adjective'. Expanded with common N4/N3 な形容詞 and example sentences.",
+      "entries": 25
     },
     {
-      "path": "japanese/nouns/_grouped/noun__katakana.json",
+      "path": "japanese/nouns/noun__katakana.json",
       "name": "Japanese (noun) (katakana)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='noun' and orthography='katakana'.",
       "entries": 122
     },
     {
-      "path": "japanese/nouns/_grouped/noun.json",
+      "path": "japanese/nouns/noun.json",
       "name": "Japanese (noun)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='noun'.",
       "entries": 392
     },
     {
-      "path": "japanese/nouns/_grouped/standalone-noun.json",
+      "path": "japanese/nouns/standalone-noun.json",
       "name": "Japanese (standalone-noun)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='standalone-noun'.",
       "entries": 15
@@ -128,7 +128,7 @@
       "path": "japanese/verbs/godan-verbs/godan_verbs_bu.json",
       "name": "Japanese N5 Godan Verbs (bu)",
       "description": null,
-      "entries": 0
+      "entries": 7
     },
     {
       "path": "japanese/verbs/godan-verbs/godan_verbs_gu.json",
