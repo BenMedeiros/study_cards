@@ -23,10 +23,7 @@ Each collection JSON should follow this shape:
 - `entries`: Array of objects representing cards/rows. Each entry may override values from `defaults`.
 
 Validation
-- **Validator script:** `_collections/scripts/validate_collections.js` scans `collections/` and warns about any entry properties not present in the nearest `_metadata.json`'s `fields` array. Undefined properties are permitted but will be reported as warnings to help keep collections consistent.
-- **Usage:**
-  - Run: `node _collections/scripts/validate_collections.js` from the repo root.
-  - Options: `--root <path>` to point at a different collections folder, `--only <subpath>` to validate a single collection subfolder.
+- A validator utility used to live under `_collections/scripts/validate_collections.js`, but it is no longer present after scripts were moved to the repo root.
 
 Best practices
 - **Defaults vs entries:** Use `defaults` for repeated primitive values (strings/numbers/booleans). Avoid storing complex nested objects in `defaults`.

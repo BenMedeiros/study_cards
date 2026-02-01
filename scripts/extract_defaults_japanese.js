@@ -1,7 +1,19 @@
+/**
+ * Extracts per-file default field values for Japanese collection JSON files.
+ *
+ * Walks `collections/japanese/…/*.json` (recursive), finds entry fields whose values are identical
+ * across all entries, moves them into top-level `defaults`, and removes those keys
+ * from each entry to reduce repetition.
+ *
+ * Side effects: rewrites the source JSON files in-place (and normalizes top-level key
+ * order to `metadata`, `defaults`, `entries`, then any remaining keys).
+ *
+ * Usage: `node scripts/extract_defaults_japanese.js`
+ */
 const fs = require('fs');
 const path = require('path');
 
-const japaneseDir = path.join(__dirname, '..', '..', 'collections', 'japanese');
+const japaneseDir = path.join(__dirname, '..', 'collections', 'japanese');
 
 function walkDir(dir, cb) {
   const items = fs.readdirSync(dir, { withFileTypes: true });

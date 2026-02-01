@@ -1,7 +1,19 @@
+/**
+ * Rebuilds the top-level collections index used by the app.
+ *
+ * Walks `collections/**.json`, builds `collections/index.json` with:
+ * - `folderMetadata`: map of top-level folder -> its `_metadata.json` path
+ * - `collections`: list of collection files with name/description/entry counts
+ *
+ * If multiple collections in the same folder share the same `metadata.name`, this
+ * script disambiguates them by rewriting `metadata.name` in-place.
+ *
+ * Usage: `node scripts/rebuild_index.js`
+ */
 const fs = require('fs').promises;
 const path = require('path');
 
-const collectionsDir = path.resolve(__dirname, '..', '..', 'collections');
+const collectionsDir = path.resolve(__dirname, '..', 'collections');
 
 async function walk(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true });

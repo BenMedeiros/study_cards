@@ -31,10 +31,11 @@ Collections and metadata
 - When a collection sits inside a category folder, category metadata is merged into the collection at load time: category commonFields are prepended unless the collection overrides them.
 
 Collections tooling
-- Aggregation: `node _collections/scripts/aggregate_collections.js` writes aggregated JSON into `_collections/aggregates`.
-- Restore: `node _collections/scripts/restore_collections.js --input _collections/aggregates/<collection>.json [--dry-run] [--overwrite]` restores files into `collections/`.
-- Extraction: `node _collections/scripts/extract_defaults_japanese.js` extracts common entry fields into `defaults` for Japanese files.
-- Validation: `node _collections/scripts/validate_collections.js` validates entries against the nearest `_metadata.json` and warns for undefined properties.
+- Rebuild index: `node scripts/rebuild_index.js` regenerates `collections/index.json`.
+- Extraction: `node scripts/extract_defaults_japanese.js` extracts common entry fields into `defaults` for Japanese files.
+- Vocab aggregate: `node scripts/extract_japanese_vocab.js` writes `scripts/extract_japanese_vocab_output.json`.
+
+Note: older `_collections/scripts/*` utilities (aggregate/restore/validate) are no longer present after the scripts folder was moved to the repo root.
 
 Example collection shape
 ```

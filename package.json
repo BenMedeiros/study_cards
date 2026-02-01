@@ -5,9 +5,8 @@
   "scripts": {
     "dev": "npx http-server -p 3000 -c-1",
     "test": "echo \"No tests yet\"",
-    "collection_aggregate": "node _collections/scripts/aggregate_collections.js",
-    "build": "node _collections/scripts/rebuild_index.js",
-    "validate": "node _collections/scripts/validate_collections.js"
+    "build": "node scripts/rebuild_index.js",
+    "clean": "node scripts/extract_defaults_japanese.js"
   },
   "keywords": [],
   "author": "",

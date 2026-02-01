@@ -71,14 +71,8 @@
       "entries": 122
     },
     {
-      "path": "japanese/nouns/noun_updated.json",
-      "name": "Japanese (noun) (noun_updated)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='noun'.",
-      "entries": 392
-    },
-    {
       "path": "japanese/nouns/noun.json",
-      "name": "Japanese (noun) (noun)",
+      "name": "Japanese (noun) (noun_updated)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='noun'.",
       "entries": 392
     },
