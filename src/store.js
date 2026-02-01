@@ -18,6 +18,8 @@ export function createStore() {
   // Folder metadata helpers/storage used for lazy loads
   let folderMetadataMap = null;
   const metadataCache = {};
+  // Dedupe concurrent folder-metadata loads (folderPath -> Promise)
+  const pendingFolderMetadataLoads = new Map();
   // map of available collection path -> lightweight metadata from index.json
   let availableCollectionsMap = new Map();
   // Track in-flight collection fetch promises to avoid duplicate fetches
@@ -408,23 +410,36 @@ export function createStore() {
 
   async function loadInheritedFolderMetadata(folderPath, cache, folderMetadataMap) {
     const folder = normalizeFolderPath(folderPath);
-    if (folder in cache) return cache[folder];
+    if (Object.prototype.hasOwnProperty.call(cache, folder)) return cache[folder];
 
-    const direct = await tryLoadFolderMetadata(folder, folderMetadataMap);
-    if (direct) {
-      cache[folder] = direct;
-      return direct;
+    if (pendingFolderMetadataLoads.has(folder)) {
+      return pendingFolderMetadataLoads.get(folder);
     }
 
-    const parent = dirname(folder);
-    if (parent === folder) {
-      cache[folder] = null;
-      return null;
-    }
+    const p = (async () => {
+      const direct = await tryLoadFolderMetadata(folder, folderMetadataMap);
+      if (direct) {
+        cache[folder] = direct;
+        return direct;
+      }
 
-    const inherited = folder ? await loadInheritedFolderMetadata(parent, cache, folderMetadataMap) : null;
-    cache[folder] = inherited;
-    return inherited;
+      const parent = dirname(folder);
+      if (parent === folder) {
+        cache[folder] = null;
+        return null;
+      }
+
+      const inherited = folder ? await loadInheritedFolderMetadata(parent, cache, folderMetadataMap) : null;
+      cache[folder] = inherited;
+      return inherited;
+    })();
+
+    pendingFolderMetadataLoads.set(folder, p);
+    try {
+      return await p;
+    } finally {
+      pendingFolderMetadataLoads.delete(folder);
+    }
   }
 
   // Public helper: return the inherited folder metadata for a collection key or folder path.
