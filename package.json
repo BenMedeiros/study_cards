@@ -6,7 +6,8 @@
     "dev": "npx http-server -p 3000 -c-1",
     "test": "echo \"No tests yet\"",
     "build": "node scripts/rebuild_index.js",
-    "clean": "node scripts/extract_defaults_japanese.js"
+    "clean": "node scripts/extract_defaults_japanese.js",
+    "rebuild:collectionSets": "node scripts/rebuild_collectionSets.js"
   },
   "keywords": [],
   "author": "",
