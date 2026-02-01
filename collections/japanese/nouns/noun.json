@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "name": "Japanese (noun)",
+    "name": "Japanese (noun) (noun_updated)",
     "description": "Auto-grouped entries from collections/japanese/nouns by type='noun'.",
-    "version": 1,
+    "version": 2,
     "sources": [
       "collections/japanese/nouns/200_nouns_part1.json",
       "collections/japanese/nouns/200_nouns_part2.json",
@@ -405,7 +405,8 @@
       "友",
       "曜日"
     ],
-    "kanjiCount": 388
+    "kanjiCount": 388,
+    "updatedForSchema": "fields_v2_with_orthography_and_type"
   },
   "defaults": {
     "type": "noun"
@@ -414,1962 +415,2354 @@
     {
       "kanji": "学校",
       "reading": "がっこう",
-      "meaning": "school"
+      "meaning": "school",
+      "orthography": "kanji"
     },
     {
       "kanji": "学生",
       "reading": "がくせい",
-      "meaning": "student"
+      "meaning": "student",
+      "orthography": "kanji"
     },
     {
       "kanji": "先生",
       "reading": "せんせい",
-      "meaning": "teacher; instructor"
+      "meaning": "teacher; instructor",
+      "orthography": "kanji"
     },
     {
       "kanji": "友達",
       "reading": "ともだち",
-      "meaning": "friend"
+      "meaning": "friend",
+      "orthography": "kanji"
     },
     {
       "kanji": "家族",
       "reading": "かぞく",
-      "meaning": "family"
+      "meaning": "family",
+      "orthography": "kanji"
     },
     {
       "kanji": "両親",
       "reading": "りょうしん",
-      "meaning": "parents"
+      "meaning": "parents",
+      "orthography": "kanji"
     },
     {
       "kanji": "母",
       "reading": "はは",
-      "meaning": "mother (my)"
+      "meaning": "mother (my)",
+      "orthography": "kanji"
     },
     {
       "kanji": "父",
       "reading": "ちち",
-      "meaning": "father (my)"
+      "meaning": "father (my)",
+      "orthography": "kanji"
     },
     {
       "kanji": "兄",
       "reading": "あに",
-      "meaning": "older brother (my)"
+      "meaning": "older brother (my)",
+      "orthography": "kanji"
     },
     {
       "kanji": "姉",
       "reading": "あね",
-      "meaning": "older sister (my)"
+      "meaning": "older sister (my)",
+      "orthography": "kanji"
     },
     {
       "kanji": "弟",
       "reading": "おとうと",
-      "meaning": "younger brother"
+      "meaning": "younger brother",
+      "orthography": "kanji"
     },
     {
       "kanji": "妹",
       "reading": "いもうと",
-      "meaning": "younger sister"
+      "meaning": "younger sister",
+      "orthography": "kanji"
     },
     {
       "kanji": "子ども",
       "reading": "こども",
-      "meaning": "child"
+      "meaning": "child",
+      "orthography": "both"
     },
     {
       "kanji": "大人",
       "reading": "おとな",
-      "meaning": "adult"
+      "meaning": "adult",
+      "orthography": "kanji"
     },
     {
       "kanji": "人",
       "reading": "ひと",
-      "meaning": "person"
+      "meaning": "person",
+      "orthography": "kanji"
     },
     {
       "kanji": "名前",
       "reading": "なまえ",
-      "meaning": "name"
+      "meaning": "name",
+      "orthography": "kanji"
     },
     {
       "kanji": "住所",
       "reading": "じゅうしょ",
-      "meaning": "address"
+      "meaning": "address",
+      "orthography": "kanji"
     },
     {
       "kanji": "国",
       "reading": "くに",
-      "meaning": "country"
+      "meaning": "country",
+      "orthography": "kanji"
     },
     {
       "kanji": "町",
       "reading": "まち",
-      "meaning": "town; city"
+      "meaning": "town; city",
+      "orthography": "kanji"
     },
     {
       "kanji": "村",
       "reading": "むら",
-      "meaning": "village"
+      "meaning": "village",
+      "orthography": "kanji"
     },
     {
       "kanji": "駅",
       "reading": "えき",
-      "meaning": "station"
+      "meaning": "station",
+      "orthography": "kanji"
     },
     {
       "kanji": "電車",
       "reading": "でんしゃ",
-      "meaning": "train"
+      "meaning": "train",
+      "orthography": "kanji"
     },
     {
       "kanji": "地下鉄",
       "reading": "ちかてつ",
-      "meaning": "subway"
+      "meaning": "subway",
+      "orthography": "kanji"
     },
     {
       "kanji": "車",
       "reading": "くるま",
-      "meaning": "car"
+      "meaning": "car",
+      "orthography": "kanji"
     },
     {
       "kanji": "自転車",
       "reading": "じてんしゃ",
-      "meaning": "bicycle"
+      "meaning": "bicycle",
+      "orthography": "kanji"
     },
     {
       "kanji": "道",
       "reading": "みち",
-      "meaning": "road; way"
+      "meaning": "road; way",
+      "orthography": "kanji"
     },
     {
       "kanji": "交差点",
       "reading": "こうさてん",
-      "meaning": "intersection"
+      "meaning": "intersection",
+      "orthography": "kanji"
     },
     {
       "kanji": "信号",
       "reading": "しんごう",
-      "meaning": "traffic light; signal"
+      "meaning": "traffic light; signal",
+      "orthography": "kanji"
     },
     {
       "kanji": "橋",
       "reading": "はし",
-      "meaning": "bridge"
+      "meaning": "bridge",
+      "orthography": "kanji"
     },
     {
       "kanji": "公園",
       "reading": "こうえん",
-      "meaning": "park"
+      "meaning": "park",
+      "orthography": "kanji"
     },
     {
       "kanji": "病院",
       "reading": "びょういん",
-      "meaning": "hospital"
+      "meaning": "hospital",
+      "orthography": "kanji"
     },
     {
       "kanji": "薬",
       "reading": "くすり",
-      "meaning": "medicine"
+      "meaning": "medicine",
+      "orthography": "kanji"
     },
     {
       "kanji": "医者",
       "reading": "いしゃ",
-      "meaning": "doctor"
+      "meaning": "doctor",
+      "orthography": "kanji"
     },
     {
       "kanji": "会社",
       "reading": "かいしゃ",
-      "meaning": "company"
+      "meaning": "company",
+      "orthography": "kanji"
     },
     {
       "kanji": "社員",
       "reading": "しゃいん",
-      "meaning": "employee"
+      "meaning": "employee",
+      "orthography": "kanji"
     },
     {
       "kanji": "仕事",
       "reading": "しごと",
-      "meaning": "work; job"
+      "meaning": "work; job",
+      "orthography": "kanji"
     },
     {
       "kanji": "会計",
       "reading": "かいけい",
-      "meaning": "bill; accounting"
+      "meaning": "bill; accounting",
+      "orthography": "kanji"
     },
     {
       "kanji": "店",
       "reading": "みせ",
-      "meaning": "shop; store"
+      "meaning": "shop; store",
+      "orthography": "kanji"
     },
     {
       "kanji": "銀行",
       "reading": "ぎんこう",
-      "meaning": "bank"
+      "meaning": "bank",
+      "orthography": "kanji"
     },
     {
       "kanji": "郵便局",
       "reading": "ゆうびんきょく",
-      "meaning": "post office"
+      "meaning": "post office",
+      "orthography": "kanji"
     },
     {
       "kanji": "図書館",
       "reading": "としょかん",
-      "meaning": "library"
+      "meaning": "library",
+      "orthography": "kanji"
     },
     {
       "kanji": "美術館",
       "reading": "びじゅつかん",
-      "meaning": "art museum"
+      "meaning": "art museum",
+      "orthography": "kanji"
     },
     {
       "kanji": "映画館",
       "reading": "えいがかん",
-      "meaning": "movie theater"
+      "meaning": "movie theater",
+      "orthography": "kanji"
     },
     {
       "kanji": "店員",
       "reading": "てんいん",
-      "meaning": "clerk; store staff"
+      "meaning": "clerk; store staff",
+      "orthography": "kanji"
     },
     {
       "kanji": "客",
       "reading": "きゃく",
-      "meaning": "customer; guest"
+      "meaning": "customer; guest",
+      "orthography": "kanji"
     },
     {
       "kanji": "お金",
       "reading": "おかね",
-      "meaning": "money"
+      "meaning": "money",
+      "orthography": "both"
     },
     {
       "kanji": "財布",
       "reading": "さいふ",
-      "meaning": "wallet"
+      "meaning": "wallet",
+      "orthography": "kanji"
     },
     {
       "kanji": "切符",
       "reading": "きっぷ",
-      "meaning": "ticket"
+      "meaning": "ticket",
+      "orthography": "kanji"
     },
     {
       "kanji": "予約",
       "reading": "よやく",
-      "meaning": "reservation"
+      "meaning": "reservation",
+      "orthography": "kanji"
     },
     {
       "kanji": "予定",
       "reading": "よてい",
-      "meaning": "plan; schedule"
+      "meaning": "plan; schedule",
+      "orthography": "kanji"
     },
     {
       "kanji": "時間",
       "reading": "じかん",
-      "meaning": "time; hour"
+      "meaning": "time; hour",
+      "orthography": "kanji"
     },
     {
       "kanji": "今日",
       "reading": "きょう",
-      "meaning": "today"
+      "meaning": "today",
+      "orthography": "kanji"
     },
     {
       "kanji": "明日",
       "reading": "あした",
-      "meaning": "tomorrow"
+      "meaning": "tomorrow",
+      "orthography": "kanji"
     },
     {
       "kanji": "昨日",
       "reading": "きのう",
-      "meaning": "yesterday"
+      "meaning": "yesterday",
+      "orthography": "kanji"
     },
     {
       "kanji": "今週",
       "reading": "こんしゅう",
-      "meaning": "this week"
+      "meaning": "this week",
+      "orthography": "kanji"
     },
     {
       "kanji": "来週",
       "reading": "らいしゅう",
-      "meaning": "next week"
+      "meaning": "next week",
+      "orthography": "kanji"
     },
     {
       "kanji": "先週",
       "reading": "せんしゅう",
-      "meaning": "last week"
+      "meaning": "last week",
+      "orthography": "kanji"
     },
     {
       "kanji": "今月",
       "reading": "こんげつ",
-      "meaning": "this month"
+      "meaning": "this month",
+      "orthography": "kanji"
     },
     {
       "kanji": "来月",
       "reading": "らいげつ",
-      "meaning": "next month"
+      "meaning": "next month",
+      "orthography": "kanji"
     },
     {
       "kanji": "去年",
       "reading": "きょねん",
-      "meaning": "last year"
+      "meaning": "last year",
+      "orthography": "kanji"
     },
     {
       "kanji": "今年",
       "reading": "ことし",
-      "meaning": "this year"
+      "meaning": "this year",
+      "orthography": "kanji"
     },
     {
       "kanji": "来年",
       "reading": "らいねん",
-      "meaning": "next year"
+      "meaning": "next year",
+      "orthography": "kanji"
     },
     {
       "kanji": "朝",
       "reading": "あさ",
-      "meaning": "morning"
+      "meaning": "morning",
+      "orthography": "kanji"
     },
     {
       "kanji": "昼",
       "reading": "ひる",
-      "meaning": "daytime; noon"
+      "meaning": "daytime; noon",
+      "orthography": "kanji"
     },
     {
       "kanji": "夜",
       "reading": "よる",
-      "meaning": "night"
+      "meaning": "night",
+      "orthography": "kanji"
     },
     {
       "kanji": "週末",
       "reading": "しゅうまつ",
-      "meaning": "weekend"
+      "meaning": "weekend",
+      "orthography": "kanji"
     },
     {
       "kanji": "季節",
       "reading": "きせつ",
-      "meaning": "season"
+      "meaning": "season",
+      "orthography": "kanji"
     },
     {
       "kanji": "春",
       "reading": "はる",
-      "meaning": "spring"
+      "meaning": "spring",
+      "orthography": "kanji"
     },
     {
       "kanji": "夏",
       "reading": "なつ",
-      "meaning": "summer"
+      "meaning": "summer",
+      "orthography": "kanji"
     },
     {
       "kanji": "秋",
       "reading": "あき",
-      "meaning": "autumn; fall"
+      "meaning": "autumn; fall",
+      "orthography": "kanji"
     },
     {
       "kanji": "冬",
       "reading": "ふゆ",
-      "meaning": "winter"
+      "meaning": "winter",
+      "orthography": "kanji"
     },
     {
       "kanji": "天気",
       "reading": "てんき",
-      "meaning": "weather"
+      "meaning": "weather",
+      "orthography": "kanji"
     },
     {
       "kanji": "雨",
       "reading": "あめ",
-      "meaning": "rain"
+      "meaning": "rain",
+      "orthography": "kanji"
     },
     {
       "kanji": "雪",
       "reading": "ゆき",
-      "meaning": "snow"
+      "meaning": "snow",
+      "orthography": "kanji"
     },
     {
       "kanji": "風",
       "reading": "かぜ",
-      "meaning": "wind"
+      "meaning": "wind",
+      "orthography": "kanji"
     },
     {
       "kanji": "空",
       "reading": "そら",
-      "meaning": "sky"
+      "meaning": "sky",
+      "orthography": "kanji"
     },
     {
       "kanji": "雲",
       "reading": "くも",
-      "meaning": "cloud"
+      "meaning": "cloud",
+      "orthography": "kanji"
     },
     {
       "kanji": "星",
       "reading": "ほし",
-      "meaning": "star"
+      "meaning": "star",
+      "orthography": "kanji"
     },
     {
       "kanji": "月",
       "reading": "つき",
-      "meaning": "moon; month"
+      "meaning": "moon; month",
+      "orthography": "kanji"
     },
     {
       "kanji": "太陽",
       "reading": "たいよう",
-      "meaning": "sun"
+      "meaning": "sun",
+      "orthography": "kanji"
     },
     {
       "kanji": "山",
       "reading": "やま",
-      "meaning": "mountain"
+      "meaning": "mountain",
+      "orthography": "kanji"
     },
     {
       "kanji": "川",
       "reading": "かわ",
-      "meaning": "river"
+      "meaning": "river",
+      "orthography": "kanji"
     },
     {
       "kanji": "海",
       "reading": "うみ",
-      "meaning": "sea; ocean"
+      "meaning": "sea; ocean",
+      "orthography": "kanji"
     },
     {
       "kanji": "池",
       "reading": "いけ",
-      "meaning": "pond"
+      "meaning": "pond",
+      "orthography": "kanji"
     },
     {
       "kanji": "湖",
       "reading": "みずうみ",
-      "meaning": "lake"
+      "meaning": "lake",
+      "orthography": "kanji"
     },
     {
       "kanji": "森",
       "reading": "もり",
-      "meaning": "forest"
+      "meaning": "forest",
+      "orthography": "kanji"
     },
     {
       "kanji": "林",
       "reading": "はやし",
-      "meaning": "woods; grove"
+      "meaning": "woods; grove",
+      "orthography": "kanji"
     },
     {
       "kanji": "木",
       "reading": "き",
-      "meaning": "tree; wood"
+      "meaning": "tree; wood",
+      "orthography": "kanji"
     },
     {
       "kanji": "花",
       "reading": "はな",
-      "meaning": "flower"
+      "meaning": "flower",
+      "orthography": "kanji"
     },
     {
       "kanji": "草",
       "reading": "くさ",
-      "meaning": "grass; weeds"
+      "meaning": "grass; weeds",
+      "orthography": "kanji"
     },
     {
       "kanji": "葉",
       "reading": "は",
-      "meaning": "leaf"
+      "meaning": "leaf",
+      "orthography": "kanji"
     },
     {
       "kanji": "犬",
       "reading": "いぬ",
-      "meaning": "dog"
+      "meaning": "dog",
+      "orthography": "kanji"
     },
     {
       "kanji": "猫",
       "reading": "ねこ",
-      "meaning": "cat"
+      "meaning": "cat",
+      "orthography": "kanji"
     },
     {
       "kanji": "鳥",
       "reading": "とり",
-      "meaning": "bird"
+      "meaning": "bird",
+      "orthography": "kanji"
     },
     {
       "kanji": "魚",
       "reading": "さかな",
-      "meaning": "fish"
+      "meaning": "fish",
+      "orthography": "kanji"
     },
     {
       "kanji": "虫",
       "reading": "むし",
-      "meaning": "insect; bug"
+      "meaning": "insect; bug",
+      "orthography": "kanji"
     },
     {
       "kanji": "牛",
       "reading": "うし",
-      "meaning": "cow; cattle"
+      "meaning": "cow; cattle",
+      "orthography": "kanji"
     },
     {
       "kanji": "馬",
       "reading": "うま",
-      "meaning": "horse"
+      "meaning": "horse",
+      "orthography": "kanji"
     },
     {
       "kanji": "羊",
       "reading": "ひつじ",
-      "meaning": "sheep"
+      "meaning": "sheep",
+      "orthography": "kanji"
     },
     {
       "kanji": "肉",
       "reading": "にく",
-      "meaning": "meat"
+      "meaning": "meat",
+      "orthography": "kanji"
     },
     {
       "kanji": "野菜",
       "reading": "やさい",
-      "meaning": "vegetable"
+      "meaning": "vegetable",
+      "orthography": "kanji"
     },
     {
       "kanji": "果物",
       "reading": "くだもの",
-      "meaning": "fruit"
+      "meaning": "fruit",
+      "orthography": "kanji"
     },
     {
       "kanji": "米",
       "reading": "こめ",
-      "meaning": "rice (uncooked)"
+      "meaning": "rice (uncooked)",
+      "orthography": "kanji"
     },
     {
       "kanji": "ご飯",
       "reading": "ごはん",
-      "meaning": "rice; meal"
+      "meaning": "rice; meal",
+      "orthography": "both"
     },
     {
       "kanji": "水",
       "reading": "みず",
-      "meaning": "water"
+      "meaning": "water",
+      "orthography": "kanji"
     },
     {
       "kanji": "お茶",
       "reading": "おちゃ",
-      "meaning": "tea"
+      "meaning": "tea",
+      "orthography": "both"
     },
     {
       "kanji": "牛乳",
       "reading": "ぎゅうにゅう",
-      "meaning": "milk"
+      "meaning": "milk",
+      "orthography": "kanji"
     },
     {
       "kanji": "砂糖",
       "reading": "さとう",
-      "meaning": "sugar"
+      "meaning": "sugar",
+      "orthography": "kanji"
     },
     {
       "kanji": "塩",
       "reading": "しお",
-      "meaning": "salt"
+      "meaning": "salt",
+      "orthography": "kanji"
     },
     {
       "kanji": "油",
       "reading": "あぶら",
-      "meaning": "oil"
+      "meaning": "oil",
+      "orthography": "kanji"
     },
     {
       "kanji": "皿",
       "reading": "さら",
-      "meaning": "plate; dish"
+      "meaning": "plate; dish",
+      "orthography": "kanji"
     },
     {
       "kanji": "茶碗",
       "reading": "ちゃわん",
-      "meaning": "rice bowl"
+      "meaning": "rice bowl",
+      "orthography": "kanji"
     },
     {
       "kanji": "箸",
       "reading": "はし",
-      "meaning": "chopsticks"
+      "meaning": "chopsticks",
+      "orthography": "kanji"
     },
     {
       "kanji": "包丁",
       "reading": "ほうちょう",
-      "meaning": "kitchen knife"
+      "meaning": "kitchen knife",
+      "orthography": "kanji"
     },
     {
       "kanji": "台所",
       "reading": "だいどころ",
-      "meaning": "kitchen"
+      "meaning": "kitchen",
+      "orthography": "kanji"
     },
     {
       "kanji": "冷蔵庫",
       "reading": "れいぞうこ",
-      "meaning": "refrigerator"
+      "meaning": "refrigerator",
+      "orthography": "kanji"
     },
     {
       "kanji": "鍋",
       "reading": "なべ",
-      "meaning": "pot"
+      "meaning": "pot",
+      "orthography": "kanji"
     },
     {
       "kanji": "掃除",
       "reading": "そうじ",
-      "meaning": "cleaning"
+      "meaning": "cleaning",
+      "orthography": "kanji"
     },
     {
       "kanji": "洗濯",
       "reading": "せんたく",
-      "meaning": "laundry"
+      "meaning": "laundry",
+      "orthography": "kanji"
     },
     {
       "kanji": "洗剤",
       "reading": "せんざい",
-      "meaning": "detergent"
+      "meaning": "detergent",
+      "orthography": "kanji"
     },
     {
       "kanji": "布団",
       "reading": "ふとん",
-      "meaning": "futon; bedding"
+      "meaning": "futon; bedding",
+      "orthography": "kanji"
     },
     {
       "kanji": "部屋",
       "reading": "へや",
-      "meaning": "room"
+      "meaning": "room",
+      "orthography": "kanji"
     },
     {
       "kanji": "家",
       "reading": "いえ",
-      "meaning": "house; home"
+      "meaning": "house; home",
+      "orthography": "kanji"
     },
     {
       "kanji": "玄関",
       "reading": "げんかん",
-      "meaning": "entryway"
+      "meaning": "entryway",
+      "orthography": "kanji"
     },
     {
       "kanji": "窓",
       "reading": "まど",
-      "meaning": "window"
+      "meaning": "window",
+      "orthography": "kanji"
     },
     {
       "kanji": "床",
       "reading": "ゆか",
-      "meaning": "floor"
+      "meaning": "floor",
+      "orthography": "kanji"
     },
     {
       "kanji": "天井",
       "reading": "てんじょう",
-      "meaning": "ceiling"
+      "meaning": "ceiling",
+      "orthography": "kanji"
     },
     {
       "kanji": "壁",
       "reading": "かべ",
-      "meaning": "wall"
+      "meaning": "wall",
+      "orthography": "kanji"
     },
     {
       "kanji": "机",
       "reading": "つくえ",
-      "meaning": "desk"
+      "meaning": "desk",
+      "orthography": "kanji"
     },
     {
       "kanji": "椅子",
       "reading": "いす",
-      "meaning": "chair"
+      "meaning": "chair",
+      "orthography": "kanji"
     },
     {
       "kanji": "本棚",
       "reading": "ほんだな",
-      "meaning": "bookshelf"
+      "meaning": "bookshelf",
+      "orthography": "kanji"
     },
     {
       "kanji": "本",
       "reading": "ほん",
-      "meaning": "book"
+      "meaning": "book",
+      "orthography": "kanji"
     },
     {
       "kanji": "新聞",
       "reading": "しんぶん",
-      "meaning": "newspaper"
+      "meaning": "newspaper",
+      "orthography": "kanji"
     },
     {
       "kanji": "雑誌",
       "reading": "ざっし",
-      "meaning": "magazine"
+      "meaning": "magazine",
+      "orthography": "kanji"
     },
     {
       "kanji": "手紙",
       "reading": "てがみ",
-      "meaning": "letter"
+      "meaning": "letter",
+      "orthography": "kanji"
     },
     {
       "kanji": "地図",
       "reading": "ちず",
-      "meaning": "map"
+      "meaning": "map",
+      "orthography": "kanji"
     },
     {
       "kanji": "写真",
       "reading": "しゃしん",
-      "meaning": "photo; picture"
+      "meaning": "photo; picture",
+      "orthography": "kanji"
     },
     {
       "kanji": "映画",
       "reading": "えいが",
-      "meaning": "movie; film"
+      "meaning": "movie; film",
+      "orthography": "kanji"
     },
     {
       "kanji": "音楽",
       "reading": "おんがく",
-      "meaning": "music"
+      "meaning": "music",
+      "orthography": "kanji"
     },
     {
       "kanji": "歌",
       "reading": "うた",
-      "meaning": "song"
+      "meaning": "song",
+      "orthography": "kanji"
     },
     {
       "kanji": "声",
       "reading": "こえ",
-      "meaning": "voice"
+      "meaning": "voice",
+      "orthography": "kanji"
     },
     {
       "kanji": "言葉",
       "reading": "ことば",
-      "meaning": "word; language"
+      "meaning": "word; language",
+      "orthography": "kanji"
     },
     {
       "kanji": "日本語",
       "reading": "にほんご",
-      "meaning": "Japanese (language)"
+      "meaning": "Japanese (language)",
+      "orthography": "kanji"
     },
     {
       "kanji": "英語",
       "reading": "えいご",
-      "meaning": "English (language)"
+      "meaning": "English (language)",
+      "orthography": "kanji"
     },
     {
       "kanji": "意味",
       "reading": "いみ",
-      "meaning": "meaning"
+      "meaning": "meaning",
+      "orthography": "kanji"
     },
     {
       "kanji": "漢字",
       "reading": "かんじ",
-      "meaning": "kanji"
+      "meaning": "kanji",
+      "orthography": "kanji"
     },
     {
       "kanji": "ひらがな",
       "reading": "ひらがな",
-      "meaning": "hiragana"
+      "meaning": "hiragana",
+      "orthography": "hiragana"
     },
     {
       "kanji": "文法",
       "reading": "ぶんぽう",
-      "meaning": "grammar"
+      "meaning": "grammar",
+      "orthography": "kanji"
     },
     {
       "kanji": "宿題",
       "reading": "しゅくだい",
-      "meaning": "homework"
+      "meaning": "homework",
+      "orthography": "kanji"
     },
     {
       "kanji": "試験",
       "reading": "しけん",
-      "meaning": "exam"
+      "meaning": "exam",
+      "orthography": "kanji"
     },
     {
       "kanji": "点数",
       "reading": "てんすう",
-      "meaning": "score; points"
+      "meaning": "score; points",
+      "orthography": "kanji"
     },
     {
       "kanji": "問題",
       "reading": "もんだい",
-      "meaning": "problem; question"
+      "meaning": "problem; question",
+      "orthography": "kanji"
     },
     {
       "kanji": "答え",
       "reading": "こたえ",
-      "meaning": "answer"
+      "meaning": "answer",
+      "orthography": "both"
     },
     {
       "kanji": "質問",
       "reading": "しつもん",
-      "meaning": "question (to ask)"
+      "meaning": "question (to ask)",
+      "orthography": "kanji"
     },
     {
       "kanji": "例",
       "reading": "れい",
-      "meaning": "example"
+      "meaning": "example",
+      "orthography": "kanji"
     },
     {
       "kanji": "理由",
       "reading": "りゆう",
-      "meaning": "reason"
+      "meaning": "reason",
+      "orthography": "kanji"
     },
     {
       "kanji": "方法",
       "reading": "ほうほう",
-      "meaning": "method; way"
+      "meaning": "method; way",
+      "orthography": "kanji"
     },
     {
       "kanji": "注意",
       "reading": "ちゅうい",
-      "meaning": "attention; caution"
+      "meaning": "attention; caution",
+      "orthography": "kanji"
     },
     {
       "kanji": "安全",
       "reading": "あんぜん",
-      "meaning": "safety"
+      "meaning": "safety",
+      "orthography": "kanji"
     },
     {
       "kanji": "危険",
       "reading": "きけん",
-      "meaning": "danger"
+      "meaning": "danger",
+      "orthography": "kanji"
     },
     {
       "kanji": "事故",
       "reading": "じこ",
-      "meaning": "accident"
+      "meaning": "accident",
+      "orthography": "kanji"
     },
     {
       "kanji": "病気",
       "reading": "びょうき",
-      "meaning": "illness"
+      "meaning": "illness",
+      "orthography": "kanji"
     },
     {
       "kanji": "熱",
       "reading": "ねつ",
-      "meaning": "fever; heat"
+      "meaning": "fever; heat",
+      "orthography": "kanji"
     },
     {
       "kanji": "薬局",
       "reading": "やっきょく",
-      "meaning": "pharmacy"
+      "meaning": "pharmacy",
+      "orthography": "kanji"
     },
     {
       "kanji": "保険",
       "reading": "ほけん",
-      "meaning": "insurance"
+      "meaning": "insurance",
+      "orthography": "kanji"
     },
     {
       "kanji": "健康",
       "reading": "けんこう",
-      "meaning": "health"
+      "meaning": "health",
+      "orthography": "kanji"
     },
     {
       "kanji": "運動",
       "reading": "うんどう",
-      "meaning": "exercise; physical activity"
+      "meaning": "exercise; physical activity",
+      "orthography": "kanji"
     },
     {
       "kanji": "散歩",
       "reading": "さんぽ",
-      "meaning": "walk; stroll"
+      "meaning": "walk; stroll",
+      "orthography": "kanji"
     },
     {
       "kanji": "旅行",
       "reading": "りょこう",
-      "meaning": "travel; trip"
+      "meaning": "travel; trip",
+      "orthography": "kanji"
     },
     {
       "kanji": "出発",
       "reading": "しゅっぱつ",
-      "meaning": "departure"
+      "meaning": "departure",
+      "orthography": "kanji"
     },
     {
       "kanji": "到着",
       "reading": "とうちゃく",
-      "meaning": "arrival"
+      "meaning": "arrival",
+      "orthography": "kanji"
     },
     {
       "kanji": "空港",
       "reading": "くうこう",
-      "meaning": "airport"
+      "meaning": "airport",
+      "orthography": "kanji"
     },
     {
       "kanji": "飛行機",
       "reading": "ひこうき",
-      "meaning": "airplane"
+      "meaning": "airplane",
+      "orthography": "kanji"
     },
     {
       "kanji": "部屋代",
       "reading": "へやだい",
-      "meaning": "room charge"
+      "meaning": "room charge",
+      "orthography": "kanji"
     },
     {
       "kanji": "観光",
       "reading": "かんこう",
-      "meaning": "sightseeing"
+      "meaning": "sightseeing",
+      "orthography": "kanji"
     },
     {
       "kanji": "名所",
       "reading": "めいしょ",
-      "meaning": "famous place; landmark"
+      "meaning": "famous place; landmark",
+      "orthography": "kanji"
     },
     {
       "kanji": "文化",
       "reading": "ぶんか",
-      "meaning": "culture"
+      "meaning": "culture",
+      "orthography": "kanji"
     },
     {
       "kanji": "歴史",
       "reading": "れきし",
-      "meaning": "history"
+      "meaning": "history",
+      "orthography": "kanji"
     },
     {
       "kanji": "世界",
       "reading": "せかい",
-      "meaning": "world"
+      "meaning": "world",
+      "orthography": "kanji"
     },
     {
       "kanji": "自然",
       "reading": "しぜん",
-      "meaning": "nature"
+      "meaning": "nature",
+      "orthography": "kanji"
     },
     {
       "kanji": "環境",
       "reading": "かんきょう",
-      "meaning": "environment"
+      "meaning": "environment",
+      "orthography": "kanji"
     },
     {
       "kanji": "空気",
       "reading": "くうき",
-      "meaning": "air; atmosphere"
+      "meaning": "air; atmosphere",
+      "orthography": "kanji"
     },
     {
       "kanji": "水道",
       "reading": "すいどう",
-      "meaning": "water supply; plumbing"
+      "meaning": "water supply; plumbing",
+      "orthography": "kanji"
     },
     {
       "kanji": "電気",
       "reading": "でんき",
-      "meaning": "electricity; light"
+      "meaning": "electricity; light",
+      "orthography": "kanji"
     },
     {
       "kanji": "料金",
       "reading": "りょうきん",
-      "meaning": "fee; charge"
+      "meaning": "fee; charge",
+      "orthography": "kanji"
     },
     {
       "kanji": "値段",
       "reading": "ねだん",
-      "meaning": "price"
+      "meaning": "price",
+      "orthography": "kanji"
     },
     {
       "kanji": "無料",
       "reading": "むりょう",
-      "meaning": "free of charge"
+      "meaning": "free of charge",
+      "orthography": "kanji"
     },
     {
       "kanji": "注文",
       "reading": "ちゅうもん",
-      "meaning": "order (at a restaurant)"
+      "meaning": "order (at a restaurant)",
+      "orthography": "kanji"
     },
     {
       "kanji": "料理",
       "reading": "りょうり",
-      "meaning": "cooking; cuisine"
+      "meaning": "cooking; cuisine",
+      "orthography": "kanji"
     },
     {
       "kanji": "朝食",
       "reading": "ちょうしょく",
-      "meaning": "breakfast"
+      "meaning": "breakfast",
+      "orthography": "kanji"
     },
     {
       "kanji": "昼食",
       "reading": "ちゅうしょく",
-      "meaning": "lunch"
+      "meaning": "lunch",
+      "orthography": "kanji"
     },
     {
       "kanji": "夕食",
       "reading": "ゆうしょく",
-      "meaning": "dinner"
+      "meaning": "dinner",
+      "orthography": "kanji"
     },
     {
       "kanji": "飲み物",
       "reading": "のみもの",
-      "meaning": "drink; beverage"
+      "meaning": "drink; beverage",
+      "orthography": "both"
     },
     {
       "kanji": "食べ物",
       "reading": "たべもの",
-      "meaning": "food"
+      "meaning": "food",
+      "orthography": "both"
     },
     {
       "kanji": "味",
       "reading": "あじ",
-      "meaning": "taste; flavor"
+      "meaning": "taste; flavor",
+      "orthography": "kanji"
     },
     {
       "kanji": "匂い",
       "reading": "におい",
-      "meaning": "smell; odor"
+      "meaning": "smell; odor",
+      "orthography": "both"
     },
     {
       "kanji": "色",
       "reading": "いろ",
-      "meaning": "color"
+      "meaning": "color",
+      "orthography": "kanji"
     },
     {
       "kanji": "形",
       "reading": "かたち",
-      "meaning": "shape; form"
+      "meaning": "shape; form",
+      "orthography": "kanji"
     },
     {
       "kanji": "高さ",
       "reading": "たかさ",
-      "meaning": "height"
+      "meaning": "height",
+      "orthography": "both"
     },
     {
       "kanji": "大きさ",
       "reading": "おおきさ",
-      "meaning": "size"
+      "meaning": "size",
+      "orthography": "both"
     },
     {
       "kanji": "重さ",
       "reading": "おもさ",
-      "meaning": "weight"
+      "meaning": "weight",
+      "orthography": "both"
     },
     {
       "kanji": "長さ",
       "reading": "ながさ",
-      "meaning": "length"
+      "meaning": "length",
+      "orthography": "both"
     },
     {
       "kanji": "幅",
       "reading": "はば",
-      "meaning": "width; breadth"
+      "meaning": "width; breadth",
+      "orthography": "kanji"
     },
     {
       "kanji": "数字",
       "reading": "すうじ",
-      "meaning": "number; numeral"
+      "meaning": "number; numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "計算",
       "reading": "けいさん",
-      "meaning": "calculation"
+      "meaning": "calculation",
+      "orthography": "kanji"
     },
     {
       "kanji": "説明",
       "reading": "せつめい",
-      "meaning": "explanation"
+      "meaning": "explanation",
+      "orthography": "kanji"
     },
     {
       "kanji": "案内",
       "reading": "あんない",
-      "meaning": "guidance; information"
+      "meaning": "guidance; information",
+      "orthography": "kanji"
     },
     {
       "kanji": "連絡",
       "reading": "れんらく",
-      "meaning": "contact; communication"
+      "meaning": "contact; communication",
+      "orthography": "kanji"
     },
     {
       "kanji": "約束",
       "reading": "やくそく",
-      "meaning": "promise; appointment"
+      "meaning": "promise; appointment",
+      "orthography": "kanji"
     },
     {
       "kanji": "相談",
       "reading": "そうだん",
-      "meaning": "consultation; advice"
+      "meaning": "consultation; advice",
+      "orthography": "kanji"
     },
     {
       "kanji": "意見",
       "reading": "いけん",
-      "meaning": "opinion"
+      "meaning": "opinion",
+      "orthography": "kanji"
     },
     {
       "kanji": "考え",
       "reading": "かんがえ",
-      "meaning": "thought; idea"
+      "meaning": "thought; idea",
+      "orthography": "both"
     },
     {
       "kanji": "気持ち",
       "reading": "きもち",
-      "meaning": "feeling"
+      "meaning": "feeling",
+      "orthography": "both"
     },
     {
       "kanji": "心",
       "reading": "こころ",
-      "meaning": "heart; mind"
+      "meaning": "heart; mind",
+      "orthography": "kanji"
     },
     {
       "kanji": "夢",
       "reading": "ゆめ",
-      "meaning": "dream"
+      "meaning": "dream",
+      "orthography": "kanji"
     },
     {
       "kanji": "希望",
       "reading": "きぼう",
-      "meaning": "hope; wish"
+      "meaning": "hope; wish",
+      "orthography": "kanji"
     },
     {
       "kanji": "目標",
       "reading": "もくひょう",
-      "meaning": "goal; target"
+      "meaning": "goal; target",
+      "orthography": "kanji"
     },
     {
       "kanji": "結果",
       "reading": "けっか",
-      "meaning": "result"
+      "meaning": "result",
+      "orthography": "kanji"
     },
     {
       "kanji": "原因",
       "reading": "げんいん",
-      "meaning": "cause"
+      "meaning": "cause",
+      "orthography": "kanji"
     },
     {
       "kanji": "経験",
       "reading": "けいけん",
-      "meaning": "experience"
+      "meaning": "experience",
+      "orthography": "kanji"
     },
     {
       "kanji": "練習",
       "reading": "れんしゅう",
-      "meaning": "practice; training"
+      "meaning": "practice; training",
+      "orthography": "kanji"
     },
     {
       "kanji": "努力",
       "reading": "どりょく",
-      "meaning": "effort"
+      "meaning": "effort",
+      "orthography": "kanji"
     },
     {
       "kanji": "成長",
       "reading": "せいちょう",
-      "meaning": "growth; development"
+      "meaning": "growth; development",
+      "orthography": "kanji"
     },
     {
       "kanji": "変化",
       "reading": "へんか",
-      "meaning": "change"
+      "meaning": "change",
+      "orthography": "kanji"
     },
     {
       "kanji": "準備",
       "reading": "じゅんび",
-      "meaning": "preparation"
+      "meaning": "preparation",
+      "orthography": "kanji"
     },
     {
       "kanji": "開始",
       "reading": "かいし",
-      "meaning": "start; beginning"
+      "meaning": "start; beginning",
+      "orthography": "kanji"
     },
     {
       "kanji": "終了",
       "reading": "しゅうりょう",
-      "meaning": "end; finish"
+      "meaning": "end; finish",
+      "orthography": "kanji"
     },
     {
       "kanji": "途中",
       "reading": "とちゅう",
-      "meaning": "on the way; halfway"
+      "meaning": "on the way; halfway",
+      "orthography": "kanji"
     },
     {
       "kanji": "最後",
       "reading": "さいご",
-      "meaning": "last; end"
+      "meaning": "last; end",
+      "orthography": "kanji"
     },
     {
       "kanji": "最初",
       "reading": "さいしょ",
-      "meaning": "first; beginning"
+      "meaning": "first; beginning",
+      "orthography": "kanji"
     },
     {
       "kanji": "以上",
       "reading": "いじょう",
-      "meaning": "more than; above; that's all"
+      "meaning": "more than; above; that's all",
+      "orthography": "kanji"
     },
     {
       "kanji": "以下",
       "reading": "いか",
-      "meaning": "less than; below"
+      "meaning": "less than; below",
+      "orthography": "kanji"
     },
     {
       "kanji": "場合",
       "reading": "ばあい",
-      "meaning": "case; situation"
+      "meaning": "case; situation",
+      "orthography": "kanji"
     },
     {
       "kanji": "理由書",
       "reading": "りゆうしょ",
-      "meaning": "written statement of reasons"
+      "meaning": "written statement of reasons",
+      "orthography": "kanji"
     },
     {
       "kanji": "書類",
       "reading": "しょるい",
-      "meaning": "documents; paperwork"
+      "meaning": "documents; paperwork",
+      "orthography": "kanji"
     },
     {
       "kanji": "身分証",
       "reading": "みぶんしょう",
-      "meaning": "ID card; identification"
+      "meaning": "ID card; identification",
+      "orthography": "kanji"
     },
     {
       "kanji": "番号",
       "reading": "ばんごう",
-      "meaning": "number; ID number"
+      "meaning": "number; ID number",
+      "orthography": "kanji"
     },
     {
       "kanji": "携帯",
       "reading": "けいたい",
-      "meaning": "mobile phone (short for 携帯電話)"
+      "meaning": "mobile phone (short for 携帯電話)",
+      "orthography": "kanji"
     },
     {
       "kanji": "携帯電話",
       "reading": "けいたいでんわ",
-      "meaning": "cell phone"
+      "meaning": "cell phone",
+      "orthography": "kanji"
     },
     {
       "kanji": "電話番号",
       "reading": "でんわばんごう",
-      "meaning": "phone number"
+      "meaning": "phone number",
+      "orthography": "kanji"
     },
     {
       "kanji": "充電",
       "reading": "じゅうでん",
-      "meaning": "charging (a battery)"
+      "meaning": "charging (a battery)",
+      "orthography": "kanji"
     },
     {
       "kanji": "電池",
       "reading": "でんち",
-      "meaning": "battery"
+      "meaning": "battery",
+      "orthography": "kanji"
     },
     {
       "kanji": "画面",
       "reading": "がめん",
-      "meaning": "screen"
+      "meaning": "screen",
+      "orthography": "kanji"
     },
     {
       "kanji": "設定",
       "reading": "せってい",
-      "meaning": "settings; configuration"
+      "meaning": "settings; configuration",
+      "orthography": "kanji"
     },
     {
       "kanji": "番号札",
       "reading": "ばんごうふだ",
-      "meaning": "number ticket; queue ticket"
+      "meaning": "number ticket; queue ticket",
+      "orthography": "kanji"
     },
     {
       "kanji": "領収書",
       "reading": "りょうしゅうしょ",
-      "meaning": "receipt"
+      "meaning": "receipt",
+      "orthography": "kanji"
     },
     {
       "kanji": "交通",
       "reading": "こうつう",
-      "meaning": "traffic; transportation"
+      "meaning": "traffic; transportation",
+      "orthography": "kanji"
     },
     {
       "kanji": "渋滞",
       "reading": "じゅうたい",
-      "meaning": "traffic jam"
+      "meaning": "traffic jam",
+      "orthography": "kanji"
     },
     {
       "kanji": "事故現場",
       "reading": "じこげんば",
-      "meaning": "accident site"
+      "meaning": "accident site",
+      "orthography": "kanji"
     },
     {
       "kanji": "注意書き",
       "reading": "ちゅういがき",
-      "meaning": "caution note; fine print"
+      "meaning": "caution note; fine print",
+      "orthography": "both"
     },
     {
       "kanji": "規則",
       "reading": "きそく",
-      "meaning": "rule; regulation"
+      "meaning": "rule; regulation",
+      "orthography": "kanji"
     },
     {
       "kanji": "法律",
       "reading": "ほうりつ",
-      "meaning": "law"
+      "meaning": "law",
+      "orthography": "kanji"
     },
     {
       "kanji": "契約",
       "reading": "けいやく",
-      "meaning": "contract"
+      "meaning": "contract",
+      "orthography": "kanji"
     },
     {
       "kanji": "申込",
       "reading": "もうしこみ",
-      "meaning": "application; sign-up"
+      "meaning": "application; sign-up",
+      "orthography": "kanji"
     },
     {
       "kanji": "手続き",
       "reading": "てつづき",
-      "meaning": "procedure; process"
+      "meaning": "procedure; process",
+      "orthography": "both"
     },
     {
       "kanji": "受付",
       "reading": "うけつけ",
-      "meaning": "reception; front desk"
+      "meaning": "reception; front desk",
+      "orthography": "kanji"
     },
     {
       "kanji": "番号順",
       "reading": "ばんごうじゅん",
-      "meaning": "numerical order"
+      "meaning": "numerical order",
+      "orthography": "kanji"
     },
     {
       "kanji": "列",
       "reading": "れつ",
-      "meaning": "line; queue"
+      "meaning": "line; queue",
+      "orthography": "kanji"
     },
     {
       "kanji": "順番",
       "reading": "じゅんばん",
-      "meaning": "turn; order"
+      "meaning": "turn; order",
+      "orthography": "kanji"
     },
     {
       "kanji": "会場",
       "reading": "かいじょう",
-      "meaning": "venue; site"
+      "meaning": "venue; site",
+      "orthography": "kanji"
     },
     {
       "kanji": "場所",
       "reading": "ばしょ",
-      "meaning": "place; location"
+      "meaning": "place; location",
+      "orthography": "kanji"
     },
     {
       "kanji": "近所",
       "reading": "きんじょ",
-      "meaning": "neighborhood; vicinity"
+      "meaning": "neighborhood; vicinity",
+      "orthography": "kanji"
     },
     {
       "kanji": "方向",
       "reading": "ほうこう",
-      "meaning": "direction"
+      "meaning": "direction",
+      "orthography": "kanji"
     },
     {
       "kanji": "左右",
       "reading": "さゆう",
-      "meaning": "left and right"
+      "meaning": "left and right",
+      "orthography": "kanji"
     },
     {
       "kanji": "右",
       "reading": "みぎ",
-      "meaning": "right"
+      "meaning": "right",
+      "orthography": "kanji"
     },
     {
       "kanji": "左",
       "reading": "ひだり",
-      "meaning": "left"
+      "meaning": "left",
+      "orthography": "kanji"
     },
     {
       "kanji": "前",
       "reading": "まえ",
-      "meaning": "front; before"
+      "meaning": "front; before",
+      "orthography": "kanji"
     },
     {
       "kanji": "後ろ",
       "reading": "うしろ",
-      "meaning": "back; behind"
+      "meaning": "back; behind",
+      "orthography": "both"
     },
     {
       "kanji": "上",
       "reading": "うえ",
-      "meaning": "top; above"
+      "meaning": "top; above",
+      "orthography": "kanji"
     },
     {
       "kanji": "下",
       "reading": "した",
-      "meaning": "bottom; below"
+      "meaning": "bottom; below",
+      "orthography": "kanji"
     },
     {
       "kanji": "中",
       "reading": "なか",
-      "meaning": "inside; middle"
+      "meaning": "inside; middle",
+      "orthography": "kanji"
     },
     {
       "kanji": "外",
       "reading": "そと",
-      "meaning": "outside"
+      "meaning": "outside",
+      "orthography": "kanji"
     },
     {
       "kanji": "近く",
       "reading": "ちかく",
-      "meaning": "nearby; vicinity"
+      "meaning": "nearby; vicinity",
+      "orthography": "both"
     },
     {
       "kanji": "遠く",
       "reading": "とおく",
-      "meaning": "far away; distance"
+      "meaning": "far away; distance",
+      "orthography": "both"
     },
     {
       "kanji": "隣",
       "reading": "となり",
-      "meaning": "next door; next to"
+      "meaning": "next door; next to",
+      "orthography": "kanji"
     },
     {
       "kanji": "向こう",
       "reading": "むこう",
-      "meaning": "over there; the other side"
+      "meaning": "over there; the other side",
+      "orthography": "both"
     },
     {
       "kanji": "周り",
       "reading": "まわり",
-      "meaning": "around; surroundings"
+      "meaning": "around; surroundings",
+      "orthography": "both"
     },
     {
       "kanji": "角",
       "reading": "かど",
-      "meaning": "corner"
+      "meaning": "corner",
+      "orthography": "kanji"
     },
     {
       "kanji": "入口",
       "reading": "いりぐち",
-      "meaning": "entrance"
+      "meaning": "entrance",
+      "orthography": "kanji"
     },
     {
       "kanji": "出口",
       "reading": "でぐち",
-      "meaning": "exit"
+      "meaning": "exit",
+      "orthography": "kanji"
     },
     {
       "kanji": "階段",
       "reading": "かいだん",
-      "meaning": "stairs"
+      "meaning": "stairs",
+      "orthography": "kanji"
     },
     {
       "kanji": "風呂",
       "reading": "ふろ",
-      "meaning": "bath"
+      "meaning": "bath",
+      "orthography": "kanji"
     },
     {
       "kanji": "洗面所",
       "reading": "せんめんじょ",
-      "meaning": "washroom; sink area"
+      "meaning": "washroom; sink area",
+      "orthography": "kanji"
     },
     {
       "kanji": "寝室",
       "reading": "しんしつ",
-      "meaning": "bedroom"
+      "meaning": "bedroom",
+      "orthography": "kanji"
     },
     {
       "kanji": "居間",
       "reading": "いま",
-      "meaning": "living room"
+      "meaning": "living room",
+      "orthography": "kanji"
     },
     {
       "kanji": "廊下",
       "reading": "ろうか",
-      "meaning": "hallway"
+      "meaning": "hallway",
+      "orthography": "kanji"
     },
     {
       "kanji": "庭",
       "reading": "にわ",
-      "meaning": "garden; yard"
+      "meaning": "garden; yard",
+      "orthography": "kanji"
     },
     {
       "kanji": "建物",
       "reading": "たてもの",
-      "meaning": "building"
+      "meaning": "building",
+      "orthography": "kanji"
     },
     {
       "kanji": "部品",
       "reading": "ぶひん",
-      "meaning": "parts; components"
+      "meaning": "parts; components",
+      "orthography": "kanji"
     },
     {
       "kanji": "道具",
       "reading": "どうぐ",
-      "meaning": "tool"
+      "meaning": "tool",
+      "orthography": "kanji"
     },
     {
       "kanji": "鍵",
       "reading": "かぎ",
-      "meaning": "key; lock"
+      "meaning": "key; lock",
+      "orthography": "kanji"
     },
     {
       "kanji": "傘",
       "reading": "かさ",
-      "meaning": "umbrella"
+      "meaning": "umbrella",
+      "orthography": "kanji"
     },
     {
       "kanji": "靴",
       "reading": "くつ",
-      "meaning": "shoes"
+      "meaning": "shoes",
+      "orthography": "kanji"
     },
     {
       "kanji": "服",
       "reading": "ふく",
-      "meaning": "clothes"
+      "meaning": "clothes",
+      "orthography": "kanji"
     },
     {
       "kanji": "上着",
       "reading": "うわぎ",
-      "meaning": "jacket; outerwear"
+      "meaning": "jacket; outerwear",
+      "orthography": "kanji"
     },
     {
       "kanji": "帽子",
       "reading": "ぼうし",
-      "meaning": "hat; cap"
+      "meaning": "hat; cap",
+      "orthography": "kanji"
     },
     {
       "kanji": "眼鏡",
       "reading": "めがね",
-      "meaning": "glasses"
+      "meaning": "glasses",
+      "orthography": "kanji"
     },
     {
       "kanji": "時計",
       "reading": "とけい",
-      "meaning": "clock; watch"
+      "meaning": "clock; watch",
+      "orthography": "kanji"
     },
     {
       "kanji": "かばん",
       "reading": "かばん",
-      "meaning": "bag"
+      "meaning": "bag",
+      "orthography": "hiragana"
     },
     {
       "kanji": "荷物",
       "reading": "にもつ",
-      "meaning": "luggage; baggage"
+      "meaning": "luggage; baggage",
+      "orthography": "kanji"
     },
     {
       "kanji": "切手",
       "reading": "きって",
-      "meaning": "stamp"
+      "meaning": "stamp",
+      "orthography": "kanji"
     },
     {
       "kanji": "お釣り",
       "reading": "おつり",
-      "meaning": "change (money)"
+      "meaning": "change (money)",
+      "orthography": "both"
     },
     {
       "kanji": "勉強",
       "reading": "べんきょう",
-      "meaning": "study"
+      "meaning": "study",
+      "orthography": "kanji"
     },
     {
       "kanji": "入学",
       "reading": "にゅうがく",
-      "meaning": "entrance to school; matriculation"
+      "meaning": "entrance to school; matriculation",
+      "orthography": "kanji"
     },
     {
       "kanji": "学習",
       "reading": "がくしゅう",
-      "meaning": "learning; study"
+      "meaning": "learning; study",
+      "orthography": "kanji"
     },
     {
       "kanji": "会話",
       "reading": "かいわ",
-      "meaning": "conversation"
+      "meaning": "conversation",
+      "orthography": "kanji"
     },
     {
       "kanji": "会議",
       "reading": "かいぎ",
-      "meaning": "meeting; conference"
+      "meaning": "meeting; conference",
+      "orthography": "kanji"
     },
     {
       "kanji": "電話",
       "reading": "でんわ",
-      "meaning": "telephone; phone call"
+      "meaning": "telephone; phone call",
+      "orthography": "kanji"
     },
     {
       "kanji": "読書",
       "reading": "どくしょ",
-      "meaning": "reading (books)"
+      "meaning": "reading (books)",
+      "orthography": "kanji"
     },
     {
       "kanji": "書き込み",
       "reading": "かきこみ",
-      "meaning": "writing/posting (a comment)"
+      "meaning": "writing/posting (a comment)",
+      "orthography": "both"
     },
     {
       "kanji": "食事",
       "reading": "しょくじ",
-      "meaning": "meal"
+      "meaning": "meal",
+      "orthography": "kanji"
     },
     {
       "kanji": "飲食",
       "reading": "いんしょく",
-      "meaning": "eating and drinking"
+      "meaning": "eating and drinking",
+      "orthography": "kanji"
     },
     {
       "kanji": "買い物",
       "reading": "かいもの",
-      "meaning": "shopping; purchases"
+      "meaning": "shopping; purchases",
+      "orthography": "both"
     },
     {
       "kanji": "売買",
       "reading": "ばいばい",
-      "meaning": "trade; buying and selling"
+      "meaning": "trade; buying and selling",
+      "orthography": "kanji"
     },
     {
       "kanji": "語学",
       "reading": "ごがく",
-      "meaning": "language study"
+      "meaning": "language study",
+      "orthography": "kanji"
     },
     {
       "kanji": "命名",
       "reading": "めいめい",
-      "meaning": "naming; christening"
+      "meaning": "naming; christening",
+      "orthography": "kanji"
     },
     {
       "kanji": "出生",
       "reading": "しゅっしょう",
-      "meaning": "birth; being born (formal)"
+      "meaning": "birth; being born (formal)",
+      "orthography": "kanji"
     },
     {
       "kanji": "年越し",
       "reading": "としこし",
-      "meaning": "New Year's Eve; passing the year"
+      "meaning": "New Year's Eve; passing the year",
+      "orthography": "both"
     },
     {
       "kanji": "確認",
       "reading": "かくにん",
-      "meaning": "confirmation; check"
+      "meaning": "confirmation; check",
+      "orthography": "kanji"
     },
     {
       "kanji": "運転",
       "reading": "うんてん",
-      "meaning": "driving; operation"
+      "meaning": "driving; operation",
+      "orthography": "kanji"
     },
     {
       "kanji": "空想",
       "reading": "くうそう",
-      "meaning": "fantasy; daydream"
+      "meaning": "fantasy; daydream",
+      "orthography": "kanji"
     },
     {
       "kanji": "休憩",
       "reading": "きゅうけい",
-      "meaning": "rest; break"
+      "meaning": "rest; break",
+      "orthography": "kanji"
     },
     {
       "kanji": "休業",
       "reading": "きゅうぎょう",
-      "meaning": "suspension of business; closed"
+      "meaning": "suspension of business; closed",
+      "orthography": "kanji"
     },
     {
       "kanji": "半分",
       "reading": "はんぶん",
-      "meaning": "half; one half"
+      "meaning": "half; one half",
+      "orthography": "kanji"
     },
     {
       "kanji": "拗音",
       "reading": "ようおん",
-      "meaning": "contracted sound (e.g., きょ / しゃ)"
+      "meaning": "contracted sound (e.g., きょ / しゃ)",
+      "orthography": "kanji"
     },
     {
       "kanji": "促音",
       "reading": "そくおん",
-      "meaning": "small っ (geminate consonant marker)"
+      "meaning": "small っ (geminate consonant marker)",
+      "orthography": "kanji"
     },
     {
       "kanji": "長音",
       "reading": "ちょうおん",
-      "meaning": "long vowel marker (ー)"
+      "meaning": "long vowel marker (ー)",
+      "orthography": "kanji"
     },
     {
       "kanji": "撥音",
       "reading": "はつおん",
-      "meaning": "the ん sound (syllabic 'n')"
+      "meaning": "the ん sound (syllabic 'n')",
+      "orthography": "kanji"
     },
     {
       "kanji": "清音",
       "reading": "せいおん",
-      "meaning": "unvoiced/plain kana (か, き, く...)"
+      "meaning": "unvoiced/plain kana (か, き, く...)",
+      "orthography": "kanji"
     },
     {
       "kanji": "濁音",
       "reading": "だくおん",
-      "meaning": "voiced consonants (が, ぎ, ぐ... with ゛)"
+      "meaning": "voiced consonants (が, ぎ, ぐ... with ゛)",
+      "orthography": "kanji"
     },
     {
       "kanji": "半濁音",
       "reading": "はんだくおん",
-      "meaning": "semi-voiced (ぱ, ぴ, ぷ... with ゜)"
+      "meaning": "semi-voiced (ぱ, ぴ, ぷ... with ゜)",
+      "orthography": "kanji"
     },
     {
       "kanji": "平仮名",
       "reading": "ひらがな",
-      "meaning": "hiragana script"
+      "meaning": "hiragana script",
+      "orthography": "kanji"
     },
     {
       "kanji": "漢字",
       "reading": "かんじ",
-      "meaning": "kanji; Chinese characters"
+      "meaning": "kanji; Chinese characters",
+      "orthography": "kanji"
     },
     {
       "kanji": "音読み",
       "reading": "おんよみ",
-      "meaning": "on-yomi; Chinese-derived reading"
+      "meaning": "on-yomi; Chinese-derived reading",
+      "orthography": "both"
     },
     {
       "kanji": "訓読み",
       "reading": "くんよみ",
-      "meaning": "kun-yomi; native Japanese reading"
+      "meaning": "kun-yomi; native Japanese reading",
+      "orthography": "both"
     },
     {
       "kanji": "送り仮名",
       "reading": "おくりがな",
-      "meaning": "kana suffixes after kanji"
+      "meaning": "kana suffixes after kanji",
+      "orthography": "both"
     },
     {
       "kanji": "仮名",
       "reading": "かな",
-      "meaning": "hiragana and katakana collectively"
+      "meaning": "hiragana and katakana collectively",
+      "orthography": "kanji"
     },
     {
       "kanji": "単独",
       "reading": "たんどく",
-      "meaning": "standalone; independent (used to describe a kanji appearing alone, not in a compound)"
+      "meaning": "standalone; independent (used to describe a kanji appearing alone, not in a compound)",
+      "orthography": "kanji"
     },
     {
       "kanji": "活用",
       "reading": "かつよう",
-      "meaning": "inflection; conjugation of a word to express grammatical meaning"
+      "meaning": "inflection; conjugation of a word to express grammatical meaning",
+      "orthography": "kanji"
     },
     {
       "kanji": "活用形",
       "reading": "かつようけい",
-      "meaning": "conjugated form; an inflected verb or adjective form"
+      "meaning": "conjugated form; an inflected verb or adjective form",
+      "orthography": "kanji"
     },
     {
       "kanji": "語幹",
       "reading": "ごかん",
-      "meaning": "word stem; the core part of a word before inflection"
+      "meaning": "word stem; the core part of a word before inflection",
+      "orthography": "kanji"
     },
     {
       "kanji": "語尾",
       "reading": "ごび",
-      "meaning": "word ending; inflectional ending of a verb or adjective"
+      "meaning": "word ending; inflectional ending of a verb or adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "辞書形",
       "reading": "じしょけい",
-      "meaning": "dictionary form; plain non-past form of a verb"
+      "meaning": "dictionary form; plain non-past form of a verb",
+      "orthography": "kanji"
     },
     {
       "kanji": "ます形",
       "reading": "ますけい",
-      "meaning": "polite verb form ending in ～ます"
+      "meaning": "polite verb form ending in ～ます",
+      "orthography": "both"
     },
     {
       "kanji": "ない形",
       "reading": "ないけい",
-      "meaning": "negative verb form ending in ～ない"
+      "meaning": "negative verb form ending in ～ない",
+      "orthography": "both"
     },
     {
       "kanji": "て形",
       "reading": "てけい",
-      "meaning": "te-form; connective verb form used for sequences, requests, and aspect"
+      "meaning": "te-form; connective verb form used for sequences, requests, and aspect",
+      "orthography": "both"
     },
     {
       "kanji": "た形",
       "reading": "たけい",
-      "meaning": "past tense verb form ending in ～た"
+      "meaning": "past tense verb form ending in ～た",
+      "orthography": "both"
     },
     {
       "kanji": "可能形",
       "reading": "かのうけい",
-      "meaning": "potential form; expresses ability or possibility"
+      "meaning": "potential form; expresses ability or possibility",
+      "orthography": "kanji"
     },
     {
       "kanji": "意向形",
       "reading": "いこうけい",
-      "meaning": "volitional form; expresses intention or suggestion (～よう)"
+      "meaning": "volitional form; expresses intention or suggestion (～よう)",
+      "orthography": "kanji"
     },
     {
       "kanji": "命令形",
       "reading": "めいれいけい",
-      "meaning": "imperative form; used to give commands"
+      "meaning": "imperative form; used to give commands",
+      "orthography": "kanji"
     },
     {
       "kanji": "仮定形",
       "reading": "かていけい",
-      "meaning": "conditional form; typically ～ば form"
+      "meaning": "conditional form; typically ～ば form",
+      "orthography": "kanji"
     },
     {
       "kanji": "五段動詞",
       "reading": "ごだんどうし",
-      "meaning": "godan verb; verb that conjugates across five vowel rows"
+      "meaning": "godan verb; verb that conjugates across five vowel rows",
+      "orthography": "kanji"
     },
     {
       "kanji": "一段動詞",
       "reading": "いちだんどうし",
-      "meaning": "ichidan verb; verb with a single stem used for conjugation"
+      "meaning": "ichidan verb; verb with a single stem used for conjugation",
+      "orthography": "kanji"
     },
     {
       "kanji": "他動詞",
       "reading": "たどうし",
-      "meaning": "transitive verb; verb that takes a direct object"
+      "meaning": "transitive verb; verb that takes a direct object",
+      "orthography": "kanji"
     },
     {
       "kanji": "自動詞",
       "reading": "じどうし",
-      "meaning": "intransitive verb; verb that does not take a direct object"
+      "meaning": "intransitive verb; verb that does not take a direct object",
+      "orthography": "kanji"
     },
     {
       "kanji": "ら抜き言葉",
       "reading": "らぬきことば",
-      "meaning": "ra-dropping speech; colloquial omission of ら in potential forms (e.g., 食べれる)"
+      "meaning": "ra-dropping speech; colloquial omission of ら in potential forms (e.g., 食べれる)",
+      "orthography": "both"
     },
     {
       "kanji": "促進",
       "reading": "そくしん",
-      "meaning": "promotion; acceleration"
+      "meaning": "promotion; acceleration",
+      "orthography": "kanji"
     },
     {
       "kanji": "社長",
       "reading": "しゃちょう",
-      "meaning": "company president"
+      "meaning": "company president",
+      "orthography": "kanji"
     },
     {
       "kanji": "部長",
       "reading": "ぶちょう",
-      "meaning": "department head"
+      "meaning": "department head",
+      "orthography": "kanji"
     },
     {
       "kanji": "成長",
       "reading": "せいちょう",
-      "meaning": "growth"
+      "meaning": "growth",
+      "orthography": "kanji"
     },
     {
       "kanji": "半分",
       "reading": "はんぶん",
-      "meaning": "half"
+      "meaning": "half",
+      "orthography": "kanji"
     },
     {
       "kanji": "半ば",
       "reading": "なかば",
-      "meaning": "middle; halfway"
+      "meaning": "middle; halfway",
+      "orthography": "both"
     },
     {
       "kanji": "平日",
       "reading": "へいじつ",
-      "meaning": "weekday"
+      "meaning": "weekday",
+      "orthography": "kanji"
     },
     {
       "kanji": "平和",
       "reading": "へいわ",
-      "meaning": "peace"
+      "meaning": "peace",
+      "orthography": "kanji"
     },
     {
       "kanji": "仮定",
       "reading": "かてい",
-      "meaning": "assumption; hypothesis"
+      "meaning": "assumption; hypothesis",
+      "orthography": "kanji"
     },
     {
       "kanji": "片方",
       "reading": "かたほう",
-      "meaning": "one side; one of a pair"
+      "meaning": "one side; one of a pair",
+      "orthography": "kanji"
     },
     {
       "kanji": "漢方",
       "reading": "かんぽう",
-      "meaning": "Chinese medicine; traditional medicine"
+      "meaning": "Chinese medicine; traditional medicine",
+      "orthography": "kanji"
     },
     {
       "kanji": "読書",
       "reading": "どくしょ",
-      "meaning": "reading (books)"
+      "meaning": "reading (books)",
+      "orthography": "kanji"
     },
     {
       "kanji": "訓練",
       "reading": "くんれん",
-      "meaning": "training; drill"
+      "meaning": "training; drill",
+      "orthography": "kanji"
     },
     {
       "kanji": "送料",
       "reading": "そうりょう",
-      "meaning": "shipping fee; postage"
+      "meaning": "shipping fee; postage",
+      "orthography": "kanji"
     },
     {
       "kanji": "飛行",
       "reading": "ひこう",
-      "meaning": "flight; flying; aviation"
+      "meaning": "flight; flying; aviation",
+      "orthography": "kanji"
     },
     {
       "kanji": "何",
       "reading": "なに",
-      "meaning": "what"
+      "meaning": "what",
+      "orthography": "kanji"
     },
     {
       "kanji": "休み",
       "reading": "やすみ",
-      "meaning": "rest; holiday; break"
+      "meaning": "rest; holiday; break",
+      "orthography": "both"
     },
     {
       "kanji": "金",
       "reading": "かね",
-      "meaning": "money; gold"
+      "meaning": "money; gold",
+      "orthography": "kanji"
     },
     {
       "kanji": "口",
       "reading": "くち",
-      "meaning": "mouth"
+      "meaning": "mouth",
+      "orthography": "kanji"
     },
     {
       "kanji": "子",
       "reading": "こ",
-      "meaning": "child"
+      "meaning": "child",
+      "orthography": "kanji"
     },
     {
       "kanji": "時",
       "reading": "とき",
-      "meaning": "time; moment"
+      "meaning": "time; moment",
+      "orthography": "kanji"
     },
     {
       "kanji": "耳",
       "reading": "みみ",
-      "meaning": "ear"
+      "meaning": "ear",
+      "orthography": "kanji"
     },
     {
       "kanji": "首",
       "reading": "くび",
-      "meaning": "neck"
+      "meaning": "neck",
+      "orthography": "kanji"
     },
     {
       "kanji": "女",
       "reading": "おんな",
-      "meaning": "woman"
+      "meaning": "woman",
+      "orthography": "kanji"
     },
     {
       "kanji": "生",
       "reading": "なま",
-      "meaning": "raw; fresh (noun/adjectival use)"
+      "meaning": "raw; fresh (noun/adjectival use)",
+      "orthography": "kanji"
     },
     {
       "kanji": "西",
       "reading": "にし",
-      "meaning": "west"
+      "meaning": "west",
+      "orthography": "kanji"
     },
     {
       "kanji": "先",
       "reading": "さき",
-      "meaning": "ahead; previous; future"
+      "meaning": "ahead; previous; future",
+      "orthography": "kanji"
     },
     {
       "kanji": "足",
       "reading": "あし",
-      "meaning": "foot; leg"
+      "meaning": "foot; leg",
+      "orthography": "kanji"
     },
     {
       "kanji": "男",
       "reading": "おとこ",
-      "meaning": "man"
+      "meaning": "man",
+      "orthography": "kanji"
     },
     {
       "kanji": "天",
       "reading": "てん",
-      "meaning": "heaven; sky (conceptual)"
+      "meaning": "heaven; sky (conceptual)",
+      "orthography": "kanji"
     },
     {
       "kanji": "土",
       "reading": "つち",
-      "meaning": "soil; earth"
+      "meaning": "soil; earth",
+      "orthography": "kanji"
     },
     {
       "kanji": "東",
       "reading": "ひがし",
-      "meaning": "east"
+      "meaning": "east",
+      "orthography": "kanji"
     },
     {
       "kanji": "南",
       "reading": "みなみ",
-      "meaning": "south"
+      "meaning": "south",
+      "orthography": "kanji"
     },
     {
       "kanji": "毎日",
       "reading": "まいにち",
-      "meaning": "every day"
+      "meaning": "every day",
+      "orthography": "kanji"
     },
     {
       "kanji": "友",
       "reading": "とも",
-      "meaning": "friend (literary/short form)"
+      "meaning": "friend (literary/short form)",
+      "orthography": "kanji"
     },
     {
       "kanji": "曜日",
       "reading": "ようび",
-      "meaning": "day of the week"
+      "meaning": "day of the week",
+      "orthography": "kanji"
     }
   ]
 }

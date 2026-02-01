@@ -43,14 +43,14 @@
     {
       "path": "japanese/nouns/expression__katakana.json",
       "name": "Japanese (expression) (katakana)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='expression' and orthography='katakana'.",
-      "entries": 2
+      "description": "Common everyday katakana expressions and onomatopoeia frequently seen in manga, subtitles, and casual writing.",
+      "entries": 30
     },
     {
       "path": "japanese/nouns/i-adjective.json",
       "name": "Japanese (i-adjective)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='i-adjective'.",
-      "entries": 2
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='i-adjective'. Expanded common i-adjectives.",
+      "entries": 100
     },
     {
       "path": "japanese/nouns/kanji__katakana.json",
@@ -71,8 +71,14 @@
       "entries": 122
     },
     {
+      "path": "japanese/nouns/noun_updated.json",
+      "name": "Japanese (noun) (noun_updated)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='noun'.",
+      "entries": 392
+    },
+    {
       "path": "japanese/nouns/noun.json",
-      "name": "Japanese (noun)",
+      "name": "Japanese (noun) (noun)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='noun'.",
       "entries": 392
     },
@@ -284,7 +290,7 @@
       "path": "pokemon/pokemon_starters.json",
       "name": "Pokémon Starters (Kanto)",
       "description": "First-generation Kanto starter Pokémon and first 26 Pokémon. Type kanji use the official Japanese main-series game terminology; verified against Bulbapedia and Pokémon Database.",
-      "entries": 26
+      "entries": 151
     },
     {
       "path": "programming/programming_languages.json",

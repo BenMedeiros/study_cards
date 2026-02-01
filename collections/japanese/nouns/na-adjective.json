@@ -45,7 +45,6 @@
       "reading": "せいけつ",
       "meaning": "clean; sanitary",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "このキッチンは清潔です。",
         "en": "This kitchen is clean.",
@@ -60,7 +59,6 @@
       "reading": "へいき",
       "meaning": "calm; composed; alright",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "雨でも平気だよ。",
         "en": "Even if it rains, I’m fine.",
@@ -75,7 +73,6 @@
       "reading": "ふしぎ",
       "meaning": "mysterious; strange; wonder",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "それは不思議な話だね。",
         "en": "That’s a mysterious story, huh.",
@@ -90,7 +87,6 @@
       "reading": "つうじょう",
       "meaning": "usual; ordinary; normal state",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "今日は通常どおり営業します。",
         "en": "Today we’re open as usual.",
@@ -105,7 +101,6 @@
       "reading": "だいじょうぶ",
       "meaning": "okay; all right; safe",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "大丈夫？手伝おうか。",
         "en": "Are you okay? Want me to help?",
@@ -120,7 +115,6 @@
       "reading": "べんり",
       "meaning": "convenient; useful",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "このアプリは便利だから、毎日使っている。",
         "en": "This app is convenient, so I use it every day.",
@@ -135,7 +129,6 @@
       "reading": "じゅうよう",
       "meaning": "important",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "これはとても重要なポイントです。",
         "en": "This is a very important point.",
@@ -150,7 +143,6 @@
       "reading": "ゆうめい",
       "meaning": "famous; well-known",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "この店はラーメンが有名です。",
         "en": "This shop is famous for its ramen.",
@@ -165,7 +157,6 @@
       "reading": "げんき",
       "meaning": "healthy; energetic; fine",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "今日は元気じゃないから、早く帰る。",
         "en": "I’m not feeling well today, so I’ll go home early.",
@@ -180,7 +171,6 @@
       "reading": "しずか",
       "meaning": "quiet",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "ここは静かな場所だから、勉強しやすい。",
         "en": "It’s easy to study here because it’s a quiet place.",
@@ -195,7 +185,6 @@
       "reading": "きれい",
       "meaning": "pretty; beautiful; clean",
       "orthography": "both",
-      "type": "na-adjective",
       "example": {
         "ja": "部屋を綺麗にしてから、友だちを呼ぶ。",
         "en": "I’ll clean the room, then invite my friends over.",
@@ -211,7 +200,6 @@
       "reading": "あんぜん",
       "meaning": "safe; secure",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "夜はこの道のほうが安全です。",
         "en": "At night, this road is safer.",
@@ -226,7 +214,6 @@
       "reading": "きけん",
       "meaning": "dangerous; risky",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "その橋は古くて危険だ。",
         "en": "That bridge is old and dangerous.",
@@ -241,7 +228,6 @@
       "reading": "ひつよう",
       "meaning": "necessary; needed",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "パスポートが必要な場合もあります。",
         "en": "In some cases, a passport is necessary.",
@@ -256,7 +242,6 @@
       "reading": "かんたん",
       "meaning": "easy; simple",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "これは簡単な問題だから、すぐ終わるよ。",
         "en": "This is an easy problem, so it’ll finish quickly.",
@@ -271,7 +256,6 @@
       "reading": "たいせつ",
       "meaning": "important; valuable; precious",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "健康は一番大切だと思う。",
         "en": "I think health is the most important.",
@@ -286,7 +270,6 @@
       "reading": "とくべつ",
       "meaning": "special",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "今日は特別な日だから、外で食べよう。",
         "en": "Since today is a special day, let’s eat out.",
@@ -301,7 +284,6 @@
       "reading": "まじめ",
       "meaning": "serious; diligent",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "彼は真面目な人で、約束を守る。",
         "en": "He’s a serious person and keeps promises.",
@@ -316,7 +298,6 @@
       "reading": "じゆう",
       "meaning": "free; freedom",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "週末は時間が自由だから、どこでも行ける。",
         "en": "On weekends my time is free, so I can go anywhere.",
@@ -331,7 +312,6 @@
       "reading": "じょうず",
       "meaning": "good at; skillful",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "彼女は日本語が上手ですね。",
         "en": "She’s good at Japanese, isn’t she?",
@@ -346,7 +326,6 @@
       "reading": "へた",
       "meaning": "bad at; unskillful",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "私は歌が下手だけど、歌うのが好き。",
         "en": "I’m bad at singing, but I like singing.",
@@ -361,7 +340,6 @@
       "reading": "しんせつ",
       "meaning": "kind; helpful",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "店員さんが親切だったので、安心した。",
         "en": "The clerk was kind, so I felt relieved.",
@@ -376,7 +354,6 @@
       "reading": "にぎやか",
       "meaning": "lively; bustling",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "駅前はいつも賑やかで、人が多い。",
         "en": "In front of the station is always lively and crowded.",
@@ -391,7 +368,6 @@
       "reading": "ふべん",
       "meaning": "inconvenient",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "この町は電車が少なくて不便だ。",
         "en": "This town is inconvenient because there are few trains.",
@@ -406,7 +382,6 @@
       "reading": "たいへん",
       "meaning": "tough; hard; serious; very (adverbial use also common)",
       "orthography": "kanji",
-      "type": "na-adjective",
       "example": {
         "ja": "引っ越しは大変だったけど、もう慣れた。",
         "en": "Moving was tough, but I’m used to it now.",

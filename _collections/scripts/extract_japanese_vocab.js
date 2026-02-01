@@ -4,6 +4,7 @@ const path = require('path');
 
 const scriptsDir = path.resolve(__dirname);
 const japaneseDir = path.join(scriptsDir, '..', '..', 'collections', 'japanese');
+const pokemonDir = path.join(scriptsDir, '..', '..', 'collections', 'pokemon');
 const collectionsDir = path.join(scriptsDir, '..', '..', 'collections');
 const outDir = path.join(scriptsDir, '..', 'aggregates');
 const outPath = path.join(outDir, 'japanese_word_lists.json');
@@ -89,12 +90,40 @@ async function collectMetadataLabels(rootDir, wordsSet, kanjiSet, labelsSet, sta
   });
 }
 
+async function collectPokemonFields(rootDir, pokemonTypesSet, pokemonRootsSet) {
+  await walk(rootDir, async (p) => {
+    let txt;
+    try { txt = await fs.readFile(p, 'utf8'); } catch (e) { return; }
+    let doc;
+    try { doc = JSON.parse(txt); } catch (e) { return; }
+
+    if (!doc || !Array.isArray(doc.entries)) return;
+    for (const e of doc.entries) {
+      if (!e || typeof e !== 'object') continue;
+
+      const { type, japaneseNameRoots } = e;
+
+      if (typeof type === 'string') pokemonTypesSet.add(type);
+      else if (Array.isArray(type)) {
+        for (const t of type) if (typeof t === 'string') pokemonTypesSet.add(t);
+      }
+
+      if (typeof japaneseNameRoots === 'string') pokemonRootsSet.add(japaneseNameRoots);
+      else if (Array.isArray(japaneseNameRoots)) {
+        for (const r of japaneseNameRoots) if (typeof r === 'string') pokemonRootsSet.add(r);
+      }
+    }
+  });
+}
+
 async function main() {
   const wordsSet = new Set();
   const kanjiSet = new Set();
   const standaloneSet = new Set();
   const labelsSet = new Set();
   const entriesKanjiSet = new Set();
+  const pokemonTypesSet = new Set();
+  const pokemonRootsSet = new Set();
 
   // Collect from all japanese files
   await walk(japaneseDir, async (p) => {
@@ -104,8 +133,13 @@ async function main() {
   // Also collect jp_label from all _metadata.json files across collections
   await collectMetadataLabels(collectionsDir, wordsSet, kanjiSet, labelsSet, standaloneSet);
 
+  // Collect Pokemon entry fields
+  await collectPokemonFields(pokemonDir, pokemonTypesSet, pokemonRootsSet);
+
   const jp_labels = Array.from(labelsSet).sort((a,b)=>a.localeCompare(b,'ja'));
   const entriesKanji = Array.from(entriesKanjiSet).sort((a,b)=>a.localeCompare(b,'ja'));
+  const pokemon_types = Array.from(pokemonTypesSet).sort((a,b)=>a.localeCompare(b,'ja'));
+  const pokemon_roots = Array.from(pokemonRootsSet).sort((a,b)=>a.localeCompare(b,'ja'));
 
   // map token -> set of files (from collectFromJson.entriesMap)
   const entriesMap = collectFromJson.entriesMap || new Map();
@@ -168,7 +202,9 @@ async function main() {
     kanjiNotStandalone: '__KANJI_NOT_STANDALONE__',
     duplicatedKanji: '__DUPLICATED_KANJI__',
     kanjiNotInOtherKanjiWords: '__KANJI_NOT_IN_OTHER__',
-    kanjiInOnlyOneOtherWord: '__KANJI_IN_ONE_OTHER__'
+    kanjiInOnlyOneOtherWord: '__KANJI_IN_ONE_OTHER__',
+    pokemon_types: '__POKEMON_TYPES__',
+    pokemon_roots: '__POKEMON_ROOTS__'
   };
 
   const out = {
@@ -181,7 +217,9 @@ async function main() {
       uniqueKanjiNotStandalone: kanjiNotStandalone.length,
       duplicatedKanji: duplicatedKanji.length,
       kanjiNotInOtherKanjiWords: kanjiNotInOtherKanjiWords.length,
-      kanjiInOnlyOneOtherWord: kanjiInOnlyOneOtherWord.length
+      kanjiInOnlyOneOtherWord: kanjiInOnlyOneOtherWord.length,
+      uniquePokemonTypes: pokemon_types.length,
+      uniquePokemonRoots: pokemon_roots.length
     },
     entriesKanji: placeholders.entriesKanji,
     jp_labels: placeholders.jp_labels,
@@ -190,7 +228,9 @@ async function main() {
     kanjiNotStandalone: placeholders.kanjiNotStandalone,
     duplicatedKanji: placeholders.duplicatedKanji,
     kanjiNotInOtherKanjiWords: placeholders.kanjiNotInOtherKanjiWords,
-    kanjiInOnlyOneOtherWord: placeholders.kanjiInOnlyOneOtherWord
+    kanjiInOnlyOneOtherWord: placeholders.kanjiInOnlyOneOtherWord,
+    pokemon_types: placeholders.pokemon_types,
+    pokemon_roots: placeholders.pokemon_roots
   };
 
   let txtOut = JSON.stringify(out, null, 2);
@@ -203,6 +243,8 @@ async function main() {
   repl.set(JSON.stringify(placeholders.duplicatedKanji), JSON.stringify(duplicatedKanji));
   repl.set(JSON.stringify(placeholders.kanjiNotInOtherKanjiWords), JSON.stringify(kanjiNotInOtherKanjiWords));
   repl.set(JSON.stringify(placeholders.kanjiInOnlyOneOtherWord), JSON.stringify(kanjiInOnlyOneOtherWord));
+  repl.set(JSON.stringify(placeholders.pokemon_types), JSON.stringify(pokemon_types));
+  repl.set(JSON.stringify(placeholders.pokemon_roots), JSON.stringify(pokemon_roots));
 
   for (const [k, v] of repl.entries()) txtOut = txtOut.replace(k, v);
   if (!txtOut.endsWith('\n')) txtOut += '\n';

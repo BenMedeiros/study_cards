@@ -9,183 +9,1783 @@
       "englishName": "Bulbasaur",
       "japaneseName": "フシギダネ",
       "pokedexNumber": 1,
-      "type": ["草", "毒"],
-      "japaneseNameRoots": ["不思議", "種"]
+      "type": [
+        "草",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "不思議",
+        "種"
+      ]
     },
     {
       "englishName": "Ivysaur",
       "japaneseName": "フシギソウ",
       "pokedexNumber": 2,
-      "type": ["草", "毒"],
-      "japaneseNameRoots": ["不思議", "草"]
+      "type": [
+        "草",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "不思議",
+        "草"
+      ]
     },
     {
       "englishName": "Venusaur",
       "japaneseName": "フシギバナ",
       "pokedexNumber": 3,
-      "type": ["草", "毒"],
-      "japaneseNameRoots": ["不思議", "花"]
+      "type": [
+        "草",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "不思議",
+        "花"
+      ]
     },
     {
       "englishName": "Charmander",
       "japaneseName": "ヒトカゲ",
       "pokedexNumber": 4,
-      "type": ["炎"],
-      "japaneseNameRoots": ["火", "蜥蜴"]
+      "type": [
+        "炎"
+      ],
+      "japaneseNameRoots": [
+        "火",
+        "蜥蜴"
+      ]
     },
     {
       "englishName": "Charmeleon",
       "japaneseName": "リザード",
       "pokedexNumber": 5,
-      "type": ["炎"],
-      "japaneseNameRoots": ["リザード"]
+      "type": [
+        "炎"
+      ],
+      "japaneseNameRoots": [
+        "リザード"
+      ]
     },
     {
       "englishName": "Charizard",
       "japaneseName": "リザードン",
       "pokedexNumber": 6,
-      "type": ["炎", "飛行"],
-      "japaneseNameRoots": ["リザード"]
+      "type": [
+        "炎",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "リザード"
+      ]
     },
     {
       "englishName": "Squirtle",
       "japaneseName": "ゼニガメ",
       "pokedexNumber": 7,
-      "type": ["水"],
-      "japaneseNameRoots": ["銭", "亀"]
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "銭",
+        "亀"
+      ]
     },
     {
       "englishName": "Wartortle",
       "japaneseName": "カメール",
       "pokedexNumber": 8,
-      "type": ["水"],
-      "japaneseNameRoots": ["亀", "甲羅"]
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "亀",
+        "甲羅"
+      ]
     },
     {
       "englishName": "Blastoise",
       "japaneseName": "カメックス",
       "pokedexNumber": 9,
-      "type": ["水"],
-      "japaneseNameRoots": ["亀", "砲"]
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "亀",
+        "砲"
+      ]
     },
     {
       "englishName": "Caterpie",
       "japaneseName": "キャタピー",
       "pokedexNumber": 10,
-      "type": ["虫"],
-      "japaneseNameRoots": ["キャタピラー"]
+      "type": [
+        "虫"
+      ],
+      "japaneseNameRoots": [
+        "キャタピラー"
+      ]
     },
     {
       "englishName": "Metapod",
       "japaneseName": "トランセル",
       "pokedexNumber": 11,
-      "type": ["虫"],
-      "japaneseNameRoots": ["トランス", "セル"]
+      "type": [
+        "虫"
+      ],
+      "japaneseNameRoots": [
+        "トランス",
+        "セル"
+      ]
     },
     {
       "englishName": "Butterfree",
       "japaneseName": "バタフリー",
       "pokedexNumber": 12,
-      "type": ["虫", "飛行"],
-      "japaneseNameRoots": ["バタフライ"]
+      "type": [
+        "虫",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "バタフライ"
+      ]
     },
     {
       "englishName": "Weedle",
       "japaneseName": "ビードル",
       "pokedexNumber": 13,
-      "type": ["虫", "毒"],
-      "japaneseNameRoots": ["ビートル"]
+      "type": [
+        "虫",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "ビートル"
+      ]
     },
     {
       "englishName": "Kakuna",
       "japaneseName": "コクーン",
       "pokedexNumber": 14,
-      "type": ["虫", "毒"],
-      "japaneseNameRoots": ["コクーン"]
+      "type": [
+        "虫",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "コクーン"
+      ]
     },
     {
       "englishName": "Beedrill",
       "japaneseName": "スピアー",
       "pokedexNumber": 15,
-      "type": ["虫", "毒"],
-      "japaneseNameRoots": ["スピア"]
+      "type": [
+        "虫",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "スピア"
+      ]
     },
     {
       "englishName": "Pidgey",
       "japaneseName": "ポッポ",
       "pokedexNumber": 16,
-      "type": ["通常", "飛行"],
-      "japaneseNameRoots": ["鳩"]
+      "type": [
+        "通常",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "鳩"
+      ]
     },
     {
       "englishName": "Pidgeotto",
       "japaneseName": "ピジョン",
       "pokedexNumber": 17,
-      "type": ["通常", "飛行"],
-      "japaneseNameRoots": ["鳩"]
+      "type": [
+        "通常",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "鳩"
+      ]
     },
     {
       "englishName": "Pidgeot",
       "japaneseName": "ピジョット",
       "pokedexNumber": 18,
-      "type": ["通常", "飛行"],
-      "japaneseNameRoots": ["鳩"]
+      "type": [
+        "通常",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "鳩"
+      ]
     },
     {
       "englishName": "Rattata",
       "japaneseName": "コラッタ",
       "pokedexNumber": 19,
-      "type": ["通常"],
-      "japaneseNameRoots": ["ラット"]
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "ラット"
+      ]
     },
     {
       "englishName": "Raticate",
       "japaneseName": "ラッタ",
       "pokedexNumber": 20,
-      "type": ["通常"],
-      "japaneseNameRoots": ["ラット"]
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "ラット"
+      ]
     },
     {
       "englishName": "Spearow",
       "japaneseName": "オニスズメ",
       "pokedexNumber": 21,
-      "type": ["通常", "飛行"],
-      "japaneseNameRoots": ["鬼", "雀"]
+      "type": [
+        "通常",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "鬼",
+        "雀"
+      ]
     },
     {
       "englishName": "Fearow",
       "japaneseName": "オニドリル",
       "pokedexNumber": 22,
-      "type": ["通常", "飛行"],
-      "japaneseNameRoots": ["鬼", "ドリル"]
+      "type": [
+        "通常",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "鬼",
+        "ドリル"
+      ]
     },
     {
       "englishName": "Ekans",
       "japaneseName": "アーボ",
       "pokedexNumber": 23,
-      "type": ["毒"],
-      "japaneseNameRoots": ["蛇"]
+      "type": [
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "蛇"
+      ]
     },
     {
       "englishName": "Arbok",
       "japaneseName": "アーボック",
       "pokedexNumber": 24,
-      "type": ["毒"],
-      "japaneseNameRoots": ["蛇"]
+      "type": [
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "蛇"
+      ]
     },
     {
       "englishName": "Pikachu",
       "japaneseName": "ピカチュウ",
       "pokedexNumber": 25,
-      "type": ["電気"],
-      "japaneseNameRoots": ["ピカ", "チュウ"]
+      "type": [
+        "電気"
+      ],
+      "japaneseNameRoots": [
+        "ピカ",
+        "チュウ"
+      ]
     },
     {
       "englishName": "Raichu",
       "japaneseName": "ライチュウ",
       "pokedexNumber": 26,
-      "type": ["電気"],
-      "japaneseNameRoots": ["雷", "チュウ"]
+      "type": [
+        "電気"
+      ],
+      "japaneseNameRoots": [
+        "雷",
+        "チュウ"
+      ]
+    },
+    {
+      "englishName": "Sandshrew",
+      "japaneseName": "サンド",
+      "pokedexNumber": 27,
+      "type": [
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "サンド"
+      ]
+    },
+    {
+      "englishName": "Sandslash",
+      "japaneseName": "サンドパン",
+      "pokedexNumber": 28,
+      "type": [
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "サンド",
+        "パン"
+      ]
+    },
+    {
+      "englishName": "Nidoran♀",
+      "japaneseName": "ニドラン♀",
+      "pokedexNumber": 29,
+      "type": [
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "ニードル"
+      ]
+    },
+    {
+      "englishName": "Nidorina",
+      "japaneseName": "ニドリーナ",
+      "pokedexNumber": 30,
+      "type": [
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "ニードル",
+        "クイーン"
+      ]
+    },
+    {
+      "englishName": "Nidoqueen",
+      "japaneseName": "ニドクイン",
+      "pokedexNumber": 31,
+      "type": [
+        "毒",
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "ニードル",
+        "クイーン"
+      ]
+    },
+    {
+      "englishName": "Nidoran♂",
+      "japaneseName": "ニドラン♂",
+      "pokedexNumber": 32,
+      "type": [
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "ニードル"
+      ]
+    },
+    {
+      "englishName": "Nidorino",
+      "japaneseName": "ニドリーノ",
+      "pokedexNumber": 33,
+      "type": [
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "ニードル",
+        "キング"
+      ]
+    },
+    {
+      "englishName": "Nidoking",
+      "japaneseName": "ニドキング",
+      "pokedexNumber": 34,
+      "type": [
+        "毒",
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "ニードル",
+        "キング"
+      ]
+    },
+    {
+      "englishName": "Clefairy",
+      "japaneseName": "ピッピ",
+      "pokedexNumber": 35,
+      "type": [
+        "妖精"
+      ],
+      "japaneseNameRoots": [
+        "ピッ"
+      ]
+    },
+    {
+      "englishName": "Clefable",
+      "japaneseName": "ピクシー",
+      "pokedexNumber": 36,
+      "type": [
+        "妖精"
+      ],
+      "japaneseNameRoots": [
+        "ピクシー"
+      ]
+    },
+    {
+      "englishName": "Vulpix",
+      "japaneseName": "ロコン",
+      "pokedexNumber": 37,
+      "type": [
+        "炎"
+      ],
+      "japaneseNameRoots": [
+        "六",
+        "狐"
+      ]
+    },
+    {
+      "englishName": "Ninetales",
+      "japaneseName": "キュウコン",
+      "pokedexNumber": 38,
+      "type": [
+        "炎"
+      ],
+      "japaneseNameRoots": [
+        "九",
+        "狐"
+      ]
+    },
+    {
+      "englishName": "Jigglypuff",
+      "japaneseName": "プリン",
+      "pokedexNumber": 39,
+      "type": [
+        "通常",
+        "妖精"
+      ],
+      "japaneseNameRoots": [
+        "プリン"
+      ]
+    },
+    {
+      "englishName": "Wigglytuff",
+      "japaneseName": "プクリン",
+      "pokedexNumber": 40,
+      "type": [
+        "通常",
+        "妖精"
+      ],
+      "japaneseNameRoots": [
+        "プク"
+      ]
+    },
+    {
+      "englishName": "Zubat",
+      "japaneseName": "ズバット",
+      "pokedexNumber": 41,
+      "type": [
+        "毒",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "ズバ"
+      ]
+    },
+    {
+      "englishName": "Golbat",
+      "japaneseName": "ゴルバット",
+      "pokedexNumber": 42,
+      "type": [
+        "毒",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "ゴール",
+        "バット"
+      ]
+    },
+    {
+      "englishName": "Oddish",
+      "japaneseName": "ナゾノクサ",
+      "pokedexNumber": 43,
+      "type": [
+        "草",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "謎",
+        "草"
+      ]
+    },
+    {
+      "englishName": "Gloom",
+      "japaneseName": "クサイハナ",
+      "pokedexNumber": 44,
+      "type": [
+        "草",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "臭い",
+        "花"
+      ]
+    },
+    {
+      "englishName": "Vileplume",
+      "japaneseName": "ラフレシア",
+      "pokedexNumber": 45,
+      "type": [
+        "草",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "ラフレシア"
+      ]
+    },
+    {
+      "englishName": "Paras",
+      "japaneseName": "パラス",
+      "pokedexNumber": 46,
+      "type": [
+        "虫",
+        "草"
+      ],
+      "japaneseNameRoots": [
+        "パラサイト"
+      ]
+    },
+    {
+      "englishName": "Parasect",
+      "japaneseName": "パラセクト",
+      "pokedexNumber": 47,
+      "type": [
+        "虫",
+        "草"
+      ],
+      "japaneseNameRoots": [
+        "パラサイト",
+        "インセクト"
+      ]
+    },
+    {
+      "englishName": "Venonat",
+      "japaneseName": "コンパン",
+      "pokedexNumber": 48,
+      "type": [
+        "虫",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "紺",
+        "パン"
+      ]
+    },
+    {
+      "englishName": "Venomoth",
+      "japaneseName": "モルフォン",
+      "pokedexNumber": 49,
+      "type": [
+        "虫",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "モルフォ"
+      ]
+    },
+    {
+      "englishName": "Diglett",
+      "japaneseName": "ディグダ",
+      "pokedexNumber": 50,
+      "type": [
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "ディグ"
+      ]
+    },
+    {
+      "englishName": "Dugtrio",
+      "japaneseName": "ダグトリオ",
+      "pokedexNumber": 51,
+      "type": [
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "ダグ",
+        "トリオ"
+      ]
+    },
+    {
+      "englishName": "Meowth",
+      "japaneseName": "ニャース",
+      "pokedexNumber": 52,
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "ニャー"
+      ]
+    },
+    {
+      "englishName": "Persian",
+      "japaneseName": "ペルシアン",
+      "pokedexNumber": 53,
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "ペルシャ"
+      ]
+    },
+    {
+      "englishName": "Psyduck",
+      "japaneseName": "コダック",
+      "pokedexNumber": 54,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "子",
+        "ダック"
+      ]
+    },
+    {
+      "englishName": "Golduck",
+      "japaneseName": "ゴルダック",
+      "pokedexNumber": 55,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "ゴールド",
+        "ダック"
+      ]
+    },
+    {
+      "englishName": "Mankey",
+      "japaneseName": "マンキー",
+      "pokedexNumber": 56,
+      "type": [
+        "格闘"
+      ],
+      "japaneseNameRoots": [
+        "モンキー"
+      ]
+    },
+    {
+      "englishName": "Primeape",
+      "japaneseName": "オコリザル",
+      "pokedexNumber": 57,
+      "type": [
+        "格闘"
+      ],
+      "japaneseNameRoots": [
+        "怒り",
+        "猿"
+      ]
+    },
+    {
+      "englishName": "Growlithe",
+      "japaneseName": "ガーディ",
+      "pokedexNumber": 58,
+      "type": [
+        "炎"
+      ],
+      "japaneseNameRoots": [
+        "ガード"
+      ]
+    },
+    {
+      "englishName": "Arcanine",
+      "japaneseName": "ウインディ",
+      "pokedexNumber": 59,
+      "type": [
+        "炎"
+      ],
+      "japaneseNameRoots": [
+        "ウインド"
+      ]
+    },
+    {
+      "englishName": "Poliwag",
+      "japaneseName": "ニョロモ",
+      "pokedexNumber": 60,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "ニョロ"
+      ]
+    },
+    {
+      "englishName": "Poliwhirl",
+      "japaneseName": "ニョロゾ",
+      "pokedexNumber": 61,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "ニョロ"
+      ]
+    },
+    {
+      "englishName": "Poliwrath",
+      "japaneseName": "ニョロボン",
+      "pokedexNumber": 62,
+      "type": [
+        "水",
+        "格闘"
+      ],
+      "japaneseNameRoots": [
+        "ニョロ"
+      ]
+    },
+    {
+      "englishName": "Abra",
+      "japaneseName": "ケーシィ",
+      "pokedexNumber": 63,
+      "type": [
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "ケーシー"
+      ]
+    },
+    {
+      "englishName": "Kadabra",
+      "japaneseName": "ユンゲラー",
+      "pokedexNumber": 64,
+      "type": [
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "ユンゲラー"
+      ]
+    },
+    {
+      "englishName": "Alakazam",
+      "japaneseName": "フーディン",
+      "pokedexNumber": 65,
+      "type": [
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "フーディーニ"
+      ]
+    },
+    {
+      "englishName": "Machop",
+      "japaneseName": "ワンリキー",
+      "pokedexNumber": 66,
+      "type": [
+        "格闘"
+      ],
+      "japaneseNameRoots": [
+        "ワン",
+        "力"
+      ]
+    },
+    {
+      "englishName": "Machoke",
+      "japaneseName": "ゴーリキー",
+      "pokedexNumber": 67,
+      "type": [
+        "格闘"
+      ],
+      "japaneseNameRoots": [
+        "ゴー",
+        "力"
+      ]
+    },
+    {
+      "englishName": "Machamp",
+      "japaneseName": "カイリキー",
+      "pokedexNumber": 68,
+      "type": [
+        "格闘"
+      ],
+      "japaneseNameRoots": [
+        "怪力"
+      ]
+    },
+    {
+      "englishName": "Bellsprout",
+      "japaneseName": "マダツボミ",
+      "pokedexNumber": 69,
+      "type": [
+        "草",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "未だ",
+        "蕾"
+      ]
+    },
+    {
+      "englishName": "Weepinbell",
+      "japaneseName": "ウツドン",
+      "pokedexNumber": 70,
+      "type": [
+        "草",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "鬱",
+        "ドン"
+      ]
+    },
+    {
+      "englishName": "Victreebel",
+      "japaneseName": "ウツボット",
+      "pokedexNumber": 71,
+      "type": [
+        "草",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "鬱",
+        "ポット"
+      ]
+    },
+    {
+      "englishName": "Tentacool",
+      "japaneseName": "メノクラゲ",
+      "pokedexNumber": 72,
+      "type": [
+        "水",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "目",
+        "海月"
+      ]
+    },
+    {
+      "englishName": "Tentacruel",
+      "japaneseName": "ドククラゲ",
+      "pokedexNumber": 73,
+      "type": [
+        "水",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "毒",
+        "海月"
+      ]
+    },
+    {
+      "englishName": "Geodude",
+      "japaneseName": "イシツブテ",
+      "pokedexNumber": 74,
+      "type": [
+        "岩",
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "石",
+        "礫"
+      ]
+    },
+    {
+      "englishName": "Graveler",
+      "japaneseName": "ゴローン",
+      "pokedexNumber": 75,
+      "type": [
+        "岩",
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "ゴロゴロ"
+      ]
+    },
+    {
+      "englishName": "Golem",
+      "japaneseName": "ゴローニャ",
+      "pokedexNumber": 76,
+      "type": [
+        "岩",
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "ゴーレム"
+      ]
+    },
+    {
+      "englishName": "Ponyta",
+      "japaneseName": "ポニータ",
+      "pokedexNumber": 77,
+      "type": [
+        "炎"
+      ],
+      "japaneseNameRoots": [
+        "ポニー"
+      ]
+    },
+    {
+      "englishName": "Rapidash",
+      "japaneseName": "ギャロップ",
+      "pokedexNumber": 78,
+      "type": [
+        "炎"
+      ],
+      "japaneseNameRoots": [
+        "ギャロップ"
+      ]
+    },
+    {
+      "englishName": "Slowpoke",
+      "japaneseName": "ヤドン",
+      "pokedexNumber": 79,
+      "type": [
+        "水",
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "宿"
+      ]
+    },
+    {
+      "englishName": "Slowbro",
+      "japaneseName": "ヤドラン",
+      "pokedexNumber": 80,
+      "type": [
+        "水",
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "宿"
+      ]
+    },
+    {
+      "englishName": "Magnemite",
+      "japaneseName": "コイル",
+      "pokedexNumber": 81,
+      "type": [
+        "電気",
+        "鋼"
+      ],
+      "japaneseNameRoots": [
+        "コイル"
+      ]
+    },
+    {
+      "englishName": "Magneton",
+      "japaneseName": "レアコイル",
+      "pokedexNumber": 82,
+      "type": [
+        "電気",
+        "鋼"
+      ],
+      "japaneseNameRoots": [
+        "レア",
+        "コイル"
+      ]
+    },
+    {
+      "englishName": "Farfetch’d",
+      "japaneseName": "カモネギ",
+      "pokedexNumber": 83,
+      "type": [
+        "通常",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "鴨",
+        "葱"
+      ]
+    },
+    {
+      "englishName": "Doduo",
+      "japaneseName": "ドードー",
+      "pokedexNumber": 84,
+      "type": [
+        "通常",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "ドードー"
+      ]
+    },
+    {
+      "englishName": "Dodrio",
+      "japaneseName": "ドードリオ",
+      "pokedexNumber": 85,
+      "type": [
+        "通常",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "ドードー",
+        "トリオ"
+      ]
+    },
+    {
+      "englishName": "Seel",
+      "japaneseName": "パウワウ",
+      "pokedexNumber": 86,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "パウ"
+      ]
+    },
+    {
+      "englishName": "Dewgong",
+      "japaneseName": "ジュゴン",
+      "pokedexNumber": 87,
+      "type": [
+        "水",
+        "氷"
+      ],
+      "japaneseNameRoots": [
+        "ジュゴン"
+      ]
+    },
+    {
+      "englishName": "Grimer",
+      "japaneseName": "ベトベター",
+      "pokedexNumber": 88,
+      "type": [
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "ベトベト"
+      ]
+    },
+    {
+      "englishName": "Muk",
+      "japaneseName": "ベトベトン",
+      "pokedexNumber": 89,
+      "type": [
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "ベトベト"
+      ]
+    },
+    {
+      "englishName": "Shellder",
+      "japaneseName": "シェルダー",
+      "pokedexNumber": 90,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "シェル"
+      ]
+    },
+    {
+      "englishName": "Cloyster",
+      "japaneseName": "パルシェン",
+      "pokedexNumber": 91,
+      "type": [
+        "水",
+        "氷"
+      ],
+      "japaneseNameRoots": [
+        "パール",
+        "シェル"
+      ]
+    },
+    {
+      "englishName": "Gastly",
+      "japaneseName": "ゴース",
+      "pokedexNumber": 92,
+      "type": [
+        "ゴースト",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "ゴースト"
+      ]
+    },
+    {
+      "englishName": "Haunter",
+      "japaneseName": "ゴースト",
+      "pokedexNumber": 93,
+      "type": [
+        "ゴースト",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "ゴースト"
+      ]
+    },
+    {
+      "englishName": "Gengar",
+      "japaneseName": "ゲンガー",
+      "pokedexNumber": 94,
+      "type": [
+        "ゴースト",
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "ゲンガー"
+      ]
+    },
+    {
+      "englishName": "Onix",
+      "japaneseName": "イワーク",
+      "pokedexNumber": 95,
+      "type": [
+        "岩",
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "岩"
+      ]
+    },
+    {
+      "englishName": "Drowzee",
+      "japaneseName": "スリープ",
+      "pokedexNumber": 96,
+      "type": [
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "スリープ"
+      ]
+    },
+    {
+      "englishName": "Hypno",
+      "japaneseName": "スリーパー",
+      "pokedexNumber": 97,
+      "type": [
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "スリープ"
+      ]
+    },
+    {
+      "englishName": "Krabby",
+      "japaneseName": "クラブ",
+      "pokedexNumber": 98,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "クラブ"
+      ]
+    },
+    {
+      "englishName": "Kingler",
+      "japaneseName": "キングラー",
+      "pokedexNumber": 99,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "キング"
+      ]
+    },
+    {
+      "englishName": "Voltorb",
+      "japaneseName": "ビリリダマ",
+      "pokedexNumber": 100,
+      "type": [
+        "電気"
+      ],
+      "japaneseNameRoots": [
+        "ビリビリ",
+        "玉"
+      ]
+    },
+    {
+      "englishName": "Electrode",
+      "japaneseName": "マルマイン",
+      "pokedexNumber": 101,
+      "type": [
+        "電気"
+      ],
+      "japaneseNameRoots": [
+        "丸",
+        "マイン"
+      ]
+    },
+    {
+      "englishName": "Exeggcute",
+      "japaneseName": "タマタマ",
+      "pokedexNumber": 102,
+      "type": [
+        "草",
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "玉"
+      ]
+    },
+    {
+      "englishName": "Exeggutor",
+      "japaneseName": "ナッシー",
+      "pokedexNumber": 103,
+      "type": [
+        "草",
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "ナッツ"
+      ]
+    },
+    {
+      "englishName": "Cubone",
+      "japaneseName": "カラカラ",
+      "pokedexNumber": 104,
+      "type": [
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "カラ"
+      ]
+    },
+    {
+      "englishName": "Marowak",
+      "japaneseName": "ガラガラ",
+      "pokedexNumber": 105,
+      "type": [
+        "地面"
+      ],
+      "japaneseNameRoots": [
+        "ガラ"
+      ]
+    },
+    {
+      "englishName": "Hitmonlee",
+      "japaneseName": "サワムラー",
+      "pokedexNumber": 106,
+      "type": [
+        "格闘"
+      ],
+      "japaneseNameRoots": [
+        "沢村"
+      ]
+    },
+    {
+      "englishName": "Hitmonchan",
+      "japaneseName": "エビワラー",
+      "pokedexNumber": 107,
+      "type": [
+        "格闘"
+      ],
+      "japaneseNameRoots": [
+        "海老原"
+      ]
+    },
+    {
+      "englishName": "Lickitung",
+      "japaneseName": "ベロリンガ",
+      "pokedexNumber": 108,
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "ベロ"
+      ]
+    },
+    {
+      "englishName": "Koffing",
+      "japaneseName": "ドガース",
+      "pokedexNumber": 109,
+      "type": [
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "毒ガス"
+      ]
+    },
+    {
+      "englishName": "Weezing",
+      "japaneseName": "マタドガス",
+      "pokedexNumber": 110,
+      "type": [
+        "毒"
+      ],
+      "japaneseNameRoots": [
+        "また",
+        "毒ガス"
+      ]
+    },
+    {
+      "englishName": "Rhyhorn",
+      "japaneseName": "サイホーン",
+      "pokedexNumber": 111,
+      "type": [
+        "地面",
+        "岩"
+      ],
+      "japaneseNameRoots": [
+        "サイ",
+        "ホーン"
+      ]
+    },
+    {
+      "englishName": "Rhydon",
+      "japaneseName": "サイドン",
+      "pokedexNumber": 112,
+      "type": [
+        "地面",
+        "岩"
+      ],
+      "japaneseNameRoots": [
+        "サイ"
+      ]
+    },
+    {
+      "englishName": "Chansey",
+      "japaneseName": "ラッキー",
+      "pokedexNumber": 113,
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "ラッキー"
+      ]
+    },
+    {
+      "englishName": "Tangela",
+      "japaneseName": "モンジャラ",
+      "pokedexNumber": 114,
+      "type": [
+        "草"
+      ],
+      "japaneseNameRoots": [
+        "もんじゃ"
+      ]
+    },
+    {
+      "englishName": "Kangaskhan",
+      "japaneseName": "ガルーラ",
+      "pokedexNumber": 115,
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "カンガルー"
+      ]
+    },
+    {
+      "englishName": "Horsea",
+      "japaneseName": "タッツー",
+      "pokedexNumber": 116,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "竜"
+      ]
+    },
+    {
+      "englishName": "Seadra",
+      "japaneseName": "シードラ",
+      "pokedexNumber": 117,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "シー",
+        "ドラゴン"
+      ]
+    },
+    {
+      "englishName": "Goldeen",
+      "japaneseName": "トサキント",
+      "pokedexNumber": 118,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "土佐金"
+      ]
+    },
+    {
+      "englishName": "Seaking",
+      "japaneseName": "アズマオウ",
+      "pokedexNumber": 119,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "東",
+        "王"
+      ]
+    },
+    {
+      "englishName": "Staryu",
+      "japaneseName": "ヒトデマン",
+      "pokedexNumber": 120,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "人手",
+        "星"
+      ]
+    },
+    {
+      "englishName": "Starmie",
+      "japaneseName": "スターミー",
+      "pokedexNumber": 121,
+      "type": [
+        "水",
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "スター"
+      ]
+    },
+    {
+      "englishName": "Mr. Mime",
+      "japaneseName": "バリヤード",
+      "pokedexNumber": 122,
+      "type": [
+        "超能力",
+        "妖精"
+      ],
+      "japaneseNameRoots": [
+        "バリア"
+      ]
+    },
+    {
+      "englishName": "Scyther",
+      "japaneseName": "ストライク",
+      "pokedexNumber": 123,
+      "type": [
+        "虫",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "ストライク"
+      ]
+    },
+    {
+      "englishName": "Jynx",
+      "japaneseName": "ルージュラ",
+      "pokedexNumber": 124,
+      "type": [
+        "氷",
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "ルージュ"
+      ]
+    },
+    {
+      "englishName": "Electabuzz",
+      "japaneseName": "エレブー",
+      "pokedexNumber": 125,
+      "type": [
+        "電気"
+      ],
+      "japaneseNameRoots": [
+        "エレクトリック"
+      ]
+    },
+    {
+      "englishName": "Magmar",
+      "japaneseName": "ブーバー",
+      "pokedexNumber": 126,
+      "type": [
+        "炎"
+      ],
+      "japaneseNameRoots": [
+        "ブー"
+      ]
+    },
+    {
+      "englishName": "Pinsir",
+      "japaneseName": "カイロス",
+      "pokedexNumber": 127,
+      "type": [
+        "虫"
+      ],
+      "japaneseNameRoots": [
+        "カイロス"
+      ]
+    },
+    {
+      "englishName": "Tauros",
+      "japaneseName": "ケンタロス",
+      "pokedexNumber": 128,
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "ケンタウロス"
+      ]
+    },
+    {
+      "englishName": "Magikarp",
+      "japaneseName": "コイキング",
+      "pokedexNumber": 129,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "鯉",
+        "キング"
+      ]
+    },
+    {
+      "englishName": "Gyarados",
+      "japaneseName": "ギャラドス",
+      "pokedexNumber": 130,
+      "type": [
+        "水",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "逆鱗",
+        "ドラゴン"
+      ]
+    },
+    {
+      "englishName": "Lapras",
+      "japaneseName": "ラプラス",
+      "pokedexNumber": 131,
+      "type": [
+        "水",
+        "氷"
+      ],
+      "japaneseNameRoots": [
+        "ラプラス"
+      ]
+    },
+    {
+      "englishName": "Ditto",
+      "japaneseName": "メタモン",
+      "pokedexNumber": 132,
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "メタモルフォーゼ"
+      ]
+    },
+    {
+      "englishName": "Eevee",
+      "japaneseName": "イーブイ",
+      "pokedexNumber": 133,
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "EV"
+      ]
+    },
+    {
+      "englishName": "Vaporeon",
+      "japaneseName": "シャワーズ",
+      "pokedexNumber": 134,
+      "type": [
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "シャワー"
+      ]
+    },
+    {
+      "englishName": "Jolteon",
+      "japaneseName": "サンダース",
+      "pokedexNumber": 135,
+      "type": [
+        "電気"
+      ],
+      "japaneseNameRoots": [
+        "サンダー"
+      ]
+    },
+    {
+      "englishName": "Flareon",
+      "japaneseName": "ブースター",
+      "pokedexNumber": 136,
+      "type": [
+        "炎"
+      ],
+      "japaneseNameRoots": [
+        "ブースト"
+      ]
+    },
+    {
+      "englishName": "Porygon",
+      "japaneseName": "ポリゴン",
+      "pokedexNumber": 137,
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "ポリゴン"
+      ]
+    },
+    {
+      "englishName": "Omanyte",
+      "japaneseName": "オムナイト",
+      "pokedexNumber": 138,
+      "type": [
+        "岩",
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "オウムガイ"
+      ]
+    },
+    {
+      "englishName": "Omastar",
+      "japaneseName": "オムスター",
+      "pokedexNumber": 139,
+      "type": [
+        "岩",
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "オウム",
+        "スター"
+      ]
+    },
+    {
+      "englishName": "Kabuto",
+      "japaneseName": "カブト",
+      "pokedexNumber": 140,
+      "type": [
+        "岩",
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "兜"
+      ]
+    },
+    {
+      "englishName": "Kabutops",
+      "japaneseName": "カブトプス",
+      "pokedexNumber": 141,
+      "type": [
+        "岩",
+        "水"
+      ],
+      "japaneseNameRoots": [
+        "兜",
+        "プス"
+      ]
+    },
+    {
+      "englishName": "Aerodactyl",
+      "japaneseName": "プテラ",
+      "pokedexNumber": 142,
+      "type": [
+        "岩",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "プテラノドン"
+      ]
+    },
+    {
+      "englishName": "Snorlax",
+      "japaneseName": "カビゴン",
+      "pokedexNumber": 143,
+      "type": [
+        "通常"
+      ],
+      "japaneseNameRoots": [
+        "黴"
+      ]
+    },
+    {
+      "englishName": "Articuno",
+      "japaneseName": "フリーザー",
+      "pokedexNumber": 144,
+      "type": [
+        "氷",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "フリーズ"
+      ]
+    },
+    {
+      "englishName": "Zapdos",
+      "japaneseName": "サンダー",
+      "pokedexNumber": 145,
+      "type": [
+        "電気",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "サンダー"
+      ]
+    },
+    {
+      "englishName": "Moltres",
+      "japaneseName": "ファイヤー",
+      "pokedexNumber": 146,
+      "type": [
+        "炎",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "ファイヤー"
+      ]
+    },
+    {
+      "englishName": "Dratini",
+      "japaneseName": "ミニリュウ",
+      "pokedexNumber": 147,
+      "type": [
+        "ドラゴン"
+      ],
+      "japaneseNameRoots": [
+        "ミニ",
+        "竜"
+      ]
+    },
+    {
+      "englishName": "Dragonair",
+      "japaneseName": "ハクリュー",
+      "pokedexNumber": 148,
+      "type": [
+        "ドラゴン"
+      ],
+      "japaneseNameRoots": [
+        "白",
+        "竜"
+      ]
+    },
+    {
+      "englishName": "Dragonite",
+      "japaneseName": "カイリュー",
+      "pokedexNumber": 149,
+      "type": [
+        "ドラゴン",
+        "飛行"
+      ],
+      "japaneseNameRoots": [
+        "怪竜"
+      ]
+    },
+    {
+      "englishName": "Mewtwo",
+      "japaneseName": "ミュウツー",
+      "pokedexNumber": 150,
+      "type": [
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "ミュー",
+        "ツー"
+      ]
+    },
+    {
+      "englishName": "Mew",
+      "japaneseName": "ミュウ",
+      "pokedexNumber": 151,
+      "type": [
+        "超能力"
+      ],
+      "japaneseNameRoots": [
+        "ミュー"
+      ]
     }
   ]
 }
