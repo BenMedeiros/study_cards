@@ -23,6 +23,12 @@
       "entries": null
     },
     {
+      "path": "japanese/nouns/bulk_unsorted.json",
+      "name": "Bulk Unsorted",
+      "description": "need to sort/group later'.",
+      "entries": 203
+    },
+    {
       "path": "japanese/nouns/compound-morpheme__katakana.json",
       "name": "Japanese (compound-morpheme) (katakana)",
       "description": "Auto-grouped entries from collections/japanese/nouns by type='compound-morpheme' and orthography='katakana'.",

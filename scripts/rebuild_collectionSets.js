@@ -17,6 +17,7 @@ const repoRoot = path.resolve(__dirname, '..');
 
 const COLLECTION_SETS_PATH = path.join(repoRoot, 'collections', 'japanese', '_collectionSets.json');
 const POKEMON_STARTERS_PATH = path.join(repoRoot, 'collections', 'pokemon', 'pokemon_starters.json');
+const JAPANESE_COLLECTIONS_ROOT = path.join(repoRoot, 'collections', 'japanese');
 
 function uniqueSortedStrings(values) {
   const set = new Set();
@@ -53,6 +54,100 @@ function stringifyJsonWithWrappedKanjiArrays(value) {
 
 function isPlainObject(v) {
   return v !== null && typeof v === 'object' && !Array.isArray(v);
+}
+
+function normalizeKanjiValue(v) {
+  if (typeof v !== 'string') return null;
+  const trimmed = v.trim();
+  return trimmed ? trimmed : null;
+}
+
+async function listJsonFilesRecursively(rootDir) {
+  const out = [];
+
+  async function walk(dir) {
+    const dirents = await fs.readdir(dir, { withFileTypes: true });
+    for (const d of dirents) {
+      const full = path.join(dir, d.name);
+      if (d.isDirectory()) {
+        await walk(full);
+        continue;
+      }
+      if (!d.isFile()) continue;
+      if (path.extname(d.name).toLowerCase() !== '.json') continue;
+      if (d.name.startsWith('_')) continue;
+      out.push(full);
+    }
+  }
+
+  await walk(rootDir);
+  return out;
+}
+
+async function collectDefinedKanjiFromJapaneseCollections() {
+  const files = await listJsonFilesRecursively(JAPANESE_COLLECTIONS_ROOT);
+  const defined = new Set();
+
+  for (const filePath of files) {
+    const json = await readJson(filePath);
+    const entries = getArray(json, 'entries');
+    if (entries.length === 0) continue;
+
+    for (const entry of entries) {
+      if (!entry || typeof entry !== 'object') continue;
+      const k = entry.kanji;
+      if (typeof k === 'string') {
+        const norm = normalizeKanjiValue(k);
+        if (norm) defined.add(norm);
+        continue;
+      }
+      if (Array.isArray(k)) {
+        for (const kv of k) {
+          const norm = normalizeKanjiValue(kv);
+          if (norm) defined.add(norm);
+        }
+      }
+    }
+  }
+
+  return defined;
+}
+
+function withMissingKanjiDefinition(setObj, missingValues) {
+  if (missingValues.length === 0) {
+    if (!setObj || typeof setObj !== 'object') return setObj;
+    if (!Object.prototype.hasOwnProperty.call(setObj, 'missing_kanji_definition')) return setObj;
+    const next = { ...setObj };
+    delete next.missing_kanji_definition;
+    return next;
+  }
+
+  return {
+    ...setObj,
+    missing_kanji_definition: missingValues
+  };
+}
+
+function annotateSetsWithMissingKanjiDefinitions(sets, definedKanji) {
+  return sets.map((setObj) => {
+    if (!setObj || typeof setObj !== 'object') return setObj;
+
+    const values = Array.isArray(setObj.kanji) ? setObj.kanji : [];
+    const missing = [];
+    const seen = new Set();
+
+    for (const v of values) {
+      const norm = normalizeKanjiValue(v);
+      if (!norm) continue;
+      if (definedKanji.has(norm)) continue;
+      if (seen.has(norm)) continue;
+      seen.add(norm);
+      missing.push(norm);
+    }
+
+    missing.sort((a, b) => a.localeCompare(b, 'ja'));
+    return withMissingKanjiDefinition(setObj, missing);
+  });
 }
 
 function formatWrappedStringArray(arr, indentLevel) {
@@ -216,9 +311,12 @@ async function rebuildCollectionSets() {
   const autoSets = await buildAutoSets();
   const nextSets = upsertSets(sets, autoSets);
 
+  const definedKanji = await collectDefinedKanjiFromJapaneseCollections();
+  const validatedSets = annotateSetsWithMissingKanjiDefinitions(nextSets, definedKanji);
+
   const next = {
     ...collectionSets,
-    sets: nextSets
+    sets: validatedSets
   };
 
   await writeJson(COLLECTION_SETS_PATH, next);
