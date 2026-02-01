@@ -17,11 +17,26 @@ function basename(path) {
   return parts.length ? parts[parts.length - 1] : '';
 }
 
+function isCollectionSetsFileKey(key) {
+  return basename(key) === '_collectionSets.json';
+}
+
+function isCollectionSetsVirtualDir(dirPath) {
+  const p = String(dirPath || '').replace(/^\/+/, '').replace(/\/+$/, '');
+  return p === '__collectionSets' || p.endsWith('/__collectionSets');
+}
+
 function titleFromFilename(filename) {
   return String(filename || '')
     .replace(/\.json$/i, '')
     .replace(/[_-]+/g, ' ')
     .trim();
+}
+
+function safeFolderLabelFromCollectionSets(cs) {
+  const raw = cs && typeof cs === 'object' ? (cs.name || cs.label || cs.title) : null;
+  const s = (typeof raw === 'string') ? raw.trim() : '';
+  return s || 'Collection Sets';
 }
 
 export function createCollectionBrowserDropdown({ store, className = '', onSelect }) {
@@ -112,6 +127,27 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
         return;
       }
 
+      if (kind === 'sets-folder') {
+        // Ensure sets are loaded for this folder before entering the virtual listing.
+        try {
+          const baseFolder = dirname(value);
+          if (store && typeof store.loadCollectionSetsForFolder === 'function') {
+            await store.loadCollectionSetsForFolder(baseFolder);
+          }
+
+          // Eagerly prefetch the entire base folder in the background.
+          if (store && typeof store.prefetchCollectionsInFolder === 'function') {
+            store.prefetchCollectionsInFolder(baseFolder);
+          }
+        } catch (err) {
+          // ignore load error; menu will show empty
+        }
+        container.dataset.kbDesired = 'up';
+        setCurrentDir(value);
+        renderMenu();
+        return;
+      }
+
       if (kind === 'file') {
         if (typeof onSelect === 'function') {
           await onSelect(value);
@@ -145,6 +181,29 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     }
 
     for (const file of listing.files) {
+      // Special-case: show per-folder collection sets as a virtual folder.
+      if (file.key && isCollectionSetsFileKey(file.key)) {
+        const baseFolder = dirname(file.key);
+        const vdir = baseFolder ? `${baseFolder}/__collectionSets` : '__collectionSets';
+
+        let folderLabel = 'Collection Sets';
+        if (store && typeof store.getCachedCollectionSetsForFolder === 'function') {
+          const cs = store.getCachedCollectionSetsForFolder(baseFolder);
+          if (cs) folderLabel = safeFolderLabelFromCollectionSets(cs);
+          // If it isn't cached yet (undefined), load in the background and re-render.
+          if (typeof cs === 'undefined' && typeof store.loadCollectionSetsForFolder === 'function' && container.classList.contains('open')) {
+            Promise.resolve()
+              .then(() => store.loadCollectionSetsForFolder(baseFolder))
+              .then(() => {
+                if (container.classList.contains('open')) renderMenu();
+              })
+              .catch(() => {});
+          }
+        }
+
+        addOption({ label: `${folderLabel}/`, kind: 'sets-folder', value: vdir });
+        continue;
+      }
       const label = file.label || titleFromFilename(basename(file.key));
       addOption({ label, kind: 'file', value: file.key });
       if (file.key && file.key === activeId) {
@@ -203,6 +262,20 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     renderMenu();
     container.classList.add('open');
     document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
+
+    // If we're currently inside the virtual Collection Sets dir, ensure its data
+    // is loaded and then re-render (so reopen after refresh isn't empty).
+    if (isCollectionSetsVirtualDir(currentDir) && store && typeof store.loadCollectionSetsForFolder === 'function') {
+      const baseFolder = dirname(currentDir);
+      Promise.resolve()
+        .then(() => store.loadCollectionSetsForFolder(baseFolder))
+        .then(() => {
+          if (container.classList.contains('open')) renderMenu();
+        })
+        .catch(() => {
+          // ignore
+        });
+    }
 
     // focus the menu so it receives key events first and they don't leak to the app
     setTimeout(() => {

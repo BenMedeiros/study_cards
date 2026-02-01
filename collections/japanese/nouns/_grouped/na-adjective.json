@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "Japanese (na-adjective)",
-    "description": "Auto-grouped entries from collections/japanese/nouns by type='na-adjective'.",
-    "version": 1,
+    "description": "Auto-grouped entries from collections/japanese/nouns by type='na-adjective'. Expanded with common N4/N3 な形容詞 and example sentences.",
+    "version": 2,
     "sources": [
       "collections/japanese/nouns/jp_linguistic_terms_supplement.json",
       "collections/japanese/nouns/jp_pokemon_roots.json"
@@ -11,9 +11,30 @@
       "清潔",
       "平気",
       "不思議",
-      "通常"
+      "通常",
+      "大丈夫",
+      "便利",
+      "重要",
+      "有名",
+      "元気",
+      "静か",
+      "綺麗",
+      "安全",
+      "危険",
+      "必要",
+      "簡単",
+      "大切",
+      "特別",
+      "真面目",
+      "自由",
+      "上手",
+      "下手",
+      "親切",
+      "賑やか",
+      "不便",
+      "大変"
     ],
-    "kanjiCount": 4
+    "kanjiCount": 25
   },
   "defaults": {
     "type": "na-adjective"
@@ -22,22 +43,379 @@
     {
       "kanji": "清潔",
       "reading": "せいけつ",
-      "meaning": "clean; sanitary"
+      "meaning": "clean; sanitary",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "このキッチンは清潔です。",
+        "en": "This kitchen is clean.",
+        "notes": [
+          "な-adjective predicate: Xは清潔です",
+          "Kanji: 清( чист/clear ) + 潔( pure/clean )"
+        ]
+      }
     },
     {
       "kanji": "平気",
       "reading": "へいき",
-      "meaning": "calm; composed; alright"
+      "meaning": "calm; composed; alright",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "雨でも平気だよ。",
+        "en": "Even if it rains, I’m fine.",
+        "notes": [
+          "Casual predicate: 平気だ",
+          "Kanji: 平( flat/calm ) + 気( spirit/feeling )"
+        ]
+      }
     },
     {
       "kanji": "不思議",
       "reading": "ふしぎ",
-      "meaning": "mysterious; strange; wonder"
+      "meaning": "mysterious; strange; wonder",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "それは不思議な話だね。",
+        "en": "That’s a mysterious story, huh.",
+        "notes": [
+          "Attributive: 不思議なN",
+          "Kanji: 不( not ) + 思( think ) + 議( discussion )"
+        ]
+      }
     },
     {
       "kanji": "通常",
       "reading": "つうじょう",
-      "meaning": "usual; ordinary; normal state"
+      "meaning": "usual; ordinary; normal state",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "今日は通常どおり営業します。",
+        "en": "Today we’re open as usual.",
+        "notes": [
+          "Often used as adverb-like: 通常どおり",
+          "Kanji: 通( pass/through ) + 常( usual )"
+        ]
+      }
+    },
+    {
+      "kanji": "大丈夫",
+      "reading": "だいじょうぶ",
+      "meaning": "okay; all right; safe",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "大丈夫？手伝おうか。",
+        "en": "Are you okay? Want me to help?",
+        "notes": [
+          "Common as standalone response: 大丈夫です",
+          "Kanji: 大( big ) + 丈( length; strong ) + 夫( man; husband )"
+        ]
+      }
+    },
+    {
+      "kanji": "便利",
+      "reading": "べんり",
+      "meaning": "convenient; useful",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "このアプリは便利だから、毎日使っている。",
+        "en": "This app is convenient, so I use it every day.",
+        "notes": [
+          "Reason pattern: 便利だから",
+          "Kanji: 便( convenience ) + 利( benefit )"
+        ]
+      }
+    },
+    {
+      "kanji": "重要",
+      "reading": "じゅうよう",
+      "meaning": "important",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "これはとても重要なポイントです。",
+        "en": "This is a very important point.",
+        "notes": [
+          "Attributive: 重要なN",
+          "Kanji: 重( heavy ) + 要( need/essential )"
+        ]
+      }
+    },
+    {
+      "kanji": "有名",
+      "reading": "ゆうめい",
+      "meaning": "famous; well-known",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "この店はラーメンが有名です。",
+        "en": "This shop is famous for its ramen.",
+        "notes": [
+          "Pattern: Nが有名",
+          "Kanji: 有( exist ) + 名( name )"
+        ]
+      }
+    },
+    {
+      "kanji": "元気",
+      "reading": "げんき",
+      "meaning": "healthy; energetic; fine",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "今日は元気じゃないから、早く帰る。",
+        "en": "I’m not feeling well today, so I’ll go home early.",
+        "notes": [
+          "Negative: 元気じゃない",
+          "Kanji: 元( origin ) + 気( spirit/energy )"
+        ]
+      }
+    },
+    {
+      "kanji": "静か",
+      "reading": "しずか",
+      "meaning": "quiet",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "ここは静かな場所だから、勉強しやすい。",
+        "en": "It’s easy to study here because it’s a quiet place.",
+        "notes": [
+          "Attributive: 静かな場所",
+          "Kanji: 静( quiet )"
+        ]
+      }
+    },
+    {
+      "kanji": "綺麗",
+      "reading": "きれい",
+      "meaning": "pretty; beautiful; clean",
+      "orthography": "both",
+      "type": "na-adjective",
+      "example": {
+        "ja": "部屋を綺麗にしてから、友だちを呼ぶ。",
+        "en": "I’ll clean the room, then invite my friends over.",
+        "notes": [
+          "Adverbial: 綺麗にする",
+          "Often written in kana: きれい",
+          "Kanji: 綺( ornate ) + 麗( beautiful )"
+        ]
+      }
+    },
+    {
+      "kanji": "安全",
+      "reading": "あんぜん",
+      "meaning": "safe; secure",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "夜はこの道のほうが安全です。",
+        "en": "At night, this road is safer.",
+        "notes": [
+          "Comparative-ish: ほうが安全",
+          "Kanji: 安( safe ) + 全( whole )"
+        ]
+      }
+    },
+    {
+      "kanji": "危険",
+      "reading": "きけん",
+      "meaning": "dangerous; risky",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "その橋は古くて危険だ。",
+        "en": "That bridge is old and dangerous.",
+        "notes": [
+          "Casual predicate: 危険だ",
+          "Kanji: 危( dangerous ) + 険( steep; hazardous )"
+        ]
+      }
+    },
+    {
+      "kanji": "必要",
+      "reading": "ひつよう",
+      "meaning": "necessary; needed",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "パスポートが必要な場合もあります。",
+        "en": "In some cases, a passport is necessary.",
+        "notes": [
+          "Pattern: Nが必要",
+          "Kanji: 必( must ) + 要( need )"
+        ]
+      }
+    },
+    {
+      "kanji": "簡単",
+      "reading": "かんたん",
+      "meaning": "easy; simple",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "これは簡単な問題だから、すぐ終わるよ。",
+        "en": "This is an easy problem, so it’ll finish quickly.",
+        "notes": [
+          "Attributive: 簡単な問題",
+          "Kanji: 簡( simple ) + 単( single )"
+        ]
+      }
+    },
+    {
+      "kanji": "大切",
+      "reading": "たいせつ",
+      "meaning": "important; valuable; precious",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "健康は一番大切だと思う。",
+        "en": "I think health is the most important.",
+        "notes": [
+          "Superlative-ish: 一番大切",
+          "Kanji: 大( big ) + 切( cut; keen/serious )"
+        ]
+      }
+    },
+    {
+      "kanji": "特別",
+      "reading": "とくべつ",
+      "meaning": "special",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "今日は特別な日だから、外で食べよう。",
+        "en": "Since today is a special day, let’s eat out.",
+        "notes": [
+          "Attributive: 特別な日",
+          "Kanji: 特( special ) + 別( separate )"
+        ]
+      }
+    },
+    {
+      "kanji": "真面目",
+      "reading": "まじめ",
+      "meaning": "serious; diligent",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "彼は真面目な人で、約束を守る。",
+        "en": "He’s a serious person and keeps promises.",
+        "notes": [
+          "Attributive: 真面目な人",
+          "Kanji: 真( true ) + 面( face ) + 目( eye )"
+        ]
+      }
+    },
+    {
+      "kanji": "自由",
+      "reading": "じゆう",
+      "meaning": "free; freedom",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "週末は時間が自由だから、どこでも行ける。",
+        "en": "On weekends my time is free, so I can go anywhere.",
+        "notes": [
+          "Often with noun-like use too: 自由がある",
+          "Kanji: 自( self ) + 由( reason; from )"
+        ]
+      }
+    },
+    {
+      "kanji": "上手",
+      "reading": "じょうず",
+      "meaning": "good at; skillful",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "彼女は日本語が上手ですね。",
+        "en": "She’s good at Japanese, isn’t she?",
+        "notes": [
+          "Pattern: Nが上手",
+          "Kanji: 上( up ) + 手( hand )"
+        ]
+      }
+    },
+    {
+      "kanji": "下手",
+      "reading": "へた",
+      "meaning": "bad at; unskillful",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "私は歌が下手だけど、歌うのが好き。",
+        "en": "I’m bad at singing, but I like singing.",
+        "notes": [
+          "Pattern: Nが下手",
+          "Kanji: 下( down ) + 手( hand )"
+        ]
+      }
+    },
+    {
+      "kanji": "親切",
+      "reading": "しんせつ",
+      "meaning": "kind; helpful",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "店員さんが親切だったので、安心した。",
+        "en": "The clerk was kind, so I felt relieved.",
+        "notes": [
+          "Past predicate: 親切だった",
+          "Kanji: 親( parent; close ) + 切( earnest; kind )"
+        ]
+      }
+    },
+    {
+      "kanji": "賑やか",
+      "reading": "にぎやか",
+      "meaning": "lively; bustling",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "駅前はいつも賑やかで、人が多い。",
+        "en": "In front of the station is always lively and crowded.",
+        "notes": [
+          "Predicate: 賑やかで (te-form linking)",
+          "Kanji: 賑( bustling )"
+        ]
+      }
+    },
+    {
+      "kanji": "不便",
+      "reading": "ふべん",
+      "meaning": "inconvenient",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "この町は電車が少なくて不便だ。",
+        "en": "This town is inconvenient because there are few trains.",
+        "notes": [
+          "Reason: 〜なくて不便",
+          "Kanji: 不( not ) + 便( convenience )"
+        ]
+      }
+    },
+    {
+      "kanji": "大変",
+      "reading": "たいへん",
+      "meaning": "tough; hard; serious; very (adverbial use also common)",
+      "orthography": "kanji",
+      "type": "na-adjective",
+      "example": {
+        "ja": "引っ越しは大変だったけど、もう慣れた。",
+        "en": "Moving was tough, but I’m used to it now.",
+        "notes": [
+          "Past predicate: 大変だった",
+          "Also common as adverb: 大変忙しい",
+          "Kanji: 大( big ) + 変( change )"
+        ]
+      }
     }
   ]
 }

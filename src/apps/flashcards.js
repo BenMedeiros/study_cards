@@ -9,7 +9,7 @@ export function renderFlashcards({ store }) {
   wrapper.className = 'card';
   wrapper.id = 'flashcards-card';
 
-  const active = store.getActiveCollection();
+  let active = store.getActiveCollection();
   if (!active) {
     wrapper.innerHTML = '<h2>Flashcards</h2><p class="hint">No active collection.</p>';
     el.append(wrapper);
@@ -17,13 +17,21 @@ export function renderFlashcards({ store }) {
   }
 
   // derive entries view (study window + shuffle) from shared util
-  const collState = (store && typeof store.loadCollectionState === 'function') ? store.loadCollectionState(active?.key) : null;
-  let entries = getCollectionView(active.entries, collState, { windowSize: 10 }).entries;
+  function refreshFromStore() {
+    active = store.getActiveCollection();
+    const collState = (store && typeof store.loadCollectionState === 'function') ? store.loadCollectionState(active?.key) : null;
+    entries = getCollectionView(active?.entries, collState, { windowSize: 10 }).entries;
+    index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+  }
+
+  let entries = [];
   let index = 0;
   let shownAt = nowMs();
 
+  refreshFromStore();
+
   function renderCard(body, entry) {
-    const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
+    const fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : [];
 
     for (const field of fields) {
       const row = document.createElement('div');
@@ -42,6 +50,11 @@ export function renderFlashcards({ store }) {
   }
 
   function render() {
+    // active may have changed via store updates
+    if (!active) {
+      wrapper.innerHTML = '<h2>Flashcards</h2><p class="hint">No active collection.</p>';
+      return;
+    }
     const entry = entries[index];
     const total = entries.length;
 
@@ -105,6 +118,29 @@ export function renderFlashcards({ store }) {
 
   render();
 
+  // React to store changes (e.g., virtual set finishing its background resolution)
+  let unsub = null;
+  try {
+    if (store && typeof store.subscribe === 'function') {
+      let lastKey = store.getActiveCollection?.()?.key || null;
+      unsub = store.subscribe(() => {
+        try {
+          const key = store.getActiveCollection?.()?.key || null;
+          if (key !== lastKey) {
+            lastKey = key;
+            index = 0;
+          }
+          refreshFromStore();
+          render();
+        } catch (e) {
+          // ignore
+        }
+      });
+    }
+  } catch (e) {
+    unsub = null;
+  }
+
   // Add keyboard navigation
   const keyHandler = (e) => {
     if (e.key === 'ArrowLeft') {
@@ -152,6 +188,7 @@ export function renderFlashcards({ store }) {
     const observer = new MutationObserver((mutations) => {
       if (!document.body.contains(wrapper)) {
         unregisterFlashcardsHandler();
+        try { if (typeof unsub === 'function') unsub(); } catch (e) {}
         observer.disconnect();
       }
     });

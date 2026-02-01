@@ -23,6 +23,18 @@ export function createStore() {
   // Track in-flight collection fetch promises to avoid duplicate fetches
   const pendingLoads = new Map();
 
+  // Collection sets (tags) support: per-folder `_collectionSets.json`
+  const COLLECTION_SETS_FILE = '_collectionSets.json';
+  const COLLECTION_SETS_DIRNAME = '__collectionSets';
+  // baseFolder (e.g. "japanese") -> parsed collectionSets json
+  const collectionSetsCache = new Map();
+  // baseFolder -> in-flight load promise
+  const pendingCollectionSetsLoads = new Map();
+
+  // Folder-level entry index cache used to resolve set terms to real entries.
+  // baseFolder -> Map(termString -> entryObject)
+  const folderEntryIndexCache = new Map();
+
   function notify() {
     for (const fn of subs) fn();
   }
@@ -96,6 +108,218 @@ export function createStore() {
   function basename(path) {
     const parts = String(path || '').split('/').filter(Boolean);
     return parts.length ? parts[parts.length - 1] : '';
+  }
+
+  function collectionSetsDirPath(baseFolder) {
+    const folder = normalizeFolderPath(baseFolder);
+    return folder ? `${folder}/${COLLECTION_SETS_DIRNAME}` : COLLECTION_SETS_DIRNAME;
+  }
+
+  function isCollectionSetsDirPath(dirPath) {
+    const folder = normalizeFolderPath(dirPath);
+    return folder === COLLECTION_SETS_DIRNAME || folder.endsWith(`/${COLLECTION_SETS_DIRNAME}`);
+  }
+
+  function parseCollectionSetVirtualKey(key) {
+    const parts = String(key || '').split('/').filter(Boolean);
+    const idx = parts.lastIndexOf(COLLECTION_SETS_DIRNAME);
+    if (idx === -1) return null;
+    if (idx >= parts.length - 1) return null;
+    const baseFolder = parts.slice(0, idx).join('/');
+    const setId = parts[idx + 1];
+    if (!setId) return null;
+    return { baseFolder, setId };
+  }
+
+  function topFolderOfKey(key) {
+    const parts = String(key || '').split('/').filter(Boolean);
+    return parts.length ? parts[0] : '';
+  }
+
+  function isCollectionSetVirtualKey(key) {
+    return !!parseCollectionSetVirtualKey(key);
+  }
+
+  function hasCollectionSetsFile(baseFolder) {
+    const folder = normalizeFolderPath(baseFolder);
+    const rel = folder ? `${folder}/${COLLECTION_SETS_FILE}` : COLLECTION_SETS_FILE;
+    return state._availableCollectionPaths.includes(rel);
+  }
+
+  async function loadCollectionSetsForFolder(baseFolder) {
+    const folder = normalizeFolderPath(baseFolder);
+    if (collectionSetsCache.has(folder)) return collectionSetsCache.get(folder);
+    if (pendingCollectionSetsLoads.has(folder)) return pendingCollectionSetsLoads.get(folder);
+
+    const p = (async () => {
+      if (!hasCollectionSetsFile(folder)) {
+        collectionSetsCache.set(folder, null);
+        return null;
+      }
+      const rel = folder ? `${folder}/${COLLECTION_SETS_FILE}` : COLLECTION_SETS_FILE;
+      const url = `./collections/${rel}`;
+      let res;
+      try {
+        res = await fetch(url);
+      } catch (err) {
+        throw new Error(`Failed to fetch collection sets ${rel}: ${err.message}`);
+      }
+      if (!res.ok) {
+        // treat missing/invalid as not available; do not spam console
+        collectionSetsCache.set(folder, null);
+        return null;
+      }
+
+      let data;
+      try {
+        const txt = await res.text();
+        if (!txt) throw new Error('empty response');
+        data = JSON.parse(txt);
+      } catch (err) {
+        throw new Error(`Invalid JSON in collection sets ${rel}: ${err.message}`);
+      }
+
+      // minimal validation/normalization
+      const sets = Array.isArray(data?.sets) ? data.sets : [];
+      const normalized = {
+        name: data?.name || null,
+        version: typeof data?.version === 'number' ? data.version : null,
+        description: data?.description || null,
+        sets: sets
+          .filter(s => s && typeof s === 'object')
+          .map(s => ({
+            id: String(s.id || '').trim(),
+            label: s.label || null,
+            description: s.description || null,
+            kanji: Array.isArray(s.kanji) ? s.kanji.slice() : []
+          }))
+          .filter(s => s.id.length > 0)
+      };
+
+      collectionSetsCache.set(folder, normalized);
+      return normalized;
+    })();
+
+    pendingCollectionSetsLoads.set(folder, p);
+    try {
+      return await p;
+    } finally {
+      pendingCollectionSetsLoads.delete(folder);
+    }
+  }
+
+  async function ensureCollectionsLoadedInFolder(baseFolder, opts = { excludeCollectionSets: true }) {
+    const folder = normalizeFolderPath(baseFolder);
+    const prefix = folder ? `${folder}/` : '';
+    const excludeCollectionSets = opts?.excludeCollectionSets !== false;
+
+    const keys = state._availableCollectionPaths
+      .filter(k => (prefix ? k.startsWith(prefix) : true))
+      .filter(k => {
+        if (!excludeCollectionSets) return true;
+        return basename(k) !== COLLECTION_SETS_FILE;
+      });
+
+    const loads = [];
+    for (const k of keys) {
+      if (!k) continue;
+      if (state.collections.some(c => c.key === k)) continue;
+      if (pendingLoads.has(k)) {
+        loads.push(pendingLoads.get(k).catch(() => null));
+        continue;
+      }
+      loads.push(loadCollectionInternal(k, { notify: false }).catch(() => null));
+    }
+
+    if (loads.length) {
+      await Promise.all(loads);
+    }
+  }
+
+  function computeEntryScore(entry) {
+    if (!entry || typeof entry !== 'object') return 0;
+    const keys = ['kanji', 'character', 'text', 'word', 'reading', 'kana', 'meaning', 'definition', 'gloss', 'type'];
+    let score = 0;
+    for (const k of keys) {
+      const v = entry[k];
+      if (typeof v === 'string' && v.trim()) score += 1;
+    }
+    if (entry.example && typeof entry.example === 'object') {
+      if (typeof entry.example.ja === 'string' && entry.example.ja.trim()) score += 1;
+      if (typeof entry.example.en === 'string' && entry.example.en.trim()) score += 1;
+    }
+    return score;
+  }
+
+  function buildFolderEntryIndex(baseFolder) {
+    const folder = normalizeFolderPath(baseFolder);
+    if (folderEntryIndexCache.has(folder)) return folderEntryIndexCache.get(folder);
+
+    const prefix = folder ? `${folder}/` : '';
+    const index = new Map();
+    const scoreMap = new Map();
+    const candidateKeys = ['kanji', 'character', 'text', 'word', 'kana', 'reading'];
+
+    const relevantCollections = state.collections
+      .filter(c => c && typeof c.key === 'string')
+      .filter(c => (prefix ? c.key.startsWith(prefix) : true))
+      .filter(c => !isCollectionSetVirtualKey(c.key));
+
+    for (const coll of relevantCollections) {
+      const entries = Array.isArray(coll.entries) ? coll.entries : [];
+      for (const entry of entries) {
+        if (!entry || typeof entry !== 'object') continue;
+        const score = computeEntryScore(entry);
+        for (const k of candidateKeys) {
+          const v = entry[k];
+          if (typeof v !== 'string') continue;
+          const term = v.trim();
+          if (!term) continue;
+          const prevScore = scoreMap.get(term);
+          if (typeof prevScore !== 'number' || score > prevScore) {
+            index.set(term, entry);
+            scoreMap.set(term, score);
+          }
+        }
+      }
+    }
+
+    folderEntryIndexCache.set(folder, index);
+    return index;
+  }
+
+  async function resolveVirtualSetRecord(record, baseFolder, setObj) {
+    const folder = normalizeFolderPath(baseFolder);
+    // Eagerly load everything in that folder so we can match terms.
+    await ensureCollectionsLoadedInFolder(folder, { excludeCollectionSets: true });
+
+    // (Re)build term index after load.
+    folderEntryIndexCache.delete(folder);
+    const index = buildFolderEntryIndex(folder);
+
+    const terms = Array.isArray(setObj?.kanji) ? setObj.kanji.slice() : [];
+    const resolved = terms.map((t) => {
+      const term = String(t || '').trim();
+      if (!term) return null;
+      const found = index.get(term);
+      if (found) return found;
+      return { kanji: term, text: term };
+    }).filter(Boolean);
+
+    // Apply inherited folder metadata fields (so Flashcards renders meaningful rows)
+    const fm = (await loadInheritedFolderMetadata(folder, metadataCache, folderMetadataMap)) || null;
+    const fields = Array.isArray(fm?.fields) ? fm.fields : null;
+
+    record.entries = resolved;
+    record.metadata = record.metadata || {};
+    if (fields) record.metadata.fields = fields;
+
+    notify();
+  }
+
+  function getCachedCollectionSetsForFolder(baseFolder) {
+    const folder = normalizeFolderPath(baseFolder);
+    return collectionSetsCache.has(folder) ? collectionSetsCache.get(folder) : undefined;
   }
 
   function titleFromFilename(filename) {
@@ -283,6 +507,24 @@ export function createStore() {
 
   function listCollectionDir(dirPath) {
     const folder = normalizeFolderPath(dirPath);
+
+    // Virtual dir: <baseFolder>/__collectionSets
+    if (isCollectionSetsDirPath(folder)) {
+      const baseFolder = dirname(folder);
+      const parentDir = baseFolder;
+      const cs = collectionSetsCache.get(baseFolder) || null;
+      const files = Array.isArray(cs?.sets)
+        ? cs.sets
+            .map(s => ({
+              filename: s.id,
+              key: `${collectionSetsDirPath(baseFolder)}/${s.id}`,
+              label: s.label || titleFromFilename(s.id)
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label))
+        : [];
+      return { dir: folder, parentDir, folders: [], files };
+    }
+
     const node = findTreeNode(folder);
 
     const parentDir = folder ? dirname(folder) : null;
@@ -358,6 +600,10 @@ export function createStore() {
   }
 
   async function loadCollection(key) {
+    return loadCollectionInternal(key, { notify: true });
+  }
+
+  async function loadCollectionInternal(key, opts = { notify: true }) {
     if (!key) throw new Error('collection key required');
     // If already loaded, return it
     const existing = state.collections.find(c => c.key === key);
@@ -367,6 +613,58 @@ export function createStore() {
     if (pendingLoads.has(key)) return pendingLoads.get(key);
 
     const p = (async () => {
+      // Virtual collection: <baseFolder>/__collectionSets/<setId>
+      const virtual = parseCollectionSetVirtualKey(key);
+      if (virtual) {
+        const { baseFolder, setId } = virtual;
+        const cs = await loadCollectionSetsForFolder(baseFolder);
+        if (!cs || !Array.isArray(cs.sets)) {
+          throw new Error(`Collection sets not available for folder: ${baseFolder || '(root)'}`);
+        }
+        const set = cs.sets.find(s => s.id === setId);
+        if (!set) {
+          throw new Error(`Collection set not found: ${setId}`);
+        }
+
+        // Start with placeholders so the UI can switch immediately.
+        const entries = (Array.isArray(set.kanji) ? set.kanji : []).map(v => {
+          const term = String(v || '').trim();
+          return { kanji: term, text: term };
+        }).filter(e => e.kanji);
+
+        const record = {
+          key,
+          entries,
+          metadata: {
+            name: set.label || titleFromFilename(set.id),
+            description: set.description || cs.description || null,
+            fields: [
+              { key: 'kanji', label: 'Kanji' }
+            ],
+            category: (baseFolder || '').split('/')[0] || baseFolder || ''
+          }
+        };
+
+        state.collections.push(record);
+        state.collections.sort((a, b) => {
+          const ai0 = state._availableCollectionPaths.indexOf(a.key);
+          const bi0 = state._availableCollectionPaths.indexOf(b.key);
+          const ai = ai0 === -1 ? Number.MAX_SAFE_INTEGER : ai0;
+          const bi = bi0 === -1 ? Number.MAX_SAFE_INTEGER : bi0;
+          return ai - bi;
+        });
+
+        // Resolve to real entries in the background (after eagerly loading folder).
+        Promise.resolve()
+          .then(() => resolveVirtualSetRecord(record, baseFolder, set))
+          .catch((err) => {
+            console.warn('[Store] Failed to resolve virtual set entries:', err?.message || err);
+          });
+
+        if (opts?.notify !== false) notify();
+        return record;
+      }
+
       // Only allow loading known paths (avoid fetching arbitrary files)
       if (!state._availableCollectionPaths.includes(key)) {
         throw new Error(`Collection not found in index: ${key}`);
@@ -418,14 +716,22 @@ export function createStore() {
 
       const record = { ...data, key };
       state.collections.push(record);
+
+      // Invalidate folder entry index cache for this top folder (so set resolution sees new data).
+      try {
+        const top = topFolderOfKey(key);
+        if (top) folderEntryIndexCache.delete(top);
+      } catch (e) {}
       // Keep collections consistent order with available list where possible
       state.collections.sort((a, b) => {
-        const ai = state._availableCollectionPaths.indexOf(a.key);
-        const bi = state._availableCollectionPaths.indexOf(b.key);
+        const ai0 = state._availableCollectionPaths.indexOf(a.key);
+        const bi0 = state._availableCollectionPaths.indexOf(b.key);
+        const ai = ai0 === -1 ? Number.MAX_SAFE_INTEGER : ai0;
+        const bi = bi0 === -1 ? Number.MAX_SAFE_INTEGER : bi0;
         return ai - bi;
       });
 
-      notify();
+      if (opts?.notify !== false) notify();
       return record;
     })();
 
@@ -436,6 +742,38 @@ export function createStore() {
     } finally {
       pendingLoads.delete(key);
     }
+  }
+
+  // Prefetch all collections under a folder (e.g. 'japanese'), in the background.
+  // This keeps lazy-loading as default, but makes virtual-set navigation fast.
+  function prefetchCollectionsInFolder(baseFolder, prefetchOpts = {}) {
+    const folder = normalizeFolderPath(baseFolder);
+    const prefix = folder ? `${folder}/` : '';
+    const excludeCollectionSets = prefetchOpts.excludeCollectionSets !== false;
+    const shouldNotify = prefetchOpts.notify === true;
+    const keys = state._availableCollectionPaths
+      .filter(k => (prefix ? k.startsWith(prefix) : true))
+      .filter(k => {
+        if (!excludeCollectionSets) return true;
+        return basename(k) !== COLLECTION_SETS_FILE;
+      });
+
+    // Fire-and-forget. Load quietly and notify once at the end.
+    Promise.resolve().then(async () => {
+      const loads = [];
+      for (const k of keys) {
+        if (!k) continue;
+        if (state.collections.some(c => c.key === k)) continue;
+        if (pendingLoads.has(k)) continue;
+        loads.push(
+          loadCollectionInternal(k, { notify: false }).catch(() => null)
+        );
+      }
+      if (loads.length) {
+        await Promise.all(loads);
+        if (shouldNotify) notify();
+      }
+    });
   }
 
   async function initialize() {
@@ -453,8 +791,12 @@ export function createStore() {
         restored = null;
       }
 
-      if (restored && state._availableCollectionPaths.includes(restored)) {
+      if (restored && (state._availableCollectionPaths.includes(restored) || isCollectionSetVirtualKey(restored))) {
         await setActiveCollectionId(restored);
+        // If restore failed (e.g., stale virtual key), fall back to first available.
+        if (!state.activeCollectionId && Array.isArray(paths) && paths.length > 0) {
+          await setActiveCollectionId(paths[0]);
+        }
       } else if (!state.activeCollectionId && Array.isArray(paths) && paths.length > 0) {
         // Persist via setter so session state is updated
         await setActiveCollectionId(paths[0]);
@@ -655,7 +997,10 @@ export function createStore() {
     setActiveCollectionId,
     syncCollectionFromURL,
     listCollectionDir,
+    loadCollectionSetsForFolder,
+    getCachedCollectionSetsForFolder,
     loadCollection,
+    prefetchCollectionsInFolder,
       loadCollectionState,
       saveCollectionState,
     getCollectionBrowserPath: () => {

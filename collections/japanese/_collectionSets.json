@@ -1,4 +1,5 @@
 {
+    "name": "collections/common",
   "version": 2,
   "description": "Simple ad-hoc sets for the Japanese collection. Each set has id/label/description and a `kanji` array of values. Sets act like tags; words may appear in multiple sets.",
   "sets": [

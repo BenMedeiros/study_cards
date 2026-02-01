@@ -3,15 +3,56 @@
     "name": "Japanese N5 Godan Verbs (bu)",
     "level": "N5",
     "version": 1,
-    "kanji": [],
-    "kanjiCount": 0
+    "kanji": [
+      "遊ぶ",
+      "飛ぶ",
+      "呼ぶ",
+      "運ぶ",
+      "選ぶ",
+      "喜ぶ",
+      "学ぶ"
+    ],
+    "kanjiCount": 7
   },
   "defaults": {
     "type": "godan-verb",
-    "ending": "bu",
-    "kanji": "学ぶ",
-    "reading": "まなぶ",
-    "meaning": "to learn; to study"
+    "ending": "bu"
   },
-  "entries": []
+  "entries": [
+    {
+      "kanji": "遊ぶ",
+      "reading": "あそぶ",
+      "meaning": "to play; to hang out; to have fun"
+    },
+    {
+      "kanji": "飛ぶ",
+      "reading": "とぶ",
+      "meaning": "to fly; to jump; to go fast (e.g., time passes quickly)"
+    },
+    {
+      "kanji": "呼ぶ",
+      "reading": "よぶ",
+      "meaning": "to call; to invite; to name"
+    },
+    {
+      "kanji": "運ぶ",
+      "reading": "はこぶ",
+      "meaning": "to carry; to transport; to move (something)"
+    },
+    {
+      "kanji": "選ぶ",
+      "reading": "えらぶ",
+      "meaning": "to choose; to select"
+    },
+    {
+      "kanji": "喜ぶ",
+      "reading": "よろこぶ",
+      "meaning": "to be happy; to喜ぶ; to be delighted"
+    },
+    {
+      "kanji": "学ぶ",
+      "reading": "まなぶ",
+      "meaning": "to learn; to study"
+    }
+  ]
 }

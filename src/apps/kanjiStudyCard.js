@@ -533,6 +533,31 @@ export function renderKanjiStudyCard({ store }) {
   refreshEntriesFromStore();
   render();
 
+  // React to store changes (e.g., virtual set finishing its background resolution)
+  let unsub = null;
+  try {
+    if (store && typeof store.subscribe === 'function') {
+      let lastKey = store.getActiveCollection?.()?.key || null;
+      unsub = store.subscribe(() => {
+        try {
+          const active = store.getActiveCollection?.();
+          const key = active?.key || null;
+          // Refresh when active collection changes or when entries may have been updated.
+          if (key !== lastKey) {
+            lastKey = key;
+            uiStateRestored = false;
+          }
+          refreshEntriesFromStore();
+          render();
+        } catch (e) {
+          // ignore
+        }
+      });
+    }
+  } catch (e) {
+    unsub = null;
+  }
+
   // start autoplay automatically if saved state requested and a sequence exists
   if (isAutoPlaying && Array.isArray(autoplayConfig) && autoplayConfig.length) startAutoplay();
 
@@ -605,6 +630,7 @@ export function renderKanjiStudyCard({ store }) {
   const observer = new MutationObserver(() => {
     if (!document.body.contains(el)) {
       unregisterKanjiHandler();
+      try { if (typeof unsub === 'function') unsub(); } catch (e) {}
       observer.disconnect();
     }
   });
