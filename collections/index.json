@@ -23,70 +23,64 @@
       "entries": null
     },
     {
-      "path": "japanese/nouns/100_katakana_english_part1.json",
-      "name": "Common Katakana Nouns (loanwords & wasei-eigo)",
-      "description": "High-frequency katakana nouns in Japanese (loanwords from various languages and Japanese coinages / wasei-eigo).",
-      "entries": 66
+      "path": "japanese/nouns/_grouped/compound-morpheme__katakana.json",
+      "name": "Japanese (compound-morpheme) (katakana)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='compound-morpheme' and orthography='katakana'.",
+      "entries": 1
     },
     {
-      "path": "japanese/nouns/200_nouns_part1.json",
-      "name": "Japanese Nouns (200) (200_nouns_part1)",
-      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
-      "entries": 60
+      "path": "japanese/nouns/_grouped/compound-morpheme.json",
+      "name": "Japanese (compound-morpheme)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='compound-morpheme'.",
+      "entries": 11
     },
     {
-      "path": "japanese/nouns/200_nouns_part2.json",
-      "name": "Japanese Nouns (200) (200_nouns_part2)",
-      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
-      "entries": 60
+      "path": "japanese/nouns/_grouped/descriptive-phrase.json",
+      "name": "Japanese (descriptive-phrase)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='descriptive-phrase'.",
+      "entries": 1
     },
     {
-      "path": "japanese/nouns/200_nouns_part3.json",
-      "name": "Japanese Nouns (200) (200_nouns_part3)",
-      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
-      "entries": 60
+      "path": "japanese/nouns/_grouped/expression__katakana.json",
+      "name": "Japanese (expression) (katakana)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='expression' and orthography='katakana'.",
+      "entries": 2
     },
     {
-      "path": "japanese/nouns/200_nouns_part4.json",
-      "name": "Japanese Nouns (200) (200_nouns_part4)",
-      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
-      "entries": 60
+      "path": "japanese/nouns/_grouped/i-adjective.json",
+      "name": "Japanese (i-adjective)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='i-adjective'.",
+      "entries": 2
     },
     {
-      "path": "japanese/nouns/200_nouns_part5.json",
-      "name": "Japanese Nouns (200) (200_nouns_part5)",
-      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
-      "entries": 60
+      "path": "japanese/nouns/_grouped/kanji__katakana.json",
+      "name": "Japanese (kanji) (katakana)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='kanji' and orthography='katakana'.",
+      "entries": 28
     },
     {
-      "path": "japanese/nouns/200_nouns_part6.json",
-      "name": "Japanese Nouns (200) (200_nouns_part6)",
-      "description": "200 common Japanese nouns (kanji), with readings and English meanings.",
-      "entries": 25
+      "path": "japanese/nouns/_grouped/na-adjective.json",
+      "name": "Japanese (na-adjective)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='na-adjective'.",
+      "entries": 4
     },
     {
-      "path": "japanese/nouns/jp_linguistic_terms_supplement.json",
-      "name": "Linguistic Term Kanji Supplement",
-      "description": "Popular vocabulary featuring kanji from Japanese linguistic terminology (with recursive component entries)",
-      "entries": 53
+      "path": "japanese/nouns/_grouped/noun__katakana.json",
+      "name": "Japanese (noun) (katakana)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='noun' and orthography='katakana'.",
+      "entries": 122
     },
     {
-      "path": "japanese/nouns/jp_linguistic_terms.json",
-      "name": "Linguistic Terms",
-      "description": "Terminology for Japanese phonetics, writing systems, and grammar",
-      "entries": 34
+      "path": "japanese/nouns/_grouped/noun.json",
+      "name": "Japanese (noun)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='noun'.",
+      "entries": 392
     },
     {
-      "path": "japanese/nouns/jp_pokemon_roots.json",
-      "name": "Pokemon name-root & type tokens (Japanese)",
-      "description": "Canonical kanji and katakana tokens used as Pokémon type labels and name roots.",
-      "entries": 41
-    },
-    {
-      "path": "japanese/nouns/nouns_11.json",
-      "name": "nouns 11",
-      "description": "Common standalone Japanese nouns or basic concept words added to cover single kanji not present in the main 200 noun lists.",
-      "entries": 21
+      "path": "japanese/nouns/_grouped/standalone-noun.json",
+      "name": "Japanese (standalone-noun)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='standalone-noun'.",
+      "entries": 15
     },
     {
       "path": "japanese/sentences/testing.json",
@@ -173,10 +167,16 @@
       "entries": 2
     },
     {
+      "path": "japanese/verbs/godan-verbs/godan-verb.json",
+      "name": "Japanese (godan-verb)",
+      "description": "Auto-grouped entries from collections/japanese/nouns by type='godan-verb'.",
+      "entries": 5
+    },
+    {
       "path": "japanese/verbs/ichidan_verbs.json",
       "name": "Japanese N5 Ichidan Verbs",
       "description": null,
-      "entries": 6
+      "entries": 62
     },
     {
       "path": "languageHistory/english.json",

@@ -107,6 +107,29 @@
       ]
     },
     {
+      "when": { "field": "type", "in": ["godan-verb"] },
+      "fields": [
+        {
+          "key": "ending",
+          "label": "Ending",
+          "jp_label": "語尾",
+          "type": "enum",
+          "description": "Dictionary-form ending class for 五段動詞 (e.g., 泳ぐ → gu).",
+          "values": {
+            "u": "〜う",
+            "ku": "〜く",
+            "gu": "〜ぐ",
+            "su": "〜す",
+            "tsu": "〜つ",
+            "nu": "〜ぬ",
+            "bu": "〜ぶ",
+            "mu": "〜む",
+            "ru": "〜る"
+          }
+        }
+      ]
+    },
+    {
       "when": { "field": "orthography", "in": ["katakana"] },
       "fields": [
         {
