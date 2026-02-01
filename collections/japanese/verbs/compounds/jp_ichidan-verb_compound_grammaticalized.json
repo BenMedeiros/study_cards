@@ -2,7 +2,20 @@
   "metadata": {
     "name": "Japanese Compound Verbs — ichidan — grammaticalized",
     "description": "Ichidan compounds where the final element is grammaticalized (auxiliary-like or polite/functional uses).",
-    "version": 1
+    "version": 1,
+    "kanji": [
+      "引き上げる",
+      "見つけ合わせる",
+      "見合わせる",
+      "差し上げる",
+      "持ち上げる",
+      "受け渡せる",
+      "申し合わせる",
+      "申し上げる",
+      "連れ戻せる",
+      "話しかける"
+    ],
+    "kanjiCount": 10
   },
   "defaults": {
     "type": "ichidan-verb",
@@ -10,15 +23,55 @@
     "compoundType": "grammaticalized"
   },
   "entries": [
-    { "kanji": "話しかける", "reading": "はなしかける", "meaning": "to address; to speak to someone" },
-    { "kanji": "持ち上げる", "reading": "もちあげる", "meaning": "to lift up; to praise (colloquial)" },
-    { "kanji": "見合わせる", "reading": "みあわせる", "meaning": "to postpone; to refrain after consideration" },
-    { "kanji": "申し合わせる", "reading": "もうしあわせる", "meaning": "to arrange/agree (by prior arrangement)" },
-    { "kanji": "差し上げる", "reading": "さしあげる", "meaning": "humble form of 'to give' (polite compound)" },
-    { "kanji": "引き上げる", "reading": "ひきあげる", "meaning": "to pull up; to raise; to withdraw" },
-    { "kanji": "受け渡せる", "reading": "うけわたせる", "meaning": "can hand over (example grammaticalized usage)" },
-    { "kanji": "連れ戻せる", "reading": "つれもどせる", "meaning": "can bring back (example form)" },
-    { "kanji": "申し上げる", "reading": "もうしあげる", "meaning": "humble/polite say; to say (humble)" },
-    { "kanji": "見つけ合わせる", "reading": "みつけあわせる", "meaning": "to cross-check by finding/matching (rare example)" }
+    {
+      "kanji": "話しかける",
+      "reading": "はなしかける",
+      "meaning": "to address; to speak to someone"
+    },
+    {
+      "kanji": "持ち上げる",
+      "reading": "もちあげる",
+      "meaning": "to lift up; to praise (colloquial)"
+    },
+    {
+      "kanji": "見合わせる",
+      "reading": "みあわせる",
+      "meaning": "to postpone; to refrain after consideration"
+    },
+    {
+      "kanji": "申し合わせる",
+      "reading": "もうしあわせる",
+      "meaning": "to arrange/agree (by prior arrangement)"
+    },
+    {
+      "kanji": "差し上げる",
+      "reading": "さしあげる",
+      "meaning": "humble form of 'to give' (polite compound)"
+    },
+    {
+      "kanji": "引き上げる",
+      "reading": "ひきあげる",
+      "meaning": "to pull up; to raise; to withdraw"
+    },
+    {
+      "kanji": "受け渡せる",
+      "reading": "うけわたせる",
+      "meaning": "can hand over (example grammaticalized usage)"
+    },
+    {
+      "kanji": "連れ戻せる",
+      "reading": "つれもどせる",
+      "meaning": "can bring back (example form)"
+    },
+    {
+      "kanji": "申し上げる",
+      "reading": "もうしあげる",
+      "meaning": "humble/polite say; to say (humble)"
+    },
+    {
+      "kanji": "見つけ合わせる",
+      "reading": "みつけあわせる",
+      "meaning": "to cross-check by finding/matching (rare example)"
+    }
   ]
 }

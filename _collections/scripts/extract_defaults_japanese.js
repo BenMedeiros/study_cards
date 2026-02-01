@@ -64,11 +64,25 @@ function extractDefaultsFromFile(filePath) {
     }
   }
 
-  if (Object.keys(extracted).length === 0) return { filePath: rel, note: 'no extraction', skipped };
-
+  // Ensure defaults exists (empty object if nothing extracted)
+  const hadDefaults = Object.prototype.hasOwnProperty.call(doc, 'defaults');
   doc.defaults = defaults;
+
+  const wrote = Object.keys(extracted).length > 0 || !hadDefaults;
+  if (!wrote) return { filePath: rel, note: 'no extraction', skipped };
+
+  // Reorder top-level keys: metadata, defaults, entries, then any others
+  const newDoc = {};
+  if (Object.prototype.hasOwnProperty.call(doc, 'metadata')) newDoc.metadata = doc.metadata;
+  newDoc.defaults = doc.defaults || {};
+  if (Object.prototype.hasOwnProperty.call(doc, 'entries')) newDoc.entries = doc.entries;
+  for (const k of Object.keys(doc)) {
+    if (k === 'metadata' || k === 'defaults' || k === 'entries') continue;
+    newDoc[k] = doc[k];
+  }
+
   try {
-    fs.writeFileSync(filePath, JSON.stringify(doc, null, 2) + '\n', 'utf8');
+    fs.writeFileSync(filePath, JSON.stringify(newDoc, null, 2) + '\n', 'utf8');
     return { filePath: rel, updated: true, extracted: Object.keys(extracted), skipped };
   } catch (e) {
     return { filePath: rel, error: `write error: ${e.message}` };

@@ -1,9 +1,0 @@
-{
-  "metadata": { "name": "Japanese N5 Godan Verbs (-mu)", "level": "N5", "version": 1 },
-  "defaults": { "type": "godan-verb", "ending": "mu" },
-  "entries": [
-    { "kanji": "飲む", "reading": "のむ", "meaning": "to drink" },
-    { "kanji": "休む", "reading": "やすむ", "meaning": "to rest; to be absent" },
-    { "kanji": "生む", "reading": "うむ", "meaning": "to give birth; to produce" }
-  ]
-}

@@ -1,0 +1,187 @@
+{
+  "metadata": {
+    "name": "Japanese (kanji) (katakana)",
+    "description": "Auto-grouped entries from collections/japanese/nouns by type='kanji' and orthography='katakana'.",
+    "version": 1,
+    "sources": [
+      "collections/japanese/nouns/jp_linguistic_terms_supplement.json"
+    ],
+    "kanji": [
+      "促",
+      "進",
+      "長",
+      "社",
+      "部",
+      "成",
+      "清",
+      "潔",
+      "濁",
+      "半",
+      "分",
+      "平",
+      "日",
+      "和",
+      "気",
+      "仮",
+      "定",
+      "片",
+      "方",
+      "付",
+      "漢",
+      "読",
+      "書",
+      "訓",
+      "練",
+      "送",
+      "料",
+      "見"
+    ],
+    "kanjiCount": 28
+  },
+  "defaults": {
+    "type": "kanji",
+    "orthography": "katakana"
+  },
+  "entries": [
+    {
+      "kanji": "促",
+      "reading": "ソク",
+      "meaning": "urge; prompt; hasten"
+    },
+    {
+      "kanji": "進",
+      "reading": "シン",
+      "meaning": "advance; progress"
+    },
+    {
+      "kanji": "長",
+      "reading": "チョウ",
+      "meaning": "long; leader; head"
+    },
+    {
+      "kanji": "社",
+      "reading": "シャ",
+      "meaning": "company; shrine"
+    },
+    {
+      "kanji": "部",
+      "reading": "ブ",
+      "meaning": "section; department; part"
+    },
+    {
+      "kanji": "成",
+      "reading": "セイ",
+      "meaning": "become; form; achieve"
+    },
+    {
+      "kanji": "清",
+      "reading": "セイ",
+      "meaning": "pure; clean; clear"
+    },
+    {
+      "kanji": "潔",
+      "reading": "ケツ",
+      "meaning": "clean; pure; righteous"
+    },
+    {
+      "kanji": "濁",
+      "reading": "ダク",
+      "meaning": "muddy; turbid; voiced (phonetics)"
+    },
+    {
+      "kanji": "半",
+      "reading": "ハン",
+      "meaning": "half"
+    },
+    {
+      "kanji": "分",
+      "reading": "ブン",
+      "meaning": "part; minute; divide"
+    },
+    {
+      "kanji": "平",
+      "reading": "ヘイ",
+      "meaning": "flat; calm; ordinary"
+    },
+    {
+      "kanji": "日",
+      "reading": "ニチ",
+      "meaning": "day; sun"
+    },
+    {
+      "kanji": "和",
+      "reading": "ワ",
+      "meaning": "harmony; peace; Japan/Japanese style"
+    },
+    {
+      "kanji": "気",
+      "reading": "キ",
+      "meaning": "spirit; mind; air; feeling"
+    },
+    {
+      "kanji": "仮",
+      "reading": "カ",
+      "meaning": "temporary; provisional; assumption"
+    },
+    {
+      "kanji": "定",
+      "reading": "テイ",
+      "meaning": "decide; set; fixed"
+    },
+    {
+      "kanji": "片",
+      "reading": "ヘン",
+      "meaning": "one-sided; fragment; piece"
+    },
+    {
+      "kanji": "方",
+      "reading": "ホウ",
+      "meaning": "direction; side; method; person (polite)"
+    },
+    {
+      "kanji": "付",
+      "reading": "フ",
+      "meaning": "attach; add; append"
+    },
+    {
+      "kanji": "漢",
+      "reading": "カン",
+      "meaning": "Han/Chinese; Sino-"
+    },
+    {
+      "kanji": "読",
+      "reading": "ドク",
+      "meaning": "read"
+    },
+    {
+      "kanji": "書",
+      "reading": "ショ",
+      "meaning": "write; book"
+    },
+    {
+      "kanji": "訓",
+      "reading": "クン",
+      "meaning": "instruction; training; kun-reading"
+    },
+    {
+      "kanji": "練",
+      "reading": "レン",
+      "meaning": "practice; train; refine"
+    },
+    {
+      "kanji": "送",
+      "reading": "ソウ",
+      "meaning": "send; see off"
+    },
+    {
+      "kanji": "料",
+      "reading": "リョウ",
+      "meaning": "fee; materials; charge"
+    },
+    {
+      "kanji": "見",
+      "reading": "ケン",
+      "meaning": "see; look; view"
+    }
+  ]
+}

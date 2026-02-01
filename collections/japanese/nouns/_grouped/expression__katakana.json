@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "name": "Japanese (expression) (katakana)",
+    "description": "Auto-grouped entries from collections/japanese/nouns by type='expression' and orthography='katakana'.",
+    "version": 1,
+    "sources": [
+      "collections/japanese/nouns/jp_pokemon_roots.json"
+    ],
+    "kanji": [
+      "ピカ",
+      "チュウ"
+    ],
+    "kanjiCount": 2
+  },
+  "defaults": {
+    "type": "expression",
+    "orthography": "katakana"
+  },
+  "entries": [
+    {
+      "kanji": "ピカ",
+      "reading": "ピカ",
+      "meaning": "sparkle; flash of light (sound effect)"
+    },
+    {
+      "kanji": "チュウ",
+      "reading": "チュウ",
+      "meaning": "squeak; kissing sound"
+    }
+  ]
+}

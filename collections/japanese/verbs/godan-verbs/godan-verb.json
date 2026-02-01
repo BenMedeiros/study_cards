@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "name": "Japanese (godan-verb)",
+    "description": "Auto-grouped entries from collections/japanese/nouns by type='godan-verb'.",
+    "version": 1,
+    "sources": [
+      "collections/japanese/nouns/jp_linguistic_terms_supplement.json"
+    ],
+    "kanji": [
+      "促す",
+      "濁る",
+      "読む",
+      "送る",
+      "見送る"
+    ],
+    "kanjiCount": 5
+  },
+  "defaults": {
+    "type": "godan-verb"
+  },
+  "entries": [
+    {
+      "kanji": "促す",
+      "reading": "うながす",
+      "meaning": "to urge; to prompt"
+    },
+    {
+      "kanji": "濁る",
+      "reading": "にごる",
+      "meaning": "to become muddy; cloudy"
+    },
+    {
+      "kanji": "読む",
+      "reading": "よむ",
+      "meaning": "to read"
+    },
+    {
+      "kanji": "送る",
+      "reading": "おくる",
+      "meaning": "to send"
+    },
+    {
+      "kanji": "見送る",
+      "reading": "みおくる",
+      "meaning": "to see off; to postpone"
+    }
+  ]
+}

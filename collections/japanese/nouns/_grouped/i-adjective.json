@@ -1,0 +1,30 @@
+{
+  "metadata": {
+    "name": "Japanese (i-adjective)",
+    "description": "Auto-grouped entries from collections/japanese/nouns by type='i-adjective'.",
+    "version": 1,
+    "sources": [
+      "collections/japanese/nouns/jp_linguistic_terms_supplement.json"
+    ],
+    "kanji": [
+      "長い",
+      "清い"
+    ],
+    "kanjiCount": 2
+  },
+  "defaults": {
+    "type": "i-adjective"
+  },
+  "entries": [
+    {
+      "kanji": "長い",
+      "reading": "ながい",
+      "meaning": "long"
+    },
+    {
+      "kanji": "清い",
+      "reading": "きよい",
+      "meaning": "pure; clean"
+    }
+  ]
+}

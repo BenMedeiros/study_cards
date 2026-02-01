@@ -1,0 +1,1056 @@
+{
+  "metadata": {
+    "name": "GU-Ending Godan Verbs (gu)",
+    "level": "N5",
+    "version": 1,
+    "kanji": [
+      "泳いだ",
+      "泳いで",
+      "泳がない",
+      "泳ぎます",
+      "泳ぐ",
+      "泳げる",
+      "泳ごう",
+      "稼いだ",
+      "稼いで",
+      "稼がない",
+      "稼ぎます",
+      "稼ぐ",
+      "稼げる",
+      "稼ごう",
+      "急いだ",
+      "急いで",
+      "急がない",
+      "急ぎます",
+      "急ぐ",
+      "急げる",
+      "急ごう",
+      "繋いだ",
+      "繋いで",
+      "繋がない",
+      "繋ぎます",
+      "繋ぐ",
+      "繋げる",
+      "繋ごう",
+      "研いだ",
+      "研いで",
+      "研がない",
+      "研ぎます",
+      "研ぐ",
+      "研げる",
+      "研ごう",
+      "騒いだ",
+      "騒いで",
+      "騒がない",
+      "騒ぎます",
+      "騒ぐ",
+      "騒げる",
+      "騒ごう",
+      "濯いだ",
+      "濯いで",
+      "濯がない",
+      "濯ぎます",
+      "濯ぐ",
+      "濯げる",
+      "濯ごう",
+      "脱いだ",
+      "脱いで",
+      "脱がない",
+      "脱ぎます",
+      "脱ぐ",
+      "脱げる",
+      "脱ごう",
+      "注いだ",
+      "注いで",
+      "注がない",
+      "注ぎます",
+      "注ぐ",
+      "注げる",
+      "注ごう",
+      "防いだ",
+      "防いで",
+      "防がない",
+      "防ぎます",
+      "防ぐ",
+      "防げる",
+      "防ごう",
+      "仰ぐ",
+      "継ぐ",
+      "貢ぐ",
+      "塞ぐ",
+      "削ぐ",
+      "漕ぐ",
+      "担ぐ",
+      "剥ぐ",
+      "紡ぐ",
+      "嗅ぐ"
+    ],
+    "kanjiCount": 80
+  },
+  "defaults": {
+    "type": "godan-verb",
+    "ending": "gu"
+  },
+  "entries": [
+    {
+      "kanji": "泳ぐ",
+      "reading": "およぐ",
+      "meaning": "to swim",
+      "example": {
+        "ja": "夏になると毎日泳ぐ。",
+        "en": "When summer comes, I swim every day.",
+        "notes": [
+          "Often used for a general habit or seasonal routine.",
+          "Common locations: 海(うみ), プール, 川(かわ)."
+        ]
+      }
+    },
+    {
+      "kanji": "泳ぎます",
+      "reading": "およぎます",
+      "meaning": "to swim (polite)",
+      "example": {
+        "ja": "明日、学校のプールで泳ぎます。",
+        "en": "Tomorrow, I’ll swim at the school pool.",
+        "notes": [
+          "Polite form fits announcements/plans and talking to teachers/strangers.",
+          "Using a specific place makes the action feel real and natural."
+        ]
+      }
+    },
+    {
+      "kanji": "泳がない",
+      "reading": "およがない",
+      "meaning": "to not swim",
+      "example": {
+        "ja": "今日は寒いので泳がない。",
+        "en": "It’s cold today, so I won’t swim.",
+        "notes": [
+          "Often used for a deliberate choice (not doing it) rather than inability.",
+          "Common reasons: 寒い, 時間がない, 疲れた."
+        ]
+      }
+    },
+    {
+      "kanji": "泳いだ",
+      "reading": "およいだ",
+      "meaning": "swam",
+      "example": {
+        "ja": "昨日、海で泳いだ。",
+        "en": "Yesterday, I swam in the sea.",
+        "notes": [
+          "Simple completed event; very common in short diary-style sentences.",
+          "海で泳ぐ is a standard collocation."
+        ]
+      }
+    },
+    {
+      "kanji": "泳いで",
+      "reading": "およいで",
+      "meaning": "swimming",
+      "example": {
+        "ja": "川で泳いで、あとで休みました。",
+        "en": "I swam in the river, and afterward I rested.",
+        "notes": [
+          "Often used to chain actions in a natural sequence.",
+          "あとで is a common way to make the sequence explicit."
+        ]
+      }
+    },
+    {
+      "kanji": "泳げる",
+      "reading": "およげる",
+      "meaning": "can swim",
+      "example": {
+        "ja": "私は子どものときから泳げる。",
+        "en": "I’ve been able to swim since I was a child.",
+        "notes": [
+          "Ability can be a skill (learned) rather than a temporary condition.",
+          "Often paired with 〜から / もう to express ‘since then / already’."
+        ]
+      }
+    },
+    {
+      "kanji": "泳ごう",
+      "reading": "およごう",
+      "meaning": "let’s swim",
+      "example": {
+        "ja": "暑いから、一緒に泳ごう。",
+        "en": "It’s hot, so let’s swim together.",
+        "notes": [
+          "Used for inviting/suggesting an action to someone else.",
+          "一緒に makes it clearly an invitation."
+        ]
+      }
+    },
+    {
+      "kanji": "急ぐ",
+      "reading": "いそぐ",
+      "meaning": "to hurry",
+      "example": {
+        "ja": "電車に間に合うために急ぐ。",
+        "en": "I hurry so I can catch the train.",
+        "notes": [
+          "Often tied to a deadline/appointment (間に合う, 約束, 時間).",
+          "Implies urgency; stronger than just ‘walk faster’ in many contexts."
+        ]
+      }
+    },
+    {
+      "kanji": "急ぎます",
+      "reading": "いそぎます",
+      "meaning": "to hurry (polite)",
+      "example": {
+        "ja": "すみません、少し急ぎます。",
+        "en": "Sorry, I’m in a bit of a hurry.",
+        "notes": [
+          "Common as a polite explanation when you can’t stay long.",
+          "少し softens the statement and sounds more natural."
+        ]
+      }
+    },
+    {
+      "kanji": "急がない",
+      "reading": "いそがない",
+      "meaning": "to not hurry",
+      "example": {
+        "ja": "まだ早いから急がないで。",
+        "en": "It’s still early, so don’t rush.",
+        "notes": [
+          "Often used to calm someone down (don’t rush).",
+          "急がないで is common in everyday speech."
+        ]
+      }
+    },
+    {
+      "kanji": "急いだ",
+      "reading": "いそいだ",
+      "meaning": "hurried",
+      "example": {
+        "ja": "雨が降りそうだったので急いだ。",
+        "en": "It looked like it was going to rain, so I hurried.",
+        "notes": [
+          "Natural cause → action pattern; implies a quick response to signs/risks.",
+          "雨が降りそう is a common trigger for 急ぐ."
+        ]
+      }
+    },
+    {
+      "kanji": "急いで",
+      "reading": "いそいで",
+      "meaning": "hurrying",
+      "example": {
+        "ja": "急いで来てください。",
+        "en": "Please come quickly.",
+        "notes": [
+          "A direct request; tone depends on context (can sound urgent).",
+          "Common in practical situations (running late, needing help)."
+        ]
+      }
+    },
+    {
+      "kanji": "急げる",
+      "reading": "いそげる",
+      "meaning": "can hurry",
+      "example": {
+        "ja": "今ならまだ急げる。",
+        "en": "If it’s now, we can still hurry (and make it).",
+        "notes": [
+          "Often implies there’s still time to change the outcome.",
+          "Common with まだ / 今なら / 間に合う."
+        ]
+      }
+    },
+    {
+      "kanji": "急ごう",
+      "reading": "いそごう",
+      "meaning": "let’s hurry",
+      "example": {
+        "ja": "遅れそうだから急ごう。",
+        "en": "We might be late, so let’s hurry.",
+        "notes": [
+          "Group decision/invitation; very common between friends or coworkers.",
+          "遅れそう is a natural motivator phrase."
+        ]
+      }
+    },
+    {
+      "kanji": "脱ぐ",
+      "reading": "ぬぐ",
+      "meaning": "to take off (clothes)",
+      "example": {
+        "ja": "家に入る前に靴を脱ぐ。",
+        "en": "I take off my shoes before entering the house.",
+        "notes": [
+          "Most common object is 靴 (Japanese house custom).",
+          "For jackets, 脱ぐ is fine, but you’ll also often hear 上着を脱ぐ / コートを脱ぐ."
+        ]
+      }
+    },
+    {
+      "kanji": "脱ぎます",
+      "reading": "ぬぎます",
+      "meaning": "to take off (clothes) (polite)",
+      "example": {
+        "ja": "ここで上着を脱ぎます。",
+        "en": "I’ll take off my jacket here.",
+        "notes": [
+          "Polite in public places or when explaining your actions.",
+          "上着 is a safe general word for outerwear."
+        ]
+      }
+    },
+    {
+      "kanji": "脱がない",
+      "reading": "ぬがない",
+      "meaning": "to not take off (clothes)",
+      "example": {
+        "ja": "寒いのでコートを脱がない。",
+        "en": "It’s cold, so I won’t take off my coat.",
+        "notes": [
+          "Often expresses a decision to keep something on (comfort/temperature).",
+          "Sounds natural with weather/room temperature reasons."
+        ]
+      }
+    },
+    {
+      "kanji": "脱いだ",
+      "reading": "ぬいだ",
+      "meaning": "took off (clothes)",
+      "example": {
+        "ja": "部屋に入ってすぐ靴を脱いだ。",
+        "en": "As soon as I entered the room, I took off my shoes.",
+        "notes": [
+          "すぐ emphasizes immediacy; fits the ‘enter → remove shoes’ routine.",
+          "Very natural household action sequence."
+        ]
+      }
+    },
+    {
+      "kanji": "脱いで",
+      "reading": "ぬいで",
+      "meaning": "taking off (clothes)",
+      "example": {
+        "ja": "靴を脱いで中に入ってください。",
+        "en": "Please take off your shoes and come inside.",
+        "notes": [
+          "Common fixed instruction at homes/some clinics/traditional places.",
+          "Using 靴 makes the intended meaning unambiguous."
+        ]
+      }
+    },
+    {
+      "kanji": "脱げる",
+      "reading": "ぬげる",
+      "meaning": "can take off (clothes)",
+      "example": {
+        "ja": "この服は一人で脱げる。",
+        "en": "I can take off these clothes by myself.",
+        "notes": [
+          "Often used for children’s independence or ease of clothing.",
+          "一人で highlights self-sufficiency."
+        ]
+      }
+    },
+    {
+      "kanji": "脱ごう",
+      "reading": "ぬごう",
+      "meaning": "let’s take off (clothes)",
+      "example": {
+        "ja": "暑いから上着を脱ごう。",
+        "en": "It’s hot, so let’s take off our jackets.",
+        "notes": [
+          "Used as a casual suggestion to adjust comfort.",
+          "上着 keeps it general and natural."
+        ]
+      }
+    },
+    {
+      "kanji": "防ぐ",
+      "reading": "ふせぐ",
+      "meaning": "to prevent; to defend",
+      "example": {
+        "ja": "マスクで風邪を防ぐ。",
+        "en": "I prevent catching a cold with a mask.",
+        "notes": [
+          "Common with negative outcomes: 事故, 火事, 風邪, ミス.",
+          "Nuance is ‘stop it from happening’ rather than ‘fix it after’."
+        ]
+      }
+    },
+    {
+      "kanji": "防ぎます",
+      "reading": "ふせぎます",
+      "meaning": "to prevent; to defend (polite)",
+      "example": {
+        "ja": "このルールは事故を防ぎます。",
+        "en": "This rule prevents accidents.",
+        "notes": [
+          "Often used in explanations/policies: rules, measures, systems.",
+          "Sounds slightly formal; good for workplace/school contexts."
+        ]
+      }
+    },
+    {
+      "kanji": "防がない",
+      "reading": "ふせがない",
+      "meaning": "to not prevent; to not defend",
+      "example": {
+        "ja": "急いでも、これではミスを防がない。",
+        "en": "Even if we hurry, this won’t prevent mistakes.",
+        "notes": [
+          "Used to criticize an ineffective method/measure.",
+          "Often paired with これでは / そんなことをしても."
+        ]
+      }
+    },
+    {
+      "kanji": "防いだ",
+      "reading": "ふせいだ",
+      "meaning": "prevented; defended",
+      "example": {
+        "ja": "早い連絡で大きな問題を防いだ。",
+        "en": "We prevented a big problem by notifying early.",
+        "notes": [
+          "Often implies ‘we avoided something serious’ due to timely action.",
+          "連絡, 注意, 対策 are common co-occurring words."
+        ]
+      }
+    },
+    {
+      "kanji": "防いで",
+      "reading": "ふせいで",
+      "meaning": "preventing; defending",
+      "example": {
+        "ja": "傘で雨を防いで走った。",
+        "en": "I blocked the rain with an umbrella and ran.",
+        "notes": [
+          "In physical contexts, it can mean ‘block/ward off’ (rain, wind, sun).",
+          "Sounds natural when there’s something tangible being blocked."
+        ]
+      }
+    },
+    {
+      "kanji": "防げる",
+      "reading": "ふせげる",
+      "meaning": "can prevent; can defend",
+      "example": {
+        "ja": "少し気をつければ事故を防げる。",
+        "en": "With a little care, you can prevent accidents.",
+        "notes": [
+          "Often used for advice: ‘If you do X, you can prevent Y.’",
+          "気をつける is a very common pairing."
+        ]
+      }
+    },
+    {
+      "kanji": "防ごう",
+      "reading": "ふせごう",
+      "meaning": "let’s prevent; let’s defend",
+      "example": {
+        "ja": "みんなでミスを防ごう。",
+        "en": "Let’s prevent mistakes together.",
+        "notes": [
+          "Common in team messages and safety posters.",
+          "みんなで signals shared responsibility."
+        ]
+      }
+    },
+    {
+      "kanji": "稼ぐ",
+      "reading": "かせぐ",
+      "meaning": "to earn (money)",
+      "example": {
+        "ja": "アルバイトで生活費を稼ぐ。",
+        "en": "I earn my living expenses with a part-time job.",
+        "notes": [
+          "More than just ‘get money’; implies active effort and income.",
+          "Common with 生活費, お金, 時間 (稼ぐ can also mean ‘save up time’ in some contexts)."
+        ]
+      }
+    },
+    {
+      "kanji": "稼ぎます",
+      "reading": "かせぎます",
+      "meaning": "to earn (money) (polite)",
+      "example": {
+        "ja": "今はアルバイトでお金を稼ぎます。",
+        "en": "Right now, I earn money with a part-time job.",
+        "notes": [
+          "Polite self-description; common in interviews or explanations.",
+          "今は frames it as a current situation (not permanent)."
+        ]
+      }
+    },
+    {
+      "kanji": "稼がない",
+      "reading": "かせがない",
+      "meaning": "to not earn (money)",
+      "example": {
+        "ja": "今月はあまり稼がないと思う。",
+        "en": "I think I won’t earn much this month.",
+        "notes": [
+          "Often used with amounts: あまり, そんなに, 少ししか.",
+          "Softened by と思う to avoid sounding absolute."
+        ]
+      }
+    },
+    {
+      "kanji": "稼いだ",
+      "reading": "かせいだ",
+      "meaning": "earned (money)",
+      "example": {
+        "ja": "先月は残業で多く稼いだ。",
+        "en": "Last month I earned a lot through overtime.",
+        "notes": [
+          "Often tied to the method/source: 残業, 副業, アルバイト.",
+          "Implies effort or extra work."
+        ]
+      }
+    },
+    {
+      "kanji": "稼いで",
+      "reading": "かせいで",
+      "meaning": "earning (money)",
+      "example": {
+        "ja": "お金を稼いで、旅行に行きたい。",
+        "en": "I want to earn money and go traveling.",
+        "notes": [
+          "Natural for goal-setting: ‘earn money and do X.’",
+          "Often implies saving up toward a purpose."
+        ]
+      }
+    },
+    {
+      "kanji": "稼げる",
+      "reading": "かせげる",
+      "meaning": "can earn (money)",
+      "example": {
+        "ja": "この仕事なら安定して稼げる。",
+        "en": "With this job, you can earn steadily.",
+        "notes": [
+          "Often evaluates a job/business: stable income vs risky income.",
+          "安定して highlights reliability (not just amount)."
+        ]
+      }
+    },
+    {
+      "kanji": "稼ごう",
+      "reading": "かせごう",
+      "meaning": "let’s earn (money)",
+      "example": {
+        "ja": "夏休みに短期で稼ごう。",
+        "en": "Let’s earn (money) with a short-term job during summer break.",
+        "notes": [
+          "Common with time-limited plans: 夏休み, 週末, 短期.",
+          "Sounds like a practical plan, not just ‘get rich’."
+        ]
+      }
+    },
+    {
+      "kanji": "騒ぐ",
+      "reading": "さわぐ",
+      "meaning": "to make noise; to make a fuss",
+      "example": {
+        "ja": "夜に外で騒ぐのはだめだ。",
+        "en": "It’s not okay to make noise outside at night.",
+        "notes": [
+          "Often used for causing trouble/disturbing others, not just being loud.",
+          "Common in complaints/rules (neighbors, apartments)."
+        ]
+      }
+    },
+    {
+      "kanji": "騒ぎます",
+      "reading": "さわぎます",
+      "meaning": "to make noise; to make a fuss (polite)",
+      "example": {
+        "ja": "子どもが騒ぎますから、すみません。",
+        "en": "Sorry—my child might be noisy.",
+        "notes": [
+          "Common apology framing; polite and realistic.",
+          "Often used when you expect disturbance (restaurant, train)."
+        ]
+      }
+    },
+    {
+      "kanji": "騒がない",
+      "reading": "さわがない",
+      "meaning": "to not make noise; to not make a fuss",
+      "example": {
+        "ja": "図書館では騒がないで。",
+        "en": "Don’t make noise in the library.",
+        "notes": [
+          "Very common instruction; 図書館 is a canonical context.",
+          "Focus is on disturbing others, not ‘having fun’."
+        ]
+      }
+    },
+    {
+      "kanji": "騒いだ",
+      "reading": "さわいだ",
+      "meaning": "made noise; made a fuss",
+      "example": {
+        "ja": "試合のあと、みんなで騒いだ。",
+        "en": "After the game, we made a big шум (celebrated loudly) together.",
+        "notes": [
+          "Can be negative (trouble) or positive (celebration) depending on context.",
+          "試合のあと makes it clearly ‘celebratory noise’."
+        ]
+      }
+    },
+    {
+      "kanji": "騒いで",
+      "reading": "さわいで",
+      "meaning": "making noise; making a fuss",
+      "example": {
+        "ja": "夜に騒いで、となりの人に怒られた。",
+        "en": "I was noisy at night and got scolded by the neighbor.",
+        "notes": [
+          "怒られる is a common consequence framing with 騒ぐ.",
+          "Makes the ‘causing trouble’ nuance explicit."
+        ]
+      }
+    },
+    {
+      "kanji": "騒げる",
+      "reading": "さわげる",
+      "meaning": "can make noise; can make a fuss",
+      "example": {
+        "ja": "ここなら少し騒げるよ。",
+        "en": "Here, we can be a little noisy.",
+        "notes": [
+          "Often about permission/appropriateness of being loud in a place.",
+          "少し softens it to ‘not too much’."
+        ]
+      }
+    },
+    {
+      "kanji": "騒ごう",
+      "reading": "さわごう",
+      "meaning": "let’s make noise; let’s make a fuss",
+      "example": {
+        "ja": "優勝した！今日はみんなで騒ごう！",
+        "en": "We won! Let’s celebrate loudly today!",
+        "notes": [
+          "Works naturally when tied to celebration; otherwise can sound reckless.",
+          "The preceding event (優勝) provides justification."
+        ]
+      }
+    },
+    {
+      "kanji": "繋ぐ",
+      "reading": "つなぐ",
+      "meaning": "to connect; to link",
+      "example": {
+        "ja": "パソコンをWi-Fiに繋ぐ。",
+        "en": "I connect my computer to Wi-Fi.",
+        "notes": [
+          "Very common modern usage with devices and networks.",
+          "Often takes に for the target (Wi-Fiに, ネットに)."
+        ]
+      }
+    },
+    {
+      "kanji": "繋ぎます",
+      "reading": "つなぎます",
+      "meaning": "to connect; to link (polite)",
+      "example": {
+        "ja": "今、ケーブルを繋ぎます。",
+        "en": "I’ll connect the cable now.",
+        "notes": [
+          "Polite narration of an action (help desk / explaining steps).",
+          "今 adds clarity and sounds natural."
+        ]
+      }
+    },
+    {
+      "kanji": "繋がない",
+      "reading": "つながない",
+      "meaning": "to not connect; to not link",
+      "example": {
+        "ja": "まだ電源を繋がないでください。",
+        "en": "Please don’t connect the power yet.",
+        "notes": [
+          "Common in instructions: ‘not yet’ is the key nuance.",
+          "Pairs naturally with まだ and ください."
+        ]
+      }
+    },
+    {
+      "kanji": "繋いだ",
+      "reading": "つないだ",
+      "meaning": "connected; linked",
+      "example": {
+        "ja": "二つの部屋をケーブルで繋いだ。",
+        "en": "I connected the two rooms with a cable.",
+        "notes": [
+          "Often used for physically linking things (rope, cable, hands).",
+          "で marks the means/tool (ケーブルで)."
+        ]
+      }
+    },
+    {
+      "kanji": "繋いで",
+      "reading": "つないで",
+      "meaning": "connecting; linking",
+      "example": {
+        "ja": "スマホを繋いでからアプリを開いてください。",
+        "en": "After connecting your phone, please open the app.",
+        "notes": [
+          "Very natural in step-by-step instructions.",
+          "〜てから emphasizes correct order."
+        ]
+      }
+    },
+    {
+      "kanji": "繋げる",
+      "reading": "つなげる",
+      "meaning": "can connect; can link",
+      "example": {
+        "ja": "このコードなら簡単に繋げる。",
+        "en": "With this cord, you can connect easily.",
+        "notes": [
+          "Often evaluates whether something is usable/compatible.",
+          "簡単に highlights ease, not just possibility."
+        ]
+      }
+    },
+    {
+      "kanji": "繋ごう",
+      "reading": "つなごう",
+      "meaning": "let’s connect; let’s link",
+      "example": {
+        "ja": "まずWi-Fiに繋ごう。",
+        "en": "First, let’s connect to Wi-Fi.",
+        "notes": [
+          "Common as a group/paired action while setting something up.",
+          "まず frames it as step one."
+        ]
+      }
+    },
+    {
+      "kanji": "注ぐ",
+      "reading": "そそぐ",
+      "meaning": "to pour; to devote (effort)",
+      "example": {
+        "ja": "コップに水を注ぐ。",
+        "en": "I pour water into a cup.",
+        "notes": [
+          "Most literal/common use is pouring liquids into containers.",
+          "Pairs naturally with に for the destination (コップに)."
+        ]
+      }
+    },
+    {
+      "kanji": "注ぎます",
+      "reading": "そそぎます",
+      "meaning": "to pour; to devote (effort) (polite)",
+      "example": {
+        "ja": "お茶を注ぎますね。",
+        "en": "I’ll pour the tea, okay?",
+        "notes": [
+          "ね softens and makes it friendly/service-like.",
+          "Common in hosting/restaurant contexts."
+        ]
+      }
+    },
+    {
+      "kanji": "注がない",
+      "reading": "そそがない",
+      "meaning": "to not pour; to not devote (effort)",
+      "example": {
+        "ja": "今日はあまり力を注がない。",
+        "en": "Today I’m not going to put much effort into it.",
+        "notes": [
+          "In ‘devote effort’ sense, often used with 力/時間/気持ち.",
+          "あまり keeps it realistic (not absolute)."
+        ]
+      }
+    },
+    {
+      "kanji": "注いだ",
+      "reading": "そそいだ",
+      "meaning": "poured; devoted (effort)",
+      "example": {
+        "ja": "全部の時間を勉強に注いだ。",
+        "en": "I devoted all my time to studying.",
+        "notes": [
+          "This is the ‘devote’ meaning; the object is time/effort, not liquid.",
+          "Often implies strong commitment and prioritization."
+        ]
+      }
+    },
+    {
+      "kanji": "注いで",
+      "reading": "そそいで",
+      "meaning": "pouring; devoting (effort)",
+      "example": {
+        "ja": "水を注いで、よく混ぜてください。",
+        "en": "Pour in the water and mix well, please.",
+        "notes": [
+          "Natural for recipes/instructions.",
+          "よく commonly pairs with mix/stir actions."
+        ]
+      }
+    },
+    {
+      "kanji": "注げる",
+      "reading": "そそげる",
+      "meaning": "can pour; can devote (effort)",
+      "example": {
+        "ja": "ここに水を注げる。",
+        "en": "You can pour water in here.",
+        "notes": [
+          "Often about whether a container/opening is suitable for pouring.",
+          "In ‘devote’ sense, it’s more common to say 力を注げる/時間を注げる with a purpose."
+        ]
+      }
+    },
+    {
+      "kanji": "注ごう",
+      "reading": "そそごう",
+      "meaning": "let’s pour; let’s devote (effort)",
+      "example": {
+        "ja": "次はこの練習に力を注ごう。",
+        "en": "Next, let’s put our effort into this practice.",
+        "notes": [
+          "Natural for team/self-improvement contexts.",
+          "Implies choosing a focus area."
+        ]
+      }
+    },
+    {
+      "kanji": "研ぐ",
+      "reading": "とぐ",
+      "meaning": "to sharpen; to polish",
+      "example": {
+        "ja": "料理の前に包丁を研ぐ。",
+        "en": "I sharpen the kitchen knife before cooking.",
+        "notes": [
+          "Most common object is 包丁; very standard everyday use.",
+          "Implies maintaining sharpness, not just cleaning."
+        ]
+      }
+    },
+    {
+      "kanji": "研ぎます",
+      "reading": "とぎます",
+      "meaning": "to sharpen; to polish (polite)",
+      "example": {
+        "ja": "今から包丁を研ぎます。",
+        "en": "I’m going to sharpen the knife now.",
+        "notes": [
+          "Polite narration; fits instructional/demo contexts.",
+          "今から signals ‘starting now’ clearly."
+        ]
+      }
+    },
+    {
+      "kanji": "研がない",
+      "reading": "とがない",
+      "meaning": "to not sharpen; to not polish",
+      "example": {
+        "ja": "危ないから、子どもは包丁を研がない。",
+        "en": "Because it’s dangerous, children don’t sharpen knives.",
+        "notes": [
+          "Natural for rules/safety guidance.",
+          "Often used with 危ない/危険 for justification."
+        ]
+      }
+    },
+    {
+      "kanji": "研いだ",
+      "reading": "といだ",
+      "meaning": "sharpened; polished",
+      "example": {
+        "ja": "昨日、包丁を研いだ。",
+        "en": "Yesterday, I sharpened the knife.",
+        "notes": [
+          "Simple completed action; very natural as a quick report.",
+          "Often implies the knife is now in better condition."
+        ]
+      }
+    },
+    {
+      "kanji": "研いで",
+      "reading": "といで",
+      "meaning": "sharpening; polishing",
+      "example": {
+        "ja": "包丁を研いでから料理した。",
+        "en": "I sharpened the knife and then cooked.",
+        "notes": [
+          "Natural ‘prep → action’ sequence; emphasizes readiness.",
+          "〜てから highlights correct order."
+        ]
+      }
+    },
+    {
+      "kanji": "研げる",
+      "reading": "とげる",
+      "meaning": "can sharpen; can polish",
+      "example": {
+        "ja": "この石ならよく研げる。",
+        "en": "With this stone, you can sharpen well.",
+        "notes": [
+          "Often evaluates tools/materials (whetstone quality).",
+          "よく conveys effectiveness, not mere possibility."
+        ]
+      }
+    },
+    {
+      "kanji": "研ごう",
+      "reading": "とごう",
+      "meaning": "let’s sharpen; let’s polish",
+      "example": {
+        "ja": "週末に包丁を研ごう。",
+        "en": "Let’s sharpen the knife this weekend.",
+        "notes": [
+          "Natural as a maintenance plan (週末, 時間があるとき).",
+          "Implies routine upkeep."
+        ]
+      }
+    },
+    {
+      "kanji": "濯ぐ",
+      "reading": "すすぐ",
+      "meaning": "to rinse",
+      "example": {
+        "ja": "歯を磨いたあとで口を濯ぐ。",
+        "en": "After brushing my teeth, I rinse my mouth.",
+        "notes": [
+          "Very common use: 口を濯ぐ (rinse mouth).",
+          "Often appears in daily routine descriptions."
+        ]
+      }
+    },
+    {
+      "kanji": "濯ぎます",
+      "reading": "すすぎます",
+      "meaning": "to rinse (polite)",
+      "example": {
+        "ja": "このコップを水で濯ぎます。",
+        "en": "I’ll rinse this cup with water.",
+        "notes": [
+          "Polite narration; fits service/help contexts.",
+          "水で marks the rinsing medium."
+        ]
+      }
+    },
+    {
+      "kanji": "濯がない",
+      "reading": "すすがない",
+      "meaning": "to not rinse",
+      "example": {
+        "ja": "まだ濯がないで、そのまま置いて。",
+        "en": "Don’t rinse it yet—leave it as it is.",
+        "notes": [
+          "Natural instruction meaning ‘not yet’.",
+          "そのまま adds the nuance ‘leave it unchanged’."
+        ]
+      }
+    },
+    {
+      "kanji": "濯いだ",
+      "reading": "すすいだ",
+      "meaning": "rinsed",
+      "example": {
+        "ja": "洗剤を水でしっかり濯いだ。",
+        "en": "I rinsed the detergent off thoroughly with water.",
+        "notes": [
+          "Common in laundry/dish contexts: detergent/soap must be rinsed off.",
+          "しっかり emphasizes doing it thoroughly (important for ‘rinse’)."
+        ]
+      }
+    },
+    {
+      "kanji": "濯いで",
+      "reading": "すすいで",
+      "meaning": "rinsing",
+      "example": {
+        "ja": "水で濯いでから使ってください。",
+        "en": "Please rinse it with water before using it.",
+        "notes": [
+          "Common instruction for cups, vegetables, tools, etc.",
+          "Implies cleanliness/safety before use."
+        ]
+      }
+    },
+    {
+      "kanji": "濯げる",
+      "reading": "すすげる",
+      "meaning": "can rinse",
+      "example": {
+        "ja": "ここで手を濯げるよ。",
+        "en": "You can rinse your hands here.",
+        "notes": [
+          "Often about availability of water/place (sink, tap).",
+          "手を濯ぐ is less common than 手を洗う, but works when focusing on ‘rinse quickly’."
+        ]
+      }
+    },
+    {
+      "kanji": "濯ごう",
+      "reading": "すすごう",
+      "meaning": "let’s rinse",
+      "example": {
+        "ja": "食事の前に口を濯ごう。",
+        "en": "Let’s rinse our mouth before eating.",
+        "notes": [
+          "Sounds like a hygiene suggestion; casual and natural.",
+          "口を濯ぐ is the safest, most natural object pairing."
+        ]
+      }
+    },
+    {
+      "kanji": "嗅ぐ",
+      "reading": "かぐ",
+      "meaning": "to smell; to sniff"
+    },
+    {
+      "kanji": "継ぐ",
+      "reading": "つぐ",
+      "meaning": "to succeed; to inherit"
+    },
+    {
+      "kanji": "塞ぐ",
+      "reading": "ふさぐ",
+      "meaning": "to block; to close up"
+    },
+    {
+      "kanji": "担ぐ",
+      "reading": "かつぐ",
+      "meaning": "to shoulder; to carry"
+    },
+    {
+      "kanji": "剥ぐ",
+      "reading": "はぐ",
+      "meaning": "to peel off"
+    },
+    {
+      "kanji": "仰ぐ",
+      "reading": "あおぐ",
+      "meaning": "to look up (to); to revere"
+    },
+    {
+      "kanji": "漕ぐ",
+      "reading": "こぐ",
+      "meaning": "to row; to pedal"
+    },
+    {
+      "kanji": "貢ぐ",
+      "reading": "みつぐ",
+      "meaning": "to contribute; to support"
+    },
+    {
+      "kanji": "紡ぐ",
+      "reading": "つむぐ",
+      "meaning": "to spin (thread); to weave; to build (a story)"
+    },
+    {
+      "kanji": "削ぐ",
+      "reading": "そぐ",
+      "meaning": "to shave off; to pare down"
+    }
+  ]
+}

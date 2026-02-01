@@ -1,0 +1,24 @@
+{
+  "metadata": {
+    "name": "Japanese (descriptive-phrase)",
+    "description": "Auto-grouped entries from collections/japanese/nouns by type='descriptive-phrase'.",
+    "version": 1,
+    "sources": [
+      "collections/japanese/nouns/jp_linguistic_terms.json"
+    ],
+    "kanji": [
+      "単独の漢字"
+    ],
+    "kanjiCount": 1
+  },
+  "defaults": {
+    "type": "descriptive-phrase"
+  },
+  "entries": [
+    {
+      "kanji": "単独の漢字",
+      "reading": "たんどくのかんじ",
+      "meaning": "standalone kanji; a kanji used alone, not in a compound or with okurigana"
+    }
+  ]
+}

@@ -1,7 +1,0 @@
-{
-  "metadata": { "name": "Japanese N5 Godan Verbs (-bu)", "level": "N5", "version": 1 },
-  "defaults": { "type": "godan-verb", "ending": "bu" },
-  "entries": [
-    { "kanji": "学ぶ", "reading": "まなぶ", "meaning": "to learn; to study" }
-  ]
-}

@@ -5,18 +5,21 @@
       "key": "kanji",
       "label": "Kanji",
       "jp_label": "漢字",
+      "description": "The kanji character(s) representing the word or concept.",
       "type": "string"
     },
     {
       "key": "reading",
       "label": "Reading",
       "jp_label": "読み",
+      "description": "The pronunciation of the kanji in hiragana or katakana.",
       "type": "string"
     },
     {
       "key": "meaning",
       "label": "Meaning",
       "jp_label": "意味",
+      "description": "The meaning or translation of the word or kanji.",
       "type": "string"
     },
     {
@@ -28,21 +31,18 @@
       "notes": "Use `ja` for the Japanese sentence, `en` for an English gloss/translation, and `notes` for short usage notes or tips."
     },
     {
-      "key": "origin",
-      "label": "Origin",
-      "jp_label": "語源",
+      "key": "orthography",
+      "label": "Orthography",
+      "jp_label": "表記",
       "type": "enum",
-      "description": "(for katakana only rn) Etymological source of the word. Use 'English' for direct loans with near 1:1 meaning. Use 'English-derived' when the Japanese meaning is narrowed or shifted. Use 'Wasei-eigo' for Japanese-made English coinages. Use other languages only when the source is clearly not English.",
+      "description": "Indicates the script usually used to write the word. Helpful for words like 'いちご' (usually kana) or loanwords that are katakana-only.",
       "values": {
-        "English": "Direct loan from English with mostly equivalent meaning.",
-        "English-derived": "Loan from English with semantic narrowing or shift in Japanese.",
-        "Wasei-eigo": "Japanese coinage built from English elements.",
-        "Portuguese": "Loanword originating from Portuguese.",
-        "Dutch": "Loanword originating from Dutch.",
-        "French": "Loanword originating from French.",
-        "German": "Loanword originating from German.",
-        "Japanese": "Native Japanese word or internal formation.",
-        "Other": "Loanword from another language not listed."
+        "kanji": "Primarily written in kanji (漢字).",
+        "kana": "Primarily written in kana (平仮名 or 片仮名).",
+        "hiragana": "Primarily written in hiragana (平仮名).",
+        "katakana": "Primarily written in katakana (片仮名).",
+        "both": "Both kanji and kana are commonly used (context-dependent).",
+        "either": "Either script is acceptable; no strong preference."
       }
     },
     {
@@ -71,33 +71,63 @@
         "adverb": "Adverb (副詞).",
         "conjunction": "Conjunction / connective."
       }
+    }
+  ],
+  "conditionalFields": [
+    {
+      "when": { "field": "type", "in": ["ichidan-verb", "godan-verb", "irregular-verb"] },
+      "fields": [
+        {
+          "key": "verbType",
+          "label": "Verb Type",
+          "jp_label": "動詞タイプ",
+          "type": "enum",
+          "description": "Classifies the structural type of lexical verbs only (single verbs, not sentences). Use only when `type` is a verb class.",
+          "values": {
+            "simple": "A standalone lexical verb (e.g., 飲む, 生きる).",
+            "compound": "Compound verb formed from two verbs or stem+verb.",
+            "suru": "Suru-verb (サ変動詞).",
+            "expression": "Sentence-like phrase, not a lexical verb (rare usage; usually better classified as type='sentence')."
+          }
+        },
+        {
+          "key": "compoundType",
+          "label": "Compound Type",
+          "jp_label": "複合動詞タイプ",
+          "type": "enum",
+          "description": "Specifies the linguistic nature of a compound verb. Only applicable if `verbType` is 'compound'.",
+          "values": {
+            "compositional": "Derived by rule; meaning fully predictable from components.",
+            "lexical": "Stored in the lexicon; meaning not derivable by rule.",
+            "aspectual": "Encodes phase, completion, or continuation of the action.",
+            "grammaticalized": "Second verb loses original lexical meaning, functions as a grammatical/auxiliary operator.",
+            "hybrid": "Partially productive but conventionalized; semi-lexical."
+          }
+        }
+      ]
     },
     {
-      "key": "verbType",
-      "label": "Verb Type",
-      "jp_label": "動詞タイプ",
-      "type": "enum",
-      "description": "Classifies the structural type of lexical verbs only (single verbs, not sentences). Use only if type is 'ichidan-verb', 'godan-verb', or 'irregular-verb'.",
-      "values": {
-        "simple": "A standalone lexical verb (e.g., 飲む, 生きる).",
-        "compound": "Compound verb formed from two verbs or stem+verb.",
-        "suru": "Suru-verb (サ変動詞).",
-        "expression": "Sentence-like phrase, not a lexical verb (rare usage; usually better classified as type='sentence')."
-      }
-    },
-    {
-      "key": "compoundType",
-      "label": "Compound Type",
-      "jp_label": "複合動詞タイプ",
-      "type": "enum",
-      "description": "Specifies the linguistic nature of a compound verb. Only applicable if verbType is 'compound'.",
-      "values": {
-        "compositional": "Derived by rule; meaning fully predictable from components.",
-        "lexical": "Stored in the lexicon; meaning not derivable by rule.",
-        "aspectual": "Encodes phase, completion, or continuation of the action.",
-        "grammaticalized": "Second verb loses original lexical meaning, functions as a grammatical/auxiliary operator.",
-        "hybrid": "Partially productive but conventionalized; semi-lexical."
-      }
+      "when": { "field": "orthography", "in": ["katakana"] },
+      "fields": [
+        {
+          "key": "origin",
+          "label": "Origin",
+          "jp_label": "語源",
+          "type": "enum",
+          "description": "Etymological source of the word. Used for katakana entries where origin/language of borrowing is relevant.",
+          "values": {
+            "English": "Direct loan from English with mostly equivalent meaning.",
+            "English-derived": "Loan from English with semantic narrowing or shift in Japanese.",
+            "Wasei-eigo": "Japanese coinage built from English elements.",
+            "Portuguese": "Loanword originating from Portuguese.",
+            "Dutch": "Loanword originating from Dutch.",
+            "French": "Loanword originating from French.",
+            "German": "Loanword originating from German.",
+            "Japanese": "Native Japanese word or internal formation.",
+            "Other": "Loanword from another language not listed."
+          }
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,108 @@
+{
+  "metadata": {
+    "name": "Japanese (standalone-noun)",
+    "description": "Auto-grouped entries from collections/japanese/nouns by type='standalone-noun'.",
+    "version": 1,
+    "sources": [
+      "collections/japanese/nouns/jp_pokemon_roots.json"
+    ],
+    "kanji": [
+      "種",
+      "草",
+      "花",
+      "火",
+      "銭",
+      "蜥蜴",
+      "毒",
+      "炎",
+      "水",
+      "亀",
+      "甲羅",
+      "砲",
+      "虫",
+      "電気",
+      "雷"
+    ],
+    "kanjiCount": 15
+  },
+  "defaults": {
+    "type": "standalone-noun"
+  },
+  "entries": [
+    {
+      "kanji": "種",
+      "reading": "たね",
+      "meaning": "seed; kind; variety"
+    },
+    {
+      "kanji": "草",
+      "reading": "くさ",
+      "meaning": "grass; weeds; vegetation"
+    },
+    {
+      "kanji": "花",
+      "reading": "はな",
+      "meaning": "flower; blossom"
+    },
+    {
+      "kanji": "火",
+      "reading": "ひ",
+      "meaning": "fire; flame"
+    },
+    {
+      "kanji": "銭",
+      "reading": "ぜに",
+      "meaning": "money; coins; small change"
+    },
+    {
+      "kanji": "蜥蜴",
+      "reading": "とかげ",
+      "meaning": "lizard"
+    },
+    {
+      "kanji": "毒",
+      "reading": "どく",
+      "meaning": "poison; toxicity"
+    },
+    {
+      "kanji": "炎",
+      "reading": "ほのお",
+      "meaning": "flame; blaze"
+    },
+    {
+      "kanji": "水",
+      "reading": "みず",
+      "meaning": "water"
+    },
+    {
+      "kanji": "亀",
+      "reading": "かめ",
+      "meaning": "turtle; tortoise"
+    },
+    {
+      "kanji": "甲羅",
+      "reading": "こうら",
+      "meaning": "shell; carapace"
+    },
+    {
+      "kanji": "砲",
+      "reading": "ほう",
+      "meaning": "cannon; artillery gun"
+    },
+    {
+      "kanji": "虫",
+      "reading": "むし",
+      "meaning": "insect; bug; worm"
+    },
+    {
+      "kanji": "電気",
+      "reading": "でんき",
+      "meaning": "electricity; electric power"
+    },
+    {
+      "kanji": "雷",
+      "reading": "かみなり",
+      "meaning": "thunder; lightning"
+    }
+  ]
+}

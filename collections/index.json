@@ -17,34 +17,10 @@
       "entries": 24
     },
     {
-      "path": "japanese/all/jp_linguistic_terms_supplement.json",
-      "name": "Linguistic Term Kanji Supplement",
-      "description": "Popular vocabulary featuring kanji from Japanese linguistic terminology (with recursive component entries)",
-      "entries": 53
-    },
-    {
-      "path": "japanese/all/jp_linguistic_terms.json",
-      "name": "Linguistic Terms",
-      "description": "Terminology for Japanese phonetics, writing systems, and grammar",
-      "entries": 34
-    },
-    {
-      "path": "japanese/all/jp_n5_kanji.json",
-      "name": "Japanese N5 Kanji",
-      "description": "Single-kanji basics for N5. Each entry should be a single kanji, with its most basic kun'yomi (native Japanese reading) or on'yomi (Sino-Japanese reading). Do not include okurigana or full verb forms (e.g., use 'たべ' or 'しょく' for 食, not 'たべる').",
-      "entries": 79
-    },
-    {
-      "path": "japanese/all/jp_pokemon_roots.json",
-      "name": "Pokemon name-root & type tokens (Japanese)",
-      "description": "Canonical kanji and katakana tokens used as Pokémon type labels and name roots (used by the pokemon collection).",
-      "entries": 45
-    },
-    {
-      "path": "japanese/all/jp_sentences.json",
-      "name": "Japanese N5 Sentences",
-      "description": "Common sentences that include kanji from the N5 kanji list.",
-      "entries": 4
+      "path": "japanese/_collectionSets.json",
+      "name": "_collectionSets",
+      "description": null,
+      "entries": null
     },
     {
       "path": "japanese/nouns/100_katakana_english_part1.json",
@@ -89,6 +65,30 @@
       "entries": 25
     },
     {
+      "path": "japanese/nouns/jp_linguistic_terms_supplement.json",
+      "name": "Linguistic Term Kanji Supplement",
+      "description": "Popular vocabulary featuring kanji from Japanese linguistic terminology (with recursive component entries)",
+      "entries": 53
+    },
+    {
+      "path": "japanese/nouns/jp_linguistic_terms.json",
+      "name": "Linguistic Terms",
+      "description": "Terminology for Japanese phonetics, writing systems, and grammar",
+      "entries": 34
+    },
+    {
+      "path": "japanese/nouns/jp_pokemon_roots.json",
+      "name": "Pokemon name-root & type tokens (Japanese)",
+      "description": "Canonical kanji and katakana tokens used as Pokémon type labels and name roots.",
+      "entries": 41
+    },
+    {
+      "path": "japanese/nouns/nouns_11.json",
+      "name": "nouns 11",
+      "description": "Common standalone Japanese nouns or basic concept words added to cover single kanji not present in the main 200 noun lists.",
+      "entries": 21
+    },
+    {
       "path": "japanese/sentences/testing.json",
       "name": "testing",
       "description": null,
@@ -131,85 +131,49 @@
       "entries": 10
     },
     {
-      "path": "japanese/verbs/godan-verb/bu/jp_n5_verbs_bu.json",
-      "name": "Japanese N5 Godan Verbs (-bu)",
+      "path": "japanese/verbs/godan-verbs/godan_verbs_bu.json",
+      "name": "Japanese N5 Godan Verbs (bu)",
       "description": null,
-      "entries": 1
+      "entries": 0
     },
     {
-      "path": "japanese/verbs/godan-verb/gu/jp_n5_verbs_gu_high.json",
-      "name": "GU-Ending Godan Verbs (Top 10)",
-      "description": "10 high-usage Japanese godan verbs ending in ぐ (gu).",
-      "entries": 70
-    },
-    {
-      "path": "japanese/verbs/godan-verb/gu/jp_n5_verbs_gu_low.json",
-      "name": "GU-Ending Godan Verbs (Next 10)",
-      "description": "10 additional Japanese godan verbs ending in ぐ (gu).",
-      "entries": 10
-    },
-    {
-      "path": "japanese/verbs/godan-verb/ku/jp_n5_verbs_ku_high.json",
-      "name": "KU-Ending Godan Verbs (Top 10)",
-      "description": "10 high-usage Japanese godan verbs ending in く (ku).",
-      "entries": 10
-    },
-    {
-      "path": "japanese/verbs/godan-verb/ku/jp_n5_verbs_ku_low.json",
-      "name": "KU-Ending Godan Verbs (Next 10)",
-      "description": "10 additional Japanese godan verbs ending in く (ku).",
-      "entries": 10
-    },
-    {
-      "path": "japanese/verbs/godan-verb/ku/jp_n5_verbs_ku.json",
-      "name": "Japanese N5 Godan Verbs (-ku)",
+      "path": "japanese/verbs/godan-verbs/godan_verbs_gu.json",
+      "name": "GU-Ending Godan Verbs (gu)",
       "description": null,
-      "entries": 4
+      "entries": 80
     },
     {
-      "path": "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu_high.json",
-      "name": "MU-Ending Godan Verbs (High Frequency)",
-      "description": "10 high-frequency Japanese godan verbs ending in む (mu).",
-      "entries": 10
-    },
-    {
-      "path": "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu_low.json",
-      "name": "MU-Ending Godan Verbs (Low Frequency)",
-      "description": "10 lower-frequency Japanese godan verbs ending in む (mu).",
-      "entries": 10
-    },
-    {
-      "path": "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu_medium.json",
-      "name": "MU-Ending Godan Verbs (Medium Frequency)",
-      "description": "10 medium-frequency Japanese godan verbs ending in む (mu).",
-      "entries": 10
-    },
-    {
-      "path": "japanese/verbs/godan-verb/mu/jp_n5_verbs_mu.json",
-      "name": "Japanese N5 Godan Verbs (-mu)",
+      "path": "japanese/verbs/godan-verbs/godan_verbs_ku.json",
+      "name": "Japanese N5 Godan Verbs (ku)",
       "description": null,
-      "entries": 3
+      "entries": 24
     },
     {
-      "path": "japanese/verbs/godan-verb/ru/jp_n5_verbs_ru.json",
-      "name": "Japanese N5 Godan Verbs (-ru)",
+      "path": "japanese/verbs/godan-verbs/godan_verbs_mu.json",
+      "name": "Japanese N5 Godan Verbs (mu)",
+      "description": null,
+      "entries": 33
+    },
+    {
+      "path": "japanese/verbs/godan-verbs/godan_verbs_ru.json",
+      "name": "Japanese N5 Godan Verbs (ru)",
       "description": null,
       "entries": 5
     },
     {
-      "path": "japanese/verbs/godan-verb/su/jp_n5_verbs_su.json",
-      "name": "Japanese N5 Godan Verbs (-su)",
+      "path": "japanese/verbs/godan-verbs/godan_verbs_su.json",
+      "name": "Japanese N5 Godan Verbs (su)",
       "description": null,
       "entries": 2
     },
     {
-      "path": "japanese/verbs/godan-verb/u/jp_n5_verbs_u.json",
-      "name": "Japanese N5 Godan Verbs (-u)",
+      "path": "japanese/verbs/godan-verbs/godan_verbs_u.json",
+      "name": "Japanese N5 Godan Verbs (u)",
       "description": null,
       "entries": 2
     },
     {
-      "path": "japanese/verbs/ichidan-verb/jp_n5_verbs_ichidan.json",
+      "path": "japanese/verbs/ichidan_verbs.json",
       "name": "Japanese N5 Ichidan Verbs",
       "description": null,
       "entries": 6

@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "name": "Japanese (na-adjective)",
+    "description": "Auto-grouped entries from collections/japanese/nouns by type='na-adjective'.",
+    "version": 1,
+    "sources": [
+      "collections/japanese/nouns/jp_linguistic_terms_supplement.json",
+      "collections/japanese/nouns/jp_pokemon_roots.json"
+    ],
+    "kanji": [
+      "清潔",
+      "平気",
+      "不思議",
+      "通常"
+    ],
+    "kanjiCount": 4
+  },
+  "defaults": {
+    "type": "na-adjective"
+  },
+  "entries": [
+    {
+      "kanji": "清潔",
+      "reading": "せいけつ",
+      "meaning": "clean; sanitary"
+    },
+    {
+      "kanji": "平気",
+      "reading": "へいき",
+      "meaning": "calm; composed; alright"
+    },
+    {
+      "kanji": "不思議",
+      "reading": "ふしぎ",
+      "meaning": "mysterious; strange; wonder"
+    },
+    {
+      "kanji": "通常",
+      "reading": "つうじょう",
+      "meaning": "usual; ordinary; normal state"
+    }
+  ]
+}

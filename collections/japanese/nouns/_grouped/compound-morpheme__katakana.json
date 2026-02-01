@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "name": "Japanese (compound-morpheme) (katakana)",
+    "description": "Auto-grouped entries from collections/japanese/nouns by type='compound-morpheme' and orthography='katakana'.",
+    "version": 1,
+    "sources": [
+      "collections/japanese/nouns/jp_pokemon_roots.json"
+    ],
+    "kanji": [
+      "トランス"
+    ],
+    "kanjiCount": 1
+  },
+  "defaults": {
+    "type": "compound-morpheme",
+    "origin": "English-derived",
+    "orthography": "katakana"
+  },
+  "entries": [
+    {
+      "kanji": "トランス",
+      "reading": "トランス",
+      "meaning": "trans-; across; beyond (prefix usage)"
+    }
+  ]
+}

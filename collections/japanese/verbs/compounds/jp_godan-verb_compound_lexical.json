@@ -2,7 +2,20 @@
   "metadata": {
     "name": "Japanese Compound Verbs — godan — lexical",
     "description": "Curated frequent lexicalized compound verbs whose final element is godan.",
-    "version": 1
+    "version": 1,
+    "kanji": [
+      "泣き叫ぶ",
+      "駆け回る",
+      "見失う",
+      "持ち出す",
+      "取り戻す",
+      "出会う",
+      "読み返す",
+      "飛び回る",
+      "聞き返す",
+      "歩き回る"
+    ],
+    "kanjiCount": 10
   },
   "defaults": {
     "type": "godan-verb",
@@ -10,15 +23,55 @@
     "compoundType": "lexical"
   },
   "entries": [
-    { "kanji": "出会う", "reading": "であう", "meaning": "to meet (by chance)" },
-    { "kanji": "歩き回る", "reading": "あるきまわる", "meaning": "to walk around; go around" },
-    { "kanji": "飛び回る", "reading": "とびまわる", "meaning": "to fly/visit around; go around (frequently)" },
-    { "kanji": "駆け回る", "reading": "かけまわる", "meaning": "to run about; run around" },
-    { "kanji": "取り戻す", "reading": "とりもどす", "meaning": "to take back; regain" },
-    { "kanji": "持ち出す", "reading": "もちだす", "meaning": "to take out; bring out" },
-    { "kanji": "聞き返す", "reading": "ききかえす", "meaning": "to ask someone to repeat; to ask back" },
-    { "kanji": "見失う", "reading": "みうしなう", "meaning": "to lose sight of; to miss" },
-    { "kanji": "泣き叫ぶ", "reading": "なきさけぶ", "meaning": "to cry out; to scream while crying" },
-    { "kanji": "読み返す", "reading": "よみかえす", "meaning": "to reread; to read again" }
+    {
+      "kanji": "出会う",
+      "reading": "であう",
+      "meaning": "to meet (by chance)"
+    },
+    {
+      "kanji": "歩き回る",
+      "reading": "あるきまわる",
+      "meaning": "to walk around; go around"
+    },
+    {
+      "kanji": "飛び回る",
+      "reading": "とびまわる",
+      "meaning": "to fly/visit around; go around (frequently)"
+    },
+    {
+      "kanji": "駆け回る",
+      "reading": "かけまわる",
+      "meaning": "to run about; run around"
+    },
+    {
+      "kanji": "取り戻す",
+      "reading": "とりもどす",
+      "meaning": "to take back; regain"
+    },
+    {
+      "kanji": "持ち出す",
+      "reading": "もちだす",
+      "meaning": "to take out; bring out"
+    },
+    {
+      "kanji": "聞き返す",
+      "reading": "ききかえす",
+      "meaning": "to ask someone to repeat; to ask back"
+    },
+    {
+      "kanji": "見失う",
+      "reading": "みうしなう",
+      "meaning": "to lose sight of; to miss"
+    },
+    {
+      "kanji": "泣き叫ぶ",
+      "reading": "なきさけぶ",
+      "meaning": "to cry out; to scream while crying"
+    },
+    {
+      "kanji": "読み返す",
+      "reading": "よみかえす",
+      "meaning": "to reread; to read again"
+    }
   ]
 }

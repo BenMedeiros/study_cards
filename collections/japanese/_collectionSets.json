@@ -1,0 +1,81 @@
+{
+  "version": 2,
+  "description": "Simple ad-hoc sets for the Japanese collection. Each set has id/label/description and a `kanji` array of values. Sets act like tags; words may appear in multiple sets.",
+  "sets": [
+    {
+      "id": "pokemon",
+      "label": "Pokémon",
+      "description": "Pokémon-related kanji, roots, and fragments used across collections.",
+      "kanji": [
+        "キャタピラー","コクーン","スピア","セル","チュウ","トランス","ドリル","バタフライ","ビートル","ピカ","ラット","リザード",
+        "炎","火","花","気","亀","議","甲","甲羅","行","思","種","常","水","銭","草","虫","通","通常","電","電気",
+        "毒","飛","飛行","不","不思議","砲","羅","雷","蜥蜴"
+      ]
+    },
+    {
+      "id": "linguistic_terms",
+      "label": "Linguistic Terms",
+      "description": "Common morphological, phonological, and orthographic terms used in the Japanese collections.",
+      "kanji": [
+        "た形","て形","ない形","ます形","ら抜き言葉","意向形","一段動詞","音読み","仮定形","仮名","可能形","活用","活用形",
+        "漢字","訓読み","五段動詞","語幹","語尾","自動詞","辞書形","清音","送り仮名","促音","他動詞","濁音",
+        "単独","単独の漢字","長音","半濁音","平仮名","片仮名","命令形","拗音","撥音"
+      ]
+    },
+    {
+      "id": "common_katakana_nouns",
+      "label": "Common Katakana Nouns",
+      "description": "High-frequency katakana nouns (loanwords / wasei-eigo).",
+      "kanji": [
+        "アイスクリーム","アプリ","イス","エレベーター","カード","ガス","カタカナ","カラー","クッキー","クラス","ケーキ","ゲーム",
+        "コート","コンビニ","コンピューター","サービス","サイズ","サイト","サラダ","サンドイッチ","シャワー","ジュース","ショップ",
+        "スーパー","スープ","ステーキ","スポーツ","スマートフォン","セール","ソース","ソファ","ソフト","タオル","チーズ",
+        "チーム","チップ","データ","テーブル","デザート","デザイン","テスト","ドア","トイレ","ネット","バス","パソコン",
+        "バター","パン","ハンバーガー","ビル","ブランド","プレー","ベッド","ポイント","ボタン","ホテル","ミス",
+        "ミルク","メール","メニュー","メンバー","ライト","リーダー","リンク","ルール","レストラン"
+      ]
+    },
+    {
+      "id": "common_kanji_nouns",
+      "label": "Common Kanji Nouns",
+      "description": "High-frequency everyday kanji compound nouns related to activities and daily life.",
+      "kanji": [
+        "お釣り","飲食","運転","荷物","会議","会話","確認","学習","休業","休憩","空想","語学","出生","書き込み",
+        "食事","切手","電話","読書","入学","年越し","買い物","売買","半分","勉強","命名"
+      ]
+    },
+    {
+      "id": "places_objects_navigation",
+      "label": "Places • Objects • Navigation",
+      "description": "Physical locations, rooms, objects, and directional or infrastructure terms.",
+      "kanji": [
+        "かばん","右","遠く","下","画面","会場","階段","外","角","眼鏡","規則","居間","近く","近所","靴","契約",
+        "建物","鍵","後ろ","交通","向こう","左","左右","傘","事故現場","時計","手続き","受付","周り","充電",
+        "渋滞","出口","順番","上","上着","場所","寝室","申込","設定","洗面所","前","中","注意書き","庭",
+        "電池","電話番号","道具","入口","番号札","番号順","部品","風呂","服","方向","法律","帽子",
+        "領収書","隣","列","廊下","携帯","携帯電話","身分証","水道","番号","料金"
+      ]
+    },
+    {
+      "id": "abstract_concepts",
+      "label": "Abstract Concepts",
+      "description": "Ideas, qualities, measurements, reasoning, and intangible notions.",
+      "kanji": [
+        "案内","以下","以上","意見","環境","希望","気持ち","空気","形","経験","計算","結果","原因","考え",
+        "高さ","最後","最初","自然","終了","重さ","色","心","数字","成長","大きさ","値段",
+        "長さ","途中","努力","匂い","幅","変化","味","夢","無料","目標","約束","理由書",
+        "規則","法律","順番","方向"
+      ]
+    },
+    {
+      "id": "daily_life_actions",
+      "label": "Daily Life • Processes • Activities",
+      "description": "Common activities, meals, administrative processes, and communication.",
+      "kanji": [
+        "飲み物","開始","終了","準備","書類","場合","説明","相談","昼食","注文","朝食","夕食","料理","練習","連絡",
+        "手続き","受付","申込","設定","充電","渋滞","注意書き",
+        "携帯","携帯電話","身分証","料金","番号","交通","会場"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "name": "Japanese N5 Godan Verbs (u)",
+    "level": "N5",
+    "version": 1,
+    "kanji": [
+      "会う",
+      "買う"
+    ],
+    "kanjiCount": 2
+  },
+  "defaults": {
+    "type": "godan-verb",
+    "ending": "u"
+  },
+  "entries": [
+    {
+      "kanji": "買う",
+      "reading": "かう",
+      "meaning": "to buy"
+    },
+    {
+      "kanji": "会う",
+      "reading": "あう",
+      "meaning": "to meet"
+    }
+  ]
+}
