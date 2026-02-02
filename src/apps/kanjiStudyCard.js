@@ -4,6 +4,10 @@ import { createAutoplayControls } from '../components/autoplay.js';
 import { createSpeakerButton } from '../components/speaker.js';
 import { getCollectionView } from '../utils/collectionManagement.js';
 
+import { createViewHeaderTools } from '../components/viewHeaderTools.js';
+
+import { createCollectionActions } from '../utils/collectionActions.js';
+
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
   el.id = 'kanji-study-root';
@@ -63,8 +67,7 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   // Root UI pieces
-  const headerTools = document.createElement('div');
-  headerTools.className = 'kanji-header-tools';
+  const headerTools = createViewHeaderTools();
 
   const shuffleBtn = document.createElement('button');
   shuffleBtn.type = 'button';
@@ -117,7 +120,7 @@ export function renderKanjiStudyCard({ store }) {
 
   // Footer controls
   const footerControls = document.createElement('div');
-  footerControls.className = 'kanji-footer-controls';
+  footerControls.className = 'view-footer-controls';
 
   const prevBtn = document.createElement('button');
   prevBtn.type = 'button';
@@ -429,14 +432,19 @@ export function renderKanjiStudyCard({ store }) {
     }
 
     orderHashInt = seed;
-    // persist per-collection state via store helper so other apps see it
+    // persist per-collection state via centralized action
     const active = store.getActiveCollection ? store.getActiveCollection() : null;
     const key = active && active.key ? active.key : null;
-    if (key && store && typeof store.saveCollectionState === 'function') {
-      store.saveCollectionState(key, { order_hash_int: seed, isShuffled: true, currentIndex: 0 });
-    } else if (typeof store.saveKanjiUIState === 'function') {
-      // fallback for older store implementations
-      store.saveKanjiUIState({ order_hash_int: seed, isShuffled: true, currentIndex: 0 });
+    if (key) {
+      try {
+        const actions = createCollectionActions(store);
+        actions.shuffleCollection(key);
+      } catch (e) {
+        // fallback: keep previous behavior
+        if (typeof store.saveKanjiUIState === 'function') {
+          try { store.saveKanjiUIState({ order_hash_int: seed, isShuffled: true, currentIndex: 0 }); } catch (err) { /* ignore */ }
+        }
+      }
     }
 
     // rebuild view from saved collection state
@@ -661,7 +669,7 @@ export function renderKanjiStudyCard({ store }) {
 
   // Footer caption (below the card)
   const footer = document.createElement('div');
-  footer.className = 'kanji-footer-caption';
+  footer.className = 'view-footer-caption';
   footer.id = 'kanji-controls';
   footer.textContent = '← / →: navigate  •  ↑: full  •  ↓: kanji only';
 

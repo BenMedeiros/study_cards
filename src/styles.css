@@ -1,21 +1,19 @@
-.kanji-footer-controls .btn {
+.view-footer-controls .btn {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.15rem;
 }
-.kanji-footer-controls .btn .icon {
+.view-footer-controls .btn .icon {
   font-size: 1.25rem;
   line-height: 1;
 }
-.kanji-footer-controls .btn .text {
+.view-footer-controls .btn .text {
   font-size: 1.05rem;
   font-weight: 600;
 }
-/* mobile rules for kanji-footer-controls moved to consolidated @media block at end of file */
-/* Kanji Study Card Footer Controls */
-.kanji-footer-controls {
+.view-footer-controls {
   position: fixed;
   left: 0;
   bottom: 0;
@@ -30,7 +28,7 @@
   padding: 1rem 0.5rem;
   z-index: 100;
 }
-.kanji-footer-controls .btn {
+.view-footer-controls .btn {
   padding: 0.5rem 1.4rem;
   font-size: 1.05rem;
   border-radius: 0.75rem;
@@ -42,18 +40,17 @@
       flex: 1;
     max-width: 7rem;
 }
-.kanji-footer-controls .btn:hover {
+.view-footer-controls .btn:hover {
   background: rgba(96, 165, 250, 0.22);
   border-color: var(--accent);
 }
 
 /* Kanji status buttons */
-.kanji-footer-controls .btn.state-learned {
+.view-footer-controls .btn.state-learned {
   background: rgba(34, 197, 94, 0.18);
   border-color: rgba(34, 197, 94, 0.45);
 }
-
-.kanji-footer-controls .btn.state-focus {
+.view-footer-controls .btn.state-focus {
   background: rgba(239, 68, 68, 0.18);
   border-color: rgba(239, 68, 68, 0.45);
 }
@@ -480,7 +477,7 @@ input[type="number"].button::-webkit-inner-spin-button {
 }
 
 /* Small caption-style footer for kanji controls (sibling under the card) */
-.kanji-footer-caption {
+.view-footer-caption {
   margin: 0.75rem auto 0;
   padding: 0.5rem 1rem;
   text-align: center;
@@ -492,8 +489,7 @@ input[type="number"].button::-webkit-inner-spin-button {
 /* Tools bar above kanji card */
 
 
-/* Kanji Study Card Header Tools */
-.kanji-header-tools {
+.view-header-tools {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -506,7 +502,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   margin: 0rem auto 1.25rem auto;
   width: fit-content;
 }
-.kanji-header-tools .btn {
+.view-header-tools .btn {
   padding: 0.3rem 1rem;
   font-size: 0.7rem;
   border-radius: 0.5rem;
@@ -516,13 +512,12 @@ input[type="number"].button::-webkit-inner-spin-button {
   font-weight: 500;
   transition: background 0.15s, border-color 0.15s;
 }
-.kanji-header-tools .btn:hover {
+.view-header-tools .btn:hover {
   background: rgba(96, 165, 250, 0.18);
   border-color: var(--accent);
 }
 
-/* Active Kanji header tool buttons (play/show-full/bold/auto-speak) */
-.kanji-header-tools .btn[aria-pressed="true"] {
+.view-header-tools .btn[aria-pressed="true"] {
   border-color: rgba(255, 255, 255, 0.92);
 }
 
@@ -1153,15 +1148,15 @@ select:hover {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  /* Kanji header tools - tighter padding on mobile */
-  .kanji-header-tools .btn {
+  /* Header tools - tighter padding on mobile */
+  .view-header-tools .btn {
     padding: 0.3rem 0.5rem;
   }
- 
-  .kanji-footer-controls .btn .text {
+
+  .view-footer-controls .btn .text {
     font-size: 0.85rem;
   }
-  .kanji-footer-controls .btn .icon {
+  .view-footer-controls .btn .icon {
     font-size: 1.05rem;
   }
 }

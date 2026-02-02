@@ -1,6 +1,8 @@
 import { createTable } from '../components/table.js';
 import { card } from '../components/card.js';
 import { el } from '../components/dom.js';
+import { createViewHeaderTools } from '../components/viewHeaderTools.js';
+import { createCollectionActions } from '../utils/collectionActions.js';
 
 export function renderData({ store }) {
   const root = document.createElement('div');
@@ -29,8 +31,7 @@ export function renderData({ store }) {
   }
 
   // Controls: Study 10 / Study All buttons grouped like kanji header tools
-  const controls = document.createElement('div');
-  controls.className = 'kanji-header-tools';
+  const controls = createViewHeaderTools();
   const studyBtn = document.createElement('button');
   studyBtn.type = 'button';
   studyBtn.className = 'btn small';
@@ -149,31 +150,18 @@ export function renderData({ store }) {
   }
 
   function persistFilters() {
-    writeCollState({
-      studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }),
-      // keep legacy keys nulled to reduce confusion
-      skipLearned: null,
-      focusOnly: null,
-    });
+    const coll = store.getActiveCollection();
+    if (!coll) return;
+    const actions = createCollectionActions(store);
+    actions.setStudyFilter(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
   }
 
   function pruneStudyIndicesToFilters() {
     try {
       const coll = store.getActiveCollection();
       if (!coll) return;
-      const saved = readCollState() || {};
-      if (!Array.isArray(saved.studyIndices)) return;
-      if (!(skipLearned || focusOnly)) return;
-
-      const next = saved.studyIndices
-        .map(i => Number(i))
-        .filter(Number.isFinite)
-        .filter(i => i >= 0 && i < allEntries.length)
-        .filter(i => passesFilters(allEntries[i]));
-
-      if (next.length !== saved.studyIndices.length) {
-        writeCollState({ studyIndices: next });
-      }
+      const actions = createCollectionActions(store);
+      actions.pruneStudyIndicesToFilters(coll.key);
     } catch (e) {
       // ignore
     }
@@ -219,13 +207,8 @@ export function renderData({ store }) {
       const coll = store?.getActiveCollection?.();
       const entries = Array.isArray(coll?.entries) ? coll.entries : [];
       const values = entries.map(getEntryKanjiValue).filter(Boolean);
-
-      if (store && typeof store.clearLearnedKanjiForValues === 'function') {
-        store.clearLearnedKanjiForValues(values);
-      } else if (store && typeof store.clearLearnedKanji === 'function') {
-        // fallback (older store API)
-        store.clearLearnedKanji();
-      }
+      const actions = createCollectionActions(store);
+      actions.clearLearnedForCollection(coll?.key);
     } catch (e) {
       // ignore
     }
@@ -238,29 +221,8 @@ export function renderData({ store }) {
     const entries = Array.isArray(coll.entries) ? coll.entries : [];
     const n = entries.length;
     if (n === 0) return;
-    const saved = readCollState();
-
-    // Use studyStart as a cursor for selecting the next subset.
-    const cursor = (saved && typeof saved.studyStart === 'number') ? saved.studyStart : 0;
-    const picked = [];
-    let lastIdx = null;
-    for (let i = 0; i < n; i++) {
-      const idx = (cursor + i) % n;
-      const entry = entries[idx];
-      if (!passesFilters(entry)) continue;
-      picked.push(idx);
-      lastIdx = idx;
-      if (picked.length >= 10) break;
-    }
-
-    const nextCursor = (lastIdx === null) ? cursor : ((lastIdx + 1) % n);
-    writeCollState({
-      studyIndices: picked,
-      studyStart: nextCursor,
-      studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }),
-      skipLearned: null,
-      focusOnly: null,
-    });
+    const actions = createCollectionActions(store);
+    actions.pickStudyWindow(coll.key, { windowSize: 10, skipLearned: !!skipLearned, focusOnly: !!focusOnly });
     // update label immediately
     updateStudyLabel();
     // update table highlighting immediately
@@ -270,13 +232,10 @@ export function renderData({ store }) {
 
   studyAllBtn.addEventListener('click', () => {
     // Clear studyStart to indicate full study set
-    writeCollState({
-      studyStart: null,
-      studyIndices: null,
-      studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }),
-      skipLearned: null,
-      focusOnly: null,
-    });
+    const coll = store.getActiveCollection();
+    if (!coll) return;
+    const actions = createCollectionActions(store);
+    actions.setStudyAll(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
     updateStudyLabel();
     markStudyRows();
   });
@@ -285,8 +244,8 @@ export function renderData({ store }) {
   shuffleBtn.addEventListener('click', () => {
     const coll = store.getActiveCollection();
     if (!coll) return;
-    const seed = Math.floor(Math.random() * 0xFFFFFFFF);
-    writeCollState({ order_hash_int: seed, isShuffled: true });
+    const actions = createCollectionActions(store);
+    actions.shuffleCollection(coll.key);
     // update marking and label immediately
     updateStudyLabel();
     markStudyRows();
@@ -295,7 +254,8 @@ export function renderData({ store }) {
   clearShuffleBtn.addEventListener('click', () => {
     const coll = store.getActiveCollection();
     if (!coll) return;
-    writeCollState({ order_hash_int: null, isShuffled: false });
+    const actions = createCollectionActions(store);
+    actions.clearCollectionShuffle(coll.key);
     updateStudyLabel();
     markStudyRows();
   });
