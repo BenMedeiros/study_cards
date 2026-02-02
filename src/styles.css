@@ -521,6 +521,35 @@ input[type="number"].button::-webkit-inner-spin-button {
   border-color: rgba(255, 255, 255, 0.92);
 }
 
+/* Three-state toggle (All / Skip Learned / Focus) */
+.three-toggle {
+  display: inline-flex;
+  align-items: stretch;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.three-toggle .toggle-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.8rem;
+  min-width: 3.25rem;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+}
+.three-toggle .toggle-option.active {
+  background: rgba(96, 165, 250, 0.12);
+  border-left: none;
+  color: var(--text);
+}
+.three-toggle .toggle-option[aria-pressed="true"] { outline: 2px solid rgba(96,165,250,0.14); }
+
+
 /* Autoplay controls (grouped play + gear) */
 .btn-group {
   display: inline-flex;
@@ -691,6 +720,23 @@ input[type="number"].button::-webkit-inner-spin-button {
   font-weight: 600;
   text-align: left;
 }
+
+/* Sort indicators for sortable table headers */
+.table th[aria-sort] {
+  position: relative;
+  padding-right: 1.25rem;
+}
+.table th[aria-sort]::after {
+  content: '';
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.table th[aria-sort="ascending"]::after { content: '▲'; }
+.table th[aria-sort="descending"]::after { content: '▼'; }
 
 .table-wrapper {
   width: 100%;

@@ -1,7 +1,7 @@
 import { createTable } from '../components/table.js';
 import { card } from '../components/card.js';
 import { el } from '../components/dom.js';
-import { createViewHeaderTools } from '../components/viewHeaderTools.js';
+import { createViewHeaderTools, createStudyFilterToggle } from '../components/viewHeaderTools.js';
 import { createCollectionActions } from '../utils/collectionActions.js';
 
 export function renderData({ store }) {
@@ -30,52 +30,72 @@ export function renderData({ store }) {
     return parts.join(',');
   }
 
-  // Controls: Study 10 / Study All buttons grouped like kanji header tools
-  const controls = createViewHeaderTools();
-  const studyBtn = document.createElement('button');
-  studyBtn.type = 'button';
-  studyBtn.className = 'btn small';
-  studyBtn.textContent = 'Study 10';
+  // Controls: header owns primary collection actions; pass callbacks so it can render and handle them
+  const controls = createViewHeaderTools({ createControls: true,
+    onStudy10: () => {
+      const coll = store.getActiveCollection();
+      if (!coll) return;
+      const entries = Array.isArray(coll.entries) ? coll.entries : [];
+      if (entries.length === 0) return;
+      const actions = createCollectionActions(store);
+      actions.pickStudyWindow(coll.key, { windowSize: 10, skipLearned: !!skipLearned, focusOnly: !!focusOnly });
+      controls.setStudyLabel && controls.setStudyLabel('Study 10');
+      updateStudyLabel();
+      markStudyRows();
+    },
+    onStudyAll: () => {
+      const coll = store.getActiveCollection();
+      if (!coll) return;
+      const actions = createCollectionActions(store);
+      actions.setStudyAll(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
+      controls.setStudyLabel && controls.setStudyLabel('Study All');
+      updateStudyLabel();
+      markStudyRows();
+    },
+    onShuffle: () => {
+      const coll = store.getActiveCollection();
+      if (!coll) return;
+      const actions = createCollectionActions(store);
+      actions.shuffleCollection(coll.key);
+      updateStudyLabel();
+      markStudyRows();
+    },
+    onClearShuffle: () => {
+      const coll = store.getActiveCollection();
+      if (!coll) return;
+      const actions = createCollectionActions(store);
+      actions.clearCollectionShuffle(coll.key);
+      updateStudyLabel();
+      markStudyRows();
+    },
+    onClearLearned: () => {
+      try {
+        const coll = store?.getActiveCollection?.();
+        const actions = createCollectionActions(store);
+        actions.clearLearnedForCollection(coll?.key);
+      } catch (e) {
+        // ignore
+      }
+    }
+  });
 
-  const shuffleBtn = document.createElement('button');
-  shuffleBtn.type = 'button';
-  shuffleBtn.className = 'btn small';
-  shuffleBtn.textContent = 'Shuffle';
+  // three-state study filter toggle (off / skipLearned / focusOnly)
+  const studyFilterToggle = createStudyFilterToggle({ state: 'off', onChange: (s) => {
+    // update local state booleans based on new three-state value
+    skipLearned = (s === 'skipLearned');
+    focusOnly = (s === 'focusOnly');
+    persistFilters();
+    pruneStudyIndicesToFilters();
+    updateFilterButtons();
+    renderTable();
+    updateStudyLabel();
+    markStudyRows();
+  } });
+  // append the study filter toggle after the header-controlled buttons
+  controls.append(studyFilterToggle.el);
 
-  const clearShuffleBtn = document.createElement('button');
-  clearShuffleBtn.type = 'button';
-  clearShuffleBtn.className = 'btn small';
-  clearShuffleBtn.textContent = 'Clear Shuffle';
-
-  const studyAllBtn = document.createElement('button');
-  studyAllBtn.type = 'button';
-  studyAllBtn.className = 'btn small';
-  studyAllBtn.textContent = 'Study All';
-
-  const skipLearnedBtn = document.createElement('button');
-  skipLearnedBtn.type = 'button';
-  skipLearnedBtn.className = 'btn small';
-  skipLearnedBtn.textContent = 'Skip Learned';
-  skipLearnedBtn.setAttribute('aria-pressed', 'false');
-
-  const focusOnlyBtn = document.createElement('button');
-  focusOnlyBtn.type = 'button';
-  focusOnlyBtn.className = 'btn small';
-  focusOnlyBtn.textContent = 'Focus: More Practice';
-  focusOnlyBtn.setAttribute('aria-pressed', 'false');
-
-  const clearLearnedBtn = document.createElement('button');
-  clearLearnedBtn.type = 'button';
-  clearLearnedBtn.className = 'btn small';
-  clearLearnedBtn.textContent = 'Clear Learned';
-  clearLearnedBtn.title = 'Remove Learned flags for items in this collection';
-
-  const studyLabel = document.createElement('div');
-  studyLabel.className = 'hint';
-  studyLabel.style.alignSelf = 'center';
-  studyLabel.textContent = '';
-
-  controls.append(studyBtn, studyAllBtn, skipLearnedBtn, focusOnlyBtn, shuffleBtn, clearShuffleBtn, clearLearnedBtn, studyLabel);
+  // studyLabel element is owned by the header controls when createControls=true
+  let studyLabel = null;
   root.appendChild(controls);
   
   if (!active) {
@@ -143,10 +163,8 @@ export function renderData({ store }) {
   }
 
   function updateFilterButtons() {
-    skipLearnedBtn.classList.toggle('active', !!skipLearned);
-    focusOnlyBtn.classList.toggle('active', !!focusOnly);
-    skipLearnedBtn.setAttribute('aria-pressed', String(!!skipLearned));
-    focusOnlyBtn.setAttribute('aria-pressed', String(!!focusOnly));
+    const state = skipLearned ? 'skipLearned' : (focusOnly ? 'focusOnly' : 'off');
+    if (studyFilterToggle && typeof studyFilterToggle.setState === 'function') studyFilterToggle.setState(state);
   }
 
   function persistFilters() {
@@ -182,118 +200,67 @@ export function renderData({ store }) {
   const tableMount = document.createElement('div');
   tableMount.id = 'data-table-mount';
 
-  skipLearnedBtn.addEventListener('click', () => {
-    skipLearned = !skipLearned;
-    persistFilters();
-    pruneStudyIndicesToFilters();
-    updateFilterButtons();
-    renderTable();
-    updateStudyLabel();
-    markStudyRows();
-  });
+  // primary header controls are handled by header component callbacks (see createViewHeaderTools)
 
-  focusOnlyBtn.addEventListener('click', () => {
-    focusOnly = !focusOnly;
-    persistFilters();
-    pruneStudyIndicesToFilters();
-    updateFilterButtons();
-    renderTable();
-    updateStudyLabel();
-    markStudyRows();
-  });
+  // Remove shuffle button for this view and prepare control state updates
+  const headerBtns = (typeof controls.getButtons === 'function') ? controls.getButtons() : null;
+  if (headerBtns && headerBtns.shuffleBtn && headerBtns.shuffleBtn.parentNode) {
+    headerBtns.shuffleBtn.parentNode.removeChild(headerBtns.shuffleBtn);
+    // also remove reference to avoid accidental use
+    delete headerBtns.shuffleBtn;
+  }
 
-  clearLearnedBtn.addEventListener('click', () => {
+  // bind to header-owned studyLabel if present
+  if (headerBtns && headerBtns.studyLabel) studyLabel = headerBtns.studyLabel;
+
+  function updateControlStates() {
     try {
-      const coll = store?.getActiveCollection?.();
-      const entries = Array.isArray(coll?.entries) ? coll.entries : [];
-      const values = entries.map(getEntryKanjiValue).filter(Boolean);
-      const actions = createCollectionActions(store);
-      actions.clearLearnedForCollection(coll?.key);
+      const coll = store.getActiveCollection();
+      if (!coll) return;
+      const saved = readCollState() || {};
+      const n = Array.isArray(coll.entries) ? coll.entries.length : 0;
+      // clearShuffle disabled if not shuffled
+      const isShuffled = !!saved.isShuffled;
+      if (headerBtns && headerBtns.clearShuffleBtn) headerBtns.clearShuffleBtn.disabled = !isShuffled;
+      // clearLearned disabled if no learned items in this collection
+      let hasLearned = false;
+      if (typeof store.isKanjiLearned === 'function') {
+        const entries = Array.isArray(coll.entries) ? coll.entries : [];
+        for (const e of entries) {
+          if (store.isKanjiLearned(getEntryKanjiValue(e))) { hasLearned = true; break; }
+        }
+      }
+      if (headerBtns && headerBtns.clearLearnedBtn) headerBtns.clearLearnedBtn.disabled = !hasLearned;
+      // studyAll disabled if already studying all (studyStart === null and no explicit indices)
+      const isStudyAll = (saved && saved.studyStart === null && !Array.isArray(saved.studyIndices));
+      if (headerBtns && headerBtns.studyAllBtn) headerBtns.studyAllBtn.disabled = !!isStudyAll;
     } catch (e) {
       // ignore
     }
-  });
-
-  // Hook up Study 10 button for active collection
-  studyBtn.addEventListener('click', () => {
-    const coll = store.getActiveCollection();
-    if (!coll) return;
-    const entries = Array.isArray(coll.entries) ? coll.entries : [];
-    const n = entries.length;
-    if (n === 0) return;
-    const actions = createCollectionActions(store);
-    actions.pickStudyWindow(coll.key, { windowSize: 10, skipLearned: !!skipLearned, focusOnly: !!focusOnly });
-    // update label immediately
-    updateStudyLabel();
-    // update table highlighting immediately
-    markStudyRows();
-    // allow other apps to re-render if they subscribe to store
-  });
-
-  studyAllBtn.addEventListener('click', () => {
-    // Clear studyStart to indicate full study set
-    const coll = store.getActiveCollection();
-    if (!coll) return;
-    const actions = createCollectionActions(store);
-    actions.setStudyAll(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
-    updateStudyLabel();
-    markStudyRows();
-  });
-
-  // Shuffle / Clear Shuffle handlers
-  shuffleBtn.addEventListener('click', () => {
-    const coll = store.getActiveCollection();
-    if (!coll) return;
-    const actions = createCollectionActions(store);
-    actions.shuffleCollection(coll.key);
-    // update marking and label immediately
-    updateStudyLabel();
-    markStudyRows();
-  });
-
-  clearShuffleBtn.addEventListener('click', () => {
-    const coll = store.getActiveCollection();
-    if (!coll) return;
-    const actions = createCollectionActions(store);
-    actions.clearCollectionShuffle(coll.key);
-    updateStudyLabel();
-    markStudyRows();
-  });
+  }
 
   function updateStudyLabel() {
     const coll = store.getActiveCollection();
     if (!coll) {
       studyLabel.textContent = '';
+      updateControlStates();
       return;
     }
     const saved = readCollState();
     const n = Array.isArray(coll.entries) ? coll.entries.length : 0;
-    const visibleCount = getVisibleOriginalIndices().length;
-    if (n === 0) {
-      studyLabel.textContent = '';
-      return;
-    }
+    if (n === 0) { studyLabel.textContent = ''; updateControlStates(); return; }
     if (saved && Array.isArray(saved.studyIndices)) {
-      const flags = [
-        focusOnly ? 'focus' : null,
-        skipLearned ? 'skip learned' : null,
-      ].filter(Boolean);
-      const suffix = flags.length ? ` • ${flags.join(', ')}` : '';
-      studyLabel.textContent = `Study: ${saved.studyIndices.length} selected${suffix}`;
+      const cnt = saved.studyIndices.length;
+      studyLabel.textContent = `Study: (${cnt}/${n})`;
+    } else if (saved && saved.studyStart === null) {
+      studyLabel.textContent = `Study: All`;
     } else if (saved && typeof saved.studyStart === 'number') {
-      studyLabel.textContent = `Study start: ${saved.studyStart} (10)`;
+      const sz = Array.isArray(saved.studyIndices) ? saved.studyIndices.length : 10;
+      studyLabel.textContent = `Study: (${sz}/${n})`;
     } else {
-      const flags = [
-        focusOnly ? 'focus' : null,
-        skipLearned ? 'skip learned' : null,
-      ].filter(Boolean);
-      const suffix = flags.length ? ` • ${flags.join(', ')}` : '';
-      if (flags.length) {
-        studyLabel.textContent = `Study: All (${visibleCount}/${n})${suffix}`;
-      } else {
-        studyLabel.textContent = 'Study: All';
-      }
+      studyLabel.textContent = `Study: All`;
     }
+    updateControlStates();
   }
 
   // Build table headers from fields
@@ -327,7 +294,7 @@ export function renderData({ store }) {
       return [icon, ...fields.map(f => entry[f.key] ?? '')];
     });
 
-    const tbl = createTable({ headers, rows, id: 'data-table' });
+    const tbl = createTable({ headers, rows, id: 'data-table', sortable: true });
     tableMount.innerHTML = '';
     tableMount.append(tbl);
 

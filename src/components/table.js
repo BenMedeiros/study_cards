@@ -8,7 +8,7 @@
  * @param {string} [options.collection] - Optional collection name the table was populated from
  * @returns {HTMLTableElement}
  */
-export function createTable({ headers, rows, className = '', id, collection } = {}) {
+export function createTable({ headers, rows, className = '', id, collection, sortable = false } = {}) {
   const wrapper = document.createElement('div');
   wrapper.className = 'table-wrapper';
   if (id) wrapper.id = `${id}-wrapper`;
@@ -89,32 +89,106 @@ export function createTable({ headers, rows, className = '', id, collection } = 
   thead.append(headerRow);
 
   const tbody = document.createElement('tbody');
-  
-  for (const rowData of rows) {
-    const tr = document.createElement('tr');
 
-    for (let i = 0; i < rowData.length; i++) {
-      const cellData = rowData[i];
-      const td = document.createElement('td');
-      const hk = headerKeys[i] ?? { key: `col-${i}`, keyClass: `col-${i}` };
-      const key = hk.key;
-      const keyClass = hk.keyClass ?? String(key).replace(/\s+/g, '-').replace(/[^A-Za-z0-9\-_]/g, '');
+  // Helper to extract comparable text/number from a cell value
+  function extractCellValue(cell) {
+    if (cell instanceof HTMLElement) return (cell.textContent || '').trim();
+    if (typeof cell === 'number') return cell;
+    if (typeof cell === 'string') return cell.trim();
+    return String(cell ?? '').trim();
+  }
 
-      td.dataset.field = key;
-      td.classList.add(`col-${keyClass}`);
+  // Render rows into tbody from a provided rows array
+  function renderRows(rowsArr) {
+    tbody.innerHTML = '';
+    for (const rowData of rowsArr) {
+      const tr = document.createElement('tr');
+      for (let i = 0; i < rowData.length; i++) {
+        const cellData = rowData[i];
+        const td = document.createElement('td');
+        const hk = headerKeys[i] ?? { key: `col-${i}`, keyClass: `col-${i}` };
+        const key = hk.key;
+        const keyClass = hk.keyClass ?? String(key).replace(/\s+/g, '-').replace(/[^A-Za-z0-9\-_]/g, '');
 
-      if (typeof cellData === 'string' || typeof cellData === 'number') {
-        td.textContent = cellData;
-      } else if (cellData instanceof HTMLElement) {
-        td.append(cellData);
-      } else {
-        td.textContent = String(cellData ?? '');
+        td.dataset.field = key;
+        td.classList.add(`col-${keyClass}`);
+
+        if (typeof cellData === 'string' || typeof cellData === 'number') {
+          td.textContent = cellData;
+        } else if (cellData instanceof HTMLElement) {
+          td.append(cellData);
+        } else {
+          td.textContent = String(cellData ?? '');
+        }
+
+        tr.append(td);
       }
+      tbody.append(tr);
+    }
+  }
 
-      tr.append(td);
+  // Sorting state
+  let sortCol = null;
+  let sortDir = 'asc';
+
+  // Rebuild headerRow with proper content and optional sorting handlers
+  headerRow.innerHTML = '';
+  for (let i = 0; i < headerKeys.length; i++) {
+    const hk = headerKeys[i];
+    const th = document.createElement('th');
+    const label = hk && hk.key ? (hk.key.charAt(0).toUpperCase() + hk.key.slice(1)) : '';
+    th.textContent = label;
+    th.dataset.field = hk.key || '';
+    th.classList.add(`col-${hk.keyClass}`);
+
+    if (sortable) {
+      th.style.cursor = 'pointer';
+      th.tabIndex = 0;
+      th.addEventListener('click', () => {
+        if (sortCol === i) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+        else { sortCol = i; sortDir = 'asc'; }
+        sortAndRender();
+      });
+      th.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); th.click(); } });
+      th.setAttribute('aria-sort', 'none');
     }
 
-    tbody.append(tr);
+    headerRow.append(th);
+  }
+
+  // Perform initial render
+  renderRows(Array.isArray(rows) ? rows : []);
+
+  // Sorting helper
+  function sortAndRender() {
+    if (sortCol === null) {
+      renderRows(rows);
+      Array.from(headerRow.children).forEach(th => th.setAttribute('aria-sort', 'none'));
+      return;
+    }
+
+    const paired = rows.map((r, idx) => ({ idx, data: r, key: extractCellValue(r[sortCol]) }));
+    paired.sort((a, b) => {
+      const ka = a.key;
+      const kb = b.key;
+      const na = (typeof ka === 'string' && ka !== '' && !Number.isNaN(Number(ka))) ? Number(ka) : ka;
+      const nb = (typeof kb === 'string' && kb !== '' && !Number.isNaN(Number(kb))) ? Number(kb) : kb;
+      if (typeof na === 'number' && typeof nb === 'number') {
+        return na - nb;
+      }
+      const sa = String(ka ?? '');
+      const sb = String(kb ?? '');
+      return sa.localeCompare(sb, undefined, { sensitivity: 'base', numeric: true });
+    });
+
+    if (sortDir === 'desc') paired.reverse();
+
+    renderRows(paired.map(p => p.data));
+
+    Array.from(headerRow.children).forEach((th, j) => {
+      if (j === sortCol) th.setAttribute('aria-sort', sortDir === 'asc' ? 'ascending' : 'descending');
+      else th.setAttribute('aria-sort', 'none');
+    });
   }
 
   table.append(thead, tbody);

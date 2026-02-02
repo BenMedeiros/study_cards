@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "npx http-server -p 3000 -c-1",
+    "dev": "node scripts/rebuild_index.js && npx http-server -p 3000 -c-1",
     "test": "echo \"No tests yet\"",
     "build": "node scripts/rebuild_index.js",
     "clean": "node scripts/extract_defaults_japanese.js",
