@@ -248,7 +248,7 @@ export function renderData({ store }) {
       return [icon, ...fields.map(f => entry[f.key] ?? '')];
     });
 
-    const tbl = createTable({ headers, rows, id: 'data-table', sortable: true });
+    const tbl = createTable({ headers, rows, id: 'data-table', sortable: true, searchable: true });
     tableMount.innerHTML = '';
     tableMount.append(tbl);
 
@@ -397,14 +397,20 @@ export function renderData({ store }) {
   const dataCard = card({
     id: 'data-card',
     cornerCaption: `${allEntries.length} Entries`,
-    children: [wrapper, tableMount]
+    children: [tableMount]
+  });
+
+  const metaCard = card({
+    id: 'metadata-card',
+    children: [wrapper]
   });
 
   // Show the full path to the currently displayed collection file.
   const pathLabel = active?.key ? `Path: ${active.key}` : 'Path: (unknown)';
   root.append(
     el('div', { className: 'hint', text: pathLabel }),
-    dataCard
+    dataCard,
+    metaCard
   );
   // initial UI updates now that the card is mounted and corner caption exists
   updateFilterButtons();

@@ -345,6 +345,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   flex: 1;
 }
 
+
 .card {
   border: 1px solid var(--border);
   border-radius: 0.875rem;
@@ -354,6 +355,14 @@ input[type="number"].button::-webkit-inner-spin-button {
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 11rem);
+    margin-top: 1rem;
+}
+
+@media (max-width: 750px) {
+  .card {
+    max-height: 35rem;
+    overflow-y: auto;
+  }
 }
 
 /* Kanji study specific tweaks */
@@ -756,6 +765,49 @@ input[type="number"].button::-webkit-inner-spin-button {
   position: relative;
   margin-top: 15px;
   max-height: calc(100vh - 12rem);
+}
+
+/* Search box for tables */
+.table-search {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0.25rem;
+  max-width: 50%;
+}
+
+@media (max-width: 768px) {
+  .table-search {
+    max-width: 100%;  
+  } 
+}
+
+.table-search-input {
+  flex: 1 1 auto;
+  min-width: 8rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.12);
+  color: var(--text);
+}
+.table-search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.1875rem rgba(96, 165, 250, 0.08);
+}
+.table-search-clear {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text);
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.table-search-clear:hover {
+  border-color: var(--accent);
+  background: rgba(96, 165, 250, 0.08);
 }
 
 /* Highlight rows that are in the current study subset */

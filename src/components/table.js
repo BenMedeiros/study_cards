@@ -8,7 +8,7 @@
  * @param {string} [options.collection] - Optional collection name the table was populated from
  * @returns {HTMLTableElement}
  */
-export function createTable({ headers, rows, className = '', id, collection, sortable = false } = {}) {
+export function createTable({ headers, rows, className = '', id, collection, sortable = false, searchable = false } = {}) {
   const wrapper = document.createElement('div');
   wrapper.className = 'table-wrapper';
   if (id) wrapper.id = `${id}-wrapper`;
@@ -98,6 +98,10 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     return String(cell ?? '').trim();
   }
 
+  // Keep original rows and a current filtered/sorted set
+  const originalRows = Array.isArray(rows) ? rows.slice() : [];
+  let currentRows = originalRows.slice();
+
   // Render rows into tbody from a provided rows array
   function renderRows(rowsArr) {
     tbody.innerHTML = '';
@@ -156,18 +160,63 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     headerRow.append(th);
   }
 
+  // Optional search UI
+  if (searchable) {
+    const searchWrap = document.createElement('div');
+    searchWrap.className = 'table-search';
+    const searchInput = document.createElement('input');
+    searchInput.type = 'search';
+    searchInput.className = 'table-search-input';
+    searchInput.placeholder = 'Search (use % as wildcard)';
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.className = 'table-search-clear';
+    clearBtn.textContent = 'Clear';
+    searchWrap.append(searchInput, clearBtn);
+    wrapper.append(searchWrap);
+
+    function makeRegex(q) {
+      const s = String(q || '');
+      if (!s) return null;
+      let pat = s;
+      if (!pat.includes('%')) pat = `%${pat}%`;
+      // escape regex special chars except %
+      pat = pat.replace(/([.+?^${}()|[\\]\\])/g, '\\$1');
+      pat = pat.replace(/%/g, '.*');
+      return new RegExp(pat, 'i');
+    }
+
+    function applyFilter(q) {
+      const rx = makeRegex(q);
+      if (!rx) currentRows = originalRows.slice();
+      else {
+        currentRows = originalRows.filter(r => {
+          for (const cell of r) {
+            const v = extractCellValue(cell);
+            if (rx.test(String(v))) return true;
+          }
+          return false;
+        });
+      }
+      sortAndRender();
+    }
+
+    searchInput.addEventListener('input', () => applyFilter(searchInput.value));
+    clearBtn.addEventListener('click', () => { searchInput.value = ''; applyFilter(''); searchInput.focus(); });
+  }
+
   // Perform initial render
-  renderRows(Array.isArray(rows) ? rows : []);
+  renderRows(currentRows);
 
   // Sorting helper
   function sortAndRender() {
     if (sortCol === null) {
-      renderRows(rows);
+      renderRows(currentRows);
       Array.from(headerRow.children).forEach(th => th.setAttribute('aria-sort', 'none'));
       return;
     }
 
-    const paired = rows.map((r, idx) => ({ idx, data: r, key: extractCellValue(r[sortCol]) }));
+    const paired = currentRows.map((r, idx) => ({ idx, data: r, key: extractCellValue(r[sortCol]) }));
     paired.sort((a, b) => {
       const ka = a.key;
       const kb = b.key;
