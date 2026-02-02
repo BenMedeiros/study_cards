@@ -1,7 +1,7 @@
 {
   "metadata": {
     "name": "Japanese compound-morpheme (mixed)",
-    "description": "Mixed orthography group for type='compound-morpheme' — total 15 (katakana: 1, kanji: 3, none: 11).",
+    "description": "Mixed orthography group for type='compound-morpheme' — total 16 (katakana: 1, kanji: 4, none: 11).",
     "version": 1
   },
   "defaults": {
@@ -53,6 +53,20 @@
           "Also standalone as し (rare in casual speech); common in compounds."
         ]
       }
+    },
+    {
+      "kanji": "両",
+      "reading": "りょう",
+      "meaning": "both; two (bound form used as a prefix in compounds)",
+      "example": {
+        "ja": "両親に電話しました。",
+        "en": "I called my parents (both parents).",
+        "notes": [
+          "Common in compounds: 両手, 両側, 両親.",
+          "Functions like a bound prefix meaning 'both'."
+        ]
+      },
+      "orthography": "kanji"
     },
     {
       "kanji": "不",

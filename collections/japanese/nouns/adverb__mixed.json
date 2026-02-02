@@ -1,7 +1,7 @@
 {
   "metadata": {
     "name": "Japanese adverb (mixed)",
-    "description": "Mixed orthography group for type='adverb' — total 4 (hiragana: 1, both: 1, katakana: 2).",
+    "description": "Mixed orthography group for type='adverb' — total 5 (hiragana: 1, both: 1, kanji: 1, katakana: 2).",
     "version": 1
   },
   "defaults": {
@@ -19,6 +19,20 @@
       "reading": "まだ",
       "meaning": "still; not yet",
       "orthography": "both"
+    },
+    {
+      "kanji": "程",
+      "reading": "ほど",
+      "meaning": "about; approximately; extent/degree (approximation/extent marker)",
+      "example": {
+        "ja": "駅まで歩いて十分ほどです。",
+        "en": "It’s about ten minutes on foot to the station.",
+        "notes": [
+          "Often follows quantities/time to mean 'about'.",
+          "Also used for degree: 思ったほど難しくない."
+        ]
+      },
+      "orthography": "kanji"
     },
     {
       "kanji": "ビリビリ",

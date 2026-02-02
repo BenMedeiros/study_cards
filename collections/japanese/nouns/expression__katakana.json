@@ -1,268 +1,217 @@
 {
   "metadata": {
-    "name": "Japanese expression (mixed)",
-    "description": "Mixed orthography group for type='expression' — total 40 (kanji: 1, katakana: 39).",
+    "name": "Japanese expression (katakana)",
+    "description": "Grouped entries for type='expression' and orthography='katakana' — total 39.",
     "version": 1
   },
   "defaults": {
-    "type": "expression"
+    "type": "expression",
+    "orthography": "katakana"
   },
   "entries": [
-    {
-      "kanji": "登録済み",
-      "reading": "とうろくずみ",
-      "meaning": "subscribed; already registered",
-      "orthography": "kanji",
-      "example": {
-        "ja": "もう登録済みだよ。",
-        "en": "I’m already subscribed.",
-        "notes": [
-          "UI label/state."
-        ]
-      }
-    },
     {
       "kanji": "ゴー",
       "reading": "ゴー",
       "meaning": "go (name-root; command/forward)",
-      "orthography": "katakana",
       "origin": "English"
     },
     {
       "kanji": "ズバ",
       "reading": "ズバ",
       "meaning": "zuba (sound; name-root)",
-      "orthography": "katakana",
       "origin": "Japanese"
     },
     {
       "kanji": "ドン",
       "reading": "ドン",
       "meaning": "don (sound ‘boom’; name-root)",
-      "orthography": "katakana",
       "origin": "Japanese"
     },
     {
       "kanji": "ニョロ",
       "reading": "ニョロ",
       "meaning": "nyoro (wriggle/squirm sound; name-root)",
-      "orthography": "katakana",
       "origin": "Japanese"
     },
     {
       "kanji": "ピッ",
       "reading": "ピッ",
       "meaning": "pi! (beep/sound; name-root)",
-      "orthography": "katakana",
       "origin": "Japanese"
     },
     {
       "kanji": "ブー",
       "reading": "ブー",
       "meaning": "boo; ‘booing’/buzz sound (name-root)",
-      "orthography": "katakana",
       "origin": "English-derived"
     },
     {
       "kanji": "プク",
       "reading": "プク",
       "meaning": "puku (puff/pop sound; name-root)",
-      "orthography": "katakana",
       "origin": "Japanese"
     },
     {
       "kanji": "プス",
       "reading": "プス",
       "meaning": "pusu (stab/prick sound; name-root)",
-      "orthography": "katakana",
       "origin": "Japanese"
     },
     {
       "kanji": "ワン",
       "reading": "ワン",
       "meaning": "wan (dog bark ‘woof’; name-root)",
-      "orthography": "katakana",
       "origin": "Japanese"
     },
     {
       "kanji": "ピカ",
       "reading": "ピカ",
-      "meaning": "sparkle; flash of light",
-      "orthography": "katakana"
+      "meaning": "sparkle; flash of light"
     },
     {
       "kanji": "チュウ",
       "reading": "チュウ",
-      "meaning": "squeak; kissing sound",
-      "orthography": "katakana"
+      "meaning": "squeak; kissing sound"
     },
     {
       "kanji": "ドキドキ",
       "reading": "ドキドキ",
-      "meaning": "heartbeat; nervous excitement",
-      "orthography": "katakana"
+      "meaning": "heartbeat; nervous excitement"
     },
     {
       "kanji": "ワクワク",
       "reading": "ワクワク",
-      "meaning": "excited anticipation",
-      "orthography": "katakana"
+      "meaning": "excited anticipation"
     },
     {
       "kanji": "キラキラ",
       "reading": "キラキラ",
-      "meaning": "glittering; sparkling",
-      "orthography": "katakana"
+      "meaning": "glittering; sparkling"
     },
     {
       "kanji": "ペコペコ",
       "reading": "ペコペコ",
-      "meaning": "very hungry; bowing repeatedly",
-      "orthography": "katakana"
+      "meaning": "very hungry; bowing repeatedly"
     },
     {
       "kanji": "ガラガラ",
       "reading": "ガラガラ",
-      "meaning": "rattling sound; empty",
-      "orthography": "katakana"
+      "meaning": "rattling sound; empty"
     },
     {
       "kanji": "バタバタ",
       "reading": "バタバタ",
-      "meaning": "flapping; hectic rushing around",
-      "orthography": "katakana"
+      "meaning": "flapping; hectic rushing around"
     },
     {
       "kanji": "イライラ",
       "reading": "イライラ",
-      "meaning": "irritated; annoyed feeling",
-      "orthography": "katakana"
+      "meaning": "irritated; annoyed feeling"
     },
     {
       "kanji": "ニコニコ",
       "reading": "ニコニコ",
-      "meaning": "smiling cheerfully",
-      "orthography": "katakana"
+      "meaning": "smiling cheerfully"
     },
     {
       "kanji": "ワンワン",
       "reading": "ワンワン",
-      "meaning": "dog barking sound",
-      "orthography": "katakana"
+      "meaning": "dog barking sound"
     },
     {
       "kanji": "ニャー",
       "reading": "ニャー",
-      "meaning": "meow; cat sound",
-      "orthography": "katakana"
+      "meaning": "meow; cat sound"
     },
     {
       "kanji": "ゴロゴロ",
       "reading": "ゴロゴロ",
-      "meaning": "rumbling; lounging around",
-      "orthography": "katakana"
+      "meaning": "rumbling; lounging around"
     },
     {
       "kanji": "コツコツ",
       "reading": "コツコツ",
-      "meaning": "tapping; steadily working",
-      "orthography": "katakana"
+      "meaning": "tapping; steadily working"
     },
     {
       "kanji": "ボロボロ",
       "reading": "ボロボロ",
-      "meaning": "tattered; falling apart",
-      "orthography": "katakana"
+      "meaning": "tattered; falling apart"
     },
     {
       "kanji": "ピンポン",
       "reading": "ピンポン",
-      "meaning": "ding-dong; doorbell sound",
-      "orthography": "katakana"
+      "meaning": "ding-dong; doorbell sound"
     },
     {
       "kanji": "ジャーン",
       "reading": "ジャーン",
-      "meaning": "ta-da! dramatic reveal sound",
-      "orthography": "katakana"
+      "meaning": "ta-da! dramatic reveal sound"
     },
     {
       "kanji": "ドーン",
       "reading": "ドーン",
-      "meaning": "boom; big impact sound",
-      "orthography": "katakana"
+      "meaning": "boom; big impact sound"
     },
     {
       "kanji": "バーン",
       "reading": "バーン",
-      "meaning": "bang; explosive sound",
-      "orthography": "katakana"
+      "meaning": "bang; explosive sound"
     },
     {
       "kanji": "ズキズキ",
       "reading": "ズキズキ",
-      "meaning": "throbbing pain",
-      "orthography": "katakana"
+      "meaning": "throbbing pain"
     },
     {
       "kanji": "シーン",
       "reading": "シーン",
-      "meaning": "complete silence",
-      "orthography": "katakana"
+      "meaning": "complete silence"
     },
     {
       "kanji": "ベタベタ",
       "reading": "ベタベタ",
-      "meaning": "sticky; clingy",
-      "orthography": "katakana"
+      "meaning": "sticky; clingy"
     },
     {
       "kanji": "フワフワ",
       "reading": "フワフワ",
-      "meaning": "fluffy; light; airy",
-      "orthography": "katakana"
+      "meaning": "fluffy; light; airy"
     },
     {
       "kanji": "グチャグチャ",
       "reading": "グチャグチャ",
-      "meaning": "messy; mushy",
-      "orthography": "katakana"
+      "meaning": "messy; mushy"
     },
     {
       "kanji": "サラサラ",
       "reading": "サラサラ",
-      "meaning": "smooth; silky; flowing",
-      "orthography": "katakana"
+      "meaning": "smooth; silky; flowing"
     },
     {
       "kanji": "ビショビショ",
       "reading": "ビショビショ",
-      "meaning": "soaking wet",
-      "orthography": "katakana"
+      "meaning": "soaking wet"
     },
     {
       "kanji": "カチカチ",
       "reading": "カチカチ",
-      "meaning": "clicking; stiff/hard",
-      "orthography": "katakana"
+      "meaning": "clicking; stiff/hard"
     },
     {
       "kanji": "ペラペラ",
       "reading": "ペラペラ",
-      "meaning": "fluent; thin/flimsy",
-      "orthography": "katakana"
+      "meaning": "fluent; thin/flimsy"
     },
     {
       "kanji": "ウロウロ",
       "reading": "ウロウロ",
-      "meaning": "wandering aimlessly",
-      "orthography": "katakana"
+      "meaning": "wandering aimlessly"
     },
     {
       "kanji": "チラチラ",
       "reading": "チラチラ",
-      "meaning": "glancing repeatedly; flickering",
-      "orthography": "katakana"
+      "meaning": "glancing repeatedly; flickering"
     }
   ]
 }

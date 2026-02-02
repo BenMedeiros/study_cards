@@ -1,7 +1,7 @@
 {
   "metadata": {
     "name": "Japanese numeral (kanji)",
-    "description": "Grouped entries for type='numeral' and orthography='kanji' — total 15.",
+    "description": "Grouped entries for type='numeral' and orthography='kanji' — total 21.",
     "version": 1
   },
   "defaults": {
@@ -9,6 +9,79 @@
     "orthography": "kanji"
   },
   "entries": [
+    {
+      "kanji": "壱",
+      "reading": "いち",
+      "meaning": "one (formal/financial numeral; used in documents)",
+      "example": {
+        "ja": "書類では「壱万円」と書くことがあります。",
+        "en": "In documents, it may be written as “壱万円 (10,000 yen)”.",
+        "notes": [
+          "Formal numerals are used to prevent tampering.",
+          "This is the formal form of 一."
+        ]
+      }
+    },
+    {
+      "kanji": "弐",
+      "reading": "に",
+      "meaning": "two (formal/financial numeral; used in documents)",
+      "example": {
+        "ja": "契約書で「弐」を見かけました。",
+        "en": "I saw 弐 in a contract.",
+        "notes": [
+          "Formal form of 二 in legal/financial contexts."
+        ]
+      }
+    },
+    {
+      "kanji": "参",
+      "reading": "さん",
+      "meaning": "three (formal/financial numeral; used in documents)",
+      "example": {
+        "ja": "金額の「参」は三の意味です。",
+        "en": "In amounts, 参 means ‘three’.",
+        "notes": [
+          "Formal form of 三 in legal/financial contexts."
+        ]
+      }
+    },
+    {
+      "kanji": "拾",
+      "reading": "じゅう",
+      "meaning": "ten (formal/financial numeral; used in documents)",
+      "example": {
+        "ja": "古い書類で「拾」を使うことがあります。",
+        "en": "Some older documents use 拾.",
+        "notes": [
+          "Formal form of 十."
+        ]
+      }
+    },
+    {
+      "kanji": "阡",
+      "reading": "せん",
+      "meaning": "one thousand (formal/old variant used in documents)",
+      "example": {
+        "ja": "資料に「阡円」と書いてありました。",
+        "en": "The document wrote it as “阡 yen”.",
+        "notes": [
+          "A formal/older variant associated with 1000 (千)."
+        ]
+      }
+    },
+    {
+      "kanji": "萬",
+      "reading": "まん",
+      "meaning": "ten thousand (old/traditional form of 万)",
+      "example": {
+        "ja": "古い本では「萬」という字が使われています。",
+        "en": "Older books use the character 萬.",
+        "notes": [
+          "Traditional form of 万; still seen in names/older print."
+        ]
+      }
+    },
     {
       "kanji": "零",
       "reading": "れい",
