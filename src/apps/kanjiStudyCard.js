@@ -5,6 +5,7 @@ import { createSpeakerButton } from '../components/speaker.js';
 import { getCollectionView } from '../utils/collectionManagement.js';
 
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
+import { createViewFooterControls } from '../components/viewFooterControls.js';
 
 import { createCollectionActions } from '../utils/collectionActions.js';
 
@@ -87,43 +88,70 @@ export function renderKanjiStudyCard({ store }) {
 
   // No legacy UI load: visual defaults used; autoplay/defaults remain runtime-only
 
-  // Footer controls
-  const footerControls = document.createElement('div');
-  footerControls.className = 'view-footer-controls';
+  // Footer controls: describe actions and let footer build UI + register shortcuts
+  let prevBtn, revealBtn, soundBtn, nextBtn, learnedBtn, practiceBtn;
 
-  const prevBtn = document.createElement('button');
-  prevBtn.type = 'button';
-  prevBtn.className = 'btn';
-  prevBtn.innerHTML = '<span class="icon">←</span><span class="text">Prev</span><span class="caption">←</span>';
+  const footerDesc = [
+    { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', action: () => showPrev() },
+    { key: 'reveal', states: [
+        { name: 'kanji-only', icon: '', text: 'Reveal', caption: '↑', shortcut: 'ArrowUp', action: () => toggleReveal() },
+        { name: 'full', icon: '', text: 'Hide', caption: '↓', shortcut: 'ArrowDown', action: () => showKanjiOnly() }
+      ], initialState: 'kanji-only' },
+    { key: 'sound', icon: '🔊', text: 'Sound', caption: 'Space', shortcut: ' ', action: () => speakCurrent() },
+    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', action: () => showNext() },
+    { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', ariaPressed: false, action: () => {
+      const entry = entries[index];
+      const v = getPrimaryKanjiValue(entry);
+      if (!v) return;
+      const originalIdxBefore = Number.isFinite(Number(viewIndices[index])) ? Number(viewIndices[index]) : null;
+      if (store && typeof store.toggleKanjiLearned === 'function') {
+        const nowLearned = store.toggleKanjiLearned(v);
+        updateMarkButtons();
+        if (nowLearned) {
+          try {
+            const active = store.getActiveCollection?.();
+            const key = active?.key;
+            const collState = (store && typeof store.loadCollectionState === 'function') ? (store.loadCollectionState(key) || {}) : {};
+            let skipLearnedMode = false;
+            if (typeof collState?.studyFilter === 'string') {
+              const raw = String(collState.studyFilter || '').trim();
+              const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
+              const set = new Set(parts);
+              skipLearnedMode = set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned');
+            } else {
+              skipLearnedMode = !!collState?.skipLearned;
+            }
+            if (skipLearnedMode) {
+              refreshEntriesFromStore();
+              index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+              render();
+              saveUIState();
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+      }
+    } },
+    { key: 'practice', icon: '🎯', text: 'Practice', caption: 'X', shortcut: 'x', ariaPressed: false, action: () => {
+      const entry = entries[index];
+      const v = getPrimaryKanjiValue(entry);
+      if (!v) return;
+      if (store && typeof store.toggleKanjiFocus === 'function') {
+        store.toggleKanjiFocus(v);
+        updateMarkButtons();
+      }
+    } },
+  ];
 
-  const revealBtn = document.createElement('button');
-  revealBtn.type = 'button';
-  revealBtn.className = 'btn';
-  revealBtn.innerHTML = '<span class="icon"></span><span class="text">Reveal</span><span class="caption">↑</span>';
-
-  const soundBtn = document.createElement('button');
-  soundBtn.type = 'button';
-  soundBtn.className = 'btn';
-  soundBtn.innerHTML = '<span class="icon">🔊</span><span class="text">Sound</span><span class="caption">Space</span>';
-
-  const nextBtn = document.createElement('button');
-  nextBtn.type = 'button';
-  nextBtn.className = 'btn';
-  nextBtn.innerHTML = '<span class="icon">→</span><span class="text">Next</span><span class="caption">→</span>';
-
-  const learnedBtn = document.createElement('button');
-  learnedBtn.type = 'button';
-  learnedBtn.className = 'btn';
-  learnedBtn.innerHTML = '<span class="icon">✅</span><span class="text">Learned</span><span class="caption">V</span>';
-  learnedBtn.setAttribute('aria-pressed', 'false');
-
-  const practiceBtn = document.createElement('button');
-  practiceBtn.type = 'button';
-  practiceBtn.className = 'btn';
-  practiceBtn.innerHTML = '<span class="icon">🎯</span><span class="text">Practice</span><span class="caption">X</span>';
-  practiceBtn.setAttribute('aria-pressed', 'false');
-
-  footerControls.append(prevBtn, revealBtn, soundBtn, learnedBtn, practiceBtn, nextBtn);
+  const footerControls = createViewFooterControls(footerDesc, { appId: 'kanjiStudy' });
+  // map returned button elements for local use
+  prevBtn = footerControls.buttons.prev;
+  revealBtn = footerControls.buttons.reveal;
+  soundBtn = footerControls.buttons.sound;
+  nextBtn = footerControls.buttons.next;
+  learnedBtn = footerControls.buttons.learned;
+  practiceBtn = footerControls.buttons.practice;
   // Unified speak helper: prefer reading/word/kana, fall back to kanji/character/text
   function speakEntry(entry) {
     if (!entry) return;
@@ -324,10 +352,17 @@ export function renderKanjiStudyCard({ store }) {
 
   function updateRevealButton() {
     // Keep the caption span so shortcut hint remains visible when keyboard is active
-    if (viewMode === 'full') {
-      revealBtn.innerHTML = '<span class="icon"></span><span class="text">Hide</span><span class="caption">↑</span>';
+    if (revealBtn && typeof revealBtn.setState === 'function') {
+      if (viewMode === 'full') revealBtn.setState('full');
+      else revealBtn.setState('kanji-only');
     } else {
-      revealBtn.innerHTML = '<span class="icon"></span><span class="text">Reveal</span><span class="caption">↑</span>';
+      if (viewMode === 'full') {
+        if (typeof revealBtn.setText === 'function') revealBtn.setText('Hide');
+        if (typeof revealBtn.setCaption === 'function') revealBtn.setCaption('↓');
+      } else {
+        if (typeof revealBtn.setText === 'function') revealBtn.setText('Reveal');
+        if (typeof revealBtn.setCaption === 'function') revealBtn.setCaption('↑');
+      }
     }
   }
 
@@ -586,129 +621,20 @@ export function renderKanjiStudyCard({ store }) {
 
   card.appendChild(wrapper);
   el.append(headerTools, card, exampleCard);
-  el.append(footerControls);
-  // Footer controls event listeners
-  prevBtn.addEventListener('click', showPrev);
-
-  nextBtn.addEventListener('click', showNext);
-
-  revealBtn.addEventListener('click', toggleReveal);
-
-  soundBtn.addEventListener('click', () => {
-    const entry = entries[index];
-    // Use the same unified speak flow
-    speakEntry(entry);
-  });
-
-  learnedBtn.addEventListener('click', () => {
-    const entry = entries[index];
-    const v = getPrimaryKanjiValue(entry);
-    if (!v) return;
-    // Capture the original index before toggling learned.
-    // toggleKanjiLearned() notifies subscribers synchronously, which can refresh entries/viewIndices
-    // and otherwise cause us to remove the *next* item from the study subset.
-    const originalIdxBefore = Number.isFinite(Number(viewIndices[index])) ? Number(viewIndices[index]) : null;
-    if (store && typeof store.toggleKanjiLearned === 'function') {
-      const nowLearned = store.toggleKanjiLearned(v);
-      updateMarkButtons();
-      // If we just marked learned while studying a removable subset, remove it.
-      if (nowLearned) {
-        try {
-          const active = store.getActiveCollection?.();
-          const key = active?.key;
-          const collState = (store && typeof store.loadCollectionState === 'function') ? (store.loadCollectionState(key) || {}) : {};
-          let skipLearnedMode = false;
-          if (typeof collState?.studyFilter === 'string') {
-            const raw = String(collState.studyFilter || '').trim();
-            const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
-            const set = new Set(parts);
-            skipLearnedMode = set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned');
-          } else {
-            // legacy
-            skipLearnedMode = !!collState?.skipLearned;
-          }
-          if (skipLearnedMode) {
-            refreshEntriesFromStore();
-            index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
-            render();
-            saveUIState();
-          }
-        } catch (e) {
-          // ignore
-        }
-      }
-    }
-  });
-
-  practiceBtn.addEventListener('click', () => {
-    const entry = entries[index];
-    const v = getPrimaryKanjiValue(entry);
-    if (!v) return;
-    if (store && typeof store.toggleKanjiFocus === 'function') {
-      store.toggleKanjiFocus(v);
-      updateMarkButtons();
-    }
-  });
+  el.append(footerControls.el);
 
   // Tools behaviour
   shuffleBtn.addEventListener('click', shuffleEntries);
   toggleBtn.addEventListener('click', toggleDefaultViewMode);
 
-  // Keyboard navigation
-  const keyHandler = (e) => {
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      showPrev();
-    } else if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      showNext();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      revealFull();
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      showKanjiOnly();
-    } else if (e.key === ' ' || e.code === 'Space') {
-      e.preventDefault();
-      // spacebar -> sound
-      soundBtn.click();
-    } else if (e.key === 'x' || e.key === 'X') {
-      e.preventDefault();
-      // x -> practice
-      practiceBtn.click();
-    } else if (e.key === 'v' || e.key === 'V') {
-      e.preventDefault();
-      // v -> learned
-      learnedBtn.click();
-    }
-  };
-
-  wrapper.addEventListener('keydown', keyHandler);
-  // Register the handler with the shell so shell controls app-level keyboard handling.
-  const registerKanjiHandler = () => {
-    const wrapped = (e) => {
-      try {
-        keyHandler(e);
-        return e.defaultPrevented === true;
-      } catch (err) {
-        return false;
-      }
-    };
-    document.dispatchEvent(new CustomEvent('app:registerKeyHandler', { detail: { id: 'kanjiStudy', handler: wrapped } }));
-  };
-
-  const unregisterKanjiHandler = () => {
-    document.dispatchEvent(new CustomEvent('app:unregisterKeyHandler', { detail: { id: 'kanjiStudy' } }));
-  };
-
-  setTimeout(registerKanjiHandler, 0);
+  // Keyboard handling for footer shortcuts is handled by the footer component
+  // (it registers an app-level key handler using id 'kanjiStudy').
 
 
 
   // Cleanup on unmount
   const observer = new MutationObserver(() => {
     if (!document.body.contains(el)) {
-      unregisterKanjiHandler();
       try { if (typeof unsub === 'function') unsub(); } catch (e) {}
       observer.disconnect();
     }
