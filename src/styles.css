@@ -426,7 +426,7 @@ input[type="number"].button::-webkit-inner-spin-button {
 .kanji-card .kanji-main {
   font-size: 5rem;
   line-height: 1;
-  font-weight: 700;
+  font-weight: 400;
   text-align: center;
   color: var(--text);
   word-break: keep-all;

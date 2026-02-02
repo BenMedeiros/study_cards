@@ -16,10 +16,8 @@ export function renderKanjiStudyCard({ store }) {
   let shownAt = nowMs();
   let isShuffled = false;
   let autoSpeakKanji = false;
-  let currentFontWeight = 'normal'; // cycles through: bold -> normal -> lighter
   let isAutoPlaying = false;
   let autoplayConfig = null; // will be defaulted from savedUI or component defaults
-  // cycles through: bold -> normal
   let savedUI = null;
   let uiStateRestored = false; // ensure saved UI (index/order) is applied only once
   let originalEntries = [];
@@ -51,10 +49,9 @@ export function renderKanjiStudyCard({ store }) {
       const state = {
         isShuffled: !!isShuffled,
         defaultViewMode: defaultViewMode,
-        fontWeight: currentFontWeight,
         autoSpeak: !!autoSpeakKanji,
         // Persist a small integer seed to avoid saving large arrays
-          order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
+        order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
         currentIndex: index,
         autoplay: autoplayConfig || null,
         isAutoPlaying: !!isAutoPlaying,
@@ -82,15 +79,6 @@ export function renderKanjiStudyCard({ store }) {
   toggleBtn.title = 'Toggle details';
   toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
 
-  // Bold toggle button (cycles font weight)
-  const boldBtn = document.createElement('button');
-  boldBtn.type = 'button';
-  boldBtn.className = 'btn small';
-  boldBtn.textContent = 'B';
-  boldBtn.title = `Font weight: ${currentFontWeight}`;
-  boldBtn.style.fontWeight = currentFontWeight;
-  boldBtn.setAttribute('aria-pressed', String(currentFontWeight === 'bold'));
-
   // New: Auto-speak Kanji toggle button
   const autoSpeakBtn = document.createElement('button');
   autoSpeakBtn.type = 'button';
@@ -98,16 +86,11 @@ export function renderKanjiStudyCard({ store }) {
   autoSpeakBtn.textContent = '🔊 Auto-speak: Off';
   autoSpeakBtn.title = 'Toggle auto-speak';
 
-  headerTools.append(shuffleBtn, toggleBtn, boldBtn, autoSpeakBtn);
+  headerTools.append(shuffleBtn, toggleBtn, autoSpeakBtn);
 
   // Apply saved UI state (visuals only here) — will apply shuffle after entries load
   savedUI = loadUIState();
   if (savedUI) {
-    if (savedUI.fontWeight) {
-      // normalize older values (e.g. 'lighter') to 'normal'
-      currentFontWeight = savedUI.fontWeight === 'bold' ? 'bold' : 'normal';
-      boldBtn.title = `Font weight: ${currentFontWeight}`;
-    }
     if (typeof savedUI.autoSpeak === 'boolean') {
       autoSpeakKanji = !!savedUI.autoSpeak;
       autoSpeakBtn.setAttribute('aria-pressed', String(!!autoSpeakKanji));
@@ -128,15 +111,6 @@ export function renderKanjiStudyCard({ store }) {
     // Ensure the active viewMode matches the saved default so the initial render uses it
     viewMode = defaultViewMode;
   }
-
-  // Visual helper for bold button background + weight
-  function updateBoldBtnVisual() {
-    boldBtn.style.fontWeight = currentFontWeight;
-    boldBtn.title = `Font weight: ${currentFontWeight}`;
-    boldBtn.setAttribute('aria-pressed', String(currentFontWeight === 'bold'));
-  }
-  // ensure visuals match initial state
-  updateBoldBtnVisual();
 
   // Ensure autoplayConfig has a default object if not loaded from savedUI
   if (!autoplayConfig) autoplayConfig = null;
@@ -217,17 +191,6 @@ export function renderKanjiStudyCard({ store }) {
   // place autoplay controls at start of headerTools, grouped visually
   headerTools.insertBefore(autoplayControlsEl, shuffleBtn);
 
-  // Bold toggle behaviour: cycle ['bold','normal','lighter'] (default: normal)
-  boldBtn.addEventListener('click', () => {
-    const cycle = ['bold', 'normal'];
-    const idx = cycle.indexOf(currentFontWeight);
-    const next = cycle[(idx + 1) % cycle.length];
-    currentFontWeight = next;
-    updateBoldBtnVisual();
-    render();
-    saveUIState();
-  });
-
   const wrapper = document.createElement('div');
   wrapper.className = 'kanji-card-wrapper';
   wrapper.tabIndex = 0; // so it can receive keyboard focus
@@ -251,8 +214,6 @@ export function renderKanjiStudyCard({ store }) {
     kanjiMain.className = 'kanji-main';
     const text = getFieldValue(entry, ['kanji', 'character', 'text']) || '';
     kanjiMain.textContent = text;
-    // Apply current font weight preference
-    kanjiMain.style.fontWeight = currentFontWeight;
     // Auto-scale font size based on text length (3 tiers)
     const length = text.length;
     let fontSize = 5; // base size in rem
