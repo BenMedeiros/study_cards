@@ -1,5 +1,3 @@
-import { getCollectionView } from './collectionManagement.js';
-
 function serializeStudyFilter({ skipLearned, focusOnly }) {
   const parts = [];
   if (skipLearned) parts.push('skipLearned');
@@ -24,9 +22,6 @@ export function createCollectionActions(store) {
 
     if (typeof store.saveCollectionState === 'function') {
       store.saveCollectionState(coll.key, { order_hash_int: seed, isShuffled: true, currentIndex: 0 });
-    } else if (typeof store.saveKanjiUIState === 'function') {
-      // fallback for older API
-      try { store.saveKanjiUIState({ order_hash_int: seed, isShuffled: true, currentIndex: 0 }); } catch (e) { /* ignore */ }
     }
     return seed;
   }
@@ -36,112 +31,20 @@ export function createCollectionActions(store) {
     if (!coll) return false;
     if (typeof store.saveCollectionState === 'function') {
       store.saveCollectionState(coll.key, { order_hash_int: null, isShuffled: false, currentIndex: 0 });
-    } else if (typeof store.saveKanjiUIState === 'function') {
-      try { store.saveKanjiUIState({ order_hash_int: null, isShuffled: false, currentIndex: 0 }); } catch (e) { /* ignore */ }
     }
     return true;
   }
 
-  function pickStudyWindow(collKey, opts = { windowSize: 10, skipLearned: false, focusOnly: false }) {
-    const coll = _getCollectionByKey(collKey) || (typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : null);
-    if (!coll) return null;
-    const entries = Array.isArray(coll.entries) ? coll.entries : [];
-    const n = entries.length;
-    if (n === 0) return null;
-
-    const saved = (typeof store.loadCollectionState === 'function') ? (store.loadCollectionState(coll.key) || {}) : {};
-    const cursor = (saved && typeof saved.studyStart === 'number') ? saved.studyStart : 0;
-
-    const picked = [];
-    let lastIdx = null;
-    for (let i = 0; i < n; i++) {
-      const idx = (cursor + i) % n;
-      const entry = entries[idx];
-      if (opts.skipLearned && typeof store.isKanjiLearned === 'function' && store.isKanjiLearned(getEntryKanjiValue(entry))) continue;
-      if (opts.focusOnly && typeof store.isKanjiFocus === 'function' && !store.isKanjiFocus(getEntryKanjiValue(entry))) continue;
-      picked.push(idx);
-      lastIdx = idx;
-      if (picked.length >= opts.windowSize) break;
-    }
-
-    const nextCursor = (lastIdx === null) ? cursor : ((lastIdx + 1) % n);
-    if (typeof store.saveCollectionState === 'function') {
-      store.saveCollectionState(coll.key, {
-        studyIndices: picked,
-        studyStart: nextCursor,
-        studyFilter: serializeStudyFilter({ skipLearned: !!opts.skipLearned, focusOnly: !!opts.focusOnly }),
-        currentIndex: 0,
-      });
-    } else if (typeof store.saveKanjiUIState === 'function') {
-      try {
-        store.saveKanjiUIState({ studyIndices: picked, studyStart: nextCursor, studyFilter: serializeStudyFilter({ skipLearned: !!opts.skipLearned, focusOnly: !!opts.focusOnly }), currentIndex: 0 });
-      } catch (e) { /* ignore */ }
-    }
-
-    return { studyIndices: picked, studyStart: nextCursor };
-  }
-
-  function setStudyAll(collKey, { skipLearned = false, focusOnly = false } = {}) {
-    const coll = _getCollectionByKey(collKey) || (typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : null);
-    if (!coll) return false;
-    if (typeof store.saveCollectionState === 'function') {
-      store.saveCollectionState(coll.key, { studyStart: null, studyIndices: null, studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }), currentIndex: 0 });
-    } else if (typeof store.saveKanjiUIState === 'function') {
-      try { store.saveKanjiUIState({ studyStart: null, studyIndices: null, studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }), currentIndex: 0 }); } catch (e) { /* ignore */ }
-    }
-    return true;
-  }
+  
 
   function setStudyFilter(collKey, { skipLearned = false, focusOnly = false } = {}) {
     const coll = _getCollectionByKey(collKey) || (typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : null);
     if (!coll) return false;
+    // Persist only the studyFilter string; other studyIndices / studyStart features removed.
     if (typeof store.saveCollectionState === 'function') {
-      store.saveCollectionState(coll.key, { studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }), skipLearned: null, focusOnly: null, currentIndex: 0 });
-    } else if (typeof store.saveKanjiUIState === 'function') {
-      try { store.saveKanjiUIState({ studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }), currentIndex: 0 }); } catch (e) { /* ignore */ }
+      store.saveCollectionState(coll.key, { studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }), currentIndex: 0 });
     }
     return true;
-  }
-
-  function pruneStudyIndicesToFilters(collKey) {
-    try {
-      const coll = _getCollectionByKey(collKey) || (typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : null);
-      if (!coll) return false;
-      const entries = Array.isArray(coll.entries) ? coll.entries : [];
-      const saved = (typeof store.loadCollectionState === 'function') ? (store.loadCollectionState(coll.key) || {}) : {};
-      if (!Array.isArray(saved.studyIndices)) return false;
-
-      const next = saved.studyIndices
-        .map(i => Number(i))
-        .filter(Number.isFinite)
-        .filter(i => i >= 0 && i < entries.length)
-        .filter(i => {
-          const entry = entries[i];
-          const v = getEntryKanjiValue(entry);
-          if (!v) return true;
-          if (saved?.studyFilter) {
-            // parse studyFilter string
-            const parts = String(saved.studyFilter || '').split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
-            const set = new Set(parts);
-            const skipLearned = set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned');
-            const focusOnly = set.has('focusOnly') || set.has('focus_only') || set.has('focus') || set.has('morePractice') || set.has('more_practice');
-            if (skipLearned && typeof store.isKanjiLearned === 'function' && store.isKanjiLearned(v)) return false;
-            if (focusOnly && typeof store.isKanjiFocus === 'function' && !store.isKanjiFocus(v)) return false;
-          }
-          return true;
-        });
-
-      if (next.length !== saved.studyIndices.length) {
-        if (typeof store.saveCollectionState === 'function') {
-          store.saveCollectionState(coll.key, { studyIndices: next, currentIndex: 0 });
-        } else if (typeof store.saveKanjiUIState === 'function') {
-          try { store.saveKanjiUIState({ studyIndices: next, currentIndex: 0 }); } catch (e) { /* ignore */ }
-        }
-      }
-      return true;
-    } catch (e) {
-      return false;
-    }
   }
 
   function clearLearnedForCollection(collKey) {
@@ -173,10 +76,7 @@ export function createCollectionActions(store) {
   return {
     shuffleCollection,
     clearCollectionShuffle,
-    pickStudyWindow,
-    setStudyAll,
     setStudyFilter,
-    pruneStudyIndicesToFilters,
     clearLearnedForCollection,
   };
 }

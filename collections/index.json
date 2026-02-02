@@ -25,14 +25,20 @@
     {
       "path": "japanese/nouns/adverb__mixed.json",
       "name": "Japanese adverb (mixed)",
-      "description": "Mixed orthography group for type='adverb' — total 4 (hiragana: 1, both: 1, katakana: 2).",
-      "entries": 4
+      "description": "Mixed orthography group for type='adverb' — total 5 (hiragana: 1, both: 1, kanji: 1, katakana: 2).",
+      "entries": 5
     },
     {
       "path": "japanese/nouns/compound-morpheme__mixed.json",
       "name": "Japanese compound-morpheme (mixed)",
-      "description": "Mixed orthography group for type='compound-morpheme' — total 15 (katakana: 1, kanji: 3, none: 11).",
-      "entries": 15
+      "description": "Mixed orthography group for type='compound-morpheme' — total 16 (katakana: 1, kanji: 4, none: 11).",
+      "entries": 16
+    },
+    {
+      "path": "japanese/nouns/counter__kanji.json",
+      "name": "Japanese counter (kanji)",
+      "description": "Grouped entries for type='counter' and orthography='kanji' — total 10.",
+      "entries": 10
     },
     {
       "path": "japanese/nouns/descriptive-phrase.json",
@@ -41,10 +47,16 @@
       "entries": 1
     },
     {
-      "path": "japanese/nouns/expression__mixed.json",
-      "name": "Japanese expression (mixed)",
-      "description": "Mixed orthography group for type='expression' — total 40 (kanji: 1, katakana: 39).",
-      "entries": 40
+      "path": "japanese/nouns/expression__kanji.json",
+      "name": "Japanese expression (kanji)",
+      "description": "Grouped entries for type='expression' and orthography='kanji' — total 7.",
+      "entries": 7
+    },
+    {
+      "path": "japanese/nouns/expression__katakana.json",
+      "name": "Japanese expression (katakana)",
+      "description": "Grouped entries for type='expression' and orthography='katakana' — total 39.",
+      "entries": 39
     },
     {
       "path": "japanese/nouns/i-adjective.json",
@@ -91,8 +103,8 @@
     {
       "path": "japanese/nouns/numeral__kanji.json",
       "name": "Japanese numeral (kanji)",
-      "description": "Grouped entries for type='numeral' and orthography='kanji' — total 15.",
-      "entries": 15
+      "description": "Grouped entries for type='numeral' and orthography='kanji' — total 21.",
+      "entries": 21
     },
     {
       "path": "japanese/nouns/standalone-noun__kanji.json",

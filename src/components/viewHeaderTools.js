@@ -1,24 +1,14 @@
 // Simple helper to create a standardized header tools container for any view.
 // Replaces the previous kanji-specific header container.
 export function createViewHeaderTools(opts = {}) {
-  const { createControls = false, onStudy10 = null, onStudyAll = null, onShuffle = null, onClearShuffle = null, onClearLearned = null } = opts || {};
+  const { createControls = false, onShuffle = null, onClearShuffle = null, onClearLearned = null } = opts || {};
   const el = document.createElement('div');
   el.className = 'view-header-tools';
 
   // If not asked to create controls, return the bare element for backward compatibility.
   if (!createControls) return el;
 
-  // Create buttons owned by this header component
-  const studyBtn = document.createElement('button');
-  studyBtn.type = 'button';
-  studyBtn.className = 'btn small';
-  studyBtn.textContent = 'Study 10';
-
-  const studyAllBtn = document.createElement('button');
-  studyAllBtn.type = 'button';
-  studyAllBtn.className = 'btn small';
-  studyAllBtn.textContent = 'Study All';
-
+  // Create buttons owned by this header component (no Study 10 / Study All — removed)
   const shuffleBtn = document.createElement('button');
   shuffleBtn.type = 'button';
   shuffleBtn.className = 'btn small';
@@ -35,24 +25,15 @@ export function createViewHeaderTools(opts = {}) {
   clearLearnedBtn.textContent = 'Clear Learned';
   clearLearnedBtn.title = 'Remove Learned flags for items in this collection';
 
-  // Study label (can be updated by callers)
-  const studyLabel = document.createElement('div');
-  studyLabel.className = 'hint';
-  studyLabel.style.alignSelf = 'center';
-  studyLabel.textContent = '';
-
-  el.append(studyBtn, studyAllBtn, shuffleBtn, clearShuffleBtn, clearLearnedBtn, studyLabel);
+  el.append(shuffleBtn, clearShuffleBtn, clearLearnedBtn);
 
   // Wire callbacks
-  studyBtn.addEventListener('click', (e) => { if (typeof onStudy10 === 'function') onStudy10(e); });
-  studyAllBtn.addEventListener('click', (e) => { if (typeof onStudyAll === 'function') onStudyAll(e); });
   shuffleBtn.addEventListener('click', (e) => { if (typeof onShuffle === 'function') onShuffle(e); });
   clearShuffleBtn.addEventListener('click', (e) => { if (typeof onClearShuffle === 'function') onClearShuffle(e); });
   clearLearnedBtn.addEventListener('click', (e) => { if (typeof onClearLearned === 'function') onClearLearned(e); });
 
-  // Expose small API on the element for callers to update the label or buttons if needed
-  el.setStudyLabel = (txt) => { studyLabel.textContent = String(txt || ''); };
-  el.getButtons = () => ({ studyBtn, studyAllBtn, shuffleBtn, clearShuffleBtn, clearLearnedBtn, studyLabel });
+  // Expose small API on the element for callers to access buttons
+  el.getButtons = () => ({ shuffleBtn, clearShuffleBtn, clearLearnedBtn });
 
   return el;
 }

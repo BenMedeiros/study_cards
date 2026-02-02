@@ -32,26 +32,7 @@ export function renderData({ store }) {
 
   // Controls: header owns primary collection actions; pass callbacks so it can render and handle them
   const controls = createViewHeaderTools({ createControls: true,
-    onStudy10: () => {
-      const coll = store.getActiveCollection();
-      if (!coll) return;
-      const entries = Array.isArray(coll.entries) ? coll.entries : [];
-      if (entries.length === 0) return;
-      const actions = createCollectionActions(store);
-      actions.pickStudyWindow(coll.key, { windowSize: 10, skipLearned: !!skipLearned, focusOnly: !!focusOnly });
-      controls.setStudyLabel && controls.setStudyLabel('Study 10');
-      updateStudyLabel();
-      markStudyRows();
-    },
-    onStudyAll: () => {
-      const coll = store.getActiveCollection();
-      if (!coll) return;
-      const actions = createCollectionActions(store);
-      actions.setStudyAll(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
-      controls.setStudyLabel && controls.setStudyLabel('Study All');
-      updateStudyLabel();
-      markStudyRows();
-    },
+    
     onShuffle: () => {
       const coll = store.getActiveCollection();
       if (!coll) return;
@@ -85,7 +66,6 @@ export function renderData({ store }) {
     skipLearned = (s === 'skipLearned');
     focusOnly = (s === 'focusOnly');
     persistFilters();
-    pruneStudyIndicesToFilters();
     updateFilterButtons();
     renderTable();
     updateStudyLabel();
@@ -128,17 +108,13 @@ export function renderData({ store }) {
     const coll = store.getActiveCollection();
     if (!coll) return null;
     if (typeof store.loadCollectionState === 'function') return store.loadCollectionState(coll.key) || {};
-    // fallback for older API
-    const saved = store.loadKanjiUIState ? store.loadKanjiUIState() : null;
-    return saved || {};
+    return {};
   }
 
   function writeCollState(patch) {
     const coll = store.getActiveCollection();
     if (!coll) return;
     if (typeof store.saveCollectionState === 'function') return store.saveCollectionState(coll.key, patch);
-    // fallback
-    if (typeof store.saveKanjiUIState === 'function') return store.saveKanjiUIState(patch);
   }
 
   function getEntryKanjiValue(entry) {
@@ -174,16 +150,7 @@ export function renderData({ store }) {
     actions.setStudyFilter(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
   }
 
-  function pruneStudyIndicesToFilters() {
-    try {
-      const coll = store.getActiveCollection();
-      if (!coll) return;
-      const actions = createCollectionActions(store);
-      actions.pruneStudyIndicesToFilters(coll.key);
-    } catch (e) {
-      // ignore
-    }
-  }
+  // pruneStudyIndicesToFilters removed — studyIndices/studyStart no longer used.
 
   const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
   const allEntries = Array.isArray(active.entries) ? active.entries : [];
@@ -210,9 +177,6 @@ export function renderData({ store }) {
     delete headerBtns.shuffleBtn;
   }
 
-  // bind to header-owned studyLabel if present
-  if (headerBtns && headerBtns.studyLabel) studyLabel = headerBtns.studyLabel;
-
   function updateControlStates() {
     try {
       const coll = store.getActiveCollection();
@@ -231,9 +195,7 @@ export function renderData({ store }) {
         }
       }
       if (headerBtns && headerBtns.clearLearnedBtn) headerBtns.clearLearnedBtn.disabled = !hasLearned;
-      // studyAll disabled if already studying all (studyStart === null and no explicit indices)
-      const isStudyAll = (saved && saved.studyStart === null && !Array.isArray(saved.studyIndices));
-      if (headerBtns && headerBtns.studyAllBtn) headerBtns.studyAllBtn.disabled = !!isStudyAll;
+      // no study subset controls remain; nothing to do here
     } catch (e) {
       // ignore
     }
@@ -242,24 +204,16 @@ export function renderData({ store }) {
   function updateStudyLabel() {
     const coll = store.getActiveCollection();
     if (!coll) {
-      studyLabel.textContent = '';
+      // no study label in header tools
       updateControlStates();
       return;
     }
     const saved = readCollState();
     const n = Array.isArray(coll.entries) ? coll.entries.length : 0;
     if (n === 0) { studyLabel.textContent = ''; updateControlStates(); return; }
-    if (saved && Array.isArray(saved.studyIndices)) {
-      const cnt = saved.studyIndices.length;
-      studyLabel.textContent = `Study: (${cnt}/${n})`;
-    } else if (saved && saved.studyStart === null) {
-      studyLabel.textContent = `Study: All`;
-    } else if (saved && typeof saved.studyStart === 'number') {
-      const sz = Array.isArray(saved.studyIndices) ? saved.studyIndices.length : 10;
-      studyLabel.textContent = `Study: (${sz}/${n})`;
-    } else {
-      studyLabel.textContent = `Study: All`;
-    }
+    // Show simplified study label: All or Filtered
+    const raw = (saved && typeof saved.studyFilter === 'string') ? String(saved.studyFilter).trim() : '';
+    // header tools no longer show study label; control state will reflect available actions
     updateControlStates();
   }
 
@@ -315,18 +269,7 @@ export function renderData({ store }) {
   function markStudyRows() {
     const coll = store.getActiveCollection();
     if (!coll) return;
-    const collState = (typeof store.loadCollectionState === 'function') ? store.loadCollectionState(coll.key) : (store.loadKanjiUIState ? store.loadKanjiUIState() : null);
-    const n = Array.isArray(coll.entries) ? coll.entries.length : 0;
-    let subsetIndices = null;
-    if (collState && Array.isArray(collState.studyIndices)) {
-      subsetIndices = new Set(collState.studyIndices.map(i => Number(i)).filter(Number.isFinite));
-    } else if (collState && typeof collState.studyStart === 'number') {
-      subsetIndices = new Set();
-      for (let i = 0; i < 10; i++) subsetIndices.add((collState.studyStart + i) % n);
-    } else if (collState && collState.studyStart === null) {
-      // study all
-      subsetIndices = new Set(Array.from({ length: n }, (_, i) => i));
-    }
+    // Only update learned/focus icons; study subset highlighting removed.
 
     const wrapperEl = tableMount;
     const tbl = wrapperEl.querySelector('table');
@@ -363,13 +306,7 @@ export function renderData({ store }) {
         // ignore
       }
 
-      if (!subsetIndices) {
-        tr.classList.remove('in-study');
-        return;
-      }
-      const originalIndex = rowToOriginalIndex[rowIndex];
-      if (subsetIndices.has(originalIndex)) tr.classList.add('in-study');
-      else tr.classList.remove('in-study');
+      // no study subset highlighting to update
     });
   }
 
@@ -399,7 +336,6 @@ export function renderData({ store }) {
           // ignore
         }
         updateFilterButtons();
-        pruneStudyIndicesToFilters();
         renderTable();
         updateStudyLabel();
         markStudyRows();
