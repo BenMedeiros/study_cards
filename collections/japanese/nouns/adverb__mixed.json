@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "Japanese adverb (mixed)",
-    "description": "Mixed orthography group for type='adverb' — total 5 (hiragana: 1, both: 1, kanji: 1, katakana: 2).",
-    "version": 1
+    "description": "Mixed orthography group for type='adverb' — expanded set with common N5–N3 adverbs plus a few frequent onomatopoeia.",
+    "version": 2
   },
   "defaults": {
     "type": "adverb"
@@ -47,6 +47,480 @@
       "meaning": "sticky (onomatopoeia)",
       "orthography": "katakana",
       "origin": "Japanese"
+    },
+
+    {
+      "kanji": "いつも",
+      "reading": "いつも",
+      "meaning": "always; usually",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "彼はいつも早く起きます。",
+        "en": "He always gets up early.",
+        "notes": [
+          "Common with habitual actions."
+        ]
+      }
+    },
+    {
+      "kanji": "よく",
+      "reading": "よく",
+      "meaning": "often; well",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "この店にはよく来ます。",
+        "en": "I come to this shop often.",
+        "notes": [
+          "Also means 'well' as in 上手に: よくできました."
+        ]
+      }
+    },
+    {
+      "kanji": "たぶん",
+      "reading": "たぶん",
+      "meaning": "probably; maybe",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "たぶん明日は雨です。",
+        "en": "It’ll probably rain tomorrow.",
+        "notes": [
+          "Often pairs with 〜と思う / 〜だろう."
+        ]
+      }
+    },
+    {
+      "kanji": "ぜんぜん",
+      "reading": "ぜんぜん",
+      "meaning": "(not) at all",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "日本語がぜんぜん分かりません。",
+        "en": "I don’t understand Japanese at all.",
+        "notes": [
+          "Standard use is with negative forms.",
+          "In casual speech, it can appear with positives: ぜんぜん大丈夫."
+        ]
+      }
+    },
+    {
+      "kanji": "もう",
+      "reading": "もう",
+      "meaning": "already; (any) more",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "もう宿題をしました。",
+        "en": "I already did my homework.",
+        "notes": [
+          "With negatives: もう〜ない = 'no longer'."
+        ]
+      }
+    },
+    {
+      "kanji": "まだ",
+      "reading": "まだ",
+      "meaning": "still; not yet",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "まだ食べていません。",
+        "en": "I haven’t eaten yet.",
+        "notes": [
+          "Kana-only is extremely common even though 未だ exists."
+        ]
+      }
+    },
+    {
+      "kanji": "すぐ",
+      "reading": "すぐ",
+      "meaning": "immediately; soon; right away",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "今すぐ来てください。",
+        "en": "Please come right away.",
+        "notes": [
+          "Also: すぐ近く = very nearby."
+        ]
+      }
+    },
+    {
+      "kanji": "とても",
+      "reading": "とても",
+      "meaning": "very",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "この映画はとても面白いです。",
+        "en": "This movie is very interesting.",
+        "notes": [
+          "More neutral/polite than すごく."
+        ]
+      }
+    },
+    {
+      "kanji": "すごく",
+      "reading": "すごく",
+      "meaning": "really; extremely",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "今日はすごく寒い。",
+        "en": "It’s really cold today.",
+        "notes": [
+          "Casual; also used as an adjective stem: すごい."
+        ]
+      }
+    },
+    {
+      "kanji": "あまり",
+      "reading": "あまり",
+      "meaning": "(not) very; (not) much",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "その店はあまり安くない。",
+        "en": "That store isn’t very cheap.",
+        "notes": [
+          "Standard with negatives: あまり〜ない."
+        ]
+      }
+    },
+    {
+      "kanji": "ちょっと",
+      "reading": "ちょっと",
+      "meaning": "a little; a bit; (softener) kind of...",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "ちょっと手伝ってください。",
+        "en": "Please help me a bit.",
+        "notes": [
+          "Often used to soften requests/refusals."
+        ]
+      }
+    },
+    {
+      "kanji": "だいたい",
+      "reading": "だいたい",
+      "meaning": "roughly; generally; mostly",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "仕事はだいたい終わりました。",
+        "en": "The work is mostly finished.",
+        "notes": [
+          "Also means 'in general': だいたい分かった."
+        ]
+      }
+    },
+    {
+      "kanji": "だんだん",
+      "reading": "だんだん",
+      "meaning": "gradually",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "だんだん暖かくなってきました。",
+        "en": "It’s gradually been getting warmer.",
+        "notes": [
+          "Common with 〜てくる / 〜ていく."
+        ]
+      }
+    },
+    {
+      "kanji": "全部",
+      "reading": "ぜんぶ",
+      "meaning": "all; entirely",
+      "orthography": "kanji",
+      "example": {
+        "ja": "ケーキを全部食べました。",
+        "en": "I ate all of the cake.",
+        "notes": [
+          "Also common in kana: ぜんぶ."
+        ]
+      }
+    },
+    {
+      "kanji": "全然",
+      "reading": "ぜんぜん",
+      "meaning": "(not) at all",
+      "orthography": "kanji",
+      "example": {
+        "ja": "全然問題ありません。",
+        "en": "No problem at all.",
+        "notes": [
+          "Common in kana too; often used casually with positives."
+        ]
+      }
+    },
+    {
+      "kanji": "絶対",
+      "reading": "ぜったい",
+      "meaning": "absolutely; definitely",
+      "orthography": "kanji",
+      "example": {
+        "ja": "絶対に忘れないで。",
+        "en": "Don’t forget, absolutely.",
+        "notes": [
+          "Often appears as 絶対に + verb."
+        ]
+      }
+    },
+    {
+      "kanji": "必ず",
+      "reading": "かならず",
+      "meaning": "surely; without fail",
+      "orthography": "kanji",
+      "example": {
+        "ja": "明日、必ず電話します。",
+        "en": "I’ll call you tomorrow for sure.",
+        "notes": [
+          "Stronger 'certainty/commitment' nuance than たぶん."
+        ]
+      }
+    },
+    {
+      "kanji": "特に",
+      "reading": "とくに",
+      "meaning": "especially; particularly",
+      "orthography": "kanji",
+      "example": {
+        "ja": "今日は特に忙しいです。",
+        "en": "I’m especially busy today.",
+        "notes": [
+          "With negatives: 特に〜ない = 'not particularly'."
+        ]
+      }
+    },
+    {
+      "kanji": "例えば",
+      "reading": "たとえば",
+      "meaning": "for example",
+      "orthography": "kanji",
+      "example": {
+        "ja": "例えば、日本や韓国です。",
+        "en": "For example, Japan and Korea.",
+        "notes": [
+          "Also common in kana: たとえば."
+        ]
+      }
+    },
+    {
+      "kanji": "最近",
+      "reading": "さいきん",
+      "meaning": "recently; lately",
+      "orthography": "kanji",
+      "example": {
+        "ja": "最近、よく本を読みます。",
+        "en": "Recently, I often read books.",
+        "notes": [
+          "Time adverb; very frequent in conversation."
+        ]
+      }
+    },
+    {
+      "kanji": "最初に",
+      "reading": "さいしょに",
+      "meaning": "first; in the beginning",
+      "orthography": "kanji",
+      "example": {
+        "ja": "最初に名前を書いてください。",
+        "en": "First, please write your name.",
+        "notes": [
+          "Often used for step-by-step instructions."
+        ]
+      }
+    },
+    {
+      "kanji": "最後に",
+      "reading": "さいごに",
+      "meaning": "finally; at the end",
+      "orthography": "kanji",
+      "example": {
+        "ja": "最後にもう一度確認します。",
+        "en": "Finally, I’ll check once more.",
+        "notes": [
+          "Pairs naturally with 最初に."
+        ]
+      }
+    },
+    {
+      "kanji": "早く",
+      "reading": "はやく",
+      "meaning": "quickly; early",
+      "orthography": "kanji",
+      "example": {
+        "ja": "明日は早く起きます。",
+        "en": "Tomorrow I’ll get up early.",
+        "notes": [
+          "Adverb form of 早い."
+        ]
+      }
+    },
+    {
+      "kanji": "ゆっくり",
+      "reading": "ゆっくり",
+      "meaning": "slowly; leisurely",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "ゆっくり話してください。",
+        "en": "Please speak slowly.",
+        "notes": [
+          "Very common request phrase."
+        ]
+      }
+    },
+    {
+      "kanji": "本当に",
+      "reading": "ほんとうに",
+      "meaning": "really; truly",
+      "orthography": "kanji",
+      "example": {
+        "ja": "本当にありがとう。",
+        "en": "Thank you, truly.",
+        "notes": [
+          "Also used as a reaction: 本当に？ = 'Really?'"
+        ]
+      }
+    },
+    {
+      "kanji": "だれでも",
+      "reading": "だれでも",
+      "meaning": "anyone; anybody",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "だれでも参加できます。",
+        "en": "Anyone can participate.",
+        "notes": [
+          "Set pattern: 疑問語 + でも."
+        ]
+      }
+    },
+    {
+      "kanji": "どこでも",
+      "reading": "どこでも",
+      "meaning": "anywhere",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "スマホがあればどこでも働けます。",
+        "en": "If you have a smartphone, you can work anywhere.",
+        "notes": [
+          "Common with 〜があれば / 〜なら."
+        ]
+      }
+    },
+    {
+      "kanji": "何でも",
+      "reading": "なんでも",
+      "meaning": "anything",
+      "orthography": "both",
+      "example": {
+        "ja": "分からないことは何でも聞いてください。",
+        "en": "Ask me anything you don’t understand.",
+        "notes": [
+          "Often written なんでも; kanji form 何でも is also common."
+        ]
+      }
+    },
+    {
+      "kanji": "やっぱり",
+      "reading": "やっぱり",
+      "meaning": "as expected; after all",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "やっぱり日本料理が好きです。",
+        "en": "After all, I like Japanese food.",
+        "notes": [
+          "Colloquial; also appears as やはり (more formal)."
+        ]
+      }
+    },
+    {
+      "kanji": "急に",
+      "reading": "きゅうに",
+      "meaning": "suddenly",
+      "orthography": "kanji",
+      "example": {
+        "ja": "急に雨が降ってきた。",
+        "en": "It suddenly started raining.",
+        "notes": [
+          "Often with 〜てきた for change onset."
+        ]
+      }
+    },
+    {
+      "kanji": "そろそろ",
+      "reading": "そろそろ",
+      "meaning": "soon; it’s about time",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "そろそろ帰りましょう。",
+        "en": "It’s about time we went home.",
+        "notes": [
+          "Gentle suggestion tone; very conversational."
+        ]
+      }
+    },
+    {
+      "kanji": "けっこう",
+      "reading": "けっこう",
+      "meaning": "quite; pretty; (polite refusal) no thanks",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "この問題はけっこう難しいです。",
+        "en": "This problem is quite difficult.",
+        "notes": [
+          "As refusal: 結構です = 'No thank you / I'm fine'."
+        ]
+      }
+    },
+
+    {
+      "kanji": "きらきら",
+      "reading": "キラキラ",
+      "meaning": "sparkling; glittering (onomatopoeia)",
+      "orthography": "katakana",
+      "origin": "Japanese",
+      "example": {
+        "ja": "星がキラキラ光っている。",
+        "en": "The stars are sparkling.",
+        "notes": [
+          "Often written in katakana for sound-symbolic effect; also seen as きらきら."
+        ]
+      }
+    },
+    {
+      "kanji": "どきどき",
+      "reading": "ドキドキ",
+      "meaning": "heart pounding; nervous excitement (onomatopoeia)",
+      "orthography": "katakana",
+      "origin": "Japanese",
+      "example": {
+        "ja": "試験の前はドキドキする。",
+        "en": "Before an exam, I get nervous (my heart pounds).",
+        "notes": [
+          "Often used with する."
+        ]
+      }
+    },
+    {
+      "kanji": "ぺらぺら",
+      "reading": "ペラペラ",
+      "meaning": "fluently (languages); chattering; flimsy/thin (onomatopoeia)",
+      "orthography": "katakana",
+      "origin": "Japanese",
+      "example": {
+        "ja": "彼は英語がペラペラです。",
+        "en": "He speaks English fluently.",
+        "notes": [
+          "Common colloquial compliment: 〜がペラペラ."
+        ]
+      }
+    },
+    {
+      "kanji": "ぐっすり",
+      "reading": "ぐっすり",
+      "meaning": "soundly (sleep)",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "昨日はぐっすり眠れました。",
+        "en": "I slept soundly yesterday.",
+        "notes": [
+          "Typically with 寝る / 眠る."
+        ]
+      }
     }
   ]
 }
