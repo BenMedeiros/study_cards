@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "name": "Japanese adverb (mixed)",
+    "description": "Mixed orthography group for type='adverb' — total 4 (hiragana: 1, both: 1, katakana: 2).",
+    "version": 1
+  },
+  "defaults": {
+    "type": "adverb"
+  },
+  "entries": [
+    {
+      "kanji": "また",
+      "reading": "また",
+      "meaning": "again; also; and",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "未だ",
+      "reading": "まだ",
+      "meaning": "still; not yet",
+      "orthography": "both"
+    },
+    {
+      "kanji": "ビリビリ",
+      "reading": "ビリビリ",
+      "meaning": "tingle; electric shock feeling (onomatopoeia)",
+      "orthography": "katakana",
+      "origin": "Japanese"
+    },
+    {
+      "kanji": "ベトベト",
+      "reading": "ベトベト",
+      "meaning": "sticky (onomatopoeia)",
+      "orthography": "katakana",
+      "origin": "Japanese"
+    }
+  ]
+}

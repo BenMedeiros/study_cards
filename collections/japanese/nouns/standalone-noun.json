@@ -1,29 +1,8 @@
 {
   "metadata": {
-    "name": "Japanese (standalone-noun)",
-    "description": "Auto-grouped entries from collections/japanese/nouns by type='standalone-noun'.",
-    "version": 1,
-    "sources": [
-      "collections/japanese/nouns/jp_pokemon_roots.json"
-    ],
-    "kanji": [
-      "種",
-      "草",
-      "花",
-      "火",
-      "銭",
-      "蜥蜴",
-      "毒",
-      "炎",
-      "水",
-      "亀",
-      "甲羅",
-      "砲",
-      "虫",
-      "電気",
-      "雷"
-    ],
-    "kanjiCount": 15
+    "name": "Japanese standalone-noun",
+    "description": "Grouped entries for type='standalone-noun' — total 15.",
+    "version": 1
   },
   "defaults": {
     "type": "standalone-noun"

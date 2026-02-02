@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "name": "Japanese noun (mixed)",
+    "description": "Mixed orthography group for type='noun' — total 5 (either: 1, hiragana: 4).",
+    "version": 1
+  },
+  "defaults": {
+    "type": "noun"
+  },
+  "entries": [
+    {
+      "kanji": "EV",
+      "reading": "EV",
+      "meaning": "EV (effort value; game term)",
+      "orthography": "either"
+    },
+    {
+      "kanji": "おすすめ",
+      "reading": "おすすめ",
+      "meaning": "recommendation; suggested (content)",
+      "orthography": "hiragana",
+      "example": {
+        "ja": "おすすめの動画を教えて。",
+        "en": "Tell me a recommended video.",
+        "notes": [
+          "Often written in hiragana in UI; kanji forms exist (お勧め/お薦め)."
+        ]
+      }
+    },
+    {
+      "kanji": "もんじゃ",
+      "reading": "もんじゃ",
+      "meaning": "monjayaki (Tokyo-style griddle dish)",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "ひらがな",
+      "reading": "ひらがな",
+      "meaning": "hiragana",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "かばん",
+      "reading": "かばん",
+      "meaning": "bag",
+      "orthography": "hiragana"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "metadata": {
+    "name": "Japanese compound-morpheme (mixed)",
+    "description": "Mixed orthography group for type='compound-morpheme' — total 15 (katakana: 1, kanji: 3, none: 11).",
+    "version": 1
+  },
+  "defaults": {
+    "type": "compound-morpheme"
+  },
+  "entries": [
+    {
+      "kanji": "トランス",
+      "reading": "トランス",
+      "meaning": "trans-; across; beyond (prefix usage)",
+      "origin": "English-derived",
+      "orthography": "katakana"
+    },
+    {
+      "kanji": "軍",
+      "reading": "ぐん",
+      "meaning": "army; military (group)",
+      "orthography": "kanji",
+      "example": {
+        "ja": "軍が町に入った。",
+        "en": "The army entered the town.",
+        "notes": [
+          "Often in compounds: 軍隊, 海軍, 空軍, etc."
+        ]
+      }
+    },
+    {
+      "kanji": "剣",
+      "reading": "けん",
+      "meaning": "sword (esp. in compounds); blade",
+      "orthography": "kanji",
+      "example": {
+        "ja": "剣の達人になりたい。",
+        "en": "I want to become a master of the sword.",
+        "notes": [
+          "As a standalone word, つるぎ is also common."
+        ]
+      }
+    },
+    {
+      "kanji": "死",
+      "reading": "し",
+      "meaning": "death",
+      "orthography": "kanji",
+      "example": {
+        "ja": "生と死について考えた。",
+        "en": "I thought about life and death.",
+        "notes": [
+          "Also standalone as し (rare in casual speech); common in compounds."
+        ]
+      }
+    },
+    {
+      "kanji": "不",
+      "reading": "ふ",
+      "meaning": "not; non- (negative prefix)"
+    },
+    {
+      "kanji": "思",
+      "reading": "し",
+      "meaning": "think; thought (kanji element)"
+    },
+    {
+      "kanji": "議",
+      "reading": "ぎ",
+      "meaning": "deliberation; discussion (kanji element)"
+    },
+    {
+      "kanji": "飛",
+      "reading": "ひ",
+      "meaning": "fly; soar (kanji element)"
+    },
+    {
+      "kanji": "行",
+      "reading": "こう",
+      "meaning": "go; travel; act (kanji element)"
+    },
+    {
+      "kanji": "甲",
+      "reading": "こう",
+      "meaning": "armor; shell; first rank"
+    },
+    {
+      "kanji": "羅",
+      "reading": "ら",
+      "meaning": "net; gauze; spread out"
+    },
+    {
+      "kanji": "通",
+      "reading": "つう",
+      "meaning": "pass through; commute"
+    },
+    {
+      "kanji": "常",
+      "reading": "じょう",
+      "meaning": "usual; constant"
+    },
+    {
+      "kanji": "電",
+      "reading": "でん",
+      "meaning": "electricity (kanji element)"
+    },
+    {
+      "kanji": "気",
+      "reading": "き",
+      "meaning": "spirit; energy; mood; air"
+    }
+  ]
+}

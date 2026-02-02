@@ -1,0 +1,362 @@
+{
+  "metadata": {
+    "name": "Japanese standalone-noun (kanji)",
+    "description": "Grouped entries for type='standalone-noun' and orthography='kanji' — total 44.",
+    "version": 1
+  },
+  "defaults": {
+    "type": "standalone-noun",
+    "orthography": "kanji"
+  },
+  "entries": [
+    {
+      "kanji": "闇",
+      "reading": "やみ",
+      "meaning": "darkness; the dark",
+      "example": {
+        "ja": "闇の中で声がした。",
+        "en": "I heard a voice in the darkness.",
+        "notes": [
+          "Also used figuratively (e.g., 闇が深い)."
+        ]
+      }
+    },
+    {
+      "kanji": "運",
+      "reading": "うん",
+      "meaning": "luck; fortune",
+      "example": {
+        "ja": "今日は運がいい。",
+        "en": "I have good luck today.",
+        "notes": [
+          "Often with がいい/わるい."
+        ]
+      }
+    },
+    {
+      "kanji": "影",
+      "reading": "かげ",
+      "meaning": "shadow; shade; figure (in shadow)",
+      "example": {
+        "ja": "窓に人の影が見える。",
+        "en": "I can see a person’s shadow in the window.",
+        "notes": [
+          "影 can be literal or metaphorical."
+        ]
+      }
+    },
+    {
+      "kanji": "王",
+      "reading": "おう",
+      "meaning": "king",
+      "example": {
+        "ja": "王は城に住んでいる。",
+        "en": "The king lives in the castle.",
+        "notes": [
+          "In compounds: 王国, 魔王, 王子, etc."
+        ]
+      }
+    },
+    {
+      "kanji": "技",
+      "reading": "わざ",
+      "meaning": "technique; skill; move (in fighting/games)",
+      "example": {
+        "ja": "新しい技を覚えた。",
+        "en": "I learned a new technique/move.",
+        "notes": [
+          "In compounds: 必殺技, 奥義, etc."
+        ]
+      }
+    },
+    {
+      "kanji": "光",
+      "reading": "ひかり",
+      "meaning": "light",
+      "example": {
+        "ja": "光が差し込んでいる。",
+        "en": "Light is shining in.",
+        "notes": [
+          "Often contrasted with 闇."
+        ]
+      }
+    },
+    {
+      "kanji": "魂",
+      "reading": "たましい",
+      "meaning": "soul; spirit",
+      "example": {
+        "ja": "魂をかけて戦う。",
+        "en": "Fight with your soul on the line.",
+        "notes": [
+          "Dramatic register."
+        ]
+      }
+    },
+    {
+      "kanji": "銃",
+      "reading": "じゅう",
+      "meaning": "gun; firearm",
+      "example": {
+        "ja": "映画で銃を見た。",
+        "en": "I saw a gun in a movie.",
+        "notes": [
+          "In compounds: 銃声, 銃弾, etc."
+        ]
+      }
+    },
+    {
+      "kanji": "城",
+      "reading": "しろ",
+      "meaning": "castle",
+      "example": {
+        "ja": "週末に城を見に行った。",
+        "en": "I went to see a castle on the weekend.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "神",
+      "reading": "かみ",
+      "meaning": "god; deity",
+      "example": {
+        "ja": "神に祈る人もいる。",
+        "en": "Some people pray to a god.",
+        "notes": [
+          "In fantasy: 神様, 神々, etc."
+        ]
+      }
+    },
+    {
+      "kanji": "敵",
+      "reading": "てき",
+      "meaning": "enemy",
+      "example": {
+        "ja": "敵が近づいている。",
+        "en": "The enemy is approaching.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "刀",
+      "reading": "かたな",
+      "meaning": "katana; sword (Japanese-style)",
+      "example": {
+        "ja": "侍は刀を持っていた。",
+        "en": "The samurai had a sword.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "命",
+      "reading": "いのち",
+      "meaning": "life;生命",
+      "example": {
+        "ja": "命を大切にして。",
+        "en": "Take care of your life.",
+        "notes": [
+          "Often in serious contexts."
+        ]
+      }
+    },
+    {
+      "kanji": "竜",
+      "reading": "りゅう",
+      "meaning": "dragon",
+      "example": {
+        "ja": "竜は空を飛んでいる。",
+        "en": "The dragon is flying in the sky.",
+        "notes": [
+          "Also written 龍; 竜 is common simplified form."
+        ]
+      }
+    },
+    {
+      "kanji": "力",
+      "reading": "ちから",
+      "meaning": "power; strength; ability",
+      "example": {
+        "ja": "力を合わせて頑張ろう。",
+        "en": "Let’s work together and do our best.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "次",
+      "reading": "つぎ",
+      "meaning": "next",
+      "example": {
+        "ja": "次の動画に行こう。",
+        "en": "Let’s go to the next video.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "音",
+      "reading": "おと",
+      "meaning": "sound",
+      "example": {
+        "ja": "音が小さすぎる。",
+        "en": "The sound is too quiet.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "顔",
+      "reading": "かお",
+      "meaning": "face",
+      "example": {
+        "ja": "顔認証を使ってロックを解除した。",
+        "en": "I unlocked it using face recognition.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "岩",
+      "reading": "いわ",
+      "meaning": "rock (type); rock",
+      "example": {
+        "ja": "岩タイプは防御が高いことが多い。",
+        "en": "Rock types often have high defense.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "鋼",
+      "reading": "はがね",
+      "meaning": "steel (type); steel",
+      "example": {
+        "ja": "鋼タイプは耐性が多い。",
+        "en": "Steel types have many resistances.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "氷",
+      "reading": "こおり",
+      "meaning": "ice (type); ice",
+      "example": {
+        "ja": "氷タイプは水の上を歩けない。",
+        "en": "Ice types can’t walk on water.",
+        "notes": [
+          "Sentence is just practice; not a game rule."
+        ]
+      }
+    },
+    {
+      "kanji": "猿",
+      "reading": "さる",
+      "meaning": "monkey"
+    },
+    {
+      "kanji": "兜",
+      "reading": "かぶと",
+      "meaning": "helmet; samurai helmet"
+    },
+    {
+      "kanji": "鴨",
+      "reading": "かも",
+      "meaning": "duck"
+    },
+    {
+      "kanji": "丸",
+      "reading": "まる",
+      "meaning": "circle; round; ‘-maru’ (name suffix)"
+    },
+    {
+      "kanji": "岩",
+      "reading": "いわ",
+      "meaning": "rock"
+    },
+    {
+      "kanji": "鬼",
+      "reading": "おに",
+      "meaning": "oni; demon ogre"
+    },
+    {
+      "kanji": "玉",
+      "reading": "たま",
+      "meaning": "ball; sphere; jewel"
+    },
+    {
+      "kanji": "狐",
+      "reading": "きつね",
+      "meaning": "fox"
+    },
+    {
+      "kanji": "鯉",
+      "reading": "こい",
+      "meaning": "carp"
+    },
+    {
+      "kanji": "紺",
+      "reading": "こん",
+      "meaning": "navy blue; dark blue"
+    },
+    {
+      "kanji": "蛇",
+      "reading": "へび",
+      "meaning": "snake"
+    },
+    {
+      "kanji": "宿",
+      "reading": "やど",
+      "meaning": "lodging; inn"
+    },
+    {
+      "kanji": "雀",
+      "reading": "すずめ",
+      "meaning": "sparrow"
+    },
+    {
+      "kanji": "石",
+      "reading": "いし",
+      "meaning": "stone; rock"
+    },
+    {
+      "kanji": "謎",
+      "reading": "なぞ",
+      "meaning": "mystery; riddle"
+    },
+    {
+      "kanji": "白",
+      "reading": "しろ",
+      "meaning": "white"
+    },
+    {
+      "kanji": "鳩",
+      "reading": "はと",
+      "meaning": "pigeon; dove"
+    },
+    {
+      "kanji": "目",
+      "reading": "め",
+      "meaning": "eye; (counter) -th (place)"
+    },
+    {
+      "kanji": "竜",
+      "reading": "りゅう",
+      "meaning": "dragon"
+    },
+    {
+      "kanji": "力",
+      "reading": "ちから",
+      "meaning": "power; strength"
+    },
+    {
+      "kanji": "鬱",
+      "reading": "うつ",
+      "meaning": "depression; gloom"
+    },
+    {
+      "kanji": "蕾",
+      "reading": "つぼみ",
+      "meaning": "bud (flower bud)"
+    },
+    {
+      "kanji": "黴",
+      "reading": "かび",
+      "meaning": "mold; mildew"
+    }
+  ]
+}

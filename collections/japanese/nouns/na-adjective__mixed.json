@@ -1,45 +1,28 @@
 {
   "metadata": {
-    "name": "Japanese (na-adjective)",
-    "description": "Auto-grouped entries from collections/japanese/nouns by type='na-adjective'. Expanded with common N4/N3 な形容詞 and example sentences.",
-    "version": 2,
-    "sources": [
-      "collections/japanese/nouns/jp_linguistic_terms_supplement.json",
-      "collections/japanese/nouns/jp_pokemon_roots.json"
-    ],
-    "kanji": [
-      "清潔",
-      "平気",
-      "不思議",
-      "通常",
-      "大丈夫",
-      "便利",
-      "重要",
-      "有名",
-      "元気",
-      "静か",
-      "綺麗",
-      "安全",
-      "危険",
-      "必要",
-      "簡単",
-      "大切",
-      "特別",
-      "真面目",
-      "自由",
-      "上手",
-      "下手",
-      "親切",
-      "賑やか",
-      "不便",
-      "大変"
-    ],
-    "kanjiCount": 25
+    "name": "Japanese na-adjective (mixed)",
+    "description": "Mixed orthography group for type='na-adjective' — total 25 (both: 1, kanji: 24).",
+    "version": 1
   },
   "defaults": {
     "type": "na-adjective"
   },
   "entries": [
+    {
+      "kanji": "綺麗",
+      "reading": "きれい",
+      "meaning": "pretty; beautiful; clean",
+      "orthography": "both",
+      "example": {
+        "ja": "部屋を綺麗にしてから、友だちを呼ぶ。",
+        "en": "I’ll clean the room, then invite my friends over.",
+        "notes": [
+          "Adverbial: 綺麗にする",
+          "Often written in kana: きれい",
+          "Kanji: 綺( ornate ) + 麗( beautiful )"
+        ]
+      }
+    },
     {
       "kanji": "清潔",
       "reading": "せいけつ",
@@ -177,21 +160,6 @@
         "notes": [
           "Attributive: 静かな場所",
           "Kanji: 静( quiet )"
-        ]
-      }
-    },
-    {
-      "kanji": "綺麗",
-      "reading": "きれい",
-      "meaning": "pretty; beautiful; clean",
-      "orthography": "both",
-      "example": {
-        "ja": "部屋を綺麗にしてから、友だちを呼ぶ。",
-        "en": "I’ll clean the room, then invite my friends over.",
-        "notes": [
-          "Adverbial: 綺麗にする",
-          "Often written in kana: きれい",
-          "Kanji: 綺( ornate ) + 麗( beautiful )"
         ]
       }
     },

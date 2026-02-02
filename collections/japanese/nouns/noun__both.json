@@ -1,0 +1,193 @@
+{
+  "metadata": {
+    "name": "Japanese noun (both)",
+    "description": "Grouped entries for type='noun' and orthography='both' — total 36.",
+    "version": 1
+  },
+  "defaults": {
+    "type": "noun",
+    "orthography": "both"
+  },
+  "entries": [
+    {
+      "kanji": "毒ガス",
+      "reading": "どくガス",
+      "meaning": "poison gas"
+    },
+    {
+      "kanji": "子ども",
+      "reading": "こども",
+      "meaning": "child"
+    },
+    {
+      "kanji": "お金",
+      "reading": "おかね",
+      "meaning": "money"
+    },
+    {
+      "kanji": "ご飯",
+      "reading": "ごはん",
+      "meaning": "rice; meal"
+    },
+    {
+      "kanji": "お茶",
+      "reading": "おちゃ",
+      "meaning": "tea"
+    },
+    {
+      "kanji": "答え",
+      "reading": "こたえ",
+      "meaning": "answer"
+    },
+    {
+      "kanji": "飲み物",
+      "reading": "のみもの",
+      "meaning": "drink; beverage"
+    },
+    {
+      "kanji": "食べ物",
+      "reading": "たべもの",
+      "meaning": "food"
+    },
+    {
+      "kanji": "匂い",
+      "reading": "におい",
+      "meaning": "smell; odor"
+    },
+    {
+      "kanji": "高さ",
+      "reading": "たかさ",
+      "meaning": "height"
+    },
+    {
+      "kanji": "大きさ",
+      "reading": "おおきさ",
+      "meaning": "size"
+    },
+    {
+      "kanji": "重さ",
+      "reading": "おもさ",
+      "meaning": "weight"
+    },
+    {
+      "kanji": "長さ",
+      "reading": "ながさ",
+      "meaning": "length"
+    },
+    {
+      "kanji": "考え",
+      "reading": "かんがえ",
+      "meaning": "thought; idea"
+    },
+    {
+      "kanji": "気持ち",
+      "reading": "きもち",
+      "meaning": "feeling"
+    },
+    {
+      "kanji": "注意書き",
+      "reading": "ちゅういがき",
+      "meaning": "caution note; fine print"
+    },
+    {
+      "kanji": "手続き",
+      "reading": "てつづき",
+      "meaning": "procedure; process"
+    },
+    {
+      "kanji": "後ろ",
+      "reading": "うしろ",
+      "meaning": "back; behind"
+    },
+    {
+      "kanji": "近く",
+      "reading": "ちかく",
+      "meaning": "nearby; vicinity"
+    },
+    {
+      "kanji": "遠く",
+      "reading": "とおく",
+      "meaning": "far away; distance"
+    },
+    {
+      "kanji": "向こう",
+      "reading": "むこう",
+      "meaning": "over there; the other side"
+    },
+    {
+      "kanji": "周り",
+      "reading": "まわり",
+      "meaning": "around; surroundings"
+    },
+    {
+      "kanji": "お釣り",
+      "reading": "おつり",
+      "meaning": "change (money)"
+    },
+    {
+      "kanji": "書き込み",
+      "reading": "かきこみ",
+      "meaning": "writing/posting (a comment)"
+    },
+    {
+      "kanji": "買い物",
+      "reading": "かいもの",
+      "meaning": "shopping; purchases"
+    },
+    {
+      "kanji": "年越し",
+      "reading": "としこし",
+      "meaning": "New Year's Eve; passing the year"
+    },
+    {
+      "kanji": "音読み",
+      "reading": "おんよみ",
+      "meaning": "on-yomi; Chinese-derived reading"
+    },
+    {
+      "kanji": "訓読み",
+      "reading": "くんよみ",
+      "meaning": "kun-yomi; native Japanese reading"
+    },
+    {
+      "kanji": "送り仮名",
+      "reading": "おくりがな",
+      "meaning": "kana suffixes after kanji"
+    },
+    {
+      "kanji": "ます形",
+      "reading": "ますけい",
+      "meaning": "polite verb form ending in ～ます"
+    },
+    {
+      "kanji": "ない形",
+      "reading": "ないけい",
+      "meaning": "negative verb form ending in ～ない"
+    },
+    {
+      "kanji": "て形",
+      "reading": "てけい",
+      "meaning": "te-form; connective verb form used for sequences, requests, and aspect"
+    },
+    {
+      "kanji": "た形",
+      "reading": "たけい",
+      "meaning": "past tense verb form ending in ～た"
+    },
+    {
+      "kanji": "ら抜き言葉",
+      "reading": "らぬきことば",
+      "meaning": "ra-dropping speech; colloquial omission of ら in potential forms (e.g., 食べれる)"
+    },
+    {
+      "kanji": "半ば",
+      "reading": "なかば",
+      "meaning": "middle; halfway"
+    },
+    {
+      "kanji": "休み",
+      "reading": "やすみ",
+      "meaning": "rest; holiday; break"
+    }
+  ]
+}

@@ -23,69 +23,87 @@
       "entries": null
     },
     {
-      "path": "japanese/nouns/bulk_unsorted.json",
-      "name": "Bulk Unsorted",
-      "description": "need to sort/group later'.",
-      "entries": 203
+      "path": "japanese/nouns/adverb__mixed.json",
+      "name": "Japanese adverb (mixed)",
+      "description": "Mixed orthography group for type='adverb' — total 4 (hiragana: 1, both: 1, katakana: 2).",
+      "entries": 4
     },
     {
-      "path": "japanese/nouns/compound-morpheme__katakana.json",
-      "name": "Japanese (compound-morpheme) (katakana)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='compound-morpheme' and orthography='katakana'.",
-      "entries": 1
-    },
-    {
-      "path": "japanese/nouns/compound-morpheme.json",
-      "name": "Japanese (compound-morpheme)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='compound-morpheme'.",
-      "entries": 11
+      "path": "japanese/nouns/compound-morpheme__mixed.json",
+      "name": "Japanese compound-morpheme (mixed)",
+      "description": "Mixed orthography group for type='compound-morpheme' — total 15 (katakana: 1, kanji: 3, none: 11).",
+      "entries": 15
     },
     {
       "path": "japanese/nouns/descriptive-phrase.json",
-      "name": "Japanese (descriptive-phrase)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='descriptive-phrase'.",
+      "name": "Japanese descriptive-phrase",
+      "description": "Grouped entries for type='descriptive-phrase' — total 1.",
       "entries": 1
     },
     {
-      "path": "japanese/nouns/expression__katakana.json",
-      "name": "Japanese (expression) (katakana)",
-      "description": "Common everyday katakana expressions and onomatopoeia frequently seen in manga, subtitles, and casual writing.",
-      "entries": 30
+      "path": "japanese/nouns/expression__mixed.json",
+      "name": "Japanese expression (mixed)",
+      "description": "Mixed orthography group for type='expression' — total 40 (kanji: 1, katakana: 39).",
+      "entries": 40
     },
     {
       "path": "japanese/nouns/i-adjective.json",
-      "name": "Japanese (i-adjective)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='i-adjective'. Expanded common i-adjectives.",
+      "name": "Japanese i-adjective",
+      "description": "Grouped entries for type='i-adjective' — total 100.",
       "entries": 100
     },
     {
       "path": "japanese/nouns/kanji__katakana.json",
-      "name": "Japanese (kanji) (katakana)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='kanji' and orthography='katakana'.",
+      "name": "Japanese kanji (katakana)",
+      "description": "Grouped entries for type='kanji' and orthography='katakana' — total 28.",
       "entries": 28
     },
     {
-      "path": "japanese/nouns/na-adjective.json",
-      "name": "Japanese (na-adjective)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='na-adjective'. Expanded with common N4/N3 な形容詞 and example sentences.",
+      "path": "japanese/nouns/na-adjective__mixed.json",
+      "name": "Japanese na-adjective (mixed)",
+      "description": "Mixed orthography group for type='na-adjective' — total 25 (both: 1, kanji: 24).",
       "entries": 25
     },
     {
-      "path": "japanese/nouns/noun__katakana.json",
-      "name": "Japanese (noun) (katakana)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='noun' and orthography='katakana'.",
-      "entries": 122
+      "path": "japanese/nouns/noun__both.json",
+      "name": "Japanese noun (both)",
+      "description": "Grouped entries for type='noun' and orthography='both' — total 36.",
+      "entries": 36
     },
     {
-      "path": "japanese/nouns/noun.json",
-      "name": "Japanese (noun) (noun_updated)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='noun'.",
-      "entries": 392
+      "path": "japanese/nouns/noun__kanji.json",
+      "name": "Japanese noun (kanji)",
+      "description": "Grouped entries for type='noun' and orthography='kanji' — total 475.",
+      "entries": 475
+    },
+    {
+      "path": "japanese/nouns/noun__katakana.json",
+      "name": "Japanese noun (katakana)",
+      "description": "Grouped entries for type='noun' and orthography='katakana' — total 208.",
+      "entries": 208
+    },
+    {
+      "path": "japanese/nouns/noun__mixed.json",
+      "name": "Japanese noun (mixed)",
+      "description": "Mixed orthography group for type='noun' — total 5 (either: 1, hiragana: 4).",
+      "entries": 5
+    },
+    {
+      "path": "japanese/nouns/numeral__kanji.json",
+      "name": "Japanese numeral (kanji)",
+      "description": "Grouped entries for type='numeral' and orthography='kanji' — total 15.",
+      "entries": 15
+    },
+    {
+      "path": "japanese/nouns/standalone-noun__kanji.json",
+      "name": "Japanese standalone-noun (kanji)",
+      "description": "Grouped entries for type='standalone-noun' and orthography='kanji' — total 44.",
+      "entries": 44
     },
     {
       "path": "japanese/nouns/standalone-noun.json",
-      "name": "Japanese (standalone-noun)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='standalone-noun'.",
+      "name": "Japanese standalone-noun",
+      "description": "Grouped entries for type='standalone-noun' — total 15.",
       "entries": 15
     },
     {

@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "name": "Japanese numeral (kanji)",
+    "description": "Grouped entries for type='numeral' and orthography='kanji' — total 15.",
+    "version": 1
+  },
+  "defaults": {
+    "type": "numeral",
+    "orthography": "kanji"
+  },
+  "entries": [
+    {
+      "kanji": "零",
+      "reading": "れい",
+      "meaning": "zero",
+      "example": {
+        "ja": "零（れい）またはゼロ",
+        "en": "zero; also 'zero' from English",
+        "notes": [
+          "used in some contexts; 0 often written as アラビア数字"
+        ]
+      }
+    },
+    {
+      "kanji": "一",
+      "reading": "いち",
+      "meaning": "one",
+      "example": {
+        "ja": "一、十一、一万",
+        "en": "one; examples: 11, 10,000",
+        "notes": [
+          "combines to form larger numbers"
+        ]
+      }
+    },
+    {
+      "kanji": "二",
+      "reading": "に",
+      "meaning": "two",
+      "example": {
+        "ja": "二、二十、二百",
+        "en": "two; e.g. 20, 200",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "三",
+      "reading": "さん",
+      "meaning": "three",
+      "example": {
+        "ja": "三、三十、三百",
+        "en": "three; e.g. 30, 300",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "四",
+      "reading": "よん",
+      "meaning": "four",
+      "example": {
+        "ja": "四（よん／し）",
+        "en": "four (よん or し)",
+        "notes": [
+          "use よん in counters; し appears in some compounds"
+        ]
+      }
+    },
+    {
+      "kanji": "五",
+      "reading": "ご",
+      "meaning": "five"
+    },
+    {
+      "kanji": "六",
+      "reading": "ろく",
+      "meaning": "six"
+    },
+    {
+      "kanji": "七",
+      "reading": "なな",
+      "meaning": "seven",
+      "example": {
+        "ja": "七（なな／しち）",
+        "en": "seven (なな or しち)",
+        "notes": [
+          "なな preferred in many situations; しち used in time expressions like 七時"
+        ]
+      }
+    },
+    {
+      "kanji": "八",
+      "reading": "はち",
+      "meaning": "eight"
+    },
+    {
+      "kanji": "九",
+      "reading": "きゅう",
+      "meaning": "nine",
+      "example": {
+        "ja": "九（きゅう／く）",
+        "en": "nine (きゅう or く)",
+        "notes": [
+          "きゅう common; く appears in some compounds"
+        ]
+      }
+    },
+    {
+      "kanji": "十",
+      "reading": "じゅう",
+      "meaning": "ten",
+      "example": {
+        "ja": "十、二十（にじゅう）",
+        "en": "ten; e.g. 20",
+        "notes": [
+          "forms the tens with digit+十"
+        ]
+      }
+    },
+    {
+      "kanji": "百",
+      "reading": "ひゃく",
+      "meaning": "hundred",
+      "example": {
+        "ja": "百、二百（にひゃく）",
+        "en": "hundred; e.g. 200",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "千",
+      "reading": "せん",
+      "meaning": "thousand",
+      "example": {
+        "ja": "千、二千（にせん）",
+        "en": "thousand; e.g. 2,000",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "万",
+      "reading": "まん",
+      "meaning": "ten thousand",
+      "example": {
+        "ja": "一万（いちまん）",
+        "en": "ten thousand",
+        "notes": [
+          "Japanese large-number grouping is by 10,000 (万) rather than 1,000"
+        ]
+      }
+    },
+    {
+      "kanji": "億",
+      "reading": "おく",
+      "meaning": "hundred million",
+      "example": {
+        "ja": "一億（いちおく）",
+        "en": "one hundred million",
+        "notes": []
+      }
+    }
+  ]
+}

@@ -1,285 +1,1304 @@
 {
   "metadata": {
-    "name": "Japanese (noun) (katakana)",
-    "description": "Auto-grouped entries from collections/japanese/nouns by type='noun' and orthography='katakana'.",
-    "version": 2,
-    "sources": [
-      "collections/japanese/nouns/100_katakana_english_part1.json",
-      "collections/japanese/nouns/200_nouns_part2.json",
-      "collections/japanese/nouns/jp_linguistic_terms.json",
-      "collections/japanese/nouns/jp_pokemon_roots.json"
-    ],
-    "kanji": [
-      "ホテル",
-      "レストラン",
-      "サンドイッチ",
-      "ハンバーガー",
-      "ジュース",
-      "ミルク",
-      "バター",
-      "チーズ",
-      "ステーキ",
-      "スープ",
-      "サラダ",
-      "デザート",
-      "アイスクリーム",
-      "ケーキ",
-      "クッキー",
-      "チップ",
-      "ソース",
-      "メニュー",
-      "サービス",
-      "サイズ",
-      "カラー",
-      "デザイン",
-      "ブランド",
-      "ショップ",
-      "コンビニ",
-      "スーパー",
-      "ビル",
-      "ドア",
-      "ベッド",
-      "シャワー",
-      "トイレ",
-      "タオル",
-      "ソファ",
-      "テーブル",
-      "イス",
-      "ライト",
-      "ボタン",
-      "カード",
-      "ポイント",
-      "セール",
-      "ゲーム",
-      "スポーツ",
-      "チーム",
-      "プレー",
-      "テスト",
-      "クラス",
-      "メンバー",
-      "リーダー",
-      "ルール",
-      "ミス",
-      "スマートフォン",
-      "コンピューター",
-      "パソコン",
-      "アプリ",
-      "ソフト",
-      "データ",
-      "ネット",
-      "メール",
-      "リンク",
-      "サイト",
-      "バス",
-      "パン",
-      "カタカナ",
-      "ガス",
-      "エレベーター",
-      "コート",
-      "電子レンジ",
-      "片仮名",
-      "リザード",
-      "キャタピラー",
-      "セル",
-      "バタフライ",
-      "ビートル",
-      "コクーン",
-      "スピア",
-      "ラット",
-      "ドリル",
-
-      "コーヒー",
-      "ティー",
-      "カフェ",
-      "ラーメン",
-      "カレー",
-      "ピザ",
-      "パスタ",
-      "ソーセージ",
-      "ハム",
-      "ヨーグルト",
-      "チョコレート",
-      "キャンディ",
-      "スナック",
-      "ポテト",
-      "トマト",
-      "レモン",
-      "オレンジ",
-      "バナナ",
-      "パイナップル",
-      "グレープ",
-
-      "カメラ",
-      "テレビ",
-      "ラジオ",
-      "ビデオ",
-      "スピーカー",
-      "イヤホン",
-      "ヘッドホン",
-      "マイク",
-      "プリンター",
-      "コピー",
-      "モニター",
-      "キーボード",
-      "マウス",
-      "バッテリー",
-      "コード",
-      "ケーブル",
-      "ファイル",
-      "フォルダ",
-      "パスワード",
-      "アカウント",
-
-      "バイク",
-      "タクシー",
-      "トラック",
-      "チケット",
-      "ホーム",
-      "プラットフォーム",
-
-      "シャツ",
-      "スカート",
-      "ズボン",
-      "ジャケット",
-      "セーター",
-      "スーツ",
-      "ネクタイ",
-      "スニーカー",
-      "バッグ",
-      "キャップ"
-    ],
-    "kanjiCount": 127
+    "name": "Japanese noun (katakana)",
+    "description": "Grouped entries for type='noun' and orthography='katakana' — total 208.",
+    "version": 1
   },
   "defaults": {
     "type": "noun",
     "orthography": "katakana"
   },
   "entries": [
-    { "origin": "English", "kanji": "ホテル", "reading": "ホテル", "meaning": "hotel" },
-    { "origin": "English", "kanji": "レストラン", "reading": "レストラン", "meaning": "restaurant" },
-    { "origin": "English", "kanji": "サンドイッチ", "reading": "サンドイッチ", "meaning": "sandwich" },
-    { "origin": "English", "kanji": "ハンバーガー", "reading": "ハンバーガー", "meaning": "hamburger" },
-    { "origin": "English", "kanji": "ジュース", "reading": "ジュース", "meaning": "juice" },
-    { "origin": "English", "kanji": "ミルク", "reading": "ミルク", "meaning": "milk" },
-    { "origin": "English", "kanji": "バター", "reading": "バター", "meaning": "butter" },
-    { "origin": "English", "kanji": "チーズ", "reading": "チーズ", "meaning": "cheese" },
-    { "origin": "English", "kanji": "ステーキ", "reading": "ステーキ", "meaning": "steak" },
-    { "origin": "English", "kanji": "スープ", "reading": "スープ", "meaning": "soup" },
-    { "origin": "English", "kanji": "サラダ", "reading": "サラダ", "meaning": "salad" },
-    { "origin": "English", "kanji": "デザート", "reading": "デザート", "meaning": "dessert" },
-    { "origin": "English", "kanji": "アイスクリーム", "reading": "アイスクリーム", "meaning": "ice cream" },
-    { "origin": "English", "kanji": "ケーキ", "reading": "ケーキ", "meaning": "cake" },
-    { "origin": "English", "kanji": "クッキー", "reading": "クッキー", "meaning": "cookie" },
-    { "origin": "English", "kanji": "チップ", "reading": "チップ", "meaning": "chip; tip" },
-    { "origin": "English", "kanji": "ソース", "reading": "ソース", "meaning": "sauce" },
-    { "origin": "English", "kanji": "メニュー", "reading": "メニュー", "meaning": "menu" },
-    { "origin": "English-derived", "kanji": "サービス", "reading": "サービス", "meaning": "complimentary extra; free item" },
-    { "origin": "English", "kanji": "サイズ", "reading": "サイズ", "meaning": "size" },
-    { "origin": "English", "kanji": "カラー", "reading": "カラー", "meaning": "color" },
-    { "origin": "English", "kanji": "デザイン", "reading": "デザイン", "meaning": "design" },
-    { "origin": "English", "kanji": "ブランド", "reading": "ブランド", "meaning": "brand" },
-    { "origin": "English", "kanji": "ショップ", "reading": "ショップ", "meaning": "shop" },
-    { "origin": "English-derived", "kanji": "コンビニ", "reading": "コンビニ", "meaning": "convenience store" },
-    { "origin": "English-derived", "kanji": "スーパー", "reading": "スーパー", "meaning": "supermarket" },
-    { "origin": "English-derived", "kanji": "ビル", "reading": "ビル", "meaning": "office building" },
-    { "origin": "English", "kanji": "ドア", "reading": "ドア", "meaning": "door" },
-    { "origin": "English", "kanji": "ベッド", "reading": "ベッド", "meaning": "bed" },
-    { "origin": "English", "kanji": "シャワー", "reading": "シャワー", "meaning": "shower" },
-    { "origin": "English-derived", "kanji": "トイレ", "reading": "トイレ", "meaning": "restroom" },
-    { "origin": "English", "kanji": "タオル", "reading": "タオル", "meaning": "towel" },
-    { "origin": "English", "kanji": "ソファ", "reading": "ソファ", "meaning": "sofa" },
-    { "origin": "English", "kanji": "テーブル", "reading": "テーブル", "meaning": "table" },
-    { "origin": "English", "kanji": "イス", "reading": "イス", "meaning": "chair" },
-    { "origin": "English", "kanji": "ライト", "reading": "ライト", "meaning": "light" },
-    { "origin": "English", "kanji": "ボタン", "reading": "ボタン", "meaning": "button" },
-    { "origin": "English", "kanji": "カード", "reading": "カード", "meaning": "card" },
-    { "origin": "English", "kanji": "ポイント", "reading": "ポイント", "meaning": "point" },
-    { "origin": "English", "kanji": "セール", "reading": "セール", "meaning": "sale" },
-    { "origin": "English", "kanji": "ゲーム", "reading": "ゲーム", "meaning": "game" },
-    { "origin": "English", "kanji": "スポーツ", "reading": "スポーツ", "meaning": "sports" },
-    { "origin": "English", "kanji": "チーム", "reading": "チーム", "meaning": "team" },
-    { "origin": "English", "kanji": "プレー", "reading": "プレー", "meaning": "play" },
-    { "origin": "English", "kanji": "テスト", "reading": "テスト", "meaning": "test" },
-    { "origin": "English", "kanji": "クラス", "reading": "クラス", "meaning": "class" },
-    { "origin": "English", "kanji": "メンバー", "reading": "メンバー", "meaning": "member" },
-    { "origin": "English", "kanji": "リーダー", "reading": "リーダー", "meaning": "leader" },
-    { "origin": "English", "kanji": "ルール", "reading": "ルール", "meaning": "rule" },
-    { "origin": "English-derived", "kanji": "ミス", "reading": "ミス", "meaning": "mistake; blunder" },
-    { "origin": "English", "kanji": "スマートフォン", "reading": "スマートフォン", "meaning": "smartphone" },
-    { "origin": "English", "kanji": "コンピューター", "reading": "コンピューター", "meaning": "computer" },
-    { "origin": "Wasei-eigo", "kanji": "パソコン", "reading": "パソコン", "meaning": "personal computer" },
-    { "origin": "English-derived", "kanji": "アプリ", "reading": "アプリ", "meaning": "mobile app" },
-    { "origin": "English-derived", "kanji": "ソフト", "reading": "ソフト", "meaning": "software program" },
-    { "origin": "English", "kanji": "データ", "reading": "データ", "meaning": "data" },
-    { "origin": "English-derived", "kanji": "ネット", "reading": "ネット", "meaning": "the internet" },
-    { "origin": "English-derived", "kanji": "メール", "reading": "メール", "meaning": "email" },
-    { "origin": "English", "kanji": "リンク", "reading": "リンク", "meaning": "link" },
-    { "origin": "English", "kanji": "サイト", "reading": "サイト", "meaning": "website" },
-    { "origin": "English", "kanji": "バス", "reading": "ばす", "meaning": "bus" },
-    { "origin": "Portuguese", "kanji": "パン", "reading": "ぱん", "meaning": "bread" },
-    { "origin": "Japanese", "kanji": "片仮名", "reading": "かたかな", "meaning": "katakana" },
-    { "origin": "English", "kanji": "ガス", "reading": "がす", "meaning": "gas" },
-    { "origin": "English", "kanji": "エレベーター", "reading": "えれべーたー", "meaning": "elevator" },
-    { "origin": "English", "kanji": "コート", "reading": "こーと", "meaning": "coat" },
-
-    { "origin": "English", "kanji": "コーヒー", "reading": "コーヒー", "meaning": "coffee" },
-    { "origin": "English", "kanji": "ティー", "reading": "ティー", "meaning": "tea" },
-    { "origin": "French", "kanji": "カフェ", "reading": "カフェ", "meaning": "cafe; coffee shop" },
-    { "origin": "Chinese", "kanji": "ラーメン", "reading": "ラーメン", "meaning": "ramen" },
-    { "origin": "English", "kanji": "カレー", "reading": "カレー", "meaning": "curry (Japanese-style curry)" },
-    { "origin": "Italian", "kanji": "ピザ", "reading": "ピザ", "meaning": "pizza" },
-    { "origin": "Italian", "kanji": "パスタ", "reading": "パスタ", "meaning": "pasta" },
-    { "origin": "English", "kanji": "ソーセージ", "reading": "ソーセージ", "meaning": "sausage" },
-    { "origin": "English", "kanji": "ハム", "reading": "ハム", "meaning": "ham" },
-    { "origin": "English", "kanji": "ヨーグルト", "reading": "ヨーグルト", "meaning": "yogurt" },
-    { "origin": "English", "kanji": "チョコレート", "reading": "チョコレート", "meaning": "chocolate" },
-    { "origin": "English", "kanji": "キャンディ", "reading": "キャンディ", "meaning": "candy" },
-    { "origin": "English", "kanji": "スナック", "reading": "スナック", "meaning": "snack" },
-    { "origin": "English", "kanji": "ポテト", "reading": "ポテト", "meaning": "potato; fries" },
-    { "origin": "English", "kanji": "トマト", "reading": "トマト", "meaning": "tomato" },
-    { "origin": "English", "kanji": "レモン", "reading": "レモン", "meaning": "lemon" },
-    { "origin": "English", "kanji": "オレンジ", "reading": "オレンジ", "meaning": "orange" },
-    { "origin": "English", "kanji": "バナナ", "reading": "バナナ", "meaning": "banana" },
-    { "origin": "English", "kanji": "パイナップル", "reading": "パイナップル", "meaning": "pineapple" },
-    { "origin": "English", "kanji": "グレープ", "reading": "グレープ", "meaning": "grape (flavor); grapes" },
-
-    { "origin": "English", "kanji": "カメラ", "reading": "カメラ", "meaning": "camera" },
-    { "origin": "English", "kanji": "テレビ", "reading": "テレビ", "meaning": "television; TV" },
-    { "origin": "English", "kanji": "ラジオ", "reading": "ラジオ", "meaning": "radio" },
-    { "origin": "English", "kanji": "ビデオ", "reading": "ビデオ", "meaning": "video" },
-    { "origin": "English", "kanji": "スピーカー", "reading": "スピーカー", "meaning": "speaker" },
-    { "origin": "English", "kanji": "イヤホン", "reading": "イヤホン", "meaning": "earphones" },
-    { "origin": "English", "kanji": "ヘッドホン", "reading": "ヘッドホン", "meaning": "headphones" },
-    { "origin": "English", "kanji": "マイク", "reading": "マイク", "meaning": "microphone" },
-    { "origin": "English", "kanji": "プリンター", "reading": "プリンター", "meaning": "printer" },
-    { "origin": "English-derived", "kanji": "コピー", "reading": "コピー", "meaning": "copy; photocopy" },
-    { "origin": "English", "kanji": "モニター", "reading": "モニター", "meaning": "monitor; screen" },
-    { "origin": "English", "kanji": "キーボード", "reading": "キーボード", "meaning": "keyboard" },
-    { "origin": "English", "kanji": "マウス", "reading": "マウス", "meaning": "mouse (computer)" },
-    { "origin": "English", "kanji": "バッテリー", "reading": "バッテリー", "meaning": "battery" },
-    { "origin": "English", "kanji": "コード", "reading": "コード", "meaning": "cord; code (context-dependent)" },
-    { "origin": "English", "kanji": "ケーブル", "reading": "ケーブル", "meaning": "cable" },
-    { "origin": "English", "kanji": "ファイル", "reading": "ファイル", "meaning": "file" },
-    { "origin": "English", "kanji": "フォルダ", "reading": "フォルダ", "meaning": "folder" },
-    { "origin": "English", "kanji": "パスワード", "reading": "パスワード", "meaning": "password" },
-    { "origin": "English", "kanji": "アカウント", "reading": "アカウント", "meaning": "account" },
-
-    { "origin": "English", "kanji": "バイク", "reading": "バイク", "meaning": "motorcycle; motorbike" },
-    { "origin": "English", "kanji": "タクシー", "reading": "タクシー", "meaning": "taxi" },
-    { "origin": "English", "kanji": "トラック", "reading": "トラック", "meaning": "truck" },
-    { "origin": "English", "kanji": "チケット", "reading": "チケット", "meaning": "ticket" },
-    { "origin": "English", "kanji": "ホーム", "reading": "ホーム", "meaning": "platform (train); home (context-dependent)" },
-    { "origin": "English", "kanji": "プラットフォーム", "reading": "プラットフォーム", "meaning": "platform" },
-
-    { "origin": "English", "kanji": "シャツ", "reading": "シャツ", "meaning": "shirt" },
-    { "origin": "English", "kanji": "スカート", "reading": "スカート", "meaning": "skirt" },
-    { "origin": "English", "kanji": "ズボン", "reading": "ズボン", "meaning": "trousers; pants" },
-    { "origin": "English", "kanji": "ジャケット", "reading": "ジャケット", "meaning": "jacket" },
-    { "origin": "English", "kanji": "セーター", "reading": "セーター", "meaning": "sweater" },
-    { "origin": "English", "kanji": "スーツ", "reading": "スーツ", "meaning": "suit" },
-    { "origin": "English", "kanji": "ネクタイ", "reading": "ネクタイ", "meaning": "necktie" },
-    { "origin": "English", "kanji": "スニーカー", "reading": "スニーカー", "meaning": "sneakers" },
-    { "origin": "English", "kanji": "バッグ", "reading": "バッグ", "meaning": "bag" },
-    { "origin": "English", "kanji": "キャップ", "reading": "キャップ", "meaning": "cap; hat" }
+    {
+      "kanji": "ニュース",
+      "reading": "ニュース",
+      "meaning": "news",
+      "origin": "English-derived",
+      "example": {
+        "ja": "ニュースを見てから寝る。",
+        "en": "I watch the news before sleeping.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "プライバシー",
+      "reading": "プライバシー",
+      "meaning": "privacy",
+      "origin": "English",
+      "example": {
+        "ja": "プライバシー設定を確認した。",
+        "en": "I checked my privacy settings.",
+        "notes": [
+          "Commonly appears with 設定."
+        ]
+      }
+    },
+    {
+      "kanji": "ライブ",
+      "reading": "ライブ",
+      "meaning": "live broadcast; live stream; live (event)",
+      "origin": "English-derived",
+      "example": {
+        "ja": "今夜はライブ配信がある。",
+        "en": "There’s a live stream tonight.",
+        "notes": [
+          "Also used for concerts: ライブに行く."
+        ]
+      }
+    },
+    {
+      "kanji": "ログアウト",
+      "reading": "ログアウト",
+      "meaning": "log out (noun/verb in Japanese UI)",
+      "origin": "English-derived",
+      "example": {
+        "ja": "安全のため、使った後はログアウトする。",
+        "en": "For safety, log out after using it.",
+        "notes": [
+          "Often used with する."
+        ]
+      }
+    },
+    {
+      "kanji": "ログイン",
+      "reading": "ログイン",
+      "meaning": "log in; sign in (noun/verb in Japanese UI)",
+      "origin": "English-derived",
+      "example": {
+        "ja": "アカウントにログインできない。",
+        "en": "I can’t log in to my account.",
+        "notes": [
+          "Often used with する/できる."
+        ]
+      }
+    },
+    {
+      "kanji": "ゴースト",
+      "reading": "ゴースト",
+      "meaning": "ghost (type/name label)",
+      "origin": "English",
+      "example": {
+        "ja": "ゴーストタイプは弱点も多い。",
+        "en": "Ghost types also have many weaknesses.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "ドラゴン",
+      "reading": "ドラゴン",
+      "meaning": "dragon (type/name label)",
+      "origin": "English",
+      "example": {
+        "ja": "ドラゴンタイプは人気がある。",
+        "en": "Dragon types are popular.",
+        "notes": []
+      }
+    },
+    {
+      "kanji": "インセクト",
+      "reading": "インセクト",
+      "meaning": "insect",
+      "origin": "English"
+    },
+    {
+      "kanji": "ウインド",
+      "reading": "ウインド",
+      "meaning": "wind",
+      "origin": "English"
+    },
+    {
+      "kanji": "エレクトリック",
+      "reading": "エレクトリック",
+      "meaning": "electric",
+      "origin": "English"
+    },
+    {
+      "kanji": "オウム",
+      "reading": "オウム",
+      "meaning": "parrot",
+      "origin": "Other"
+    },
+    {
+      "kanji": "オウムガイ",
+      "reading": "オウムガイ",
+      "meaning": "nautilus (chambered nautilus)",
+      "origin": "Other"
+    },
+    {
+      "kanji": "ガード",
+      "reading": "ガード",
+      "meaning": "guard; protection",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "カイロス",
+      "reading": "カイロス",
+      "meaning": "Kairos (name-root; also ‘opportune moment’ in Greek)",
+      "origin": "Other"
+    },
+    {
+      "kanji": "カラ",
+      "reading": "カラ",
+      "meaning": "shell; empty (name-root)",
+      "origin": "Japanese"
+    },
+    {
+      "kanji": "ガラ",
+      "reading": "ガラ",
+      "meaning": "pattern; design; also ‘rattle’ nuance (name-root)",
+      "origin": "Japanese"
+    },
+    {
+      "kanji": "カンガルー",
+      "reading": "カンガルー",
+      "meaning": "kangaroo",
+      "origin": "English"
+    },
+    {
+      "kanji": "キャタピラー",
+      "reading": "キャタピラー",
+      "meaning": "caterpillar",
+      "origin": "English"
+    },
+    {
+      "kanji": "ギャロップ",
+      "reading": "ギャロップ",
+      "meaning": "gallop",
+      "origin": "English"
+    },
+    {
+      "kanji": "キング",
+      "reading": "キング",
+      "meaning": "king",
+      "origin": "English"
+    },
+    {
+      "kanji": "クイーン",
+      "reading": "クイーン",
+      "meaning": "queen",
+      "origin": "English"
+    },
+    {
+      "kanji": "クラブ",
+      "reading": "クラブ",
+      "meaning": "club; crab (name-root; often ‘crab’ in Pokémon)",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "ケーシー",
+      "reading": "ケーシー",
+      "meaning": "Casey (name-root)",
+      "origin": "Other"
+    },
+    {
+      "kanji": "ゲンガー",
+      "reading": "ゲンガー",
+      "meaning": "Gengar (name-root)",
+      "origin": "Other"
+    },
+    {
+      "kanji": "ケンタウロス",
+      "reading": "ケンタウロス",
+      "meaning": "centaur",
+      "origin": "Other"
+    },
+    {
+      "kanji": "コイル",
+      "reading": "コイル",
+      "meaning": "coil",
+      "origin": "English"
+    },
+    {
+      "kanji": "ゴースト",
+      "reading": "ゴースト",
+      "meaning": "ghost",
+      "origin": "English"
+    },
+    {
+      "kanji": "ゴール",
+      "reading": "ゴール",
+      "meaning": "goal",
+      "origin": "English"
+    },
+    {
+      "kanji": "ゴールド",
+      "reading": "ゴールド",
+      "meaning": "gold",
+      "origin": "English"
+    },
+    {
+      "kanji": "ゴーレム",
+      "reading": "ゴーレム",
+      "meaning": "golem",
+      "origin": "Other"
+    },
+    {
+      "kanji": "コクーン",
+      "reading": "コクーン",
+      "meaning": "cocoon",
+      "origin": "English"
+    },
+    {
+      "kanji": "サイ",
+      "reading": "サイ",
+      "meaning": "rhinoceros (sai)",
+      "origin": "Japanese"
+    },
+    {
+      "kanji": "サンダー",
+      "reading": "サンダー",
+      "meaning": "thunder",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "サンド",
+      "reading": "サンド",
+      "meaning": "sand",
+      "origin": "English"
+    },
+    {
+      "kanji": "シー",
+      "reading": "シー",
+      "meaning": "sea / ‘C’ (name-root)",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "シェル",
+      "reading": "シェル",
+      "meaning": "shell",
+      "origin": "English"
+    },
+    {
+      "kanji": "ジュゴン",
+      "reading": "ジュゴン",
+      "meaning": "dugong",
+      "origin": "Other"
+    },
+    {
+      "kanji": "スター",
+      "reading": "スター",
+      "meaning": "star; celebrity",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "ストライク",
+      "reading": "ストライク",
+      "meaning": "strike",
+      "origin": "English"
+    },
+    {
+      "kanji": "スピア",
+      "reading": "スピア",
+      "meaning": "spear",
+      "origin": "English"
+    },
+    {
+      "kanji": "スリープ",
+      "reading": "スリープ",
+      "meaning": "sleep",
+      "origin": "English"
+    },
+    {
+      "kanji": "セル",
+      "reading": "セル",
+      "meaning": "cell (name-root; generic ‘cell’)",
+      "origin": "English"
+    },
+    {
+      "kanji": "ダグ",
+      "reading": "ダグ",
+      "meaning": "dug / dig (name-root)",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "ダック",
+      "reading": "ダック",
+      "meaning": "duck",
+      "origin": "English"
+    },
+    {
+      "kanji": "ツー",
+      "reading": "ツー",
+      "meaning": "two / ‘2’ (name-root)",
+      "origin": "English"
+    },
+    {
+      "kanji": "ディグ",
+      "reading": "ディグ",
+      "meaning": "dig",
+      "origin": "English"
+    },
+    {
+      "kanji": "ドードー",
+      "reading": "ドードー",
+      "meaning": "dodo (bird)",
+      "origin": "Other"
+    },
+    {
+      "kanji": "ドラゴン",
+      "reading": "ドラゴン",
+      "meaning": "dragon",
+      "origin": "English"
+    },
+    {
+      "kanji": "トリオ",
+      "reading": "トリオ",
+      "meaning": "trio",
+      "origin": "English"
+    },
+    {
+      "kanji": "ドリル",
+      "reading": "ドリル",
+      "meaning": "drill",
+      "origin": "English"
+    },
+    {
+      "kanji": "ナッツ",
+      "reading": "ナッツ",
+      "meaning": "nuts",
+      "origin": "English"
+    },
+    {
+      "kanji": "ニードル",
+      "reading": "ニードル",
+      "meaning": "needle",
+      "origin": "English"
+    },
+    {
+      "kanji": "パール",
+      "reading": "パール",
+      "meaning": "pearl",
+      "origin": "English"
+    },
+    {
+      "kanji": "パウ",
+      "reading": "パウ",
+      "meaning": "pow / ‘paw’ (name-root)",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "バタフライ",
+      "reading": "バタフライ",
+      "meaning": "butterfly",
+      "origin": "English"
+    },
+    {
+      "kanji": "バット",
+      "reading": "バット",
+      "meaning": "bat (animal or sports bat; name-root)",
+      "origin": "English"
+    },
+    {
+      "kanji": "パラサイト",
+      "reading": "パラサイト",
+      "meaning": "parasite",
+      "origin": "English"
+    },
+    {
+      "kanji": "バリア",
+      "reading": "バリア",
+      "meaning": "barrier",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "ビートル",
+      "reading": "ビートル",
+      "meaning": "beetle",
+      "origin": "English"
+    },
+    {
+      "kanji": "ピクシー",
+      "reading": "ピクシー",
+      "meaning": "pixie",
+      "origin": "English"
+    },
+    {
+      "kanji": "ファイヤー",
+      "reading": "ファイヤー",
+      "meaning": "fire",
+      "origin": "English"
+    },
+    {
+      "kanji": "ブースト",
+      "reading": "ブースト",
+      "meaning": "boost",
+      "origin": "English"
+    },
+    {
+      "kanji": "フーディーニ",
+      "reading": "フーディーニ",
+      "meaning": "Houdini (name-root)",
+      "origin": "Other"
+    },
+    {
+      "kanji": "プテラノドン",
+      "reading": "プテラノドン",
+      "meaning": "pteranodon",
+      "origin": "Other"
+    },
+    {
+      "kanji": "フリーズ",
+      "reading": "フリーズ",
+      "meaning": "freeze (noun/verb in Japanese UI/game)",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "プリン",
+      "reading": "プリン",
+      "meaning": "custard pudding (purin)",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "ペルシャ",
+      "reading": "ペルシャ",
+      "meaning": "Persia / Persian (name-root)",
+      "origin": "Other"
+    },
+    {
+      "kanji": "ベロ",
+      "reading": "ベロ",
+      "meaning": "tongue (colloq.); ‘bleh’/tongue (name-root)",
+      "origin": "Japanese"
+    },
+    {
+      "kanji": "ホーン",
+      "reading": "ホーン",
+      "meaning": "horn",
+      "origin": "English"
+    },
+    {
+      "kanji": "ポット",
+      "reading": "ポット",
+      "meaning": "pot; kettle (electric pot)",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "ポニー",
+      "reading": "ポニー",
+      "meaning": "pony",
+      "origin": "English"
+    },
+    {
+      "kanji": "ポリゴン",
+      "reading": "ポリゴン",
+      "meaning": "polygon",
+      "origin": "English"
+    },
+    {
+      "kanji": "マイン",
+      "reading": "マイン",
+      "meaning": "mine (name-root)",
+      "origin": "English"
+    },
+    {
+      "kanji": "ミニ",
+      "reading": "ミニ",
+      "meaning": "mini; small",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "ミュー",
+      "reading": "ミュー",
+      "meaning": "mew (cat sound/name-root)",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "メタモルフォーゼ",
+      "reading": "メタモルフォーゼ",
+      "meaning": "metamorphosis",
+      "origin": "Other"
+    },
+    {
+      "kanji": "モルフォ",
+      "reading": "モルフォ",
+      "meaning": "morpho (morpho butterfly; name-root)",
+      "origin": "Other"
+    },
+    {
+      "kanji": "モンキー",
+      "reading": "モンキー",
+      "meaning": "monkey",
+      "origin": "English"
+    },
+    {
+      "kanji": "ユンゲラー",
+      "reading": "ユンゲラー",
+      "meaning": "Jung (name-root; from Carl Jung)",
+      "origin": "Other"
+    },
+    {
+      "kanji": "ラッキー",
+      "reading": "ラッキー",
+      "meaning": "lucky",
+      "origin": "English-derived"
+    },
+    {
+      "kanji": "ラット",
+      "reading": "ラット",
+      "meaning": "rat",
+      "origin": "English"
+    },
+    {
+      "kanji": "ラプラス",
+      "reading": "ラプラス",
+      "meaning": "Laplace (name-root)",
+      "origin": "Other"
+    },
+    {
+      "kanji": "ラフレシア",
+      "reading": "ラフレシア",
+      "meaning": "Rafflesia (corpse flower; name-root)",
+      "origin": "Other"
+    },
+    {
+      "kanji": "リザード",
+      "reading": "リザード",
+      "meaning": "lizard",
+      "origin": "English"
+    },
+    {
+      "kanji": "ルージュ",
+      "reading": "ルージュ",
+      "meaning": "rouge",
+      "origin": "French"
+    },
+    {
+      "kanji": "レア",
+      "reading": "レア",
+      "meaning": "rare",
+      "origin": "English-derived"
+    },
+    {
+      "origin": "English",
+      "kanji": "ホテル",
+      "reading": "ホテル",
+      "meaning": "hotel"
+    },
+    {
+      "origin": "English",
+      "kanji": "レストラン",
+      "reading": "レストラン",
+      "meaning": "restaurant"
+    },
+    {
+      "origin": "English",
+      "kanji": "サンドイッチ",
+      "reading": "サンドイッチ",
+      "meaning": "sandwich"
+    },
+    {
+      "origin": "English",
+      "kanji": "ハンバーガー",
+      "reading": "ハンバーガー",
+      "meaning": "hamburger"
+    },
+    {
+      "origin": "English",
+      "kanji": "ジュース",
+      "reading": "ジュース",
+      "meaning": "juice"
+    },
+    {
+      "origin": "English",
+      "kanji": "ミルク",
+      "reading": "ミルク",
+      "meaning": "milk"
+    },
+    {
+      "origin": "English",
+      "kanji": "バター",
+      "reading": "バター",
+      "meaning": "butter"
+    },
+    {
+      "origin": "English",
+      "kanji": "チーズ",
+      "reading": "チーズ",
+      "meaning": "cheese"
+    },
+    {
+      "origin": "English",
+      "kanji": "ステーキ",
+      "reading": "ステーキ",
+      "meaning": "steak"
+    },
+    {
+      "origin": "English",
+      "kanji": "スープ",
+      "reading": "スープ",
+      "meaning": "soup"
+    },
+    {
+      "origin": "English",
+      "kanji": "サラダ",
+      "reading": "サラダ",
+      "meaning": "salad"
+    },
+    {
+      "origin": "English",
+      "kanji": "デザート",
+      "reading": "デザート",
+      "meaning": "dessert"
+    },
+    {
+      "origin": "English",
+      "kanji": "アイスクリーム",
+      "reading": "アイスクリーム",
+      "meaning": "ice cream"
+    },
+    {
+      "origin": "English",
+      "kanji": "ケーキ",
+      "reading": "ケーキ",
+      "meaning": "cake"
+    },
+    {
+      "origin": "English",
+      "kanji": "クッキー",
+      "reading": "クッキー",
+      "meaning": "cookie"
+    },
+    {
+      "origin": "English",
+      "kanji": "チップ",
+      "reading": "チップ",
+      "meaning": "chip; tip"
+    },
+    {
+      "origin": "English",
+      "kanji": "ソース",
+      "reading": "ソース",
+      "meaning": "sauce"
+    },
+    {
+      "origin": "English",
+      "kanji": "メニュー",
+      "reading": "メニュー",
+      "meaning": "menu"
+    },
+    {
+      "origin": "English-derived",
+      "kanji": "サービス",
+      "reading": "サービス",
+      "meaning": "complimentary extra; free item"
+    },
+    {
+      "origin": "English",
+      "kanji": "サイズ",
+      "reading": "サイズ",
+      "meaning": "size"
+    },
+    {
+      "origin": "English",
+      "kanji": "カラー",
+      "reading": "カラー",
+      "meaning": "color"
+    },
+    {
+      "origin": "English",
+      "kanji": "デザイン",
+      "reading": "デザイン",
+      "meaning": "design"
+    },
+    {
+      "origin": "English",
+      "kanji": "ブランド",
+      "reading": "ブランド",
+      "meaning": "brand"
+    },
+    {
+      "origin": "English",
+      "kanji": "ショップ",
+      "reading": "ショップ",
+      "meaning": "shop"
+    },
+    {
+      "origin": "English-derived",
+      "kanji": "コンビニ",
+      "reading": "コンビニ",
+      "meaning": "convenience store"
+    },
+    {
+      "origin": "English-derived",
+      "kanji": "スーパー",
+      "reading": "スーパー",
+      "meaning": "supermarket"
+    },
+    {
+      "origin": "English-derived",
+      "kanji": "ビル",
+      "reading": "ビル",
+      "meaning": "office building"
+    },
+    {
+      "origin": "English",
+      "kanji": "ドア",
+      "reading": "ドア",
+      "meaning": "door"
+    },
+    {
+      "origin": "English",
+      "kanji": "ベッド",
+      "reading": "ベッド",
+      "meaning": "bed"
+    },
+    {
+      "origin": "English",
+      "kanji": "シャワー",
+      "reading": "シャワー",
+      "meaning": "shower"
+    },
+    {
+      "origin": "English-derived",
+      "kanji": "トイレ",
+      "reading": "トイレ",
+      "meaning": "restroom"
+    },
+    {
+      "origin": "English",
+      "kanji": "タオル",
+      "reading": "タオル",
+      "meaning": "towel"
+    },
+    {
+      "origin": "English",
+      "kanji": "ソファ",
+      "reading": "ソファ",
+      "meaning": "sofa"
+    },
+    {
+      "origin": "English",
+      "kanji": "テーブル",
+      "reading": "テーブル",
+      "meaning": "table"
+    },
+    {
+      "origin": "English",
+      "kanji": "イス",
+      "reading": "イス",
+      "meaning": "chair"
+    },
+    {
+      "origin": "English",
+      "kanji": "ライト",
+      "reading": "ライト",
+      "meaning": "light"
+    },
+    {
+      "origin": "English",
+      "kanji": "ボタン",
+      "reading": "ボタン",
+      "meaning": "button"
+    },
+    {
+      "origin": "English",
+      "kanji": "カード",
+      "reading": "カード",
+      "meaning": "card"
+    },
+    {
+      "origin": "English",
+      "kanji": "ポイント",
+      "reading": "ポイント",
+      "meaning": "point"
+    },
+    {
+      "origin": "English",
+      "kanji": "セール",
+      "reading": "セール",
+      "meaning": "sale"
+    },
+    {
+      "origin": "English",
+      "kanji": "ゲーム",
+      "reading": "ゲーム",
+      "meaning": "game"
+    },
+    {
+      "origin": "English",
+      "kanji": "スポーツ",
+      "reading": "スポーツ",
+      "meaning": "sports"
+    },
+    {
+      "origin": "English",
+      "kanji": "チーム",
+      "reading": "チーム",
+      "meaning": "team"
+    },
+    {
+      "origin": "English",
+      "kanji": "プレー",
+      "reading": "プレー",
+      "meaning": "play"
+    },
+    {
+      "origin": "English",
+      "kanji": "テスト",
+      "reading": "テスト",
+      "meaning": "test"
+    },
+    {
+      "origin": "English",
+      "kanji": "クラス",
+      "reading": "クラス",
+      "meaning": "class"
+    },
+    {
+      "origin": "English",
+      "kanji": "メンバー",
+      "reading": "メンバー",
+      "meaning": "member"
+    },
+    {
+      "origin": "English",
+      "kanji": "リーダー",
+      "reading": "リーダー",
+      "meaning": "leader"
+    },
+    {
+      "origin": "English",
+      "kanji": "ルール",
+      "reading": "ルール",
+      "meaning": "rule"
+    },
+    {
+      "origin": "English-derived",
+      "kanji": "ミス",
+      "reading": "ミス",
+      "meaning": "mistake; blunder"
+    },
+    {
+      "origin": "English",
+      "kanji": "スマートフォン",
+      "reading": "スマートフォン",
+      "meaning": "smartphone"
+    },
+    {
+      "origin": "English",
+      "kanji": "コンピューター",
+      "reading": "コンピューター",
+      "meaning": "computer"
+    },
+    {
+      "origin": "Wasei-eigo",
+      "kanji": "パソコン",
+      "reading": "パソコン",
+      "meaning": "personal computer"
+    },
+    {
+      "origin": "English-derived",
+      "kanji": "アプリ",
+      "reading": "アプリ",
+      "meaning": "mobile app"
+    },
+    {
+      "origin": "English-derived",
+      "kanji": "ソフト",
+      "reading": "ソフト",
+      "meaning": "software program"
+    },
+    {
+      "origin": "English",
+      "kanji": "データ",
+      "reading": "データ",
+      "meaning": "data"
+    },
+    {
+      "origin": "English-derived",
+      "kanji": "ネット",
+      "reading": "ネット",
+      "meaning": "the internet"
+    },
+    {
+      "origin": "English-derived",
+      "kanji": "メール",
+      "reading": "メール",
+      "meaning": "email"
+    },
+    {
+      "origin": "English",
+      "kanji": "リンク",
+      "reading": "リンク",
+      "meaning": "link"
+    },
+    {
+      "origin": "English",
+      "kanji": "サイト",
+      "reading": "サイト",
+      "meaning": "website"
+    },
+    {
+      "origin": "English",
+      "kanji": "バス",
+      "reading": "ばす",
+      "meaning": "bus"
+    },
+    {
+      "origin": "Portuguese",
+      "kanji": "パン",
+      "reading": "ぱん",
+      "meaning": "bread"
+    },
+    {
+      "origin": "Japanese",
+      "kanji": "片仮名",
+      "reading": "かたかな",
+      "meaning": "katakana"
+    },
+    {
+      "origin": "English",
+      "kanji": "ガス",
+      "reading": "がす",
+      "meaning": "gas"
+    },
+    {
+      "origin": "English",
+      "kanji": "エレベーター",
+      "reading": "えれべーたー",
+      "meaning": "elevator"
+    },
+    {
+      "origin": "English",
+      "kanji": "コート",
+      "reading": "こーと",
+      "meaning": "coat"
+    },
+    {
+      "origin": "English",
+      "kanji": "コーヒー",
+      "reading": "コーヒー",
+      "meaning": "coffee"
+    },
+    {
+      "origin": "English",
+      "kanji": "ティー",
+      "reading": "ティー",
+      "meaning": "tea"
+    },
+    {
+      "origin": "French",
+      "kanji": "カフェ",
+      "reading": "カフェ",
+      "meaning": "cafe; coffee shop"
+    },
+    {
+      "origin": "Chinese",
+      "kanji": "ラーメン",
+      "reading": "ラーメン",
+      "meaning": "ramen"
+    },
+    {
+      "origin": "English",
+      "kanji": "カレー",
+      "reading": "カレー",
+      "meaning": "curry (Japanese-style curry)"
+    },
+    {
+      "origin": "Italian",
+      "kanji": "ピザ",
+      "reading": "ピザ",
+      "meaning": "pizza"
+    },
+    {
+      "origin": "Italian",
+      "kanji": "パスタ",
+      "reading": "パスタ",
+      "meaning": "pasta"
+    },
+    {
+      "origin": "English",
+      "kanji": "ソーセージ",
+      "reading": "ソーセージ",
+      "meaning": "sausage"
+    },
+    {
+      "origin": "English",
+      "kanji": "ハム",
+      "reading": "ハム",
+      "meaning": "ham"
+    },
+    {
+      "origin": "English",
+      "kanji": "ヨーグルト",
+      "reading": "ヨーグルト",
+      "meaning": "yogurt"
+    },
+    {
+      "origin": "English",
+      "kanji": "チョコレート",
+      "reading": "チョコレート",
+      "meaning": "chocolate"
+    },
+    {
+      "origin": "English",
+      "kanji": "キャンディ",
+      "reading": "キャンディ",
+      "meaning": "candy"
+    },
+    {
+      "origin": "English",
+      "kanji": "スナック",
+      "reading": "スナック",
+      "meaning": "snack"
+    },
+    {
+      "origin": "English",
+      "kanji": "ポテト",
+      "reading": "ポテト",
+      "meaning": "potato; fries"
+    },
+    {
+      "origin": "English",
+      "kanji": "トマト",
+      "reading": "トマト",
+      "meaning": "tomato"
+    },
+    {
+      "origin": "English",
+      "kanji": "レモン",
+      "reading": "レモン",
+      "meaning": "lemon"
+    },
+    {
+      "origin": "English",
+      "kanji": "オレンジ",
+      "reading": "オレンジ",
+      "meaning": "orange"
+    },
+    {
+      "origin": "English",
+      "kanji": "バナナ",
+      "reading": "バナナ",
+      "meaning": "banana"
+    },
+    {
+      "origin": "English",
+      "kanji": "パイナップル",
+      "reading": "パイナップル",
+      "meaning": "pineapple"
+    },
+    {
+      "origin": "English",
+      "kanji": "グレープ",
+      "reading": "グレープ",
+      "meaning": "grape (flavor); grapes"
+    },
+    {
+      "origin": "English",
+      "kanji": "カメラ",
+      "reading": "カメラ",
+      "meaning": "camera"
+    },
+    {
+      "origin": "English",
+      "kanji": "テレビ",
+      "reading": "テレビ",
+      "meaning": "television; TV"
+    },
+    {
+      "origin": "English",
+      "kanji": "ラジオ",
+      "reading": "ラジオ",
+      "meaning": "radio"
+    },
+    {
+      "origin": "English",
+      "kanji": "ビデオ",
+      "reading": "ビデオ",
+      "meaning": "video"
+    },
+    {
+      "origin": "English",
+      "kanji": "スピーカー",
+      "reading": "スピーカー",
+      "meaning": "speaker"
+    },
+    {
+      "origin": "English",
+      "kanji": "イヤホン",
+      "reading": "イヤホン",
+      "meaning": "earphones"
+    },
+    {
+      "origin": "English",
+      "kanji": "ヘッドホン",
+      "reading": "ヘッドホン",
+      "meaning": "headphones"
+    },
+    {
+      "origin": "English",
+      "kanji": "マイク",
+      "reading": "マイク",
+      "meaning": "microphone"
+    },
+    {
+      "origin": "English",
+      "kanji": "プリンター",
+      "reading": "プリンター",
+      "meaning": "printer"
+    },
+    {
+      "origin": "English-derived",
+      "kanji": "コピー",
+      "reading": "コピー",
+      "meaning": "copy; photocopy"
+    },
+    {
+      "origin": "English",
+      "kanji": "モニター",
+      "reading": "モニター",
+      "meaning": "monitor; screen"
+    },
+    {
+      "origin": "English",
+      "kanji": "キーボード",
+      "reading": "キーボード",
+      "meaning": "keyboard"
+    },
+    {
+      "origin": "English",
+      "kanji": "マウス",
+      "reading": "マウス",
+      "meaning": "mouse (computer)"
+    },
+    {
+      "origin": "English",
+      "kanji": "バッテリー",
+      "reading": "バッテリー",
+      "meaning": "battery"
+    },
+    {
+      "origin": "English",
+      "kanji": "コード",
+      "reading": "コード",
+      "meaning": "cord; code (context-dependent)"
+    },
+    {
+      "origin": "English",
+      "kanji": "ケーブル",
+      "reading": "ケーブル",
+      "meaning": "cable"
+    },
+    {
+      "origin": "English",
+      "kanji": "ファイル",
+      "reading": "ファイル",
+      "meaning": "file"
+    },
+    {
+      "origin": "English",
+      "kanji": "フォルダ",
+      "reading": "フォルダ",
+      "meaning": "folder"
+    },
+    {
+      "origin": "English",
+      "kanji": "パスワード",
+      "reading": "パスワード",
+      "meaning": "password"
+    },
+    {
+      "origin": "English",
+      "kanji": "アカウント",
+      "reading": "アカウント",
+      "meaning": "account"
+    },
+    {
+      "origin": "English",
+      "kanji": "バイク",
+      "reading": "バイク",
+      "meaning": "motorcycle; motorbike"
+    },
+    {
+      "origin": "English",
+      "kanji": "タクシー",
+      "reading": "タクシー",
+      "meaning": "taxi"
+    },
+    {
+      "origin": "English",
+      "kanji": "トラック",
+      "reading": "トラック",
+      "meaning": "truck"
+    },
+    {
+      "origin": "English",
+      "kanji": "チケット",
+      "reading": "チケット",
+      "meaning": "ticket"
+    },
+    {
+      "origin": "English",
+      "kanji": "ホーム",
+      "reading": "ホーム",
+      "meaning": "platform (train); home (context-dependent)"
+    },
+    {
+      "origin": "English",
+      "kanji": "プラットフォーム",
+      "reading": "プラットフォーム",
+      "meaning": "platform"
+    },
+    {
+      "origin": "English",
+      "kanji": "シャツ",
+      "reading": "シャツ",
+      "meaning": "shirt"
+    },
+    {
+      "origin": "English",
+      "kanji": "スカート",
+      "reading": "スカート",
+      "meaning": "skirt"
+    },
+    {
+      "origin": "English",
+      "kanji": "ズボン",
+      "reading": "ズボン",
+      "meaning": "trousers; pants"
+    },
+    {
+      "origin": "English",
+      "kanji": "ジャケット",
+      "reading": "ジャケット",
+      "meaning": "jacket"
+    },
+    {
+      "origin": "English",
+      "kanji": "セーター",
+      "reading": "セーター",
+      "meaning": "sweater"
+    },
+    {
+      "origin": "English",
+      "kanji": "スーツ",
+      "reading": "スーツ",
+      "meaning": "suit"
+    },
+    {
+      "origin": "English",
+      "kanji": "ネクタイ",
+      "reading": "ネクタイ",
+      "meaning": "necktie"
+    },
+    {
+      "origin": "English",
+      "kanji": "スニーカー",
+      "reading": "スニーカー",
+      "meaning": "sneakers"
+    },
+    {
+      "origin": "English",
+      "kanji": "バッグ",
+      "reading": "バッグ",
+      "meaning": "bag"
+    },
+    {
+      "origin": "English",
+      "kanji": "キャップ",
+      "reading": "キャップ",
+      "meaning": "cap; hat"
+    }
   ]
 }

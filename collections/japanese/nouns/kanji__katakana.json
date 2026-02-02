@@ -1,42 +1,8 @@
 {
   "metadata": {
-    "name": "Japanese (kanji) (katakana)",
-    "description": "Auto-grouped entries from collections/japanese/nouns by type='kanji' and orthography='katakana'.",
-    "version": 1,
-    "sources": [
-      "collections/japanese/nouns/jp_linguistic_terms_supplement.json"
-    ],
-    "kanji": [
-      "促",
-      "進",
-      "長",
-      "社",
-      "部",
-      "成",
-      "清",
-      "潔",
-      "濁",
-      "半",
-      "分",
-      "平",
-      "日",
-      "和",
-      "気",
-      "仮",
-      "定",
-      "片",
-      "方",
-      "付",
-      "漢",
-      "読",
-      "書",
-      "訓",
-      "練",
-      "送",
-      "料",
-      "見"
-    ],
-    "kanjiCount": 28
+    "name": "Japanese kanji (katakana)",
+    "description": "Grouped entries for type='kanji' and orthography='katakana' — total 28.",
+    "version": 1
   },
   "defaults": {
     "type": "kanji",

@@ -125,6 +125,70 @@
         "collection": "collections/pokemon/pokemon_starters.json",
         "field": "entries[].japaneseNameRoots[]"
       }
+    },
+    {
+      "id": "ordinals",
+      "label": "Ordinals (第〜)",
+      "description": "Common ordinal forms using 第 (第一、第二…) and other ordinal expressions.",
+      "kanji": [
+        "第一","第二","第三","第四","第五","第十"
+      ],
+      "missing_kanji_definition": [
+        "第一",
+        "第五",
+        "第三",
+        "第四",
+        "第十",
+        "第二"
+      ]
+    },
+    {
+      "id": "formal_numerals",
+      "label": "Formal / Financial Numerals",
+      "description": "Traditional formal kanji used in legal, financial, and anti-fraud contexts (壱、弐、参、拾など).",
+      "kanji": [
+        "壱","弐","参","拾","阡","萬"
+      ],
+      "missing_kanji_definition": [
+        "壱",
+        "参",
+        "拾",
+        "弐",
+        "萬",
+        "阡"
+      ]
+    },
+    {
+      "id": "fractional_numerals",
+      "label": "Fractional & Approximate Numerals",
+      "description": "Common fractional and approximate number words (半, 分, 両, 割など).",
+      "kanji": [
+        "半","分","両","割","程"
+      ],
+      "missing_kanji_definition": [
+        "割",
+        "程",
+        "両"
+      ]
+    },
+    {
+      "id": "native_tsu_numerals",
+      "label": "Native 'つ' Counting (一つ〜十)",
+      "description": "The traditional native Japanese counting set used with つ (一つ、二つ、三つ…).",
+      "kanji": [
+        "一つ","二つ","三つ","四つ","五つ","六つ","七つ","八つ","九つ","十"
+      ],
+      "missing_kanji_definition": [
+        "一つ",
+        "九つ",
+        "五つ",
+        "三つ",
+        "四つ",
+        "七つ",
+        "二つ",
+        "八つ",
+        "六つ"
+      ]
     }
   ]
 }

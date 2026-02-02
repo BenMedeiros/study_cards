@@ -1,119 +1,512 @@
 {
   "metadata": {
-    "name": "Japanese (i-adjective)",
-    "description": "Auto-grouped entries from collections/japanese/nouns by type='i-adjective'. Expanded common i-adjectives.",
-    "version": 2,
-    "sources": [
-      "collections/japanese/nouns/jp_linguistic_terms_supplement.json"
-    ],
-    "kanji": [
-      "長い","清い","新しい","古い","高い","安い","低い","広い","狭い","大きい","小さい","多い","少ない","早い","遅い","近い","遠い","強い","弱い","重い","軽い","明るい","暗い","暑い","寒い","冷たい","熱い","温かい","難しい","易しい","面白い","つまらない","嬉しい","悲しい","楽しい","苦しい","痛い","甘い","辛い","苦い","美味しい","まずい","赤い","青い","白い","黒い","丸い","四角い","若い","老い","優しい","厳しい","正しい","悪い","良い","欲しい","忙しい","眠い","汚い","臭い","危ない","凄い","偉い","細い","太い","深い","浅い","厚い","薄い","硬い","柔らかい","固い","鋭い","鈍い","眩しい","寂しい","恥ずかしい","羨ましい","珍しい","詳しい","怪しい","可愛い","憎い","頼もしい","心強い","弱々しい","粗い","滑らかい","暖かい","蒼い","黄色い","茶色い","青白い","素早い","だるい","きつい","偽物っぽい","清らかい","騒がしい","忙しない"
-    ],
-    "kanjiCount": 100
+    "name": "Japanese i-adjective",
+    "description": "Grouped entries for type='i-adjective' — total 100.",
+    "version": 1
   },
   "defaults": {
     "type": "i-adjective"
   },
   "entries": [
-    {"kanji":"長い","reading":"ながい","meaning":"long"},
-    {"kanji":"清い","reading":"きよい","meaning":"pure; clean"},
-    {"kanji":"新しい","reading":"あたらしい","meaning":"new"},
-    {"kanji":"古い","reading":"ふるい","meaning":"old"},
-    {"kanji":"高い","reading":"たかい","meaning":"tall; expensive"},
-    {"kanji":"安い","reading":"やすい","meaning":"cheap"},
-    {"kanji":"低い","reading":"ひくい","meaning":"low"},
-    {"kanji":"広い","reading":"ひろい","meaning":"wide; spacious"},
-    {"kanji":"狭い","reading":"せまい","meaning":"narrow"},
-    {"kanji":"大きい","reading":"おおきい","meaning":"big"},
-    {"kanji":"小さい","reading":"ちいさい","meaning":"small"},
-    {"kanji":"多い","reading":"おおい","meaning":"many; a lot"},
-    {"kanji":"少ない","reading":"すくない","meaning":"few; little"},
-    {"kanji":"早い","reading":"はやい","meaning":"early; fast"},
-    {"kanji":"遅い","reading":"おそい","meaning":"late; slow"},
-    {"kanji":"近い","reading":"ちかい","meaning":"near"},
-    {"kanji":"遠い","reading":"とおい","meaning":"far"},
-    {"kanji":"強い","reading":"つよい","meaning":"strong"},
-    {"kanji":"弱い","reading":"よわい","meaning":"weak"},
-    {"kanji":"重い","reading":"おもい","meaning":"heavy"},
-    {"kanji":"軽い","reading":"かるい","meaning":"light (weight)"},
-    {"kanji":"明るい","reading":"あかるい","meaning":"bright; cheerful"},
-    {"kanji":"暗い","reading":"くらい","meaning":"dark; gloomy"},
-    {"kanji":"暑い","reading":"あつい","meaning":"hot (weather)"},
-    {"kanji":"寒い","reading":"さむい","meaning":"cold (weather)"},
-    {"kanji":"冷たい","reading":"つめたい","meaning":"cold (touch)"},
-    {"kanji":"熱い","reading":"あつい","meaning":"hot (touch)"},
-    {"kanji":"温かい","reading":"あたたかい","meaning":"warm"},
-    {"kanji":"難しい","reading":"むずかしい","meaning":"difficult"},
-    {"kanji":"易しい","reading":"やさしい","meaning":"easy (rare kanji)"},
-    {"kanji":"面白い","reading":"おもしろい","meaning":"interesting; funny"},
-    {"kanji":"つまらない","reading":"つまらない","meaning":"boring"},
-    {"kanji":"嬉しい","reading":"うれしい","meaning":"happy; glad"},
-    {"kanji":"悲しい","reading":"かなしい","meaning":"sad"},
-    {"kanji":"楽しい","reading":"たのしい","meaning":"fun"},
-    {"kanji":"苦しい","reading":"くるしい","meaning":"painful; hard"},
-    {"kanji":"痛い","reading":"いたい","meaning":"painful"},
-    {"kanji":"甘い","reading":"あまい","meaning":"sweet"},
-    {"kanji":"辛い","reading":"からい","meaning":"spicy"},
-    {"kanji":"苦い","reading":"にがい","meaning":"bitter"},
-    {"kanji":"美味しい","reading":"おいしい","meaning":"delicious"},
-    {"kanji":"まずい","reading":"まずい","meaning":"tastes bad"},
-    {"kanji":"赤い","reading":"あかい","meaning":"red"},
-    {"kanji":"青い","reading":"あおい","meaning":"blue"},
-    {"kanji":"白い","reading":"しろい","meaning":"white"},
-    {"kanji":"黒い","reading":"くろい","meaning":"black"},
-    {"kanji":"丸い","reading":"まるい","meaning":"round"},
-    {"kanji":"四角い","reading":"しかくい","meaning":"square"},
-    {"kanji":"若い","reading":"わかい","meaning":"young"},
-    {"kanji":"老い","reading":"おい","meaning":"old age (literary adj form)"},
-    {"kanji":"優しい","reading":"やさしい","meaning":"kind; gentle"},
-    {"kanji":"厳しい","reading":"きびしい","meaning":"strict; severe"},
-    {"kanji":"正しい","reading":"ただしい","meaning":"correct"},
-    {"kanji":"悪い","reading":"わるい","meaning":"bad"},
-    {"kanji":"良い","reading":"よい","meaning":"good"},
-    {"kanji":"欲しい","reading":"ほしい","meaning":"want; desired"},
-    {"kanji":"忙しい","reading":"いそがしい","meaning":"busy"},
-    {"kanji":"眠い","reading":"ねむい","meaning":"sleepy"},
-    {"kanji":"汚い","reading":"きたない","meaning":"dirty"},
-    {"kanji":"臭い","reading":"くさい","meaning":"smelly"},
-    {"kanji":"危ない","reading":"あぶない","meaning":"dangerous"},
-    {"kanji":"凄い","reading":"すごい","meaning":"amazing"},
-    {"kanji":"偉い","reading":"えらい","meaning":"great; admirable"},
-    {"kanji":"細い","reading":"ほそい","meaning":"thin"},
-    {"kanji":"太い","reading":"ふとい","meaning":"thick; fat"},
-    {"kanji":"深い","reading":"ふかい","meaning":"deep"},
-    {"kanji":"浅い","reading":"あさい","meaning":"shallow"},
-    {"kanji":"厚い","reading":"あつい","meaning":"thick"},
-    {"kanji":"薄い","reading":"うすい","meaning":"thin; pale"},
-    {"kanji":"硬い","reading":"かたい","meaning":"hard"},
-    {"kanji":"柔らかい","reading":"やわらかい","meaning":"soft"},
-    {"kanji":"固い","reading":"かたい","meaning":"solid; firm"},
-    {"kanji":"鋭い","reading":"するどい","meaning":"sharp"},
-    {"kanji":"鈍い","reading":"にぶい","meaning":"dull"},
-    {"kanji":"眩しい","reading":"まぶしい","meaning":"dazzling"},
-    {"kanji":"寂しい","reading":"さびしい","meaning":"lonely"},
-    {"kanji":"恥ずかしい","reading":"はずかしい","meaning":"embarrassed"},
-    {"kanji":"羨ましい","reading":"うらやましい","meaning":"envious"},
-    {"kanji":"珍しい","reading":"めずらしい","meaning":"rare"},
-    {"kanji":"詳しい","reading":"くわしい","meaning":"detailed; knowledgeable"},
-    {"kanji":"怪しい","reading":"あやしい","meaning":"suspicious"},
-    {"kanji":"可愛い","reading":"かわいい","meaning":"cute"},
-    {"kanji":"憎い","reading":"にくい","meaning":"hateful"},
-    {"kanji":"頼もしい","reading":"たのもしい","meaning":"reliable"},
-    {"kanji":"心強い","reading":"こころづよい","meaning":"reassuring"},
-    {"kanji":"弱々しい","reading":"よわよわしい","meaning":"feeble"},
-    {"kanji":"粗い","reading":"あらい","meaning":"coarse"},
-    {"kanji":"滑らかい","reading":"なめらかい","meaning":"smooth"},
-    {"kanji":"暖かい","reading":"あたたかい","meaning":"warm"},
-    {"kanji":"蒼い","reading":"あおい","meaning":"deep blue"},
-    {"kanji":"黄色い","reading":"きいろい","meaning":"yellow"},
-    {"kanji":"茶色い","reading":"ちゃいろい","meaning":"brown"},
-    {"kanji":"青白い","reading":"あおじろい","meaning":"pale"},
-    {"kanji":"素早い","reading":"すばやい","meaning":"quick"},
-    {"kanji":"だるい","reading":"だるい","meaning":"sluggish"},
-    {"kanji":"きつい","reading":"きつい","meaning":"tight; harsh"},
-    {"kanji":"偽物っぽい","reading":"にせものっぽい","meaning":"fake-looking"},
-    {"kanji":"清らかい","reading":"きよらかい","meaning":"pure (poetic)"},
-    {"kanji":"騒がしい","reading":"さわがしい","meaning":"noisy"},
-    {"kanji":"忙しない","reading":"せわしない","meaning":"restless; hectic"}
+    {
+      "kanji": "長い",
+      "reading": "ながい",
+      "meaning": "long"
+    },
+    {
+      "kanji": "清い",
+      "reading": "きよい",
+      "meaning": "pure; clean"
+    },
+    {
+      "kanji": "新しい",
+      "reading": "あたらしい",
+      "meaning": "new"
+    },
+    {
+      "kanji": "古い",
+      "reading": "ふるい",
+      "meaning": "old"
+    },
+    {
+      "kanji": "高い",
+      "reading": "たかい",
+      "meaning": "tall; expensive"
+    },
+    {
+      "kanji": "安い",
+      "reading": "やすい",
+      "meaning": "cheap"
+    },
+    {
+      "kanji": "低い",
+      "reading": "ひくい",
+      "meaning": "low"
+    },
+    {
+      "kanji": "広い",
+      "reading": "ひろい",
+      "meaning": "wide; spacious"
+    },
+    {
+      "kanji": "狭い",
+      "reading": "せまい",
+      "meaning": "narrow"
+    },
+    {
+      "kanji": "大きい",
+      "reading": "おおきい",
+      "meaning": "big"
+    },
+    {
+      "kanji": "小さい",
+      "reading": "ちいさい",
+      "meaning": "small"
+    },
+    {
+      "kanji": "多い",
+      "reading": "おおい",
+      "meaning": "many; a lot"
+    },
+    {
+      "kanji": "少ない",
+      "reading": "すくない",
+      "meaning": "few; little"
+    },
+    {
+      "kanji": "早い",
+      "reading": "はやい",
+      "meaning": "early; fast"
+    },
+    {
+      "kanji": "遅い",
+      "reading": "おそい",
+      "meaning": "late; slow"
+    },
+    {
+      "kanji": "近い",
+      "reading": "ちかい",
+      "meaning": "near"
+    },
+    {
+      "kanji": "遠い",
+      "reading": "とおい",
+      "meaning": "far"
+    },
+    {
+      "kanji": "強い",
+      "reading": "つよい",
+      "meaning": "strong"
+    },
+    {
+      "kanji": "弱い",
+      "reading": "よわい",
+      "meaning": "weak"
+    },
+    {
+      "kanji": "重い",
+      "reading": "おもい",
+      "meaning": "heavy"
+    },
+    {
+      "kanji": "軽い",
+      "reading": "かるい",
+      "meaning": "light (weight)"
+    },
+    {
+      "kanji": "明るい",
+      "reading": "あかるい",
+      "meaning": "bright; cheerful"
+    },
+    {
+      "kanji": "暗い",
+      "reading": "くらい",
+      "meaning": "dark; gloomy"
+    },
+    {
+      "kanji": "暑い",
+      "reading": "あつい",
+      "meaning": "hot (weather)"
+    },
+    {
+      "kanji": "寒い",
+      "reading": "さむい",
+      "meaning": "cold (weather)"
+    },
+    {
+      "kanji": "冷たい",
+      "reading": "つめたい",
+      "meaning": "cold (touch)"
+    },
+    {
+      "kanji": "熱い",
+      "reading": "あつい",
+      "meaning": "hot (touch)"
+    },
+    {
+      "kanji": "温かい",
+      "reading": "あたたかい",
+      "meaning": "warm"
+    },
+    {
+      "kanji": "難しい",
+      "reading": "むずかしい",
+      "meaning": "difficult"
+    },
+    {
+      "kanji": "易しい",
+      "reading": "やさしい",
+      "meaning": "easy (rare kanji)"
+    },
+    {
+      "kanji": "面白い",
+      "reading": "おもしろい",
+      "meaning": "interesting; funny"
+    },
+    {
+      "kanji": "つまらない",
+      "reading": "つまらない",
+      "meaning": "boring"
+    },
+    {
+      "kanji": "嬉しい",
+      "reading": "うれしい",
+      "meaning": "happy; glad"
+    },
+    {
+      "kanji": "悲しい",
+      "reading": "かなしい",
+      "meaning": "sad"
+    },
+    {
+      "kanji": "楽しい",
+      "reading": "たのしい",
+      "meaning": "fun"
+    },
+    {
+      "kanji": "苦しい",
+      "reading": "くるしい",
+      "meaning": "painful; hard"
+    },
+    {
+      "kanji": "痛い",
+      "reading": "いたい",
+      "meaning": "painful"
+    },
+    {
+      "kanji": "甘い",
+      "reading": "あまい",
+      "meaning": "sweet"
+    },
+    {
+      "kanji": "辛い",
+      "reading": "からい",
+      "meaning": "spicy"
+    },
+    {
+      "kanji": "苦い",
+      "reading": "にがい",
+      "meaning": "bitter"
+    },
+    {
+      "kanji": "美味しい",
+      "reading": "おいしい",
+      "meaning": "delicious"
+    },
+    {
+      "kanji": "まずい",
+      "reading": "まずい",
+      "meaning": "tastes bad"
+    },
+    {
+      "kanji": "赤い",
+      "reading": "あかい",
+      "meaning": "red"
+    },
+    {
+      "kanji": "青い",
+      "reading": "あおい",
+      "meaning": "blue"
+    },
+    {
+      "kanji": "白い",
+      "reading": "しろい",
+      "meaning": "white"
+    },
+    {
+      "kanji": "黒い",
+      "reading": "くろい",
+      "meaning": "black"
+    },
+    {
+      "kanji": "丸い",
+      "reading": "まるい",
+      "meaning": "round"
+    },
+    {
+      "kanji": "四角い",
+      "reading": "しかくい",
+      "meaning": "square"
+    },
+    {
+      "kanji": "若い",
+      "reading": "わかい",
+      "meaning": "young"
+    },
+    {
+      "kanji": "老い",
+      "reading": "おい",
+      "meaning": "old age (literary adj form)"
+    },
+    {
+      "kanji": "優しい",
+      "reading": "やさしい",
+      "meaning": "kind; gentle"
+    },
+    {
+      "kanji": "厳しい",
+      "reading": "きびしい",
+      "meaning": "strict; severe"
+    },
+    {
+      "kanji": "正しい",
+      "reading": "ただしい",
+      "meaning": "correct"
+    },
+    {
+      "kanji": "悪い",
+      "reading": "わるい",
+      "meaning": "bad"
+    },
+    {
+      "kanji": "良い",
+      "reading": "よい",
+      "meaning": "good"
+    },
+    {
+      "kanji": "欲しい",
+      "reading": "ほしい",
+      "meaning": "want; desired"
+    },
+    {
+      "kanji": "忙しい",
+      "reading": "いそがしい",
+      "meaning": "busy"
+    },
+    {
+      "kanji": "眠い",
+      "reading": "ねむい",
+      "meaning": "sleepy"
+    },
+    {
+      "kanji": "汚い",
+      "reading": "きたない",
+      "meaning": "dirty"
+    },
+    {
+      "kanji": "臭い",
+      "reading": "くさい",
+      "meaning": "smelly"
+    },
+    {
+      "kanji": "危ない",
+      "reading": "あぶない",
+      "meaning": "dangerous"
+    },
+    {
+      "kanji": "凄い",
+      "reading": "すごい",
+      "meaning": "amazing"
+    },
+    {
+      "kanji": "偉い",
+      "reading": "えらい",
+      "meaning": "great; admirable"
+    },
+    {
+      "kanji": "細い",
+      "reading": "ほそい",
+      "meaning": "thin"
+    },
+    {
+      "kanji": "太い",
+      "reading": "ふとい",
+      "meaning": "thick; fat"
+    },
+    {
+      "kanji": "深い",
+      "reading": "ふかい",
+      "meaning": "deep"
+    },
+    {
+      "kanji": "浅い",
+      "reading": "あさい",
+      "meaning": "shallow"
+    },
+    {
+      "kanji": "厚い",
+      "reading": "あつい",
+      "meaning": "thick"
+    },
+    {
+      "kanji": "薄い",
+      "reading": "うすい",
+      "meaning": "thin; pale"
+    },
+    {
+      "kanji": "硬い",
+      "reading": "かたい",
+      "meaning": "hard"
+    },
+    {
+      "kanji": "柔らかい",
+      "reading": "やわらかい",
+      "meaning": "soft"
+    },
+    {
+      "kanji": "固い",
+      "reading": "かたい",
+      "meaning": "solid; firm"
+    },
+    {
+      "kanji": "鋭い",
+      "reading": "するどい",
+      "meaning": "sharp"
+    },
+    {
+      "kanji": "鈍い",
+      "reading": "にぶい",
+      "meaning": "dull"
+    },
+    {
+      "kanji": "眩しい",
+      "reading": "まぶしい",
+      "meaning": "dazzling"
+    },
+    {
+      "kanji": "寂しい",
+      "reading": "さびしい",
+      "meaning": "lonely"
+    },
+    {
+      "kanji": "恥ずかしい",
+      "reading": "はずかしい",
+      "meaning": "embarrassed"
+    },
+    {
+      "kanji": "羨ましい",
+      "reading": "うらやましい",
+      "meaning": "envious"
+    },
+    {
+      "kanji": "珍しい",
+      "reading": "めずらしい",
+      "meaning": "rare"
+    },
+    {
+      "kanji": "詳しい",
+      "reading": "くわしい",
+      "meaning": "detailed; knowledgeable"
+    },
+    {
+      "kanji": "怪しい",
+      "reading": "あやしい",
+      "meaning": "suspicious"
+    },
+    {
+      "kanji": "可愛い",
+      "reading": "かわいい",
+      "meaning": "cute"
+    },
+    {
+      "kanji": "憎い",
+      "reading": "にくい",
+      "meaning": "hateful"
+    },
+    {
+      "kanji": "頼もしい",
+      "reading": "たのもしい",
+      "meaning": "reliable"
+    },
+    {
+      "kanji": "心強い",
+      "reading": "こころづよい",
+      "meaning": "reassuring"
+    },
+    {
+      "kanji": "弱々しい",
+      "reading": "よわよわしい",
+      "meaning": "feeble"
+    },
+    {
+      "kanji": "粗い",
+      "reading": "あらい",
+      "meaning": "coarse"
+    },
+    {
+      "kanji": "滑らかい",
+      "reading": "なめらかい",
+      "meaning": "smooth"
+    },
+    {
+      "kanji": "暖かい",
+      "reading": "あたたかい",
+      "meaning": "warm"
+    },
+    {
+      "kanji": "蒼い",
+      "reading": "あおい",
+      "meaning": "deep blue"
+    },
+    {
+      "kanji": "黄色い",
+      "reading": "きいろい",
+      "meaning": "yellow"
+    },
+    {
+      "kanji": "茶色い",
+      "reading": "ちゃいろい",
+      "meaning": "brown"
+    },
+    {
+      "kanji": "青白い",
+      "reading": "あおじろい",
+      "meaning": "pale"
+    },
+    {
+      "kanji": "素早い",
+      "reading": "すばやい",
+      "meaning": "quick"
+    },
+    {
+      "kanji": "だるい",
+      "reading": "だるい",
+      "meaning": "sluggish"
+    },
+    {
+      "kanji": "きつい",
+      "reading": "きつい",
+      "meaning": "tight; harsh"
+    },
+    {
+      "kanji": "偽物っぽい",
+      "reading": "にせものっぽい",
+      "meaning": "fake-looking"
+    },
+    {
+      "kanji": "清らかい",
+      "reading": "きよらかい",
+      "meaning": "pure (poetic)"
+    },
+    {
+      "kanji": "騒がしい",
+      "reading": "さわがしい",
+      "meaning": "noisy"
+    },
+    {
+      "kanji": "忙しない",
+      "reading": "せわしない",
+      "meaning": "restless; hectic"
+    }
   ]
 }
