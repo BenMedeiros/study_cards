@@ -23,6 +23,69 @@ export function createAppShell({ store, onNavigate }) {
     }
   }
 
+  // Track whether the user is actively using a keyboard vs pointer input.
+  // Persist to shell state so other parts of the app can read it.
+  let usingKeyboard = false;
+  let __keyboardTimeout = null;
+  const KEYBOARD_TIMEOUT_MS = 600 * 1000; // 600 seconds
+
+  function clearKeyboardTimeout() {
+    if (__keyboardTimeout) {
+      clearTimeout(__keyboardTimeout);
+      __keyboardTimeout = null;
+    }
+  }
+
+  function setUsingKeyboardState(val) {
+    const next = !!val;
+    if (next === usingKeyboard) {
+      // refresh timeout when already true
+      if (next) {
+        clearKeyboardTimeout();
+        __keyboardTimeout = setTimeout(() => setUsingKeyboardState(false), KEYBOARD_TIMEOUT_MS);
+      }
+      return;
+    }
+
+    usingKeyboard = next;
+    try {
+      if (usingKeyboard) document.body.classList.add('using-keyboard');
+      else document.body.classList.remove('using-keyboard');
+    } catch (e) {}
+
+    if (store && typeof store.setShellState === 'function') {
+      try {
+        const payload = { usingKeyboard };
+        if (usingKeyboard) payload.usingKeyboardLastSeen = new Date().toISOString();
+        // Persist without notifying subscribers to avoid re-rendering the
+        // header/menu while key handlers are active. scheduleFlush still
+        // debounces actual persistence to disk.
+        try { store.setShellState(payload, { silent: true }); } catch (e) {}
+      } catch (e) {}
+    }
+
+    clearKeyboardTimeout();
+    if (usingKeyboard) {
+      __keyboardTimeout = setTimeout(() => setUsingKeyboardState(false), KEYBOARD_TIMEOUT_MS);
+    }
+  }
+
+  // Initialize from persisted shell state (respect 600s timeout if provided)
+  try {
+    const persisted = (store && typeof store.getShellState === 'function') ? (store.getShellState() || {}) : {};
+    let initial = !!persisted.usingKeyboard;
+    if (initial && persisted.usingKeyboardLastSeen) {
+      const then = Date.parse(String(persisted.usingKeyboardLastSeen || '')) || 0;
+      if ((Date.now() - then) > KEYBOARD_TIMEOUT_MS) initial = false;
+    }
+    setUsingKeyboardState(initial);
+  } catch (e) {}
+
+  // Simple heuristic: any keydown -> keyboard usage. We do NOT flip back to
+  // pointer usage immediately on mouse/pointer events; instead `usingKeyboard`
+  // is cleared only after the inactivity timeout (KEYBOARD_TIMEOUT_MS).
+  window.addEventListener('keydown', () => setUsingKeyboardState(true), { capture: true, passive: true });
+
   // Global key handling: keep document-level listeners centralized here.
   // Components should subscribe to `ui:closeOverlays` when they are open.
   function onGlobalKeyDown(e) {

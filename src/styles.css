@@ -45,6 +45,20 @@
   border-color: var(--accent);
 }
 
+/* Small caption under buttons for keyboard shortcuts. Hidden unless keyboard in use. */
+.view-footer-controls .btn .caption {
+  display: none;
+  margin-top: 0.12rem;
+  font-size: 0.73rem;
+  color: var(--muted);
+  font-weight: 600;
+  line-height: 1;
+}
+
+body.using-keyboard .view-footer-controls .btn .caption {
+  display: block;
+}
+
 /* Kanji status buttons */
 .view-footer-controls .btn.state-learned {
   background: rgba(34, 197, 94, 0.18);
@@ -1261,10 +1275,14 @@ select:hover {
     padding: 0.3rem 0.5rem;
   }
 
-  .view-footer-controls .btn .text {
-    font-size: 0.85rem;
-  }
   .view-footer-controls .btn .icon {
     font-size: 1.05rem;
   }
+}
+
+/* Show focus outlines only for keyboard users (adds minimal visual affordance) */
+:focus { outline: none; }
+.using-keyboard :focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }

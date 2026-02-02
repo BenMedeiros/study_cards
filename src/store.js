@@ -1242,6 +1242,31 @@ export function createStore() {
     }
   }
 
+  function getShellState() {
+    try {
+      const v = uiState?.shell;
+      return (v && typeof v === 'object') ? { ...v } : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function setShellState(patch, opts = {}) {
+    try {
+      uiState.shell = uiState.shell || {};
+      const prev = (uiState.shell && typeof uiState.shell === 'object') ? uiState.shell : {};
+      const patchObj = (patch && typeof patch === 'object') ? patch : {};
+      uiState.shell = { ...prev, ...patchObj };
+      dirtyShell = true;
+      scheduleFlush();
+      // By default, notify subscribers so UI updates. Callers can pass
+      // { silent: true } to persist without triggering a re-render.
+      if (!opts.silent) notify();
+    } catch (e) {
+      // ignore
+    }
+  }
+
   function setShellVoiceSettings(patch) {
     try {
       uiState.shell = uiState.shell || {};
@@ -1310,6 +1335,8 @@ export function createStore() {
     },
     getShellVoiceSettings,
     setShellVoiceSettings,
+    getShellState,
+    setShellState,
     getInheritedFolderMetadata,
   };
 }

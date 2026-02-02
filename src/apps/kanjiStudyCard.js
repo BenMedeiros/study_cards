@@ -94,33 +94,33 @@ export function renderKanjiStudyCard({ store }) {
   const prevBtn = document.createElement('button');
   prevBtn.type = 'button';
   prevBtn.className = 'btn';
-  prevBtn.innerHTML = '<span class="icon">←</span><span class="text">Prev</span>';
+  prevBtn.innerHTML = '<span class="icon">←</span><span class="text">Prev</span><span class="caption">←</span>';
 
   const revealBtn = document.createElement('button');
   revealBtn.type = 'button';
   revealBtn.className = 'btn';
-  revealBtn.innerHTML = '<span class="icon"></span><span class="text">Reveal</span>';
+  revealBtn.innerHTML = '<span class="icon"></span><span class="text">Reveal</span><span class="caption">↑</span>';
 
   const soundBtn = document.createElement('button');
   soundBtn.type = 'button';
   soundBtn.className = 'btn';
-  soundBtn.innerHTML = '<span class="icon">🔊</span><span class="text">Sound</span>';
+  soundBtn.innerHTML = '<span class="icon">🔊</span><span class="text">Sound</span><span class="caption">Space</span>';
 
   const nextBtn = document.createElement('button');
   nextBtn.type = 'button';
   nextBtn.className = 'btn';
-  nextBtn.innerHTML = '<span class="icon">→</span><span class="text">Next</span>';
+  nextBtn.innerHTML = '<span class="icon">→</span><span class="text">Next</span><span class="caption">→</span>';
 
   const learnedBtn = document.createElement('button');
   learnedBtn.type = 'button';
   learnedBtn.className = 'btn';
-  learnedBtn.innerHTML = '<span class="icon">✅</span><span class="text">Learned</span>';
+  learnedBtn.innerHTML = '<span class="icon">✅</span><span class="text">Learned</span><span class="caption">V</span>';
   learnedBtn.setAttribute('aria-pressed', 'false');
 
   const practiceBtn = document.createElement('button');
   practiceBtn.type = 'button';
   practiceBtn.className = 'btn';
-  practiceBtn.innerHTML = '<span class="icon">🎯</span><span class="text">Practice</span>';
+  practiceBtn.innerHTML = '<span class="icon">🎯</span><span class="text">Practice</span><span class="caption">X</span>';
   practiceBtn.setAttribute('aria-pressed', 'false');
 
   footerControls.append(prevBtn, revealBtn, soundBtn, learnedBtn, practiceBtn, nextBtn);
@@ -323,10 +323,11 @@ export function renderKanjiStudyCard({ store }) {
   
 
   function updateRevealButton() {
+    // Keep the caption span so shortcut hint remains visible when keyboard is active
     if (viewMode === 'full') {
-      revealBtn.innerHTML = '<span class="icon"></span><span class="text">Hide</span>';
+      revealBtn.innerHTML = '<span class="icon"></span><span class="text">Hide</span><span class="caption">↑</span>';
     } else {
-      revealBtn.innerHTML = '<span class="icon"></span><span class="text">Reveal</span>';
+      revealBtn.innerHTML = '<span class="icon"></span><span class="text">Reveal</span><span class="caption">↑</span>';
     }
   }
 
@@ -667,6 +668,18 @@ export function renderKanjiStudyCard({ store }) {
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       showKanjiOnly();
+    } else if (e.key === ' ' || e.code === 'Space') {
+      e.preventDefault();
+      // spacebar -> sound
+      soundBtn.click();
+    } else if (e.key === 'x' || e.key === 'X') {
+      e.preventDefault();
+      // x -> practice
+      practiceBtn.click();
+    } else if (e.key === 'v' || e.key === 'V') {
+      e.preventDefault();
+      // v -> learned
+      learnedBtn.click();
     }
   };
 
