@@ -210,7 +210,7 @@ export function renderData({ store }) {
     }
     const saved = readCollState();
     const n = Array.isArray(coll.entries) ? coll.entries.length : 0;
-    if (n === 0) { studyLabel.textContent = ''; updateControlStates(); return; }
+    if (n === 0) { updateControlStates(); return; }
     // Show simplified study label: All or Filtered
     const raw = (saved && typeof saved.studyFilter === 'string') ? String(saved.studyFilter).trim() : '';
     // header tools no longer show study label; control state will reflect available actions
@@ -252,13 +252,13 @@ export function renderData({ store }) {
     tableMount.innerHTML = '';
     tableMount.append(tbl);
 
-    // Update corner caption if present.
+    // Update corner caption if present. Use visible count (filtered) so it stays correct
     try {
       const corner = root.querySelector('#data-card .card-corner-caption');
       if (corner) {
         const total = allEntries.length;
         const visible = visibleIdxs.length;
-        corner.textContent = (skipLearned || focusOnly) ? `${visible}/${total} Entries` : `${total} Entries`;
+        corner.textContent = (visible < total) ? `${visible}/${total} Entries` : `${total} Entries`;
       }
     } catch (e) {
       // ignore
@@ -311,10 +311,7 @@ export function renderData({ store }) {
   }
 
   // initial label + marking
-  updateFilterButtons();
-  renderTable();
-  updateStudyLabel();
-  markStudyRows();
+  // (initial render will occur after the data card is created and mounted)
 
   // Subscribe to store changes and update markings when session state changes
   let unsub = null;
@@ -409,6 +406,12 @@ export function renderData({ store }) {
     el('div', { className: 'hint', text: pathLabel }),
     dataCard
   );
-  
+  // initial UI updates now that the card is mounted and corner caption exists
+  updateFilterButtons();
+  renderTable();
+  updateStudyLabel();
+  markStudyRows();
+  updateControlStates();
+
   return root;
 }

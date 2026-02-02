@@ -521,6 +521,16 @@ input[type="number"].button::-webkit-inner-spin-button {
   border-color: rgba(255, 255, 255, 0.92);
 }
 
+/* Disabled state for header buttons */
+.view-header-tools .btn:disabled,
+.view-header-tools .btn[disabled] {
+  opacity: 0.48;
+  cursor: not-allowed;
+  background: rgba(255,255,255,0.02);
+  border-color: rgba(255,255,255,0.06);
+  color: var(--muted);
+}
+
 /* Three-state toggle (All / Skip Learned / Focus) */
 .three-toggle {
   display: inline-flex;
