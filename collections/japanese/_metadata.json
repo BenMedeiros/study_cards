@@ -37,12 +37,9 @@
       "type": "enum",
       "description": "Indicates the script usually used to write the word. Helpful for words like 'いちご' (usually kana) or loanwords that are katakana-only.",
       "values": {
-        "kanji": "Primarily written in kanji (漢字).",
-        "kana": "Primarily written in kana (平仮名 or 片仮名).",
-        "hiragana": "Primarily written in hiragana (平仮名).",
-        "katakana": "Primarily written in katakana (片仮名).",
-        "both": "Both kanji and kana are commonly used (context-dependent).",
-        "either": "Either script is acceptable; no strong preference."
+        "kanji": "Primarily written in kanji (漢字), okurigana as needed.",
+        "kana": "Primarily written in kana (平仮名 or 片仮名), rarely uses its possible kanji form",
+        "both": "Both kanji and kana are commonly used (context-dependent)."
       }
     },
     {
