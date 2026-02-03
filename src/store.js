@@ -682,6 +682,9 @@ export function createStore() {
             id: String(s.id || '').trim(),
             label: s.label || null,
             description: s.description || null,
+            // New: kanjiFilter is an array of filter expressions (AND semantics).
+            // Back-compat: keep `kanji` if present.
+            kanjiFilter: Array.isArray(s.kanjiFilter) ? s.kanjiFilter.slice() : null,
             kanji: Array.isArray(s.kanji) ? s.kanji.slice() : []
           }))
           .filter(s => s.id.length > 0)
@@ -788,14 +791,67 @@ export function createStore() {
     folderEntryIndexCache.delete(folder);
     const index = buildFolderEntryIndex(folder);
 
-    const terms = Array.isArray(setObj?.kanji) ? setObj.kanji.slice() : [];
-    const resolved = terms.map((t) => {
-      const term = String(t || '').trim();
-      if (!term) return null;
-      const found = index.get(term);
-      if (found) return found;
-      return { kanji: term, text: term };
-    }).filter(Boolean);
+    // If the set defines `kanjiFilter[]`, resolve entries by filtering all loaded
+    // entries in the folder using simple filter expressions (AND semantics).
+    const resolved = [];
+    if (Array.isArray(setObj?.kanjiFilter) && setObj.kanjiFilter.length) {
+      // Helper: parse a single filter string into { field, op, value }
+      function parseFilter(f) {
+        const s = String(f || '').trim();
+        if (!s) return null;
+        // support `field=value` (eq), `field.startsWith[val]`, `field.endsWith[val]`
+        const mStarts = s.match(/^([^.\[]+)\.startsWith\[(.*)\]$/);
+        if (mStarts) return { field: mStarts[1], op: 'startsWith', value: mStarts[2] };
+        const mEnds = s.match(/^([^.\[]+)\.endsWith\[(.*)\]$/);
+        if (mEnds) return { field: mEnds[1], op: 'endsWith', value: mEnds[2] };
+        const mEq = s.match(/^([^=]+)=(.*)$/);
+        if (mEq) return { field: mEq[1], op: 'eq', value: mEq[2] };
+        return null;
+      }
+
+      function matchesAll(entry, filters) {
+        for (const f of filters) {
+          const parsed = parseFilter(f);
+          if (!parsed) return false;
+          const raw = entry && typeof entry === 'object' ? entry[parsed.field] : undefined;
+          const val = (typeof raw === 'string' || typeof raw === 'number') ? String(raw) : null;
+          if (val === null) return false;
+          const v = String(parsed.value || '');
+          if (parsed.op === 'eq') {
+            if (val !== v) return false;
+          } else if (parsed.op === 'startsWith') {
+            if (!val.startsWith(v)) return false;
+          } else if (parsed.op === 'endsWith') {
+            if (!val.endsWith(v)) return false;
+          } else {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      // Iterate all loaded collections' entries and select matching ones.
+      for (const coll of state.collections.slice()) {
+        // skip virtual set records and only consider collections inside the same top folder
+        if (!coll || !coll.key) continue;
+        if (isCollectionSetVirtualKey(coll.key)) continue;
+        if (folder && topFolderOfKey(coll.key) !== folder) continue;
+        if (!Array.isArray(coll.entries)) continue;
+        for (const e of coll.entries) {
+          if (!e || typeof e !== 'object') continue;
+          if (matchesAll(e, setObj.kanjiFilter)) resolved.push(e);
+        }
+      }
+    } else {
+      const terms = Array.isArray(setObj?.kanji) ? setObj.kanji.slice() : [];
+      for (const t of terms) {
+        const term = String(t || '').trim();
+        if (!term) continue;
+        const found = index.get(term);
+        if (found) resolved.push(found);
+        else resolved.push({ kanji: term, text: term });
+      }
+    }
 
     // Apply inherited folder metadata fields (so Flashcards renders meaningful rows)
     const fm = (await loadInheritedFolderMetadata(folder, metadataCache, folderMetadataMap)) || null;
@@ -1124,10 +1180,17 @@ export function createStore() {
         }
 
         // Start with placeholders so the UI can switch immediately.
-        const entries = (Array.isArray(set.kanji) ? set.kanji : []).map(v => {
-          const term = String(v || '').trim();
-          return { kanji: term, text: term };
-        }).filter(e => e.kanji);
+        // If this set uses `kanjiFilter[]` we can't produce literal term placeholders,
+        // so start with an empty entries array and resolve in background.
+        let entries = [];
+        if (Array.isArray(set.kanjiFilter) && set.kanjiFilter.length) {
+          entries = [];
+        } else {
+          entries = (Array.isArray(set.kanji) ? set.kanji : []).map(v => {
+            const term = String(v || '').trim();
+            return { kanji: term, text: term };
+          }).filter(e => e.kanji);
+        }
 
         const record = {
           key,

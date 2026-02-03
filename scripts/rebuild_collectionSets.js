@@ -131,6 +131,8 @@ function withMissingKanjiDefinition(setObj, missingValues) {
 function annotateSetsWithMissingKanjiDefinitions(sets, definedKanji) {
   return sets.map((setObj) => {
     if (!setObj || typeof setObj !== 'object') return setObj;
+    // If this set uses `kanjiFilter[]` skip missing-kanji checks (can't statically enumerate values).
+    if (Array.isArray(setObj.kanjiFilter) && setObj.kanjiFilter.length) return withMissingKanjiDefinition(setObj, []);
 
     const values = Array.isArray(setObj.kanji) ? setObj.kanji : [];
     const missing = [];
@@ -310,6 +312,17 @@ async function rebuildCollectionSets() {
 
   const autoSets = await buildAutoSets();
   const nextSets = upsertSets(sets, autoSets);
+
+  // Validate: warn if any set defines both `kanji` and `kanjiFilter`
+  for (const s of nextSets) {
+    if (!s || typeof s !== 'object') continue;
+    const hasKanji = Array.isArray(s.kanji) && s.kanji.length > 0;
+    const hasFilter = Array.isArray(s.kanjiFilter) && s.kanjiFilter.length > 0;
+    if (hasKanji && hasFilter) {
+      const sid = typeof s.id === 'string' ? s.id : '(unknown id)';
+      console.warn(`Warning: collection set ${sid} contains both 'kanji' and 'kanjiFilter'. 'kanjiFilter' will be used; consider removing 'kanji'.`);
+    }
+  }
 
   const definedKanji = await collectDefinedKanjiFromJapaneseCollections();
   const validatedSets = annotateSetsWithMissingKanjiDefinitions(nextSets, definedKanji);

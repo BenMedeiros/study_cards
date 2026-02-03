@@ -23,10 +23,16 @@
       "entries": null
     },
     {
+      "path": "japanese/nouns/adverb__hiragana.json",
+      "name": "Japanese adverb (hiragana)",
+      "description": "Grouped entries for type='adverb' and orthography='hiragana' — total 21.",
+      "entries": 21
+    },
+    {
       "path": "japanese/nouns/adverb__mixed.json",
       "name": "Japanese adverb (mixed)",
-      "description": "Mixed orthography group for type='adverb' — expanded set with common N5–N3 adverbs plus a few frequent onomatopoeia.",
-      "entries": 41
+      "description": "Mixed orthography group for type='adverb' — total 20 (both: 2, katakana: 5, kanji: 13).",
+      "entries": 20
     },
     {
       "path": "japanese/nouns/compound-morpheme__mixed.json",
@@ -59,10 +65,28 @@
       "entries": 39
     },
     {
+      "path": "japanese/nouns/godan-verb.json",
+      "name": "Japanese godan-verb",
+      "description": "Grouped entries for type='godan-verb' — total 54.",
+      "entries": 54
+    },
+    {
       "path": "japanese/nouns/i-adjective.json",
       "name": "Japanese i-adjective",
       "description": "Grouped entries for type='i-adjective' — total 100.",
       "entries": 100
+    },
+    {
+      "path": "japanese/nouns/ichidan-verb__kanji.json",
+      "name": "Japanese ichidan-verb (kanji)",
+      "description": "Grouped entries for type='ichidan-verb' and orthography='kanji' — total 51.",
+      "entries": 51
+    },
+    {
+      "path": "japanese/nouns/ichidan-verb__mixed.json",
+      "name": "Japanese ichidan-verb (mixed)",
+      "description": "Mixed orthography group for type='ichidan-verb' — total 29 (hiragana: 2, both: 7, none: 20).",
+      "entries": 29
     },
     {
       "path": "japanese/nouns/kanji__katakana.json",
@@ -125,42 +149,6 @@
       "entries": null
     },
     {
-      "path": "japanese/verbs/compounds/jp_godan-verb_compound_compositional.json",
-      "name": "Japanese Compound Verbs — godan — compositional",
-      "description": "Productive compound verbs built transparently from parts; final element is godan.",
-      "entries": 10
-    },
-    {
-      "path": "japanese/verbs/compounds/jp_godan-verb_compound_grammaticalized.json",
-      "name": "Japanese Compound Verbs — godan — grammaticalized",
-      "description": "Common compounds where the final godan element is grammaticalized (mutual/auxiliary-like).",
-      "entries": 10
-    },
-    {
-      "path": "japanese/verbs/compounds/jp_godan-verb_compound_hybrid.json",
-      "name": "Japanese Compound Verbs — godan — hybrid",
-      "description": "Frequent hybrid compound verbs (partly productive, partly conventionalized); final element is godan.",
-      "entries": 10
-    },
-    {
-      "path": "japanese/verbs/compounds/jp_godan-verb_compound_lexical.json",
-      "name": "Japanese Compound Verbs — godan — lexical",
-      "description": "Curated frequent lexicalized compound verbs whose final element is godan.",
-      "entries": 10
-    },
-    {
-      "path": "japanese/verbs/compounds/jp_ichidan-verb_compound_compositional.json",
-      "name": "Japanese Compound Verbs — ichidan — compositional",
-      "description": "Productive ichidan compound verbs built transparently from parts; final element is ichidan.",
-      "entries": 10
-    },
-    {
-      "path": "japanese/verbs/compounds/jp_ichidan-verb_compound_grammaticalized.json",
-      "name": "Japanese Compound Verbs — ichidan — grammaticalized",
-      "description": "Ichidan compounds where the final element is grammaticalized (auxiliary-like or polite/functional uses).",
-      "entries": 10
-    },
-    {
       "path": "japanese/verbs/godan-verbs/godan_verbs_bu.json",
       "name": "Japanese N5 Godan Verbs (bu)",
       "description": null,
@@ -183,36 +171,6 @@
       "name": "Japanese N5 Godan Verbs (mu)",
       "description": null,
       "entries": 33
-    },
-    {
-      "path": "japanese/verbs/godan-verbs/godan_verbs_ru.json",
-      "name": "Japanese N5 Godan Verbs (ru)",
-      "description": null,
-      "entries": 5
-    },
-    {
-      "path": "japanese/verbs/godan-verbs/godan_verbs_su.json",
-      "name": "Japanese N5 Godan Verbs (su)",
-      "description": null,
-      "entries": 2
-    },
-    {
-      "path": "japanese/verbs/godan-verbs/godan_verbs_u.json",
-      "name": "Japanese N5 Godan Verbs (u)",
-      "description": null,
-      "entries": 2
-    },
-    {
-      "path": "japanese/verbs/godan-verbs/godan-verb.json",
-      "name": "Japanese (godan-verb)",
-      "description": "Auto-grouped entries from collections/japanese/nouns by type='godan-verb'.",
-      "entries": 5
-    },
-    {
-      "path": "japanese/verbs/ichidan_verbs.json",
-      "name": "Japanese N5 Ichidan Verbs",
-      "description": null,
-      "entries": 62
     },
     {
       "path": "languageHistory/english.json",

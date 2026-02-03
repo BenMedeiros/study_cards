@@ -32,6 +32,7 @@ async function reorganize() {
   // collect all entries
   const allEntries = [];
   const sourceFiles = [];
+  const seenKanjiByType = new Map(); // type -> Set(kanji)
 
   for (const fp of jsonFiles) {
     // skip files in output folder (there shouldn't be any here) but keep safe
@@ -63,6 +64,20 @@ async function reorganize() {
     for (const ent of entries) {
       const copy = Object.assign({}, ent); // shallow copy
       applyDefaultsToEntry(copy, defaults);
+      // warn on duplicate kanji for the same type
+      try {
+        const t = copy.type === undefined || copy.type === null ? '__NO_TYPE__' : String(copy.type);
+        const k = copy.kanji === undefined || copy.kanji === null ? null : String(copy.kanji);
+        if (k) {
+          if (!seenKanjiByType.has(t)) seenKanjiByType.set(t, new Set());
+          const s = seenKanjiByType.get(t);
+          if (s.has(k)) {
+            console.warn(`[dup] duplicate kanji '${k}' for type='${t}' — source ${rel(fp)} ` + (copy.orthography ? `(orth='${copy.orthography}')` : ''));
+          } else {
+            s.add(k);
+          }
+        }
+      } catch(e) {}
       allEntries.push({ entry: copy, source: fp });
     }
   }
@@ -89,6 +104,10 @@ async function reorganize() {
   }
 
   const outputs = [];
+  const wrote = [];
+  const preserved = [];
+  const deleted = [];
+  const bumped = [];
 
   for (const [typeKey, orthGroups] of groupsByType.entries()) {
     // compute counts and sort by size (smallest first)
@@ -121,7 +140,7 @@ async function reorganize() {
       if (typeVal !== undefined) parts.push(safeName(typeVal) || 'type');
       if (g.orthography !== undefined && g.orthography !== null) parts.push(safeName(g.orthography) || 'orth');
       const fileName = (parts.length ? parts.join('__') : 'ungrouped') + '.json';
-      const outPath = path.join(outputDir, fileName);
+      const dest = path.join(nounsDir, fileName);
 
       const defaults = {};
       if (typeVal !== undefined) defaults.type = typeVal;
@@ -148,9 +167,33 @@ async function reorganize() {
         entries: entriesToWrite
       };
 
-      await fs.writeFile(outPath, JSON.stringify(outJson, null, 2), 'utf8');
-      outputs.push(outPath);
-      console.log(`[write] ${rel(outPath)} — ${entriesToWrite.length} entries\n`);
+      // If destination exists, compare normalized entries and bump version if changed
+      try {
+        const destTxt = await require('fs').promises.readFile(dest, 'utf8');
+        const destParsed = JSON.parse(destTxt);
+        const destEntries = Array.isArray(destParsed.entries) ? destParsed.entries : [];
+        const outEntries = Array.isArray(outJson.entries) ? outJson.entries : [];
+        const normalize = arr => arr.map(e => JSON.stringify(e)).sort().join('\n');
+        if (normalize(destEntries) !== normalize(outEntries)) {
+          const destVer = destParsed.metadata && typeof destParsed.metadata.version === 'number' ? destParsed.metadata.version : undefined;
+          const newVer = destVer !== undefined ? destVer + 1 : (typeof outJson.metadata.version === 'number' ? outJson.metadata.version + 1 : 2);
+          outJson.metadata.version = newVer;
+          bumped.push({ path: rel(dest), from: destParsed.metadata && destParsed.metadata.version, to: newVer, fromCount: destEntries.length, toCount: outEntries.length });
+        } else {
+          // no change: preserve destination version if present
+          if (destParsed.metadata && typeof destParsed.metadata.version === 'number') {
+            outJson.metadata = outJson.metadata || {};
+            outJson.metadata.version = destParsed.metadata.version;
+          }
+        }
+      } catch (e) {
+        // dest doesn't exist or couldn't be read — treat as new file
+        if (!outJson.metadata || typeof outJson.metadata.version !== 'number') outJson.metadata = outJson.metadata || {}, outJson.metadata.version = 1;
+      }
+
+      await require('fs').promises.writeFile(dest, JSON.stringify(outJson, null, 2), 'utf8');
+      outputs.push(dest);
+      wrote.push({ path: rel(dest), count: entriesToWrite.length, tag: 'write' });
     }
 
     // write a single mixed group if any were collected
@@ -163,7 +206,7 @@ async function reorganize() {
         if (typeVal !== undefined) parts.push(safeName(typeVal) || 'type');
         if (m.orthography !== undefined && m.orthography !== null) parts.push(safeName(m.orthography) || 'orth');
         const fileName = (parts.length ? parts.join('__') : 'ungrouped') + '.json';
-        const outPath = path.join(outputDir, fileName);
+        const dest = path.join(nounsDir, fileName);
 
         const defaults = {};
         if (typeVal !== undefined) defaults.type = typeVal;
@@ -190,9 +233,30 @@ async function reorganize() {
           entries: entriesToWrite
         };
 
-        await fs.writeFile(outPath, JSON.stringify(outJson, null, 2), 'utf8');
-        outputs.push(outPath);
-        console.log(`[write][homogeneous] ${rel(outPath)} — ${entriesToWrite.length} entries\n`);
+        try {
+          const destTxt = await require('fs').promises.readFile(dest, 'utf8');
+          const destParsed = JSON.parse(destTxt);
+          const destEntries = Array.isArray(destParsed.entries) ? destParsed.entries : [];
+          const outEntries = Array.isArray(outJson.entries) ? outJson.entries : [];
+          const normalize = arr => arr.map(e => JSON.stringify(e)).sort().join('\n');
+            if (normalize(destEntries) !== normalize(outEntries)) {
+              const destVer = destParsed.metadata && typeof destParsed.metadata.version === 'number' ? destParsed.metadata.version : undefined;
+              const newVer = destVer !== undefined ? destVer + 1 : (typeof outJson.metadata.version === 'number' ? outJson.metadata.version + 1 : 2);
+              outJson.metadata.version = newVer;
+              bumped.push({ path: rel(dest), from: destParsed.metadata && destParsed.metadata.version, to: newVer, fromCount: destEntries.length, toCount: outEntries.length });
+            } else {
+              if (destParsed.metadata && typeof destParsed.metadata.version === 'number') {
+                outJson.metadata = outJson.metadata || {};
+                outJson.metadata.version = destParsed.metadata.version;
+              }
+            }
+        } catch (e) {
+          if (!outJson.metadata || typeof outJson.metadata.version !== 'number') outJson.metadata = outJson.metadata || {}, outJson.metadata.version = 1;
+        }
+
+        await require('fs').promises.writeFile(dest, JSON.stringify(outJson, null, 2), 'utf8');
+        outputs.push(dest);
+        wrote.push({ path: rel(dest), count: entriesToWrite.length, tag: 'write[homogeneous]' });
         // done with mixed handling for this type
         continue;
       }
@@ -208,7 +272,7 @@ async function reorganize() {
       if (typeVal !== undefined) parts.push(safeName(typeVal) || 'type');
       parts.push('mixed');
       const fileName = parts.join('__') + '.json';
-      const outPath = path.join(outputDir, fileName);
+      const dest = path.join(nounsDir, fileName);
 
         // For mixed group: include defaults.type when available (but not orthography).
         const defaultsForMixed = {};
@@ -243,9 +307,30 @@ async function reorganize() {
           entries: mixedEntriesNormalized
         };
 
-      await fs.writeFile(outPath, JSON.stringify(outJson, null, 2), 'utf8');
-      outputs.push(outPath);
-      console.log(`[write][mixed] ${rel(outPath)} — ${mixedEntriesNormalized.length} entries\n`);
+      try {
+        const destTxt = await require('fs').promises.readFile(dest, 'utf8');
+        const destParsed = JSON.parse(destTxt);
+        const destEntries = Array.isArray(destParsed.entries) ? destParsed.entries : [];
+        const outEntries = Array.isArray(outJson.entries) ? outJson.entries : [];
+        const normalize = arr => arr.map(e => JSON.stringify(e)).sort().join('\n');
+        if (normalize(destEntries) !== normalize(outEntries)) {
+          const destVer = destParsed.metadata && typeof destParsed.metadata.version === 'number' ? destParsed.metadata.version : undefined;
+          const newVer = destVer !== undefined ? destVer + 1 : (typeof outJson.metadata.version === 'number' ? outJson.metadata.version + 1 : 2);
+          outJson.metadata.version = newVer;
+          bumped.push({ path: rel(dest), from: destParsed.metadata && destParsed.metadata.version, to: newVer, fromCount: destEntries.length, toCount: outEntries.length });
+        } else {
+          if (destParsed.metadata && typeof destParsed.metadata.version === 'number') {
+            outJson.metadata = outJson.metadata || {};
+            outJson.metadata.version = destParsed.metadata.version;
+          }
+        }
+      } catch (e) {
+        if (!outJson.metadata || typeof outJson.metadata.version !== 'number') outJson.metadata = outJson.metadata || {}, outJson.metadata.version = 1;
+      }
+
+      await require('fs').promises.writeFile(dest, JSON.stringify(outJson, null, 2), 'utf8');
+      outputs.push(dest);
+      wrote.push({ path: rel(dest), count: mixedEntriesNormalized.length, tag: 'write[mixed]' });
     }
   }
 
@@ -255,7 +340,7 @@ async function reorganize() {
     const parsed = JSON.parse(txt);
     return sum + (Array.isArray(parsed.entries) ? parsed.entries.length : 0);
   }, 0);
-  console.log(`\nSummary: input=${inputCount}, output=${outputCount}\n`);
+  // Summary counts (input/output) — validated above
 
   if (inputCount !== outputCount) {
     console.error(`[ERROR] total entries mismatch: input=${inputCount} != output=${outputCount}. Aborting.`);
@@ -264,31 +349,54 @@ async function reorganize() {
   }
 
   // delete original input files (only those we read)
+  const outputsSet = new Set(outputs.map(p => path.resolve(p)));
   for (const fp of sourceFiles) {
-    await fs.unlink(fp);
-    console.log(`[delete] ${rel(fp)}`);
-  }
-
-  // move outputs into nounsDir (overwrite if existing)
-  for (const outP of outputs) {
-    const base = path.basename(outP);
-    const dest = path.join(nounsDir, base);
+    const abs = path.resolve(fp);
+    if (outputsSet.has(abs)) {
+      preserved.push(rel(fp));
+      continue;
+    }
     try {
-      // remove destination if exists
-      await fs.unlink(dest).catch(() => {});
-      await fs.rename(outP, dest);
-      console.log(`[move] ${rel(outP)} -> ${rel(dest)}`);
-    } catch (err) {
-      console.error(`[error] Failed moving ${rel(outP)} -> ${rel(dest)}: ${err && err.message ? err.message : err}`);
-      throw err;
+      await fs.unlink(fp);
+      deleted.push(rel(fp));
+    } catch (e) {
+      console.warn(`[warn] Failed deleting ${rel(fp)}: ${e && e.message ? e.message : e}`);
     }
   }
+
+  // outputs were written directly into `nounsDir`; no move required
+  // (outputs array contains destination paths)
 
   // optionally remove output dir if empty
   try {
     const remaining = await fs.readdir(outputDir);
     if (remaining.length === 0) await fs.rmdir(outputDir);
   } catch(e){}
+
+  // Concise summary logging
+  const totalWritten = wrote.length;
+  const totalWrittenEntries = wrote.reduce((s, w) => s + (w.count || 0), 0);
+  if (totalWritten) {
+    console.log(`\n[write] ${totalWritten} files — total ${totalWrittenEntries} entries`);
+    for (const w of wrote) console.log(`  ${w.tag} ${w.path} — ${w.count}`);
+  }
+
+  if (bumped.length) {
+    console.log(`\n[version] ${bumped.length} file(s) bumped`);
+    for (const b of bumped) console.log(`  ${b.path} ${b.from ?? '-'} -> ${b.to} (${b.fromCount} -> ${b.toCount})`);
+  }
+
+  if (preserved.length) {
+    console.log(`\n[preserved] ${preserved.length} file(s)`);
+    const show = preserved.slice(0, 50);
+    for (const p of show) console.log(`  ${p}`);
+    if (preserved.length > show.length) console.log(`  ... and ${preserved.length - show.length} more`);
+  }
+
+  if (deleted.length) {
+    console.log(`\n[deleted] ${deleted.length} file(s)`);
+    for (const d of deleted) console.log(`  ${d}`);
+  }
 
   console.log('\nReorganization complete.\n');
 }

@@ -2,6 +2,32 @@
   "name": "collections/common",
   "version": 2,
   "description": "Simple ad-hoc sets for the Japanese collection. Each set has id/label/description and a `kanji` array of values. Sets act like tags; words may appear in multiple sets.",
+  "setsSchema": {
+    "summary": "Schema and usage notes for objects inside the `sets` array.",
+    "fields": [
+      { "key": "id", "type": "string", "required": true, "description": "Unique set identifier." },
+      { "key": "label", "type": "string", "description": "Human-readable label." },
+      { "key": "description", "type": "string", "description": "Longer description of the set." },
+      { "key": "kanji", "type": "array[string]", "description": "Legacy: explicit list of kanji/terms. Still supported for backward compatibility." },
+      { "key": "kanjiFilter", "type": "array[string]", "description": "New: array of filter expressions used to select entries (AND semantics). See `kanjiFilterSyntax` below." },
+      { "key": "source", "type": "object", "description": "Optional provenance info: { collection: string, field: string }." }
+    ],
+    "kanjiFilterSyntax": {
+      "description": "Filter expressions are strings and are combined with logical AND. Filters match top-level entry properties only (e.g., 'type', 'verbType', 'ending', 'reading').",
+      "operators": [
+        { "syntax": "field=value", "meaning": "Exact string equality (e.g., type=godan-verb)." },
+        { "syntax": "field.startsWith[val]", "meaning": "Field string starts with the given value (e.g., reading.startsWith[ひ])." },
+        { "syntax": "field.endsWith[val]", "meaning": "Field string ends with the given value (e.g., ending=gu can also be written as ending.endsWith[gu])." }
+      ],
+      "examples": [
+        "[\"type=godan-verb\"]",
+        "[\"type=godan-verb\", \"verbType=compound\"]",
+        "[\"reading.startsWith[ひ]\"]",
+        "[\"type=ichidan-verb\", \"compoundType=compositional\"]"
+      ],
+      "notes": "Nested-field access (e.g. example.ja) and substring 'contains' are not supported. Values are coerced to strings for matching. If a set defines both 'kanji' and 'kanjiFilter', 'kanjiFilter' takes precedence and a rebuild warning will be emitted."
+    }
+  },
   "sets": [
     {
       "id": "linguistic_terms",
@@ -156,6 +182,129 @@
       "description": "The traditional native Japanese counting set used with つ (一つ、二つ、三つ…).",
       "kanji": [
         "一つ","二つ","三つ","四つ","五つ","六つ","七つ","八つ","九つ","十"
+      ]
+    },
+    {
+      "id": "jp_godan_compound_compositional",
+      "label": "Japanese Compound Verbs — godan — compositional",
+      "description": "Productive compound verbs built transparently from parts; final element is godan.",
+      "kanjiFilter": [
+        "type=godan-verb",
+        "verbType=compound",
+        "compoundType=compositional"
+      ],
+      "kanjiCount": 10,
+      "source": {
+        "collection": "collections/japanese/verbs/compounds/jp_godan-verb_compound_compositional.json",
+        "field": "metadata.kanji"
+      }
+    },
+    {
+      "id": "jp_godan_compound_grammaticalized",
+      "label": "Japanese Compound Verbs — godan — grammaticalized",
+      "description": "Common compounds where the final godan element is grammaticalized (mutual/auxiliary-like).",
+      "kanjiFilter": [
+        "type=godan-verb",
+        "verbType=compound",
+        "compoundType=grammaticalized"
+      ],
+      "kanjiCount": 10,
+      "source": {
+        "collection": "collections/japanese/verbs/compounds/jp_godan-verb_compound_grammaticalized.json",
+        "field": "metadata.kanji"
+      }
+    },
+    {
+      "id": "jp_godan_compound_hybrid",
+      "label": "Japanese Compound Verbs — godan — hybrid",
+      "description": "Frequent hybrid compound verbs (partly productive, partly conventionalized); final element is godan.",
+      "kanjiFilter": [
+        "type=godan-verb",
+        "verbType=compound",
+        "compoundType=hybrid"
+      ],
+      "kanjiCount": 10,
+      "source": {
+        "collection": "collections/japanese/verbs/compounds/jp_godan-verb_compound_hybrid.json",
+        "field": "metadata.kanji"
+      }
+    },
+    {
+      "id": "jp_godan_compound_lexical",
+      "label": "Japanese Compound Verbs — godan — lexical",
+      "description": "Curated frequent lexicalized compound verbs whose final element is godan.",
+      "kanjiFilter": [
+        "type=godan-verb",
+        "verbType=compound",
+        "compoundType=lexical"
+      ],
+      "kanjiCount": 10,
+      "source": {
+        "collection": "collections/japanese/verbs/compounds/jp_godan-verb_compound_lexical.json",
+        "field": "metadata.kanji"
+      }
+    },
+    {
+      "id": "jp_ichidan_compound_compositional",
+      "label": "Japanese Compound Verbs — ichidan — compositional",
+      "description": "Productive ichidan compound verbs built transparently from parts; final element is ichidan.",
+      "kanjiFilter": [
+        "type=ichidan-verb",
+        "verbType=compound",
+        "compoundType=compositional"
+      ],
+      "kanjiCount": 10,
+      "source": {
+        "collection": "collections/japanese/verbs/compounds/jp_ichidan-verb_compound_compositional.json",
+        "field": "metadata.kanji"
+      }
+    },
+    {
+      "id": "jp_ichidan_compound_grammaticalized",
+      "label": "Japanese Compound Verbs — ichidan — grammaticalized",
+      "description": "Ichidan compounds where the final element is grammaticalized (auxiliary-like or polite/functional uses).",
+      "kanjiFilter": [
+        "type=ichidan-verb",
+        "verbType=compound",
+        "compoundType=grammaticalized"
+      ],
+      "kanjiCount": 10,
+      "source": {
+        "collection": "collections/japanese/verbs/compounds/jp_ichidan-verb_compound_grammaticalized.json",
+        "field": "metadata.kanji"
+      }
+    },
+    {
+      "id": "verbs_ichidan",
+      "label": "Ichidan Verbs",
+      "description": "All entries classified as ichidan verbs (一段動詞).",
+      "kanjiFilter": [
+        "type=ichidan-verb"
+      ]
+    },
+    {
+      "id": "verbs_godan",
+      "label": "Godan Verbs",
+      "description": "All entries classified as godan verbs (五段動詞).",
+      "kanjiFilter": [
+        "type=godan-verb"
+      ]
+    },
+    {
+      "id": "verbs_godan_gu",
+      "label": "Godan Verbs — ending 〜ぐ (gu)",
+      "description": "Godan verbs whose dictionary-form ending is ぐ (e.g., 泳ぐ).",
+      "kanjiFilter": [
+        "type=godan-verb",
+        "ending=gu"
+      ]
+    },
+    {
+      "id": "reading_startswith_hi",
+      "label": "Readings starting with ひ",
+      "description": "Entries whose `reading` field starts with the hiragana ひ.",
+      "kanjiFilter": [
+        "reading.startsWith[ひ]"
       ]
     }
   ]

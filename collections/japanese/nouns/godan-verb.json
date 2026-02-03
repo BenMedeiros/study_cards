@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "Japanese godan-verb",
-    "description": "Grouped entries for type='godan-verb' — total 14.",
-    "version": 1
+    "description": "Grouped entries for type='godan-verb' — total 54.",
+    "version": 2
   },
   "defaults": {
     "type": "godan-verb"
@@ -86,6 +86,286 @@
       "reading": "あう",
       "meaning": "to meet",
       "ending": "u"
+    },
+    {
+      "kanji": "書き直す",
+      "reading": "かきなおす",
+      "meaning": "to rewrite; to correct writing",
+      "verbType": "compound",
+      "compoundType": "compositional"
+    },
+    {
+      "kanji": "聞き直す",
+      "reading": "ききなおす",
+      "meaning": "to ask again; to check by asking",
+      "verbType": "compound",
+      "compoundType": "compositional"
+    },
+    {
+      "kanji": "見直す",
+      "reading": "みなおす",
+      "meaning": "to review; to reconsider",
+      "verbType": "compound",
+      "compoundType": "compositional"
+    },
+    {
+      "kanji": "書き足す",
+      "reading": "かきたす",
+      "meaning": "to add writing; to add a note",
+      "verbType": "compound",
+      "compoundType": "compositional"
+    },
+    {
+      "kanji": "飛び出す",
+      "reading": "とびだす",
+      "meaning": "to jump out; to rush out",
+      "verbType": "compound",
+      "compoundType": "compositional"
+    },
+    {
+      "kanji": "逃げ出す",
+      "reading": "にげだす",
+      "meaning": "to run away; to escape",
+      "verbType": "compound",
+      "compoundType": "compositional"
+    },
+    {
+      "kanji": "引き返す",
+      "reading": "ひきかえす",
+      "meaning": "to go back; to return",
+      "verbType": "compound",
+      "compoundType": "compositional"
+    },
+    {
+      "kanji": "割り振る",
+      "reading": "わりふる",
+      "meaning": "to allocate; to distribute",
+      "verbType": "compound",
+      "compoundType": "compositional"
+    },
+    {
+      "kanji": "切り落とす",
+      "reading": "きりおとす",
+      "meaning": "to cut off; to cut away",
+      "verbType": "compound",
+      "compoundType": "compositional"
+    },
+    {
+      "kanji": "立ち去る",
+      "reading": "たちさる",
+      "meaning": "to leave; to depart",
+      "verbType": "compound",
+      "compoundType": "compositional"
+    },
+    {
+      "kanji": "話し合う",
+      "reading": "はなしあう",
+      "meaning": "to discuss; to talk together",
+      "verbType": "compound",
+      "compoundType": "grammaticalized"
+    },
+    {
+      "kanji": "語り合う",
+      "reading": "かたりあう",
+      "meaning": "to talk together; exchange stories",
+      "verbType": "compound",
+      "compoundType": "grammaticalized"
+    },
+    {
+      "kanji": "助け合う",
+      "reading": "たすけあう",
+      "meaning": "to help each other",
+      "verbType": "compound",
+      "compoundType": "grammaticalized"
+    },
+    {
+      "kanji": "分け合う",
+      "reading": "わけあう",
+      "meaning": "to share; to divide among",
+      "verbType": "compound",
+      "compoundType": "grammaticalized"
+    },
+    {
+      "kanji": "言い合う",
+      "reading": "いいあう",
+      "meaning": "to tell each other; to argue/exchange words",
+      "verbType": "compound",
+      "compoundType": "grammaticalized"
+    },
+    {
+      "kanji": "折り合う",
+      "reading": "おりあう",
+      "meaning": "to compromise; to come to terms",
+      "verbType": "compound",
+      "compoundType": "grammaticalized"
+    },
+    {
+      "kanji": "呼び合う",
+      "reading": "よびあう",
+      "meaning": "to call to one another; to call each other",
+      "verbType": "compound",
+      "compoundType": "grammaticalized"
+    },
+    {
+      "kanji": "触れ合う",
+      "reading": "ふれあう",
+      "meaning": "to come into contact; to interact",
+      "verbType": "compound",
+      "compoundType": "grammaticalized"
+    },
+    {
+      "kanji": "取り合う",
+      "reading": "とりあう",
+      "meaning": "to compete for; to take in turns; to deal with",
+      "verbType": "compound",
+      "compoundType": "grammaticalized"
+    },
+    {
+      "kanji": "協力し合う",
+      "reading": "きょうりょくしあう",
+      "meaning": "to cooperate with one another",
+      "verbType": "compound",
+      "compoundType": "grammaticalized"
+    },
+    {
+      "kanji": "聞き取る",
+      "reading": "ききとる",
+      "meaning": "to catch (what someone says)",
+      "verbType": "compound",
+      "compoundType": "hybrid"
+    },
+    {
+      "kanji": "食べ歩く",
+      "reading": "たべあるく",
+      "meaning": "to eat one's way around (restaurants)",
+      "verbType": "compound",
+      "compoundType": "hybrid"
+    },
+    {
+      "kanji": "聞き逃す",
+      "reading": "ききのがす",
+      "meaning": "to miss hearing; to fail to catch (audio)",
+      "verbType": "compound",
+      "compoundType": "hybrid"
+    },
+    {
+      "kanji": "見切る",
+      "reading": "みきる",
+      "meaning": "to give up on; to judge/decide (from context)",
+      "verbType": "compound",
+      "compoundType": "hybrid"
+    },
+    {
+      "kanji": "立ち寄る",
+      "reading": "たちよる",
+      "meaning": "to drop by; to stop by",
+      "verbType": "compound",
+      "compoundType": "hybrid"
+    },
+    {
+      "kanji": "持ち上がる",
+      "reading": "もちあがる",
+      "meaning": "to be raised; to come up (issue/event)",
+      "verbType": "compound",
+      "compoundType": "hybrid"
+    },
+    {
+      "kanji": "飲み歩く",
+      "reading": "のみあるく",
+      "meaning": "to drink and go around (bar hopping)",
+      "verbType": "compound",
+      "compoundType": "hybrid"
+    },
+    {
+      "kanji": "探し回る",
+      "reading": "さがしまわる",
+      "meaning": "to search around; to look all over",
+      "verbType": "compound",
+      "compoundType": "hybrid"
+    },
+    {
+      "kanji": "探り回る",
+      "reading": "さぐりまわる",
+      "meaning": "to probe around; to look/search stealthily",
+      "verbType": "compound",
+      "compoundType": "hybrid"
+    },
+    {
+      "kanji": "聞き及ぶ",
+      "reading": "ききおよぶ",
+      "meaning": "to hear reports; to reach one's ears",
+      "verbType": "compound",
+      "compoundType": "hybrid"
+    },
+    {
+      "kanji": "出会う",
+      "reading": "であう",
+      "meaning": "to meet (by chance)",
+      "verbType": "compound",
+      "compoundType": "lexical"
+    },
+    {
+      "kanji": "歩き回る",
+      "reading": "あるきまわる",
+      "meaning": "to walk around; go around",
+      "verbType": "compound",
+      "compoundType": "lexical"
+    },
+    {
+      "kanji": "飛び回る",
+      "reading": "とびまわる",
+      "meaning": "to fly/visit around; go around (frequently)",
+      "verbType": "compound",
+      "compoundType": "lexical"
+    },
+    {
+      "kanji": "駆け回る",
+      "reading": "かけまわる",
+      "meaning": "to run about; run around",
+      "verbType": "compound",
+      "compoundType": "lexical"
+    },
+    {
+      "kanji": "取り戻す",
+      "reading": "とりもどす",
+      "meaning": "to take back; regain",
+      "verbType": "compound",
+      "compoundType": "lexical"
+    },
+    {
+      "kanji": "持ち出す",
+      "reading": "もちだす",
+      "meaning": "to take out; bring out",
+      "verbType": "compound",
+      "compoundType": "lexical"
+    },
+    {
+      "kanji": "聞き返す",
+      "reading": "ききかえす",
+      "meaning": "to ask someone to repeat; to ask back",
+      "verbType": "compound",
+      "compoundType": "lexical"
+    },
+    {
+      "kanji": "見失う",
+      "reading": "みうしなう",
+      "meaning": "to lose sight of; to miss",
+      "verbType": "compound",
+      "compoundType": "lexical"
+    },
+    {
+      "kanji": "泣き叫ぶ",
+      "reading": "なきさけぶ",
+      "meaning": "to cry out; to scream while crying",
+      "verbType": "compound",
+      "compoundType": "lexical"
+    },
+    {
+      "kanji": "読み返す",
+      "reading": "よみかえす",
+      "meaning": "to reread; to read again",
+      "verbType": "compound",
+      "compoundType": "lexical"
     }
   ]
 }
