@@ -294,5 +294,19 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
 
   container.append(group, overlay);
 
+  // Imperative API for hosts (optional). This keeps existing call sites working
+  // because `createAutoplayControls` still returns a single Element.
+  container.__setPlaying = (playing) => {
+    const nextState = !!playing;
+    playBtn.setAttribute('aria-pressed', String(nextState));
+    playBtn.textContent = nextState ? '⏸' : '▶';
+    playBtn.title = nextState ? 'Pause autoplay' : 'Start autoplay';
+  };
+  container.__getPlaying = () => playBtn.getAttribute('aria-pressed') === 'true';
+  container.__togglePlaying = () => {
+    // Use the button click so we share the exact same behavior/guards.
+    playBtn.click();
+  };
+
   return container;
 }

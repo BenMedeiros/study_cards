@@ -323,13 +323,49 @@ export function renderKanjiStudyCard({ store }) {
     } catch (e) {}
   }
 
-  const autoplayControlsEl = createAutoplayControls({
+  // Autoplay play/pause state must be toggleable from both UI and external
+  // media keys (Bluetooth play/pause). Keep UI + MediaSession in sync.
+  let autoplayControlsEl = null;
+  // Unique per mount: avoids a stale instance unregistering the active one.
+  const MEDIA_HANDLER_ID = `kanjiStudy-${Math.random().toString(36).slice(2, 10)}`;
+
+  function notifyShellMediaState() {
+    try {
+      document.dispatchEvent(new CustomEvent('app:mediaStateChanged', { detail: { id: MEDIA_HANDLER_ID } }));
+    } catch (e) {}
+  }
+
+  function setAutoplayPlaying(next, { source = 'internal' } = {}) {
+    const want = !!next;
+    if (want) {
+      // Mirror the autoplay UI's behavior: if no sequence exists, do not start.
+      if (!Array.isArray(autoplayConfig) || autoplayConfig.length === 0) return;
+    }
+    if (want === isAutoPlaying) {
+      // still keep MediaSession/UI consistent
+      try { autoplayControlsEl && autoplayControlsEl.__setPlaying && autoplayControlsEl.__setPlaying(want); } catch (e) {}
+      notifyShellMediaState();
+      return;
+    }
+
+    isAutoPlaying = want;
+    if (!isAutoPlaying) {
+      _autoplayAbort = true;
+    }
+
+    try { autoplayControlsEl && autoplayControlsEl.__setPlaying && autoplayControlsEl.__setPlaying(isAutoPlaying); } catch (e) {}
+    notifyShellMediaState();
+    saveUIState();
+    if (isAutoPlaying) startAutoplay();
+  }
+
+  autoplayControlsEl = createAutoplayControls({
     sequence: Array.isArray(autoplayConfig) ? autoplayConfig : [],
     isPlaying: !!isAutoPlaying,
     onTogglePlay: (play) => {
-      isAutoPlaying = !!play;
-      saveUIState();
-      if (isAutoPlaying) startAutoplay();
+      // UI already toggled its own icon; we centralize state changes here so
+      // MediaSession + external controls stay consistent.
+      setAutoplayPlaying(!!play, { source: 'ui' });
     },
     onSequenceChange: (seq) => {
       autoplayConfig = Array.isArray(seq) ? seq.slice() : [];
@@ -606,6 +642,8 @@ export function renderKanjiStudyCard({ store }) {
         await sleep(80);
         if (!document.body.contains(el)) {
           isAutoPlaying = false;
+          notifyShellMediaState();
+          try { autoplayControlsEl && autoplayControlsEl.__setPlaying && autoplayControlsEl.__setPlaying(false); } catch (e) {}
           saveUIState();
           _autoplayAbort = true;
           break;
@@ -615,6 +653,8 @@ export function renderKanjiStudyCard({ store }) {
       await sleep(200);
     }
     // update any UI state (play button) via saved state
+    notifyShellMediaState();
+    try { autoplayControlsEl && autoplayControlsEl.__setPlaying && autoplayControlsEl.__setPlaying(!!isAutoPlaying); } catch (e) {}
     saveUIState();
   }
 
@@ -797,6 +837,32 @@ export function renderKanjiStudyCard({ store }) {
   // start autoplay automatically if saved state requested and a sequence exists
   if (isAutoPlaying && Array.isArray(autoplayConfig) && autoplayConfig.length) startAutoplay();
 
+  // Register media controls with the shell so Bluetooth/media play-pause can
+  // toggle autoplay just like clicking the play button.
+  try {
+    document.dispatchEvent(new CustomEvent('app:registerMediaHandler', {
+      detail: {
+        id: MEDIA_HANDLER_ID,
+        play: () => {
+          if (!document.body.contains(el)) return { playing: false };
+          setAutoplayPlaying(true, { source: 'shell-media' });
+          return { playing: !!isAutoPlaying };
+        },
+        pause: () => {
+          if (!document.body.contains(el)) return { playing: false };
+          setAutoplayPlaying(false, { source: 'shell-media' });
+          return { playing: !!isAutoPlaying };
+        },
+        toggle: () => {
+          if (!document.body.contains(el)) return { playing: false };
+          setAutoplayPlaying(!isAutoPlaying, { source: 'shell-media' });
+          return { playing: !!isAutoPlaying };
+        },
+        getState: () => ({ playing: !!isAutoPlaying }),
+      }
+    }));
+  } catch (e) {}
+
   // Footer caption (below the card)
   const footer = document.createElement('div');
   footer.className = 'view-footer-caption';
@@ -817,7 +883,14 @@ export function renderKanjiStudyCard({ store }) {
 
 
   // Cleanup on unmount
+  let __wasMounted = false;
   const observer = new MutationObserver(() => {
+    // Avoid false-positive unmount before the shell has appended this view.
+    if (!__wasMounted) {
+      if (document.body.contains(el)) __wasMounted = true;
+      else return;
+    }
+
     if (!document.body.contains(el)) {
       // finalize any remaining credit when navigating away/unmounting
       try {
@@ -829,6 +902,9 @@ export function renderKanjiStudyCard({ store }) {
         window.removeEventListener('focus', onFocus);
       } catch (e) {}
       try { if (typeof unsub === 'function') unsub(); } catch (e) {}
+      try {
+        document.dispatchEvent(new CustomEvent('app:unregisterMediaHandler', { detail: { id: MEDIA_HANDLER_ID } }));
+      } catch (e) {}
       observer.disconnect();
     }
   });

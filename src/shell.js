@@ -187,6 +187,76 @@ export function createAppShell({ store, onNavigate }) {
   // `true` if they handled the event and want to stop further processing.
   const appKeyHandlers = [];
 
+  // App-level media handler registry. Apps can register callbacks for
+  // play/pause/toggle (Bluetooth headset buttons, media keys, etc.).
+  // Shell will dispatch to the most-recently-registered handler (LIFO),
+  // mirroring keyboard handler behavior.
+  const appMediaHandlers = [];
+
+  function getActiveMediaHandler() {
+    if (!Array.isArray(appMediaHandlers) || appMediaHandlers.length === 0) return null;
+    return appMediaHandlers[appMediaHandlers.length - 1] || null;
+  }
+
+  function setShellMediaPlaybackState(state) {
+    try {
+      if (!('mediaSession' in navigator) || !navigator.mediaSession) return;
+      const s = String(state || 'none');
+      navigator.mediaSession.playbackState = (s === 'playing' || s === 'paused' || s === 'none') ? s : 'none';
+    } catch (e) {}
+  }
+
+  function syncShellMediaSessionFromActive() {
+    const active = getActiveMediaHandler();
+    if (!active) {
+      setShellMediaPlaybackState('none');
+      return;
+    }
+    try {
+      if (typeof active.getState === 'function') {
+        const st = active.getState();
+        if (st && typeof st === 'object' && st.playing !== undefined) {
+          setShellMediaPlaybackState(st.playing ? 'playing' : 'paused');
+        } else if (typeof st === 'boolean') {
+          setShellMediaPlaybackState(st ? 'playing' : 'paused');
+        }
+      }
+    } catch (e) {}
+  }
+
+  function dispatchMediaAction(action) {
+    // Match the shell keydown behavior: if a modal is open, skip app dispatch.
+    if (document.querySelector('[role="dialog"][aria-modal="true"]')) return false;
+
+    const active = getActiveMediaHandler();
+    if (!active) return false;
+
+    try {
+      let result;
+      if (action === 'play') {
+        if (typeof active.play === 'function') result = active.play();
+        else if (typeof active.toggle === 'function') result = active.toggle();
+      } else if (action === 'pause') {
+        if (typeof active.pause === 'function') result = active.pause();
+        else if (typeof active.toggle === 'function') result = active.toggle();
+      } else {
+        if (typeof active.toggle === 'function') result = active.toggle();
+      }
+
+      // If handler returns state, use it; otherwise query getState.
+      if (typeof result === 'boolean') {
+        setShellMediaPlaybackState(result ? 'playing' : 'paused');
+      } else if (result && typeof result === 'object' && result.playing !== undefined) {
+        setShellMediaPlaybackState(result.playing ? 'playing' : 'paused');
+      } else {
+        syncShellMediaSessionFromActive();
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   document.addEventListener('app:registerKeyHandler', (ev) => {
     try {
       const { id, handler } = ev.detail || {};
@@ -208,6 +278,75 @@ export function createAppShell({ store, onNavigate }) {
       }
     } catch (err) {}
   });
+
+  // Media handler register/unregister
+  document.addEventListener('app:registerMediaHandler', (ev) => {
+    try {
+      const { id, play, pause, toggle, getState } = ev.detail || {};
+      if (!id) return;
+      // Remove existing with same id then push to top
+      for (let i = appMediaHandlers.length - 1; i >= 0; i--) {
+        if (appMediaHandlers[i].id === id) appMediaHandlers.splice(i, 1);
+      }
+      appMediaHandlers.push({ id, play, pause, toggle, getState });
+      syncShellMediaSessionFromActive();
+    } catch (err) {}
+  });
+
+  document.addEventListener('app:unregisterMediaHandler', (ev) => {
+    try {
+      const id = ev.detail?.id;
+      if (!id) return;
+      for (let i = appMediaHandlers.length - 1; i >= 0; i--) {
+        if (appMediaHandlers[i].id === id) appMediaHandlers.splice(i, 1);
+      }
+      syncShellMediaSessionFromActive();
+    } catch (err) {}
+  });
+
+  // Apps can notify the shell that their playback state changed (e.g. user
+  // clicked play/pause in the UI) so the MediaSession playbackState stays in sync.
+  document.addEventListener('app:mediaStateChanged', (ev) => {
+    try {
+      const id = ev.detail?.id;
+      const active = getActiveMediaHandler();
+      if (id && active && active.id !== id) return;
+      syncShellMediaSessionFromActive();
+    } catch (e) {}
+  });
+
+  // Wire MediaSession actions + media-key keydown fallback once at the shell.
+  try {
+    if ('mediaSession' in navigator && navigator.mediaSession) {
+      const ms = navigator.mediaSession;
+      try { ms.setActionHandler('play', () => dispatchMediaAction('play')); } catch (e) {}
+      try { ms.setActionHandler('pause', () => dispatchMediaAction('pause')); } catch (e) {}
+      try { ms.setActionHandler('stop', () => dispatchMediaAction('pause')); } catch (e) {}
+      try { ms.setActionHandler('playpause', () => dispatchMediaAction('toggle')); } catch (e) {}
+      // optional metadata (safe to ignore if unsupported)
+      try {
+        ms.metadata = new window.MediaMetadata({ title: 'Study Cards' });
+      } catch (e) {}
+      syncShellMediaSessionFromActive();
+    }
+  } catch (e) {}
+
+  // Keydown fallback: some environments expose media keys as key events.
+  try {
+    window.addEventListener('keydown', (e) => {
+      const key = String(e.key || '');
+      const code = String(e.code || '');
+      const isPlayPause = key === 'MediaPlayPause' || code === 'MediaPlayPause';
+      const isPlay = key === 'MediaPlay' || code === 'MediaPlay';
+      const isPause = key === 'MediaPause' || code === 'MediaPause';
+      if (!isPlayPause && !isPlay && !isPause) return;
+      const handled = dispatchMediaAction(isPlay ? 'play' : isPause ? 'pause' : 'toggle');
+      if (handled) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, true);
+  } catch (e) {}
 
   const header = document.createElement('div');
   header.className = 'header';
