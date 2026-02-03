@@ -25,10 +25,13 @@ function linkToAppAndCollection(appId, collectionId) {
   return `${p}?collection=${enc}`;
 }
 
-function makeLink({ label, goTo, sublabel }) {
+function makeLink({ label, goTo, sublabel, meta }) {
   const a = el('a', {
     className: 'home-link',
-    text: label,
+    children: [
+      el('span', { className: 'home-link-label', text: label }),
+      meta ? el('span', { className: 'home-link-meta', text: meta }) : null,
+    ].filter(Boolean),
     attrs: { href: `#${goTo}`, 'data-go': goTo },
   });
   if (!sublabel) return a;
@@ -72,24 +75,11 @@ export function renderLanding({ store, onNavigate }) {
   });
   const recentCollections = allStats.slice(0, 6);
 
-  const focusKanji = (activeCategory === 'japanese' && typeof store.getFocusKanjiValues === 'function')
-    ? (store.getFocusKanjiValues(16) || [])
-    : [];
+  
 
-  const header = card({
-    id: 'home-header-card',
-    title: 'Home',
-    subtitle: `Active collection: ${activeName}`,
-    cornerCaption: activeId ? (activeId.split('/').pop() || activeId) : '',
-  });
 
-  const statsGrid = el('div', { className: 'grid', id: 'home-stats-grid' });
-  statsGrid.append(
-    card({ title: 'Last 24h', cornerCaption: formatDurationMs(total24h), children: [el('p', { className: 'hint', text: 'All collections, all apps' })] }),
-    card({ title: 'Last 48h', cornerCaption: formatDurationMs(total48h), children: [el('p', { className: 'hint', text: 'All collections, all apps' })] }),
-    card({ title: 'Last 72h', cornerCaption: formatDurationMs(total72h), children: [el('p', { className: 'hint', text: 'All collections, all apps' })] }),
-    card({ title: 'Last 7d', cornerCaption: formatDurationMs(total7d), children: [el('p', { className: 'hint', text: 'All collections, all apps' })] }),
-  );
+
+  // old stats grid removed — replaced by Japanese-focused windows below
 
   const quickLinks = [];
   quickLinks.push(makeLink({ label: 'Flashcards', goTo: linkToAppAndCollection('flashcards', activeId), sublabel: 'Browse and review all fields' }));
@@ -100,94 +90,95 @@ export function renderLanding({ store, onNavigate }) {
   }
   quickLinks.push(makeLink({ label: 'Collections', goTo: '/collections', sublabel: 'Manage collection settings + stats' }));
 
-  const toolsCard = card({
-    id: 'home-tools-card',
-    title: 'Open',
-    subtitle: 'Jump into a view',
-    children: [el('div', { className: 'home-links', children: quickLinks })],
-  });
-
-  const recentCard = card({
-    id: 'home-recent-card',
-    title: 'Pick back up',
-    subtitle: 'Most recent app + collection pairs',
-  });
-  const recentList = el('div', { className: 'home-links', id: 'home-recent-links' });
-  if (recent.length === 0) {
-    recentList.append(el('p', { className: 'hint', text: 'No study sessions recorded yet.' }));
-  } else {
-    for (const s of recent) {
-      const goTo = linkToAppAndCollection(s.appId, s.collectionId);
-      const collName = store.getCollections?.().find(c => c.key === s.collectionId)?.metadata?.name || s.collectionId;
-      const when = s.endIso ? `${formatIsoShort(s.endIso)} (${formatRelativeFromIso(s.endIso, now)})` : '';
-      const dur = s.durationMs ? formatDurationMs(s.durationMs) : '';
-      recentList.append(makeLink({
-        label: `${appLabel(s.appId)} — ${collName}`,
-        goTo,
-        sublabel: [dur, when].filter(Boolean).join(' • '),
-      }));
-    }
-  }
-  recentCard.append(recentList);
-
-  const recentCollectionsCard = card({
-    id: 'home-recent-collections-card',
-    title: 'Recent collections',
-    subtitle: 'Last studied collections with totals',
-  });
-  const collList = el('div', { className: 'home-links', id: 'home-recent-collections-links' });
-  if (recentCollections.length === 0) {
-    collList.append(el('p', { className: 'hint', text: 'No collection activity yet.' }));
-  } else {
-    for (const st of recentCollections) {
-      const collName = store.getCollections?.().find(c => c.key === st.collectionId)?.metadata?.name || st.collectionId;
-      const goTo = linkToAppAndCollection((activeCategory === 'japanese') ? 'kanji' : 'flashcards', st.collectionId);
-      const when = st.lastEndIso ? `${formatIsoShort(st.lastEndIso)} (${formatRelativeFromIso(st.lastEndIso, now)})` : '';
-      const total = st.totalMs ? formatDurationMs(st.totalMs) : '0s';
-      const lastDur = st.lastDurationMs ? formatDurationMs(st.lastDurationMs) : '';
-      collList.append(makeLink({
-        label: collName,
-        goTo,
-        sublabel: [
-          `Total ${total}`,
-          lastDur ? `Last ${lastDur}` : null,
-          when || null,
-        ].filter(Boolean).join(' • '),
-      }));
-    }
-  }
-  recentCollectionsCard.append(collList);
-
-  const focusCard = (activeCategory === 'japanese') ? card({
-    id: 'home-focus-card',
-    title: 'Focus kanji',
-    subtitle: 'Marked as focus (global)',
-  }) : null;
-
-  if (focusCard) {
-    const wrap = el('div', { className: 'home-focus-wrap' });
-    if (focusKanji.length === 0) {
-      wrap.append(el('p', { className: 'hint', text: 'No focus kanji yet.' }));
-    } else {
-      const list = el('div', { className: 'home-focus-list' });
-      for (const k of focusKanji) {
-        const a = el('a', {
-          className: 'pill',
-          text: k,
-          attrs: { href: `#${linkToAppAndCollection('kanji', activeId)}`, 'data-go': linkToAppAndCollection('kanji', activeId) },
-        });
-        list.append(a);
+  // Helper: return sorted, Japanese-filtered items for a window
+  function getWindowItems(windowMs) {
+    const cutoff = now - windowMs;
+    const raw = store.getRecentStudySessions?.(1000) || [];
+    const map = new Map();
+    for (const s of raw) {
+      if (!s.endIso) continue;
+      const t = new Date(s.endIso).getTime();
+      if (t < cutoff) continue;
+      const id = s.collectionId;
+      const prev = map.get(id) || { collectionId: id, totalMs: 0, lastEndIso: null, lastDurationMs: 0, lastAppId: null };
+      prev.totalMs += s.durationMs || 0;
+      if (!prev.lastEndIso || new Date(s.endIso).getTime() > new Date(prev.lastEndIso).getTime()) {
+        prev.lastEndIso = s.endIso;
+        prev.lastDurationMs = s.durationMs || 0;
+        prev.lastAppId = s.appId;
       }
-      wrap.append(list);
+      map.set(id, prev);
     }
-    focusCard.append(wrap);
+
+    let items = Array.from(map.values()).sort((a, b) => {
+      const ta = a.lastEndIso ? new Date(a.lastEndIso).getTime() : 0;
+      const tb = b.lastEndIso ? new Date(b.lastEndIso).getTime() : 0;
+      return tb - ta;
+    });
+
+    // Filter to only Japanese collections for this home section
+    items = items.filter(it => {
+      const coll = store.getCollections?.().find(c => c.key === it.collectionId);
+      const category = String(coll?.metadata?.category || '').toLowerCase();
+      return category === 'japanese' || String(it.collectionId || '').startsWith('japanese/');
+    });
+
+    return items;
   }
 
-  const grid = el('div', { className: 'grid', id: 'home-grid' });
-  grid.append(toolsCard, recentCard, recentCollectionsCard);
-  if (focusCard) grid.append(focusCard);
+  // Render a card from a prepared items array. excludeLabel is shown under the title.
+  function renderWindowCard(title, items, totalMs, excludeLabel, windowKey) {
+    const cardChildren = [];
+    // render the exclude hint when excludeLabel is provided (allow empty string to reserve space)
+    if (excludeLabel !== undefined) {
+      cardChildren.push(el('div', { className: 'hint', text: excludeLabel }));
+    }
+    const wrap = el('div', { className: 'home-links' });
+    if (!items || items.length === 0) {
+      wrap.append(el('p', { className: 'hint', text: 'No collections studied in this period.' }));
+    } else {
+      for (const it of items) {
+        const coll = store.getCollections?.().find(c => c.key === it.collectionId);
+        const rawName = coll?.metadata?.name || it.collectionId.replace(/^japanese\/?/, '');
+        const collName = rawName;
+        const goTo = linkToAppAndCollection('kanji', it.collectionId);
+        const when = it.lastEndIso ? `${formatIsoShort(it.lastEndIso)} (${formatRelativeFromIso(it.lastEndIso, now)})` : '';
+        const total = it.totalMs ? formatDurationMs(it.totalMs) : '';
+        wrap.append(makeLink({ label: collName, goTo, meta: total, sublabel: when }));
+      }
+    }
+    cardChildren.push(wrap);
+    const cardEl = card({ title, cornerCaption: formatDurationMs(totalMs), children: cardChildren });
+    cardEl.classList.add('home-window-card');
+    if (windowKey) cardEl.classList.add(`home-window-${String(windowKey).replace(/\s+/g, '-').toLowerCase()}`);
+    return cardEl;
+  }
 
-  root.append(header, statsGrid, grid);
+  const sectionLabel = el('div', { className: 'section-label-row', children: [el('h3', { className: 'section-label', text: 'Japanese — Kanji study' })] });
+  const grid = el('div', { className: 'grid', id: 'japanese-home-grid' });
+  // Show windowed collection lists for Japanese collections (kanji study)
+  const items24 = getWindowItems(24 * 60 * 60 * 1000);
+  const ids24 = new Set(items24.map(i => i.collectionId));
+
+  const items48Raw = getWindowItems(48 * 60 * 60 * 1000);
+  const items48 = items48Raw.filter(i => !ids24.has(i.collectionId));
+  const ids48 = new Set(items48.map(i => i.collectionId));
+
+  const items72Raw = getWindowItems(72 * 60 * 60 * 1000);
+  const items72 = items72Raw.filter(i => !ids24.has(i.collectionId) && !ids48.has(i.collectionId));
+  const ids72 = new Set(items72.map(i => i.collectionId));
+
+  const items7dRaw = getWindowItems(7 * 24 * 60 * 60 * 1000);
+  const items7d = items7dRaw.filter(i => !ids24.has(i.collectionId) && !ids48.has(i.collectionId) && !ids72.has(i.collectionId));
+
+  grid.append(
+    renderWindowCard('Last 24h', items24, total24h, '', '24h'),
+    renderWindowCard('Last 48h', items48, total48h, 'excludes Last 24h', '48h'),
+    renderWindowCard('Last 72h', items72, total72h, 'excludes Last 48h and Last 24h', '72h'),
+    renderWindowCard('Last 7d', items7d, total7d, 'excludes Last 72h, 48h and 24h', '7d'),
+  );
+
+  root.append(sectionLabel, grid);
 
   root.addEventListener('click', (e) => {
     const t = e.target;

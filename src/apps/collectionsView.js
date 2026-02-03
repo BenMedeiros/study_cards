@@ -111,13 +111,21 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     }
   ];
 
+  // Define column groups for visual grouping and collapse/expand
+  const colGroups = [
+    { label: 'Meta', start: 0, end: 3, collapsible: false },
+    { label: 'Study Time', start: 4, end: 10, collapsible: true, collapsed: false },
+    { label: 'Settings', start: 11, end: 15, collapsible: true, collapsed: true }
+  ];
+
   const table = createTable({
     headers,
     rows,
     id: 'collections-table',
     sortable: true,
     searchable: true,
-    rowActions
+    rowActions,
+    colGroups
   });
 
   const collectionsCard = card({

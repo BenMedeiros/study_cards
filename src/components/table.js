@@ -8,7 +8,7 @@
  * @param {string} [options.collection] - Optional collection name the table was populated from
  * @returns {HTMLTableElement}
  */
-export function createTable({ headers, rows, className = '', id, collection, sortable = false, searchable = false, rowActions = [] } = {}) {
+export function createTable({ headers, rows, className = '', id, collection, sortable = false, searchable = false, rowActions = [], colGroups = [] } = {}) {
   const wrapper = document.createElement('div');
   wrapper.className = 'table-wrapper';
   if (id) wrapper.id = `${id}-wrapper`;
@@ -25,6 +25,10 @@ export function createTable({ headers, rows, className = '', id, collection, sor
   const thead = document.createElement('thead');
   const headerRow = document.createElement('tr');
   const headerKeys = [];
+  // Track which columns are currently hidden (by group collapse)
+  const hiddenCols = new Set();
+  const collapsedGroups = new Set();
+  const defaultPlaceholderWidth = 36; // px
 
   function toKebabCase(s) {
     return String(s)
@@ -85,8 +89,57 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     headerKeys.push({ key, keyClass });
     headerRow.append(th);
   }
+  // Build optional <colgroup> so we can mark columns and control layout
+  const colgroup = document.createElement('colgroup');
+  for (let i = 0; i < headerKeys.length; i++) {
+    const col = document.createElement('col');
+    col.dataset.colIndex = String(i);
+    const keyClass = (headerKeys[i] && headerKeys[i].keyClass) ? headerKeys[i].keyClass : `col-${i}`;
+    col.classList.add(`col-${keyClass}`);
+    colgroup.append(col);
+  }
 
-  thead.append(headerRow);
+  // If colGroups provided, render an additional header row above the regular headers
+  let groupHeaderRow = null;
+  if (Array.isArray(colGroups) && colGroups.length) {
+    groupHeaderRow = document.createElement('tr');
+    for (const g of colGroups) {
+      const gLabel = g.label || '';
+      const start = Number.isFinite(g.start) ? g.start : (g.startIndex ?? 0);
+      const end = Number.isFinite(g.end) ? g.end : (g.endIndex ?? (start));
+      const span = Math.max(1, (end - start) + 1);
+      const th = document.createElement('th');
+      th.colSpan = span;
+      const groupId = (g.id ?? gLabel) || (String(start) + '-' + String(end));
+      th.dataset.groupId = groupId;
+      th.classList.add('colgroup-header');
+      const titleWrap = document.createElement('div');
+      titleWrap.className = 'colgroup-title';
+      const caption = document.createElement('span');
+      caption.textContent = gLabel;
+      titleWrap.append(caption);
+      if (g.collapsible !== false) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'colgroup-toggle btn small';
+        btn.textContent = g.collapsed ? '+' : '\u2212';
+        btn.title = g.collapsed ? `Expand ${gLabel}` : `Collapse ${gLabel}`;
+        btn.addEventListener('click', () => {
+          const willCollapse = !collapsedGroups.has(groupId);
+          if (willCollapse) collapsedGroups.add(groupId); else collapsedGroups.delete(groupId);
+          btn.textContent = willCollapse ? '+' : '\u2212';
+          btn.title = willCollapse ? `Expand ${gLabel}` : `Collapse ${gLabel}`;
+          updateColumnVisibility(start, end, !willCollapse);
+        });
+        titleWrap.append(btn);
+      }
+      // visual borders for the group header
+      th.style.borderLeft = '1px solid rgba(255,255,255,0.06)';
+      th.style.borderRight = '1px solid rgba(255,255,255,0.06)';
+      th.append(titleWrap);
+      groupHeaderRow.append(th);
+    }
+  }
 
   const tbody = document.createElement('tbody');
 
@@ -125,6 +178,38 @@ export function createTable({ headers, rows, className = '', id, collection, sor
           td.textContent = String(cellData ?? '');
         }
 
+        // If this column belongs to a collapsed group: keep only the group's
+        // first column as a narrow placeholder, hide the others completely.
+        const g = getGroupForIndex(i);
+        if (g) {
+          const gId = (g.id ?? g.label) || String((Number.isFinite(g.start) ? g.start : (g.startIndex ?? i))) + '-' + String((Number.isFinite(g.end) ? g.end : (g.endIndex ?? i)));
+          const startIdx = Number.isFinite(g.start) ? g.start : (g.startIndex ?? i);
+          if (collapsedGroups.has(gId)) {
+            if (i === startIdx) {
+              const w = (g && g.placeholderWidth) ? (typeof g.placeholderWidth === 'number' ? `${g.placeholderWidth}px` : g.placeholderWidth) : `${defaultPlaceholderWidth}px`;
+              td.style.width = w;
+              td.style.minWidth = w;
+              td.style.maxWidth = w;
+              td.textContent = '';
+              td.classList.add('col-collapsed');
+              td.style.display = '';
+            } else {
+              td.style.display = 'none';
+            }
+          } else {
+            td.style.display = '';
+            td.style.width = '';
+            td.style.minWidth = '';
+            td.style.maxWidth = '';
+            td.classList.remove('col-collapsed');
+          }
+        } else {
+          td.style.width = '';
+          td.style.minWidth = '';
+          td.style.maxWidth = '';
+          td.classList.remove('col-collapsed');
+          td.style.display = '';
+        }
         tr.append(td);
       }
 
@@ -196,6 +281,128 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     th.classList.add('col-actions');
     th.setAttribute('aria-sort', 'none');
     headerRow.append(th);
+  }
+
+  // Insert colgroup and optional group header before thead content
+  // apply group borders and mark member columns
+  if (Array.isArray(colGroups) && colGroups.length) {
+    for (const g of colGroups) {
+      const start = Number.isFinite(g.start) ? g.start : (g.startIndex ?? 0);
+      const end = Number.isFinite(g.end) ? g.end : (g.endIndex ?? start);
+      const groupId = (g.id ?? g.label) || (String(start) + '-' + String(end));
+      for (let ci = start; ci <= end; ci++) {
+        const colEl = colgroup.querySelector(`col[data-col-index="${ci}"]`);
+        if (colEl) colEl.dataset.group = groupId;
+        const hdr = headerRow.children[ci];
+        if (hdr) {
+          hdr.classList.add('colgroup-member');
+          if (ci === start) hdr.style.borderLeft = '1px solid rgba(255,255,255,0.06)';
+          if (ci === end) hdr.style.borderRight = '1px solid rgba(255,255,255,0.06)';
+        }
+        for (const tr of Array.from(tbody.children)) {
+          const td = tr.children[ci];
+          if (!td) continue;
+          if (ci === start) td.style.borderLeft = '1px solid rgba(255,255,255,0.04)';
+          if (ci === end) td.style.borderRight = '1px solid rgba(255,255,255,0.04)';
+        }
+      }
+    }
+  }
+  if (groupHeaderRow) thead.append(groupHeaderRow);
+  thead.append(headerRow);
+  if (colgroup.children.length) table.append(colgroup);
+
+  // helper to update visibility of a contiguous column range
+  function updateColumnVisibility(start, end, show) {
+    // Update <col> elements
+    for (let ci = start; ci <= end; ci++) {
+      const colEl = colgroup.querySelector(`col[data-col-index="${ci}"]`);
+      if (colEl) {
+        // when hiding a group, keep the first column as a placeholder
+        if (!show) {
+          if (ci === start) colEl.style.display = '';
+          else colEl.style.display = 'none';
+        } else {
+          colEl.style.display = '';
+        }
+      }
+      // update header cell
+      const th = headerRow.children[ci];
+      const g = getGroupForIndex(ci);
+      const w = (g && g.placeholderWidth) ? (typeof g.placeholderWidth === 'number' ? `${g.placeholderWidth}px` : g.placeholderWidth) : `${defaultPlaceholderWidth}px`;
+      if (th) {
+        const group = getGroupForIndex(ci);
+        const startIdx = Number.isFinite(group?.start) ? group.start : (group?.startIndex ?? ci);
+        if (show) {
+          th.style.width = '';
+          th.style.minWidth = '';
+          th.style.maxWidth = '';
+          th.classList.remove('col-collapsed');
+          th.style.display = '';
+        } else {
+          if (ci === startIdx) {
+            th.style.width = w;
+            th.style.minWidth = w;
+            th.style.maxWidth = w;
+            th.classList.add('col-collapsed');
+            th.style.display = '';
+          } else {
+            th.style.display = 'none';
+          }
+        }
+      }
+    }
+    // update body cells
+    for (const tr of Array.from(tbody.children)) {
+      for (let ci = start; ci <= end; ci++) {
+        const td = tr.children[ci];
+        if (!td) continue;
+        const g = getGroupForIndex(ci);
+        const w = (g && g.placeholderWidth) ? (typeof g.placeholderWidth === 'number' ? `${g.placeholderWidth}px` : g.placeholderWidth) : `${defaultPlaceholderWidth}px`;
+        if (show) {
+          td.style.width = '';
+          td.style.minWidth = '';
+          td.style.maxWidth = '';
+          td.classList.remove('col-collapsed');
+          td.style.display = '';
+        } else {
+          const startIdx = Number.isFinite(g?.start) ? g.start : (g?.startIndex ?? ci);
+          if (ci === startIdx) {
+            td.style.width = w;
+            td.style.minWidth = w;
+            td.style.maxWidth = w;
+            td.textContent = '';
+            td.classList.add('col-collapsed');
+            td.style.display = '';
+          } else {
+            td.style.display = 'none';
+          }
+        }
+      }
+    }
+  }
+
+  // Initialize collapsed state from colGroups
+  if (Array.isArray(colGroups) && colGroups.length) {
+    for (const g of colGroups) {
+      const start = Number.isFinite(g.start) ? g.start : (g.startIndex ?? 0);
+      const end = Number.isFinite(g.end) ? g.end : (g.endIndex ?? start);
+      if (g.collapsed) {
+        collapsedGroups.add((g.id ?? g.label) || (String(start) + '-' + String(end)));
+        updateColumnVisibility(start, end, false);
+      }
+    }
+  }
+
+  // helper: find group object for a column index
+  function getGroupForIndex(i) {
+    if (!Array.isArray(colGroups)) return null;
+    for (const g of colGroups) {
+      const start = Number.isFinite(g.start) ? g.start : (g.startIndex ?? 0);
+      const end = Number.isFinite(g.end) ? g.end : (g.endIndex ?? start);
+      if (i >= start && i <= end) return g;
+    }
+    return null;
   }
 
   // Optional search UI

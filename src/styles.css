@@ -659,6 +659,76 @@ input[type="number"].button::-webkit-inner-spin-button {
   gap: 0.75rem;
 }
 
+
+/* Japanese home grid: wider cards and scrollable lists for consistent sizing */
+#japanese-home-grid {
+  grid-template-columns: repeat(auto-fit, minmax(18.75rem, 1fr));
+}
+
+#japanese-home-grid .card {
+  max-height: 22.5rem;
+}
+
+#japanese-home-grid .home-links {
+  max-height: 19.5rem;
+  overflow: auto;
+}
+
+.section-label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.section-label {
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+/* home-link: show name left, inline meta (total study time) on the right */
+.home-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: var(--text);
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: rgba(96,165,250,0.04);
+}
+
+.home-link-label {
+  display: inline-block;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-link-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+  flex: 0 0 auto;
+}
+
+/* Remove the gap between the card title and its hint for window cards */
+.home-window-card h2  {
+  margin: 0;
+}
+
+/* Ensure 24h card still reserves vertical space for the hint even if empty */
+.home-window-24h .hint {
+  min-height: 1rem;
+  opacity: 0.95;
+}
+
 /* Small caption-style footer for kanji controls (sibling under the card) */
 .view-footer-caption {
   margin: 0.75rem auto 0;
