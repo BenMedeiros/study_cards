@@ -9,7 +9,7 @@ export function createStore() {
 
   // IndexedDB-backed persistence (with localStorage fallback).
   // Store schema:
-  // - kv: { key: 'shell'|'apps'|'learned_kanji'|'focus_on_kanji', value: object|array }
+  // - kv: { key: 'shell'|'apps'|'kanji_progress', value: object }
   // - collections: { id: '<collectionId>', value: object }
   let persistenceReady = false;
   let idbAvailable = false;
@@ -21,13 +21,13 @@ export function createStore() {
     apps: {},
     collections: {},
     kv: {
-      learned_kanji: [],
-      focus_on_kanji: [],
+      // Map<string, KanjiProgressRecord>
+      // KanjiProgressRecord: { state, seen, timeMsStudiedInKanjiStudyCard, timesSeenInKanjiStudyCard, ... }
+      kanji_progress: {},
     },
   };
 
-  let learnedKanjiSet = new Set();
-  let focusKanjiSet = new Set();
+  const KANJI_PROGRESS_KEY = 'kanji_progress';
 
   let flushTimer = null;
   let flushInFlight = null;
@@ -122,8 +122,8 @@ export function createStore() {
           if (doShell) puts.push(idbPut('kv', { key: 'shell', value: uiState.shell || {} }));
           if (doApps) puts.push(idbPut('kv', { key: 'apps', value: uiState.apps || {} }));
           for (const k of kvKeys) {
-            if (k === 'learned_kanji' || k === 'focus_on_kanji') {
-              puts.push(idbPut('kv', { key: k, value: uiState.kv?.[k] || [] }));
+            if (k === KANJI_PROGRESS_KEY) {
+              puts.push(idbPut('kv', { key: k, value: uiState.kv?.[k] || {} }));
             }
           }
           for (const id of colls) {
@@ -166,81 +166,109 @@ export function createStore() {
     return s;
   }
 
-  function syncKanjiSetsFromArrays() {
-    const learnedArr = Array.isArray(uiState?.kv?.learned_kanji) ? uiState.kv.learned_kanji : [];
-    const focusArr = Array.isArray(uiState?.kv?.focus_on_kanji) ? uiState.kv.focus_on_kanji : [];
-    learnedKanjiSet = new Set(learnedArr.map(normalizeKanjiValue).filter(Boolean));
-    focusKanjiSet = new Set(focusArr.map(normalizeKanjiValue).filter(Boolean));
-    // Enforce mutual exclusion at load time.
-    for (const v of learnedKanjiSet) {
-      if (focusKanjiSet.has(v)) focusKanjiSet.delete(v);
+  function ensureKanjiProgressMap() {
+    uiState.kv = uiState.kv || {};
+    const v = uiState.kv[KANJI_PROGRESS_KEY];
+    if (!v || typeof v !== 'object' || Array.isArray(v)) {
+      uiState.kv[KANJI_PROGRESS_KEY] = {};
     }
-    uiState.kv.learned_kanji = Array.from(learnedKanjiSet);
-    uiState.kv.focus_on_kanji = Array.from(focusKanjiSet);
+    return uiState.kv[KANJI_PROGRESS_KEY];
   }
 
-  function persistKanjiSetsToArrays() {
-    uiState.kv = uiState.kv || {};
-    uiState.kv.learned_kanji = Array.from(learnedKanjiSet);
-    uiState.kv.focus_on_kanji = Array.from(focusKanjiSet);
+  function getKanjiProgressRecord(v) {
+    const k = normalizeKanjiValue(v);
+    if (!k) return null;
+    const map = ensureKanjiProgressMap();
+    const rec = map[k];
+    return (rec && typeof rec === 'object' && !Array.isArray(rec)) ? rec : null;
+  }
+
+  function setKanjiProgressRecord(v, patch, opts = {}) {
+    const k = normalizeKanjiValue(v);
+    if (!k) return null;
+    const map = ensureKanjiProgressMap();
+    const prev = getKanjiProgressRecord(k) || {};
+    const patchObj = (patch && typeof patch === 'object') ? patch : {};
+    map[k] = { ...prev, ...patchObj };
+    dirtyKv.add(KANJI_PROGRESS_KEY);
+    scheduleFlush({ immediate: !!opts.immediate });
+    if (!opts.silent) notify();
+    return map[k];
+  }
+
+  function getKanjiState(v) {
+    const rec = getKanjiProgressRecord(v);
+    const s = rec?.state;
+    return (typeof s === 'string' && s.trim()) ? s.trim() : null;
+  }
+
+  function setKanjiState(v, nextState, opts = {}) {
+    const state = (typeof nextState === 'string' && nextState.trim()) ? nextState.trim() : null;
+    return setKanjiProgressRecord(v, { state }, opts);
   }
 
   function isKanjiLearned(v) {
-    const s = normalizeKanjiValue(v);
-    if (!s) return false;
-    return learnedKanjiSet.has(s);
+    return getKanjiState(v) === 'learned';
   }
 
   function isKanjiFocus(v) {
-    const s = normalizeKanjiValue(v);
-    if (!s) return false;
-    return focusKanjiSet.has(s);
+    return getKanjiState(v) === 'focus';
   }
 
   function toggleKanjiLearned(v) {
-    const s = normalizeKanjiValue(v);
-    if (!s) return false;
-
-    if (learnedKanjiSet.has(s)) {
-      learnedKanjiSet.delete(s);
-    } else {
-      learnedKanjiSet.add(s);
-      focusKanjiSet.delete(s);
-    }
-
-    persistKanjiSetsToArrays();
-    dirtyKv.add('learned_kanji');
-    dirtyKv.add('focus_on_kanji');
-    scheduleFlush();
-    notify();
-    return learnedKanjiSet.has(s);
+    const k = normalizeKanjiValue(v);
+    if (!k) return false;
+    const cur = getKanjiState(k);
+    const next = (cur === 'learned') ? null : 'learned';
+    setKanjiState(k, next);
+    return getKanjiState(k) === 'learned';
   }
 
   function toggleKanjiFocus(v) {
-    const s = normalizeKanjiValue(v);
-    if (!s) return false;
+    const k = normalizeKanjiValue(v);
+    if (!k) return false;
+    const cur = getKanjiState(k);
+    const next = (cur === 'focus') ? null : 'focus';
+    setKanjiState(k, next);
+    return getKanjiState(k) === 'focus';
+  }
 
-    if (focusKanjiSet.has(s)) {
-      focusKanjiSet.delete(s);
-    } else {
-      focusKanjiSet.add(s);
-      learnedKanjiSet.delete(s);
-    }
+  function recordKanjiSeenInKanjiStudyCard(v, opts = {}) {
+    const k = normalizeKanjiValue(v);
+    if (!k) return;
+    const prev = getKanjiProgressRecord(k) || {};
+    const prevTimes = Number.isFinite(Number(prev.timesSeenInKanjiStudyCard)) ? Number(prev.timesSeenInKanjiStudyCard) : 0;
+    setKanjiProgressRecord(k, {
+      seen: true,
+      timesSeenInKanjiStudyCard: prevTimes + 1,
+    }, { silent: opts.silent !== false, immediate: !!opts.immediate });
+  }
 
-    persistKanjiSetsToArrays();
-    dirtyKv.add('learned_kanji');
-    dirtyKv.add('focus_on_kanji');
-    scheduleFlush();
-    notify();
-    return focusKanjiSet.has(s);
+  function addTimeMsStudiedInKanjiStudyCard(v, deltaMs, opts = {}) {
+    const k = normalizeKanjiValue(v);
+    const d = Math.round(Number(deltaMs));
+    if (!k) return;
+    if (!Number.isFinite(d) || d <= 0) return;
+    const prev = getKanjiProgressRecord(k) || {};
+    const prevTime = Number.isFinite(Number(prev.timeMsStudiedInKanjiStudyCard)) ? Math.round(Number(prev.timeMsStudiedInKanjiStudyCard)) : 0;
+    setKanjiProgressRecord(k, {
+      timeMsStudiedInKanjiStudyCard: Math.max(0, prevTime + d),
+    }, { silent: opts.silent !== false, immediate: !!opts.immediate });
   }
 
   function clearLearnedKanji() {
     try {
-      learnedKanjiSet.clear();
-      // Do not clear focus set.
-      persistKanjiSetsToArrays();
-      dirtyKv.add('learned_kanji');
+      const map = ensureKanjiProgressMap();
+      let changed = false;
+      for (const [k, rec] of Object.entries(map)) {
+        if (!rec || typeof rec !== 'object') continue;
+        if (rec.state === 'learned') {
+          map[k] = { ...rec, state: null };
+          changed = true;
+        }
+      }
+      if (!changed) return;
+      dirtyKv.add(KANJI_PROGRESS_KEY);
       scheduleFlush({ immediate: true });
       notify();
     } catch (e) {
@@ -254,15 +282,18 @@ export function createStore() {
       const toClear = new Set(values.map(normalizeKanjiValue).filter(Boolean));
       if (toClear.size === 0) return;
 
+      const map = ensureKanjiProgressMap();
       let changed = false;
       for (const v of toClear) {
-        if (learnedKanjiSet.delete(v)) changed = true;
+        const rec = map[v];
+        if (rec && typeof rec === 'object' && rec.state === 'learned') {
+          map[v] = { ...rec, state: null };
+          changed = true;
+        }
       }
       if (!changed) return;
 
-      // Do not clear focus set.
-      persistKanjiSetsToArrays();
-      dirtyKv.add('learned_kanji');
+      dirtyKv.add(KANJI_PROGRESS_KEY);
       scheduleFlush({ immediate: true });
       notify();
     } catch (e) {
@@ -1092,16 +1123,14 @@ export function createStore() {
           const { idbGet, idbGetAll } = await import('./utils/idb.js');
           const shellRec = await idbGet('kv', 'shell');
           const appsRec = await idbGet('kv', 'apps');
-          const learnedRec = await idbGet('kv', 'learned_kanji');
-          const focusRec = await idbGet('kv', 'focus_on_kanji');
+          const kanjiProgressRec = await idbGet('kv', KANJI_PROGRESS_KEY);
           const collRecs = await idbGetAll('collections');
           loaded = {
             shell: (shellRec && shellRec.value && typeof shellRec.value === 'object') ? shellRec.value : {},
             apps: (appsRec && appsRec.value && typeof appsRec.value === 'object') ? appsRec.value : {},
             collections: {},
             kv: {
-              learned_kanji: Array.isArray(learnedRec?.value) ? learnedRec.value : [],
-              focus_on_kanji: Array.isArray(focusRec?.value) ? focusRec.value : [],
+              [KANJI_PROGRESS_KEY]: (kanjiProgressRec && kanjiProgressRec.value && typeof kanjiProgressRec.value === 'object' && !Array.isArray(kanjiProgressRec.value)) ? kanjiProgressRec.value : {},
             },
           };
           for (const r of (Array.isArray(collRecs) ? collRecs : [])) {
@@ -1122,10 +1151,9 @@ export function createStore() {
       uiState.shell = (loaded.shell && typeof loaded.shell === 'object') ? loaded.shell : {};
       uiState.apps = (loaded.apps && typeof loaded.apps === 'object') ? loaded.apps : {};
       uiState.collections = (loaded.collections && typeof loaded.collections === 'object') ? loaded.collections : {};
-      uiState.kv = (loaded.kv && typeof loaded.kv === 'object') ? loaded.kv : { learned_kanji: [], focus_on_kanji: [] };
-      if (!Array.isArray(uiState.kv.learned_kanji)) uiState.kv.learned_kanji = [];
-      if (!Array.isArray(uiState.kv.focus_on_kanji)) uiState.kv.focus_on_kanji = [];
-      syncKanjiSetsFromArrays();
+      uiState.kv = (loaded.kv && typeof loaded.kv === 'object') ? loaded.kv : { [KANJI_PROGRESS_KEY]: {} };
+      // Ensure `kanji_progress` is present and well-formed.
+      ensureKanjiProgressMap();
 
       const paths = await loadSeedCollections();
       // Do not eagerly load collection JSONs; start with none loaded.
@@ -1316,6 +1344,10 @@ export function createStore() {
     toggleKanjiFocus,
     clearLearnedKanji,
     clearLearnedKanjiForValues,
+    // Kanji per-item progress/stats
+    getKanjiProgressRecord,
+    recordKanjiSeenInKanjiStudyCard,
+    addTimeMsStudiedInKanjiStudyCard,
     setActiveCollectionId,
     syncCollectionFromURL,
     listCollectionDir,

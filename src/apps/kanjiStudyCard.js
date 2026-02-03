@@ -13,6 +13,127 @@ export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
   el.id = 'kanji-study-root';
 
+  // Study timing: credit time spent on a card (max 10s per card view).
+  const MAX_CREDIT_PER_CARD_MS = 10_000;
+  const MIN_VIEW_TO_COUNT_MS = 200;
+  const timing = {
+    kanji: null,
+    startedAtMs: null,
+    creditedThisViewMs: 0,
+    seenMarkedThisView: false,
+  };
+
+  function canRunTimer() {
+    try {
+      if (document.visibilityState !== 'visible') return false;
+      if (typeof document.hasFocus === 'function' && !document.hasFocus()) return false;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function getCurrentKanjiKey() {
+    const entry = entries && entries.length ? entries[index] : null;
+    const v = getPrimaryKanjiValue(entry);
+    return String(v || '').trim();
+  }
+
+  function flushTimingCredit({ immediate = false } = {}) {
+    const k = timing.kanji;
+    if (!k) return;
+    if (timing.startedAtMs == null) return;
+    const now = nowMs();
+    const elapsed = Math.max(0, Math.round(now - timing.startedAtMs));
+
+    // Only count a view (seen/timesSeen) after a minimum dwell.
+    const totalViewedThisViewMs = timing.creditedThisViewMs + elapsed;
+    if (!timing.seenMarkedThisView && totalViewedThisViewMs >= MIN_VIEW_TO_COUNT_MS) {
+      timing.seenMarkedThisView = true;
+      try {
+        if (store && typeof store.recordKanjiSeenInKanjiStudyCard === 'function') {
+          store.recordKanjiSeenInKanjiStudyCard(k, { silent: true, immediate });
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    // Don't award any study-time credit unless they've been on the card long enough.
+    if (totalViewedThisViewMs < MIN_VIEW_TO_COUNT_MS) {
+      timing.startedAtMs = null;
+      return;
+    }
+
+    const remaining = Math.max(0, MAX_CREDIT_PER_CARD_MS - timing.creditedThisViewMs);
+    const add = Math.round(Math.min(elapsed, remaining));
+    timing.startedAtMs = null;
+    if (add <= 0) return;
+    timing.creditedThisViewMs += add;
+    try {
+      if (store && typeof store.addTimeMsStudiedInKanjiStudyCard === 'function') {
+        store.addTimeMsStudiedInKanjiStudyCard(k, add, { silent: true, immediate });
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  function maybeResumeTiming() {
+    if (!timing.kanji) return;
+    if (timing.startedAtMs != null) return;
+    if (timing.creditedThisViewMs >= MAX_CREDIT_PER_CARD_MS) return;
+    if (!canRunTimer()) return;
+    timing.startedAtMs = nowMs();
+  }
+
+  function beginTimingForKanji(kanji) {
+    const k = String(kanji || '').trim();
+    if (!k) {
+      // Nothing to track
+      timing.kanji = null;
+      timing.startedAtMs = null;
+      timing.creditedThisViewMs = 0;
+      timing.seenMarkedThisView = false;
+      return;
+    }
+
+    // Close out any previous card timing before switching.
+    flushTimingCredit();
+
+    timing.kanji = k;
+    timing.startedAtMs = null;
+    timing.creditedThisViewMs = 0;
+
+    // Defer "seen" increment until MIN_VIEW_TO_COUNT_MS has elapsed.
+    timing.seenMarkedThisView = false;
+
+    maybeResumeTiming();
+  }
+
+  function syncTimingToCurrentCard() {
+    const current = getCurrentKanjiKey();
+    if (!current) {
+      // stop
+      flushTimingCredit();
+      timing.kanji = null;
+      timing.startedAtMs = null;
+      timing.creditedThisViewMs = 0;
+      timing.seenMarkedThisView = false;
+      return;
+    }
+    if (timing.kanji !== current) {
+      beginTimingForKanji(current);
+      return;
+    }
+    // same card: ensure paused/resumed state matches visibility/focus
+    if (!canRunTimer()) {
+      flushTimingCredit();
+    } else {
+      maybeResumeTiming();
+    }
+  }
+
   // Simple state
   let entries = [];
   let index = 0;
@@ -343,6 +464,8 @@ export function renderKanjiStudyCard({ store }) {
   // Navigation / control helpers to avoid duplicated logic
   function goToIndex(newIndex) {
     if (newIndex < 0 || newIndex >= entries.length) return;
+    // finalize time for previous card before switching
+    flushTimingCredit({ immediate: false });
     const prev = index;
     index = newIndex;
     shownAt = nowMs();
@@ -401,6 +524,8 @@ export function renderKanjiStudyCard({ store }) {
   function shuffleEntries() {
     const n = originalEntries.length;
     if (n === 0) return;
+
+    flushTimingCredit({ immediate: false });
 
     // generate a 32-bit seed (prefer crypto RNG)
     let seed;
@@ -507,6 +632,10 @@ export function renderKanjiStudyCard({ store }) {
     refreshEntriesFromStore();
       }
     // render
+
+    // If the underlying entry changed due to refresh, keep timing aligned.
+    // (e.g., store updates, filter changes, virtual set resolution)
+    syncTimingToCurrentCard();
 
     wrapper.innerHTML = '';
 
@@ -617,6 +746,29 @@ export function renderKanjiStudyCard({ store }) {
   refreshEntriesFromStore();
   render();
 
+  // Pause/resume timing on visibility/focus changes
+  const onVisibility = () => {
+    if (document.visibilityState === 'hidden') {
+      flushTimingCredit({ immediate: true });
+    } else {
+      maybeResumeTiming();
+    }
+  };
+  const onBlur = () => {
+    flushTimingCredit({ immediate: true });
+  };
+  const onFocus = () => {
+    maybeResumeTiming();
+  };
+
+  try {
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('blur', onBlur);
+    window.addEventListener('focus', onFocus);
+  } catch (e) {
+    // ignore
+  }
+
   // React to store changes (e.g., virtual set finishing its background resolution)
   let unsub = null;
   try {
@@ -667,6 +819,15 @@ export function renderKanjiStudyCard({ store }) {
   // Cleanup on unmount
   const observer = new MutationObserver(() => {
     if (!document.body.contains(el)) {
+      // finalize any remaining credit when navigating away/unmounting
+      try {
+        flushTimingCredit({ immediate: true });
+      } catch (e) {}
+      try {
+        document.removeEventListener('visibilitychange', onVisibility);
+        window.removeEventListener('blur', onBlur);
+        window.removeEventListener('focus', onFocus);
+      } catch (e) {}
       try { if (typeof unsub === 'function') unsub(); } catch (e) {}
       observer.disconnect();
     }

@@ -320,19 +320,17 @@ export function createAppShell({ store, onNavigate }) {
       addItem('Log Persisted Data (IDB)', () => {
         try {
           console.group('Persisted Data (IndexedDB)');
-          // Only read persisted records from IndexedDB: kv.shell, kv.apps, kv.learned_kanji, kv.focus_on_kanji, collections
+          // Only read persisted records from IndexedDB: kv.shell, kv.apps, kv.kanji_progress, collections
           import('./utils/idb.js').then(({ idbGet, idbGetAll }) => {
             Promise.all([
               idbGet('kv', 'shell').catch(() => null),
               idbGet('kv', 'apps').catch(() => null),
-              idbGet('kv', 'learned_kanji').catch(() => null),
-              idbGet('kv', 'focus_on_kanji').catch(() => null),
+              idbGet('kv', 'kanji_progress').catch(() => null),
               idbGetAll('collections').catch(() => null),
-            ]).then(([shellRec, appsRec, learnedRec, focusRec, collRecs]) => {
+            ]).then(([shellRec, appsRec, kanjiProgressRec, collRecs]) => {
               console.log('idb.kv.shell:', shellRec);
               console.log('idb.kv.apps:', appsRec);
-              console.log('idb.kv.learned_kanji:', learnedRec);
-              console.log('idb.kv.focus_on_kanji:', focusRec);
+              console.log('idb.kv.kanji_progress:', kanjiProgressRec);
               console.log('idb.collections (array):', collRecs);
               console.groupEnd();
             }).catch((err) => { console.error('IDB read error', err); console.groupEnd(); });
