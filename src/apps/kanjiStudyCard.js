@@ -1,7 +1,7 @@
 import { nowMs } from '../utils/helpers.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
 import { createAutoplayControls } from '../components/autoplay.js';
-import { createSpeakerButton } from '../components/speaker.js';
+import { createSpeakerButton } from '../components/ui.js';
 import { getCollectionView } from '../utils/collectionManagement.js';
 
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';

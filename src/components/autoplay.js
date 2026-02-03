@@ -1,4 +1,4 @@
-import { el, safeId } from './dom.js';
+import { el, safeId } from './ui.js';
 
 // Autoplay controls: abstract sequencer builder.
 // The component accepts/returns a `sequence` array of actions, e.g.
@@ -32,6 +32,14 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
 
   function buildOverlay() {
     overlay.innerHTML = '';
+    // close button (top-right)
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'autoplay-close btn small';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.textContent = '✕';
+    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); hideOverlay(); });
+
     const left = el('div', { className: 'autoplay-left' });
     const right = el('div', { className: 'autoplay-right' });
 
@@ -132,17 +140,70 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
 
     right.append(seqTitle, seqList);
 
-    overlay.append(left, right);
+    overlay.append(closeBtn, left, right);
+  }
+
+  // Modal helpers
+  let backdrop = null;
+  let _prevActive = null;
+
+  function getFocusable(root) {
+    const sel = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+    return Array.from(root.querySelectorAll(sel)).filter(n => n.offsetParent !== null);
+  }
+
+  function _onKeyDown(e) {
+    if (e.key === 'Escape') {
+      e.preventDefault(); hideOverlay(); return;
+    }
+    if (e.key !== 'Tab') return;
+    const f = getFocusable(overlay);
+    if (f.length === 0) { e.preventDefault(); return; }
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
   }
 
   function showOverlay(x, y) {
+    // Accept optional x,y for backward compatibility, but always center modal.
     buildOverlay();
-    // Position near button but allow responsive placement
-    overlay.style.left = `${Math.round(x)}px`;
-    overlay.style.top = `${Math.round(y)}px`;
-    overlay.style.display = 'flex';
+
+    backdrop = document.createElement('div');
+    backdrop.className = 'autoplay-backdrop';
+    backdrop.addEventListener('click', () => hideOverlay());
+
     overlay.removeAttribute('aria-hidden');
-    setTimeout(() => document.addEventListener('click', onDocClick), 0);
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.tabIndex = -1;
+
+    // choose mount point: prefer #shell-root, then #app, then document.body
+    const mount = document.getElementById('shell-root') || document.getElementById('app') || document.body;
+
+    // append to chosen mount so it's grouped with app DOM
+    mount.appendChild(backdrop);
+    mount.appendChild(overlay);
+
+    // center the overlay on screen (fixed positioning centers relative to viewport)
+    overlay.style.left = '50%';
+    overlay.style.top = '50%';
+    overlay.style.transform = 'translate(-50%, -50%)';
+    overlay.style.display = 'flex';
+
+    // trigger CSS animation classes if present
+    requestAnimationFrame(() => {
+      backdrop.classList && backdrop.classList.add('show');
+      overlay.classList && overlay.classList.add('open');
+    });
+
+    _prevActive = document.activeElement;
+    const focusables = getFocusable(overlay);
+    if (focusables.length) focusables[0].focus(); else overlay.focus();
+
+    document.addEventListener('keydown', _onKeyDown);
     document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
   }
 
@@ -158,10 +219,24 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
       // ignore
     }
 
-    overlay.style.display = 'none';
-    // mark hidden for screen readers
-    overlay.setAttribute('aria-hidden', 'true');
-    document.removeEventListener('click', onDocClick);
+    // animate out then remove
+    try { overlay.classList && overlay.classList.remove('open'); } catch (e) {}
+    try { backdrop && backdrop.classList && backdrop.classList.remove('show'); } catch (e) {}
+
+    const cleanup = () => {
+      try { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); } catch (e) {}
+      try { if (backdrop && backdrop.parentNode) backdrop.parentNode.removeChild(backdrop); } catch (e) {}
+      overlay.style.display = 'none';
+      overlay.setAttribute('aria-hidden', 'true');
+    };
+
+    let called = false;
+    function done() { if (called) return; called = true; cleanup(); }
+    overlay.addEventListener('transitionend', done);
+    setTimeout(done, 220);
+
+    try { if (_prevActive && _prevActive.focus) _prevActive.focus(); } catch (e) {}
+    document.removeEventListener('keydown', _onKeyDown);
     document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);
   }
 

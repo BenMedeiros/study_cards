@@ -1,11 +1,9 @@
+import { parseHashRoute } from './utils/helpers.js';
+
 const listeners = new Set();
 
 export function getRouteFromHash() {
-  const raw = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
-  const path = raw.startsWith('/') ? raw : '/';
-  const [pathname, search = ''] = path.split('?');
-  const query = new URLSearchParams(search);
-  return { pathname, query };
+  return parseHashRoute(location.hash);
 }
 
 export function installHashRouter({ onRoute }) {

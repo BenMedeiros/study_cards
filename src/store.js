@@ -1,4 +1,6 @@
 import { nowIso, uuid } from './utils/helpers.js';
+import { basename, dirname, normalizeFolderPath, titleFromFilename } from './utils/helpers.js';
+import { buildHashRoute, parseHashRoute } from './utils/helpers.js';
 
 export function createStore() {
   // Persistent UI state (previously stored in sessionStorage under `studyUIState`).
@@ -317,17 +319,13 @@ export function createStore() {
     // would block restoring the persisted lastRoute.
     if (!location.hash) return;
 
-    const raw = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
-    const path = raw.startsWith('/') ? raw : '/';
-    const [pathname, search = ''] = path.split('?');
-    const query = new URLSearchParams(search);
+    const { pathname, query } = parseHashRoute(location.hash);
 
     const id = (typeof collectionId === 'string' && collectionId) ? collectionId : null;
     if (id) query.set('collection', id);
     else query.delete('collection');
 
-    const nextSearch = query.toString();
-    const newHash = nextSearch ? `#${pathname}?${nextSearch}` : `#${pathname}`;
+    const newHash = buildHashRoute({ pathname, query });
     if (location.hash !== newHash) {
       history.replaceState(null, '', newHash);
     }
@@ -410,23 +408,6 @@ export function createStore() {
     }
 
     if (!same) notify();
-  }
-
-  function normalizeFolderPath(folderPath) {
-    const p = String(folderPath || '').replace(/^\/+/, '').replace(/\/+$/, '');
-    return p;
-  }
-
-  function dirname(path) {
-    const parts = String(path || '').split('/').filter(Boolean);
-    if (parts.length <= 1) return '';
-    parts.pop();
-    return parts.join('/');
-  }
-
-  function basename(path) {
-    const parts = String(path || '').split('/').filter(Boolean);
-    return parts.length ? parts[parts.length - 1] : '';
   }
 
   function collectionSetsDirPath(baseFolder) {
@@ -639,13 +620,6 @@ export function createStore() {
   function getCachedCollectionSetsForFolder(baseFolder) {
     const folder = normalizeFolderPath(baseFolder);
     return collectionSetsCache.has(folder) ? collectionSetsCache.get(folder) : undefined;
-  }
-
-  function titleFromFilename(filename) {
-    return String(filename || '')
-      .replace(/\.json$/i, '')
-      .replace(/[_-]+/g, ' ')
-      .trim();
   }
 
   function normalizeIndexRelativePath(p) {

@@ -2,7 +2,7 @@ import { nowMs } from '../utils/helpers.js';
 import { getCollectionView } from '../utils/collectionManagement.js';
 import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } from '../utils/japanese.js';
 import { createDropdown } from '../components/dropdown.js';
-import { createSpeakerButton } from '../components/speaker.js';
+import { createSpeakerButton } from '../components/ui.js';
 
 export function renderQaCards({ store }) {
   const el = document.createElement('div');

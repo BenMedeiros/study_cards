@@ -2,6 +2,7 @@ import { renderLanding } from './apps/landing.js';
 import { renderFlashcards } from './apps/flashcards.js';
 import { renderQaCards } from './apps/qaCards.js';
 import { renderCollectionsManager } from './apps/collections.js';
+import { parseHashRoute } from './utils/helpers.js';
 import { renderData } from './apps/data.js';
 import { renderPlaceholderTool } from './apps/placeholder.js';
 import { renderKanjiStudyCard } from './apps/kanjiStudyCard.js';
@@ -89,6 +90,9 @@ export function createAppShell({ store, onNavigate }) {
   // Global key handling: keep document-level listeners centralized here.
   // Components should subscribe to `ui:closeOverlays` when they are open.
   function onGlobalKeyDown(e) {
+    // If a modal dialog (aria-modal) is open, let it trap keys and skip
+    // shell-level global key handling so modals can control focus/keyboard.
+    if (document.querySelector('[role="dialog"][aria-modal="true"]')) return;
     // Escape closes overlays (existing behavior)
     if (e.key === 'Escape') {
       document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
@@ -621,10 +625,7 @@ export function createAppShell({ store, onNavigate }) {
   }
 
   function getCurrentRoute() {
-    const raw = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
-    const path = raw.startsWith('/') ? raw : '/';
-    const [pathname, search = ''] = path.split('?');
-    return { pathname, query: new URLSearchParams(search) };
+    return parseHashRoute(location.hash);
   }
 
   function renderRoute(route) {

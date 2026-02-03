@@ -5,17 +5,7 @@
  * because this needs hierarchical navigation (folders + up-dir).
  */
 
-function dirname(path) {
-  const parts = String(path || '').split('/').filter(Boolean);
-  if (parts.length <= 1) return '';
-  parts.pop();
-  return parts.join('/');
-}
-
-function basename(path) {
-  const parts = String(path || '').split('/').filter(Boolean);
-  return parts.length ? parts[parts.length - 1] : '';
-}
+import { basename, dirname, titleFromFilename } from '../utils/helpers.js';
 
 function isCollectionSetsFileKey(key) {
   return basename(key) === '_collectionSets.json';
@@ -24,13 +14,6 @@ function isCollectionSetsFileKey(key) {
 function isCollectionSetsVirtualDir(dirPath) {
   const p = String(dirPath || '').replace(/^\/+/, '').replace(/\/+$/, '');
   return p === '__collectionSets' || p.endsWith('/__collectionSets');
-}
-
-function titleFromFilename(filename) {
-  return String(filename || '')
-    .replace(/\.json$/i, '')
-    .replace(/[_-]+/g, ' ')
-    .trim();
 }
 
 function safeFolderLabelFromCollectionSets(cs) {

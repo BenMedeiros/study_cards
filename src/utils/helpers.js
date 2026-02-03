@@ -43,3 +43,49 @@ export function uuid() {
 export function nowMs() {
   return performance.now();
 }
+
+
+/**
+ * Navigation + path helpers
+ */
+
+// Canonical hash-route parsing/building used across router, shell, and store.
+export function parseHashRoute(hash = location.hash) {
+  const raw = String(hash || '').startsWith('#') ? String(hash).slice(1) : String(hash || '');
+  const path = raw.startsWith('/') ? raw : '/';
+  const [pathname, search = ''] = path.split('?');
+  return { pathname, query: new URLSearchParams(search) };
+}
+
+export function buildHashRoute({ pathname = '/', query } = {}) {
+  const p = String(pathname || '/');
+  const qp = query instanceof URLSearchParams
+    ? query
+    : new URLSearchParams(query || '');
+  const search = qp.toString();
+  return search ? `#${p}?${search}` : `#${p}`;
+}
+
+// Shared path utilities for collection keys and folder paths.
+export function normalizeFolderPath(folderPath) {
+  return String(folderPath || '').replace(/^\/+/, '').replace(/\/+$/, '');
+}
+
+export function dirname(path) {
+  const parts = String(path || '').split('/').filter(Boolean);
+  if (parts.length <= 1) return '';
+  parts.pop();
+  return parts.join('/');
+}
+
+export function basename(path) {
+  const parts = String(path || '').split('/').filter(Boolean);
+  return parts.length ? parts[parts.length - 1] : '';
+}
+
+export function titleFromFilename(filename) {
+  return String(filename || '')
+    .replace(/\.json$/i, '')
+    .replace(/[_-]+/g, ' ')
+    .trim();
+}

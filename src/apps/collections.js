@@ -1,5 +1,5 @@
 import { createTable } from '../components/table.js';
-import { card } from '../components/card.js';
+import { card } from '../components/ui.js';
 
 export function renderCollectionsManager({ store, onNavigate, route }) {
   const root = document.createElement('div');

@@ -1,6 +1,6 @@
 import { createTable } from '../components/table.js';
-import { card } from '../components/card.js';
-import { el } from '../components/dom.js';
+import { card } from '../components/ui.js';
+import { el } from '../components/ui.js';
 import { createViewHeaderTools, createStudyFilterToggle } from '../components/viewHeaderTools.js';
 import { createCollectionActions } from '../utils/collectionActions.js';
 
