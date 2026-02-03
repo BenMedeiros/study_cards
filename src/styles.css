@@ -697,6 +697,10 @@ input[type="number"].button::-webkit-inner-spin-button {
   font-size: 0.85rem;
 }
 
+.table .btn {
+  font-size: x-small;
+} 
+
 /* Backdrop for modal autoplay overlay */
 .autoplay-backdrop {
   position: fixed;

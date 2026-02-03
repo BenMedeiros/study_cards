@@ -8,7 +8,7 @@
  * @param {string} [options.collection] - Optional collection name the table was populated from
  * @returns {HTMLTableElement}
  */
-export function createTable({ headers, rows, className = '', id, collection, sortable = false, searchable = false } = {}) {
+export function createTable({ headers, rows, className = '', id, collection, sortable = false, searchable = false, rowActions = [] } = {}) {
   const wrapper = document.createElement('div');
   wrapper.className = 'table-wrapper';
   if (id) wrapper.id = `${id}-wrapper`;
@@ -105,7 +105,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
   // Render rows into tbody from a provided rows array
   function renderRows(rowsArr) {
     tbody.innerHTML = '';
-    for (const rowData of rowsArr) {
+    rowsArr.forEach((rowData, rowIndex) => {
       const tr = document.createElement('tr');
       for (let i = 0; i < rowData.length; i++) {
         const cellData = rowData[i];
@@ -127,8 +127,36 @@ export function createTable({ headers, rows, className = '', id, collection, sor
 
         tr.append(td);
       }
+
+      // attach optional row id/meta from array-like property so action handlers
+      // can resolve the original item if needed (e.g. rowData.__id)
+      try { if (rowData && (rowData.__id || (rowData.meta && rowData.meta.id))) tr.dataset.rowId = rowData.__id || rowData.meta.id; } catch (e) {}
+
+      // render action buttons if provided
+      if (Array.isArray(rowActions) && rowActions.length) {
+        const td = document.createElement('td');
+        td.dataset.field = 'actions';
+        td.classList.add('col-actions');
+        for (const act of rowActions) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          if (act.className) btn.className = act.className;
+          // ensure app-wide button styling is applied
+          btn.classList.add('btn');
+          btn.textContent = act.label || act.title || '';
+          if (act.title) btn.title = act.title;
+          btn.addEventListener('click', (ev) => {
+            try {
+              if (typeof act.onClick === 'function') act.onClick(rowData, rowIndex, { tr, td, table });
+            } catch (e) {}
+          });
+          td.append(btn);
+        }
+        tr.append(td);
+      }
+
       tbody.append(tr);
-    }
+    });
   }
 
   // Sorting state
@@ -160,6 +188,16 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     headerRow.append(th);
   }
 
+  // add actions header if rowActions provided
+  if (Array.isArray(rowActions) && rowActions.length) {
+    const th = document.createElement('th');
+    th.textContent = 'Actions';
+    th.dataset.field = 'actions';
+    th.classList.add('col-actions');
+    th.setAttribute('aria-sort', 'none');
+    headerRow.append(th);
+  }
+
   // Optional search UI
   if (searchable) {
     const searchWrap = document.createElement('div');
@@ -172,7 +210,13 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     clearBtn.type = 'button';
     clearBtn.className = 'table-search-clear';
     clearBtn.textContent = 'Clear';
+    const copyBtn = document.createElement('button');
+    copyBtn.type = 'button';
+    copyBtn.className = 'table-copy-json btn small';
+    copyBtn.textContent = 'Copy JSON';
+    copyBtn.title = 'Copy current (filtered) rows as JSON';
     searchWrap.append(searchInput, clearBtn);
+    searchWrap.append(copyBtn);
     wrapper.append(searchWrap);
 
     function makeRegex(q) {
@@ -203,6 +247,36 @@ export function createTable({ headers, rows, className = '', id, collection, sor
 
     searchInput.addEventListener('input', () => applyFilter(searchInput.value));
     clearBtn.addEventListener('click', () => { searchInput.value = ''; applyFilter(''); searchInput.focus(); });
+    copyBtn.addEventListener('click', async () => {
+      try {
+        // Build array of objects from currentRows using headerKeys
+        const out = currentRows.map(r => {
+          const obj = {};
+          for (let i = 0; i < headerKeys.length; i++) {
+            const key = headerKeys[i]?.key || String(i);
+            const v = extractCellValue(r[i]);
+            obj[key || `col${i}`] = v;
+          }
+          return obj;
+        });
+        const txt = JSON.stringify(out, null, 2);
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          await navigator.clipboard.writeText(txt);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = txt;
+          document.body.append(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+        const prev = copyBtn.textContent;
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => { copyBtn.textContent = prev; }, 1200);
+      } catch (e) {
+        try { alert('Copy failed'); } catch (er) {}
+      }
+    });
   }
 
   // Perform initial render
