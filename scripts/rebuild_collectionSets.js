@@ -324,6 +324,30 @@ async function rebuildCollectionSets() {
     }
   }
 
+  // Convert legacy `kanji` arrays into a single `kanjiFilter` using the `.in[...]` syntax
+  // so callers can use only `kanjiFilter` going forward.
+  for (const s of nextSets) {
+    if (!s || typeof s !== 'object') continue;
+    const hasKanji = Array.isArray(s.kanji) && s.kanji.length > 0;
+    const hasFilter = Array.isArray(s.kanjiFilter) && s.kanjiFilter.length > 0;
+    if (hasKanji && !hasFilter) {
+      // Build comma-separated list, preserving original strings
+      const parts = s.kanji.map(v => String(v || '').trim()).filter(Boolean);
+      if (parts.length) {
+        // Escape any ']' by replacing with '\]'
+        const escaped = parts.map(p => p.replace(/\]/g, '\\]')).join(',');
+        s.kanjiFilter = [`kanji.in[${escaped}]`];
+        delete s.kanji;
+      } else {
+        delete s.kanji;
+      }
+    }
+    // If both exist, we previously warned; prefer existing kanjiFilter and drop kanji
+    if (hasKanji && hasFilter) {
+      delete s.kanji;
+    }
+  }
+
   const definedKanji = await collectDefinedKanjiFromJapaneseCollections();
   const validatedSets = annotateSetsWithMissingKanjiDefinitions(nextSets, definedKanji);
 

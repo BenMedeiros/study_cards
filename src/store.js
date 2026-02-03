@@ -804,6 +804,8 @@ export function createStore() {
         if (mStarts) return { field: mStarts[1], op: 'startsWith', value: mStarts[2] };
         const mEnds = s.match(/^([^.\[]+)\.endsWith\[(.*)\]$/);
         if (mEnds) return { field: mEnds[1], op: 'endsWith', value: mEnds[2] };
+        const mIn = s.match(/^([^.\[]+)\.in\[(.*)\]$/);
+        if (mIn) return { field: mIn[1], op: 'in', value: mIn[2] };
         const mEq = s.match(/^([^=]+)=(.*)$/);
         if (mEq) return { field: mEq[1], op: 'eq', value: mEq[2] };
         return null;
@@ -823,6 +825,11 @@ export function createStore() {
             if (!val.startsWith(v)) return false;
           } else if (parsed.op === 'endsWith') {
             if (!val.endsWith(v)) return false;
+          } else if (parsed.op === 'in') {
+            // value is comma-separated list
+            const parts = String(parsed.value || '').split(',').map(x => x.trim()).filter(Boolean);
+            if (parts.length === 0) return false;
+            if (!parts.includes(val)) return false;
           } else {
             return false;
           }
