@@ -426,12 +426,14 @@ input[type="number"].button::-webkit-inner-spin-button {
   flex-direction: column;
   max-height: calc(100vh - 11rem);
     margin-top: 1rem;
+     overflow-y: auto;
+     max-height: 28rem;
 }
 
 @media (max-width: 750px) {
   .card {
     max-height: 35rem;
-    overflow-y: auto;
+   
   }
 }
 

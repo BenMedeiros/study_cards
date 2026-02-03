@@ -260,23 +260,38 @@ export function createAppShell({ store, onNavigate }) {
     brand.append(brandTitle, brandSubtitle);
 
     // Right-click on brand opens a small command menu for dev actions
-    function closeBrandMenu(menu) {
-      try { document.body.removeChild(menu); } catch (e) {}
-      document.removeEventListener('click', onBodyClick);
-      document.removeEventListener('keydown', onKeyDown);
+    let brandMenuEl = null;
+
+    function closeBrandMenu() {
+      if (brandMenuEl) {
+        try { brandMenuEl.remove(); } catch (e) {}
+        brandMenuEl = null;
+      }
+      document.removeEventListener('click', onBodyClick, true);
+      document.removeEventListener('keydown', onKeyDown, true);
     }
 
     function onBodyClick(e) {
-      // click outside removes menu
-      if (!menu.contains(e.target)) closeBrandMenu(menu);
+      // Click outside removes menu
+      if (!brandMenuEl) return;
+      if (!brandMenuEl.contains(e.target)) closeBrandMenu();
     }
 
     function onKeyDown(e) {
-      if (e.key === 'Escape') closeBrandMenu(menu);
+      if (e.key === 'Escape') closeBrandMenu();
     }
+
+    // If renderHeader runs while the menu is open, force-close any orphan.
+    try {
+      document.querySelectorAll('.brand-context-menu').forEach((el) => el.remove());
+    } catch (e) {}
+    closeBrandMenu();
 
     function openBrandMenu(x, y) {
       document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
+      // Prevent multiple instances: always replace any existing menu.
+      closeBrandMenu();
+
       const menu = document.createElement('div');
       menu.className = 'brand-context-menu';
       menu.style.position = 'fixed';
@@ -296,7 +311,7 @@ export function createAppShell({ store, onNavigate }) {
         it.style.padding = '0.5rem 0.75rem';
         it.style.cursor = 'pointer';
         it.style.color = 'var(--text)';
-        it.addEventListener('click', (ev) => { ev.stopPropagation(); try { onClick(); } catch (e) {} closeBrandMenu(menu); });
+        it.addEventListener('click', (ev) => { ev.stopPropagation(); try { onClick(); } catch (e) {} closeBrandMenu(); });
         it.addEventListener('mouseenter', () => { it.style.background = 'rgba(96,165,250,0.06)'; });
         it.addEventListener('mouseleave', () => { it.style.background = 'transparent'; });
         menu.appendChild(it);
@@ -305,15 +320,19 @@ export function createAppShell({ store, onNavigate }) {
       addItem('Log Persisted Data (IDB)', () => {
         try {
           console.group('Persisted Data (IndexedDB)');
-          // Only read persisted records from IndexedDB: kv.shell, kv.apps, collections
+          // Only read persisted records from IndexedDB: kv.shell, kv.apps, kv.learned_kanji, kv.focus_on_kanji, collections
           import('./utils/idb.js').then(({ idbGet, idbGetAll }) => {
             Promise.all([
               idbGet('kv', 'shell').catch(() => null),
               idbGet('kv', 'apps').catch(() => null),
+              idbGet('kv', 'learned_kanji').catch(() => null),
+              idbGet('kv', 'focus_on_kanji').catch(() => null),
               idbGetAll('collections').catch(() => null),
-            ]).then(([shellRec, appsRec, collRecs]) => {
+            ]).then(([shellRec, appsRec, learnedRec, focusRec, collRecs]) => {
               console.log('idb.kv.shell:', shellRec);
               console.log('idb.kv.apps:', appsRec);
+              console.log('idb.kv.learned_kanji:', learnedRec);
+              console.log('idb.kv.focus_on_kanji:', focusRec);
               console.log('idb.collections (array):', collRecs);
               console.groupEnd();
             }).catch((err) => { console.error('IDB read error', err); console.groupEnd(); });
@@ -323,7 +342,12 @@ export function createAppShell({ store, onNavigate }) {
 
       // Append menu and wire dismissal
       document.body.appendChild(menu);
-      setTimeout(() => { document.addEventListener('click', onBodyClick); document.addEventListener('keydown', onKeyDown); }, 0);
+      brandMenuEl = menu;
+      // Use capture so we close even if inner code stops propagation.
+      setTimeout(() => {
+        document.addEventListener('click', onBodyClick, true);
+        document.addEventListener('keydown', onKeyDown, true);
+      }, 0);
     }
 
     brand.addEventListener('contextmenu', (e) => {

@@ -1,5 +1,8 @@
 import { nowMs } from '../utils/helpers.js';
 import { getCollectionView } from '../utils/collectionManagement.js';
+import { speak, getLanguageCode } from '../utils/speech.js';
+
+import { createViewFooterControls } from '../components/viewFooterControls.js';
 
 export function renderFlashcards({ store }) {
   const el = document.createElement('div');
@@ -14,6 +17,29 @@ export function renderFlashcards({ store }) {
     wrapper.innerHTML = '<h2>Flashcards</h2><p class="hint">No active collection.</p>';
     el.append(wrapper);
     return el;
+  }
+
+  function getFieldValue(entry, keys) {
+    if (!entry) return '';
+    for (const k of keys) {
+      if (entry[k]) return entry[k];
+    }
+    return '';
+  }
+
+  function getPrimaryValue(entry) {
+    return String(getFieldValue(entry, ['kanji', 'character', 'text']) || '').trim();
+  }
+
+  function speakEntry(entry) {
+    if (!entry) return;
+    const primary = getFieldValue(entry, ['reading', 'kana', 'word', 'text']);
+    const fallback = getFieldValue(entry, ['kanji', 'character', 'text']);
+    const speakText = primary || fallback || '';
+    if (!speakText) return;
+    const fieldKey = primary ? 'reading' : 'kanji';
+    const lang = getLanguageCode(fieldKey, active?.metadata?.category);
+    speak(speakText, lang);
   }
 
   // derive entries view (study window + shuffle) from shared util
@@ -86,6 +112,70 @@ export function renderFlashcards({ store }) {
     }
   }
 
+  // Footer controls (shared component) — mirrors kanjiStudyCard actions except reveal/hide
+  let learnedBtn, practiceBtn;
+
+  function showPrev() { goToIndex(index - 1); }
+  function showNext() { goToIndex(index + 1); }
+  function speakCurrent() { if (entries[index]) speakEntry(entries[index]); }
+
+  function goToIndex(newIndex) {
+    if (newIndex < 0 || newIndex >= entries.length) return;
+    index = newIndex;
+    shownAt = nowMs();
+    render();
+  }
+
+  function updateMarkButtons() {
+    if (!learnedBtn || !practiceBtn) return;
+    const entry = entries[index];
+    const v = getPrimaryValue(entry);
+    const isLearned = !!(store && typeof store.isKanjiLearned === 'function' && v) ? store.isKanjiLearned(v) : false;
+    const isFocus = !!(store && typeof store.isKanjiFocus === 'function' && v) ? store.isKanjiFocus(v) : false;
+
+    learnedBtn.classList.toggle('state-learned', isLearned);
+    practiceBtn.classList.toggle('state-focus', isFocus);
+
+    learnedBtn.setAttribute('aria-pressed', String(!!isLearned));
+    practiceBtn.setAttribute('aria-pressed', String(!!isFocus));
+  }
+
+  const footerDesc = [
+    { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', action: () => showPrev() },
+    { key: 'sound', icon: '🔊', text: 'Sound', caption: 'Space', shortcut: ' ', action: () => speakCurrent() },
+    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', action: () => showNext() },
+    { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', ariaPressed: false, action: () => {
+      const entry = entries[index];
+      const v = getPrimaryValue(entry);
+      if (!v) return;
+      if (store && typeof store.toggleKanjiLearned === 'function') {
+        store.toggleKanjiLearned(v);
+        updateMarkButtons();
+        // If current card became filtered out (skipLearned/focusOnly), refresh view & clamp
+        refreshFromStore();
+        index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+        render();
+      }
+    } },
+    { key: 'practice', icon: '🎯', text: 'Practice', caption: 'X', shortcut: 'x', ariaPressed: false, action: () => {
+      const entry = entries[index];
+      const v = getPrimaryValue(entry);
+      if (!v) return;
+      if (store && typeof store.toggleKanjiFocus === 'function') {
+        store.toggleKanjiFocus(v);
+        updateMarkButtons();
+        // If current card became filtered out (skipLearned/focusOnly), refresh view & clamp
+        refreshFromStore();
+        index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+        render();
+      }
+    } },
+  ];
+
+  const footerControls = createViewFooterControls(footerDesc, { appId: 'flashcards' });
+  learnedBtn = footerControls.buttons.learned;
+  practiceBtn = footerControls.buttons.practice;
+
   function render() {
     // active may have changed via store updates
     if (!active) {
@@ -108,49 +198,16 @@ export function renderFlashcards({ store }) {
     const body = document.createElement('div');
     body.id = 'flashcards-body';
   
-    const controls = document.createElement('div');
-    controls.className = 'cardtools-row cardtools-bottom';
-    controls.id = 'flashcards-controls';
-
     if (!entry) {
       body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
     } else {
       renderCard(body, entry);
     }
 
-    const prev = document.createElement('button');
-    prev.className = 'button';
-    prev.id = 'flashcards-prev';
-    prev.name = 'prev';
-    prev.textContent = 'Prev';
+    wrapper.append(cornerCaption, toolsRow, body);
 
-    const next = document.createElement('button');
-    next.className = 'button';
-    next.id = 'flashcards-next';
-    next.name = 'next';
-    next.textContent = 'Next';
-
-    prev.addEventListener('click', async () => {
-      if (index > 0) {
-        index -= 1;
-        shownAt = nowMs();
-        render();
-      }
-    });
-
-    next.addEventListener('click', async () => {
-      const timeOnCard = Math.round(nowMs() - shownAt);
-      
-      if (index < total - 1) {
-        index += 1;
-        shownAt = nowMs();
-        render();
-      }
-    });
-
-    controls.append(prev, next);
-    
-    wrapper.append(cornerCaption, toolsRow, body, controls);
+    // Update learned/focus button state
+    updateMarkButtons();
   }
 
   render();
@@ -178,60 +235,16 @@ export function renderFlashcards({ store }) {
     unsub = null;
   }
 
-  // Add keyboard navigation
-  const keyHandler = (e) => {
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      if (index > 0) {
-        index -= 1;
-        shownAt = nowMs();
-        render();
-      }
-    } else if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      if (index < entries.length - 1) {
-        index += 1;
-        shownAt = nowMs();
-        render();
-      }
+  // Cleanup on unmount
+  const observer = new MutationObserver(() => {
+    if (!document.body.contains(el)) {
+      try { if (typeof unsub === 'function') unsub(); } catch (e) {}
+      observer.disconnect();
     }
-  };
-
-  wrapper.addEventListener('keydown', keyHandler);
-  // Register the handler with the shell so shell controls app-level keyboard handling.
-  // The handler should return true when it handled the event to stop further processing.
-  const registerFlashcardsHandler = () => {
-    const wrapped = (e) => {
-      try {
-        keyHandler(e);
-        // keyHandler calls e.preventDefault when it handles keys; return true if default prevented
-        return e.defaultPrevented === true;
-      } catch (err) {
-        return false;
-      }
-    };
-    document.dispatchEvent(new CustomEvent('app:registerKeyHandler', { detail: { id: 'flashcards', handler: wrapped } }));
-  };
-
-  const unregisterFlashcardsHandler = () => {
-    document.dispatchEvent(new CustomEvent('app:unregisterKeyHandler', { detail: { id: 'flashcards' } }));
-  };
-
-  // Register now for app-level handling
-  setTimeout(registerFlashcardsHandler, 0);
-  
-  // Cleanup on unmount (not perfect but helps)
-  setTimeout(() => {
-    const observer = new MutationObserver((mutations) => {
-      if (!document.body.contains(wrapper)) {
-        unregisterFlashcardsHandler();
-        try { if (typeof unsub === 'function') unsub(); } catch (e) {}
-        observer.disconnect();
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-  }, 100);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 
   el.append(wrapper);
+  el.append(footerControls.el);
   return el;
 }
