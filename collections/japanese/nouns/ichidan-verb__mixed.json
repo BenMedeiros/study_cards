@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "name": "Japanese ichidan-verb (mixed)",
+    "description": "Mixed orthography group for type='ichidan-verb' — total 9 (hiragana: 2, both: 7).",
+    "version": 1
+  },
+  "defaults": {
+    "type": "ichidan-verb"
+  },
+  "entries": [
+    {
+      "kanji": "いる",
+      "reading": "いる",
+      "meaning": "to exist (animate); to be (someone is here)",
+      "orthography": "hiragana",
+      "verbType": "simple",
+      "example": {
+        "ja": "弟は今、家にいます。",
+        "en": "My little brother is at home now.",
+        "notes": [
+          "Location often marked with に/で; existence uses に."
+        ]
+      }
+    },
+    {
+      "kanji": "できる",
+      "reading": "できる",
+      "meaning": "to be able to; can do; to be made; to be completed",
+      "orthography": "hiragana",
+      "verbType": "simple",
+      "example": {
+        "ja": "私は日本語が少しできます。",
+        "en": "I can speak a little Japanese.",
+        "notes": [
+          "Ability often uses が (日本語ができる)."
+        ]
+      }
+    },
+    {
+      "kanji": "片付ける",
+      "reading": "かたづける",
+      "meaning": "to tidy up; to put in order; to clean up",
+      "orthography": "both",
+      "verbType": "simple",
+      "example": {
+        "ja": "部屋を片付けましょう。",
+        "en": "Let’s tidy up the room.",
+        "notes": [
+          "Volitional suggestion: 〜ましょう."
+        ]
+      }
+    },
+    {
+      "kanji": "付ける",
+      "reading": "つける",
+      "meaning": "to attach; to add; to turn on (a light); to set (a rule/condition)",
+      "orthography": "both",
+      "verbType": "simple",
+      "example": {
+        "ja": "電気を付けてください。",
+        "en": "Please turn on the light.",
+        "notes": [
+          "Transitive; 電気を付ける = turn on."
+        ]
+      }
+    },
+    {
+      "kanji": "止める",
+      "reading": "とめる",
+      "meaning": "to stop (something); to turn off; to park (a car)",
+      "orthography": "both",
+      "verbType": "simple",
+      "example": {
+        "ja": "車をここに止めないでください。",
+        "en": "Please don’t park the car here.",
+        "notes": [
+          "Transitive; 車を止める (park/stop)."
+        ]
+      }
+    },
+    {
+      "kanji": "取れる",
+      "reading": "とれる",
+      "meaning": "to come off; to be removed; to be obtained/caught",
+      "orthography": "both",
+      "verbType": "simple",
+      "example": {
+        "ja": "ボタンが取れました。",
+        "en": "The button came off.",
+        "notes": [
+          "Intransitive; subject often marked with が."
+        ]
+      }
+    },
+    {
+      "kanji": "掛ける",
+      "reading": "かける",
+      "meaning": "to hang (something); to put on; to apply; to make a call",
+      "orthography": "both",
+      "verbType": "simple",
+      "example": {
+        "ja": "友だちに電話を掛けます。",
+        "en": "I’ll call my friend.",
+        "notes": [
+          "Common: 〜に電話を掛ける."
+        ]
+      }
+    },
+    {
+      "kanji": "出かける",
+      "reading": "でかける",
+      "meaning": "to go out; to leave (home) for a while",
+      "orthography": "both",
+      "verbType": "simple",
+      "example": {
+        "ja": "これから買い物に出かけます。",
+        "en": "I’m going out shopping now.",
+        "notes": [
+          "Destination often marked with に (〜に出かける)."
+        ]
+      }
+    },
+    {
+      "kanji": "見つける",
+      "reading": "みつける",
+      "meaning": "to find; to discover",
+      "orthography": "both",
+      "verbType": "simple",
+      "example": {
+        "ja": "駅の近くでいい店を見つけました。",
+        "en": "I found a good shop near the station.",
+        "notes": [
+          "Object marked with を."
+        ]
+      }
+    }
+  ]
+}

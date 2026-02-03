@@ -1,874 +1,675 @@
 {
   "metadata": {
-    "name": "Japanese N5 Ichidan Verbs",
-    "level": "N5",
-    "version": 3,
-    "kanji": [
-      "見る",
-      "いる",
-      "起きる",
-      "寝る",
-      "着る",
-      "できる",
-      "出る",
-      "食べる",
-      "開ける",
-      "空ける",
-      "閉める",
-      "止める",
-      "消える",
-      "変える",
-      "考える",
-      "覚える",
-      "忘れる",
-      "教える",
-      "借りる",
-      "浴びる",
-      "迎える",
-      "答える",
-      "伝える",
-      "調べる",
-      "比べる",
-      "見せる",
-      "決める",
-      "始める",
-      "終える",
-      "続ける",
-      "認める",
-      "褒める",
-      "育てる",
-      "捨てる",
-      "集める",
-      "片付ける",
-      "取れる",
-      "掛ける",
-      "受ける",
-      "付ける",
-      "降りる",
-      "落ちる",
-      "足りる",
-      "過ぎる",
-      "伸びる",
-      "信じる",
-      "感じる",
-      "似る",
-      "間違える",
-      "覚める",
-      "進める",
-      "遅れる",
-      "汚れる",
-      "壊れる",
-      "触れる",
-      "生まれる",
-      "聞こえる",
-      "名付ける",
-      "出かける",
-      "見つける"
-    ],
-    "kanjiCount": 60
+    "name": "Japanese ichidan-verb (kanji)",
+    "description": "Grouped entries for type='ichidan-verb' and orthography='kanji' — total 51.",
+    "version": 1
   },
   "defaults": {
     "type": "ichidan-verb",
-    "verbType": "simple"
+    "orthography": "kanji"
   },
   "entries": [
     {
       "kanji": "見る",
       "reading": "みる",
       "meaning": "to see; to watch; to look",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "毎晩、テレビを見ます。",
         "en": "I watch TV every night.",
-        "notes": ["Object marked with を."]
-      }
-    },
-    {
-      "kanji": "いる",
-      "reading": "いる",
-      "meaning": "to exist (animate); to be (someone is here)",
-      "orthography": "hiragana",
-      "type": "ichidan-verb",
-      "verbType": "simple",
-      "example": {
-        "ja": "弟は今、家にいます。",
-        "en": "My little brother is at home now.",
-        "notes": ["Location often marked with に/で; existence uses に."]
+        "notes": [
+          "Object marked with を."
+        ]
       }
     },
     {
       "kanji": "起きる",
       "reading": "おきる",
       "meaning": "to wake up; to get up",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "私は毎日六時に起きます。",
         "en": "I get up at 6 every day.",
-        "notes": ["Time + に is common."]
+        "notes": [
+          "Time + に is common."
+        ]
       }
     },
     {
       "kanji": "寝る",
       "reading": "ねる",
       "meaning": "to sleep; to go to bed",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "昨日は早く寝ました。",
         "en": "I went to bed early yesterday.",
-        "notes": ["Adverb + 寝る is common (早く寝る)."]
+        "notes": [
+          "Adverb + 寝る is common (早く寝る)."
+        ]
       }
     },
     {
       "kanji": "着る",
       "reading": "きる",
       "meaning": "to wear (on the upper body); to put on",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "寒いから、コートを着てください。",
         "en": "It’s cold, so please put on a coat.",
-        "notes": ["Upper-body clothing uses 着る; object marked with を."]
-      }
-    },
-    {
-      "kanji": "できる",
-      "reading": "できる",
-      "meaning": "to be able to; can do; to be made; to be completed",
-      "orthography": "hiragana",
-      "type": "ichidan-verb",
-      "verbType": "simple",
-      "example": {
-        "ja": "私は日本語が少しできます。",
-        "en": "I can speak a little Japanese.",
-        "notes": ["Ability often uses が (日本語ができる)."]
+        "notes": [
+          "Upper-body clothing uses 着る; object marked with を."
+        ]
       }
     },
     {
       "kanji": "出る",
       "reading": "でる",
       "meaning": "to go out; to leave; to come out; to appear",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "七時に家を出ます。",
         "en": "I leave the house at 7.",
-        "notes": ["Departure point often marked with を (家を出る)."]
+        "notes": [
+          "Departure point often marked with を (家を出る)."
+        ]
       }
     },
     {
       "kanji": "食べる",
       "reading": "たべる",
       "meaning": "to eat",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "朝ごはんを食べました。",
         "en": "I ate breakfast.",
-        "notes": ["Object marked with を."]
+        "notes": [
+          "Object marked with を."
+        ]
       }
     },
     {
       "kanji": "開ける",
       "reading": "あける",
       "meaning": "to open (a door/window/container)",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "窓を開けてもいいですか。",
         "en": "May I open the window?",
-        "notes": ["Transitive; object marked with を."]
+        "notes": [
+          "Transitive; object marked with を."
+        ]
       }
     },
     {
       "kanji": "空ける",
       "reading": "あける",
       "meaning": "to make empty; to vacate; to clear (space/time)",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "来週の月曜日、時間を空けられますか。",
         "en": "Can you make time next Monday?",
-        "notes": ["Common collocation: 時間を空ける."]
+        "notes": [
+          "Common collocation: 時間を空ける."
+        ]
       }
     },
     {
       "kanji": "閉める",
       "reading": "しめる",
       "meaning": "to close (something)",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "ドアを閉めてください。",
         "en": "Please close the door.",
-        "notes": ["Transitive; object marked with を."]
-      }
-    },
-    {
-      "kanji": "止める",
-      "reading": "とめる",
-      "meaning": "to stop (something); to turn off; to park (a car)",
-      "orthography": "both",
-      "type": "ichidan-verb",
-      "verbType": "simple",
-      "example": {
-        "ja": "車をここに止めないでください。",
-        "en": "Please don’t park the car here.",
-        "notes": ["Transitive; 車を止める (park/stop)."]
+        "notes": [
+          "Transitive; object marked with を."
+        ]
       }
     },
     {
       "kanji": "消える",
       "reading": "きえる",
       "meaning": "to go out (a light/fire); to disappear",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "電気が消えました。",
         "en": "The light went out.",
-        "notes": ["Intransitive; subject often marked with が."]
+        "notes": [
+          "Intransitive; subject often marked with が."
+        ]
       }
     },
     {
       "kanji": "変える",
       "reading": "かえる",
       "meaning": "to change (something); to alter",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "予定を変えました。",
         "en": "I changed the schedule/plan.",
-        "notes": ["Transitive; 予定を変える is common."]
+        "notes": [
+          "Transitive; 予定を変える is common."
+        ]
       }
     },
     {
       "kanji": "考える",
       "reading": "かんがえる",
       "meaning": "to think; to consider",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "週末の予定を考えています。",
         "en": "I’m thinking about weekend plans.",
-        "notes": ["〜を考える; progressive uses 〜ている."]
+        "notes": [
+          "〜を考える; progressive uses 〜ている."
+        ]
       }
     },
     {
       "kanji": "覚える",
       "reading": "おぼえる",
       "meaning": "to remember; to memorize; to learn",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "新しい漢字を五つ覚えました。",
         "en": "I memorized five new kanji.",
-        "notes": ["Quantity + を + 覚える is common."]
+        "notes": [
+          "Quantity + を + 覚える is common."
+        ]
       }
     },
     {
       "kanji": "忘れる",
       "reading": "わすれる",
       "meaning": "to forget",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "宿題をするのを忘れました。",
         "en": "I forgot to do my homework.",
-        "notes": ["Pattern: Vるのを忘れる."]
+        "notes": [
+          "Pattern: Vるのを忘れる."
+        ]
       }
     },
     {
       "kanji": "教える",
       "reading": "おしえる",
       "meaning": "to teach; to tell",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "先生が答えを教えてくれました。",
         "en": "The teacher told me the answer.",
-        "notes": ["Person が + (someoneに) + thingを + 教える."]
+        "notes": [
+          "Person が + (someoneに) + thingを + 教える."
+        ]
       }
     },
     {
       "kanji": "借りる",
       "reading": "かりる",
       "meaning": "to borrow; to rent",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "友だちに本を借りました。",
         "en": "I borrowed a book from a friend.",
-        "notes": ["Lender marked with に (〜に借りる)."]
+        "notes": [
+          "Lender marked with に (〜に借りる)."
+        ]
       }
     },
     {
       "kanji": "浴びる",
       "reading": "あびる",
       "meaning": "to bathe in; to take (a shower); to receive (criticism, etc.)",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "朝、シャワーを浴びます。",
         "en": "I take a shower in the morning.",
-        "notes": ["Common: シャワーを浴びる."]
+        "notes": [
+          "Common: シャワーを浴びる."
+        ]
       }
     },
-
     {
       "kanji": "迎える",
       "reading": "むかえる",
       "meaning": "to pick up; to welcome; to迎える",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "駅で友だちを迎えます。",
         "en": "I’ll pick up my friend at the station.",
-        "notes": ["Placeで + personを + 迎える."]
+        "notes": [
+          "Placeで + personを + 迎える."
+        ]
       }
     },
     {
       "kanji": "答える",
       "reading": "こたえる",
       "meaning": "to answer; to reply",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "質問に答えてください。",
         "en": "Please answer the question.",
-        "notes": ["Pattern: 〜に答える (answer to)."]
+        "notes": [
+          "Pattern: 〜に答える (answer to)."
+        ]
       }
     },
     {
       "kanji": "伝える",
       "reading": "つたえる",
       "meaning": "to convey; to tell; to pass on (a message)",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "田中さんに伝えておきます。",
         "en": "I’ll let Tanaka know.",
-        "notes": ["Common: 〜に伝える; 伝えておく = tell in advance."]
+        "notes": [
+          "Common: 〜に伝える; 伝えておく = tell in advance."
+        ]
       }
     },
     {
       "kanji": "調べる",
       "reading": "しらべる",
       "meaning": "to check; to investigate; to look up",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "辞書で意味を調べました。",
         "en": "I looked up the meaning in a dictionary.",
-        "notes": ["Tool/locationで + objectを + 調べる."]
+        "notes": [
+          "Tool/locationで + objectを + 調べる."
+        ]
       }
     },
     {
       "kanji": "比べる",
       "reading": "くらべる",
       "meaning": "to compare",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "この二つを比べてください。",
         "en": "Please compare these two.",
-        "notes": ["Object marked with を (AをBと比べる also common)."]
+        "notes": [
+          "Object marked with を (AをBと比べる also common)."
+        ]
       }
     },
     {
       "kanji": "見せる",
       "reading": "みせる",
       "meaning": "to show; to let (someone) see",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "写真を母に見せました。",
         "en": "I showed the photo to my mom.",
-        "notes": ["Person marked with に (〜に見せる)."]
+        "notes": [
+          "Person marked with に (〜に見せる)."
+        ]
       }
     },
     {
       "kanji": "決める",
       "reading": "きめる",
       "meaning": "to decide; to choose; to set",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "旅行の日を決めました。",
         "en": "I decided the day for the trip.",
-        "notes": ["〜を決める = decide (a thing)."]
+        "notes": [
+          "〜を決める = decide (a thing)."
+        ]
       }
     },
     {
       "kanji": "始める",
       "reading": "はじめる",
       "meaning": "to start; to begin (something)",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "九時から勉強を始めます。",
         "en": "I’ll start studying from 9 o’clock.",
-        "notes": ["Timeから is common."]
+        "notes": [
+          "Timeから is common."
+        ]
       }
     },
     {
       "kanji": "終える",
       "reading": "おえる",
       "meaning": "to finish; to end; to complete",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "仕事を早く終えました。",
         "en": "I finished work early.",
-        "notes": ["More formal than 終わる; transitive."]
+        "notes": [
+          "More formal than 終わる; transitive."
+        ]
       }
     },
     {
       "kanji": "続ける",
       "reading": "つづける",
       "meaning": "to continue; to keep doing",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "毎日、日本語の勉強を続けています。",
         "en": "I keep studying Japanese every day.",
-        "notes": ["〜を続ける; 〜ている for ongoing habit."]
+        "notes": [
+          "〜を続ける; 〜ている for ongoing habit."
+        ]
       }
     },
     {
       "kanji": "認める",
       "reading": "みとめる",
       "meaning": "to recognize; to admit; to approve",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "自分のミスを認めました。",
         "en": "I admitted my mistake.",
-        "notes": ["〜を認める = admit/recognize (a fact)."]
+        "notes": [
+          "〜を認める = admit/recognize (a fact)."
+        ]
       }
     },
     {
       "kanji": "褒める",
       "reading": "ほめる",
       "meaning": "to praise; to compliment",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "先生が私を褒めました。",
         "en": "The teacher praised me.",
-        "notes": ["Personを褒める."]
+        "notes": [
+          "Personを褒める."
+        ]
       }
     },
-
     {
       "kanji": "育てる",
       "reading": "そだてる",
       "meaning": "to raise; to grow; to bring up (a child)",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "母は花を育てています。",
         "en": "My mother is growing flowers.",
-        "notes": ["Plants/children commonly take を."]
+        "notes": [
+          "Plants/children commonly take を."
+        ]
       }
     },
     {
       "kanji": "捨てる",
       "reading": "すてる",
       "meaning": "to throw away; to discard",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "この紙を捨ててもいいですか。",
         "en": "May I throw this paper away?",
-        "notes": ["Permission pattern: 〜てもいいですか."]
+        "notes": [
+          "Permission pattern: 〜てもいいですか."
+        ]
       }
     },
     {
       "kanji": "集める",
       "reading": "あつめる",
       "meaning": "to collect; to gather",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "切手を集めています。",
         "en": "I collect stamps.",
-        "notes": ["Hobby pattern: Nを集めている."]
-      }
-    },
-    {
-      "kanji": "片付ける",
-      "reading": "かたづける",
-      "meaning": "to tidy up; to put in order; to clean up",
-      "orthography": "both",
-      "type": "ichidan-verb",
-      "verbType": "simple",
-      "example": {
-        "ja": "部屋を片付けましょう。",
-        "en": "Let’s tidy up the room.",
-        "notes": ["Volitional suggestion: 〜ましょう."]
-      }
-    },
-
-    {
-      "kanji": "取れる",
-      "reading": "とれる",
-      "meaning": "to come off; to be removed; to be obtained/caught",
-      "orthography": "both",
-      "type": "ichidan-verb",
-      "verbType": "simple",
-      "example": {
-        "ja": "ボタンが取れました。",
-        "en": "The button came off.",
-        "notes": ["Intransitive; subject often marked with が."]
-      }
-    },
-    {
-      "kanji": "掛ける",
-      "reading": "かける",
-      "meaning": "to hang (something); to put on; to apply; to make a call",
-      "orthography": "both",
-      "type": "ichidan-verb",
-      "verbType": "simple",
-      "example": {
-        "ja": "友だちに電話を掛けます。",
-        "en": "I’ll call my friend.",
-        "notes": ["Common: 〜に電話を掛ける."]
+        "notes": [
+          "Hobby pattern: Nを集めている."
+        ]
       }
     },
     {
       "kanji": "受ける",
       "reading": "うける",
       "meaning": "to receive; to take (a test); to accept",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "来週、試験を受けます。",
         "en": "I’ll take an exam next week.",
-        "notes": ["Common: 試験を受ける."]
+        "notes": [
+          "Common: 試験を受ける."
+        ]
       }
     },
-    {
-      "kanji": "付ける",
-      "reading": "つける",
-      "meaning": "to attach; to add; to turn on (a light); to set (a rule/condition)",
-      "orthography": "both",
-      "type": "ichidan-verb",
-      "verbType": "simple",
-      "example": {
-        "ja": "電気を付けてください。",
-        "en": "Please turn on the light.",
-        "notes": ["Transitive; 電気を付ける = turn on."]
-      }
-    },
-
     {
       "kanji": "降りる",
       "reading": "おりる",
       "meaning": "to get off (a train/bus); to go down; to descend",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "次の駅で降ります。",
         "en": "I’ll get off at the next station.",
-        "notes": ["Placeで降りる."]
+        "notes": [
+          "Placeで降りる."
+        ]
       }
     },
     {
       "kanji": "落ちる",
       "reading": "おちる",
       "meaning": "to fall; to drop; to go down (price); to fail (an exam)",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "スマホが床に落ちました。",
         "en": "My phone fell onto the floor.",
-        "notes": ["Destination marked with に (床に落ちる)."]
+        "notes": [
+          "Destination marked with に (床に落ちる)."
+        ]
       }
     },
     {
       "kanji": "足りる",
       "reading": "たりる",
       "meaning": "to be enough; to be sufficient",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "お金が足りません。",
         "en": "I don’t have enough money.",
-        "notes": ["Often uses が (subject is insufficient)."]
+        "notes": [
+          "Often uses が (subject is insufficient)."
+        ]
       }
     },
     {
       "kanji": "過ぎる",
       "reading": "すぎる",
       "meaning": "to pass; to exceed; to be too much",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "もう十時を過ぎました。",
         "en": "It’s already past 10 o’clock.",
-        "notes": ["Timeを過ぎる = pass a time."]
+        "notes": [
+          "Timeを過ぎる = pass a time."
+        ]
       }
     },
     {
       "kanji": "伸びる",
       "reading": "のびる",
       "meaning": "to grow; to stretch; to improve",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "髪が伸びました。",
         "en": "My hair grew.",
-        "notes": ["Intransitive; often uses が."]
+        "notes": [
+          "Intransitive; often uses が."
+        ]
       }
     },
-
     {
       "kanji": "信じる",
       "reading": "しんじる",
       "meaning": "to believe; to trust",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "私は友だちを信じています。",
         "en": "I trust my friend.",
-        "notes": ["Object marked with を."]
+        "notes": [
+          "Object marked with を."
+        ]
       }
     },
     {
       "kanji": "感じる",
       "reading": "かんじる",
       "meaning": "to feel; to sense",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "この音楽は悲しいと感じます。",
         "en": "I feel this music is sad.",
-        "notes": ["Pattern: Aと感じる (feel that...)."]
+        "notes": [
+          "Pattern: Aと感じる (feel that...)."
+        ]
       }
     },
     {
       "kanji": "似る",
       "reading": "にる",
       "meaning": "to resemble; to look like",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "妹は母に似ています。",
         "en": "My younger sister resembles our mother.",
-        "notes": ["Target marked with に (〜に似る)."]
+        "notes": [
+          "Target marked with に (〜に似る)."
+        ]
       }
     },
     {
       "kanji": "間違える",
       "reading": "まちがえる",
       "meaning": "to make a mistake; to get wrong",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "番号を間違えました。",
         "en": "I got the number wrong.",
-        "notes": ["Object marked with を."]
+        "notes": [
+          "Object marked with を."
+        ]
       }
     },
-
     {
       "kanji": "覚める",
       "reading": "さめる",
       "meaning": "to wake up; to come to senses; (heat) to cool down",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "夢から覚めました。",
         "en": "I woke from the dream.",
-        "notes": ["Pattern: 〜から覚める (wake from)."]
+        "notes": [
+          "Pattern: 〜から覚める (wake from)."
+        ]
       }
     },
     {
       "kanji": "進める",
       "reading": "すすめる",
       "meaning": "to advance; to proceed; to move forward; to promote",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "話を進めましょう。",
         "en": "Let’s move the discussion forward.",
-        "notes": ["Transitive; 〜を進める."]
+        "notes": [
+          "Transitive; 〜を進める."
+        ]
       }
     },
     {
       "kanji": "遅れる",
       "reading": "おくれる",
       "meaning": "to be late; to fall behind",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "電車が遅れています。",
         "en": "The train is delayed.",
-        "notes": ["Intransitive; delays often use が/は."]
+        "notes": [
+          "Intransitive; delays often use が/は."
+        ]
       }
     },
-
     {
       "kanji": "汚れる",
       "reading": "よごれる",
       "meaning": "to get dirty; to be stained",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "服が汚れました。",
         "en": "My clothes got dirty.",
-        "notes": ["Intransitive; subject often marked with が."]
+        "notes": [
+          "Intransitive; subject often marked with が."
+        ]
       }
     },
     {
       "kanji": "壊れる",
       "reading": "こわれる",
       "meaning": "to break; to be broken",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "この時計は壊れています。",
         "en": "This watch is broken.",
-        "notes": ["State uses 〜ている (壊れている)."]
+        "notes": [
+          "State uses 〜ている (壊れている)."
+        ]
       }
     },
     {
       "kanji": "触れる",
       "reading": "ふれる",
       "meaning": "to touch; to come into contact; to mention briefly",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "その犬に触れないでください。",
         "en": "Please don’t touch that dog.",
-        "notes": ["Target marked with に (〜に触れる)."]
+        "notes": [
+          "Target marked with に (〜に触れる)."
+        ]
       }
     },
-
     {
       "kanji": "生まれる",
       "reading": "うまれる",
       "meaning": "to be born",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "私はアメリカで生まれました。",
         "en": "I was born in the U.S.",
-        "notes": ["Placeで生まれる is common."]
+        "notes": [
+          "Placeで生まれる is common."
+        ]
       }
     },
     {
       "kanji": "聞こえる",
       "reading": "きこえる",
       "meaning": "to be audible; to be heard",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "ここから海の音が聞こえます。",
         "en": "From here, I can hear the sound of the sea.",
-        "notes": ["Perception often uses が (音が聞こえる)."]
+        "notes": [
+          "Perception often uses が (音が聞こえる)."
+        ]
       }
     },
     {
       "kanji": "名付ける",
       "reading": "なづける",
       "meaning": "to name; to give a name",
-      "orthography": "kanji",
-      "type": "ichidan-verb",
       "verbType": "simple",
       "example": {
         "ja": "この犬をポチと名付けました。",
         "en": "I named this dog Pochi.",
-        "notes": ["Pattern: AをBと名付ける."]
-      }
-    },
-
-    {
-      "kanji": "出かける",
-      "reading": "でかける",
-      "meaning": "to go out; to leave (home) for a while",
-      "orthography": "both",
-      "type": "ichidan-verb",
-      "verbType": "simple",
-      "example": {
-        "ja": "これから買い物に出かけます。",
-        "en": "I’m going out shopping now.",
-        "notes": ["Destination often marked with に (〜に出かける)."]
-      }
-    },
-     {
-      "kanji": "片付ける",
-      "reading": "かたづける",
-      "meaning": "to tidy up; to put away"
-    },
-    {
-      "kanji": "付ける",
-      "reading": "つける",
-      "meaning": "to attach; to add; to turn on (a device)"
-    },
-    {
-      "kanji": "見つける",
-      "reading": "みつける",
-      "meaning": "to find; to discover",
-      "orthography": "both",
-      "type": "ichidan-verb",
-      "verbType": "simple",
-      "example": {
-        "ja": "駅の近くでいい店を見つけました。",
-        "en": "I found a good shop near the station.",
-        "notes": ["Object marked with を."]
+        "notes": [
+          "Pattern: AをBと名付ける."
+        ]
       }
     }
   ]

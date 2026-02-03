@@ -1,0 +1,91 @@
+{
+  "metadata": {
+    "name": "Japanese godan-verb",
+    "description": "Grouped entries for type='godan-verb' — total 14.",
+    "version": 1
+  },
+  "defaults": {
+    "type": "godan-verb"
+  },
+  "entries": [
+    {
+      "kanji": "促す",
+      "reading": "うながす",
+      "meaning": "to urge; to prompt"
+    },
+    {
+      "kanji": "濁る",
+      "reading": "にごる",
+      "meaning": "to become muddy; cloudy"
+    },
+    {
+      "kanji": "読む",
+      "reading": "よむ",
+      "meaning": "to read"
+    },
+    {
+      "kanji": "送る",
+      "reading": "おくる",
+      "meaning": "to send"
+    },
+    {
+      "kanji": "見送る",
+      "reading": "みおくる",
+      "meaning": "to see off; to postpone"
+    },
+    {
+      "kanji": "上がる",
+      "reading": "あがる",
+      "meaning": "to rise; to go up",
+      "ending": "ru"
+    },
+    {
+      "kanji": "生きる",
+      "reading": "いきる",
+      "meaning": "to live",
+      "ending": "ru"
+    },
+    {
+      "kanji": "語る",
+      "reading": "かたる",
+      "meaning": "to narrate; to talk about",
+      "ending": "ru"
+    },
+    {
+      "kanji": "下がる",
+      "reading": "さがる",
+      "meaning": "to fall; to go down; to step back",
+      "ending": "ru"
+    },
+    {
+      "kanji": "名乗る",
+      "reading": "なのる",
+      "meaning": "to give one's name; to introduce oneself",
+      "ending": "ru"
+    },
+    {
+      "kanji": "話す",
+      "reading": "はなす",
+      "meaning": "to speak; to talk",
+      "ending": "su"
+    },
+    {
+      "kanji": "外す",
+      "reading": "はずす",
+      "meaning": "to remove; to unfasten; to be away",
+      "ending": "su"
+    },
+    {
+      "kanji": "買う",
+      "reading": "かう",
+      "meaning": "to buy",
+      "ending": "u"
+    },
+    {
+      "kanji": "会う",
+      "reading": "あう",
+      "meaning": "to meet",
+      "ending": "u"
+    }
+  ]
+}
