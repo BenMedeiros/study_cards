@@ -219,7 +219,6 @@ export function renderKanjiStudyCard({ store }) {
         { name: 'full', icon: '', text: 'Hide', caption: '↓', shortcut: 'ArrowDown', action: () => showKanjiOnly() }
       ], initialState: 'kanji-only' },
     { key: 'sound', icon: '🔊', text: 'Sound', caption: 'Space', shortcut: ' ', action: () => speakCurrent() },
-    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', action: () => showNext() },
     { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', ariaPressed: false, action: () => {
       const entry = entries[index];
       const v = getPrimaryKanjiValue(entry);
@@ -263,6 +262,7 @@ export function renderKanjiStudyCard({ store }) {
         updateMarkButtons();
       }
     } },
+    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', action: () => showNext() },
   ];
 
   const footerControls = createViewFooterControls(footerDesc, { appId: 'kanjiStudy' });

@@ -143,7 +143,6 @@ export function renderFlashcards({ store }) {
   const footerDesc = [
     { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', action: () => showPrev() },
     { key: 'sound', icon: '🔊', text: 'Sound', caption: 'Space', shortcut: ' ', action: () => speakCurrent() },
-    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', action: () => showNext() },
     { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', ariaPressed: false, action: () => {
       const entry = entries[index];
       const v = getPrimaryValue(entry);
@@ -170,6 +169,7 @@ export function renderFlashcards({ store }) {
         render();
       }
     } },
+    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', action: () => showNext() },
   ];
 
   const footerControls = createViewFooterControls(footerDesc, { appId: 'flashcards' });

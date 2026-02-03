@@ -45,6 +45,20 @@
 }
 
 @media (max-width: 768px) {
+  /* Mobile footer: force a consistent 3-per-row grid with equal widths */
+  .view-footer-controls {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    justify-content: stretch;
+    align-items: stretch;
+  }
+
+  .view-footer-controls .btn {
+    width: 100%;
+    max-width: none;
+    flex: none;
+  }
+
   .view-footer-controls .btn .icon {
     font-size: 1.05rem;
   }

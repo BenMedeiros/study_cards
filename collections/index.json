@@ -25,8 +25,8 @@
     {
       "path": "japanese/nouns/adverb__mixed.json",
       "name": "Japanese adverb (mixed)",
-      "description": "Mixed orthography group for type='adverb' — total 5 (hiragana: 1, both: 1, kanji: 1, katakana: 2).",
-      "entries": 5
+      "description": "Mixed orthography group for type='adverb' — expanded set with common N5–N3 adverbs plus a few frequent onomatopoeia.",
+      "entries": 41
     },
     {
       "path": "japanese/nouns/compound-morpheme__mixed.json",
