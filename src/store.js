@@ -9,7 +9,7 @@ export function createStore() {
 
   // IndexedDB-backed persistence (with localStorage fallback).
   // Store schema:
-  // - kv: { key: 'shell'|'apps'|'kanji_progress', value: object }
+  // - kv: { key: 'shell'|'apps'|'kanji_progress'|'study_time', value: object }
   // - collections: { id: '<collectionId>', value: object }
   let persistenceReady = false;
   let idbAvailable = false;
@@ -24,10 +24,15 @@ export function createStore() {
       // Map<string, KanjiProgressRecord>
       // KanjiProgressRecord: { state, seen, timeMsStudiedInKanjiStudyCard, timesSeenInKanjiStudyCard, ... }
       kanji_progress: {},
+      // StudyTimeRecord
+      // { version: 1, sessions: StudySession[], statsByCollection: object, statsByAppCollection: object }
+      // StudySession: { appId, collectionId, startIso, endIso, durationMs }
+      study_time: null,
     },
   };
 
   const KANJI_PROGRESS_KEY = 'kanji_progress';
+  const STUDY_TIME_KEY = 'study_time';
 
   let flushTimer = null;
   let flushInFlight = null;
@@ -122,7 +127,7 @@ export function createStore() {
           if (doShell) puts.push(idbPut('kv', { key: 'shell', value: uiState.shell || {} }));
           if (doApps) puts.push(idbPut('kv', { key: 'apps', value: uiState.apps || {} }));
           for (const k of kvKeys) {
-            if (k === KANJI_PROGRESS_KEY) {
+            if (k === KANJI_PROGRESS_KEY || k === STUDY_TIME_KEY) {
               puts.push(idbPut('kv', { key: k, value: uiState.kv?.[k] || {} }));
             }
           }
@@ -173,6 +178,26 @@ export function createStore() {
       uiState.kv[KANJI_PROGRESS_KEY] = {};
     }
     return uiState.kv[KANJI_PROGRESS_KEY];
+  }
+
+  function ensureStudyTimeRecord() {
+    uiState.kv = uiState.kv || {};
+    let v = uiState.kv[STUDY_TIME_KEY];
+    if (!v || typeof v !== 'object' || Array.isArray(v)) {
+      v = { version: 1, sessions: [], statsByCollection: {}, statsByAppCollection: {} };
+      uiState.kv[STUDY_TIME_KEY] = v;
+      return v;
+    }
+    // Normalize fields for older records.
+    if (typeof v.version !== 'number') v.version = 1;
+    if (!Array.isArray(v.sessions)) v.sessions = [];
+    if (!v.statsByCollection || typeof v.statsByCollection !== 'object' || Array.isArray(v.statsByCollection)) v.statsByCollection = {};
+    if (!v.statsByAppCollection || typeof v.statsByAppCollection !== 'object' || Array.isArray(v.statsByAppCollection)) v.statsByAppCollection = {};
+    return v;
+  }
+
+  function appCollectionKey(appId, collectionId) {
+    return `${String(appId || '').trim()}::${String(collectionId || '').trim()}`;
   }
 
   function getKanjiProgressRecord(v) {
@@ -254,6 +279,141 @@ export function createStore() {
     setKanjiProgressRecord(k, {
       timeMsStudiedInKanjiStudyCard: Math.max(0, prevTime + d),
     }, { silent: opts.silent !== false, immediate: !!opts.immediate });
+  }
+
+  function recordAppCollectionStudySession({ appId, collectionId, startIso, endIso, durationMs } = {}) {
+    const a = String(appId || '').trim();
+    const c = String(collectionId || '').trim();
+    if (!a || !c) return;
+    const d = Math.round(Number(durationMs));
+    if (!Number.isFinite(d) || d <= 0) return;
+
+    const rec = ensureStudyTimeRecord();
+    const start = String(startIso || '').trim();
+    const end = String(endIso || '').trim();
+    const session = {
+      appId: a,
+      collectionId: c,
+      startIso: start || nowIso(),
+      endIso: end || nowIso(),
+      durationMs: d,
+    };
+
+    rec.sessions.push(session);
+    // Cap growth to avoid unbounded IndexedDB records.
+    const MAX_SESSIONS = 2000;
+    if (rec.sessions.length > MAX_SESSIONS) {
+      rec.sessions.splice(0, rec.sessions.length - MAX_SESSIONS);
+    }
+
+    // Update aggregate stats for the collection.
+    const colPrev = rec.statsByCollection[c] && typeof rec.statsByCollection[c] === 'object'
+      ? rec.statsByCollection[c]
+      : { totalMs: 0, lastEndIso: null, lastDurationMs: null };
+    const colTotal = Math.max(0, (Number(colPrev.totalMs) || 0) + d);
+    rec.statsByCollection[c] = {
+      totalMs: colTotal,
+      lastEndIso: session.endIso,
+      lastDurationMs: d,
+    };
+
+    // Update aggregate stats for the app+collection.
+    const key = appCollectionKey(a, c);
+    const acPrev = rec.statsByAppCollection[key] && typeof rec.statsByAppCollection[key] === 'object'
+      ? rec.statsByAppCollection[key]
+      : { totalMs: 0, lastEndIso: null, lastDurationMs: null };
+    const acTotal = Math.max(0, (Number(acPrev.totalMs) || 0) + d);
+    rec.statsByAppCollection[key] = {
+      totalMs: acTotal,
+      lastEndIso: session.endIso,
+      lastDurationMs: d,
+    };
+
+    dirtyKv.add(STUDY_TIME_KEY);
+    scheduleFlush();
+    // Notify UI subscribers so views (e.g. Collections) refresh immediately
+    notify();
+  }
+
+  function getStudyTimeRecord() {
+    return ensureStudyTimeRecord();
+  }
+
+  function sumSessionDurations({ windowMs, collectionId = null } = {}) {
+    const win = Math.round(Number(windowMs));
+    const hasWindow = Number.isFinite(win) && win > 0;
+    const c = collectionId ? String(collectionId).trim() : null;
+    const now = Date.now();
+    const cutoff = hasWindow ? (now - win) : null;
+
+    const rec = ensureStudyTimeRecord();
+    let total = 0;
+    for (let i = rec.sessions.length - 1; i >= 0; i--) {
+      const s = rec.sessions[i];
+      if (!s || typeof s !== 'object') continue;
+      if (c && s.collectionId !== c) continue;
+      if (hasWindow) {
+        const end = new Date(String(s.endIso || '')).getTime();
+        if (!Number.isFinite(end) || Number.isNaN(end)) continue;
+        if (end < cutoff) break; // sessions are append-only; older ones are earlier in the array
+      }
+      const d = Math.round(Number(s.durationMs));
+      if (Number.isFinite(d) && d > 0) total += d;
+    }
+    return total;
+  }
+
+  function getCollectionStudyStats(collectionId) {
+    const id = String(collectionId || '').trim();
+    if (!id) return null;
+    const rec = ensureStudyTimeRecord();
+    const base = rec.statsByCollection?.[id] && typeof rec.statsByCollection[id] === 'object'
+      ? rec.statsByCollection[id]
+      : { totalMs: 0, lastEndIso: null, lastDurationMs: null };
+    const last24h = sumSessionDurations({ windowMs: 24 * 60 * 60 * 1000, collectionId: id });
+    const last48h = sumSessionDurations({ windowMs: 48 * 60 * 60 * 1000, collectionId: id });
+    const last72h = sumSessionDurations({ windowMs: 72 * 60 * 60 * 1000, collectionId: id });
+    const last7d = sumSessionDurations({ windowMs: 7 * 24 * 60 * 60 * 1000, collectionId: id });
+    return {
+      collectionId: id,
+      totalMs: Math.max(0, Number(base.totalMs) || 0),
+      lastEndIso: base.lastEndIso || null,
+      lastDurationMs: Number.isFinite(Number(base.lastDurationMs)) ? Math.round(Number(base.lastDurationMs)) : null,
+      last24h,
+      last48h,
+      last72h,
+      last7d,
+    };
+  }
+
+  function getAllCollectionsStudyStats() {
+    const rec = ensureStudyTimeRecord();
+    const out = [];
+    for (const id of Object.keys(rec.statsByCollection || {})) {
+      const st = getCollectionStudyStats(id);
+      if (st) out.push(st);
+    }
+    return out;
+  }
+
+  function getRecentStudySessions(limit = 10) {
+    const n = Math.max(0, Math.min(100, Math.round(Number(limit) || 0)));
+    const rec = ensureStudyTimeRecord();
+    if (!n) return [];
+    return rec.sessions.slice(-n).reverse();
+  }
+
+  function getFocusKanjiValues(limit = 24) {
+    const n = Math.max(0, Math.min(200, Math.round(Number(limit) || 0)));
+    if (!n) return [];
+    const map = ensureKanjiProgressMap();
+    const out = [];
+    for (const [k, r] of Object.entries(map)) {
+      if (!r || typeof r !== 'object') continue;
+      if (r.state === 'focus') out.push(k);
+      if (out.length >= n) break;
+    }
+    return out;
   }
 
   function clearLearnedKanji() {
@@ -1124,6 +1284,7 @@ export function createStore() {
           const shellRec = await idbGet('kv', 'shell');
           const appsRec = await idbGet('kv', 'apps');
           const kanjiProgressRec = await idbGet('kv', KANJI_PROGRESS_KEY);
+          const studyTimeRec = await idbGet('kv', STUDY_TIME_KEY);
           const collRecs = await idbGetAll('collections');
           loaded = {
             shell: (shellRec && shellRec.value && typeof shellRec.value === 'object') ? shellRec.value : {},
@@ -1131,6 +1292,7 @@ export function createStore() {
             collections: {},
             kv: {
               [KANJI_PROGRESS_KEY]: (kanjiProgressRec && kanjiProgressRec.value && typeof kanjiProgressRec.value === 'object' && !Array.isArray(kanjiProgressRec.value)) ? kanjiProgressRec.value : {},
+              [STUDY_TIME_KEY]: (studyTimeRec && studyTimeRec.value && typeof studyTimeRec.value === 'object' && !Array.isArray(studyTimeRec.value)) ? studyTimeRec.value : null,
             },
           };
           for (const r of (Array.isArray(collRecs) ? collRecs : [])) {
@@ -1154,6 +1316,8 @@ export function createStore() {
       uiState.kv = (loaded.kv && typeof loaded.kv === 'object') ? loaded.kv : { [KANJI_PROGRESS_KEY]: {} };
       // Ensure `kanji_progress` is present and well-formed.
       ensureKanjiProgressMap();
+      // Ensure `study_time` is present and well-formed.
+      ensureStudyTimeRecord();
 
       const paths = await loadSeedCollections();
       // Do not eagerly load collection JSONs; start with none loaded.
@@ -1348,6 +1512,14 @@ export function createStore() {
     getKanjiProgressRecord,
     recordKanjiSeenInKanjiStudyCard,
     addTimeMsStudiedInKanjiStudyCard,
+    // Cross-app study time (app x collection)
+    recordAppCollectionStudySession,
+    getStudyTimeRecord,
+    getRecentStudySessions,
+    getCollectionStudyStats,
+    getAllCollectionsStudyStats,
+    sumSessionDurations,
+    getFocusKanjiValues,
     setActiveCollectionId,
     syncCollectionFromURL,
     listCollectionDir,

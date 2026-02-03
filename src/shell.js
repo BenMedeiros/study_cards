@@ -379,6 +379,74 @@ export function createAppShell({ store, onNavigate }) {
     voiceState: getVoiceState(),
   };
 
+  // Study time tracking (app x collection)
+  let activeStudySession = null;
+  let activeRoutePathname = null;
+
+  function routePathToAppId(pathname) {
+    const p = String(pathname || '').trim();
+    if (!p) return null;
+    if (p === '/') return 'home';
+    if (p === '/flashcards') return 'flashcards';
+    if (p === '/qa-cards') return 'qa-cards';
+    if (p === '/kanji') return 'kanji';
+    if (p === '/data') return 'data';
+    if (p === '/collections') return 'collections';
+    return null;
+  }
+
+  function endActiveStudySession() {
+    if (!activeStudySession) return;
+    try {
+      const endWall = Date.now();
+      const durationMs = Math.max(0, endWall - activeStudySession.startWallMs);
+      // Ignore ultra-short time slices to reduce noise.
+      if (durationMs >= 1000) {
+        store.recordAppCollectionStudySession({
+          appId: activeStudySession.appId,
+          collectionId: activeStudySession.collectionId,
+          startIso: activeStudySession.startIso,
+          endIso: new Date(endWall).toISOString(),
+          durationMs,
+        });
+      }
+    } catch (e) {
+      // ignore
+    } finally {
+      activeStudySession = null;
+    }
+  }
+
+  function startActiveStudySessionFor(pathname) {
+    try {
+      const appId = routePathToAppId(pathname);
+      const collectionId = (store && typeof store.getActiveCollectionId === 'function') ? (store.getActiveCollectionId() || null) : null;
+      if (!appId || !collectionId) return;
+      activeStudySession = {
+        appId,
+        collectionId,
+        startWallMs: Date.now(),
+        startIso: new Date().toISOString(),
+      };
+    } catch (e) {
+      activeStudySession = null;
+    }
+  }
+
+  function swapStudySessionFor(pathname) {
+    endActiveStudySession();
+    startActiveStudySessionFor(pathname);
+  }
+
+  try {
+    window.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') endActiveStudySession();
+    });
+    window.addEventListener('pagehide', () => {
+      endActiveStudySession();
+    });
+  } catch (e) {}
+
   function renderHeader() {
     headerInner.innerHTML = '';
 
@@ -863,6 +931,15 @@ export function createAppShell({ store, onNavigate }) {
   }
 
   function renderRoute(route) {
+    // Study-time bookkeeping: close previous view session and start the next.
+    try {
+      const nextPath = String(route?.pathname || '/');
+      if (activeRoutePathname !== nextPath) {
+        swapStudySessionFor(nextPath);
+        activeRoutePathname = nextPath;
+      }
+    } catch (e) {}
+
     renderHeader();
     main.innerHTML = '';
 
@@ -911,10 +988,17 @@ export function createAppShell({ store, onNavigate }) {
   store.subscribe(() => {
     // Refresh cached values then re-render header
     try {
+      const prevActiveId = cached.activeId;
       cached.collections = Array.isArray(store.getCollections?.()) ? store.getCollections() : cached.collections;
       cached.activeId = typeof store.getActiveCollectionId === 'function' ? store.getActiveCollectionId() : cached.activeId;
       cached.activeCollection = typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : cached.activeCollection;
       cached.voiceState = getVoiceState();
+
+      // If the active collection changed while staying in the same view,
+      // split the study session so time is attributed to the correct collection.
+      if (prevActiveId !== cached.activeId && activeRoutePathname) {
+        swapStudySessionFor(activeRoutePathname);
+      }
     } catch (err) {}
     renderHeader();
   });

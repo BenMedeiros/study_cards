@@ -1,5 +1,6 @@
 import { createTable } from '../components/table.js';
 import { card } from '../components/ui.js';
+import { formatDurationMs, formatIsoShort } from '../utils/helpers.js';
 
 export function renderCollectionsManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
@@ -8,7 +9,24 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   const collections = store.getAvailableCollections();
 
   // Build table headers (include additional collection metadata columns)
-  const headers = ['Name', 'Path', 'Entries', 'Description', 'Current Index', 'Default View', 'Is Shuffled', 'Order Hash', 'Study Filter'];
+  const headers = [
+    'Name',
+    'Path',
+    'Entries',
+    'Description',
+    'Last Studied',
+    'Last Duration',
+    'Total Study',
+    '24h',
+    '48h',
+    '72h',
+    '7d',
+    'Current Index',
+    'Default View',
+    'Is Shuffled',
+    'Order Hash',
+    'Study Filter'
+  ];
 
   // Build table rows and attach __id metadata for action handlers
   const rows = collections.map(c => {
@@ -31,11 +49,22 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
         meta = c.value || c.metadata || {};
       }
     } catch (e) { meta = c.value || c.metadata || {}; }
+    const collectionId = c.id || c.key || c.path || '';
+    const study = (store && typeof store.getCollectionStudyStats === 'function')
+      ? store.getCollectionStudyStats(collectionId)
+      : null;
     const arr = [
       c.name || c.path || c.id || c.key || '',
       c.path || c.id || c.key || '',
       entryCount,
       c.description || '',
+      study?.lastEndIso ? formatIsoShort(study.lastEndIso) : '',
+      study?.lastDurationMs ? formatDurationMs(study.lastDurationMs) : '',
+      study?.totalMs ? formatDurationMs(study.totalMs) : '',
+      study?.last24h ? formatDurationMs(study.last24h) : '',
+      study?.last48h ? formatDurationMs(study.last48h) : '',
+      study?.last72h ? formatDurationMs(study.last72h) : '',
+      study?.last7d ? formatDurationMs(study.last7d) : '',
       meta.currentIndex ?? '',
       meta.defaultViewMode ?? '',
       (typeof meta.isShuffled === 'boolean') ? (meta.isShuffled ? 'Yes' : 'No') : '',
