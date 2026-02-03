@@ -1275,6 +1275,32 @@ export function createStore() {
     }
   }
 
+  // App-level state helpers. Apps can persist small UI state under `apps.<appId>`.
+  function getAppState(appId) {
+    try {
+      if (!appId) return {};
+      const v = uiState?.apps?.[appId];
+      return (v && typeof v === 'object') ? { ...v } : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function setAppState(appId, patch, opts = {}) {
+    try {
+      if (!appId) return;
+      uiState.apps = uiState.apps || {};
+      const prev = (uiState.apps[appId] && typeof uiState.apps[appId] === 'object') ? uiState.apps[appId] : {};
+      const patchObj = (patch && typeof patch === 'object') ? patch : {};
+      uiState.apps[appId] = { ...prev, ...patchObj };
+      dirtyApps = true;
+      scheduleFlush();
+      if (!opts.silent) notify();
+    } catch (e) {
+      // ignore
+    }
+  }
+
   return {
     subscribe,
     initialize,
@@ -1309,6 +1335,8 @@ export function createStore() {
     },
     getShellVoiceSettings,
     setShellVoiceSettings,
+    getAppState,
+    setAppState,
     getShellState,
     setShellState,
     getInheritedFolderMetadata,

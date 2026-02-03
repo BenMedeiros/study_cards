@@ -259,6 +259,79 @@ export function createAppShell({ store, onNavigate }) {
 
     brand.append(brandTitle, brandSubtitle);
 
+    // Right-click on brand opens a small command menu for dev actions
+    function closeBrandMenu(menu) {
+      try { document.body.removeChild(menu); } catch (e) {}
+      document.removeEventListener('click', onBodyClick);
+      document.removeEventListener('keydown', onKeyDown);
+    }
+
+    function onBodyClick(e) {
+      // click outside removes menu
+      if (!menu.contains(e.target)) closeBrandMenu(menu);
+    }
+
+    function onKeyDown(e) {
+      if (e.key === 'Escape') closeBrandMenu(menu);
+    }
+
+    function openBrandMenu(x, y) {
+      document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
+      const menu = document.createElement('div');
+      menu.className = 'brand-context-menu';
+      menu.style.position = 'fixed';
+      menu.style.left = `${Math.round(x)}px`;
+      menu.style.top = `${Math.round(y)}px`;
+      menu.style.background = 'var(--panel)';
+      menu.style.border = '1px solid var(--border)';
+      menu.style.borderRadius = '0.5rem';
+      menu.style.padding = '0.25rem';
+      menu.style.zIndex = '1400';
+      menu.style.minWidth = '12rem';
+
+      const addItem = (label, onClick) => {
+        const it = document.createElement('div');
+        it.className = 'brand-context-item';
+        it.textContent = label;
+        it.style.padding = '0.5rem 0.75rem';
+        it.style.cursor = 'pointer';
+        it.style.color = 'var(--text)';
+        it.addEventListener('click', (ev) => { ev.stopPropagation(); try { onClick(); } catch (e) {} closeBrandMenu(menu); });
+        it.addEventListener('mouseenter', () => { it.style.background = 'rgba(96,165,250,0.06)'; });
+        it.addEventListener('mouseleave', () => { it.style.background = 'transparent'; });
+        menu.appendChild(it);
+      };
+
+      addItem('Log Persisted Data (IDB)', () => {
+        try {
+          console.group('Persisted Data (IndexedDB)');
+          // Only read persisted records from IndexedDB: kv.shell, kv.apps, collections
+          import('./utils/idb.js').then(({ idbGet, idbGetAll }) => {
+            Promise.all([
+              idbGet('kv', 'shell').catch(() => null),
+              idbGet('kv', 'apps').catch(() => null),
+              idbGetAll('collections').catch(() => null),
+            ]).then(([shellRec, appsRec, collRecs]) => {
+              console.log('idb.kv.shell:', shellRec);
+              console.log('idb.kv.apps:', appsRec);
+              console.log('idb.collections (array):', collRecs);
+              console.groupEnd();
+            }).catch((err) => { console.error('IDB read error', err); console.groupEnd(); });
+          }).catch((err) => { console.error('Unable to import idb utils', err); console.groupEnd(); });
+        } catch (err) { console.error('Log Persisted Data failed', err); }
+      });
+
+      // Append menu and wire dismissal
+      document.body.appendChild(menu);
+      setTimeout(() => { document.addEventListener('click', onBodyClick); document.addEventListener('keydown', onKeyDown); }, 0);
+    }
+
+    brand.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openBrandMenu(e.clientX, e.clientY);
+    });
+
     const right = document.createElement('div');
     right.className = 'header-right';
     right.id = 'hdr-right';

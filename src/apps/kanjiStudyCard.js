@@ -175,8 +175,35 @@ export function renderKanjiStudyCard({ store }) {
   });
 
   // Autoplay controls: create grouped play/gear control and hook into play loop
+  // Load app-specific autoplay config (saved under uiState.apps.kanjiStudy.autoplaySequence)
+  try {
+    if (store && typeof store.getAppState === 'function') {
+      const appState = store.getAppState('kanjiStudy') || {};
+      if (Array.isArray(appState.autoplaySequence)) autoplayConfig = appState.autoplaySequence.slice();
+    }
+  } catch (e) {}
+
+  // Ensure a sensible default sequence exists and persist it app-scoped if missing
+  const DEFAULT_AUTOPLAY_SEQUENCE = [
+    { action: 'next' },
+    { action: 'wait', ms: 1000 },
+    { action: 'sound' },
+    { action: 'wait', ms: 1000 },
+    { action: 'reveal' },
+    { action: 'wait', ms: 1000 }
+  ];
+
+  if (!Array.isArray(autoplayConfig) || autoplayConfig.length === 0) {
+    autoplayConfig = DEFAULT_AUTOPLAY_SEQUENCE.slice();
+    try {
+      if (store && typeof store.setAppState === 'function') {
+        store.setAppState('kanjiStudy', { autoplaySequence: autoplayConfig });
+      }
+    } catch (e) {}
+  }
+
   const autoplayControlsEl = createAutoplayControls({
-    sequence: Array.isArray(autoplayConfig) ? autoplayConfig : (autoplayConfig ? autoplayConfig : []),
+    sequence: Array.isArray(autoplayConfig) ? autoplayConfig : [],
     isPlaying: !!isAutoPlaying,
     onTogglePlay: (play) => {
       isAutoPlaying = !!play;
@@ -185,6 +212,11 @@ export function renderKanjiStudyCard({ store }) {
     },
     onSequenceChange: (seq) => {
       autoplayConfig = Array.isArray(seq) ? seq.slice() : [];
+      try {
+        if (store && typeof store.setAppState === 'function') {
+          store.setAppState('kanjiStudy', { autoplaySequence: autoplayConfig });
+        }
+      } catch (e) {}
       saveUIState();
     }
   });

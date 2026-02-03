@@ -7,6 +7,15 @@ import { el, safeId } from './ui.js';
 export function createAutoplayControls({ sequence = [], isPlaying = false, onTogglePlay, onSequenceChange }) {
   let seq = Array.isArray(sequence) ? sequence.slice() : [];
 
+  const DEFAULT_SEQUENCE = [
+    { action: 'next' },
+    { action: 'wait', ms: 1000 },
+    { action: 'sound' },
+    { action: 'wait', ms: 1000 },
+    { action: 'reveal' },
+    { action: 'wait', ms: 1000 }
+  ];
+
   const container = el('div', { className: 'autoplay-controls' });
   const group = el('div', { className: 'btn-group' });
 
@@ -79,9 +88,9 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
     const seqTitle = el('div', { className: 'hint', text: 'Sequence' });
     const seqList = el('div', { className: 'autoplay-sequence' });
 
-    // If no sequence exists yet, populate a sensible default so users see options
+    // If no sequence exists yet, populate the app default sequence and notify host
     if (!Array.isArray(seq) || seq.length === 0) {
-      seq = [ { action: 'wait', ms: 1000 }, { action: 'next' } ];
+      seq = DEFAULT_SEQUENCE.slice();
       // notify host that a default sequence is available
       onSequenceChange && onSequenceChange(seq.slice());
     }
@@ -136,9 +145,23 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
       });
     }
 
+    // Reset button (restore defaults)
+    const seqActions = el('div', { className: 'autoplay-sequence-actions' });
+    const resetBtn = document.createElement('button');
+    resetBtn.type = 'button';
+    resetBtn.className = 'btn';
+    resetBtn.textContent = 'Reset to default';
+    resetBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      seq = DEFAULT_SEQUENCE.slice();
+      renderSequence();
+      onSequenceChange && onSequenceChange(seq.slice());
+    });
+    seqActions.append(resetBtn);
+
     renderSequence();
 
-    right.append(seqTitle, seqList);
+    right.append(seqTitle, seqActions, seqList);
 
     overlay.append(closeBtn, left, right);
   }
