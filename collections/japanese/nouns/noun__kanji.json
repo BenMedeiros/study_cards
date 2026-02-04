@@ -12,1162 +12,547 @@
     {
       "kanji": "悪魔",
       "reading": "あくま",
-      "meaning": "demon; devil",
-      "example": {
-        "ja": "あの物語には悪魔が出てくる。",
-        "en": "A demon appears in that story.",
-        "notes": [
-          "Common in fantasy/anime contexts."
-        ]
-      }
+      "meaning": "demon; devil"
     },
     {
       "kanji": "運命",
       "reading": "うんめい",
-      "meaning": "fate; destiny",
-      "example": {
-        "ja": "それは運命だと思う。",
-        "en": "I think it’s fate.",
-        "notes": [
-          "Common dramatic word in anime/novels."
-        ]
-      }
+      "meaning": "fate; destiny"
     },
     {
       "kanji": "王国",
       "reading": "おうこく",
-      "meaning": "kingdom",
-      "example": {
-        "ja": "その王国は長い歴史がある。",
-        "en": "That kingdom has a long history.",
-        "notes": []
-      }
+      "meaning": "kingdom"
     },
     {
       "kanji": "過去",
       "reading": "かこ",
-      "meaning": "the past",
-      "example": {
-        "ja": "過去のことは忘れたい。",
-        "en": "I want to forget the past.",
-        "notes": []
-      }
+      "meaning": "the past"
     },
     {
       "kanji": "解放",
       "reading": "かいほう",
-      "meaning": "liberation; release; setting free",
-      "example": {
-        "ja": "町は解放された。",
-        "en": "The town was liberated.",
-        "notes": [
-          "Also used as “release/unlock” in games."
-        ]
-      }
+      "meaning": "liberation; release; setting free"
     },
     {
       "kanji": "覚醒",
       "reading": "かくせい",
-      "meaning": "awakening (sudden power/awareness); arousal",
-      "example": {
-        "ja": "主人公が覚醒する場面が好きだ。",
-        "en": "I like the scene where the main character awakens (their power).",
-        "notes": [
-          "Very common in battle/anime context."
-        ]
-      }
+      "meaning": "awakening (sudden power/awareness); arousal"
     },
     {
       "kanji": "危機",
       "reading": "きき",
-      "meaning": "crisis",
-      "example": {
-        "ja": "国は大きな危機にある。",
-        "en": "The country is in a major crisis.",
-        "notes": []
-      }
+      "meaning": "crisis"
     },
     {
       "kanji": "記憶",
       "reading": "きおく",
-      "meaning": "memory; recollection",
-      "example": {
-        "ja": "その出来事をはっきり記憶している。",
-        "en": "I remember that event clearly.",
-        "notes": []
-      }
+      "meaning": "memory; recollection"
     },
     {
       "kanji": "空間",
       "reading": "くうかん",
-      "meaning": "space (physical/three-dimensional); room",
-      "example": {
-        "ja": "この部屋は空間が広い。",
-        "en": "This room feels spacious.",
-        "notes": [
-          "Also used in sci-fi: 時間と空間."
-        ]
-      }
+      "meaning": "space (physical/three-dimensional); room"
     },
     {
       "kanji": "結界",
       "reading": "けっかい",
-      "meaning": "barrier (magical/spiritual); protective boundary",
-      "example": {
-        "ja": "結界が強すぎて入れない。",
-        "en": "The barrier is too strong, so we can’t enter.",
-        "notes": [
-          "Fantasy/anime term."
-        ]
-      }
+      "meaning": "barrier (magical/spiritual); protective boundary"
     },
     {
       "kanji": "現在",
       "reading": "げんざい",
-      "meaning": "the present; current time/status",
-      "example": {
-        "ja": "現在の状況を説明します。",
-        "en": "I will explain the current situation.",
-        "notes": []
-      }
+      "meaning": "the present; current time/status"
     },
     {
       "kanji": "最強",
       "reading": "さいきょう",
-      "meaning": "strongest; invincible (colloq.)",
-      "example": {
-        "ja": "あの人が最強だと思う。",
-        "en": "I think that person is the strongest.",
-        "notes": [
-          "Also used like an adjective in casual speech."
-        ]
-      }
+      "meaning": "strongest; invincible (colloq.)"
     },
     {
       "kanji": "支配",
       "reading": "しはい",
-      "meaning": "control; rule; domination",
-      "example": {
-        "ja": "恐怖で人を支配するのはよくない。",
-        "en": "It’s not good to control people with fear.",
-        "notes": []
-      }
+      "meaning": "control; rule; domination"
     },
     {
       "kanji": "事件",
       "reading": "じけん",
-      "meaning": "incident; case (often criminal)",
-      "example": {
-        "ja": "大きな事件が起きた。",
-        "en": "A major incident occurred.",
-        "notes": []
-      }
+      "meaning": "incident; case (often criminal)"
     },
     {
       "kanji": "勝利",
       "reading": "しょうり",
-      "meaning": "victory",
-      "example": {
-        "ja": "最後に勝利した。",
-        "en": "In the end, (we) won.",
-        "notes": []
-      }
+      "meaning": "victory"
     },
     {
       "kanji": "真実",
       "reading": "しんじつ",
-      "meaning": "truth; reality (as truth)",
-      "example": {
-        "ja": "真実を知りたい。",
-        "en": "I want to know the truth.",
-        "notes": []
-      }
+      "meaning": "truth; reality (as truth)"
     },
     {
       "kanji": "進化",
       "reading": "しんか",
-      "meaning": "evolution; (game) evolution/upgrade",
-      "example": {
-        "ja": "ポケモンが進化した。",
-        "en": "The Pokémon evolved.",
-        "notes": [
-          "Very common in games."
-        ]
-      }
+      "meaning": "evolution; (game) evolution/upgrade"
     },
     {
       "kanji": "生徒",
       "reading": "せいと",
-      "meaning": "student (pupil; esp. school)",
-      "example": {
-        "ja": "生徒は教室に集まった。",
-        "en": "The students gathered in the classroom.",
-        "notes": [
-          "生徒 (pupil) vs 学生 (student, broader)."
-        ]
-      }
+      "meaning": "student (pupil; esp. school)"
     },
     {
       "kanji": "精神",
       "reading": "せいしん",
-      "meaning": "mind; spirit; mentality",
-      "example": {
-        "ja": "精神的に疲れている。",
-        "en": "I’m mentally tired.",
-        "notes": [
-          "精神的(に) = mentally."
-        ]
-      }
+      "meaning": "mind; spirit; mentality"
     },
     {
       "kanji": "絶望",
       "reading": "ぜつぼう",
-      "meaning": "despair; hopelessness",
-      "example": {
-        "ja": "絶望してもあきらめない。",
-        "en": "Even in despair, don’t give up.",
-        "notes": []
-      }
+      "meaning": "despair; hopelessness"
     },
     {
       "kanji": "戦い",
       "reading": "たたかい",
-      "meaning": "battle; fight; struggle",
-      "example": {
-        "ja": "長い戦いが始まる。",
-        "en": "A long battle begins.",
-        "notes": []
-      }
+      "meaning": "battle; fight; struggle"
     },
     {
       "kanji": "戦争",
       "reading": "せんそう",
-      "meaning": "war",
-      "example": {
-        "ja": "戦争は終わってほしい。",
-        "en": "I want wars to end.",
-        "notes": []
-      }
+      "meaning": "war"
     },
     {
       "kanji": "選択",
       "reading": "せんたく",
-      "meaning": "choice; selection",
-      "example": {
-        "ja": "どちらを選択しますか。",
-        "en": "Which do you choose?",
-        "notes": [
-          "Also used in UI/menus."
-        ]
-      }
+      "meaning": "choice; selection"
     },
     {
       "kanji": "組織",
       "reading": "そしき",
-      "meaning": "organization (group/system)",
-      "example": {
-        "ja": "その組織は秘密が多い。",
-        "en": "That organization has many secrets.",
-        "notes": []
-      }
+      "meaning": "organization (group/system)"
     },
     {
       "kanji": "仲間",
       "reading": "なかま",
-      "meaning": "companion; teammate; friend (in-group)",
-      "example": {
-        "ja": "仲間と一緒に行こう。",
-        "en": "Let’s go together with our friends/teammates.",
-        "notes": [
-          "Very common ‘party member’ word in games."
-        ]
-      }
+      "meaning": "companion; teammate; friend (in-group)"
     },
     {
       "kanji": "天使",
       "reading": "てんし",
-      "meaning": "angel",
-      "example": {
-        "ja": "天使みたいに優しい。",
-        "en": "They’re kind like an angel.",
-        "notes": [
-          "Also used metaphorically."
-        ]
-      }
+      "meaning": "angel"
     },
     {
       "kanji": "伝説",
       "reading": "でんせつ",
-      "meaning": "legend; myth",
-      "example": {
-        "ja": "伝説の剣を探している。",
-        "en": "I’m looking for the legendary sword.",
-        "notes": []
-      }
+      "meaning": "legend; myth"
     },
     {
       "kanji": "都市",
       "reading": "とし",
-      "meaning": "city (urban area)",
-      "example": {
-        "ja": "都市では電車が便利だ。",
-        "en": "In cities, trains are convenient.",
-        "notes": []
-      }
+      "meaning": "city (urban area)"
     },
     {
       "kanji": "任務",
       "reading": "にんむ",
-      "meaning": "mission; duty; assignment",
-      "example": {
-        "ja": "任務を必ず成功させる。",
-        "en": "I’ll make sure to complete the mission.",
-        "notes": []
-      }
+      "meaning": "mission; duty; assignment"
     },
     {
       "kanji": "能力",
       "reading": "のうりょく",
-      "meaning": "ability; capability; power (skill)",
-      "example": {
-        "ja": "能力を伸ばしたい。",
-        "en": "I want to improve my abilities.",
-        "notes": [
-          "Common in games/anime for ‘powers’ too."
-        ]
-      }
+      "meaning": "ability; capability; power (skill)"
     },
     {
       "kanji": "敗北",
       "reading": "はいぼく",
-      "meaning": "defeat; loss",
-      "example": {
-        "ja": "敗北から学ぶことも多い。",
-        "en": "You can learn a lot from defeat.",
-        "notes": []
-      }
+      "meaning": "defeat; loss"
     },
     {
       "kanji": "秘密",
       "reading": "ひみつ",
-      "meaning": "secret",
-      "example": {
-        "ja": "これは二人だけの秘密だ。",
-        "en": "This is a secret just between us.",
-        "notes": []
-      }
+      "meaning": "secret"
     },
     {
       "kanji": "必殺技",
       "reading": "ひっさつわざ",
-      "meaning": "finishing move; special killing technique",
-      "example": {
-        "ja": "必殺技を出すタイミングが大事だ。",
-        "en": "Timing is important when using a finishing move.",
-        "notes": [
-          "Very common in anime/game battles."
-        ]
-      }
+      "meaning": "finishing move; special killing technique"
     },
     {
       "kanji": "封印",
       "reading": "ふういん",
-      "meaning": "seal; sealing (magic/closure)",
-      "example": {
-        "ja": "扉が封印されて開かない。",
-        "en": "The door is sealed and won’t open.",
-        "notes": []
-      }
+      "meaning": "seal; sealing (magic/closure)"
     },
     {
       "kanji": "復讐",
       "reading": "ふくしゅう",
-      "meaning": "revenge",
-      "example": {
-        "ja": "復讐のために生きている。",
-        "en": "They live for revenge.",
-        "notes": [
-          "Dramatic register; common in plots."
-        ]
-      }
+      "meaning": "revenge"
     },
     {
       "kanji": "兵士",
       "reading": "へいし",
-      "meaning": "soldier",
-      "example": {
-        "ja": "兵士が門を守っている。",
-        "en": "Soldiers are guarding the gate.",
-        "notes": []
-      }
+      "meaning": "soldier"
     },
     {
       "kanji": "変身",
       "reading": "へんしん",
-      "meaning": "transformation; changing form",
-      "example": {
-        "ja": "主人公が変身した！",
-        "en": "The main character transformed!",
-        "notes": [
-          "Tokusa/hero genre staple."
-        ]
-      }
+      "meaning": "transformation; changing form"
     },
     {
       "kanji": "魔王",
       "reading": "まおう",
-      "meaning": "demon king",
-      "example": {
-        "ja": "魔王を倒す旅に出る。",
-        "en": "They set off on a journey to defeat the demon king.",
-        "notes": []
-      }
+      "meaning": "demon king"
     },
     {
       "kanji": "魔法",
       "reading": "まほう",
-      "meaning": "magic",
-      "example": {
-        "ja": "魔法が使えたらいいな。",
-        "en": "I wish I could use magic.",
-        "notes": []
-      }
+      "meaning": "magic"
     },
     {
       "kanji": "味方",
       "reading": "みかた",
-      "meaning": "ally; friend; your side",
-      "example": {
-        "ja": "味方が増えると安心する。",
-        "en": "It feels reassuring when you gain allies.",
-        "notes": [
-          "Opposite pairing with 敵."
-        ]
-      }
+      "meaning": "ally; friend; your side"
     },
     {
       "kanji": "未来",
       "reading": "みらい",
-      "meaning": "future",
-      "example": {
-        "ja": "未来は自分で作る。",
-        "en": "You create your own future.",
-        "notes": []
-      }
+      "meaning": "future"
     },
     {
       "kanji": "勇者",
       "reading": "ゆうしゃ",
-      "meaning": "hero (brave hero, esp. fantasy RPG)",
-      "example": {
-        "ja": "勇者が村を救った。",
-        "en": "The hero saved the village.",
-        "notes": [
-          "RPG/fantasy term."
-        ]
-      }
+      "meaning": "hero (brave hero, esp. fantasy RPG)"
     },
     {
       "kanji": "画質",
       "reading": "がしつ",
-      "meaning": "image quality; video quality",
-      "example": {
-        "ja": "画質を高くすると通信量が増える。",
-        "en": "If you increase video quality, data usage goes up.",
-        "notes": []
-      }
+      "meaning": "image quality; video quality"
     },
     {
       "kanji": "概要",
       "reading": "がいよう",
-      "meaning": "overview; summary",
-      "example": {
-        "ja": "まず概要を説明します。",
-        "en": "First, I’ll explain the overview.",
-        "notes": []
-      }
+      "meaning": "overview; summary"
     },
     {
       "kanji": "関連動画",
       "reading": "かんれんどうが",
-      "meaning": "related videos",
-      "example": {
-        "ja": "関連動画も見てみよう。",
-        "en": "Let’s also check the related videos.",
-        "notes": []
-      }
+      "meaning": "related videos"
     },
     {
       "kanji": "急上昇",
       "reading": "きゅうじょうしょう",
-      "meaning": "trending; rapidly rising (in popularity)",
-      "example": {
-        "ja": "急上昇の動画に面白いのがあった。",
-        "en": "There was an interesting video in Trending.",
-        "notes": [
-          "YouTube tab label in Japanese."
-        ]
-      }
+      "meaning": "trending; rapidly rising (in popularity)"
     },
     {
       "kanji": "共有",
       "reading": "きょうゆう",
-      "meaning": "share; sharing",
-      "example": {
-        "ja": "この動画を友だちと共有した。",
-        "en": "I shared this video with a friend.",
-        "notes": [
-          "Also appears in phone settings."
-        ]
-      }
+      "meaning": "share; sharing"
     },
     {
       "kanji": "検索",
       "reading": "けんさく",
-      "meaning": "search (noun); searching",
-      "example": {
-        "ja": "検索して曲を探した。",
-        "en": "I searched for the song.",
-        "notes": []
-      }
+      "meaning": "search (noun); searching"
     },
     {
       "kanji": "言語",
       "reading": "げんご",
-      "meaning": "language",
-      "example": {
-        "ja": "言語を日本語に変えた。",
-        "en": "I changed the language to Japanese.",
-        "notes": []
-      }
+      "meaning": "language"
     },
     {
       "kanji": "限定公開",
       "reading": "げんていこうかい",
-      "meaning": "unlisted (limited visibility); limited public",
-      "example": {
-        "ja": "この動画は限定公開にした。",
-        "en": "I set this video to unlisted.",
-        "notes": [
-          "YouTube visibility setting."
-        ]
-      }
+      "meaning": "unlisted (limited visibility); limited public"
     },
     {
       "kanji": "固定",
       "reading": "こてい",
-      "meaning": "pin; fixed; sticking (e.g., pinned comment)",
-      "example": {
-        "ja": "コメントを固定した。",
-        "en": "I pinned the comment.",
-        "notes": [
-          "UI usage: 固定する."
-        ]
-      }
+      "meaning": "pin; fixed; sticking (e.g., pinned comment)"
     },
     {
       "kanji": "公開",
       "reading": "こうかい",
-      "meaning": "public; release; publishing",
-      "example": {
-        "ja": "動画を公開した。",
-        "en": "I published the video.",
-        "notes": []
-      }
+      "meaning": "public; release; publishing"
     },
     {
       "kanji": "更新",
       "reading": "こうしん",
-      "meaning": "update; renewal; refresh",
-      "example": {
-        "ja": "ページを更新してみて。",
-        "en": "Try refreshing the page.",
-        "notes": [
-          "As a button/command in apps."
-        ]
-      }
+      "meaning": "update; renewal; refresh"
     },
     {
       "kanji": "削除",
       "reading": "さくじょ",
-      "meaning": "deletion; remove",
-      "example": {
-        "ja": "間違えて投稿を削除した。",
-        "en": "I deleted the post by mistake.",
-        "notes": []
-      }
+      "meaning": "deletion; remove"
     },
     {
       "kanji": "字幕",
       "reading": "じまく",
-      "meaning": "subtitles; captions",
-      "example": {
-        "ja": "字幕をオンにして見よう。",
-        "en": "Let’s turn on subtitles and watch.",
-        "notes": []
-      }
+      "meaning": "subtitles; captions"
     },
     {
       "kanji": "自動再生",
       "reading": "じどうさいせい",
-      "meaning": "autoplay (automatic playback)",
-      "example": {
-        "ja": "自動再生をオフにした。",
-        "en": "I turned off autoplay.",
-        "notes": []
-      }
+      "meaning": "autoplay (automatic playback)"
     },
     {
       "kanji": "制限",
       "reading": "せいげん",
-      "meaning": "restriction; limit",
-      "example": {
-        "ja": "年齢制限がある動画もある。",
-        "en": "Some videos have age restrictions.",
-        "notes": []
-      }
+      "meaning": "restriction; limit"
     },
     {
       "kanji": "切替",
       "reading": "きりかえ",
-      "meaning": "switching; toggle; changeover",
-      "example": {
-        "ja": "アカウントを切替した。",
-        "en": "I switched accounts.",
-        "notes": [
-          "Often with する."
-        ]
-      }
+      "meaning": "switching; toggle; changeover"
     },
     {
       "kanji": "接続",
       "reading": "せつぞく",
-      "meaning": "connection; connecting",
-      "example": {
-        "ja": "Wi-Fiに接続できない。",
-        "en": "I can’t connect to Wi-Fi.",
-        "notes": []
-      }
+      "meaning": "connection; connecting"
     },
     {
       "kanji": "全画面",
       "reading": "ぜんがめん",
-      "meaning": "full screen",
-      "example": {
-        "ja": "全画面で見ると楽しい。",
-        "en": "It’s fun to watch in full screen.",
-        "notes": []
-      }
+      "meaning": "full screen"
     },
     {
       "kanji": "送信",
       "reading": "そうしん",
-      "meaning": "send; transmission",
-      "example": {
-        "ja": "メッセージを送信した。",
-        "en": "I sent the message.",
-        "notes": []
-      }
+      "meaning": "send; transmission"
     },
     {
       "kanji": "速度",
       "reading": "そくど",
-      "meaning": "speed; playback speed",
-      "example": {
-        "ja": "速度を1.5倍にした。",
-        "en": "I set the speed to 1.5x.",
-        "notes": []
-      }
+      "meaning": "speed; playback speed"
     },
     {
       "kanji": "地域",
       "reading": "ちいき",
-      "meaning": "region; area",
-      "example": {
-        "ja": "地域によって表示が違う。",
-        "en": "The display differs by region.",
-        "notes": []
-      }
+      "meaning": "region; area"
     },
     {
       "kanji": "追加",
       "reading": "ついか",
-      "meaning": "add; addition",
-      "example": {
-        "ja": "再生リストに追加した。",
-        "en": "I added it to the playlist.",
-        "notes": []
-      }
+      "meaning": "add; addition"
     },
     {
       "kanji": "通知",
       "reading": "つうち",
-      "meaning": "notification; notice",
-      "example": {
-        "ja": "通知が多すぎる。",
-        "en": "I get too many notifications.",
-        "notes": []
-      }
+      "meaning": "notification; notice"
     },
     {
       "kanji": "通報",
       "reading": "つうほう",
-      "meaning": "report (to authorities/system); filing a report",
-      "example": {
-        "ja": "迷惑なコメントを通報した。",
-        "en": "I reported an abusive comment.",
-        "notes": []
-      }
+      "meaning": "report (to authorities/system); filing a report"
     },
     {
       "kanji": "登録",
       "reading": "とうろく",
-      "meaning": "subscribe; register",
-      "example": {
-        "ja": "このチャンネルを登録した。",
-        "en": "I subscribed to this channel.",
-        "notes": []
-      }
+      "meaning": "subscribe; register"
     },
     {
       "kanji": "読み込み",
       "reading": "よみこみ",
-      "meaning": "loading; reading in (data)",
-      "example": {
-        "ja": "読み込みが終わらない。",
-        "en": "Loading won’t finish.",
-        "notes": []
-      }
+      "meaning": "loading; reading in (data)"
     },
     {
       "kanji": "非公開",
       "reading": "ひこうかい",
-      "meaning": "private (not public)",
-      "example": {
-        "ja": "この動画は非公開にした。",
-        "en": "I set this video to private.",
-        "notes": []
-      }
+      "meaning": "private (not public)"
     },
     {
       "kanji": "標準",
       "reading": "ひょうじゅん",
-      "meaning": "standard; default",
-      "example": {
-        "ja": "画質は標準に戻した。",
-        "en": "I set the quality back to standard.",
-        "notes": []
-      }
+      "meaning": "standard; default"
     },
     {
       "kanji": "表示",
       "reading": "ひょうじ",
-      "meaning": "display; show",
-      "example": {
-        "ja": "字幕を表示して。",
-        "en": "Show the subtitles.",
-        "notes": []
-      }
+      "meaning": "display; show"
     },
     {
       "kanji": "並び替え",
       "reading": "ならびかえ",
-      "meaning": "sort; reorder",
-      "example": {
-        "ja": "動画を新しい順に並び替えた。",
-        "en": "I sorted the videos by newest.",
-        "notes": []
-      }
+      "meaning": "sort; reorder"
     },
     {
       "kanji": "編集",
       "reading": "へんしゅう",
-      "meaning": "edit; editing",
-      "example": {
-        "ja": "タイトルを編集した。",
-        "en": "I edited the title.",
-        "notes": []
-      }
+      "meaning": "edit; editing"
     },
     {
       "kanji": "返信",
       "reading": "へんしん",
-      "meaning": "reply; response",
-      "example": {
-        "ja": "コメントに返信した。",
-        "en": "I replied to the comment.",
-        "notes": []
-      }
+      "meaning": "reply; response"
     },
     {
       "kanji": "保存",
       "reading": "ほぞん",
-      "meaning": "save; saving",
-      "example": {
-        "ja": "後で見るために保存した。",
-        "en": "I saved it to watch later.",
-        "notes": []
-      }
+      "meaning": "save; saving"
     },
     {
       "kanji": "報告",
       "reading": "ほうこく",
-      "meaning": "report; reporting",
-      "example": {
-        "ja": "問題を報告した。",
-        "en": "I reported the problem.",
-        "notes": []
-      }
+      "meaning": "report; reporting"
     },
     {
       "kanji": "利用規約",
       "reading": "りようきやく",
-      "meaning": "terms of service; terms of use",
-      "example": {
-        "ja": "利用規約を読んで同意した。",
-        "en": "I read the terms of service and agreed.",
-        "notes": []
-      }
+      "meaning": "terms of service; terms of use"
     },
     {
       "kanji": "履歴",
       "reading": "りれき",
-      "meaning": "history; log (viewing/search history)",
-      "example": {
-        "ja": "履歴を消したい。",
-        "en": "I want to delete my history.",
-        "notes": []
-      }
+      "meaning": "history; log (viewing/search history)"
     },
     {
       "kanji": "暗証",
       "reading": "あんしょう",
-      "meaning": "PIN; passcode (secret code)",
-      "example": {
-        "ja": "暗証番号を忘れた。",
-        "en": "I forgot my PIN code.",
-        "notes": [
-          "Often appears as 暗証番号."
-        ]
-      }
+      "meaning": "PIN; passcode (secret code)"
     },
     {
       "kanji": "位置",
       "reading": "いち",
-      "meaning": "position; location",
-      "example": {
-        "ja": "位置情報をオンにした。",
-        "en": "I turned on location services.",
-        "notes": [
-          "Often with 情報: 位置情報."
-        ]
-      }
+      "meaning": "position; location"
     },
     {
       "kanji": "印刷",
       "reading": "いんさつ",
-      "meaning": "printing; print",
-      "example": {
-        "ja": "この書類を印刷したい。",
-        "en": "I want to print this document.",
-        "notes": []
-      }
+      "meaning": "printing; print"
     },
     {
       "kanji": "音量",
       "reading": "おんりょう",
-      "meaning": "volume (sound level)",
-      "example": {
-        "ja": "音量を下げて。",
-        "en": "Turn the volume down.",
-        "notes": []
-      }
+      "meaning": "volume (sound level)"
     },
     {
       "kanji": "拡大",
       "reading": "かくだい",
-      "meaning": "enlarge; zoom in",
-      "example": {
-        "ja": "写真を拡大して見た。",
-        "en": "I zoomed in on the photo.",
-        "notes": []
-      }
+      "meaning": "enlarge; zoom in"
     },
     {
       "kanji": "管理",
       "reading": "かんり",
-      "meaning": "management; control; administration",
-      "example": {
-        "ja": "アプリの権限を管理する。",
-        "en": "Manage app permissions.",
-        "notes": []
-      }
+      "meaning": "management; control; administration"
     },
     {
       "kanji": "機内",
       "reading": "きない",
-      "meaning": "onboard (an aircraft); inside the airplane",
-      "example": {
-        "ja": "機内モードにした。",
-        "en": "I turned on airplane mode.",
-        "notes": [
-          "Most common as 機内モード."
-        ]
-      }
+      "meaning": "onboard (an aircraft); inside the airplane"
     },
     {
       "kanji": "権限",
       "reading": "けんげん",
-      "meaning": "permission; authority (app permission)",
-      "example": {
-        "ja": "カメラの権限を許可した。",
-        "en": "I allowed camera permission.",
-        "notes": []
-      }
+      "meaning": "permission; authority (app permission)"
     },
     {
       "kanji": "残量",
       "reading": "ざんりょう",
-      "meaning": "remaining amount (battery/data)",
-      "example": {
-        "ja": "電池の残量が少ない。",
-        "en": "The battery is low.",
-        "notes": [
-          "Often appears with 電池: 電池残量."
-        ]
-      }
+      "meaning": "remaining amount (battery/data)"
     },
     {
       "kanji": "指紋",
       "reading": "しもん",
-      "meaning": "fingerprint",
-      "example": {
-        "ja": "指紋認証がうまくいかない。",
-        "en": "Fingerprint authentication isn’t working well.",
-        "notes": []
-      }
+      "meaning": "fingerprint"
     },
     {
       "kanji": "時刻",
       "reading": "じこく",
-      "meaning": "time (clock time)",
-      "example": {
-        "ja": "時刻を自動で設定する。",
-        "en": "Set the time automatically.",
-        "notes": []
-      }
+      "meaning": "time (clock time)"
     },
     {
       "kanji": "自動回転",
       "reading": "じどうかいてん",
-      "meaning": "auto-rotate (screen rotation)",
-      "example": {
-        "ja": "自動回転をオフにした。",
-        "en": "I turned off auto-rotate.",
-        "notes": []
-      }
+      "meaning": "auto-rotate (screen rotation)"
     },
     {
       "kanji": "辞書",
       "reading": "じしょ",
-      "meaning": "dictionary",
-      "example": {
-        "ja": "辞書で意味を調べた。",
-        "en": "I looked up the meaning in a dictionary.",
-        "notes": []
-      }
+      "meaning": "dictionary"
     },
     {
       "kanji": "初期化",
       "reading": "しょきか",
-      "meaning": "initialize; reset (to factory settings)",
-      "example": {
-        "ja": "スマホを初期化した。",
-        "en": "I factory-reset my phone.",
-        "notes": [
-          "Often used for ‘factory reset’."
-        ]
-      }
+      "meaning": "initialize; reset (to factory settings)"
     },
     {
       "kanji": "省電力",
       "reading": "しょうでんりょく",
-      "meaning": "power saving; low power",
-      "example": {
-        "ja": "省電力モードをオンにした。",
-        "en": "I turned on power saving mode.",
-        "notes": []
-      }
+      "meaning": "power saving; low power"
     },
     {
       "kanji": "情報",
       "reading": "じょうほう",
-      "meaning": "information",
-      "example": {
-        "ja": "端末情報を確認した。",
-        "en": "I checked the device information.",
-        "notes": []
-      }
+      "meaning": "information"
     },
     {
       "kanji": "同期",
       "reading": "どうき",
-      "meaning": "sync; synchronization",
-      "example": {
-        "ja": "写真が同期されない。",
-        "en": "My photos aren’t syncing.",
-        "notes": [
-          "Often with する/される: 同期する."
-        ]
-      }
+      "meaning": "sync; synchronization"
     },
     {
       "kanji": "日付",
       "reading": "ひづけ",
-      "meaning": "date (calendar date)",
-      "example": {
-        "ja": "日付を間違えた。",
-        "en": "I got the date wrong.",
-        "notes": []
-      }
+      "meaning": "date (calendar date)"
     },
     {
       "kanji": "入力",
       "reading": "にゅうりょく",
-      "meaning": "input; entry (text/data)",
-      "example": {
-        "ja": "パスワードを入力してください。",
-        "en": "Please enter your password.",
-        "notes": []
-      }
+      "meaning": "input; entry (text/data)"
     },
     {
       "kanji": "認証",
       "reading": "にんしょう",
-      "meaning": "authentication; verification",
-      "example": {
-        "ja": "二段階認証を設定した。",
-        "en": "I set up two-factor authentication.",
-        "notes": []
-      }
+      "meaning": "authentication; verification"
     },
     {
       "kanji": "復元",
       "reading": "ふくげん",
-      "meaning": "restore; recovery",
-      "example": {
-        "ja": "バックアップから復元した。",
-        "en": "I restored from a backup.",
-        "notes": []
-      }
+      "meaning": "restore; recovery"
     },
     {
       "kanji": "着信音",
       "reading": "ちゃくしんおん",
-      "meaning": "ringtone; incoming call sound",
-      "example": {
-        "ja": "着信音を小さくした。",
-        "en": "I lowered the ringtone volume.",
-        "notes": [
-          "Often appears in phone settings."
-        ]
-      }
+      "meaning": "ringtone; incoming call sound"
     },
     {
       "kanji": "通信",
       "reading": "つうしん",
-      "meaning": "communication; data connection; telecoms",
-      "example": {
-        "ja": "通信量が多すぎる。",
-        "en": "My data usage is too high.",
-        "notes": [
-          "Common in settings: 通信, 通信量, 通信制限."
-        ]
-      }
+      "meaning": "communication; data connection; telecoms"
     },
     {
       "kanji": "壁紙",
       "reading": "かべがみ",
-      "meaning": "wallpaper (phone/desktop background)",
-      "example": {
-        "ja": "壁紙を新しくした。",
-        "en": "I changed my wallpaper.",
-        "notes": []
-      }
+      "meaning": "wallpaper (phone/desktop background)"
     },
     {
       "kanji": "補助",
       "reading": "ほじょ",
-      "meaning": "assistance; support",
-      "example": {
-        "ja": "補助機能をオンにした。",
-        "en": "I turned on accessibility/support features.",
-        "notes": [
-          "Often appears in accessibility contexts."
-        ]
-      }
+      "meaning": "assistance; support"
     },
     {
       "kanji": "無線",
       "reading": "むせん",
-      "meaning": "wireless; radio (communication)",
-      "example": {
-        "ja": "無線の設定を見直した。",
-        "en": "I reviewed the wireless settings.",
-        "notes": [
-          "Used in phrases like 無線LAN."
-        ]
-      }
+      "meaning": "wireless; radio (communication)"
     },
     {
       "kanji": "明るさ",
       "reading": "あかるさ",
-      "meaning": "brightness",
-      "example": {
-        "ja": "画面の明るさを上げた。",
-        "en": "I increased the screen brightness.",
-        "notes": []
-      }
+      "meaning": "brightness"
     },
     {
       "kanji": "格闘",
       "reading": "かくとう",
-      "meaning": "fighting (type); hand-to-hand combat",
-      "example": {
-        "ja": "格闘タイプの技を使う。",
-        "en": "Use a Fighting-type move.",
-        "notes": []
-      }
+      "meaning": "fighting (type); hand-to-hand combat"
     },
     {
       "kanji": "地面",
       "reading": "じめん",
-      "meaning": "ground (type); ground/earth",
-      "example": {
-        "ja": "地面タイプは電気に強い。",
-        "en": "Ground types are strong against Electric.",
-        "notes": []
-      }
+      "meaning": "ground (type); ground/earth"
     },
     {
       "kanji": "超能力",
       "reading": "ちょうのうりょく",
-      "meaning": "psychic powers; psychic (type)",
-      "example": {
-        "ja": "超能力タイプのポケモンが好き。",
-        "en": "I like Psychic-type Pokémon.",
-        "notes": []
-      }
+      "meaning": "psychic powers; psychic (type)"
     },
     {
       "kanji": "妖精",
       "reading": "ようせい",
-      "meaning": "fairy; fairy (type)",
-      "example": {
-        "ja": "妖精タイプはドラゴンに強い。",
-        "en": "Fairy types are strong against Dragons.",
-        "notes": []
-      }
+      "meaning": "fairy; fairy (type)"
     },
     {
       "kanji": "怪竜",

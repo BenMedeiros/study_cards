@@ -12,123 +12,52 @@
     {
       "kanji": "割",
       "reading": "わり",
-      "meaning": "tenth; 10% unit (used for percentages/discount rates)",
-      "example": {
-        "ja": "この店は二割引です。",
-        "en": "This shop has a 20% discount.",
-        "notes": [
-          "X割 = X × 10%. (一割=10%, 二割=20%).",
-          "Common pattern: 〜割引 (わりびき)."
-        ]
-      }
+      "meaning": "tenth; 10% unit (used for percentages/discount rates)"
     },
     {
       "kanji": "一つ",
       "reading": "ひとつ",
-      "meaning": "one (thing); one item (native 'つ' counting)",
-      "example": {
-        "ja": "りんごを一つください。",
-        "en": "One apple, please.",
-        "notes": [
-          "Generic counter for items; very common in daily speech."
-        ]
-      }
+      "meaning": "one (thing); one item (native 'つ' counting)"
     },
     {
       "kanji": "二つ",
       "reading": "ふたつ",
-      "meaning": "two (things); two items (native 'つ' counting)",
-      "example": {
-        "ja": "ポイントは二つあります。",
-        "en": "There are two key points.",
-        "notes": [
-          "Works for both objects and abstract 'points/reasons'."
-        ]
-      }
+      "meaning": "two (things); two items (native 'つ' counting)"
     },
     {
       "kanji": "三つ",
       "reading": "みっつ",
-      "meaning": "three (things); three items (native 'つ' counting)",
-      "example": {
-        "ja": "理由は三つあります。",
-        "en": "There are three reasons.",
-        "notes": [
-          "Common in explanations and lists."
-        ]
-      }
+      "meaning": "three (things); three items (native 'つ' counting)"
     },
     {
       "kanji": "四つ",
       "reading": "よっつ",
-      "meaning": "four (things); four items (native 'つ' counting)",
-      "example": {
-        "ja": "席が四つ空いています。",
-        "en": "There are four seats available.",
-        "notes": [
-          "Native reading: よっつ."
-        ]
-      }
+      "meaning": "four (things); four items (native 'つ' counting)"
     },
     {
       "kanji": "五つ",
       "reading": "いつつ",
-      "meaning": "five (things); five items (native 'つ' counting)",
-      "example": {
-        "ja": "箱を五つ用意しました。",
-        "en": "I prepared five boxes.",
-        "notes": [
-          "Native reading: いつつ."
-        ]
-      }
+      "meaning": "five (things); five items (native 'つ' counting)"
     },
     {
       "kanji": "六つ",
       "reading": "むっつ",
-      "meaning": "six (things); six items (native 'つ' counting)",
-      "example": {
-        "ja": "質問が六つあります。",
-        "en": "There are six questions.",
-        "notes": [
-          "Native reading: むっつ."
-        ]
-      }
+      "meaning": "six (things); six items (native 'つ' counting)"
     },
     {
       "kanji": "七つ",
       "reading": "ななつ",
-      "meaning": "seven (things); seven items (native 'つ' counting)",
-      "example": {
-        "ja": "約束が七つあります。",
-        "en": "I have seven appointments/promises.",
-        "notes": [
-          "Native reading: ななつ."
-        ]
-      }
+      "meaning": "seven (things); seven items (native 'つ' counting)"
     },
     {
       "kanji": "八つ",
       "reading": "やっつ",
-      "meaning": "eight (things); eight items (native 'つ' counting)",
-      "example": {
-        "ja": "宿題を八つ終えました。",
-        "en": "I finished eight homework tasks.",
-        "notes": [
-          "Native reading: やっつ; often used for tasks/points too."
-        ]
-      }
+      "meaning": "eight (things); eight items (native 'つ' counting)"
     },
     {
       "kanji": "九つ",
       "reading": "ここのつ",
-      "meaning": "nine (things); nine items (native 'つ' counting)",
-      "example": {
-        "ja": "部屋が九つあります。",
-        "en": "There are nine rooms.",
-        "notes": [
-          "Native reading: ここのつ."
-        ]
-      }
+      "meaning": "nine (things); nine items (native 'つ' counting)"
     }
   ]
 }

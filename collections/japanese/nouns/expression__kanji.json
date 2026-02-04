@@ -13,92 +13,42 @@
       "kanji": "登録済み",
       "reading": "とうろくずみ",
       "meaning": "subscribed; already registered",
-      "example": {
-        "ja": "もう登録済みだよ。",
-        "en": "I’m already subscribed.",
-        "notes": [
-          "UI label/state."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
       "kanji": "第一",
       "reading": "だいいち",
       "meaning": "first; number one (ordinal form using 第)",
-      "example": {
-        "ja": "第一の理由を説明します。",
-        "en": "I’ll explain the first reason.",
-        "notes": [
-          "第 + numeral makes an ordinal (first/second/…).",
-          "Common with 章・課・回・理由・条件, etc."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
       "kanji": "第二",
       "reading": "だいに",
       "meaning": "second (ordinal form using 第)",
-      "example": {
-        "ja": "第二案も考えましょう。",
-        "en": "Let’s consider the second option too.",
-        "notes": [
-          "Often used in lists, plans, and formal structure."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
       "kanji": "第三",
       "reading": "だいさん",
       "meaning": "third (ordinal form using 第)",
-      "example": {
-        "ja": "第三者には話さないでください。",
-        "en": "Please don’t tell a third party.",
-        "notes": [
-          "第三者 (だいさんしゃ) is a common fixed term meaning 'third party'."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
       "kanji": "第四",
       "reading": "だいよん",
       "meaning": "fourth (ordinal form using 第)",
-      "example": {
-        "ja": "第四の質問に答えます。",
-        "en": "I’ll answer the fourth question.",
-        "notes": [
-          "Reading is typically だいよん."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
       "kanji": "第五",
       "reading": "だいご",
       "meaning": "fifth (ordinal form using 第)",
-      "example": {
-        "ja": "第五章を先に読みました。",
-        "en": "I read Chapter 5 first.",
-        "notes": [
-          "Common with 章/課/回/問, etc."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
       "kanji": "第十",
       "reading": "だいじゅう",
       "meaning": "tenth (ordinal form using 第)",
-      "example": {
-        "ja": "第十回の会議は来週です。",
-        "en": "The 10th meeting is next week.",
-        "notes": [
-          "With 回, casual speech sometimes contracts (じゅっかい)."
-        ]
-      },
       "lexicalClass": "regular"
     }
   ]

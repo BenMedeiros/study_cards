@@ -12,131 +12,57 @@
     {
       "kanji": "壱",
       "reading": "いち",
-      "meaning": "one (formal/financial numeral; used in documents)",
-      "example": {
-        "ja": "書類では「壱万円」と書くことがあります。",
-        "en": "In documents, it may be written as “壱万円 (10,000 yen)”.",
-        "notes": [
-          "Formal numerals are used to prevent tampering.",
-          "This is the formal form of 一."
-        ]
-      }
+      "meaning": "one (formal/financial numeral; used in documents)"
     },
     {
       "kanji": "弐",
       "reading": "に",
-      "meaning": "two (formal/financial numeral; used in documents)",
-      "example": {
-        "ja": "契約書で「弐」を見かけました。",
-        "en": "I saw 弐 in a contract.",
-        "notes": [
-          "Formal form of 二 in legal/financial contexts."
-        ]
-      }
+      "meaning": "two (formal/financial numeral; used in documents)"
     },
     {
       "kanji": "参",
       "reading": "さん",
-      "meaning": "three (formal/financial numeral; used in documents)",
-      "example": {
-        "ja": "金額の「参」は三の意味です。",
-        "en": "In amounts, 参 means ‘three’.",
-        "notes": [
-          "Formal form of 三 in legal/financial contexts."
-        ]
-      }
+      "meaning": "three (formal/financial numeral; used in documents)"
     },
     {
       "kanji": "拾",
       "reading": "じゅう",
-      "meaning": "ten (formal/financial numeral; used in documents)",
-      "example": {
-        "ja": "古い書類で「拾」を使うことがあります。",
-        "en": "Some older documents use 拾.",
-        "notes": [
-          "Formal form of 十."
-        ]
-      }
+      "meaning": "ten (formal/financial numeral; used in documents)"
     },
     {
       "kanji": "阡",
       "reading": "せん",
-      "meaning": "one thousand (formal/old variant used in documents)",
-      "example": {
-        "ja": "資料に「阡円」と書いてありました。",
-        "en": "The document wrote it as “阡 yen”.",
-        "notes": [
-          "A formal/older variant associated with 1000 (千)."
-        ]
-      }
+      "meaning": "one thousand (formal/old variant used in documents)"
     },
     {
       "kanji": "萬",
       "reading": "まん",
-      "meaning": "ten thousand (old/traditional form of 万)",
-      "example": {
-        "ja": "古い本では「萬」という字が使われています。",
-        "en": "Older books use the character 萬.",
-        "notes": [
-          "Traditional form of 万; still seen in names/older print."
-        ]
-      }
+      "meaning": "ten thousand (old/traditional form of 万)"
     },
     {
       "kanji": "零",
       "reading": "れい",
-      "meaning": "zero",
-      "example": {
-        "ja": "零（れい）またはゼロ",
-        "en": "zero; also 'zero' from English",
-        "notes": [
-          "used in some contexts; 0 often written as アラビア数字"
-        ]
-      }
+      "meaning": "zero"
     },
     {
       "kanji": "一",
       "reading": "いち",
-      "meaning": "one",
-      "example": {
-        "ja": "一、十一、一万",
-        "en": "one; examples: 11, 10,000",
-        "notes": [
-          "combines to form larger numbers"
-        ]
-      }
+      "meaning": "one"
     },
     {
       "kanji": "二",
       "reading": "に",
-      "meaning": "two",
-      "example": {
-        "ja": "二、二十、二百",
-        "en": "two; e.g. 20, 200",
-        "notes": []
-      }
+      "meaning": "two"
     },
     {
       "kanji": "三",
       "reading": "さん",
-      "meaning": "three",
-      "example": {
-        "ja": "三、三十、三百",
-        "en": "three; e.g. 30, 300",
-        "notes": []
-      }
+      "meaning": "three"
     },
     {
       "kanji": "四",
       "reading": "よん",
-      "meaning": "four",
-      "example": {
-        "ja": "四（よん／し）",
-        "en": "four (よん or し)",
-        "notes": [
-          "use よん in counters; し appears in some compounds"
-        ]
-      }
+      "meaning": "four"
     },
     {
       "kanji": "五",
@@ -151,14 +77,7 @@
     {
       "kanji": "七",
       "reading": "なな",
-      "meaning": "seven",
-      "example": {
-        "ja": "七（なな／しち）",
-        "en": "seven (なな or しち)",
-        "notes": [
-          "なな preferred in many situations; しち used in time expressions like 七時"
-        ]
-      }
+      "meaning": "seven"
     },
     {
       "kanji": "八",
@@ -168,68 +87,32 @@
     {
       "kanji": "九",
       "reading": "きゅう",
-      "meaning": "nine",
-      "example": {
-        "ja": "九（きゅう／く）",
-        "en": "nine (きゅう or く)",
-        "notes": [
-          "きゅう common; く appears in some compounds"
-        ]
-      }
+      "meaning": "nine"
     },
     {
       "kanji": "十",
       "reading": "じゅう",
-      "meaning": "ten",
-      "example": {
-        "ja": "十、二十（にじゅう）",
-        "en": "ten; e.g. 20",
-        "notes": [
-          "forms the tens with digit+十"
-        ]
-      }
+      "meaning": "ten"
     },
     {
       "kanji": "百",
       "reading": "ひゃく",
-      "meaning": "hundred",
-      "example": {
-        "ja": "百、二百（にひゃく）",
-        "en": "hundred; e.g. 200",
-        "notes": []
-      }
+      "meaning": "hundred"
     },
     {
       "kanji": "千",
       "reading": "せん",
-      "meaning": "thousand",
-      "example": {
-        "ja": "千、二千（にせん）",
-        "en": "thousand; e.g. 2,000",
-        "notes": []
-      }
+      "meaning": "thousand"
     },
     {
       "kanji": "万",
       "reading": "まん",
-      "meaning": "ten thousand",
-      "example": {
-        "ja": "一万（いちまん）",
-        "en": "ten thousand",
-        "notes": [
-          "Japanese large-number grouping is by 10,000 (万) rather than 1,000"
-        ]
-      }
+      "meaning": "ten thousand"
     },
     {
       "kanji": "億",
       "reading": "おく",
-      "meaning": "hundred million",
-      "example": {
-        "ja": "一億（いちおく）",
-        "en": "one hundred million",
-        "notes": []
-      }
+      "meaning": "hundred million"
     }
   ]
 }

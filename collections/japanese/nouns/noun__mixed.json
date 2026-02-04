@@ -18,32 +18,25 @@
       "kanji": "おすすめ",
       "reading": "おすすめ",
       "meaning": "recommendation; suggested (content)",
-      "orthography": "hiragana",
-      "example": {
-        "ja": "おすすめの動画を教えて。",
-        "en": "Tell me a recommended video.",
-        "notes": [
-          "Often written in hiragana in UI; kanji forms exist (お勧め/お薦め)."
-        ]
-      }
+      "orthography": "kana"
     },
     {
       "kanji": "もんじゃ",
       "reading": "もんじゃ",
       "meaning": "monjayaki (Tokyo-style griddle dish)",
-      "orthography": "hiragana"
+      "orthography": "kana"
     },
     {
       "kanji": "ひらがな",
       "reading": "ひらがな",
       "meaning": "hiragana",
-      "orthography": "hiragana"
+      "orthography": "both"
     },
     {
       "kanji": "かばん",
       "reading": "かばん",
       "meaning": "bag",
-      "orthography": "hiragana"
+      "orthography": "kana"
     }
   ]
 }

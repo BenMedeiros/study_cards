@@ -20,13 +20,6 @@
       "reading": "なんでも",
       "meaning": "anything",
       "orthography": "both",
-      "example": {
-        "ja": "分からないことは何でも聞いてください。",
-        "en": "Ask me anything you don’t understand.",
-        "notes": [
-          "Often written なんでも; kanji form 何でも is also common."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -36,19 +29,6 @@
       "orthography": "both"
     },
     {
-      "kanji": "何でも",
-      "reading": "なんでも",
-      "meaning": "anything",
-      "orthography": "both",
-      "example": {
-        "ja": "分からないことは何でも聞いてください。",
-        "en": "Ask me anything you don’t understand.",
-        "notes": [
-          "Often written なんでも; kanji form 何でも is also common."
-        ]
-      }
-    },
-    {
       "kanji": "ビリビリ",
       "reading": "ビリビリ",
       "meaning": "tingle; electric shock feeling (onomatopoeia)",
@@ -70,13 +50,6 @@
       "meaning": "sparkling; glittering (onomatopoeia)",
       "orthography": "katakana",
       "origin": "Japanese",
-      "example": {
-        "ja": "星がキラキラ光っている。",
-        "en": "The stars are sparkling.",
-        "notes": [
-          "Often written in katakana for sound-symbolic effect; also seen as きらきら."
-        ]
-      },
       "lexicalClass": "onomatopoeia"
     },
     {
@@ -85,13 +58,6 @@
       "meaning": "heart pounding; nervous excitement (onomatopoeia)",
       "orthography": "katakana",
       "origin": "Japanese",
-      "example": {
-        "ja": "試験の前はドキドキする。",
-        "en": "Before an exam, I get nervous (my heart pounds).",
-        "notes": [
-          "Often used with する."
-        ]
-      },
       "lexicalClass": "onomatopoeia"
     },
     {
@@ -100,13 +66,6 @@
       "meaning": "fluently (languages); chattering; flimsy/thin (onomatopoeia)",
       "orthography": "katakana",
       "origin": "Japanese",
-      "example": {
-        "ja": "彼は英語がペラペラです。",
-        "en": "He speaks English fluently.",
-        "notes": [
-          "Common colloquial compliment: 〜がペラペラ."
-        ]
-      },
       "lexicalClass": "onomatopoeia"
     },
     {
@@ -128,55 +87,26 @@
       "reading": "キラキラ",
       "meaning": "sparkling; glittering (onomatopoeia)",
       "orthography": "katakana",
-      "origin": "Japanese",
-      "example": {
-        "ja": "星がキラキラ光っている。",
-        "en": "The stars are sparkling.",
-        "notes": [
-          "Often written in katakana for sound-symbolic effect; also seen as きらきら."
-        ]
-      }
+      "origin": "Japanese"
     },
     {
       "kanji": "どきどき",
       "reading": "ドキドキ",
       "meaning": "heart pounding; nervous excitement (onomatopoeia)",
       "orthography": "katakana",
-      "origin": "Japanese",
-      "example": {
-        "ja": "試験の前はドキドキする。",
-        "en": "Before an exam, I get nervous (my heart pounds).",
-        "notes": [
-          "Often used with する."
-        ]
-      }
+      "origin": "Japanese"
     },
     {
       "kanji": "ぺらぺら",
       "reading": "ペラペラ",
       "meaning": "fluently (languages); chattering; flimsy/thin (onomatopoeia)",
       "orthography": "katakana",
-      "origin": "Japanese",
-      "example": {
-        "ja": "彼は英語がペラペラです。",
-        "en": "He speaks English fluently.",
-        "notes": [
-          "Common colloquial compliment: 〜がペラペラ."
-        ]
-      }
+      "origin": "Japanese"
     },
     {
       "kanji": "程",
       "reading": "ほど",
       "meaning": "about; approximately; extent/degree (approximation/extent marker)",
-      "example": {
-        "ja": "駅まで歩いて十分ほどです。",
-        "en": "It’s about ten minutes on foot to the station.",
-        "notes": [
-          "Often follows quantities/time to mean 'about'.",
-          "Also used for degree: 思ったほど難しくない."
-        ]
-      },
       "orthography": "kanji",
       "lexicalClass": "regular"
     },
@@ -185,13 +115,6 @@
       "reading": "ぜんぶ",
       "meaning": "all; entirely",
       "orthography": "kanji",
-      "example": {
-        "ja": "ケーキを全部食べました。",
-        "en": "I ate all of the cake.",
-        "notes": [
-          "Also common in kana: ぜんぶ."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -199,13 +122,6 @@
       "reading": "ぜんぜん",
       "meaning": "(not) at all",
       "orthography": "kanji",
-      "example": {
-        "ja": "全然問題ありません。",
-        "en": "No problem at all.",
-        "notes": [
-          "Common in kana too; often used casually with positives."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -213,13 +129,6 @@
       "reading": "ぜったい",
       "meaning": "absolutely; definitely",
       "orthography": "kanji",
-      "example": {
-        "ja": "絶対に忘れないで。",
-        "en": "Don’t forget, absolutely.",
-        "notes": [
-          "Often appears as 絶対に + verb."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -227,13 +136,6 @@
       "reading": "かならず",
       "meaning": "surely; without fail",
       "orthography": "kanji",
-      "example": {
-        "ja": "明日、必ず電話します。",
-        "en": "I’ll call you tomorrow for sure.",
-        "notes": [
-          "Stronger 'certainty/commitment' nuance than たぶん."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -241,13 +143,6 @@
       "reading": "とくに",
       "meaning": "especially; particularly",
       "orthography": "kanji",
-      "example": {
-        "ja": "今日は特に忙しいです。",
-        "en": "I’m especially busy today.",
-        "notes": [
-          "With negatives: 特に〜ない = 'not particularly'."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -255,13 +150,6 @@
       "reading": "たとえば",
       "meaning": "for example",
       "orthography": "kanji",
-      "example": {
-        "ja": "例えば、日本や韓国です。",
-        "en": "For example, Japan and Korea.",
-        "notes": [
-          "Also common in kana: たとえば."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -269,13 +157,6 @@
       "reading": "さいきん",
       "meaning": "recently; lately",
       "orthography": "kanji",
-      "example": {
-        "ja": "最近、よく本を読みます。",
-        "en": "Recently, I often read books.",
-        "notes": [
-          "Time adverb; very frequent in conversation."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -283,13 +164,6 @@
       "reading": "さいしょに",
       "meaning": "first; in the beginning",
       "orthography": "kanji",
-      "example": {
-        "ja": "最初に名前を書いてください。",
-        "en": "First, please write your name.",
-        "notes": [
-          "Often used for step-by-step instructions."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -297,13 +171,6 @@
       "reading": "さいごに",
       "meaning": "finally; at the end",
       "orthography": "kanji",
-      "example": {
-        "ja": "最後にもう一度確認します。",
-        "en": "Finally, I’ll check once more.",
-        "notes": [
-          "Pairs naturally with 最初に."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -311,13 +178,6 @@
       "reading": "はやく",
       "meaning": "quickly; early",
       "orthography": "kanji",
-      "example": {
-        "ja": "明日は早く起きます。",
-        "en": "Tomorrow I’ll get up early.",
-        "notes": [
-          "Adverb form of 早い."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -325,13 +185,6 @@
       "reading": "ほんとうに",
       "meaning": "really; truly",
       "orthography": "kanji",
-      "example": {
-        "ja": "本当にありがとう。",
-        "en": "Thank you, truly.",
-        "notes": [
-          "Also used as a reaction: 本当に？ = 'Really?'"
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
@@ -339,184 +192,85 @@
       "reading": "きゅうに",
       "meaning": "suddenly",
       "orthography": "kanji",
-      "example": {
-        "ja": "急に雨が降ってきた。",
-        "en": "It suddenly started raining.",
-        "notes": [
-          "Often with 〜てきた for change onset."
-        ]
-      },
       "lexicalClass": "regular"
     },
     {
       "kanji": "程",
       "reading": "ほど",
       "meaning": "about; approximately; extent/degree (approximation/extent marker)",
-      "example": {
-        "ja": "駅まで歩いて十分ほどです。",
-        "en": "It’s about ten minutes on foot to the station.",
-        "notes": [
-          "Often follows quantities/time to mean 'about'.",
-          "Also used for degree: 思ったほど難しくない."
-        ]
-      },
       "orthography": "kanji"
     },
     {
       "kanji": "全部",
       "reading": "ぜんぶ",
       "meaning": "all; entirely",
-      "orthography": "kanji",
-      "example": {
-        "ja": "ケーキを全部食べました。",
-        "en": "I ate all of the cake.",
-        "notes": [
-          "Also common in kana: ぜんぶ."
-        ]
-      }
+      "orthography": "kanji"
     },
     {
       "kanji": "全然",
       "reading": "ぜんぜん",
       "meaning": "(not) at all",
-      "orthography": "kanji",
-      "example": {
-        "ja": "全然問題ありません。",
-        "en": "No problem at all.",
-        "notes": [
-          "Common in kana too; often used casually with positives."
-        ]
-      }
+      "orthography": "kanji"
     },
     {
       "kanji": "絶対",
       "reading": "ぜったい",
       "meaning": "absolutely; definitely",
-      "orthography": "kanji",
-      "example": {
-        "ja": "絶対に忘れないで。",
-        "en": "Don’t forget, absolutely.",
-        "notes": [
-          "Often appears as 絶対に + verb."
-        ]
-      }
+      "orthography": "kanji"
     },
     {
       "kanji": "必ず",
       "reading": "かならず",
       "meaning": "surely; without fail",
-      "orthography": "kanji",
-      "example": {
-        "ja": "明日、必ず電話します。",
-        "en": "I’ll call you tomorrow for sure.",
-        "notes": [
-          "Stronger 'certainty/commitment' nuance than たぶん."
-        ]
-      }
+      "orthography": "kanji"
     },
     {
       "kanji": "特に",
       "reading": "とくに",
       "meaning": "especially; particularly",
-      "orthography": "kanji",
-      "example": {
-        "ja": "今日は特に忙しいです。",
-        "en": "I’m especially busy today.",
-        "notes": [
-          "With negatives: 特に〜ない = 'not particularly'."
-        ]
-      }
+      "orthography": "kanji"
     },
     {
       "kanji": "例えば",
       "reading": "たとえば",
       "meaning": "for example",
-      "orthography": "kanji",
-      "example": {
-        "ja": "例えば、日本や韓国です。",
-        "en": "For example, Japan and Korea.",
-        "notes": [
-          "Also common in kana: たとえば."
-        ]
-      }
+      "orthography": "kanji"
     },
     {
       "kanji": "最近",
       "reading": "さいきん",
       "meaning": "recently; lately",
-      "orthography": "kanji",
-      "example": {
-        "ja": "最近、よく本を読みます。",
-        "en": "Recently, I often read books.",
-        "notes": [
-          "Time adverb; very frequent in conversation."
-        ]
-      }
+      "orthography": "kanji"
     },
     {
       "kanji": "最初に",
       "reading": "さいしょに",
       "meaning": "first; in the beginning",
-      "orthography": "kanji",
-      "example": {
-        "ja": "最初に名前を書いてください。",
-        "en": "First, please write your name.",
-        "notes": [
-          "Often used for step-by-step instructions."
-        ]
-      }
+      "orthography": "kanji"
     },
     {
       "kanji": "最後に",
       "reading": "さいごに",
       "meaning": "finally; at the end",
-      "orthography": "kanji",
-      "example": {
-        "ja": "最後にもう一度確認します。",
-        "en": "Finally, I’ll check once more.",
-        "notes": [
-          "Pairs naturally with 最初に."
-        ]
-      }
+      "orthography": "kanji"
     },
     {
       "kanji": "早く",
       "reading": "はやく",
       "meaning": "quickly; early",
-      "orthography": "kanji",
-      "example": {
-        "ja": "明日は早く起きます。",
-        "en": "Tomorrow I’ll get up early.",
-        "notes": [
-          "Adverb form of 早い."
-        ]
-      }
+      "orthography": "kanji"
     },
     {
       "kanji": "本当に",
       "reading": "ほんとうに",
       "meaning": "really; truly",
-      "orthography": "kanji",
-      "example": {
-        "ja": "本当にありがとう。",
-        "en": "Thank you, truly.",
-        "notes": [
-          "Also used as a reaction: 本当に？ = 'Really?'"
-        ]
-      }
+      "orthography": "kanji"
     },
     {
       "kanji": "急に",
       "reading": "きゅうに",
       "meaning": "suddenly",
-      "orthography": "kanji",
-      "example": {
-        "ja": "急に雨が降ってきた。",
-        "en": "It suddenly started raining.",
-        "notes": [
-          "Often with 〜てきた for change onset."
-        ]
-      }
+      "orthography": "kanji"
     }
   ]
 }

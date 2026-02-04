@@ -413,140 +413,60 @@
       "kanji": "泳ぐ",
       "reading": "およぐ",
       "meaning": "to swim",
-      "example": {
-        "ja": "夏になると毎日泳ぐ。",
-        "en": "When summer comes, I swim every day.",
-        "notes": [
-          "Often used for a general habit or seasonal routine.",
-          "Common locations: 海(うみ), プール, 川(かわ)."
-        ]
-      },
       "ending": "gu"
     },
     {
       "kanji": "急ぐ",
       "reading": "いそぐ",
       "meaning": "to hurry",
-      "example": {
-        "ja": "電車に間に合うために急ぐ。",
-        "en": "I hurry so I can catch the train.",
-        "notes": [
-          "Often tied to a deadline/appointment (間に合う, 約束, 時間).",
-          "Implies urgency; stronger than just ‘walk faster’ in many contexts."
-        ]
-      },
       "ending": "gu"
     },
     {
       "kanji": "脱ぐ",
       "reading": "ぬぐ",
       "meaning": "to take off (clothes)",
-      "example": {
-        "ja": "家に入る前に靴を脱ぐ。",
-        "en": "I take off my shoes before entering the house.",
-        "notes": [
-          "Most common object is 靴 (Japanese house custom).",
-          "For jackets, 脱ぐ is fine, but you’ll also often hear 上着を脱ぐ / コートを脱ぐ."
-        ]
-      },
       "ending": "gu"
     },
     {
       "kanji": "防ぐ",
       "reading": "ふせぐ",
       "meaning": "to prevent; to defend",
-      "example": {
-        "ja": "マスクで風邪を防ぐ。",
-        "en": "I prevent catching a cold with a mask.",
-        "notes": [
-          "Common with negative outcomes: 事故, 火事, 風邪, ミス.",
-          "Nuance is ‘stop it from happening’ rather than ‘fix it after’."
-        ]
-      },
       "ending": "gu"
     },
     {
       "kanji": "稼ぐ",
       "reading": "かせぐ",
       "meaning": "to earn (money)",
-      "example": {
-        "ja": "アルバイトで生活費を稼ぐ。",
-        "en": "I earn my living expenses with a part-time job.",
-        "notes": [
-          "More than just ‘get money’; implies active effort and income.",
-          "Common with 生活費, お金, 時間 (稼ぐ can also mean ‘save up time’ in some contexts)."
-        ]
-      },
       "ending": "gu"
     },
     {
       "kanji": "騒ぐ",
       "reading": "さわぐ",
       "meaning": "to make noise; to make a fuss",
-      "example": {
-        "ja": "夜に外で騒ぐのはだめだ。",
-        "en": "It’s not okay to make noise outside at night.",
-        "notes": [
-          "Often used for causing trouble/disturbing others, not just being loud.",
-          "Common in complaints/rules (neighbors, apartments)."
-        ]
-      },
       "ending": "gu"
     },
     {
       "kanji": "繋ぐ",
       "reading": "つなぐ",
       "meaning": "to connect; to link",
-      "example": {
-        "ja": "パソコンをWi-Fiに繋ぐ。",
-        "en": "I connect my computer to Wi-Fi.",
-        "notes": [
-          "Very common modern usage with devices and networks.",
-          "Often takes に for the target (Wi-Fiに, ネットに)."
-        ]
-      },
       "ending": "gu"
     },
     {
       "kanji": "注ぐ",
       "reading": "そそぐ",
       "meaning": "to pour; to devote (effort)",
-      "example": {
-        "ja": "コップに水を注ぐ。",
-        "en": "I pour water into a cup.",
-        "notes": [
-          "Most literal/common use is pouring liquids into containers.",
-          "Pairs naturally with に for the destination (コップに)."
-        ]
-      },
       "ending": "gu"
     },
     {
       "kanji": "研ぐ",
       "reading": "とぐ",
       "meaning": "to sharpen; to polish",
-      "example": {
-        "ja": "料理の前に包丁を研ぐ。",
-        "en": "I sharpen the kitchen knife before cooking.",
-        "notes": [
-          "Most common object is 包丁; very standard everyday use.",
-          "Implies maintaining sharpness, not just cleaning."
-        ]
-      },
       "ending": "gu"
     },
     {
       "kanji": "濯ぐ",
       "reading": "すすぐ",
       "meaning": "to rinse",
-      "example": {
-        "ja": "歯を磨いたあとで口を濯ぐ。",
-        "en": "After brushing my teeth, I rinse my mouth.",
-        "notes": [
-          "Very common use: 口を濯ぐ (rinse mouth).",
-          "Often appears in daily routine descriptions."
-        ]
-      },
       "ending": "gu"
     },
     {

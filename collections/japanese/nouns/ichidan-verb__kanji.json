@@ -13,664 +13,307 @@
       "kanji": "見る",
       "reading": "みる",
       "meaning": "to see; to watch; to look",
-      "verbType": "simple",
-      "example": {
-        "ja": "毎晩、テレビを見ます。",
-        "en": "I watch TV every night.",
-        "notes": [
-          "Object marked with を."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "起きる",
       "reading": "おきる",
       "meaning": "to wake up; to get up",
-      "verbType": "simple",
-      "example": {
-        "ja": "私は毎日六時に起きます。",
-        "en": "I get up at 6 every day.",
-        "notes": [
-          "Time + に is common."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "寝る",
       "reading": "ねる",
       "meaning": "to sleep; to go to bed",
-      "verbType": "simple",
-      "example": {
-        "ja": "昨日は早く寝ました。",
-        "en": "I went to bed early yesterday.",
-        "notes": [
-          "Adverb + 寝る is common (早く寝る)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "着る",
       "reading": "きる",
       "meaning": "to wear (on the upper body); to put on",
-      "verbType": "simple",
-      "example": {
-        "ja": "寒いから、コートを着てください。",
-        "en": "It’s cold, so please put on a coat.",
-        "notes": [
-          "Upper-body clothing uses 着る; object marked with を."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "出る",
       "reading": "でる",
       "meaning": "to go out; to leave; to come out; to appear",
-      "verbType": "simple",
-      "example": {
-        "ja": "七時に家を出ます。",
-        "en": "I leave the house at 7.",
-        "notes": [
-          "Departure point often marked with を (家を出る)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "食べる",
       "reading": "たべる",
       "meaning": "to eat",
-      "verbType": "simple",
-      "example": {
-        "ja": "朝ごはんを食べました。",
-        "en": "I ate breakfast.",
-        "notes": [
-          "Object marked with を."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "開ける",
       "reading": "あける",
       "meaning": "to open (a door/window/container)",
-      "verbType": "simple",
-      "example": {
-        "ja": "窓を開けてもいいですか。",
-        "en": "May I open the window?",
-        "notes": [
-          "Transitive; object marked with を."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "空ける",
       "reading": "あける",
       "meaning": "to make empty; to vacate; to clear (space/time)",
-      "verbType": "simple",
-      "example": {
-        "ja": "来週の月曜日、時間を空けられますか。",
-        "en": "Can you make time next Monday?",
-        "notes": [
-          "Common collocation: 時間を空ける."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "閉める",
       "reading": "しめる",
       "meaning": "to close (something)",
-      "verbType": "simple",
-      "example": {
-        "ja": "ドアを閉めてください。",
-        "en": "Please close the door.",
-        "notes": [
-          "Transitive; object marked with を."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "消える",
       "reading": "きえる",
       "meaning": "to go out (a light/fire); to disappear",
-      "verbType": "simple",
-      "example": {
-        "ja": "電気が消えました。",
-        "en": "The light went out.",
-        "notes": [
-          "Intransitive; subject often marked with が."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "変える",
       "reading": "かえる",
       "meaning": "to change (something); to alter",
-      "verbType": "simple",
-      "example": {
-        "ja": "予定を変えました。",
-        "en": "I changed the schedule/plan.",
-        "notes": [
-          "Transitive; 予定を変える is common."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "考える",
       "reading": "かんがえる",
       "meaning": "to think; to consider",
-      "verbType": "simple",
-      "example": {
-        "ja": "週末の予定を考えています。",
-        "en": "I’m thinking about weekend plans.",
-        "notes": [
-          "〜を考える; progressive uses 〜ている."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "覚える",
       "reading": "おぼえる",
       "meaning": "to remember; to memorize; to learn",
-      "verbType": "simple",
-      "example": {
-        "ja": "新しい漢字を五つ覚えました。",
-        "en": "I memorized five new kanji.",
-        "notes": [
-          "Quantity + を + 覚える is common."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "忘れる",
       "reading": "わすれる",
       "meaning": "to forget",
-      "verbType": "simple",
-      "example": {
-        "ja": "宿題をするのを忘れました。",
-        "en": "I forgot to do my homework.",
-        "notes": [
-          "Pattern: Vるのを忘れる."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "教える",
       "reading": "おしえる",
       "meaning": "to teach; to tell",
-      "verbType": "simple",
-      "example": {
-        "ja": "先生が答えを教えてくれました。",
-        "en": "The teacher told me the answer.",
-        "notes": [
-          "Person が + (someoneに) + thingを + 教える."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "借りる",
       "reading": "かりる",
       "meaning": "to borrow; to rent",
-      "verbType": "simple",
-      "example": {
-        "ja": "友だちに本を借りました。",
-        "en": "I borrowed a book from a friend.",
-        "notes": [
-          "Lender marked with に (〜に借りる)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "浴びる",
       "reading": "あびる",
       "meaning": "to bathe in; to take (a shower); to receive (criticism, etc.)",
-      "verbType": "simple",
-      "example": {
-        "ja": "朝、シャワーを浴びます。",
-        "en": "I take a shower in the morning.",
-        "notes": [
-          "Common: シャワーを浴びる."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "迎える",
       "reading": "むかえる",
       "meaning": "to pick up; to welcome; to迎える",
-      "verbType": "simple",
-      "example": {
-        "ja": "駅で友だちを迎えます。",
-        "en": "I’ll pick up my friend at the station.",
-        "notes": [
-          "Placeで + personを + 迎える."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "答える",
       "reading": "こたえる",
       "meaning": "to answer; to reply",
-      "verbType": "simple",
-      "example": {
-        "ja": "質問に答えてください。",
-        "en": "Please answer the question.",
-        "notes": [
-          "Pattern: 〜に答える (answer to)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "伝える",
       "reading": "つたえる",
       "meaning": "to convey; to tell; to pass on (a message)",
-      "verbType": "simple",
-      "example": {
-        "ja": "田中さんに伝えておきます。",
-        "en": "I’ll let Tanaka know.",
-        "notes": [
-          "Common: 〜に伝える; 伝えておく = tell in advance."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "調べる",
       "reading": "しらべる",
       "meaning": "to check; to investigate; to look up",
-      "verbType": "simple",
-      "example": {
-        "ja": "辞書で意味を調べました。",
-        "en": "I looked up the meaning in a dictionary.",
-        "notes": [
-          "Tool/locationで + objectを + 調べる."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "比べる",
       "reading": "くらべる",
       "meaning": "to compare",
-      "verbType": "simple",
-      "example": {
-        "ja": "この二つを比べてください。",
-        "en": "Please compare these two.",
-        "notes": [
-          "Object marked with を (AをBと比べる also common)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "見せる",
       "reading": "みせる",
       "meaning": "to show; to let (someone) see",
-      "verbType": "simple",
-      "example": {
-        "ja": "写真を母に見せました。",
-        "en": "I showed the photo to my mom.",
-        "notes": [
-          "Person marked with に (〜に見せる)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "決める",
       "reading": "きめる",
       "meaning": "to decide; to choose; to set",
-      "verbType": "simple",
-      "example": {
-        "ja": "旅行の日を決めました。",
-        "en": "I decided the day for the trip.",
-        "notes": [
-          "〜を決める = decide (a thing)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "始める",
       "reading": "はじめる",
       "meaning": "to start; to begin (something)",
-      "verbType": "simple",
-      "example": {
-        "ja": "九時から勉強を始めます。",
-        "en": "I’ll start studying from 9 o’clock.",
-        "notes": [
-          "Timeから is common."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "終える",
       "reading": "おえる",
       "meaning": "to finish; to end; to complete",
-      "verbType": "simple",
-      "example": {
-        "ja": "仕事を早く終えました。",
-        "en": "I finished work early.",
-        "notes": [
-          "More formal than 終わる; transitive."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "続ける",
       "reading": "つづける",
       "meaning": "to continue; to keep doing",
-      "verbType": "simple",
-      "example": {
-        "ja": "毎日、日本語の勉強を続けています。",
-        "en": "I keep studying Japanese every day.",
-        "notes": [
-          "〜を続ける; 〜ている for ongoing habit."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "認める",
       "reading": "みとめる",
       "meaning": "to recognize; to admit; to approve",
-      "verbType": "simple",
-      "example": {
-        "ja": "自分のミスを認めました。",
-        "en": "I admitted my mistake.",
-        "notes": [
-          "〜を認める = admit/recognize (a fact)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "褒める",
       "reading": "ほめる",
       "meaning": "to praise; to compliment",
-      "verbType": "simple",
-      "example": {
-        "ja": "先生が私を褒めました。",
-        "en": "The teacher praised me.",
-        "notes": [
-          "Personを褒める."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "育てる",
       "reading": "そだてる",
       "meaning": "to raise; to grow; to bring up (a child)",
-      "verbType": "simple",
-      "example": {
-        "ja": "母は花を育てています。",
-        "en": "My mother is growing flowers.",
-        "notes": [
-          "Plants/children commonly take を."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "捨てる",
       "reading": "すてる",
       "meaning": "to throw away; to discard",
-      "verbType": "simple",
-      "example": {
-        "ja": "この紙を捨ててもいいですか。",
-        "en": "May I throw this paper away?",
-        "notes": [
-          "Permission pattern: 〜てもいいですか."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "集める",
       "reading": "あつめる",
       "meaning": "to collect; to gather",
-      "verbType": "simple",
-      "example": {
-        "ja": "切手を集めています。",
-        "en": "I collect stamps.",
-        "notes": [
-          "Hobby pattern: Nを集めている."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "受ける",
       "reading": "うける",
       "meaning": "to receive; to take (a test); to accept",
-      "verbType": "simple",
-      "example": {
-        "ja": "来週、試験を受けます。",
-        "en": "I’ll take an exam next week.",
-        "notes": [
-          "Common: 試験を受ける."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "降りる",
       "reading": "おりる",
       "meaning": "to get off (a train/bus); to go down; to descend",
-      "verbType": "simple",
-      "example": {
-        "ja": "次の駅で降ります。",
-        "en": "I’ll get off at the next station.",
-        "notes": [
-          "Placeで降りる."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "落ちる",
       "reading": "おちる",
       "meaning": "to fall; to drop; to go down (price); to fail (an exam)",
-      "verbType": "simple",
-      "example": {
-        "ja": "スマホが床に落ちました。",
-        "en": "My phone fell onto the floor.",
-        "notes": [
-          "Destination marked with に (床に落ちる)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "足りる",
       "reading": "たりる",
       "meaning": "to be enough; to be sufficient",
-      "verbType": "simple",
-      "example": {
-        "ja": "お金が足りません。",
-        "en": "I don’t have enough money.",
-        "notes": [
-          "Often uses が (subject is insufficient)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "過ぎる",
       "reading": "すぎる",
       "meaning": "to pass; to exceed; to be too much",
-      "verbType": "simple",
-      "example": {
-        "ja": "もう十時を過ぎました。",
-        "en": "It’s already past 10 o’clock.",
-        "notes": [
-          "Timeを過ぎる = pass a time."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "伸びる",
       "reading": "のびる",
       "meaning": "to grow; to stretch; to improve",
-      "verbType": "simple",
-      "example": {
-        "ja": "髪が伸びました。",
-        "en": "My hair grew.",
-        "notes": [
-          "Intransitive; often uses が."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "信じる",
       "reading": "しんじる",
       "meaning": "to believe; to trust",
-      "verbType": "simple",
-      "example": {
-        "ja": "私は友だちを信じています。",
-        "en": "I trust my friend.",
-        "notes": [
-          "Object marked with を."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "感じる",
       "reading": "かんじる",
       "meaning": "to feel; to sense",
-      "verbType": "simple",
-      "example": {
-        "ja": "この音楽は悲しいと感じます。",
-        "en": "I feel this music is sad.",
-        "notes": [
-          "Pattern: Aと感じる (feel that...)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "似る",
       "reading": "にる",
       "meaning": "to resemble; to look like",
-      "verbType": "simple",
-      "example": {
-        "ja": "妹は母に似ています。",
-        "en": "My younger sister resembles our mother.",
-        "notes": [
-          "Target marked with に (〜に似る)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "間違える",
       "reading": "まちがえる",
       "meaning": "to make a mistake; to get wrong",
-      "verbType": "simple",
-      "example": {
-        "ja": "番号を間違えました。",
-        "en": "I got the number wrong.",
-        "notes": [
-          "Object marked with を."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "覚める",
       "reading": "さめる",
       "meaning": "to wake up; to come to senses; (heat) to cool down",
-      "verbType": "simple",
-      "example": {
-        "ja": "夢から覚めました。",
-        "en": "I woke from the dream.",
-        "notes": [
-          "Pattern: 〜から覚める (wake from)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "進める",
       "reading": "すすめる",
       "meaning": "to advance; to proceed; to move forward; to promote",
-      "verbType": "simple",
-      "example": {
-        "ja": "話を進めましょう。",
-        "en": "Let’s move the discussion forward.",
-        "notes": [
-          "Transitive; 〜を進める."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "遅れる",
       "reading": "おくれる",
       "meaning": "to be late; to fall behind",
-      "verbType": "simple",
-      "example": {
-        "ja": "電車が遅れています。",
-        "en": "The train is delayed.",
-        "notes": [
-          "Intransitive; delays often use が/は."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "汚れる",
       "reading": "よごれる",
       "meaning": "to get dirty; to be stained",
-      "verbType": "simple",
-      "example": {
-        "ja": "服が汚れました。",
-        "en": "My clothes got dirty.",
-        "notes": [
-          "Intransitive; subject often marked with が."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "壊れる",
       "reading": "こわれる",
       "meaning": "to break; to be broken",
-      "verbType": "simple",
-      "example": {
-        "ja": "この時計は壊れています。",
-        "en": "This watch is broken.",
-        "notes": [
-          "State uses 〜ている (壊れている)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "触れる",
       "reading": "ふれる",
       "meaning": "to touch; to come into contact; to mention briefly",
-      "verbType": "simple",
-      "example": {
-        "ja": "その犬に触れないでください。",
-        "en": "Please don’t touch that dog.",
-        "notes": [
-          "Target marked with に (〜に触れる)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "生まれる",
       "reading": "うまれる",
       "meaning": "to be born",
-      "verbType": "simple",
-      "example": {
-        "ja": "私はアメリカで生まれました。",
-        "en": "I was born in the U.S.",
-        "notes": [
-          "Placeで生まれる is common."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "聞こえる",
       "reading": "きこえる",
       "meaning": "to be audible; to be heard",
-      "verbType": "simple",
-      "example": {
-        "ja": "ここから海の音が聞こえます。",
-        "en": "From here, I can hear the sound of the sea.",
-        "notes": [
-          "Perception often uses が (音が聞こえる)."
-        ]
-      }
+      "verbType": "simple"
     },
     {
       "kanji": "名付ける",
       "reading": "なづける",
       "meaning": "to name; to give a name",
-      "verbType": "simple",
-      "example": {
-        "ja": "この犬をポチと名付けました。",
-        "en": "I named this dog Pochi.",
-        "notes": [
-          "Pattern: AをBと名付ける."
-        ]
-      }
+      "verbType": "simple"
     }
   ]
 }

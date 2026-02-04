@@ -13,86 +13,43 @@
       "kanji": "ニュース",
       "reading": "ニュース",
       "meaning": "news",
-      "origin": "English-derived",
-      "example": {
-        "ja": "ニュースを見てから寝る。",
-        "en": "I watch the news before sleeping.",
-        "notes": []
-      }
+      "origin": "English-derived"
     },
     {
       "kanji": "プライバシー",
       "reading": "プライバシー",
       "meaning": "privacy",
-      "origin": "English",
-      "example": {
-        "ja": "プライバシー設定を確認した。",
-        "en": "I checked my privacy settings.",
-        "notes": [
-          "Commonly appears with 設定."
-        ]
-      }
+      "origin": "English"
     },
     {
       "kanji": "ライブ",
       "reading": "ライブ",
       "meaning": "live broadcast; live stream; live (event)",
-      "origin": "English-derived",
-      "example": {
-        "ja": "今夜はライブ配信がある。",
-        "en": "There’s a live stream tonight.",
-        "notes": [
-          "Also used for concerts: ライブに行く."
-        ]
-      }
+      "origin": "English-derived"
     },
     {
       "kanji": "ログアウト",
       "reading": "ログアウト",
       "meaning": "log out (noun/verb in Japanese UI)",
-      "origin": "English-derived",
-      "example": {
-        "ja": "安全のため、使った後はログアウトする。",
-        "en": "For safety, log out after using it.",
-        "notes": [
-          "Often used with する."
-        ]
-      }
+      "origin": "English-derived"
     },
     {
       "kanji": "ログイン",
       "reading": "ログイン",
       "meaning": "log in; sign in (noun/verb in Japanese UI)",
-      "origin": "English-derived",
-      "example": {
-        "ja": "アカウントにログインできない。",
-        "en": "I can’t log in to my account.",
-        "notes": [
-          "Often used with する/できる."
-        ]
-      }
+      "origin": "English-derived"
     },
     {
       "kanji": "ゴースト",
       "reading": "ゴースト",
       "meaning": "ghost (type/name label)",
-      "origin": "English",
-      "example": {
-        "ja": "ゴーストタイプは弱点も多い。",
-        "en": "Ghost types also have many weaknesses.",
-        "notes": []
-      }
+      "origin": "English"
     },
     {
       "kanji": "ドラゴン",
       "reading": "ドラゴン",
       "meaning": "dragon (type/name label)",
-      "origin": "English",
-      "example": {
-        "ja": "ドラゴンタイプは人気がある。",
-        "en": "Dragon types are popular.",
-        "notes": []
-      }
+      "origin": "English"
     },
     {
       "kanji": "インセクト",
