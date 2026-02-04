@@ -393,6 +393,9 @@ export function renderKanjiStudyCard({ store }) {
   // Example card (created once, shown/hidden as needed)
   const exampleCard = document.createElement('div');
   exampleCard.className = 'card kanji-example-card';
+  // carousel state for examples on the current entry
+  let currentExampleIndex = 0;
+  let lastExampleEntry = null;
 
   // render a single card body
   function renderCard(body, entry) {
@@ -704,10 +707,15 @@ export function renderKanjiStudyCard({ store }) {
 
     // Show/hide example card based on entry.examples (array)
     if (entry && Array.isArray(entry.examples) && entry.examples.length) {
+      // reset carousel index when switching to a new entry
+      if (lastExampleEntry !== entry) {
+        currentExampleIndex = 0;
+        lastExampleEntry = entry;
+      }
       exampleCard.innerHTML = '';
-      
-      // Use the first example for display
-      const ex = entry.examples[0] || {};
+      const examples = entry.examples || [];
+      const idx = ((Number(currentExampleIndex) || 0) % examples.length + examples.length) % examples.length;
+      const ex = examples[idx] || {};
       const jaText = ex.ja || '';
       const enText = ex.en || '';
       const notes = Array.isArray(ex.notes) ? ex.notes : [];
@@ -721,17 +729,51 @@ export function renderKanjiStudyCard({ store }) {
       // Label row with speaker button
       const exampleHeader = document.createElement('div');
       exampleHeader.className = 'kanji-example-header';
-      
+
       const exampleLabel = document.createElement('div');
       exampleLabel.className = 'muted kanji-example-label';
       exampleLabel.textContent = 'Example Sentence';
-      
+
+      // create speaker button bound to current example text
       const speakerBtn = createSpeakerButton({ 
         text: jaText,
         fieldKey: 'reading'
       });
-      
-      exampleHeader.append(exampleLabel, speakerBtn);
+
+      // Carousel controls (prev / index / next) when multiple examples
+      const controls = document.createElement('div');
+      controls.className = 'example-carousel-controls';
+      controls.style.display = 'flex';
+      if (examples.length > 1) {
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'icon-button';
+        prevBtn.title = 'Previous example';
+        prevBtn.textContent = '◀';
+        prevBtn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          currentExampleIndex = (idx - 1 + examples.length) % examples.length;
+          render();
+        });
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'icon-button';
+        nextBtn.title = 'Next example';
+        nextBtn.textContent = '▶';
+        nextBtn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          currentExampleIndex = (idx + 1) % examples.length;
+          render();
+        });
+
+        const counter = document.createElement('div');
+        counter.className = 'muted kanji-example-label';
+        counter.style.margin = '0 8px';
+        counter.textContent = `${idx + 1} / ${examples.length}`;
+
+        controls.append(prevBtn, counter, nextBtn);
+      }
+
+      exampleHeader.append(exampleLabel, controls, speakerBtn);
       
       // Japanese text (always visible)
       const exampleText = document.createElement('div');

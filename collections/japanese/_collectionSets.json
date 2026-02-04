@@ -291,6 +291,39 @@
       "kanjiFilter": [
         "reading.startsWith[ひ]"
       ]
+    },
+    {
+      "id": "kanji_state_focus",
+      "label": "Kanji — focus",
+      "description": "Kanji currently marked as focus in shell.kanji_progress.",
+      "kanjiFilter": [
+        "kanji_progress.state=focus"
+      ]
+    },
+    {
+      "id": "kanji_state_learned",
+      "label": "Kanji — learned",
+      "description": "Kanji currently marked as learned in shell.kanji_progress.",
+      "kanjiFilter": [
+        "kanji_progress.state=learned"
+      ]
+    },
+    {
+      "id": "kanji_seen",
+      "label": "Kanji — seen",
+      "description": "Kanji that have been seen (shell.kanji_progress.seen = true).",
+      "kanjiFilter": [
+        "kanji_progress.seen=true"
+      ]
+    },
+    {
+      "id": "kanji_seen_unlearned",
+      "label": "Kanji — seen, not learned",
+      "description": "Kanji seen but not marked learned (seen=true and state!=learned).",
+      "kanjiFilter": [
+        "kanji_progress.seen=true",
+        "kanji_progress.state!=learned"
+      ]
     }
   ]
 }

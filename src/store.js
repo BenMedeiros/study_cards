@@ -830,22 +830,108 @@ export function createStore() {
       function parseFilter(f) {
         const s = String(f || '').trim();
         if (!s) return null;
-        // support `field=value` (eq), `field.startsWith[val]`, `field.endsWith[val]`
-        const mStarts = s.match(/^([^.\[]+)\.startsWith\[(.*)\]$/);
+        // support `field.startsWith[val]`, `field.endsWith[val]`, `field.in[val]`
+        const mStarts = s.match(/^(.+?)\.startsWith\[(.*)\]$/);
         if (mStarts) return { field: mStarts[1], op: 'startsWith', value: mStarts[2] };
-        const mEnds = s.match(/^([^.\[]+)\.endsWith\[(.*)\]$/);
+        const mEnds = s.match(/^(.+?)\.endsWith\[(.*)\]$/);
         if (mEnds) return { field: mEnds[1], op: 'endsWith', value: mEnds[2] };
-        const mIn = s.match(/^([^.\[]+)\.in\[(.*)\]$/);
+        const mIn = s.match(/^(.+?)\.in\[(.*)\]$/);
         if (mIn) return { field: mIn[1], op: 'in', value: mIn[2] };
-        const mEq = s.match(/^([^=]+)=(.*)$/);
+        // support != first, then =
+        const mNeq = s.match(/^(.+?)!=([\s\S]*)$/);
+        if (mNeq) return { field: mNeq[1], op: 'neq', value: mNeq[2] };
+        const mEq = s.match(/^(.+?)=([\s\S]*)$/);
         if (mEq) return { field: mEq[1], op: 'eq', value: mEq[2] };
         return null;
       }
 
       function matchesAll(entry, filters) {
+        const progressMap = ensureKanjiProgressMap();
+        const keyCandidates = ['kanji', 'character', 'text', 'word', 'kana', 'reading'];
+
+        function entryKeyForProgress(e) {
+          if (!e || typeof e !== 'object') return '';
+          for (const k of keyCandidates) {
+            const v = e[k];
+            if (v !== undefined && v !== null && String(v || '').trim()) return normalizeKanjiValue(v);
+          }
+          return '';
+        }
+
         for (const f of filters) {
           const parsed = parseFilter(f);
           if (!parsed) return false;
+
+          // Support nested-field access for kanji progress: "kanji_progress.fieldName"
+          if (String(parsed.field).startsWith('kanji_progress.')) {
+            const parts = String(parsed.field).split('.');
+            const fieldName = parts.slice(1).join('.');
+            const entryKey = entryKeyForProgress(entry);
+            if (!entryKey) return false;
+            const rec = progressMap[entryKey];
+            if (!rec || typeof rec !== 'object') {
+              // treat missing record as null/undefined
+              if (parsed.op === 'neq') {
+                // comparing to a value: missing !== value -> true only if value is not empty/null
+                const cmpVal = String(parsed.value || '').trim();
+                if (cmpVal === '') return false;
+                // missing rec means field !== value
+                continue;
+              }
+              return false;
+            }
+
+            const raw = rec[fieldName];
+
+            // Evaluate comparison smartly based on raw type
+            if (parsed.op === 'eq') {
+              if (typeof raw === 'boolean') {
+                const want = String(parsed.value || '').trim().toLowerCase();
+                const wantBool = (want === 'true');
+                if (raw !== wantBool) return false;
+              } else if (typeof raw === 'number') {
+                const wantNum = Number(parsed.value);
+                if (!Number.isFinite(wantNum) || raw !== wantNum) return false;
+              } else if (raw === null || raw === undefined) {
+                if ((parsed.value || '') !== '') return false;
+              } else {
+                const sval = String(raw);
+                if (sval !== String(parsed.value || '')) return false;
+              }
+            } else if (parsed.op === 'neq') {
+              if (typeof raw === 'boolean') {
+                const want = String(parsed.value || '').trim().toLowerCase();
+                const wantBool = (want === 'true');
+                if (raw === wantBool) return false;
+              } else if (typeof raw === 'number') {
+                const wantNum = Number(parsed.value);
+                if (Number.isFinite(wantNum) && raw === wantNum) return false;
+              } else if (raw === null || raw === undefined) {
+                if ((parsed.value || '') === '') return false;
+              } else {
+                const sval = String(raw);
+                if (sval === String(parsed.value || '')) return false;
+              }
+            } else if (parsed.op === 'startsWith' || parsed.op === 'endsWith' || parsed.op === 'in') {
+              const sval = (raw === null || raw === undefined) ? '' : String(raw);
+              const v = String(parsed.value || '');
+              if (parsed.op === 'startsWith') {
+                if (!sval.startsWith(v)) return false;
+              } else if (parsed.op === 'endsWith') {
+                if (!sval.endsWith(v)) return false;
+              } else {
+                const parts = String(parsed.value || '').split(',').map(x => x.trim()).filter(Boolean);
+                if (parts.length === 0) return false;
+                if (!parts.includes(sval)) return false;
+              }
+            } else {
+              return false;
+            }
+
+            continue;
+          }
+
+          // Fallback: match against entry's own fields (coerce to string)
           const raw = entry && typeof entry === 'object' ? entry[parsed.field] : undefined;
           const val = (typeof raw === 'string' || typeof raw === 'number') ? String(raw) : null;
           if (val === null) return false;
@@ -861,6 +947,8 @@ export function createStore() {
             const parts = String(parsed.value || '').split(',').map(x => x.trim()).filter(Boolean);
             if (parts.length === 0) return false;
             if (!parts.includes(val)) return false;
+          } else if (parsed.op === 'neq') {
+            if (val === v) return false;
           } else {
             return false;
           }
