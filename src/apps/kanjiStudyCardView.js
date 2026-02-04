@@ -702,14 +702,15 @@ export function renderKanjiStudyCard({ store }) {
 
     wrapper.append(cornerCaption, body);
 
-    // Show/hide example card based on entry.example
-    if (entry && entry.example) {
+    // Show/hide example card based on entry.examples (array)
+    if (entry && Array.isArray(entry.examples) && entry.examples.length) {
       exampleCard.innerHTML = '';
       
-      // Extract example fields (handle undefined/null)
-      const jaText = entry.example.ja || '';
-      const enText = entry.example.en || '';
-      const notes = Array.isArray(entry.example.notes) ? entry.example.notes : [];
+      // Use the first example for display
+      const ex = entry.examples[0] || {};
+      const jaText = ex.ja || '';
+      const enText = ex.en || '';
+      const notes = Array.isArray(ex.notes) ? ex.notes : [];
       
       // Only show card if Japanese text exists
       if (!jaText) {

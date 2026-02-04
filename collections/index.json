@@ -23,16 +23,22 @@
       "entries": null
     },
     {
-      "path": "japanese/nouns/adverb__hiragana.json",
-      "name": "Japanese adverb (hiragana)",
-      "description": "Grouped entries for type='adverb' and orthography='hiragana' — total 21.",
-      "entries": 21
+      "path": "japanese/examples/examples_gemini.json",
+      "name": "examples_gemini",
+      "description": null,
+      "entries": null
+    },
+    {
+      "path": "japanese/examples/examples.json",
+      "name": "examples",
+      "description": null,
+      "entries": null
     },
     {
       "path": "japanese/nouns/adverb__mixed.json",
       "name": "Japanese adverb (mixed)",
-      "description": "Mixed orthography group for type='adverb' — total 20 (both: 2, katakana: 5, kanji: 13).",
-      "entries": 20
+      "description": "Mixed orthography group for type='adverb' — total 40 (both: 4, katakana: 10, kanji: 26).",
+      "entries": 39
     },
     {
       "path": "japanese/nouns/compound-morpheme__mixed.json",
@@ -67,8 +73,8 @@
     {
       "path": "japanese/nouns/godan-verb.json",
       "name": "Japanese godan-verb",
-      "description": "Grouped entries for type='godan-verb' — total 54.",
-      "entries": 54
+      "description": "Grouped entries for type='godan-verb' — total 138.",
+      "entries": 138
     },
     {
       "path": "japanese/nouns/i-adjective.json",
@@ -141,36 +147,6 @@
       "name": "Japanese standalone-noun",
       "description": "Grouped entries for type='standalone-noun' — total 15.",
       "entries": 15
-    },
-    {
-      "path": "japanese/sentences/testing.json",
-      "name": "testing",
-      "description": null,
-      "entries": null
-    },
-    {
-      "path": "japanese/verbs/godan-verbs/godan_verbs_bu.json",
-      "name": "Japanese N5 Godan Verbs (bu)",
-      "description": null,
-      "entries": 7
-    },
-    {
-      "path": "japanese/verbs/godan-verbs/godan_verbs_gu.json",
-      "name": "GU-Ending Godan Verbs (gu)",
-      "description": null,
-      "entries": 80
-    },
-    {
-      "path": "japanese/verbs/godan-verbs/godan_verbs_ku.json",
-      "name": "Japanese N5 Godan Verbs (ku)",
-      "description": null,
-      "entries": 24
-    },
-    {
-      "path": "japanese/verbs/godan-verbs/godan_verbs_mu.json",
-      "name": "Japanese N5 Godan Verbs (mu)",
-      "description": null,
-      "entries": 33
     },
     {
       "path": "languageHistory/english.json",

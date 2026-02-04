@@ -482,6 +482,8 @@ export function createStore() {
   // Folder-level entry index cache used to resolve set terms to real entries.
   // baseFolder -> Map(termString -> entryObject)
   const folderEntryIndexCache = new Map();
+  // Examples cache: baseFolder -> Array of example objects collected from loaded collection files' top-level `examples` arrays
+  const examplesCache = new Map();
 
   function notify() {
     for (const fn of subs) fn();
@@ -738,9 +740,17 @@ export function createStore() {
       const v = entry[k];
       if (typeof v === 'string' && v.trim()) score += 1;
     }
-    if (entry.example && typeof entry.example === 'object') {
-      if (typeof entry.example.ja === 'string' && entry.example.ja.trim()) score += 1;
-      if (typeof entry.example.en === 'string' && entry.example.en.trim()) score += 1;
+    // Examples are stored separately on `entry.examples` (array of example objects).
+    if (Array.isArray(entry.examples) && entry.examples.length) {
+      let hasJa = false;
+      let hasEn = false;
+      for (const ex of entry.examples) {
+        if (!hasJa && typeof ex?.ja === 'string' && ex.ja.trim()) hasJa = true;
+        if (!hasEn && typeof ex?.en === 'string' && ex.en.trim()) hasEn = true;
+        if (hasJa && hasEn) break;
+      }
+      if (hasJa) score += 1;
+      if (hasEn) score += 1;
     }
     return score;
   }
@@ -779,6 +789,27 @@ export function createStore() {
     }
 
     folderEntryIndexCache.set(folder, index);
+    // Attach any loaded examples (examplesCache) by matching example.refWords -> entry.kanji
+    try {
+      const examples = examplesCache.get(folder) || [];
+      if (Array.isArray(examples) && examples.length) {
+        for (const ex of examples) {
+          if (!ex || typeof ex !== 'object') continue;
+          const refs = Array.isArray(ex.refWords) ? ex.refWords : [];
+          for (const rawKey of refs) {
+            const key = String(rawKey || '').trim();
+            if (!key) continue;
+            const entry = index.get(key);
+            if (!entry || typeof entry !== 'object') continue;
+            if (!Array.isArray(entry.examples)) entry.examples = [];
+            entry.examples.push(ex);
+          }
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+
     return index;
   }
 
@@ -986,6 +1017,7 @@ export function createStore() {
       pendingFolderMetadataLoads.delete(folder);
     }
   }
+  
 
   // Public helper: return the inherited folder metadata for a collection key or folder path.
   // This exposes the result of `loadInheritedFolderMetadata` (cached) so UI can show
@@ -1257,6 +1289,12 @@ export function createStore() {
         throw new Error(`Invalid JSON in collection ${key}: ${err.message}`);
       }
 
+      // Support legacy "examples-only" files which are plain arrays: normalize
+      // a top-level array into an object shape { metadata: {}, examples: [...] }
+      if (Array.isArray(data)) {
+        data = { metadata: {}, examples: data };
+      }
+
       // Apply inherited folder metadata (nearest `_metadata.json` up the folder chain)
       const folderPath = dirname(key);
       const fm = (await loadInheritedFolderMetadata(folderPath, metadataCache, folderMetadataMap)) || { fields: [], category: folderPath.split('/')[0] || '' };
@@ -1279,6 +1317,34 @@ export function createStore() {
       data.metadata = data.metadata || {};
       if (!data.metadata.name) {
         data.metadata.name = titleFromFilename(basename(key));
+      }
+
+      // Register examples from this collection file (if present).
+      try {
+        const examples = Array.isArray(data.examples) ? data.examples : null;
+        if (examples) {
+          const top = topFolderOfKey(key) || '';
+          const prev = examplesCache.get(top) || [];
+          examplesCache.set(top, prev.concat(examples));
+
+          // Attach examples to entries within this collection by matching refWords -> entry.kanji
+          if (Array.isArray(data.entries) && data.entries.length) {
+            for (const ex of examples) {
+              if (!ex || typeof ex !== 'object') continue;
+              const refs = Array.isArray(ex.refWords) ? ex.refWords : [];
+              for (const rawKey of refs) {
+                const keyStr = String(rawKey || '').trim();
+                if (!keyStr) continue;
+                const entry = data.entries.find(e => e && String(e.kanji || '').trim() === keyStr);
+                if (!entry) continue;
+                if (!Array.isArray(entry.examples)) entry.examples = [];
+                entry.examples.push(ex);
+              }
+            }
+          }
+        }
+      } catch (e) {
+        // ignore
       }
 
       const record = { ...data, key };
