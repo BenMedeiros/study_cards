@@ -7,6 +7,8 @@ const root = document.getElementById('app');
 if (!root) throw new Error('Missing #app');
 
 const store = createStore();
+// Expose store for console debugging
+window.__STORE__ = store;
 setVoiceSettingsGetter(() => {
   return (store && typeof store.getShellVoiceSettings === 'function')
     ? (store.getShellVoiceSettings() || null)
