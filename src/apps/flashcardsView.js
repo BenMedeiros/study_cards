@@ -12,7 +12,7 @@ export function renderFlashcards({ store }) {
   wrapper.className = 'card';
   wrapper.id = 'flashcards-card';
 
-  let active = store.getActiveCollection();
+  let active = store.collections.getActiveCollection();
   if (!active) {
     wrapper.innerHTML = '<h2>Flashcards</h2><p class="hint">No active collection.</p>';
     el.append(wrapper);
@@ -44,8 +44,10 @@ export function renderFlashcards({ store }) {
 
   // derive entries view (study window + shuffle) from shared util
   function refreshFromStore() {
-    active = store.getActiveCollection();
-    const collState = (store && typeof store.loadCollectionState === 'function') ? store.loadCollectionState(active?.key) : null;
+    active = store.collections.getActiveCollection();
+    const collState = (store?.collections && typeof store.collections.loadCollectionState === 'function')
+      ? store.collections.loadCollectionState(active?.key)
+      : null;
     const view = getCollectionView(active?.entries, collState, { windowSize: 10 });
     let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
 
@@ -72,11 +74,11 @@ export function renderFlashcards({ store }) {
           filtered.push(entry);
           continue;
         }
-        if (skipLearned && typeof store.isKanjiLearned === 'function') {
-          if (store.isKanjiLearned(s)) continue;
+        if (skipLearned && typeof store?.kanjiProgress?.isKanjiLearned === 'function') {
+          if (store.kanjiProgress.isKanjiLearned(s)) continue;
         }
-        if (focusOnly && typeof store.isKanjiFocus === 'function') {
-          if (!store.isKanjiFocus(s)) continue;
+        if (focusOnly && typeof store?.kanjiProgress?.isKanjiFocus === 'function') {
+          if (!store.kanjiProgress.isKanjiFocus(s)) continue;
         }
         filtered.push(entry);
       }
@@ -130,8 +132,8 @@ export function renderFlashcards({ store }) {
     if (!learnedBtn || !practiceBtn) return;
     const entry = entries[index];
     const v = getPrimaryValue(entry);
-    const isLearned = !!(store && typeof store.isKanjiLearned === 'function' && v) ? store.isKanjiLearned(v) : false;
-    const isFocus = !!(store && typeof store.isKanjiFocus === 'function' && v) ? store.isKanjiFocus(v) : false;
+    const isLearned = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiLearned === 'function' && v) ? store.kanjiProgress.isKanjiLearned(v) : false;
+    const isFocus = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiFocus === 'function' && v) ? store.kanjiProgress.isKanjiFocus(v) : false;
 
     learnedBtn.classList.toggle('state-learned', isLearned);
     practiceBtn.classList.toggle('state-focus', isFocus);
@@ -147,8 +149,8 @@ export function renderFlashcards({ store }) {
       const entry = entries[index];
       const v = getPrimaryValue(entry);
       if (!v) return;
-      if (store && typeof store.toggleKanjiLearned === 'function') {
-        store.toggleKanjiLearned(v);
+      if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiLearned === 'function') {
+        store.kanjiProgress.toggleKanjiLearned(v);
         updateMarkButtons();
         // If current card became filtered out (skipLearned/focusOnly), refresh view & clamp
         refreshFromStore();
@@ -160,8 +162,8 @@ export function renderFlashcards({ store }) {
       const entry = entries[index];
       const v = getPrimaryValue(entry);
       if (!v) return;
-      if (store && typeof store.toggleKanjiFocus === 'function') {
-        store.toggleKanjiFocus(v);
+      if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiFocus === 'function') {
+        store.kanjiProgress.toggleKanjiFocus(v);
         updateMarkButtons();
         // If current card became filtered out (skipLearned/focusOnly), refresh view & clamp
         refreshFromStore();
@@ -216,10 +218,10 @@ export function renderFlashcards({ store }) {
   let unsub = null;
   try {
     if (store && typeof store.subscribe === 'function') {
-      let lastKey = store.getActiveCollection?.()?.key || null;
+      let lastKey = store?.collections?.getActiveCollection?.()?.key || null;
       unsub = store.subscribe(() => {
         try {
-          const key = store.getActiveCollection?.()?.key || null;
+          const key = store?.collections?.getActiveCollection?.()?.key || null;
           if (key !== lastKey) {
             lastKey = key;
             index = 0;

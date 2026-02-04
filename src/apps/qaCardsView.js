@@ -12,7 +12,7 @@ export function renderQaCards({ store }) {
   wrapper.className = 'card';
   wrapper.id = 'qa-cards-card';
 
-  const active = store.getActiveCollection();
+  const active = store.collections.getActiveCollection();
   if (!active) {
     wrapper.innerHTML = '<h2>QA Cards</h2><p class="hint">No active collection.</p>';
     el.append(wrapper);
@@ -24,7 +24,9 @@ export function renderQaCards({ store }) {
   let answerField = fields[1]?.key ?? 'answer';
   
   // derive entries view (study window + shuffle) from shared util
-  const collState = (store && typeof store.loadCollectionState === 'function') ? store.loadCollectionState(active?.key) : null;
+  const collState = (store?.collections && typeof store.collections.loadCollectionState === 'function')
+    ? store.collections.loadCollectionState(active?.key)
+    : null;
   let entries = getCollectionView(active.entries, collState, { windowSize: 10 }).entries;
   let index = 0;
   let shownAt = nowMs();

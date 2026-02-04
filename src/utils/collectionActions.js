@@ -9,28 +9,28 @@ export function createCollectionActions(store) {
   if (!store) throw new Error('store is required');
 
   function _getCollectionByKey(collKey) {
-    const cols = (typeof store.getCollections === 'function') ? store.getCollections() : [];
+    const cols = (typeof store?.collections?.getCollections === 'function') ? store.collections.getCollections() : [];
     return cols.find(c => c && c.key === collKey) || null;
   }
 
   function shuffleCollection(collKey) {
-    const coll = _getCollectionByKey(collKey) || (typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : null);
+    const coll = _getCollectionByKey(collKey) || (typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : null);
     if (!coll) return null;
     const seed = (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues)
       ? (window.crypto.getRandomValues(new Uint32Array(1))[0] >>> 0)
       : (Math.floor(Math.random() * 0x100000000) >>> 0);
 
-    if (typeof store.saveCollectionState === 'function') {
-      store.saveCollectionState(coll.key, { order_hash_int: seed, isShuffled: true, currentIndex: 0 });
+    if (typeof store?.collections?.saveCollectionState === 'function') {
+      store.collections.saveCollectionState(coll.key, { order_hash_int: seed, isShuffled: true, currentIndex: 0 });
     }
     return seed;
   }
 
   function clearCollectionShuffle(collKey) {
-    const coll = _getCollectionByKey(collKey) || (typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : null);
+    const coll = _getCollectionByKey(collKey) || (typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : null);
     if (!coll) return false;
-    if (typeof store.saveCollectionState === 'function') {
-      store.saveCollectionState(coll.key, { order_hash_int: null, isShuffled: false, currentIndex: 0 });
+    if (typeof store?.collections?.saveCollectionState === 'function') {
+      store.collections.saveCollectionState(coll.key, { order_hash_int: null, isShuffled: false, currentIndex: 0 });
     }
     return true;
   }
@@ -38,26 +38,26 @@ export function createCollectionActions(store) {
   
 
   function setStudyFilter(collKey, { skipLearned = false, focusOnly = false } = {}) {
-    const coll = _getCollectionByKey(collKey) || (typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : null);
+    const coll = _getCollectionByKey(collKey) || (typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : null);
     if (!coll) return false;
     // Persist only the studyFilter string; other studyIndices / studyStart features removed.
-    if (typeof store.saveCollectionState === 'function') {
-      store.saveCollectionState(coll.key, { studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }), currentIndex: 0 });
+    if (typeof store?.collections?.saveCollectionState === 'function') {
+      store.collections.saveCollectionState(coll.key, { studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }), currentIndex: 0 });
     }
     return true;
   }
 
   function clearLearnedForCollection(collKey) {
-    const coll = _getCollectionByKey(collKey) || (typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : null);
+    const coll = _getCollectionByKey(collKey) || (typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : null);
     if (!coll) return false;
     const entries = Array.isArray(coll.entries) ? coll.entries : [];
     const values = entries.map(getEntryKanjiValue).filter(Boolean);
-    if (typeof store.clearLearnedKanjiForValues === 'function') {
-      store.clearLearnedKanjiForValues(values);
+    if (typeof store?.kanjiProgress?.clearLearnedKanjiForValues === 'function') {
+      store.kanjiProgress.clearLearnedKanjiForValues(values);
       return true;
     }
-    if (typeof store.clearLearnedKanji === 'function') {
-      store.clearLearnedKanji();
+    if (typeof store?.kanjiProgress?.clearLearnedKanji === 'function') {
+      store.kanjiProgress.clearLearnedKanji();
       return true;
     }
     return false;

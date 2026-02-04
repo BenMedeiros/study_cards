@@ -6,7 +6,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
   root.id = 'collections-root';
 
-  const collections = store.getAvailableCollections();
+  const collections = store.collections.getAvailableCollections();
 
   // Build table headers (include additional collection metadata columns)
   const headers = [
@@ -36,10 +36,10 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     // different identifiers (path vs key vs id).
     let meta = {};
     try {
-      if (store && typeof store.loadCollectionState === 'function') {
+      if (store?.collections && typeof store.collections.loadCollectionState === 'function') {
         const candidates = [c.path, c.id, c.key, c.path && c.path.replace(/^\.?\/*collections\/*/, ''), c.path && c.path.replace(/^\/*/, '')].filter(Boolean);
         for (const k of candidates) {
-          const s = store.loadCollectionState(k);
+          const s = store.collections.loadCollectionState(k);
           if (s && Object.keys(s).length) { meta = s; break; }
         }
         if (!meta || !Object.keys(meta).length) {
@@ -50,8 +50,8 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
       }
     } catch (e) { meta = c.value || c.metadata || {}; }
     const collectionId = c.id || c.key || c.path || '';
-    const study = (store && typeof store.getCollectionStudyStats === 'function')
-      ? store.getCollectionStudyStats(collectionId)
+    const study = (store?.studyTime && typeof store.studyTime.getCollectionStudyStats === 'function')
+      ? store.studyTime.getCollectionStudyStats(collectionId)
       : null;
     const arr = [
       c.name || c.path || c.id || c.key || '',
@@ -84,8 +84,8 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
       onClick: (rowData, rowIndex, { tr }) => {
         const id = tr?.dataset?.rowId || rowData.__id;
         try {
-          if (store && typeof store.saveCollectionState === 'function') {
-            store.saveCollectionState(id, { order_hash_int: null, isShuffled: false, currentIndex: 0, studyFilter: '', defaultViewMode: null });
+          if (store?.collections && typeof store.collections.saveCollectionState === 'function') {
+            store.collections.saveCollectionState(id, { order_hash_int: null, isShuffled: false, currentIndex: 0, studyFilter: '', defaultViewMode: null });
           }
         } catch (e) {}
         // update the row cells in-place so UI reflects cleared settings

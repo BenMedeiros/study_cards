@@ -51,8 +51,8 @@ export function renderKanjiStudyCard({ store }) {
     if (!timing.seenMarkedThisView && totalViewedThisViewMs >= MIN_VIEW_TO_COUNT_MS) {
       timing.seenMarkedThisView = true;
       try {
-        if (store && typeof store.recordKanjiSeenInKanjiStudyCard === 'function') {
-          store.recordKanjiSeenInKanjiStudyCard(k, { silent: true, immediate });
+        if (store?.kanjiProgress && typeof store.kanjiProgress.recordKanjiSeenInKanjiStudyCard === 'function') {
+          store.kanjiProgress.recordKanjiSeenInKanjiStudyCard(k, { silent: true, immediate });
         }
       } catch (e) {
         // ignore
@@ -71,8 +71,8 @@ export function renderKanjiStudyCard({ store }) {
     if (add <= 0) return;
     timing.creditedThisViewMs += add;
     try {
-      if (store && typeof store.addTimeMsStudiedInKanjiStudyCard === 'function') {
-        store.addTimeMsStudiedInKanjiStudyCard(k, add, { silent: true, immediate });
+      if (store?.kanjiProgress && typeof store.kanjiProgress.addTimeMsStudiedInKanjiStudyCard === 'function') {
+        store.kanjiProgress.addTimeMsStudiedInKanjiStudyCard(k, add, { silent: true, immediate });
       }
     } catch (e) {
       // ignore
@@ -166,11 +166,11 @@ export function renderKanjiStudyCard({ store }) {
   // Persist minimal UI state into per-collection state (no legacy fallbacks)
   function saveUIState() {
     try {
-      const active = store.getActiveCollection ? store.getActiveCollection() : null;
+      const active = store?.collections?.getActiveCollection ? store.collections.getActiveCollection() : null;
       const key = active && active.key ? active.key : null;
       if (!key) return;
-      if (typeof store.saveCollectionState === 'function') {
-        store.saveCollectionState(key, {
+      if (typeof store?.collections?.saveCollectionState === 'function') {
+        store.collections.saveCollectionState(key, {
           isShuffled: !!isShuffled,
           defaultViewMode: defaultViewMode,
           order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
@@ -224,14 +224,16 @@ export function renderKanjiStudyCard({ store }) {
       const v = getPrimaryKanjiValue(entry);
       if (!v) return;
       const originalIdxBefore = Number.isFinite(Number(viewIndices[index])) ? Number(viewIndices[index]) : null;
-      if (store && typeof store.toggleKanjiLearned === 'function') {
-        const nowLearned = store.toggleKanjiLearned(v);
+      if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiLearned === 'function') {
+        const nowLearned = store.kanjiProgress.toggleKanjiLearned(v);
         updateMarkButtons();
         if (nowLearned) {
           try {
-            const active = store.getActiveCollection?.();
+            const active = store?.collections?.getActiveCollection?.();
             const key = active?.key;
-            const collState = (store && typeof store.loadCollectionState === 'function') ? (store.loadCollectionState(key) || {}) : {};
+            const collState = (store?.collections && typeof store.collections.loadCollectionState === 'function')
+              ? (store.collections.loadCollectionState(key) || {})
+              : {};
             let skipLearnedMode = false;
             if (typeof collState?.studyFilter === 'string') {
               const raw = String(collState.studyFilter || '').trim();
@@ -257,8 +259,8 @@ export function renderKanjiStudyCard({ store }) {
       const entry = entries[index];
       const v = getPrimaryKanjiValue(entry);
       if (!v) return;
-      if (store && typeof store.toggleKanjiFocus === 'function') {
-        store.toggleKanjiFocus(v);
+      if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiFocus === 'function') {
+        store.kanjiProgress.toggleKanjiFocus(v);
         updateMarkButtons();
       }
     } },
@@ -298,8 +300,8 @@ export function renderKanjiStudyCard({ store }) {
   // Autoplay controls: create grouped play/gear control and hook into play loop
   // Load app-specific autoplay config (saved under uiState.apps.kanjiStudy.autoplaySequence)
   try {
-    if (store && typeof store.getAppState === 'function') {
-      const appState = store.getAppState('kanjiStudy') || {};
+    if (store?.apps && typeof store.apps.getState === 'function') {
+      const appState = store.apps.getState('kanjiStudy') || {};
       if (Array.isArray(appState.autoplaySequence)) autoplayConfig = appState.autoplaySequence.slice();
     }
   } catch (e) {}
@@ -317,8 +319,8 @@ export function renderKanjiStudyCard({ store }) {
   if (!Array.isArray(autoplayConfig) || autoplayConfig.length === 0) {
     autoplayConfig = DEFAULT_AUTOPLAY_SEQUENCE.slice();
     try {
-      if (store && typeof store.setAppState === 'function') {
-        store.setAppState('kanjiStudy', { autoplaySequence: autoplayConfig });
+      if (store?.apps && typeof store.apps.setState === 'function') {
+        store.apps.setState('kanjiStudy', { autoplaySequence: autoplayConfig });
       }
     } catch (e) {}
   }
@@ -370,8 +372,8 @@ export function renderKanjiStudyCard({ store }) {
     onSequenceChange: (seq) => {
       autoplayConfig = Array.isArray(seq) ? seq.slice() : [];
       try {
-        if (store && typeof store.setAppState === 'function') {
-          store.setAppState('kanjiStudy', { autoplaySequence: autoplayConfig });
+        if (store?.apps && typeof store.apps.setState === 'function') {
+          store.apps.setState('kanjiStudy', { autoplaySequence: autoplayConfig });
         }
       } catch (e) {}
       saveUIState();
@@ -431,11 +433,11 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   function refreshEntriesFromStore() {
-    const active = store.getActiveCollection();
+    const active = store.collections.getActiveCollection();
     originalEntries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
     // Use shared collection management to build the view (study window + shuffle)
     const key = active?.key;
-    let collState = (store && typeof store.loadCollectionState === 'function') ? (store.loadCollectionState(key) || {}) : {};
+    let collState = (store?.collections && typeof store.collections.loadCollectionState === 'function') ? (store.collections.loadCollectionState(key) || {}) : {};
 
     let skipLearned = false;
     let focusOnly = false;
@@ -469,11 +471,11 @@ export function renderKanjiStudyCard({ store }) {
           filteredIndices.push(nextIndices[i]);
           continue;
         }
-        if (skipLearned && typeof store.isKanjiLearned === 'function') {
-          if (store.isKanjiLearned(v)) continue;
+        if (skipLearned && typeof store?.kanjiProgress?.isKanjiLearned === 'function') {
+          if (store.kanjiProgress.isKanjiLearned(v)) continue;
         }
-        if (focusOnly && typeof store.isKanjiFocus === 'function') {
-          if (!store.isKanjiFocus(v)) continue;
+        if (focusOnly && typeof store?.kanjiProgress?.isKanjiFocus === 'function') {
+          if (!store.kanjiProgress.isKanjiFocus(v)) continue;
         }
         filteredEntries.push(entry);
         filteredIndices.push(nextIndices[i]);
@@ -529,8 +531,8 @@ export function renderKanjiStudyCard({ store }) {
   function updateMarkButtons() {
     const entry = entries[index];
     const v = getPrimaryKanjiValue(entry);
-    const isLearned = !!(store && typeof store.isKanjiLearned === 'function' && v) ? store.isKanjiLearned(v) : false;
-    const isFocus = !!(store && typeof store.isKanjiFocus === 'function' && v) ? store.isKanjiFocus(v) : false;
+    const isLearned = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiLearned === 'function' && v) ? store.kanjiProgress.isKanjiLearned(v) : false;
+    const isFocus = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiFocus === 'function' && v) ? store.kanjiProgress.isKanjiFocus(v) : false;
 
     learnedBtn.classList.toggle('state-learned', isLearned);
     practiceBtn.classList.toggle('state-focus', isFocus);
@@ -575,7 +577,7 @@ export function renderKanjiStudyCard({ store }) {
 
     orderHashInt = seed;
     // persist per-collection state via centralized action
-    const active = store.getActiveCollection ? store.getActiveCollection() : null;
+    const active = store?.collections?.getActiveCollection ? store.collections.getActiveCollection() : null;
     const key = active && active.key ? active.key : null;
     if (key) {
       try {
@@ -813,10 +815,10 @@ export function renderKanjiStudyCard({ store }) {
   let unsub = null;
   try {
     if (store && typeof store.subscribe === 'function') {
-      let lastKey = store.getActiveCollection?.()?.key || null;
+      let lastKey = store?.collections?.getActiveCollection?.()?.key || null;
       unsub = store.subscribe(() => {
         try {
-          const active = store.getActiveCollection?.();
+          const active = store?.collections?.getActiveCollection?.();
           const key = active?.key || null;
           // Refresh when active collection changes or when entries may have been updated.
           if (key !== lastKey) {

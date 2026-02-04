@@ -1566,53 +1566,63 @@ export function createStore() {
   return {
     subscribe,
     initialize,
-    getCollections,
-    getAvailableCollections,
-    getActiveCollectionId,
-    getActiveCollection,
-    getLastRoute,
-    setLastRoute,
-    isKanjiLearned,
-    isKanjiFocus,
-    toggleKanjiLearned,
-    toggleKanjiFocus,
-    clearLearnedKanji,
-    clearLearnedKanjiForValues,
-    // Kanji per-item progress/stats
-    getKanjiProgressRecord,
-    recordKanjiSeenInKanjiStudyCard,
-    addTimeMsStudiedInKanjiStudyCard,
-    // Cross-app study time (app x collection)
-    recordAppCollectionStudySession,
-    getStudyTimeRecord,
-    getRecentStudySessions,
-    getCollectionStudyStats,
-    getAllCollectionsStudyStats,
-    sumSessionDurations,
-    getFocusKanjiValues,
-    setActiveCollectionId,
-    syncCollectionFromURL,
-    listCollectionDir,
-    loadCollectionSetsForFolder,
-    getCachedCollectionSetsForFolder,
-    loadCollection,
-    prefetchCollectionsInFolder,
+    collections: {
+      getCollections,
+      getAvailableCollections,
+      getActiveCollectionId,
+      getActiveCollection,
+      setActiveCollectionId,
+      syncCollectionFromURL,
+      listCollectionDir,
+      loadCollectionSetsForFolder,
+      getCachedCollectionSetsForFolder,
+      loadCollection,
+      prefetchCollectionsInFolder,
       loadCollectionState,
       saveCollectionState,
-    getCollectionBrowserPath: () => {
-      return (typeof state.collectionBrowserPath === 'string') ? state.collectionBrowserPath : null;
+      getInheritedFolderMetadata,
     },
-    setCollectionBrowserPath: (path) => {
-      state.collectionBrowserPath = typeof path === 'string' ? path : String(path || '');
-      // Ephemeral UI change: do not notify subscribers to avoid
-      // re-rendering the shell while dropdowns/overlays are open.
+    shell: {
+      getLastRoute,
+      setLastRoute,
+      getCollectionBrowserPath: () => {
+        return (typeof state.collectionBrowserPath === 'string') ? state.collectionBrowserPath : null;
+      },
+      setCollectionBrowserPath: (path) => {
+        state.collectionBrowserPath = typeof path === 'string' ? path : String(path || '');
+        // Ephemeral UI change: do not notify subscribers to avoid
+        // re-rendering the shell while dropdowns/overlays are open.
+      },
+      getVoiceSettings: getShellVoiceSettings,
+      setVoiceSettings: setShellVoiceSettings,
+      getState: getShellState,
+      setState: setShellState,
     },
-    getShellVoiceSettings,
-    setShellVoiceSettings,
-    getAppState,
-    setAppState,
-    getShellState,
-    setShellState,
-    getInheritedFolderMetadata,
+    apps: {
+      getState: getAppState,
+      setState: setAppState,
+    },
+    kanjiProgress: {
+      isKanjiLearned,
+      isKanjiFocus,
+      toggleKanjiLearned,
+      toggleKanjiFocus,
+      clearLearnedKanji,
+      clearLearnedKanjiForValues,
+      // Per-item progress/stats
+      getKanjiProgressRecord,
+      recordKanjiSeenInKanjiStudyCard,
+      addTimeMsStudiedInKanjiStudyCard,
+      getFocusKanjiValues,
+    },
+    studyTime: {
+      // Cross-app study time (app x collection)
+      recordAppCollectionStudySession,
+      getStudyTimeRecord,
+      getRecentStudySessions,
+      getCollectionStudyStats,
+      getAllCollectionsStudyStats,
+      sumSessionDurations,
+    },
   };
 }

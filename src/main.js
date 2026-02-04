@@ -10,8 +10,8 @@ const store = createStore();
 // Expose store for console debugging
 window.__STORE__ = store;
 setVoiceSettingsGetter(() => {
-  return (store && typeof store.getShellVoiceSettings === 'function')
-    ? (store.getShellVoiceSettings() || null)
+  return (store?.shell && typeof store.shell.getVoiceSettings === 'function')
+    ? (store.shell.getVoiceSettings() || null)
     : null;
 });
 const shell = createAppShell({ store, onNavigate: navigateTo });
@@ -22,20 +22,20 @@ store.initialize().then(() => {
   // Now that persisted UI state is loaded, decide initial route.
   // If URL already has a hash, that wins. Otherwise restore last visited route.
   if (!location.hash) {
-    const last = (store && typeof store.getLastRoute === 'function') ? store.getLastRoute() : null;
+    const last = (store?.shell && typeof store.shell.getLastRoute === 'function') ? store.shell.getLastRoute() : null;
     navigateTo(last || '/');
   }
 
   // Now that collections are loaded, sync from URL and set up router
   const initialRoute = shell.getCurrentRoute();
-  store.syncCollectionFromURL(initialRoute);
+  store.collections.syncCollectionFromURL(initialRoute);
   
   installHashRouter({
     onRoute: (route) => {
-      if (store && typeof store.setLastRoute === 'function') {
-        store.setLastRoute(route);
+      if (store?.shell && typeof store.shell.setLastRoute === 'function') {
+        store.shell.setLastRoute(route);
       }
-      store.syncCollectionFromURL(route);
+      store.collections.syncCollectionFromURL(route);
       shell.renderRoute(route);
     },
   });

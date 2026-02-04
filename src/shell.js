@@ -15,12 +15,12 @@ export function createAppShell({ store, onNavigate }) {
   el.id = 'shell-root';
 
   function getVoiceState() {
-    return (store && typeof store.getShellVoiceSettings === 'function') ? (store.getShellVoiceSettings() || {}) : {};
+    return (store?.shell && typeof store.shell.getVoiceSettings === 'function') ? (store.shell.getVoiceSettings() || {}) : {};
   }
 
   function setVoiceState(patch) {
-    if (store && typeof store.setShellVoiceSettings === 'function') {
-      store.setShellVoiceSettings(patch);
+    if (store?.shell && typeof store.shell.setVoiceSettings === 'function') {
+      store.shell.setVoiceSettings(patch);
     }
   }
 
@@ -54,14 +54,14 @@ export function createAppShell({ store, onNavigate }) {
       else document.body.classList.remove('using-keyboard');
     } catch (e) {}
 
-    if (store && typeof store.setShellState === 'function') {
+    if (store?.shell && typeof store.shell.setState === 'function') {
       try {
         const payload = { usingKeyboard };
         if (usingKeyboard) payload.usingKeyboardLastSeen = new Date().toISOString();
         // Persist without notifying subscribers to avoid re-rendering the
         // header/menu while key handlers are active. scheduleFlush still
         // debounces actual persistence to disk.
-        try { store.setShellState(payload, { silent: true }); } catch (e) {}
+        try { store.shell.setState(payload, { silent: true }); } catch (e) {}
       } catch (e) {}
     }
 
@@ -73,7 +73,7 @@ export function createAppShell({ store, onNavigate }) {
 
   // Initialize from persisted shell state (respect 600s timeout if provided)
   try {
-    const persisted = (store && typeof store.getShellState === 'function') ? (store.getShellState() || {}) : {};
+    const persisted = (store?.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
     let initial = !!persisted.usingKeyboard;
     if (initial && persisted.usingKeyboardLastSeen) {
       const then = Date.parse(String(persisted.usingKeyboardLastSeen || '')) || 0;
@@ -373,9 +373,9 @@ export function createAppShell({ store, onNavigate }) {
   // during header render. This keeps renderHeader fast and only updates
   // when the store emits changes.
   const cached = {
-    collections: Array.isArray(store.getCollections?.()) ? store.getCollections() : [],
-    activeId: typeof store.getActiveCollectionId === 'function' ? store.getActiveCollectionId() : null,
-    activeCollection: typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : null,
+    collections: Array.isArray(store?.collections?.getCollections?.()) ? store.collections.getCollections() : [],
+    activeId: typeof store?.collections?.getActiveCollectionId === 'function' ? store.collections.getActiveCollectionId() : null,
+    activeCollection: typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : null,
     voiceState: getVoiceState(),
   };
 
@@ -402,7 +402,7 @@ export function createAppShell({ store, onNavigate }) {
       const durationMs = Math.max(0, endWall - activeStudySession.startWallMs);
       // Ignore ultra-short time slices to reduce noise.
       if (durationMs >= 1000) {
-        store.recordAppCollectionStudySession({
+        store.studyTime.recordAppCollectionStudySession({
           appId: activeStudySession.appId,
           collectionId: activeStudySession.collectionId,
           startIso: activeStudySession.startIso,
@@ -420,7 +420,9 @@ export function createAppShell({ store, onNavigate }) {
   function startActiveStudySessionFor(pathname) {
     try {
       const appId = routePathToAppId(pathname);
-      const collectionId = (store && typeof store.getActiveCollectionId === 'function') ? (store.getActiveCollectionId() || null) : null;
+      const collectionId = (store?.collections && typeof store.collections.getActiveCollectionId === 'function')
+        ? (store.collections.getActiveCollectionId() || null)
+        : null;
       if (!appId || !collectionId) return;
       activeStudySession = {
         appId,
@@ -576,7 +578,7 @@ export function createAppShell({ store, onNavigate }) {
       store,
       className: 'align-right',
       onSelect: async (value) => {
-        await store.setActiveCollectionId(value);
+        await store.collections.setActiveCollectionId(value);
         const currentRoute = getCurrentRoute();
         renderRoute(currentRoute);
       }
@@ -960,7 +962,7 @@ export function createAppShell({ store, onNavigate }) {
     // Crossword and Word Search routes removed
 
     if (route.pathname === '/kanji') {
-      const active = store.getActiveCollection();
+      const active = store.collections.getActiveCollection();
       const category = active?.metadata?.category || '';
       if (category.toLowerCase() !== 'japanese') {
         // redirect to home if the active collection isn't Japanese
@@ -989,9 +991,9 @@ export function createAppShell({ store, onNavigate }) {
     // Refresh cached values then re-render header
     try {
       const prevActiveId = cached.activeId;
-      cached.collections = Array.isArray(store.getCollections?.()) ? store.getCollections() : cached.collections;
-      cached.activeId = typeof store.getActiveCollectionId === 'function' ? store.getActiveCollectionId() : cached.activeId;
-      cached.activeCollection = typeof store.getActiveCollection === 'function' ? store.getActiveCollection() : cached.activeCollection;
+      cached.collections = Array.isArray(store?.collections?.getCollections?.()) ? store.collections.getCollections() : cached.collections;
+      cached.activeId = typeof store?.collections?.getActiveCollectionId === 'function' ? store.collections.getActiveCollectionId() : cached.activeId;
+      cached.activeCollection = typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : cached.activeCollection;
       cached.voiceState = getVoiceState();
 
       // If the active collection changed while staying in the same view,

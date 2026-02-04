@@ -42,7 +42,7 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
   }
 
   function getButtonLabel() {
-    const active = store.getActiveCollection();
+    const active = store.collections.getActiveCollection();
     if (active?.metadata?.name) return active.metadata.name;
     if (active?.key) return titleFromFilename(basename(active.key));
     return 'Select…';
@@ -51,7 +51,7 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
   let currentDir = '';
 
   function syncDirFromState() {
-    const fromStore = store.getCollectionBrowserPath?.();
+    const fromStore = store.shell.getCollectionBrowserPath?.();
     // Only respect an explicit, non-empty path from the store. Empty
     // string means "no preference" so fall back to the active collection.
     if (typeof fromStore === 'string' && fromStore.length > 0) {
@@ -59,14 +59,14 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
       return;
     }
 
-    const activeId = store.getActiveCollectionId?.();
+    const activeId = store.collections.getActiveCollectionId?.();
     if (activeId) currentDir = dirname(activeId);
   }
 
   function setCurrentDir(nextDir) {
     currentDir = nextDir || '';
-    if (store.setCollectionBrowserPath) {
-      store.setCollectionBrowserPath(currentDir);
+    if (store?.shell?.setCollectionBrowserPath) {
+      store.shell.setCollectionBrowserPath(currentDir);
     }
   }
 
@@ -114,13 +114,13 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
         // Ensure sets are loaded for this folder before entering the virtual listing.
         try {
           const baseFolder = dirname(value);
-          if (store && typeof store.loadCollectionSetsForFolder === 'function') {
-            await store.loadCollectionSetsForFolder(baseFolder);
+          if (store?.collections && typeof store.collections.loadCollectionSetsForFolder === 'function') {
+            await store.collections.loadCollectionSetsForFolder(baseFolder);
           }
 
           // Eagerly prefetch the entire base folder in the background.
-          if (store && typeof store.prefetchCollectionsInFolder === 'function') {
-            store.prefetchCollectionsInFolder(baseFolder);
+          if (store?.collections && typeof store.collections.prefetchCollectionsInFolder === 'function') {
+            store.collections.prefetchCollectionsInFolder(baseFolder);
           }
         } catch (err) {
           // ignore load error; menu will show empty
@@ -135,7 +135,7 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
         if (typeof onSelect === 'function') {
           await onSelect(value);
         } else {
-          await store.setActiveCollectionId(value);
+          await store.collections.setActiveCollectionId(value);
         }
         close();
         return;
@@ -148,10 +148,10 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
   function renderMenu() {
     clearMenu();
 
-    const activeId = store.getActiveCollectionId?.();
+    const activeId = store.collections.getActiveCollectionId?.();
 
-    const listing = store.listCollectionDir
-      ? store.listCollectionDir(currentDir)
+    const listing = store.collections.listCollectionDir
+      ? store.collections.listCollectionDir(currentDir)
       : { dir: currentDir, parentDir: '', folders: [], files: [] };
 
     if (listing.dir && listing.parentDir !== null) {
@@ -170,13 +170,13 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
         const vdir = baseFolder ? `${baseFolder}/__collectionSets` : '__collectionSets';
 
         let folderLabel = 'Collection Sets';
-        if (store && typeof store.getCachedCollectionSetsForFolder === 'function') {
-          const cs = store.getCachedCollectionSetsForFolder(baseFolder);
+        if (store?.collections && typeof store.collections.getCachedCollectionSetsForFolder === 'function') {
+          const cs = store.collections.getCachedCollectionSetsForFolder(baseFolder);
           if (cs) folderLabel = safeFolderLabelFromCollectionSets(cs);
           // If it isn't cached yet (undefined), load in the background and re-render.
-          if (typeof cs === 'undefined' && typeof store.loadCollectionSetsForFolder === 'function' && container.classList.contains('open')) {
+          if (typeof cs === 'undefined' && typeof store.collections.loadCollectionSetsForFolder === 'function' && container.classList.contains('open')) {
             Promise.resolve()
-              .then(() => store.loadCollectionSetsForFolder(baseFolder))
+              .then(() => store.collections.loadCollectionSetsForFolder(baseFolder))
               .then(() => {
                 if (container.classList.contains('open')) renderMenu();
               })
@@ -248,10 +248,10 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
 
     // If we're currently inside the virtual Collection Sets dir, ensure its data
     // is loaded and then re-render (so reopen after refresh isn't empty).
-    if (isCollectionSetsVirtualDir(currentDir) && store && typeof store.loadCollectionSetsForFolder === 'function') {
+    if (isCollectionSetsVirtualDir(currentDir) && store?.collections && typeof store.collections.loadCollectionSetsForFolder === 'function') {
       const baseFolder = dirname(currentDir);
       Promise.resolve()
-        .then(() => store.loadCollectionSetsForFolder(baseFolder))
+        .then(() => store.collections.loadCollectionSetsForFolder(baseFolder))
         .then(() => {
           if (container.classList.contains('open')) renderMenu();
         })
@@ -365,8 +365,8 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     try { menu.blur(); } catch (err) {}
     // Clear ephemeral store path so next open defaults to active collection
     try {
-      if (store && typeof store.setCollectionBrowserPath === 'function') {
-        store.setCollectionBrowserPath('');
+      if (store?.shell && typeof store.shell.setCollectionBrowserPath === 'function') {
+        store.shell.setCollectionBrowserPath('');
       }
     } catch (err) {}
     document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);

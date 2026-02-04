@@ -7,7 +7,7 @@ import { createCollectionActions } from '../utils/collectionActions.js';
 export function renderData({ store }) {
   const root = document.createElement('div');
   root.id = 'data-root';
-  const active = store.getActiveCollection();
+  const active = store.collections.getActiveCollection();
 
   let skipLearned = false;
   let focusOnly = false;
@@ -34,7 +34,7 @@ export function renderData({ store }) {
   const controls = createViewHeaderTools({ createControls: true,
     
     onShuffle: () => {
-      const coll = store.getActiveCollection();
+      const coll = store.collections.getActiveCollection();
       if (!coll) return;
       const actions = createCollectionActions(store);
       actions.shuffleCollection(coll.key);
@@ -42,7 +42,7 @@ export function renderData({ store }) {
       markStudyRows();
     },
     onClearShuffle: () => {
-      const coll = store.getActiveCollection();
+      const coll = store.collections.getActiveCollection();
       if (!coll) return;
       const actions = createCollectionActions(store);
       actions.clearCollectionShuffle(coll.key);
@@ -51,7 +51,7 @@ export function renderData({ store }) {
     },
     onClearLearned: () => {
       try {
-        const coll = store?.getActiveCollection?.();
+        const coll = store?.collections?.getActiveCollection?.();
         const actions = createCollectionActions(store);
         actions.clearLearnedForCollection(coll?.key);
       } catch (e) {
@@ -105,16 +105,16 @@ export function renderData({ store }) {
 
   // Helpers to read/save per-collection state
   function readCollState() {
-    const coll = store.getActiveCollection();
+    const coll = store.collections.getActiveCollection();
     if (!coll) return null;
-    if (typeof store.loadCollectionState === 'function') return store.loadCollectionState(coll.key) || {};
+    if (typeof store?.collections?.loadCollectionState === 'function') return store.collections.loadCollectionState(coll.key) || {};
     return {};
   }
 
   function writeCollState(patch) {
-    const coll = store.getActiveCollection();
+    const coll = store.collections.getActiveCollection();
     if (!coll) return;
-    if (typeof store.saveCollectionState === 'function') return store.saveCollectionState(coll.key, patch);
+    if (typeof store?.collections?.saveCollectionState === 'function') return store.collections.saveCollectionState(coll.key, patch);
   }
 
   function getEntryKanjiValue(entry) {
@@ -129,11 +129,11 @@ export function renderData({ store }) {
   function passesFilters(entry) {
     const v = getEntryKanjiValue(entry);
     if (!v) return true;
-    if (skipLearned && typeof store.isKanjiLearned === 'function') {
-      if (store.isKanjiLearned(v)) return false;
+    if (skipLearned && typeof store?.kanjiProgress?.isKanjiLearned === 'function') {
+      if (store.kanjiProgress.isKanjiLearned(v)) return false;
     }
-    if (focusOnly && typeof store.isKanjiFocus === 'function') {
-      if (!store.isKanjiFocus(v)) return false;
+    if (focusOnly && typeof store?.kanjiProgress?.isKanjiFocus === 'function') {
+      if (!store.kanjiProgress.isKanjiFocus(v)) return false;
     }
     return true;
   }
@@ -144,7 +144,7 @@ export function renderData({ store }) {
   }
 
   function persistFilters() {
-    const coll = store.getActiveCollection();
+    const coll = store.collections.getActiveCollection();
     if (!coll) return;
     const actions = createCollectionActions(store);
     actions.setStudyFilter(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
@@ -179,7 +179,7 @@ export function renderData({ store }) {
 
   function updateControlStates() {
     try {
-      const coll = store.getActiveCollection();
+      const coll = store.collections.getActiveCollection();
       if (!coll) return;
       const saved = readCollState() || {};
       const n = Array.isArray(coll.entries) ? coll.entries.length : 0;
@@ -188,10 +188,10 @@ export function renderData({ store }) {
       if (headerBtns && headerBtns.clearShuffleBtn) headerBtns.clearShuffleBtn.disabled = !isShuffled;
       // clearLearned disabled if no learned items in this collection
       let hasLearned = false;
-      if (typeof store.isKanjiLearned === 'function') {
+      if (typeof store?.kanjiProgress?.isKanjiLearned === 'function') {
         const entries = Array.isArray(coll.entries) ? coll.entries : [];
         for (const e of entries) {
-          if (store.isKanjiLearned(getEntryKanjiValue(e))) { hasLearned = true; break; }
+          if (store.kanjiProgress.isKanjiLearned(getEntryKanjiValue(e))) { hasLearned = true; break; }
         }
       }
       if (headerBtns && headerBtns.clearLearnedBtn) headerBtns.clearLearnedBtn.disabled = !hasLearned;
@@ -202,7 +202,7 @@ export function renderData({ store }) {
   }
 
   function updateStudyLabel() {
-    const coll = store.getActiveCollection();
+    const coll = store.collections.getActiveCollection();
     if (!coll) {
       // no study label in header tools
       updateControlStates();
@@ -227,8 +227,8 @@ export function renderData({ store }) {
 
     const rows = visibleEntries.map(entry => {
       const v = getEntryKanjiValue(entry);
-      const learned = (v && typeof store.isKanjiLearned === 'function') ? store.isKanjiLearned(v) : false;
-      const focus = (v && typeof store.isKanjiFocus === 'function') ? store.isKanjiFocus(v) : false;
+      const learned = (v && typeof store?.kanjiProgress?.isKanjiLearned === 'function') ? store.kanjiProgress.isKanjiLearned(v) : false;
+      const focus = (v && typeof store?.kanjiProgress?.isKanjiFocus === 'function') ? store.kanjiProgress.isKanjiFocus(v) : false;
 
       const icon = document.createElement('span');
       icon.className = 'kanji-status-icon';
@@ -267,7 +267,7 @@ export function renderData({ store }) {
 
   // Highlight rows that are part of the current study subset
   function markStudyRows() {
-    const coll = store.getActiveCollection();
+    const coll = store.collections.getActiveCollection();
     if (!coll) return;
     // Only update learned/focus icons; study subset highlighting removed.
 
@@ -282,8 +282,8 @@ export function renderData({ store }) {
         const originalIndex = rowToOriginalIndex[rowIndex];
         const entry = (typeof originalIndex === 'number') ? allEntries[originalIndex] : null;
         const v = getEntryKanjiValue(entry);
-        const learned = (v && typeof store.isKanjiLearned === 'function') ? store.isKanjiLearned(v) : false;
-        const focus = (v && typeof store.isKanjiFocus === 'function') ? store.isKanjiFocus(v) : false;
+        const learned = (v && typeof store?.kanjiProgress?.isKanjiLearned === 'function') ? store.kanjiProgress.isKanjiLearned(v) : false;
+        const focus = (v && typeof store?.kanjiProgress?.isKanjiFocus === 'function') ? store.kanjiProgress.isKanjiFocus(v) : false;
 
         const firstCell = tr.querySelector('td');
         const icon = firstCell ? firstCell.querySelector('.kanji-status-icon') : null;
@@ -379,8 +379,8 @@ export function renderData({ store }) {
   wrapper.append(collMetaDetails, defaultsDetails, folderMetaDetails);
 
   // Load inherited folder metadata asynchronously via the store API
-  if (store && typeof store.getInheritedFolderMetadata === 'function') {
-    store.getInheritedFolderMetadata(active.key)
+  if (store?.collections && typeof store.collections.getInheritedFolderMetadata === 'function') {
+    store.collections.getInheritedFolderMetadata(active.key)
       .then(folderMeta => {
         const pre = wrapper.querySelector('#folder-meta-pre');
         if (pre) pre.textContent = folderMeta ? JSON.stringify(folderMeta, null, 2) : 'None';

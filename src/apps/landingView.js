@@ -45,18 +45,18 @@ export function renderLanding({ store, onNavigate }) {
   const root = document.createElement('div');
   root.id = 'home-root';
 
-  const active = store.getActiveCollection();
-  const activeId = store.getActiveCollectionId?.() || null;
+  const active = store.collections.getActiveCollection();
+  const activeId = store.collections.getActiveCollectionId?.() || null;
   const activeName = active?.metadata?.name || 'None';
   const activeCategory = String(active?.metadata?.category || '').toLowerCase();
 
   const now = Date.now();
-  const total24h = store.sumSessionDurations?.({ windowMs: 24 * 60 * 60 * 1000 }) || 0;
-  const total48h = store.sumSessionDurations?.({ windowMs: 48 * 60 * 60 * 1000 }) || 0;
-  const total72h = store.sumSessionDurations?.({ windowMs: 72 * 60 * 60 * 1000 }) || 0;
-  const total7d = store.sumSessionDurations?.({ windowMs: 7 * 24 * 60 * 60 * 1000 }) || 0;
+  const total24h = store.studyTime.sumSessionDurations?.({ windowMs: 24 * 60 * 60 * 1000 }) || 0;
+  const total48h = store.studyTime.sumSessionDurations?.({ windowMs: 48 * 60 * 60 * 1000 }) || 0;
+  const total72h = store.studyTime.sumSessionDurations?.({ windowMs: 72 * 60 * 60 * 1000 }) || 0;
+  const total7d = store.studyTime.sumSessionDurations?.({ windowMs: 7 * 24 * 60 * 60 * 1000 }) || 0;
 
-  const sessions = store.getRecentStudySessions?.(30) || [];
+  const sessions = store.studyTime.getRecentStudySessions?.(30) || [];
   const recent = [];
   const seen = new Set();
   for (const s of sessions) {
@@ -67,7 +67,7 @@ export function renderLanding({ store, onNavigate }) {
     if (recent.length >= 8) break;
   }
 
-  const allStats = store.getAllCollectionsStudyStats?.() || [];
+  const allStats = store.studyTime.getAllCollectionsStudyStats?.() || [];
   allStats.sort((a, b) => {
     const ta = a?.lastEndIso ? new Date(a.lastEndIso).getTime() : 0;
     const tb = b?.lastEndIso ? new Date(b.lastEndIso).getTime() : 0;
@@ -93,7 +93,7 @@ export function renderLanding({ store, onNavigate }) {
   // Helper: return sorted, Japanese-filtered items for a window
   function getWindowItems(windowMs) {
     const cutoff = now - windowMs;
-    const raw = store.getRecentStudySessions?.(1000) || [];
+    const raw = store.studyTime.getRecentStudySessions?.(1000) || [];
     const map = new Map();
     for (const s of raw) {
       if (!s.endIso) continue;
@@ -118,7 +118,7 @@ export function renderLanding({ store, onNavigate }) {
 
     // Filter to only Japanese collections for this home section
     items = items.filter(it => {
-      const coll = store.getCollections?.().find(c => c.key === it.collectionId);
+      const coll = store.collections.getCollections?.().find(c => c.key === it.collectionId);
       const category = String(coll?.metadata?.category || '').toLowerCase();
       return category === 'japanese' || String(it.collectionId || '').startsWith('japanese/');
     });
@@ -138,7 +138,7 @@ export function renderLanding({ store, onNavigate }) {
       wrap.append(el('p', { className: 'hint', text: 'No collections studied in this period.' }));
     } else {
       for (const it of items) {
-        const coll = store.getCollections?.().find(c => c.key === it.collectionId);
+        const coll = store.collections.getCollections?.().find(c => c.key === it.collectionId);
         const rawName = coll?.metadata?.name || it.collectionId.replace(/^japanese\/?/, '');
         const collName = rawName;
         const goTo = linkToAppAndCollection('kanji', it.collectionId);
