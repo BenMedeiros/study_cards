@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "Japanese godan-verb",
-    "description": "Grouped entries for type='godan-verb' — total 61.",
-    "version": 3
+    "description": "Grouped entries for type='godan-verb' — total 138.",
+    "version": 4
   },
   "defaults": {
     "type": "godan-verb"
@@ -408,6 +408,548 @@
       "reading": "まなぶ",
       "meaning": "to learn; to study",
       "ending": "bu"
+    },
+    {
+      "kanji": "泳ぐ",
+      "reading": "およぐ",
+      "meaning": "to swim",
+      "example": {
+        "ja": "夏になると毎日泳ぐ。",
+        "en": "When summer comes, I swim every day.",
+        "notes": [
+          "Often used for a general habit or seasonal routine.",
+          "Common locations: 海(うみ), プール, 川(かわ)."
+        ]
+      },
+      "ending": "gu"
+    },
+    {
+      "kanji": "急ぐ",
+      "reading": "いそぐ",
+      "meaning": "to hurry",
+      "example": {
+        "ja": "電車に間に合うために急ぐ。",
+        "en": "I hurry so I can catch the train.",
+        "notes": [
+          "Often tied to a deadline/appointment (間に合う, 約束, 時間).",
+          "Implies urgency; stronger than just ‘walk faster’ in many contexts."
+        ]
+      },
+      "ending": "gu"
+    },
+    {
+      "kanji": "脱ぐ",
+      "reading": "ぬぐ",
+      "meaning": "to take off (clothes)",
+      "example": {
+        "ja": "家に入る前に靴を脱ぐ。",
+        "en": "I take off my shoes before entering the house.",
+        "notes": [
+          "Most common object is 靴 (Japanese house custom).",
+          "For jackets, 脱ぐ is fine, but you’ll also often hear 上着を脱ぐ / コートを脱ぐ."
+        ]
+      },
+      "ending": "gu"
+    },
+    {
+      "kanji": "防ぐ",
+      "reading": "ふせぐ",
+      "meaning": "to prevent; to defend",
+      "example": {
+        "ja": "マスクで風邪を防ぐ。",
+        "en": "I prevent catching a cold with a mask.",
+        "notes": [
+          "Common with negative outcomes: 事故, 火事, 風邪, ミス.",
+          "Nuance is ‘stop it from happening’ rather than ‘fix it after’."
+        ]
+      },
+      "ending": "gu"
+    },
+    {
+      "kanji": "稼ぐ",
+      "reading": "かせぐ",
+      "meaning": "to earn (money)",
+      "example": {
+        "ja": "アルバイトで生活費を稼ぐ。",
+        "en": "I earn my living expenses with a part-time job.",
+        "notes": [
+          "More than just ‘get money’; implies active effort and income.",
+          "Common with 生活費, お金, 時間 (稼ぐ can also mean ‘save up time’ in some contexts)."
+        ]
+      },
+      "ending": "gu"
+    },
+    {
+      "kanji": "騒ぐ",
+      "reading": "さわぐ",
+      "meaning": "to make noise; to make a fuss",
+      "example": {
+        "ja": "夜に外で騒ぐのはだめだ。",
+        "en": "It’s not okay to make noise outside at night.",
+        "notes": [
+          "Often used for causing trouble/disturbing others, not just being loud.",
+          "Common in complaints/rules (neighbors, apartments)."
+        ]
+      },
+      "ending": "gu"
+    },
+    {
+      "kanji": "繋ぐ",
+      "reading": "つなぐ",
+      "meaning": "to connect; to link",
+      "example": {
+        "ja": "パソコンをWi-Fiに繋ぐ。",
+        "en": "I connect my computer to Wi-Fi.",
+        "notes": [
+          "Very common modern usage with devices and networks.",
+          "Often takes に for the target (Wi-Fiに, ネットに)."
+        ]
+      },
+      "ending": "gu"
+    },
+    {
+      "kanji": "注ぐ",
+      "reading": "そそぐ",
+      "meaning": "to pour; to devote (effort)",
+      "example": {
+        "ja": "コップに水を注ぐ。",
+        "en": "I pour water into a cup.",
+        "notes": [
+          "Most literal/common use is pouring liquids into containers.",
+          "Pairs naturally with に for the destination (コップに)."
+        ]
+      },
+      "ending": "gu"
+    },
+    {
+      "kanji": "研ぐ",
+      "reading": "とぐ",
+      "meaning": "to sharpen; to polish",
+      "example": {
+        "ja": "料理の前に包丁を研ぐ。",
+        "en": "I sharpen the kitchen knife before cooking.",
+        "notes": [
+          "Most common object is 包丁; very standard everyday use.",
+          "Implies maintaining sharpness, not just cleaning."
+        ]
+      },
+      "ending": "gu"
+    },
+    {
+      "kanji": "濯ぐ",
+      "reading": "すすぐ",
+      "meaning": "to rinse",
+      "example": {
+        "ja": "歯を磨いたあとで口を濯ぐ。",
+        "en": "After brushing my teeth, I rinse my mouth.",
+        "notes": [
+          "Very common use: 口を濯ぐ (rinse mouth).",
+          "Often appears in daily routine descriptions."
+        ]
+      },
+      "ending": "gu"
+    },
+    {
+      "kanji": "嗅ぐ",
+      "reading": "かぐ",
+      "meaning": "to smell; to sniff",
+      "ending": "gu"
+    },
+    {
+      "kanji": "継ぐ",
+      "reading": "つぐ",
+      "meaning": "to succeed; to inherit",
+      "ending": "gu"
+    },
+    {
+      "kanji": "塞ぐ",
+      "reading": "ふさぐ",
+      "meaning": "to block; to close up",
+      "ending": "gu"
+    },
+    {
+      "kanji": "担ぐ",
+      "reading": "かつぐ",
+      "meaning": "to shoulder; to carry",
+      "ending": "gu"
+    },
+    {
+      "kanji": "剥ぐ",
+      "reading": "はぐ",
+      "meaning": "to peel off",
+      "ending": "gu"
+    },
+    {
+      "kanji": "仰ぐ",
+      "reading": "あおぐ",
+      "meaning": "to look up (to); to revere",
+      "ending": "gu"
+    },
+    {
+      "kanji": "漕ぐ",
+      "reading": "こぐ",
+      "meaning": "to row; to pedal",
+      "ending": "gu"
+    },
+    {
+      "kanji": "貢ぐ",
+      "reading": "みつぐ",
+      "meaning": "to contribute; to support",
+      "ending": "gu"
+    },
+    {
+      "kanji": "紡ぐ",
+      "reading": "つむぐ",
+      "meaning": "to spin (thread); to weave; to build (a story)",
+      "ending": "gu"
+    },
+    {
+      "kanji": "削ぐ",
+      "reading": "そぐ",
+      "meaning": "to shave off; to pare down",
+      "ending": "gu"
+    },
+    {
+      "kanji": "聞く",
+      "reading": "きく",
+      "meaning": "to hear; to ask",
+      "ending": "ku"
+    },
+    {
+      "kanji": "書く",
+      "reading": "かく",
+      "meaning": "to write",
+      "ending": "ku"
+    },
+    {
+      "kanji": "空く",
+      "reading": "あく",
+      "meaning": "to become empty; to be vacant",
+      "ending": "ku"
+    },
+    {
+      "kanji": "開く",
+      "reading": "あく",
+      "meaning": "to open; to become open (intransitive)",
+      "ending": "ku"
+    },
+    {
+      "kanji": "行く",
+      "reading": "いく",
+      "meaning": "to go",
+      "ending": "ku"
+    },
+    {
+      "kanji": "書く",
+      "reading": "かく",
+      "meaning": "to write",
+      "ending": "ku"
+    },
+    {
+      "kanji": "聞く",
+      "reading": "きく",
+      "meaning": "to listen; to ask",
+      "ending": "ku"
+    },
+    {
+      "kanji": "歩く",
+      "reading": "あるく",
+      "meaning": "to walk",
+      "ending": "ku"
+    },
+    {
+      "kanji": "開く",
+      "reading": "あく",
+      "meaning": "to open (intransitive)",
+      "ending": "ku"
+    },
+    {
+      "kanji": "開く",
+      "reading": "ひらく",
+      "meaning": "to open; to hold (an event)",
+      "ending": "ku"
+    },
+    {
+      "kanji": "置く",
+      "reading": "おく",
+      "meaning": "to put; to place",
+      "ending": "ku"
+    },
+    {
+      "kanji": "着く",
+      "reading": "つく",
+      "meaning": "to arrive",
+      "ending": "ku"
+    },
+    {
+      "kanji": "付く",
+      "reading": "つく",
+      "meaning": "to be attached; to stick",
+      "ending": "ku"
+    },
+    {
+      "kanji": "続く",
+      "reading": "つづく",
+      "meaning": "to continue",
+      "ending": "ku"
+    },
+    {
+      "kanji": "働く",
+      "reading": "はたらく",
+      "meaning": "to work",
+      "ending": "ku"
+    },
+    {
+      "kanji": "届く",
+      "reading": "とどく",
+      "meaning": "to reach; to be delivered",
+      "ending": "ku"
+    },
+    {
+      "kanji": "泣く",
+      "reading": "なく",
+      "meaning": "to cry",
+      "ending": "ku"
+    },
+    {
+      "kanji": "焼く",
+      "reading": "やく",
+      "meaning": "to bake; to grill; to burn",
+      "ending": "ku"
+    },
+    {
+      "kanji": "叩く",
+      "reading": "たたく",
+      "meaning": "to hit; to strike",
+      "ending": "ku"
+    },
+    {
+      "kanji": "解く",
+      "reading": "とく",
+      "meaning": "to solve; to untie",
+      "ending": "ku"
+    },
+    {
+      "kanji": "効く",
+      "reading": "きく",
+      "meaning": "to be effective",
+      "ending": "ku"
+    },
+    {
+      "kanji": "磨く",
+      "reading": "みがく",
+      "meaning": "to polish; to brush",
+      "ending": "ku"
+    },
+    {
+      "kanji": "咲く",
+      "reading": "さく",
+      "meaning": "to bloom",
+      "ending": "ku"
+    },
+    {
+      "kanji": "抱く",
+      "reading": "だく",
+      "meaning": "to hug; to hold",
+      "ending": "ku"
+    },
+    {
+      "kanji": "飲む",
+      "reading": "のむ",
+      "meaning": "to drink",
+      "ending": "mu"
+    },
+    {
+      "kanji": "休む",
+      "reading": "やすむ",
+      "meaning": "to rest; to be absent",
+      "ending": "mu"
+    },
+    {
+      "kanji": "生む",
+      "reading": "うむ",
+      "meaning": "to give birth; to produce",
+      "ending": "mu"
+    },
+    {
+      "kanji": "飲む",
+      "reading": "のむ",
+      "meaning": "to drink",
+      "ending": "mu"
+    },
+    {
+      "kanji": "読む",
+      "reading": "よむ",
+      "meaning": "to read",
+      "ending": "mu"
+    },
+    {
+      "kanji": "休む",
+      "reading": "やすむ",
+      "meaning": "to rest; to be absent",
+      "ending": "mu"
+    },
+    {
+      "kanji": "住む",
+      "reading": "すむ",
+      "meaning": "to live; to reside",
+      "ending": "mu"
+    },
+    {
+      "kanji": "頼む",
+      "reading": "たのむ",
+      "meaning": "to request; to ask",
+      "ending": "mu"
+    },
+    {
+      "kanji": "包む",
+      "reading": "つつむ",
+      "meaning": "to wrap; to cover",
+      "ending": "mu"
+    },
+    {
+      "kanji": "掴む",
+      "reading": "つかむ",
+      "meaning": "to grasp; to seize",
+      "ending": "mu"
+    },
+    {
+      "kanji": "組む",
+      "reading": "くむ",
+      "meaning": "to assemble; to pair; to cross arms",
+      "ending": "mu"
+    },
+    {
+      "kanji": "踏む",
+      "reading": "ふむ",
+      "meaning": "to step on",
+      "ending": "mu"
+    },
+    {
+      "kanji": "悩む",
+      "reading": "なやむ",
+      "meaning": "to worry; to be troubled",
+      "ending": "mu"
+    },
+    {
+      "kanji": "悔やむ",
+      "reading": "くやむ",
+      "meaning": "to regret",
+      "ending": "mu"
+    },
+    {
+      "kanji": "悼む",
+      "reading": "いたむ",
+      "meaning": "to mourn",
+      "ending": "mu"
+    },
+    {
+      "kanji": "噤む",
+      "reading": "つぐむ",
+      "meaning": "to shut one’s mouth",
+      "ending": "mu"
+    },
+    {
+      "kanji": "悔む",
+      "reading": "くやむ",
+      "meaning": "to repent; to regret",
+      "ending": "mu"
+    },
+    {
+      "kanji": "望む",
+      "reading": "のぞむ",
+      "meaning": "to look out over; to face",
+      "ending": "mu"
+    },
+    {
+      "kanji": "富む",
+      "reading": "とむ",
+      "meaning": "to be rich in; to abound in",
+      "ending": "mu"
+    },
+    {
+      "kanji": "歪む",
+      "reading": "ゆがむ",
+      "meaning": "to warp; to become distorted",
+      "ending": "mu"
+    },
+    {
+      "kanji": "滲む",
+      "reading": "にじむ",
+      "meaning": "to blur; to smudge; to ooze",
+      "ending": "mu"
+    },
+    {
+      "kanji": "縮む",
+      "reading": "ちぢむ",
+      "meaning": "to shrink",
+      "ending": "mu"
+    },
+    {
+      "kanji": "悄む",
+      "reading": "しょげむ",
+      "meaning": "to be dejected; to lose heart",
+      "ending": "mu"
+    },
+    {
+      "kanji": "止む",
+      "reading": "やむ",
+      "meaning": "to stop (rain, sound)",
+      "ending": "mu"
+    },
+    {
+      "kanji": "望む",
+      "reading": "のぞむ",
+      "meaning": "to hope; to desire; to face",
+      "ending": "mu"
+    },
+    {
+      "kanji": "積む",
+      "reading": "つむ",
+      "meaning": "to pile up; to load",
+      "ending": "mu"
+    },
+    {
+      "kanji": "編む",
+      "reading": "あむ",
+      "meaning": "to knit; to braid",
+      "ending": "mu"
+    },
+    {
+      "kanji": "痛む",
+      "reading": "いたむ",
+      "meaning": "to hurt; to feel pain",
+      "ending": "mu"
+    },
+    {
+      "kanji": "恨む",
+      "reading": "うらむ",
+      "meaning": "to resent; to hold a grudge",
+      "ending": "mu"
+    },
+    {
+      "kanji": "睨む",
+      "reading": "にらむ",
+      "meaning": "to glare at",
+      "ending": "mu"
+    },
+    {
+      "kanji": "慎む",
+      "reading": "つつしむ",
+      "meaning": "to be careful; to refrain",
+      "ending": "mu"
+    },
+    {
+      "kanji": "傷む",
+      "reading": "いたむ",
+      "meaning": "to spoil; to go bad (food)",
+      "ending": "mu"
+    },
+    {
+      "kanji": "営む",
+      "reading": "いとなむ",
+      "meaning": "to run (a business); to operate",
+      "ending": "mu"
     }
   ]
 }
