@@ -13,205 +13,244 @@
       "kanji": "ゴー",
       "reading": "ゴー",
       "meaning": "go (name-root; command/forward)",
-      "origin": "English"
+      "origin": "English",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "ズバ",
       "reading": "ズバ",
       "meaning": "zuba (sound; name-root)",
-      "origin": "Japanese"
+      "origin": "Japanese",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "ドン",
       "reading": "ドン",
       "meaning": "don (sound ‘boom’; name-root)",
-      "origin": "Japanese"
+      "origin": "Japanese",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "ニョロ",
       "reading": "ニョロ",
       "meaning": "nyoro (wriggle/squirm sound; name-root)",
-      "origin": "Japanese"
+      "origin": "Japanese",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ピッ",
       "reading": "ピッ",
       "meaning": "pi! (beep/sound; name-root)",
-      "origin": "Japanese"
+      "origin": "Japanese",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "ブー",
       "reading": "ブー",
       "meaning": "boo; ‘booing’/buzz sound (name-root)",
-      "origin": "English-derived"
+      "origin": "English-derived",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "プク",
       "reading": "プク",
       "meaning": "puku (puff/pop sound; name-root)",
-      "origin": "Japanese"
+      "origin": "Japanese",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "プス",
       "reading": "プス",
       "meaning": "pusu (stab/prick sound; name-root)",
-      "origin": "Japanese"
+      "origin": "Japanese",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "ワン",
       "reading": "ワン",
       "meaning": "wan (dog bark ‘woof’; name-root)",
-      "origin": "Japanese"
+      "origin": "Japanese",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "ピカ",
       "reading": "ピカ",
-      "meaning": "sparkle; flash of light"
+      "meaning": "sparkle; flash of light",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "チュウ",
       "reading": "チュウ",
-      "meaning": "squeak; kissing sound"
+      "meaning": "squeak; kissing sound",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "ドキドキ",
       "reading": "ドキドキ",
-      "meaning": "heartbeat; nervous excitement"
+      "meaning": "heartbeat; nervous excitement",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ワクワク",
       "reading": "ワクワク",
-      "meaning": "excited anticipation"
+      "meaning": "excited anticipation",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "キラキラ",
       "reading": "キラキラ",
-      "meaning": "glittering; sparkling"
+      "meaning": "glittering; sparkling",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ペコペコ",
       "reading": "ペコペコ",
-      "meaning": "very hungry; bowing repeatedly"
+      "meaning": "very hungry; bowing repeatedly",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ガラガラ",
       "reading": "ガラガラ",
-      "meaning": "rattling sound; empty"
+      "meaning": "rattling sound; empty",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "バタバタ",
       "reading": "バタバタ",
-      "meaning": "flapping; hectic rushing around"
+      "meaning": "flapping; hectic rushing around",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "イライラ",
       "reading": "イライラ",
-      "meaning": "irritated; annoyed feeling"
+      "meaning": "irritated; annoyed feeling",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ニコニコ",
       "reading": "ニコニコ",
-      "meaning": "smiling cheerfully"
+      "meaning": "smiling cheerfully",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ワンワン",
       "reading": "ワンワン",
-      "meaning": "dog barking sound"
+      "meaning": "dog barking sound",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ニャー",
       "reading": "ニャー",
-      "meaning": "meow; cat sound"
+      "meaning": "meow; cat sound",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ゴロゴロ",
       "reading": "ゴロゴロ",
-      "meaning": "rumbling; lounging around"
+      "meaning": "rumbling; lounging around",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "コツコツ",
       "reading": "コツコツ",
-      "meaning": "tapping; steadily working"
+      "meaning": "tapping; steadily working",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ボロボロ",
       "reading": "ボロボロ",
-      "meaning": "tattered; falling apart"
+      "meaning": "tattered; falling apart",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ピンポン",
       "reading": "ピンポン",
-      "meaning": "ding-dong; doorbell sound"
+      "meaning": "ding-dong; doorbell sound",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "ジャーン",
       "reading": "ジャーン",
-      "meaning": "ta-da! dramatic reveal sound"
+      "meaning": "ta-da! dramatic reveal sound",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "ドーン",
       "reading": "ドーン",
-      "meaning": "boom; big impact sound"
+      "meaning": "boom; big impact sound",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "バーン",
       "reading": "バーン",
-      "meaning": "bang; explosive sound"
+      "meaning": "bang; explosive sound",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "ズキズキ",
       "reading": "ズキズキ",
-      "meaning": "throbbing pain"
+      "meaning": "throbbing pain",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "シーン",
       "reading": "シーン",
-      "meaning": "complete silence"
+      "meaning": "complete silence",
+      "lexicalClass": "sfx"
     },
     {
       "kanji": "ベタベタ",
       "reading": "ベタベタ",
-      "meaning": "sticky; clingy"
+      "meaning": "sticky; clingy",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "フワフワ",
       "reading": "フワフワ",
-      "meaning": "fluffy; light; airy"
+      "meaning": "fluffy; light; airy",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "グチャグチャ",
       "reading": "グチャグチャ",
-      "meaning": "messy; mushy"
+      "meaning": "messy; mushy",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "サラサラ",
       "reading": "サラサラ",
-      "meaning": "smooth; silky; flowing"
+      "meaning": "smooth; silky; flowing",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ビショビショ",
       "reading": "ビショビショ",
-      "meaning": "soaking wet"
+      "meaning": "soaking wet",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "カチカチ",
       "reading": "カチカチ",
-      "meaning": "clicking; stiff/hard"
+      "meaning": "clicking; stiff/hard",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ペラペラ",
       "reading": "ペラペラ",
-      "meaning": "fluent; thin/flimsy"
+      "meaning": "fluent; thin/flimsy",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "ウロウロ",
       "reading": "ウロウロ",
-      "meaning": "wandering aimlessly"
+      "meaning": "wandering aimlessly",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "チラチラ",
       "reading": "チラチラ",
-      "meaning": "glancing repeatedly; flickering"
+      "meaning": "glancing repeatedly; flickering",
+      "lexicalClass": "onomatopoeia"
     }
   ]
 }

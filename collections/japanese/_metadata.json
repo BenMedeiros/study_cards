@@ -5,21 +5,21 @@
       "key": "kanji",
       "label": "Kanji",
       "jp_label": "漢字",
-      "description": "The kanji character(s) representing the word or concept.",
+      "description": "The written form of the entry as it typically appears (kanji, kana, or mixed). This field is the DISPLAY spelling, not necessarily 'kanji-only'. Examples: 悪魔, ありがとう, ドキドキ, 毒ガス.",
       "type": "string"
     },
     {
       "key": "reading",
       "label": "Reading",
       "jp_label": "読み",
-      "description": "The pronunciation of the kanji in hiragana or katakana.",
+      "description": "The pronunciation, written in kana (usually hiragana; katakana ok for katakana words). Examples: あくま, ありがとう, どきどき / ドキドキ.",
       "type": "string"
     },
     {
       "key": "meaning",
       "label": "Meaning",
       "jp_label": "意味",
-      "description": "The meaning or translation of the word or kanji.",
+      "description": "English gloss/translation. Keep it short; add nuance in example notes when needed.",
       "type": "string"
     },
     {
@@ -28,7 +28,7 @@
       "jp_label": "例文",
       "type": "object",
       "description": "Optional example sentence(s). Expected shape: { ja: string, en: string, notes: [string] }",
-      "notes": "Use `ja` for the Japanese sentence, `en` for an English gloss/translation, and `notes` for short usage notes or tips."
+      "notes": "Use `ja` for Japanese, `en` for English, and `notes` for usage patterns (e.g., 'often used with と', 'often used with する', register, restrictions)."
     },
     {
       "key": "orthography",
@@ -47,26 +47,41 @@
       "label": "Type",
       "jp_label": "種類",
       "type": "enum",
-      "description": "How to choose: use 'standalone-noun' when the kanji can appear as a standalone word without okurigana. Use 'verb-stem' for kanji forming part of a verb. Use 'compound-morpheme' for bound/on-yomi uses in compounds. Use 'sentence' or 'phrase' for multi-word units or full clauses. Other values cover adjectives, particles, counters, etc.",
+      "description": "Grammatical classification: how it behaves in sentences. Use `lexicalClass` to capture families like onomatopoeia or greetings that can cross POS. Rules of thumb: if it is one lexical word, pick noun/verb/adj/adverb/etc. If it is multi-word or a fixed chunk, pick expression/phrase/sentence types.",
       "values": {
-        "noun": "A standalone noun not requiring okurigana.",
-        "standalone-noun": "Kanji that can appear as a word by itself without okurigana.",
-        "compound-morpheme": "Kanji that only appears in compounds (bound or on-yomi usage).",
-        "verb-stem": "Kanji that appears as part of a verb stem requiring okurigana.",
-        "numeral": "Numbers / counters used in counting.",
-        "ichidan-verb": "一段動詞 (vowel-stem verb).",
-        "godan-verb": "五段動詞 (consonant-stem verb).",
-        "irregular-verb": "Irregular verbs (する, 来る, etc.).",
-        "i-adjective": "い形容詞.",
-        "na-adjective": "な形容詞.",
-        "particle": "Function word / particle.",
-        "expression": "Fixed multi-word phrase (idiomatic or conventional).",
-        "descriptive-phrase": "Descriptive phrase, often multi-word.",
-        "sentence": "A full grammatical sentence, usually contains subject/object/verb.",
-        "phrase-sentence": "A phrase that is a complete clause or predicate-object unit.",
-        "counter": "Japanese counter word.",
-        "adverb": "Adverb (副詞).",
-        "conjunction": "Conjunction / connective."
+        "noun": "Standalone noun (名詞). Can take particles like が/を/に. Example: 本, 勉強.",
+        "standalone-noun": "A single kanji that can stand alone as a noun WITHOUT okurigana (rare; only when truly used alone).",
+        "compound-morpheme": "Bound morpheme used mainly inside compounds; not typically a standalone word (e.g., 〜学, 〜性).",
+        "verb-stem": "Kanji/root that appears as part of a verb requiring okurigana; not a full dictionary-form verb by itself (e.g., 受け in 受ける).",
+        "numeral": "Number words / numeric forms (一, 二, ３, etc.). Use `counter` for counter words like 〜枚, 〜人.",
+        "ichidan-verb": "一段動詞 dictionary form (e.g., 食べる, 見る).",
+        "godan-verb": "五段動詞 dictionary form (e.g., 書く, 泳ぐ).",
+        "irregular-verb": "Irregular verbs (する, 来る) and irregular verb entries.",
+        "i-adjective": "い-adjective (い形容詞) (e.g., 高い, 忙しい).",
+        "na-adjective": "な-adjective (な形容詞) (e.g., 便利, きれい).",
+        "particle": "Particle / function word (e.g., は, が, を, に, で, から, まで).",
+        "adverb": "Adverb (副詞) or adverb-like word used to modify verbs/clauses (e.g., すぐ, ゆっくり). Many mimetics belong here (ドキドキ(と)する, キラキラ(と)光る) — mark those with lexicalClass='onomatopoeia'.",
+        "conjunction": "Connective/conjunction (接続詞) linking clauses/sentences (e.g., でも, そして).",
+        "counter": "Counter word used with numerals (e.g., 〜人, 〜枚, 〜つ).",
+        "expression": "Fixed conventional phrase (often multi-word) that is used as a unit (e.g., おつかれさま, しょうがない). Not a full sentence unless it clearly contains its own predicate.",
+        "descriptive-phrase": "Descriptive multi-word phrase used as a modifier or chunk (often not fully idiomatic).",
+        "sentence": "Full sentence with its own predicate (usually ends with a verb/です/ます etc.).",
+        "phrase-sentence": "Clause-like chunk that forms a complete predicate unit (shorter than a full sentence record, but still predicate-bearing)."
+      }
+    },
+    {
+      "key": "lexicalClass",
+      "label": "Lexical Class",
+      "jp_label": "語彙クラス",
+      "type": "enum",
+      "description": "Lexical family / usage domain (word 'kind'), independent of grammar `type`. Use this to capture important categories that cross parts of speech: onomatopoeia/mimetics, manga SFX, greetings, interjections, and set phrases. Defaults to 'regular' when none apply.",
+      "values": {
+        "regular": "Normal lexical item with no special family tag.",
+        "onomatopoeia": "Sound-symbolic mimetic (擬音語・擬態語): often repeated patterns and used with と or する (e.g., ドキドキ, キラキラ, ワクワク, ベタベタ). Usually type='adverb' (or sometimes noun/na-adjective in specific uses).",
+        "sfx": "Sound-effect token (especially manga/quotes): often standalone with ！/… and not a normal dictionary word (e.g., ドン！, ゴー！, ピッ).",
+        "set-phrase": "Fixed conventional chunk (定型表現) learned as a unit; may not map cleanly to a single POS (e.g., しょうがない).",
+        "greeting": "Greeting/aisatsu (挨拶): used in social exchange (e.g., こんにちは, おつかれさま).",
+        "interjection": "Spontaneous utterance (感動詞): あっ, えっ, へえ, ええと."
       }
     }
   ],
@@ -79,12 +94,12 @@
           "label": "Verb Type",
           "jp_label": "動詞タイプ",
           "type": "enum",
-          "description": "Classifies the structural type of lexical verbs only (single verbs, not sentences). Use only when `type` is a verb class.",
+          "description": "Structural type for lexical verbs only (single dictionary-form verbs). Do NOT use for sentence-like phrases. For mimetic + する (ドキドキする), prefer type='adverb' + lexicalClass='onomatopoeia' and note 'often used with する' in example notes.",
           "values": {
-            "simple": "A standalone lexical verb (e.g., 飲む, 生きる).",
+            "simple": "Single lexical verb (e.g., 飲む, 生きる).",
             "compound": "Compound verb formed from two verbs or stem+verb.",
-            "suru": "Suru-verb (サ変動詞).",
-            "expression": "Sentence-like phrase, not a lexical verb (rare usage; usually better classified as type='sentence')."
+            "suru": "Suru-verb (サ変動詞) lexicalized as a verb entry (e.g., 勉強する as a verb entry, if you store it that way).",
+            "expression": "Sentence-like phrase, not a lexical verb (rare; usually better classified as type='sentence' or 'expression')."
           }
         },
         {
@@ -92,52 +107,29 @@
           "label": "Compound Type",
           "jp_label": "複合動詞タイプ",
           "type": "enum",
-          "description": "Specifies the linguistic nature of a compound verb. Only applicable if `verbType` is 'compound'.",
+          "description": "Only if `verbType` is 'compound': describes how predictable/conventional the compound meaning is.",
           "values": {
-            "compositional": "Derived by rule; meaning fully predictable from components.",
-            "lexical": "Stored in the lexicon; meaning not derivable by rule.",
-            "aspectual": "Encodes phase, completion, or continuation of the action.",
-            "grammaticalized": "Second verb loses original lexical meaning, functions as a grammatical/auxiliary operator.",
-            "hybrid": "Partially productive but conventionalized; semi-lexical."
+            "compositional": "Derived by rule; meaning predictable from components.",
+            "lexical": "Conventionalized/stored; meaning not fully predictable.",
+            "aspectual": "Encodes phase/completion/continuation.",
+            "grammaticalized": "Second verb is auxiliary-like; original lexical meaning weakened.",
+            "hybrid": "Partially productive but conventionalized."
           }
         }
       ]
     },
     {
-      "when": { "field": "type", "in": ["godan-verb"] },
-      "fields": [
-        {
-          "key": "ending",
-          "label": "Ending",
-          "jp_label": "語尾",
-          "type": "enum",
-          "description": "Dictionary-form ending class for 五段動詞 (e.g., 泳ぐ → gu).",
-          "values": {
-            "u": "〜う",
-            "ku": "〜く",
-            "gu": "〜ぐ",
-            "su": "〜す",
-            "tsu": "〜つ",
-            "nu": "〜ぬ",
-            "bu": "〜ぶ",
-            "mu": "〜む",
-            "ru": "〜る"
-          }
-        }
-      ]
-    },
-    {
-      "when": { "field": "orthography", "in": ["katakana"] },
+      "when": { "field": "orthography", "in": ["kana"] },
       "fields": [
         {
           "key": "origin",
           "label": "Origin",
           "jp_label": "語源",
           "type": "enum",
-          "description": "Etymological source of the word. Used for katakana entries where origin/language of borrowing is relevant.",
+          "description": "Etymological source. Use for loanwords and katakana items where origin matters. For native mimetics written in katakana, use origin='Japanese'.",
           "values": {
             "English": "Direct loan from English with mostly equivalent meaning.",
-            "English-derived": "Loan from English with semantic narrowing or shift in Japanese.",
+            "English-derived": "Loan from English with semantic narrowing/shift in Japanese.",
             "Wasei-eigo": "Japanese coinage built from English elements.",
             "Portuguese": "Loanword originating from Portuguese.",
             "Dutch": "Loanword originating from Dutch.",

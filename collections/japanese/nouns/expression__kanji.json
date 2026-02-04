@@ -19,7 +19,8 @@
         "notes": [
           "UI label/state."
         ]
-      }
+      },
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第一",
@@ -32,7 +33,8 @@
           "第 + numeral makes an ordinal (first/second/…).",
           "Common with 章・課・回・理由・条件, etc."
         ]
-      }
+      },
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第二",
@@ -44,7 +46,8 @@
         "notes": [
           "Often used in lists, plans, and formal structure."
         ]
-      }
+      },
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第三",
@@ -56,7 +59,8 @@
         "notes": [
           "第三者 (だいさんしゃ) is a common fixed term meaning 'third party'."
         ]
-      }
+      },
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第四",
@@ -68,7 +72,8 @@
         "notes": [
           "Reading is typically だいよん."
         ]
-      }
+      },
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第五",
@@ -80,7 +85,8 @@
         "notes": [
           "Common with 章/課/回/問, etc."
         ]
-      }
+      },
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第十",
@@ -92,7 +98,8 @@
         "notes": [
           "With 回, casual speech sometimes contracts (じゅっかい)."
         ]
-      }
+      },
+      "lexicalClass": "regular"
     }
   ]
 }

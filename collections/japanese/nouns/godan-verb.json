@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "Japanese godan-verb",
-    "description": "Grouped entries for type='godan-verb' — total 54.",
-    "version": 2
+    "description": "Grouped entries for type='godan-verb' — total 61.",
+    "version": 3
   },
   "defaults": {
     "type": "godan-verb"
@@ -366,6 +366,48 @@
       "meaning": "to reread; to read again",
       "verbType": "compound",
       "compoundType": "lexical"
+    },
+    {
+      "kanji": "遊ぶ",
+      "reading": "あそぶ",
+      "meaning": "to play; to hang out; to have fun",
+      "ending": "bu"
+    },
+    {
+      "kanji": "飛ぶ",
+      "reading": "とぶ",
+      "meaning": "to fly; to jump; to go fast (e.g., time passes quickly)",
+      "ending": "bu"
+    },
+    {
+      "kanji": "呼ぶ",
+      "reading": "よぶ",
+      "meaning": "to call; to invite; to name",
+      "ending": "bu"
+    },
+    {
+      "kanji": "運ぶ",
+      "reading": "はこぶ",
+      "meaning": "to carry; to transport; to move (something)",
+      "ending": "bu"
+    },
+    {
+      "kanji": "選ぶ",
+      "reading": "えらぶ",
+      "meaning": "to choose; to select",
+      "ending": "bu"
+    },
+    {
+      "kanji": "喜ぶ",
+      "reading": "よろこぶ",
+      "meaning": "to be happy; to喜ぶ; to be delighted",
+      "ending": "bu"
+    },
+    {
+      "kanji": "学ぶ",
+      "reading": "まなぶ",
+      "meaning": "to learn; to study",
+      "ending": "bu"
     }
   ]
 }
