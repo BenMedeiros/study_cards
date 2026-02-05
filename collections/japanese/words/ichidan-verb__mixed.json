@@ -2,10 +2,11 @@
   "metadata": {
     "name": "Japanese ichidan-verb (mixed)",
     "description": "Mixed orthography group for type='ichidan-verb' — total 29 (kana: 2, both: 7, none: 20).",
-    "version": 2
+    "version": 3
   },
   "defaults": {
-    "type": "ichidan-verb"
+    "type": "ichidan-verb",
+    "verbType": "compound"
   },
   "entries": [
     {
@@ -75,140 +76,120 @@
       "kanji": "飲み比べる",
       "reading": "のみくらべる",
       "meaning": "to compare drinks; taste test",
-      "verbType": "compound",
       "compoundType": "compositional"
     },
     {
       "kanji": "買い替える",
       "reading": "かいかえる",
       "meaning": "to replace by buying a new one",
-      "verbType": "compound",
       "compoundType": "compositional"
     },
     {
       "kanji": "書き換える",
       "reading": "かきかえる",
       "meaning": "to rewrite; to reword",
-      "verbType": "compound",
       "compoundType": "compositional"
     },
     {
       "kanji": "引き受ける",
       "reading": "ひきうける",
       "meaning": "to take on; to undertake",
-      "verbType": "compound",
       "compoundType": "compositional"
     },
     {
       "kanji": "見届ける",
       "reading": "みとどける",
       "meaning": "to see something through; to witness to completion",
-      "verbType": "compound",
       "compoundType": "compositional"
     },
     {
       "kanji": "取り替える",
       "reading": "とりかえる",
       "meaning": "to exchange; to replace",
-      "verbType": "compound",
       "compoundType": "compositional"
     },
     {
       "kanji": "受け止める",
       "reading": "うけとめる",
       "meaning": "to catch; to receive (emotion/information)",
-      "verbType": "compound",
       "compoundType": "compositional"
     },
     {
       "kanji": "取り入れる",
       "reading": "とりいれる",
       "meaning": "to adopt; to incorporate",
-      "verbType": "compound",
       "compoundType": "compositional"
     },
     {
       "kanji": "書き直せる",
       "reading": "かきなおせる",
       "meaning": "can rewrite (useful example form)",
-      "verbType": "compound",
       "compoundType": "compositional"
     },
     {
       "kanji": "試し見る",
       "reading": "ためしみる",
       "meaning": "to try looking/try seeing (rare example)",
-      "verbType": "compound",
       "compoundType": "compositional"
     },
     {
       "kanji": "話しかける",
       "reading": "はなしかける",
       "meaning": "to address; to speak to someone",
-      "verbType": "compound",
       "compoundType": "grammaticalized"
     },
     {
       "kanji": "持ち上げる",
       "reading": "もちあげる",
       "meaning": "to lift up; to praise (colloquial)",
-      "verbType": "compound",
       "compoundType": "grammaticalized"
     },
     {
       "kanji": "見合わせる",
       "reading": "みあわせる",
       "meaning": "to postpone; to refrain after consideration",
-      "verbType": "compound",
       "compoundType": "grammaticalized"
     },
     {
       "kanji": "申し合わせる",
       "reading": "もうしあわせる",
       "meaning": "to arrange/agree (by prior arrangement)",
-      "verbType": "compound",
       "compoundType": "grammaticalized"
     },
     {
       "kanji": "差し上げる",
       "reading": "さしあげる",
       "meaning": "humble form of 'to give' (polite compound)",
-      "verbType": "compound",
       "compoundType": "grammaticalized"
     },
     {
       "kanji": "引き上げる",
       "reading": "ひきあげる",
       "meaning": "to pull up; to raise; to withdraw",
-      "verbType": "compound",
       "compoundType": "grammaticalized"
     },
     {
       "kanji": "受け渡せる",
       "reading": "うけわたせる",
       "meaning": "can hand over (example grammaticalized usage)",
-      "verbType": "compound",
       "compoundType": "grammaticalized"
     },
     {
       "kanji": "連れ戻せる",
       "reading": "つれもどせる",
       "meaning": "can bring back (example form)",
-      "verbType": "compound",
       "compoundType": "grammaticalized"
     },
     {
       "kanji": "申し上げる",
       "reading": "もうしあげる",
       "meaning": "humble/polite say; to say (humble)",
-      "verbType": "compound",
       "compoundType": "grammaticalized"
     },
     {
       "kanji": "見つけ合わせる",
       "reading": "みつけあわせる",
       "meaning": "to cross-check by finding/matching (rare example)",
-      "verbType": "compound",
       "compoundType": "grammaticalized"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "name": "Japanese compound-morpheme (mixed)",
-    "description": "Mixed orthography group for type='compound-morpheme' — total 16 (katakana: 1, kanji: 4, none: 11).",
+    "name": "Japanese compound-morpheme",
+    "description": "Grouped entries for type='compound-morpheme' — total 16.",
     "version": 1
   },
   "defaults": {

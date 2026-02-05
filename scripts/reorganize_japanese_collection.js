@@ -23,6 +23,35 @@ const DEFAULT_CONFIG = {
 
 const CONFIG = DEFAULT_CONFIG;
 
+/*
+Overview - reorganize_japanese_collection.js
+
+This script reads JSON files from collections/japanese/words, groups entries
+by the ordered keys in `CONFIG.grouping.groupByKeys` (default ['type','orthography']),
+and writes consolidated files back into the same directory.
+
+Key behaviors:
+- Per-file defaults: when reading source files, per-file `defaults` are collected
+  and merged into group-level defaults. Consistent defaults (same key/value
+  across all sources in a group) are preserved and written to output files.
+- Lifting defaults: primitive fields that appear with the same value across
+  every entry in a source file are promoted into that file's defaults (in-memory)
+  before grouping. For enum fields (discovered from _metadata.json), the most
+  common value will be promoted when it is a strict majority (> floor(n/2)).
+  This reduces redundancy even for "mixed" files.
+- Type-aggregation: if the total number of entries for a first-key group
+  (e.g. a single `type` across all orthographies) is <= `CONFIG.grouping.maxMixedEntries`,
+  the script writes a single type-level file (no `mixed` suffix) and includes
+  any common defaults.
+- Mixed-group defaults: when creating mixed output files, the script computes
+  the intersection of subgroup defaults and promotes those into the mixed file's
+  `defaults` object; matching fields are removed from entries for compactness.
+
+Note: this script performs in-memory lifting and grouping and writes new files
+into the `words` directory. It preserves versioning by comparing normalized
+entries and bumping `metadata.version` when content changes.
+*/
+
 // Helper to produce a deterministic group key and a friendly label
 function makeGroupKeyFromEntry(entry) {
   const parts = CONFIG.grouping.groupByKeys.map(k => {
@@ -40,6 +69,101 @@ function makeGroupLabelFromKey(key) {
 async function readJson(filePath) {
   const txt = await fs.readFile(filePath, 'utf8');
   return JSON.parse(txt);
+}
+
+// Determine where entries live in a data blob and return shape info
+function findEntriesShape(data) {
+  if (Array.isArray(data)) return { container: 'array', entries: data };
+  if (Array.isArray(data.entries)) return { container: 'entries', entries: data.entries };
+  if (data.root && Array.isArray(data.root.entries)) return { container: 'root.entries', entries: data.root.entries };
+  const arrKey = Object.keys(data).find(k => Array.isArray(data[k]));
+  if (arrKey) return { container: arrKey, entries: data[arrKey], arrKey };
+  return { container: null, entries: null };
+}
+
+// Lift primitive fields common to every entry into the defaults section in-memory.
+// For enum keys, lift the most-common value when it is a strict majority.
+// Returns an object { changed: bool, liftedKeys: [{key,value}] }
+function liftCommonFields(data, fp, enumMap) {
+  const shape = findEntriesShape(data);
+  if (!shape.entries) return { changed: false, liftedKeys: [] };
+
+  // determine where defaults live
+  let defaultsObj = null;
+  let defaultsLocation = null; // 'defaults' or 'root.defaults'
+  if (data.defaults) { defaultsObj = data.defaults; defaultsLocation = 'defaults'; }
+  else if (data.root && data.root.defaults) { defaultsObj = data.root.defaults; defaultsLocation = 'root.defaults'; }
+  else { defaultsObj = {}; defaultsLocation = 'defaults'; }
+
+  const candidateKeys = new Map();
+  const totalEntries = shape.entries.length;
+  for (const ent of shape.entries) {
+    for (const k of Object.keys(ent)) {
+      const v = ent[k];
+      if (v === undefined || v === null) continue;
+      if (typeof v === 'object') continue;
+      if (k === 'kanji' || k === 'reading' || k === 'meaning') continue;
+      if (!candidateKeys.has(k)) candidateKeys.set(k, { freq: new Map(), count: 0 });
+      const rec = candidateKeys.get(k);
+      const sv = String(v);
+      rec.freq.set(sv, (rec.freq.get(sv) || 0) + 1);
+      rec.count += 1;
+    }
+  }
+
+  const liftedKeys = [];
+  for (const [k, rec] of candidateKeys.entries()) {
+    const values = Array.from(rec.freq.keys());
+    const count = rec.count;
+    // Non-enum: Only lift when every entry has the key present (count === totalEntries)
+    if (!enumMap || !enumMap.has(k)) {
+      if (count === totalEntries && values.length === 1) {
+        const val = values[0];
+        if (!defaultsObj.hasOwnProperty(k)) {
+          if (defaultsLocation === 'defaults') data.defaults = data.defaults || {}, data.defaults[k] = val;
+          else if (defaultsLocation === 'root.defaults') data.root = data.root || {}, data.root.defaults = data.root.defaults || {}, data.root.defaults[k] = val;
+          else data.defaults = data.defaults || {}, data.defaults[k] = val;
+          for (const ent of shape.entries) { if (ent.hasOwnProperty(k)) delete ent[k]; }
+          liftedKeys.push({ key: k, value: val });
+        }
+      }
+    } else {
+      // Enum key: lift the most common value if it's a strict majority
+      let best = null; let bestCount = 0;
+      for (const [val, c] of rec.freq.entries()) { if (c > bestCount) { best = val; bestCount = c; } }
+      if (best !== null && bestCount > Math.floor(totalEntries / 2)) {
+        if (!defaultsObj.hasOwnProperty(k)) {
+          if (defaultsLocation === 'defaults') data.defaults = data.defaults || {}, data.defaults[k] = best;
+          else if (defaultsLocation === 'root.defaults') data.root = data.root || {}, data.root.defaults = data.root.defaults || {}, data.root.defaults[k] = best;
+          else data.defaults = data.defaults || {}, data.defaults[k] = best;
+          for (const ent of shape.entries) { if (ent.hasOwnProperty(k) && String(ent[k]) === String(best)) delete ent[k]; }
+          liftedKeys.push({ key: k, value: best });
+        }
+      } else {
+        // no majority
+        // leave as-is
+      }
+    }
+  }
+
+  if (liftedKeys.length) {
+    console.log(`[lift] promoted ${liftedKeys.length} field(s) in ${path.relative(process.cwd(), fp)}`);
+    for (const lk of liftedKeys) console.log(`  ${lk.key}='${lk.value}'`);
+    return { changed: true, liftedKeys };
+  }
+  return { changed: false, liftedKeys: [] };
+}
+
+function buildEnumMap(meta) {
+  const enumMap = new Set();
+  if (!meta) return enumMap;
+  for (const f of meta.fields || []) {
+    if (f.type === 'enum' && f.key) enumMap.add(f.key);
+  }
+  for (const c of meta.conditionalFields || []) {
+    for (const f of c.fields || []) if (f.type === 'enum' && f.key) enumMap.add(f.key);
+  }
+  return enumMap;
 }
 
 function applyDefaultsToEntry(entry, defaults) {
@@ -60,6 +184,12 @@ async function reorganize() {
   const outputDir = path.join(wordsDir, CONFIG.behavior.outputDirName || 'output');
   const rel = p => path.relative(process.cwd(), p);
 
+  // load words metadata to determine enum fields that can be lifted partially
+  const metaPath = path.join(wordsDir, '_metadata.json');
+  let meta = null;
+  try { meta = await readJson(metaPath); } catch (e) { /* ignore */ }
+  const enumMap = buildEnumMap(meta || {});
+
   const files = await fs.readdir(wordsDir, { withFileTypes: true });
   const jsonFiles = files
     .filter(f => f.isFile() && f.name.endsWith('.json') && !f.name.startsWith('_'))
@@ -69,6 +199,8 @@ async function reorganize() {
   const allEntries = [];
   const sourceFiles = [];
   const seenKanjiByType = new Map(); // type -> Set(kanji)
+  let liftedTotal = 0;
+  const liftedDetails = [];
 
   for (const fp of jsonFiles) {
     // skip files in output folder (there shouldn't be any here) but keep safe
@@ -78,7 +210,18 @@ async function reorganize() {
     const data = await readJson(fp);
     sourceFiles.push(fp);
 
-    let defaults = data.defaults || data.root && data.root.defaults || {};
+    // Lift common primitive fields into defaults (in-memory) so grouping benefits
+    try {
+      const liftRes = liftCommonFields(data, fp, enumMap);
+      if (liftRes.changed && liftRes.liftedKeys && liftRes.liftedKeys.length) {
+        liftedTotal += liftRes.liftedKeys.length;
+        liftedDetails.push({ file: rel(fp), keys: liftRes.liftedKeys });
+      }
+    } catch (e) {
+      console.warn(`[lift] failed for ${rel(fp)}: ${e && e.message ? e.message : e}`);
+    }
+
+    let defaults = data.defaults || (data.root && data.root.defaults) || {};
 
     // find entries: common shapes
     let entries = [];
@@ -116,22 +259,36 @@ async function reorganize() {
           }
         }
       } catch(e) {}
-      allEntries.push({ entry: copy, source: fp });
+      // attach the source file's defaults (shallow) so grouping can preserve them
+      allEntries.push({ entry: copy, source: fp, defaults: Object.assign({}, defaults) });
     }
   }
 
   // Group by configured keys
   const groups = new Map(); // key -> { key, values: [...], entries: [] }
-  for (const { entry } of allEntries) {
+  for (const { entry, defaults: entryDefaults } of allEntries) {
     const key = makeGroupKeyFromEntry(entry);
     if (!groups.has(key)) {
       const values = CONFIG.grouping.groupByKeys.map(k => {
         const v = entry[k];
         return v === undefined || v === null ? undefined : String(v);
       });
-      groups.set(key, { key, values, entries: [] });
+      groups.set(key, { key, values, entries: [], defaults: entryDefaults ? Object.assign({}, entryDefaults) : {} });
     }
-    groups.get(key).entries.push(Object.assign({}, entry));
+    const g = groups.get(key);
+    // merge defaults: keep only keys that are consistent across sources
+    if (entryDefaults) {
+      for (const dk of Object.keys(g.defaults || {})) {
+        if (!entryDefaults.hasOwnProperty(dk) || String(entryDefaults[dk]) !== String(g.defaults[dk])) {
+          delete g.defaults[dk];
+        }
+      }
+      // add any defaults from this source that g.defaults doesn't have yet
+      for (const dk of Object.keys(entryDefaults)) {
+        if (!g.defaults.hasOwnProperty(dk)) g.defaults[dk] = entryDefaults[dk];
+      }
+    }
+    g.entries.push(Object.assign({}, entry));
   }
 
   // Log summary of groups formed
@@ -157,7 +314,7 @@ async function reorganize() {
     const orthVal = valueMap.orthography === undefined || valueMap.orthography === null ? undefined : valueMap.orthography;
     const typeKey = typeVal === undefined ? '__NO_TYPE__' : String(typeVal);
     if (!groupsByType.has(typeKey)) groupsByType.set(typeKey, []);
-    groupsByType.get(typeKey).push({ type: typeVal, orthography: orthVal, entries: g.entries });
+    groupsByType.get(typeKey).push({ type: typeVal, orthography: orthVal, entries: g.entries, defaults: g.defaults || {} });
   }
 
   const outputs = [];
@@ -171,9 +328,89 @@ async function reorganize() {
     const groupsSorted = orthGroups.map(g => ({
       orthography: g.orthography,
       entries: g.entries,
-      count: g.entries.length
+      count: g.entries.length,
+      defaults: g.defaults || {}
     })).sort((a, b) => a.count - b.count);
 
+    // If the entire first-key group fits under the maxMixedEntries threshold,
+    // write a single file for the first-key (e.g. type) and skip subdividing.
+    const maxMixed = CONFIG.grouping.maxMixedEntries || 40;
+    const totalForType = groupsSorted.reduce((s, g) => s + g.count, 0);
+    if (totalForType > 0 && totalForType <= maxMixed) {
+      // combine all entries and compute intersection of defaults across subgroups
+      const combinedEntries = [];
+      const defaultsList = groupsSorted.map(g => g.defaults || {});
+      const commonDefaults = {};
+      if (defaultsList.length) {
+        const first = defaultsList[0];
+        for (const k of Object.keys(first)) {
+          let ok = true;
+          for (let i = 1; i < defaultsList.length; i++) {
+            if (!defaultsList[i].hasOwnProperty(k) || String(defaultsList[i][k]) !== String(first[k])) { ok = false; break; }
+          }
+          if (ok) commonDefaults[k] = first[k];
+        }
+      }
+      const typeVal = (typeKey === '__NO_TYPE__') ? undefined : typeKey;
+      if (typeVal !== undefined) commonDefaults.type = typeVal;
+
+      for (const g of groupsSorted) {
+        for (const e of g.entries) combinedEntries.push(Object.assign({}, e));
+      }
+
+      const parts = [];
+      if (typeVal !== undefined) parts.push(safeName(typeVal) || 'type');
+      const fileName = (parts.length ? parts.join('__') : 'ungrouped') + '.json';
+      const dest = path.join(wordsDir, fileName);
+
+      const entriesToWrite = combinedEntries.map(e => {
+        const copy = Object.assign({}, e);
+        for (const k of Object.keys(commonDefaults)) {
+          if (copy.hasOwnProperty(k) && String(copy[k]) === String(commonDefaults[k])) delete copy[k];
+        }
+        return copy;
+      });
+
+      const namePart = `${typeVal ?? 'no-type'}`;
+      const totalCount = entriesToWrite.length;
+      const desc = `Grouped entries${typeVal ? " for type='"+typeVal+"'" : ''} — total ${totalCount}.`;
+      const outJson = {
+        metadata: {
+          name: `Japanese ${namePart}`,
+          description: desc,
+          version: 1
+        },
+        defaults: Object.keys(commonDefaults).length ? commonDefaults : undefined,
+        entries: entriesToWrite
+      };
+
+      try {
+        const destTxt = await require('fs').promises.readFile(dest, 'utf8');
+        const destParsed = JSON.parse(destTxt);
+        const destEntries = Array.isArray(destParsed.entries) ? destParsed.entries : [];
+        const outEntries = Array.isArray(outJson.entries) ? outJson.entries : [];
+        const normalize = arr => arr.map(e => JSON.stringify(e)).sort().join('\n');
+        if (normalize(destEntries) !== normalize(outEntries)) {
+          const destVer = destParsed.metadata && typeof destParsed.metadata.version === 'number' ? destParsed.metadata.version : undefined;
+          const newVer = destVer !== undefined ? destVer + 1 : (typeof outJson.metadata.version === 'number' ? outJson.metadata.version + 1 : 2);
+          outJson.metadata.version = newVer;
+          bumped.push({ path: rel(dest), from: destParsed.metadata && destParsed.metadata.version, to: newVer, fromCount: destEntries.length, toCount: outEntries.length });
+        } else {
+          if (destParsed.metadata && typeof destParsed.metadata.version === 'number') {
+            outJson.metadata = outJson.metadata || {};
+            outJson.metadata.version = destParsed.metadata.version;
+          }
+        }
+      } catch (e) {
+        if (!outJson.metadata || typeof outJson.metadata.version !== 'number') outJson.metadata = outJson.metadata || {}, outJson.metadata.version = 1;
+      }
+
+      await require('fs').promises.writeFile(dest, JSON.stringify(outJson, null, 2), 'utf8');
+      outputs.push(dest);
+      wrote.push({ path: rel(dest), count: entriesToWrite.length, tag: 'write[type-aggregate]' });
+      // done handling this typeKey
+      continue;
+    }
     // build at most one mixed group by taking smallest groups until adding next would exceed 40
     const mixed = [];
     let mixedCount = 0;
@@ -206,7 +443,8 @@ async function reorganize() {
       const fileName = (parts.length ? parts.join('__') : 'ungrouped') + '.json';
       const dest = path.join(wordsDir, fileName);
 
-      const defaults = {};
+      // start with any group-level defaults discovered when grouping
+      const defaults = Object.assign({}, g.defaults || {});
       if (typeVal !== undefined) defaults.type = typeVal;
       if (g.orthography !== undefined && g.orthography !== null) defaults.orthography = g.orthography;
 
@@ -227,7 +465,7 @@ async function reorganize() {
           description: desc,
           version: 1
         },
-        defaults: defaults,
+        defaults: Object.keys(defaults).length ? defaults : undefined,
         entries: entriesToWrite
       };
 
@@ -272,7 +510,7 @@ async function reorganize() {
         const fileName = (parts.length ? parts.join('__') : 'ungrouped') + '.json';
         const dest = path.join(wordsDir, fileName);
 
-        const defaults = {};
+        const defaults = Object.assign({}, m.defaults || {});
         if (typeVal !== undefined) defaults.type = typeVal;
         if (m.orthography !== undefined && m.orthography !== null) defaults.orthography = m.orthography;
 
@@ -338,18 +576,30 @@ async function reorganize() {
       const fileName = parts.join('__') + '.json';
       const dest = path.join(wordsDir, fileName);
 
-        // For mixed group: include defaults.type when available (but not orthography).
-        const defaultsForMixed = {};
-        if (typeVal !== undefined) defaultsForMixed.type = typeVal;
-
-        // Remove the type property from entries when it matches the default to keep files compact
-        const mixedEntriesNormalized = mixedEntries.map(e => {
-          const copy = Object.assign({}, e);
-          if (defaultsForMixed.type !== undefined && copy.type !== undefined && String(copy.type) === String(defaultsForMixed.type)) {
-            delete copy.type;
+          // For mixed group: compute intersection of per-subgroup defaults and include defaults.type when available.
+          // Compute common defaults across mixed subgroups
+          const subgroupDefaults = mixed.map(m => m.defaults || {});
+          const commonDefaults = {};
+          if (subgroupDefaults.length) {
+            const first = subgroupDefaults[0];
+            for (const k of Object.keys(first)) {
+              let ok = true;
+              for (let i = 1; i < subgroupDefaults.length; i++) {
+                if (!subgroupDefaults[i].hasOwnProperty(k) || String(subgroupDefaults[i][k]) !== String(first[k])) { ok = false; break; }
+              }
+              if (ok) commonDefaults[k] = first[k];
+            }
           }
-          return copy;
-        });
+          if (typeVal !== undefined) commonDefaults.type = typeVal;
+
+          // Remove the defaults from entries when they match the common defaults to keep files compact
+          const mixedEntriesNormalized = mixedEntries.map(e => {
+            const copy = Object.assign({}, e);
+            for (const dk of Object.keys(commonDefaults)) {
+              if (copy.hasOwnProperty(dk) && String(copy[dk]) === String(commonDefaults[dk])) delete copy[dk];
+            }
+            return copy;
+          });
 
         // build per-orthography counts for description
         const orthoCounts = new Map();
@@ -367,7 +617,7 @@ async function reorganize() {
             description: desc,
             version: 1
           },
-          defaults: Object.keys(defaultsForMixed).length ? defaultsForMixed : undefined,
+          defaults: Object.keys(commonDefaults).length ? commonDefaults : undefined,
           entries: mixedEntriesNormalized
         };
 
@@ -460,6 +710,14 @@ async function reorganize() {
   if (deleted.length) {
     console.log(`\n[deleted] ${deleted.length} file(s)`);
     for (const d of deleted) console.log(`  ${d}`);
+  }
+
+  if (liftedTotal) {
+    console.log(`\n[lifted] promoted ${liftedTotal} field(s)`);
+    for (const d of liftedDetails) {
+      const parts = d.keys.map(kv => `${kv.key}='${kv.value}'`).join(', ');
+      console.log(`  ${d.file}: ${parts}`);
+    }
   }
 
   console.log('\nReorganization complete.\n');

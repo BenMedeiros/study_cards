@@ -2,11 +2,12 @@
   "metadata": {
     "name": "Japanese expression (katakana)",
     "description": "Grouped entries for type='expression' and orthography='katakana' — total 39.",
-    "version": 1
+    "version": 2
   },
   "defaults": {
     "type": "expression",
-    "orthography": "katakana"
+    "orthography": "katakana",
+    "lexicalClass": "onomatopoeia"
   },
   "entries": [
     {
@@ -34,8 +35,7 @@
       "kanji": "ニョロ",
       "reading": "ニョロ",
       "meaning": "nyoro (wriggle/squirm sound; name-root)",
-      "origin": "Japanese",
-      "lexicalClass": "onomatopoeia"
+      "origin": "Japanese"
     },
     {
       "kanji": "ピッ",
@@ -75,8 +75,7 @@
     {
       "kanji": "ピカ",
       "reading": "ピカ",
-      "meaning": "sparkle; flash of light",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "sparkle; flash of light"
     },
     {
       "kanji": "チュウ",
@@ -87,80 +86,67 @@
     {
       "kanji": "ドキドキ",
       "reading": "ドキドキ",
-      "meaning": "heartbeat; nervous excitement",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "heartbeat; nervous excitement"
     },
     {
       "kanji": "ワクワク",
       "reading": "ワクワク",
-      "meaning": "excited anticipation",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "excited anticipation"
     },
     {
       "kanji": "キラキラ",
       "reading": "キラキラ",
-      "meaning": "glittering; sparkling",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "glittering; sparkling"
     },
     {
       "kanji": "ペコペコ",
       "reading": "ペコペコ",
-      "meaning": "very hungry; bowing repeatedly",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "very hungry; bowing repeatedly"
     },
     {
       "kanji": "ガラガラ",
       "reading": "ガラガラ",
-      "meaning": "rattling sound; empty",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "rattling sound; empty"
     },
     {
       "kanji": "バタバタ",
       "reading": "バタバタ",
-      "meaning": "flapping; hectic rushing around",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "flapping; hectic rushing around"
     },
     {
       "kanji": "イライラ",
       "reading": "イライラ",
-      "meaning": "irritated; annoyed feeling",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "irritated; annoyed feeling"
     },
     {
       "kanji": "ニコニコ",
       "reading": "ニコニコ",
-      "meaning": "smiling cheerfully",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "smiling cheerfully"
     },
     {
       "kanji": "ワンワン",
       "reading": "ワンワン",
-      "meaning": "dog barking sound",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "dog barking sound"
     },
     {
       "kanji": "ニャー",
       "reading": "ニャー",
-      "meaning": "meow; cat sound",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "meow; cat sound"
     },
     {
       "kanji": "ゴロゴロ",
       "reading": "ゴロゴロ",
-      "meaning": "rumbling; lounging around",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "rumbling; lounging around"
     },
     {
       "kanji": "コツコツ",
       "reading": "コツコツ",
-      "meaning": "tapping; steadily working",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "tapping; steadily working"
     },
     {
       "kanji": "ボロボロ",
       "reading": "ボロボロ",
-      "meaning": "tattered; falling apart",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "tattered; falling apart"
     },
     {
       "kanji": "ピンポン",
@@ -189,8 +175,7 @@
     {
       "kanji": "ズキズキ",
       "reading": "ズキズキ",
-      "meaning": "throbbing pain",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "throbbing pain"
     },
     {
       "kanji": "シーン",
@@ -201,56 +186,47 @@
     {
       "kanji": "ベタベタ",
       "reading": "ベタベタ",
-      "meaning": "sticky; clingy",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "sticky; clingy"
     },
     {
       "kanji": "フワフワ",
       "reading": "フワフワ",
-      "meaning": "fluffy; light; airy",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "fluffy; light; airy"
     },
     {
       "kanji": "グチャグチャ",
       "reading": "グチャグチャ",
-      "meaning": "messy; mushy",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "messy; mushy"
     },
     {
       "kanji": "サラサラ",
       "reading": "サラサラ",
-      "meaning": "smooth; silky; flowing",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "smooth; silky; flowing"
     },
     {
       "kanji": "ビショビショ",
       "reading": "ビショビショ",
-      "meaning": "soaking wet",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "soaking wet"
     },
     {
       "kanji": "カチカチ",
       "reading": "カチカチ",
-      "meaning": "clicking; stiff/hard",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "clicking; stiff/hard"
     },
     {
       "kanji": "ペラペラ",
       "reading": "ペラペラ",
-      "meaning": "fluent; thin/flimsy",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "fluent; thin/flimsy"
     },
     {
       "kanji": "ウロウロ",
       "reading": "ウロウロ",
-      "meaning": "wandering aimlessly",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "wandering aimlessly"
     },
     {
       "kanji": "チラチラ",
       "reading": "チラチラ",
-      "meaning": "glancing repeatedly; flickering",
-      "lexicalClass": "onomatopoeia"
+      "meaning": "glancing repeatedly; flickering"
     }
   ]
 }

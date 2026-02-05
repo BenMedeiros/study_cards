@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "name": "Japanese numeral (kanji)",
-    "description": "Grouped entries for type='numeral' and orthography='kanji' — total 21.",
+    "name": "Japanese numeral",
+    "description": "Grouped entries for type='numeral' — total 21.",
     "version": 1
   },
   "defaults": {

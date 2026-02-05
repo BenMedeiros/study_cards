@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "name": "Japanese counter (kanji)",
-    "description": "Grouped entries for type='counter' and orthography='kanji' — total 10.",
+    "name": "Japanese counter",
+    "description": "Grouped entries for type='counter' — total 10.",
     "version": 1
   },
   "defaults": {

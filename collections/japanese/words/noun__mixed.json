@@ -2,10 +2,11 @@
   "metadata": {
     "name": "Japanese noun (mixed)",
     "description": "Mixed orthography group for type='noun' — total 4 (either: 1, kana: 3).",
-    "version": 2
+    "version": 3
   },
   "defaults": {
-    "type": "noun"
+    "type": "noun",
+    "orthography": "kana"
   },
   "entries": [
     {
@@ -17,20 +18,17 @@
     {
       "kanji": "おすすめ",
       "reading": "おすすめ",
-      "meaning": "recommendation; suggested (content)",
-      "orthography": "kana"
+      "meaning": "recommendation; suggested (content)"
     },
     {
       "kanji": "もんじゃ",
       "reading": "もんじゃ",
-      "meaning": "monjayaki (Tokyo-style griddle dish)",
-      "orthography": "kana"
+      "meaning": "monjayaki (Tokyo-style griddle dish)"
     },
     {
       "kanji": "かばん",
       "reading": "かばん",
-      "meaning": "bag",
-      "orthography": "kana"
+      "meaning": "bag"
     }
   ]
 }

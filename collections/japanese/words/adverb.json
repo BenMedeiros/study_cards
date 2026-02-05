@@ -1,11 +1,12 @@
 {
   "metadata": {
-    "name": "Japanese adverb (mixed)",
-    "description": "Mixed orthography group for type='adverb' — total 39 (both: 3, katakana: 10, kanji: 26).",
+    "name": "Japanese adverb",
+    "description": "Grouped entries for type='adverb' — total 39.",
     "version": 2
   },
   "defaults": {
-    "type": "adverb"
+    "type": "adverb",
+    "orthography": "kanji"
   },
   "entries": [
     {
@@ -107,170 +108,144 @@
       "kanji": "程",
       "reading": "ほど",
       "meaning": "about; approximately; extent/degree (approximation/extent marker)",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "全部",
       "reading": "ぜんぶ",
       "meaning": "all; entirely",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "全然",
       "reading": "ぜんぜん",
       "meaning": "(not) at all",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "絶対",
       "reading": "ぜったい",
       "meaning": "absolutely; definitely",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "必ず",
       "reading": "かならず",
       "meaning": "surely; without fail",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "特に",
       "reading": "とくに",
       "meaning": "especially; particularly",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "例えば",
       "reading": "たとえば",
       "meaning": "for example",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "最近",
       "reading": "さいきん",
       "meaning": "recently; lately",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "最初に",
       "reading": "さいしょに",
       "meaning": "first; in the beginning",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "最後に",
       "reading": "さいごに",
       "meaning": "finally; at the end",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "早く",
       "reading": "はやく",
       "meaning": "quickly; early",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "本当に",
       "reading": "ほんとうに",
       "meaning": "really; truly",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "急に",
       "reading": "きゅうに",
       "meaning": "suddenly",
-      "orthography": "kanji",
       "lexicalClass": "regular"
     },
     {
       "kanji": "程",
       "reading": "ほど",
-      "meaning": "about; approximately; extent/degree (approximation/extent marker)",
-      "orthography": "kanji"
+      "meaning": "about; approximately; extent/degree (approximation/extent marker)"
     },
     {
       "kanji": "全部",
       "reading": "ぜんぶ",
-      "meaning": "all; entirely",
-      "orthography": "kanji"
+      "meaning": "all; entirely"
     },
     {
       "kanji": "全然",
       "reading": "ぜんぜん",
-      "meaning": "(not) at all",
-      "orthography": "kanji"
+      "meaning": "(not) at all"
     },
     {
       "kanji": "絶対",
       "reading": "ぜったい",
-      "meaning": "absolutely; definitely",
-      "orthography": "kanji"
+      "meaning": "absolutely; definitely"
     },
     {
       "kanji": "必ず",
       "reading": "かならず",
-      "meaning": "surely; without fail",
-      "orthography": "kanji"
+      "meaning": "surely; without fail"
     },
     {
       "kanji": "特に",
       "reading": "とくに",
-      "meaning": "especially; particularly",
-      "orthography": "kanji"
+      "meaning": "especially; particularly"
     },
     {
       "kanji": "例えば",
       "reading": "たとえば",
-      "meaning": "for example",
-      "orthography": "kanji"
+      "meaning": "for example"
     },
     {
       "kanji": "最近",
       "reading": "さいきん",
-      "meaning": "recently; lately",
-      "orthography": "kanji"
+      "meaning": "recently; lately"
     },
     {
       "kanji": "最初に",
       "reading": "さいしょに",
-      "meaning": "first; in the beginning",
-      "orthography": "kanji"
+      "meaning": "first; in the beginning"
     },
     {
       "kanji": "最後に",
       "reading": "さいごに",
-      "meaning": "finally; at the end",
-      "orthography": "kanji"
+      "meaning": "finally; at the end"
     },
     {
       "kanji": "早く",
       "reading": "はやく",
-      "meaning": "quickly; early",
-      "orthography": "kanji"
+      "meaning": "quickly; early"
     },
     {
       "kanji": "本当に",
       "reading": "ほんとうに",
-      "meaning": "really; truly",
-      "orthography": "kanji"
+      "meaning": "really; truly"
     },
     {
       "kanji": "急に",
       "reading": "きゅうに",
-      "meaning": "suddenly",
-      "orthography": "kanji"
+      "meaning": "suddenly"
     }
   ]
 }

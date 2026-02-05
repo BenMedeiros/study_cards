@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "name": "Japanese kanji (katakana)",
-    "description": "Grouped entries for type='kanji' and orthography='katakana' — total 28.",
+    "name": "Japanese kanji",
+    "description": "Grouped entries for type='kanji' — total 28.",
     "version": 1
   },
   "defaults": {

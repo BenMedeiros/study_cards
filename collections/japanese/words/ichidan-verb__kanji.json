@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Japanese ichidan-verb (kanji)",
     "description": "Grouped entries for type='ichidan-verb' and orthography='kanji' — total 51.",
-    "version": 1
+    "version": 3
   },
   "defaults": {
     "type": "ichidan-verb",

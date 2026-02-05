@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Japanese expression (kanji)",
     "description": "Grouped entries for type='expression' and orthography='kanji' — total 7.",
-    "version": 1
+    "version": 3
   },
   "defaults": {
     "type": "expression",
