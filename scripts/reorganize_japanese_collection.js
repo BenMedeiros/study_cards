@@ -20,14 +20,14 @@ function safeName(s) {
 }
 
 async function reorganize() {
-  const nounsDir = path.resolve(__dirname, '..', 'collections', 'japanese', 'nouns');
-  const outputDir = path.join(nounsDir, 'output');
+  const wordsDir = path.resolve(__dirname, '..', 'collections', 'japanese', 'words');
+  const outputDir = path.join(wordsDir, 'output');
   const rel = p => path.relative(process.cwd(), p);
 
-  const files = await fs.readdir(nounsDir, { withFileTypes: true });
+  const files = await fs.readdir(wordsDir, { withFileTypes: true });
   const jsonFiles = files
     .filter(f => f.isFile() && f.name.endsWith('.json'))
-    .map(f => path.join(nounsDir, f.name));
+    .map(f => path.join(wordsDir, f.name));
 
   // collect all entries
   const allEntries = [];
@@ -140,7 +140,7 @@ async function reorganize() {
       if (typeVal !== undefined) parts.push(safeName(typeVal) || 'type');
       if (g.orthography !== undefined && g.orthography !== null) parts.push(safeName(g.orthography) || 'orth');
       const fileName = (parts.length ? parts.join('__') : 'ungrouped') + '.json';
-      const dest = path.join(nounsDir, fileName);
+      const dest = path.join(wordsDir, fileName);
 
       const defaults = {};
       if (typeVal !== undefined) defaults.type = typeVal;
@@ -206,7 +206,7 @@ async function reorganize() {
         if (typeVal !== undefined) parts.push(safeName(typeVal) || 'type');
         if (m.orthography !== undefined && m.orthography !== null) parts.push(safeName(m.orthography) || 'orth');
         const fileName = (parts.length ? parts.join('__') : 'ungrouped') + '.json';
-        const dest = path.join(nounsDir, fileName);
+        const dest = path.join(wordsDir, fileName);
 
         const defaults = {};
         if (typeVal !== undefined) defaults.type = typeVal;
@@ -272,7 +272,7 @@ async function reorganize() {
       if (typeVal !== undefined) parts.push(safeName(typeVal) || 'type');
       parts.push('mixed');
       const fileName = parts.join('__') + '.json';
-      const dest = path.join(nounsDir, fileName);
+      const dest = path.join(wordsDir, fileName);
 
         // For mixed group: include defaults.type when available (but not orthography).
         const defaultsForMixed = {};
@@ -364,7 +364,7 @@ async function reorganize() {
     }
   }
 
-  // outputs were written directly into `nounsDir`; no move required
+  // outputs were written directly into `wordsDir`; no move required
   // (outputs array contains destination paths)
 
   // optionally remove output dir if empty

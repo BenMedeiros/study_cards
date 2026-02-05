@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "Japanese noun (both)",
-    "description": "Grouped entries for type='noun' and orthography='both' — total 36.",
-    "version": 1
+    "description": "Grouped entries for type='noun' and orthography='both' — total 37.",
+    "version": 2
   },
   "defaults": {
     "type": "noun",
@@ -188,6 +188,11 @@
       "kanji": "休み",
       "reading": "やすみ",
       "meaning": "rest; holiday; break"
+    },
+    {
+      "kanji": "ひらがな",
+      "reading": "ひらがな",
+      "meaning": "hiragana"
     }
   ]
 }

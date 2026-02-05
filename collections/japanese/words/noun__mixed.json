@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "Japanese noun (mixed)",
-    "description": "Mixed orthography group for type='noun' — total 5 (either: 1, hiragana: 4).",
-    "version": 1
+    "description": "Mixed orthography group for type='noun' — total 4 (either: 1, kana: 3).",
+    "version": 2
   },
   "defaults": {
     "type": "noun"
@@ -25,12 +25,6 @@
       "reading": "もんじゃ",
       "meaning": "monjayaki (Tokyo-style griddle dish)",
       "orthography": "kana"
-    },
-    {
-      "kanji": "ひらがな",
-      "reading": "ひらがな",
-      "meaning": "hiragana",
-      "orthography": "both"
     },
     {
       "kanji": "かばん",
