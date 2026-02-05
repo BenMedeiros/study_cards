@@ -1,10 +1,10 @@
 import * as idb from '../utils/idb.js';
 
-const PERSIST_KEY = 'studyUIState';
+// Legacy decompression removed — app assumes new per-session store shape.
 
-function loadFromLocalStorageFallback() {
+function loadLocalKey(key) {
   try {
-    const raw = localStorage.getItem(PERSIST_KEY);
+    const raw = localStorage.getItem(key);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     return (parsed && typeof parsed === 'object') ? parsed : null;
@@ -13,62 +13,11 @@ function loadFromLocalStorageFallback() {
   }
 }
 
-function saveToLocalStorageFallback(obj) {
+function saveLocalKey(key, obj) {
   try {
-    localStorage.setItem(PERSIST_KEY, JSON.stringify(obj));
+    localStorage.setItem(key, JSON.stringify(obj || {}));
   } catch {
     // ignore
-  }
-}
-
-function snapshotUiState(uiState) {
-  return {
-    shell: uiState.shell || {},
-    collections: uiState.collections || {},
-    apps: uiState.apps || {},
-    kv: uiState.kv || {},
-  };
-}
-
-// Backward-compatible decompression of older study_time schema
-function maybeDecompressStudyTimeRecord(kv, studyTimeKey = 'study_time') {
-  try {
-    const st = kv?.[studyTimeKey];
-    if (!st || typeof st !== 'object') return kv;
-    if (st.schema_version !== 2 || !Array.isArray(st.sessions)) return kv;
-
-    const apps = Array.isArray(st.normalization_appIds) ? st.normalization_appIds : [];
-    const cols = Array.isArray(st.normalization_collectionIds) ? st.normalization_collectionIds : [];
-
-    const decompressed = [];
-    for (const s of st.sessions) {
-      if (!s) continue;
-      if (Array.isArray(s)) {
-        const ai = s[0];
-        const ci = s[1];
-        const startIso = s[2] || '';
-        const endIso = s[3] || '';
-        const durationMs = Math.round(Number(s[4]) || 0);
-        const appId = (typeof ai === 'number' && ai >= 0 && ai < apps.length) ? apps[ai] : (typeof ai === 'string' ? ai : '');
-        const collectionId = (typeof ci === 'number' && ci >= 0 && ci < cols.length) ? cols[ci] : (typeof ci === 'string' ? ci : '');
-        decompressed.push({ appId, collectionId, startIso, endIso, durationMs });
-      } else if (typeof s === 'object') {
-        decompressed.push({
-          appId: String(s.appId || ''),
-          collectionId: String(s.collectionId || ''),
-          startIso: String(s.startIso || ''),
-          endIso: String(s.endIso || ''),
-          durationMs: Math.round(Number(s.durationMs) || 0),
-        });
-      }
-    }
-
-    return {
-      ...kv,
-      [studyTimeKey]: { version: st.version || 1, sessions: decompressed },
-    };
-  } catch {
-    return kv;
   }
 }
 
@@ -92,7 +41,7 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
       if (idbAvailable) {
         await idb.openStudyDb().catch((e) => {
           idbBroken = true;
-          console.warn('[Persistence] IndexedDB unavailable, falling back to localStorage', e);
+          console.warn('[Persistence] IndexedDB unavailable', e);
         });
       }
     } catch (e) {
@@ -140,27 +89,41 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
       if (idbAvailable && !idbBroken) {
         try {
           const puts = [];
-          if (doShell) puts.push(idb.idbPut('kv', { key: 'shell', value: uiState.shell || {} }));
-          if (doApps) puts.push(idb.idbPut('kv', { key: 'apps', value: uiState.apps || {} }));
+          if (doShell) saveLocalKey('shell', uiState.shell || {});
+          if (doApps) saveLocalKey('apps', uiState.apps || {});
           for (const k of kvKeys) {
-            if (k === kanjiProgressKey || k === studyTimeKey) {
-              puts.push(idb.idbPut('kv', { key: k, value: uiState.kv?.[k] || {} }));
+            if (k === kanjiProgressKey) {
+              // Write individual kanji progress rows into the new store.
+              const kp = uiState.kv?.[kanjiProgressKey] || {};
+              if (kp && typeof kp === 'object') {
+                for (const kid of Object.keys(kp)) {
+                  puts.push(idb.idbPut('kanji_progress', { id: String(kid), value: kp[kid] }));
+                }
+              }
+            } else if (k === studyTimeKey) {
+              // study_time sessions are stored in `study_time_sessions`; skip writing the whole blob.
             } else {
-              puts.push(idb.idbPut('kv', { key: k, value: uiState.kv?.[k] || {} }));
+              // Store small arbitrary kv entries in localStorage under a prefix.
+              try {
+                saveLocalKey(`kv__${k}`, uiState.kv?.[k] || {});
+              } catch {
+                // ignore
+              }
             }
           }
           for (const id of colls) {
-            puts.push(idb.idbPut('collections', { id, value: uiState.collections?.[id] || {} }));
+            puts.push(idb.idbPut('collection_settings', { id, value: uiState.collections?.[id] || {} }));
           }
           if (puts.length) await Promise.all(puts);
           return;
         } catch (e) {
           idbBroken = true;
-          console.warn('[Persistence] IndexedDB write failed, falling back to localStorage', e);
+          console.warn('[Persistence] IndexedDB write failed', e);
         }
       }
 
-      saveToLocalStorageFallback(snapshotUiState(uiState));
+      // IndexedDB not available or write failed — do nothing (no fallback).
+      console.warn('[Persistence] Skipping persistence; IndexedDB unavailable or broken');
     })().finally(() => {
       flushInFlight = null;
     });
@@ -174,21 +137,63 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
     let loaded = null;
     if (idbAvailable && !idbBroken) {
       try {
-        const shellRec = await idb.idbGet('kv', 'shell');
-        const appsRec = await idb.idbGet('kv', 'apps');
-        const kanjiProgressRec = await idb.idbGet('kv', kanjiProgressKey);
-        const studyTimeRec = await idb.idbGet('kv', studyTimeKey);
-        const collRecs = await idb.idbGetAll('collections');
+        const shellLocal = loadLocalKey('shell');
+        const appsLocal = loadLocalKey('apps');
+        const shellRec = shellLocal ? { value: shellLocal } : null;
+        const appsRec = appsLocal ? { value: appsLocal } : null;
+        const kanjiProgressRows = await idb.idbGetAll('kanji_progress');
+        const studyTimeRows = await idb.idbGetAll('study_time_sessions');
+        const collRecs = await idb.idbGetAll('collection_settings');
+
+        const kanjiMap = {};
+        for (const r of (Array.isArray(kanjiProgressRows) ? kanjiProgressRows : [])) {
+          if (!r || typeof r !== 'object') continue;
+          const id = r.id;
+          if (!id) continue;
+          kanjiMap[id] = (r.value && typeof r.value === 'object') ? r.value : r.value;
+        }
+        // Build study_time sessions array from per-session rows (sorted by startIso ascending)
+        const sessions = [];
+        for (const r of (Array.isArray(studyTimeRows) ? studyTimeRows : [])) {
+          if (!r || typeof r !== 'object') continue;
+          const s = r;
+          // store entries may include startIso, endIso, appId, collectionId, durationMs
+          sessions.push({
+            appId: String(s.appId || ''),
+            collectionId: String(s.collectionId || ''),
+            startIso: String(s.startIso || ''),
+            endIso: String(s.endIso || ''),
+            durationMs: Math.round(Number(s.durationMs) || 0),
+          });
+        }
+        sessions.sort((a, b) => String(a.startIso || '').localeCompare(String(b.startIso || '')));
 
         loaded = {
           shell: (shellRec && shellRec.value && typeof shellRec.value === 'object') ? shellRec.value : {},
           apps: (appsRec && appsRec.value && typeof appsRec.value === 'object') ? appsRec.value : {},
           collections: {},
           kv: {
-            [kanjiProgressKey]: (kanjiProgressRec && kanjiProgressRec.value && typeof kanjiProgressRec.value === 'object' && !Array.isArray(kanjiProgressRec.value)) ? kanjiProgressRec.value : {},
-            [studyTimeKey]: (studyTimeRec && studyTimeRec.value && typeof studyTimeRec.value === 'object' && !Array.isArray(studyTimeRec.value)) ? studyTimeRec.value : null,
+            [kanjiProgressKey]: kanjiMap,
+            [studyTimeKey]: { version: 1, sessions },
           },
         };
+
+        // Load any small kv entries saved in localStorage under the `kv__` prefix
+        try {
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (!k || !k.startsWith('kv__')) continue;
+            const realKey = k.slice(4);
+            try {
+              const parsed = JSON.parse(localStorage.getItem(k));
+              if (parsed !== null && parsed !== undefined) loaded.kv[realKey] = parsed;
+            } catch {
+              // ignore parse errors
+            }
+          }
+        } catch {
+          // ignore localStorage iteration errors
+        }
 
         for (const r of (Array.isArray(collRecs) ? collRecs : [])) {
           if (!r || typeof r !== 'object') continue;
@@ -199,16 +204,16 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
         }
       } catch (e) {
         idbBroken = true;
-        console.warn('[Persistence] IndexedDB read failed, falling back to localStorage', e);
+        console.warn('[Persistence] IndexedDB read failed', e);
       }
     }
-
     if (!loaded) {
-      loaded = loadFromLocalStorageFallback() || { shell: {}, apps: {}, collections: {}, kv: {} };
+      // IndexedDB not available or read failed — initialize empty state (no localStorage fallback).
+      loaded = { shell: {}, apps: {}, collections: {}, kv: {} };
     }
 
     const kvLoaded = (loaded.kv && typeof loaded.kv === 'object') ? { ...loaded.kv } : { [kanjiProgressKey]: {} };
-    const kvNormalized = maybeDecompressStudyTimeRecord(kvLoaded, studyTimeKey);
+    const kvNormalized = kvLoaded;
 
     uiState.shell = (loaded.shell && typeof loaded.shell === 'object') ? loaded.shell : {};
     uiState.apps = (loaded.apps && typeof loaded.apps === 'object') ? loaded.apps : {};
@@ -216,7 +221,7 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
     uiState.kv = kvNormalized;
 
     emitter?.emit?.();
-    return snapshotUiState(uiState);
+    return { shell: uiState.shell || {}, apps: uiState.apps || {}, collections: uiState.collections || {}, kv: uiState.kv || {} };
   }
 
   function installFlushGuards() {
@@ -230,6 +235,29 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
     }
   }
 
+  async function appendStudySession(session = {}) {
+    try {
+      await ensureReady();
+      if (!idbAvailable || idbBroken) return;
+      const s = session || {};
+      const startIso = String(s.startIso || '').trim();
+      if (!startIso) return;
+      const rec = {
+        startIso,
+        endIso: String(s.endIso || ''),
+        appId: String(s.appId || ''),
+        collectionId: String(s.collectionId || ''),
+        durationMs: Math.round(Number(s.durationMs) || 0),
+      };
+      await idb.idbPut('study_time_sessions', rec).catch((e) => {
+        idbBroken = true;
+        console.warn('[Persistence] Failed to append study session', e);
+      });
+    } catch (e) {
+      // ignore
+    }
+  }
+
   return {
     ensureReady,
     load,
@@ -237,5 +265,6 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
     scheduleFlush,
     markDirty,
     installFlushGuards,
+    appendStudySession,
   };
 }

@@ -23,14 +23,6 @@
       "type": "string"
     },
     {
-      "key": "example",
-      "label": "Example",
-      "jp_label": "例文",
-      "type": "object",
-      "description": "Optional example sentence(s). Expected shape: { ja: string, en: string, notes: [string] }. Examples should be provided in the collection file's top-level `examples` array (or in a collection file that contains `metadata` and `examples` but no `entries`).",
-      "notes": "Use `ja` for Japanese, `en` for English, and `notes` for usage patterns (e.g., 'often used with と', 'often used with する', register, restrictions). Each example MAY include `refWords` (array of lookup keys) which reference entry `kanji` values; when collections are loaded the store will attach matching examples to `entry.examples` (array) by matching `refWords` to `entry.kanji`."
-    },
-    {
       "key": "orthography",
       "label": "Orthography",
       "jp_label": "表記",

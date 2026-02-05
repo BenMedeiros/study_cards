@@ -23,7 +23,7 @@ export function isIndexedDBAvailable() {
   }
 }
 
-export function openStudyDb({ dbName = 'study_cards', version = 1 } = {}) {
+export function openStudyDb({ dbName = 'study_cards', version = 2 } = {}) {
   if (dbPromise) return dbPromise;
 
   dbPromise = new Promise((resolve, reject) => {
@@ -37,12 +37,22 @@ export function openStudyDb({ dbName = 'study_cards', version = 1 } = {}) {
     req.onupgradeneeded = () => {
       const db = req.result;
 
-      if (!db.objectStoreNames.contains('kv')) {
-        db.createObjectStore('kv', { keyPath: 'key' });
+      // Remove legacy 'kv' store if present (we no longer use a generic kv store)
+      if (db.objectStoreNames.contains('kv')) {
+        try { db.deleteObjectStore('kv'); } catch (e) { /* ignore */ }
       }
-      if (!db.objectStoreNames.contains('collections')) {
-        db.createObjectStore('collections', { keyPath: 'id' });
+
+      if (!db.objectStoreNames.contains('collection_settings')) {
+        db.createObjectStore('collection_settings', { keyPath: 'id' });
       }
+      if (!db.objectStoreNames.contains('kanji_progress')) {
+        db.createObjectStore('kanji_progress', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('study_time_sessions')) {
+        // keyPath startIso asserted unique by app
+        db.createObjectStore('study_time_sessions', { keyPath: 'startIso' });
+      }
+      
     };
 
     req.onsuccess = () => resolve(req.result);
@@ -73,63 +83,15 @@ export async function idbPut(storeName, record) {
     toPut.value = { ...toPut.value };
   }
 
-  // If persisting study_time, add normalized arrays for app and collection ids
-  // to make persisted shape easier to query without loading large sessions arrays.
-  try {
-    if (String(storeName) === 'kv' && toPut?.key === 'study_time' && Array.isArray(toPut.value?.sessions)) {
-      const sessions = toPut.value.sessions || [];
-      const appIds = [];
-      const colIds = [];
-      const appIndex = new Map();
-      const colIndex = new Map();
-      const compressed = [];
-
-      for (const s of sessions) {
-        if (!s) continue;
-        // If already compressed (array with numeric idxes), keep as-is
-        if (Array.isArray(s) && s.length >= 5 && typeof s[0] === 'number') {
-          compressed.push(s);
-          continue;
-        }
-
-        // Expect object shape { appId, collectionId, startIso, endIso, durationMs }
-        const aiRaw = (s && typeof s === 'object') ? String(s.appId || '').trim() : '';
-        const ciRaw = (s && typeof s === 'object') ? String(s.collectionId || '').trim() : '';
-
-        let ai = -1;
-        if (aiRaw) {
-          if (appIndex.has(aiRaw)) ai = appIndex.get(aiRaw);
-          else { ai = appIds.length; appIndex.set(aiRaw, ai); appIds.push(aiRaw); }
-        }
-
-        let ci = -1;
-        if (ciRaw) {
-          if (colIndex.has(ciRaw)) ci = colIndex.get(ciRaw);
-          else { ci = colIds.length; colIndex.set(ciRaw, ci); colIds.push(ciRaw); }
-        }
-
-        const startIso = (s && typeof s === 'object') ? String(s.startIso || '') : '';
-        const endIso = (s && typeof s === 'object') ? String(s.endIso || '') : '';
-        const durationMs = (s && typeof s === 'object') ? Math.round(Number(s.durationMs) || 0) : 0;
-
-        compressed.push([ai, ci, startIso, endIso, durationMs]);
-      }
-
-      toPut.value.sessions = compressed;
-      toPut.value.normalization_appIds = appIds;
-      toPut.value.normalization_collectionIds = colIds;
-      // Mark compressed schema version
-      toPut.value.schema_version = 2;
-      toPut.value.__schema = { sessionShape: ['appIndex', 'collectionIndex', 'startIso', 'endIso', 'durationMs'], schema_version: 2 };
-    }
-  } catch (e) {
-    // ignore normalization failures
-  }
+  // No special-case compression of study_time here; study_time sessions
+  // will be stored in `study_time_sessions` object store.
 
   // Ensure every stored kv value has a schema_version (default 1)
   try {
-    if (toPut && typeof toPut === 'object' && toPut.value && typeof toPut.value === 'object') {
-      if (typeof toPut.value.schema_version !== 'number') toPut.value.schema_version = 1;
+    if (String(storeName) === 'kv') {
+      if (toPut && typeof toPut === 'object' && toPut.value && typeof toPut.value === 'object') {
+        if (typeof toPut.value.schema_version !== 'number') toPut.value.schema_version = 1;
+      }
     }
   } catch (e) {}
 
@@ -180,6 +142,8 @@ export async function idbGetAll(storeName) {
 
 export async function idbDumpAll() {
   const kv = await idbGetAll('kv').catch(() => null);
-  const collections = await idbGetAll('collections').catch(() => null);
-  return { kv, collections };
+  const collections = await idbGetAll('collection_settings').catch(() => null);
+  const kanji = await idbGetAll('kanji_progress').catch(() => null);
+  const sessions = await idbGetAll('study_time_sessions').catch(() => null);
+  return { kv, collections, kanji_progress: kanji, study_time_sessions: sessions };
 }

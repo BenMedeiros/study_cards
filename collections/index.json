@@ -1,7 +1,7 @@
 {
   "folderMetadata": {
     "greek": "greek/_metadata.json",
-    "japanese": "japanese/_metadata.json",
+    "japanese": "japanese/words/_metadata.json",
     "languageHistory": "languageHistory/_metadata.json",
     "linguistics": "linguistics/_metadata.json",
     "mythology": "mythology/_metadata.json",
@@ -24,20 +24,14 @@
     },
     {
       "path": "japanese/examples/examples_gemini.json",
-      "name": "examples_gemini",
-      "description": null,
-      "entries": null
-    },
-    {
-      "path": "japanese/examples/examples.json",
-      "name": "examples",
-      "description": null,
-      "entries": null
+      "name": "Full Examples",
+      "description": "all old examples i had saved (v0 seed)",
+      "entries": 348
     },
     {
       "path": "japanese/words/adverb__mixed.json",
       "name": "Japanese adverb (mixed)",
-      "description": "Mixed orthography group for type='adverb' — total 40 (both: 4, katakana: 10, kanji: 26).",
+      "description": "Mixed orthography group for type='adverb' — total 39 (both: 3, katakana: 10, kanji: 26).",
       "entries": 39
     },
     {
@@ -91,7 +85,7 @@
     {
       "path": "japanese/words/ichidan-verb__mixed.json",
       "name": "Japanese ichidan-verb (mixed)",
-      "description": "Mixed orthography group for type='ichidan-verb' — total 29 (hiragana: 2, both: 7, none: 20).",
+      "description": "Mixed orthography group for type='ichidan-verb' — total 29 (kana: 2, both: 7, none: 20).",
       "entries": 29
     },
     {
@@ -109,8 +103,8 @@
     {
       "path": "japanese/words/noun__both.json",
       "name": "Japanese noun (both)",
-      "description": "Grouped entries for type='noun' and orthography='both' — total 36.",
-      "entries": 36
+      "description": "Grouped entries for type='noun' and orthography='both' — total 37.",
+      "entries": 37
     },
     {
       "path": "japanese/words/noun__kanji.json",
@@ -127,8 +121,8 @@
     {
       "path": "japanese/words/noun__mixed.json",
       "name": "Japanese noun (mixed)",
-      "description": "Mixed orthography group for type='noun' — total 5 (either: 1, hiragana: 4).",
-      "entries": 5
+      "description": "Mixed orthography group for type='noun' — total 4 (either: 1, kana: 3).",
+      "entries": 4
     },
     {
       "path": "japanese/words/numeral__kanji.json",

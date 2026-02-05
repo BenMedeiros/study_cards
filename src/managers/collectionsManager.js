@@ -442,8 +442,22 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       let fileRel = normalizeIndexRelativePath(rawFile);
       if (!fileRel) continue;
 
+      // If the file path is not a single filename, try to make it
+      // relative to the folder key when it looks like a subpath
+      // intended for that folder. This handles index entries like
+      // { "japanese": "words/_metadata.json" } meaning
+      // "collections/japanese/words/_metadata.json".
       if (!fileRel.includes('/')) {
         fileRel = folder ? `${folder}/${fileRel}` : fileRel;
+      } else if (folder) {
+        // If the provided relative path doesn't already start with
+        // the folder, and doesn't look like an explicit parent path,
+        // prefix it so it resolves under the folder key. This keeps
+        // backwards compatibility while allowing shorthand like
+        // "words/_metadata.json" under the "japanese" key.
+        if (!fileRel.startsWith(`${folder}/`) && !fileRel.startsWith('../') && !fileRel.startsWith('/')) {
+          fileRel = `${folder}/${fileRel}`;
+        }
       }
 
       map.set(folder, fileRel);
@@ -455,7 +469,24 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   async function tryLoadFolderMetadata(folderPath, folderMetadataMapParam) {
     const folder = normalizeFolderPath(folderPath);
     if (folderMetadataMapParam instanceof Map) {
-      const rel = folderMetadataMapParam.get(folder);
+      // Exact match first
+      let rel = folderMetadataMapParam.get(folder);
+
+      // If no exact mapping, try to find a mapping that points to
+      // a metadata file located under this folder (e.g. an index that
+      // had "japanese": "words/_metadata.json" -> stored as
+      // "japanese/words/_metadata.json")
+      if (!rel) {
+        const want1 = `${folder}/_metadata.json`;
+        const want2 = `${folder}/metadata.json`;
+        for (const [, v] of folderMetadataMapParam.entries()) {
+          if (v === want1 || v === want2) {
+            rel = v;
+            break;
+          }
+        }
+      }
+
       if (!rel) return null;
 
       const metadataUrl = `./collections/${rel}`;

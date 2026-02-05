@@ -1,0 +1,47 @@
+{
+  "category": "japanese.examples",
+  "fields": [
+    {
+      "key": "ja",
+      "label": "Japanese",
+      "jp_label": "日本語",
+      "type": "string",
+      "description": "Japanese example sentence."
+    },
+    {
+      "key": "en",
+      "label": "English",
+      "jp_label": "英訳",
+      "type": "string",
+      "description": "English translation of the example sentence."
+    },
+    {
+      "key": "grammar",
+      "label": "Grammar",
+      "jp_label": "文法",
+      "type": "string",
+      "description": "Optional short grammar/pattern tag for the sentence (e.g., 'Verb-te + ください', 'Onomatopoeia + する')."
+    },
+    {
+      "key": "grammarNote",
+      "label": "Grammar Note",
+      "jp_label": "文法メモ",
+      "type": "string",
+      "description": "Optional explanation of the grammar/pattern tag (e.g., register, nuance, constraints)."
+    },
+    {
+      "key": "notes",
+      "label": "Notes",
+      "jp_label": "メモ",
+      "type": "array<string>",
+      "description": "Optional usage notes (nuance, register, restrictions, common collocations)."
+    },
+    {
+      "key": "refWords",
+      "label": "Reference Words",
+      "jp_label": "参照語",
+      "type": "array<string>",
+      "description": "Optional array of lookup keys referencing other entry `kanji` values. When collections are loaded, matching examples can be attached to `entry.examples` by matching each refWord to `entry.kanji`."
+    }
+  ]
+}

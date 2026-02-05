@@ -22,23 +22,30 @@ export function createStudyTimeManager({ uiState, persistence, emitter, studyTim
     if (!Number.isFinite(d) || d <= 0) return;
 
     const rec = ensureStudyTimeRecord();
-    const start = String(startIso || '').trim();
-    const end = String(endIso || '').trim();
-    rec.sessions.push({
+    const start = String(startIso || '').trim() || nowIso();
+    const end = String(endIso || '').trim() || nowIso();
+    const session = {
       appId: a,
       collectionId: c,
-      startIso: start || nowIso(),
-      endIso: end || nowIso(),
+      startIso: start,
+      endIso: end,
       durationMs: d,
-    });
+    };
 
+    // Keep an in-memory rolling window for recent sessions for quick reads.
+    rec.sessions.push(session);
     const MAX_SESSIONS = 2000;
     if (rec.sessions.length > MAX_SESSIONS) {
       rec.sessions.splice(0, rec.sessions.length - MAX_SESSIONS);
     }
 
-    persistence.markDirty({ kvKey: studyTimeKey });
-    persistence.scheduleFlush();
+    // Persist the session as an individual row; no whole-blob write.
+    try {
+      persistence.appendStudySession(session);
+    } catch {
+      // ignore persistence failures; in-memory state still updated
+    }
+
     emitter.emit();
   }
 
