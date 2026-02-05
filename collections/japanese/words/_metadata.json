@@ -23,18 +23,6 @@
       "type": "string"
     },
     {
-      "key": "orthography",
-      "label": "Orthography",
-      "jp_label": "表記",
-      "type": "enum",
-      "description": "Indicates the script usually used to write the word. Helpful for words like 'いちご' (usually kana) or loanwords that are katakana-only.",
-      "values": {
-        "kanji": "Primarily written in kanji (漢字), okurigana as needed.",
-        "kana": "Primarily written in kana (平仮名 or 片仮名), rarely uses its possible kanji form",
-        "both": "Both kanji and kana are commonly used (context-dependent)."
-      }
-    },
-    {
       "key": "type",
       "label": "Type",
       "jp_label": "種類",
@@ -75,6 +63,19 @@
         "greeting": "Greeting/aisatsu (挨拶): used in social exchange (e.g., こんにちは, おつかれさま).",
         "interjection": "Spontaneous utterance (感動詞): あっ, えっ, へえ, ええと."
       }
+    },
+    {
+      "key": "orthography",
+      "label": "Orthography",
+      "jp_label": "表記",
+      "type": "enum",
+      "description": "Indicates the script usually used to write the word. Helpful for words like 'いちご' (usually kana) or loanwords that are katakana-only.",
+      "values": {
+        "kanji": "Primarily written in kanji (漢字), okurigana as needed.",
+        "hiragana": "Primarily written in kana (平仮名 or 片仮名), rarely uses its possible kanji form",
+        "both": "Both kanji and kana are commonly used (context-dependent).",
+        "katakana": "Primarily written in katakana (片仮名), often loanwords or mimetics."
+      }
     }
   ],
   "conditionalFields": [
@@ -93,7 +94,12 @@
             "suru": "Suru-verb (サ変動詞) lexicalized as a verb entry (e.g., 勉強する as a verb entry, if you store it that way).",
             "expression": "Sentence-like phrase, not a lexical verb (rare; usually better classified as type='sentence' or 'expression')."
           }
-        },
+        }
+      ]
+    },
+    {
+      "when": { "field": "verbType", "in": ["compound"] },
+      "fields": [
         {
           "key": "compoundType",
           "label": "Compound Type",
@@ -111,7 +117,7 @@
       ]
     },
     {
-      "when": { "field": "orthography", "in": ["kana"] },
+      "when": { "field": "orthography", "in": ["katakana"] },
       "fields": [
         {
           "key": "origin",

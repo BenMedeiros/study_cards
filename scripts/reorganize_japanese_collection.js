@@ -1,5 +1,41 @@
 const fs = require('fs').promises;
+// NOTE: configuration lives in this script (no external config file).
 const path = require('path');
+
+// Configuration (edit here to change grouping behavior)
+// grouping.groupByKeys: ordered list of entry properties used to form groups.
+//   e.g. ['type','orthography'] groups by type__orthography.
+// grouping.maxMixedEntries: when building a "mixed" group, include smallest
+//   groups until this threshold would be exceeded.
+// behavior.outputDirName: name of the temporary output dir inside words/
+// behavior.deleteOriginalFiles: whether to delete original source files
+const DEFAULT_CONFIG = {
+  grouping: {
+    groupByKeys: ['type', 'orthography'],
+    maxMixedEntries: 40,
+    mixSmallestFirst: true
+  },
+  behavior: {
+    outputDirName: 'output',
+    deleteOriginalFiles: true
+  }
+};
+
+const CONFIG = DEFAULT_CONFIG;
+
+// Helper to produce a deterministic group key and a friendly label
+function makeGroupKeyFromEntry(entry) {
+  const parts = CONFIG.grouping.groupByKeys.map(k => {
+    const v = entry[k];
+    return v === undefined || v === null ? '' : String(v);
+  });
+  return parts.join('::::');
+}
+
+function makeGroupLabelFromKey(key) {
+  const parts = key.split('::::');
+  return CONFIG.grouping.groupByKeys.map((k, i) => `${k}='${parts[i] || ''}'`).join(', ');
+}
 
 async function readJson(filePath) {
   const txt = await fs.readFile(filePath, 'utf8');
@@ -21,12 +57,12 @@ function safeName(s) {
 
 async function reorganize() {
   const wordsDir = path.resolve(__dirname, '..', 'collections', 'japanese', 'words');
-  const outputDir = path.join(wordsDir, 'output');
+  const outputDir = path.join(wordsDir, CONFIG.behavior.outputDirName || 'output');
   const rel = p => path.relative(process.cwd(), p);
 
   const files = await fs.readdir(wordsDir, { withFileTypes: true });
   const jsonFiles = files
-    .filter(f => f.isFile() && f.name.endsWith('.json'))
+    .filter(f => f.isFile() && f.name.endsWith('.json') && !f.name.startsWith('_'))
     .map(f => path.join(wordsDir, f.name));
 
   // collect all entries
@@ -36,7 +72,9 @@ async function reorganize() {
 
   for (const fp of jsonFiles) {
     // skip files in output folder (there shouldn't be any here) but keep safe
-    if (fp.includes(path.sep + 'output' + path.sep)) continue;
+    if (fp.includes(path.sep + (CONFIG.behavior.outputDirName || 'output') + path.sep)) continue;
+    // skip files that start with '_' (internal/hidden files)
+    if (path.basename(fp).startsWith('_')) continue;
     const data = await readJson(fp);
     sourceFiles.push(fp);
 
@@ -82,25 +120,44 @@ async function reorganize() {
     }
   }
 
-  // Group by type and orthography
-  const groups = new Map(); // key -> { type, orthography, entries: [] }
+  // Group by configured keys
+  const groups = new Map(); // key -> { key, values: [...], entries: [] }
   for (const { entry } of allEntries) {
-    const type = (entry.type === undefined || entry.type === null) ? undefined : String(entry.type);
-    const orth = (entry.orthography === undefined || entry.orthography === null) ? undefined : String(entry.orthography);
-    const key = `${type ?? ''}::::${orth ?? ''}`;
-    if (!groups.has(key)) groups.set(key, { type, orthography: orth, entries: [] });
+    const key = makeGroupKeyFromEntry(entry);
+    if (!groups.has(key)) {
+      const values = CONFIG.grouping.groupByKeys.map(k => {
+        const v = entry[k];
+        return v === undefined || v === null ? undefined : String(v);
+      });
+      groups.set(key, { key, values, entries: [] });
+    }
     groups.get(key).entries.push(Object.assign({}, entry));
+  }
+
+  // Log summary of groups formed
+  console.log(`\n[groups] Formed ${groups.size} groups by ${CONFIG.grouping.groupByKeys.join('__')}`);
+  for (const [k, g] of groups.entries()) {
+    const label = CONFIG.grouping.groupByKeys.map((kk, i) => `${kk}='${g.values[i] ?? ''}'`).join(', ');
+    console.log(`  ${label} — ${g.entries.length}`);
   }
 
   // Ensure output dir
   await fs.mkdir(outputDir, { recursive: true });
 
   // Organize groups by type to allow making a single "mixed" group per type
+  // Map configured grouping keys into `.type` and `.orthography` fields so
+  // downstream logic can remain largely unchanged.
   const groupsByType = new Map(); // typeKey -> [{ type, orthography, entries }]
   for (const [k, g] of groups.entries()) {
-    const typeKey = g.type === undefined || g.type === null ? '__NO_TYPE__' : String(g.type);
+    const valueMap = {};
+    CONFIG.grouping.groupByKeys.forEach((kk, i) => {
+      valueMap[kk] = g.values[i];
+    });
+    const typeVal = valueMap.type === undefined || valueMap.type === null ? undefined : valueMap.type;
+    const orthVal = valueMap.orthography === undefined || valueMap.orthography === null ? undefined : valueMap.orthography;
+    const typeKey = typeVal === undefined ? '__NO_TYPE__' : String(typeVal);
     if (!groupsByType.has(typeKey)) groupsByType.set(typeKey, []);
-    groupsByType.get(typeKey).push(g);
+    groupsByType.get(typeKey).push({ type: typeVal, orthography: orthVal, entries: g.entries });
   }
 
   const outputs = [];
@@ -120,13 +177,20 @@ async function reorganize() {
     // build at most one mixed group by taking smallest groups until adding next would exceed 40
     const mixed = [];
     let mixedCount = 0;
+    // collect smallest groups first (if configured) until threshold reached
     for (const g of groupsSorted) {
-      if (mixedCount + g.count <= 40) {
+      if (mixedCount + g.count <= (CONFIG.grouping.maxMixedEntries || 40)) {
         mixed.push(g);
         mixedCount += g.count;
       } else {
         break;
       }
+    }
+
+    // Log which groups were chosen for mixing for this type
+    if (mixed.length > 0) {
+      const mixedSummary = mixed.map(m => `${m.orthography === undefined || m.orthography === null ? 'none' : m.orthography} (${m.count})`).join(' | ');
+      console.log(`[grouping] type='${typeKey}' -> mixed groups: ${mixedSummary}`);
     }
 
     // remove mixed groups from the list of groups to write individually

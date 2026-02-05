@@ -6,314 +6,264 @@
   },
   "defaults": {
     "type": "ichidan-verb",
-    "orthography": "kanji"
+    "orthography": "kanji",
+    "verbType": "simple"
   },
   "entries": [
     {
       "kanji": "見る",
       "reading": "みる",
-      "meaning": "to see; to watch; to look",
-      "verbType": "simple"
+      "meaning": "to see; to watch; to look"
     },
     {
       "kanji": "起きる",
       "reading": "おきる",
-      "meaning": "to wake up; to get up",
-      "verbType": "simple"
+      "meaning": "to wake up; to get up"
     },
     {
       "kanji": "寝る",
       "reading": "ねる",
-      "meaning": "to sleep; to go to bed",
-      "verbType": "simple"
+      "meaning": "to sleep; to go to bed"
     },
     {
       "kanji": "着る",
       "reading": "きる",
-      "meaning": "to wear (on the upper body); to put on",
-      "verbType": "simple"
+      "meaning": "to wear (on the upper body); to put on"
     },
     {
       "kanji": "出る",
       "reading": "でる",
-      "meaning": "to go out; to leave; to come out; to appear",
-      "verbType": "simple"
+      "meaning": "to go out; to leave; to come out; to appear"
     },
     {
       "kanji": "食べる",
       "reading": "たべる",
-      "meaning": "to eat",
-      "verbType": "simple"
+      "meaning": "to eat"
     },
     {
       "kanji": "開ける",
       "reading": "あける",
-      "meaning": "to open (a door/window/container)",
-      "verbType": "simple"
+      "meaning": "to open (a door/window/container)"
     },
     {
       "kanji": "空ける",
       "reading": "あける",
-      "meaning": "to make empty; to vacate; to clear (space/time)",
-      "verbType": "simple"
+      "meaning": "to make empty; to vacate; to clear (space/time)"
     },
     {
       "kanji": "閉める",
       "reading": "しめる",
-      "meaning": "to close (something)",
-      "verbType": "simple"
+      "meaning": "to close (something)"
     },
     {
       "kanji": "消える",
       "reading": "きえる",
-      "meaning": "to go out (a light/fire); to disappear",
-      "verbType": "simple"
+      "meaning": "to go out (a light/fire); to disappear"
     },
     {
       "kanji": "変える",
       "reading": "かえる",
-      "meaning": "to change (something); to alter",
-      "verbType": "simple"
+      "meaning": "to change (something); to alter"
     },
     {
       "kanji": "考える",
       "reading": "かんがえる",
-      "meaning": "to think; to consider",
-      "verbType": "simple"
+      "meaning": "to think; to consider"
     },
     {
       "kanji": "覚える",
       "reading": "おぼえる",
-      "meaning": "to remember; to memorize; to learn",
-      "verbType": "simple"
+      "meaning": "to remember; to memorize; to learn"
     },
     {
       "kanji": "忘れる",
       "reading": "わすれる",
-      "meaning": "to forget",
-      "verbType": "simple"
+      "meaning": "to forget"
     },
     {
       "kanji": "教える",
       "reading": "おしえる",
-      "meaning": "to teach; to tell",
-      "verbType": "simple"
+      "meaning": "to teach; to tell"
     },
     {
       "kanji": "借りる",
       "reading": "かりる",
-      "meaning": "to borrow; to rent",
-      "verbType": "simple"
+      "meaning": "to borrow; to rent"
     },
     {
       "kanji": "浴びる",
       "reading": "あびる",
-      "meaning": "to bathe in; to take (a shower); to receive (criticism, etc.)",
-      "verbType": "simple"
+      "meaning": "to bathe in; to take (a shower); to receive (criticism, etc.)"
     },
     {
       "kanji": "迎える",
       "reading": "むかえる",
-      "meaning": "to pick up; to welcome; to迎える",
-      "verbType": "simple"
+      "meaning": "to pick up; to welcome; to迎える"
     },
     {
       "kanji": "答える",
       "reading": "こたえる",
-      "meaning": "to answer; to reply",
-      "verbType": "simple"
+      "meaning": "to answer; to reply"
     },
     {
       "kanji": "伝える",
       "reading": "つたえる",
-      "meaning": "to convey; to tell; to pass on (a message)",
-      "verbType": "simple"
+      "meaning": "to convey; to tell; to pass on (a message)"
     },
     {
       "kanji": "調べる",
       "reading": "しらべる",
-      "meaning": "to check; to investigate; to look up",
-      "verbType": "simple"
+      "meaning": "to check; to investigate; to look up"
     },
     {
       "kanji": "比べる",
       "reading": "くらべる",
-      "meaning": "to compare",
-      "verbType": "simple"
+      "meaning": "to compare"
     },
     {
       "kanji": "見せる",
       "reading": "みせる",
-      "meaning": "to show; to let (someone) see",
-      "verbType": "simple"
+      "meaning": "to show; to let (someone) see"
     },
     {
       "kanji": "決める",
       "reading": "きめる",
-      "meaning": "to decide; to choose; to set",
-      "verbType": "simple"
+      "meaning": "to decide; to choose; to set"
     },
     {
       "kanji": "始める",
       "reading": "はじめる",
-      "meaning": "to start; to begin (something)",
-      "verbType": "simple"
+      "meaning": "to start; to begin (something)"
     },
     {
       "kanji": "終える",
       "reading": "おえる",
-      "meaning": "to finish; to end; to complete",
-      "verbType": "simple"
+      "meaning": "to finish; to end; to complete"
     },
     {
       "kanji": "続ける",
       "reading": "つづける",
-      "meaning": "to continue; to keep doing",
-      "verbType": "simple"
+      "meaning": "to continue; to keep doing"
     },
     {
       "kanji": "認める",
       "reading": "みとめる",
-      "meaning": "to recognize; to admit; to approve",
-      "verbType": "simple"
+      "meaning": "to recognize; to admit; to approve"
     },
     {
       "kanji": "褒める",
       "reading": "ほめる",
-      "meaning": "to praise; to compliment",
-      "verbType": "simple"
+      "meaning": "to praise; to compliment"
     },
     {
       "kanji": "育てる",
       "reading": "そだてる",
-      "meaning": "to raise; to grow; to bring up (a child)",
-      "verbType": "simple"
+      "meaning": "to raise; to grow; to bring up (a child)"
     },
     {
       "kanji": "捨てる",
       "reading": "すてる",
-      "meaning": "to throw away; to discard",
-      "verbType": "simple"
+      "meaning": "to throw away; to discard"
     },
     {
       "kanji": "集める",
       "reading": "あつめる",
-      "meaning": "to collect; to gather",
-      "verbType": "simple"
+      "meaning": "to collect; to gather"
     },
     {
       "kanji": "受ける",
       "reading": "うける",
-      "meaning": "to receive; to take (a test); to accept",
-      "verbType": "simple"
+      "meaning": "to receive; to take (a test); to accept"
     },
     {
       "kanji": "降りる",
       "reading": "おりる",
-      "meaning": "to get off (a train/bus); to go down; to descend",
-      "verbType": "simple"
+      "meaning": "to get off (a train/bus); to go down; to descend"
     },
     {
       "kanji": "落ちる",
       "reading": "おちる",
-      "meaning": "to fall; to drop; to go down (price); to fail (an exam)",
-      "verbType": "simple"
+      "meaning": "to fall; to drop; to go down (price); to fail (an exam)"
     },
     {
       "kanji": "足りる",
       "reading": "たりる",
-      "meaning": "to be enough; to be sufficient",
-      "verbType": "simple"
+      "meaning": "to be enough; to be sufficient"
     },
     {
       "kanji": "過ぎる",
       "reading": "すぎる",
-      "meaning": "to pass; to exceed; to be too much",
-      "verbType": "simple"
+      "meaning": "to pass; to exceed; to be too much"
     },
     {
       "kanji": "伸びる",
       "reading": "のびる",
-      "meaning": "to grow; to stretch; to improve",
-      "verbType": "simple"
+      "meaning": "to grow; to stretch; to improve"
     },
     {
       "kanji": "信じる",
       "reading": "しんじる",
-      "meaning": "to believe; to trust",
-      "verbType": "simple"
+      "meaning": "to believe; to trust"
     },
     {
       "kanji": "感じる",
       "reading": "かんじる",
-      "meaning": "to feel; to sense",
-      "verbType": "simple"
+      "meaning": "to feel; to sense"
     },
     {
       "kanji": "似る",
       "reading": "にる",
-      "meaning": "to resemble; to look like",
-      "verbType": "simple"
+      "meaning": "to resemble; to look like"
     },
     {
       "kanji": "間違える",
       "reading": "まちがえる",
-      "meaning": "to make a mistake; to get wrong",
-      "verbType": "simple"
+      "meaning": "to make a mistake; to get wrong"
     },
     {
       "kanji": "覚める",
       "reading": "さめる",
-      "meaning": "to wake up; to come to senses; (heat) to cool down",
-      "verbType": "simple"
+      "meaning": "to wake up; to come to senses; (heat) to cool down"
     },
     {
       "kanji": "進める",
       "reading": "すすめる",
-      "meaning": "to advance; to proceed; to move forward; to promote",
-      "verbType": "simple"
+      "meaning": "to advance; to proceed; to move forward; to promote"
     },
     {
       "kanji": "遅れる",
       "reading": "おくれる",
-      "meaning": "to be late; to fall behind",
-      "verbType": "simple"
+      "meaning": "to be late; to fall behind"
     },
     {
       "kanji": "汚れる",
       "reading": "よごれる",
-      "meaning": "to get dirty; to be stained",
-      "verbType": "simple"
+      "meaning": "to get dirty; to be stained"
     },
     {
       "kanji": "壊れる",
       "reading": "こわれる",
-      "meaning": "to break; to be broken",
-      "verbType": "simple"
+      "meaning": "to break; to be broken"
     },
     {
       "kanji": "触れる",
       "reading": "ふれる",
-      "meaning": "to touch; to come into contact; to mention briefly",
-      "verbType": "simple"
+      "meaning": "to touch; to come into contact; to mention briefly"
     },
     {
       "kanji": "生まれる",
       "reading": "うまれる",
-      "meaning": "to be born",
-      "verbType": "simple"
+      "meaning": "to be born"
     },
     {
       "kanji": "聞こえる",
       "reading": "きこえる",
-      "meaning": "to be audible; to be heard",
-      "verbType": "simple"
+      "meaning": "to be audible; to be heard"
     },
     {
       "kanji": "名付ける",
       "reading": "なづける",
-      "meaning": "to name; to give a name",
-      "verbType": "simple"
+      "meaning": "to name; to give a name"
     }
   ]
 }

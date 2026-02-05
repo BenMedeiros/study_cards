@@ -6,50 +6,44 @@
   },
   "defaults": {
     "type": "expression",
-    "orthography": "kanji"
+    "orthography": "kanji",
+    "lexicalClass": "regular"
   },
   "entries": [
     {
       "kanji": "登録済み",
       "reading": "とうろくずみ",
-      "meaning": "subscribed; already registered",
-      "lexicalClass": "regular"
+      "meaning": "subscribed; already registered"
     },
     {
       "kanji": "第一",
       "reading": "だいいち",
-      "meaning": "first; number one (ordinal form using 第)",
-      "lexicalClass": "regular"
+      "meaning": "first; number one (ordinal form using 第)"
     },
     {
       "kanji": "第二",
       "reading": "だいに",
-      "meaning": "second (ordinal form using 第)",
-      "lexicalClass": "regular"
+      "meaning": "second (ordinal form using 第)"
     },
     {
       "kanji": "第三",
       "reading": "だいさん",
-      "meaning": "third (ordinal form using 第)",
-      "lexicalClass": "regular"
+      "meaning": "third (ordinal form using 第)"
     },
     {
       "kanji": "第四",
       "reading": "だいよん",
-      "meaning": "fourth (ordinal form using 第)",
-      "lexicalClass": "regular"
+      "meaning": "fourth (ordinal form using 第)"
     },
     {
       "kanji": "第五",
       "reading": "だいご",
-      "meaning": "fifth (ordinal form using 第)",
-      "lexicalClass": "regular"
+      "meaning": "fifth (ordinal form using 第)"
     },
     {
       "kanji": "第十",
       "reading": "だいじゅう",
-      "meaning": "tenth (ordinal form using 第)",
-      "lexicalClass": "regular"
+      "meaning": "tenth (ordinal form using 第)"
     }
   ]
 }
