@@ -66,7 +66,74 @@ export async function idbPut(storeName, record) {
   const db = await openStudyDb();
   const tx = db.transaction(storeName, 'readwrite');
   const store = tx.objectStore(storeName);
-  store.put(record);
+
+  // Make a shallow copy so we don't mutate caller objects.
+  const toPut = { ...record };
+  if (toPut && typeof toPut === 'object' && toPut.value && typeof toPut.value === 'object') {
+    toPut.value = { ...toPut.value };
+  }
+
+  // If persisting study_time, add normalized arrays for app and collection ids
+  // to make persisted shape easier to query without loading large sessions arrays.
+  try {
+    if (String(storeName) === 'kv' && toPut?.key === 'study_time' && Array.isArray(toPut.value?.sessions)) {
+      const sessions = toPut.value.sessions || [];
+      const appIds = [];
+      const colIds = [];
+      const appIndex = new Map();
+      const colIndex = new Map();
+      const compressed = [];
+
+      for (const s of sessions) {
+        if (!s) continue;
+        // If already compressed (array with numeric idxes), keep as-is
+        if (Array.isArray(s) && s.length >= 5 && typeof s[0] === 'number') {
+          compressed.push(s);
+          continue;
+        }
+
+        // Expect object shape { appId, collectionId, startIso, endIso, durationMs }
+        const aiRaw = (s && typeof s === 'object') ? String(s.appId || '').trim() : '';
+        const ciRaw = (s && typeof s === 'object') ? String(s.collectionId || '').trim() : '';
+
+        let ai = -1;
+        if (aiRaw) {
+          if (appIndex.has(aiRaw)) ai = appIndex.get(aiRaw);
+          else { ai = appIds.length; appIndex.set(aiRaw, ai); appIds.push(aiRaw); }
+        }
+
+        let ci = -1;
+        if (ciRaw) {
+          if (colIndex.has(ciRaw)) ci = colIndex.get(ciRaw);
+          else { ci = colIds.length; colIndex.set(ciRaw, ci); colIds.push(ciRaw); }
+        }
+
+        const startIso = (s && typeof s === 'object') ? String(s.startIso || '') : '';
+        const endIso = (s && typeof s === 'object') ? String(s.endIso || '') : '';
+        const durationMs = (s && typeof s === 'object') ? Math.round(Number(s.durationMs) || 0) : 0;
+
+        compressed.push([ai, ci, startIso, endIso, durationMs]);
+      }
+
+      toPut.value.sessions = compressed;
+      toPut.value.normalization_appIds = appIds;
+      toPut.value.normalization_collectionIds = colIds;
+      // Mark compressed schema version
+      toPut.value.schema_version = 2;
+      toPut.value.__schema = { sessionShape: ['appIndex', 'collectionIndex', 'startIso', 'endIso', 'durationMs'], schema_version: 2 };
+    }
+  } catch (e) {
+    // ignore normalization failures
+  }
+
+  // Ensure every stored kv value has a schema_version (default 1)
+  try {
+    if (toPut && typeof toPut === 'object' && toPut.value && typeof toPut.value === 'object') {
+      if (typeof toPut.value.schema_version !== 'number') toPut.value.schema_version = 1;
+    }
+  } catch (e) {}
+
+  store.put(toPut);
   await waitForTransaction(tx);
 }
 
@@ -109,4 +176,10 @@ export async function idbGetAll(storeName) {
 
   await waitForTransaction(tx);
   return out;
+}
+
+export async function idbDumpAll() {
+  const kv = await idbGetAll('kv').catch(() => null);
+  const collections = await idbGetAll('collections').catch(() => null);
+  return { kv, collections };
 }

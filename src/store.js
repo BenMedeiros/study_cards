@@ -2,6 +2,8 @@ import { nowIso, uuid } from './utils/helpers.js';
 import { basename, dirname, normalizeFolderPath, titleFromFilename } from './utils/helpers.js';
 import { buildHashRoute, parseHashRoute } from './utils/helpers.js';
 
+import * as idb from './utils/idb.js';
+
 export function createStore() {
   // Persistent UI state (previously stored in sessionStorage under `studyUIState`).
   // Kept in-memory for fast synchronous reads; flushed to durable storage async.
@@ -25,7 +27,7 @@ export function createStore() {
       // KanjiProgressRecord: { state, seen, timeMsStudiedInKanjiStudyCard, timesSeenInKanjiStudyCard, ... }
       kanji_progress: {},
       // StudyTimeRecord
-      // { version: 1, sessions: StudySession[], statsByCollection: object, statsByAppCollection: object }
+      // { version: 1, sessions: StudySession[] }
       // StudySession: { appId, collectionId, startIso, endIso, durationMs }
       study_time: null,
     },
@@ -43,12 +45,11 @@ export function createStore() {
 
   async function ensurePersistence() {
     if (persistenceReady) return;
-    // Dynamic import so store still loads in environments without IndexedDB.
+    // Use statically imported idb utilities.
     try {
-      const mod = await import('./utils/idb.js');
-      idbAvailable = !!mod?.isIndexedDBAvailable?.();
+      idbAvailable = !!idb?.isIndexedDBAvailable?.();
       if (idbAvailable) {
-        await mod.openStudyDb().catch((e) => {
+        await idb.openStudyDb().catch((e) => {
           idbBroken = true;
           console.warn('[Store] IndexedDB unavailable, falling back to localStorage', e);
         });
@@ -122,17 +123,16 @@ export function createStore() {
       // IndexedDB path (preferred)
       if (idbAvailable && !idbBroken) {
         try {
-          const { idbPut } = await import('./utils/idb.js');
           const puts = [];
-          if (doShell) puts.push(idbPut('kv', { key: 'shell', value: uiState.shell || {} }));
-          if (doApps) puts.push(idbPut('kv', { key: 'apps', value: uiState.apps || {} }));
+          if (doShell) puts.push(idb.idbPut('kv', { key: 'shell', value: uiState.shell || {} }));
+          if (doApps) puts.push(idb.idbPut('kv', { key: 'apps', value: uiState.apps || {} }));
           for (const k of kvKeys) {
             if (k === KANJI_PROGRESS_KEY || k === STUDY_TIME_KEY) {
-              puts.push(idbPut('kv', { key: k, value: uiState.kv?.[k] || {} }));
+              puts.push(idb.idbPut('kv', { key: k, value: uiState.kv?.[k] || {} }));
             }
           }
           for (const id of colls) {
-            puts.push(idbPut('collections', { id, value: uiState.collections?.[id] || {} }));
+            puts.push(idb.idbPut('collections', { id, value: uiState.collections?.[id] || {} }));
           }
           if (puts.length) await Promise.all(puts);
           return;
@@ -184,15 +184,13 @@ export function createStore() {
     uiState.kv = uiState.kv || {};
     let v = uiState.kv[STUDY_TIME_KEY];
     if (!v || typeof v !== 'object' || Array.isArray(v)) {
-      v = { version: 1, sessions: [], statsByCollection: {}, statsByAppCollection: {} };
+      v = { version: 1, sessions: [] };
       uiState.kv[STUDY_TIME_KEY] = v;
       return v;
     }
-    // Normalize fields for older records.
+    // Normalize fields for older records: ensure minimal shape (only sessions persisted)
     if (typeof v.version !== 'number') v.version = 1;
     if (!Array.isArray(v.sessions)) v.sessions = [];
-    if (!v.statsByCollection || typeof v.statsByCollection !== 'object' || Array.isArray(v.statsByCollection)) v.statsByCollection = {};
-    if (!v.statsByAppCollection || typeof v.statsByAppCollection !== 'object' || Array.isArray(v.statsByAppCollection)) v.statsByAppCollection = {};
     return v;
   }
 
@@ -298,40 +296,17 @@ export function createStore() {
       endIso: end || nowIso(),
       durationMs: d,
     };
-
+    // Append session and cap growth to avoid unbounded records.
     rec.sessions.push(session);
-    // Cap growth to avoid unbounded IndexedDB records.
     const MAX_SESSIONS = 2000;
     if (rec.sessions.length > MAX_SESSIONS) {
       rec.sessions.splice(0, rec.sessions.length - MAX_SESSIONS);
     }
 
-    // Update aggregate stats for the collection.
-    const colPrev = rec.statsByCollection[c] && typeof rec.statsByCollection[c] === 'object'
-      ? rec.statsByCollection[c]
-      : { totalMs: 0, lastEndIso: null, lastDurationMs: null };
-    const colTotal = Math.max(0, (Number(colPrev.totalMs) || 0) + d);
-    rec.statsByCollection[c] = {
-      totalMs: colTotal,
-      lastEndIso: session.endIso,
-      lastDurationMs: d,
-    };
-
-    // Update aggregate stats for the app+collection.
-    const key = appCollectionKey(a, c);
-    const acPrev = rec.statsByAppCollection[key] && typeof rec.statsByAppCollection[key] === 'object'
-      ? rec.statsByAppCollection[key]
-      : { totalMs: 0, lastEndIso: null, lastDurationMs: null };
-    const acTotal = Math.max(0, (Number(acPrev.totalMs) || 0) + d);
-    rec.statsByAppCollection[key] = {
-      totalMs: acTotal,
-      lastEndIso: session.endIso,
-      lastDurationMs: d,
-    };
-
+    // Persist only sessions; aggregates are computed on demand.
     dirtyKv.add(STUDY_TIME_KEY);
     scheduleFlush();
-    // Notify UI subscribers so views (e.g. Collections) refresh immediately
+    // Notify UI subscribers so views refresh immediately
     notify();
   }
 
@@ -367,18 +342,28 @@ export function createStore() {
     const id = String(collectionId || '').trim();
     if (!id) return null;
     const rec = ensureStudyTimeRecord();
-    const base = rec.statsByCollection?.[id] && typeof rec.statsByCollection[id] === 'object'
-      ? rec.statsByCollection[id]
-      : { totalMs: 0, lastEndIso: null, lastDurationMs: null };
+    // Compute aggregates from sessions
+    let totalMs = 0;
+    let lastEndIso = null;
+    let lastDurationMs = null;
+    for (let i = rec.sessions.length - 1; i >= 0; i--) {
+      const s = rec.sessions[i];
+      if (!s || typeof s !== 'object') continue;
+      if (s.collectionId !== id) continue;
+      const d = Math.round(Number(s.durationMs));
+      if (Number.isFinite(d) && d > 0) totalMs += d;
+      if (!lastEndIso) lastEndIso = s.endIso || null;
+      if (!lastDurationMs && Number.isFinite(d)) lastDurationMs = d;
+    }
     const last24h = sumSessionDurations({ windowMs: 24 * 60 * 60 * 1000, collectionId: id });
     const last48h = sumSessionDurations({ windowMs: 48 * 60 * 60 * 1000, collectionId: id });
     const last72h = sumSessionDurations({ windowMs: 72 * 60 * 60 * 1000, collectionId: id });
     const last7d = sumSessionDurations({ windowMs: 7 * 24 * 60 * 60 * 1000, collectionId: id });
     return {
       collectionId: id,
-      totalMs: Math.max(0, Number(base.totalMs) || 0),
-      lastEndIso: base.lastEndIso || null,
-      lastDurationMs: Number.isFinite(Number(base.lastDurationMs)) ? Math.round(Number(base.lastDurationMs)) : null,
+      totalMs: Math.max(0, Number(totalMs) || 0),
+      lastEndIso: lastEndIso || null,
+      lastDurationMs: Number.isFinite(Number(lastDurationMs)) ? Math.round(Number(lastDurationMs)) : null,
       last24h,
       last48h,
       last72h,
@@ -389,7 +374,13 @@ export function createStore() {
   function getAllCollectionsStudyStats() {
     const rec = ensureStudyTimeRecord();
     const out = [];
-    for (const id of Object.keys(rec.statsByCollection || {})) {
+    const seen = new Set();
+    for (let i = rec.sessions.length - 1; i >= 0; i--) {
+      const s = rec.sessions[i];
+      if (!s || typeof s !== 'object') continue;
+      const id = String(s.collectionId || '').trim();
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
       const st = getCollectionStudyStats(id);
       if (st) out.push(st);
     }
@@ -1504,12 +1495,11 @@ export function createStore() {
       let loaded = null;
       if (idbAvailable && !idbBroken) {
         try {
-          const { idbGet, idbGetAll } = await import('./utils/idb.js');
-          const shellRec = await idbGet('kv', 'shell');
-          const appsRec = await idbGet('kv', 'apps');
-          const kanjiProgressRec = await idbGet('kv', KANJI_PROGRESS_KEY);
-          const studyTimeRec = await idbGet('kv', STUDY_TIME_KEY);
-          const collRecs = await idbGetAll('collections');
+          const shellRec = await idb.idbGet('kv', 'shell');
+          const appsRec = await idb.idbGet('kv', 'apps');
+          const kanjiProgressRec = await idb.idbGet('kv', KANJI_PROGRESS_KEY);
+          const studyTimeRec = await idb.idbGet('kv', STUDY_TIME_KEY);
+          const collRecs = await idb.idbGetAll('collections');
           loaded = {
             shell: (shellRec && shellRec.value && typeof shellRec.value === 'object') ? shellRec.value : {},
             apps: (appsRec && appsRec.value && typeof appsRec.value === 'object') ? appsRec.value : {},
@@ -1537,7 +1527,36 @@ export function createStore() {
       uiState.shell = (loaded.shell && typeof loaded.shell === 'object') ? loaded.shell : {};
       uiState.apps = (loaded.apps && typeof loaded.apps === 'object') ? loaded.apps : {};
       uiState.collections = (loaded.collections && typeof loaded.collections === 'object') ? loaded.collections : {};
-      uiState.kv = (loaded.kv && typeof loaded.kv === 'object') ? loaded.kv : { [KANJI_PROGRESS_KEY]: {} };
+      // Decompress persisted study_time schema_version=2 into in-memory sessions objects
+      const kvLoaded = (loaded.kv && typeof loaded.kv === 'object') ? { ...loaded.kv } : { [KANJI_PROGRESS_KEY]: {} };
+      try {
+        const st = kvLoaded[STUDY_TIME_KEY];
+        if (st && typeof st === 'object' && st.schema_version === 2 && Array.isArray(st.sessions)) {
+          const apps = Array.isArray(st.normalization_appIds) ? st.normalization_appIds : [];
+          const cols = Array.isArray(st.normalization_collectionIds) ? st.normalization_collectionIds : [];
+          const decompressed = [];
+          for (const s of st.sessions) {
+            if (!s) continue;
+            if (Array.isArray(s)) {
+              const ai = s[0];
+              const ci = s[1];
+              const startIso = s[2] || '';
+              const endIso = s[3] || '';
+              const durationMs = Math.round(Number(s[4]) || 0);
+              const appId = (typeof ai === 'number' && ai >= 0 && ai < apps.length) ? apps[ai] : (typeof ai === 'string' ? ai : '');
+              const collectionId = (typeof ci === 'number' && ci >= 0 && ci < cols.length) ? cols[ci] : (typeof ci === 'string' ? ci : '');
+              decompressed.push({ appId, collectionId, startIso, endIso, durationMs });
+            } else if (s && typeof s === 'object') {
+              decompressed.push({ appId: String(s.appId || ''), collectionId: String(s.collectionId || ''), startIso: String(s.startIso || ''), endIso: String(s.endIso || ''), durationMs: Math.round(Number(s.durationMs) || 0) });
+            }
+          }
+          kvLoaded[STUDY_TIME_KEY] = { version: st.version || 1, sessions: decompressed };
+        }
+      } catch (e) {
+        // ignore decompression failures and fall back to raw loaded.kv
+      }
+
+      uiState.kv = kvLoaded;
       // Ensure `kanji_progress` is present and well-formed.
       ensureKanjiProgressMap();
       // Ensure `study_time` is present and well-formed.

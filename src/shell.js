@@ -9,6 +9,7 @@ import { renderKanjiStudyCard } from './apps/kanjiStudyCardView.js';
 import { createCollectionBrowserDropdown } from './components/collectionBrowser.js';
 import { speak } from './utils/speech.js';
 import { createDropdown } from './components/dropdown.js';
+import * as idb from './utils/idb.js';
 
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
@@ -529,21 +530,19 @@ export function createAppShell({ store, onNavigate }) {
       addItem('Log Persisted Data (IDB)', () => {
         try {
           console.group('Persisted Data (IndexedDB)');
-          // Only read persisted records from IndexedDB: kv.shell, kv.apps, kv.kanji_progress, collections
-          import('./utils/idb.js').then(({ idbGet, idbGetAll }) => {
-            Promise.all([
-              idbGet('kv', 'shell').catch(() => null),
-              idbGet('kv', 'apps').catch(() => null),
-              idbGet('kv', 'kanji_progress').catch(() => null),
-              idbGetAll('collections').catch(() => null),
-            ]).then(([shellRec, appsRec, kanjiProgressRec, collRecs]) => {
-              console.log('idb.kv.shell:', shellRec);
-              console.log('idb.kv.apps:', appsRec);
-              console.log('idb.kv.kanji_progress:', kanjiProgressRec);
-              console.log('idb.collections (array):', collRecs);
-              console.groupEnd();
-            }).catch((err) => { console.error('IDB read error', err); console.groupEnd(); });
-          }).catch((err) => { console.error('Unable to import idb utils', err); console.groupEnd(); });
+          // Dump kv + collections and log as raw objects (no pretty JSON)
+          idb.idbDumpAll().then((dump) => {
+            const kvRecs = dump?.kv || [];
+            const collRecs = dump?.collections || [];
+            console.log('idb.kv (all records):');
+            for (const r of Array.isArray(kvRecs) ? kvRecs : []) {
+              const key = r?.key ?? '(no key)';
+              const val = r?.value ?? r;
+              console.log(key, val);
+            }
+            console.log('idb.collections (array):', collRecs);
+            console.groupEnd();
+          }).catch((err) => { console.error('IDB read error', err); console.groupEnd(); });
         } catch (err) { console.error('Log Persisted Data failed', err); }
       });
 
