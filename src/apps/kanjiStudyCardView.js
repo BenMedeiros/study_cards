@@ -390,12 +390,12 @@ export function renderKanjiStudyCard({ store }) {
   const card = document.createElement('div');
   card.className = 'card kanji-card';
 
-  // Example card (created once, shown/hidden as needed)
-  const exampleCard = document.createElement('div');
-  exampleCard.className = 'card kanji-example-card';
-  // carousel state for examples on the current entry
-  let currentExampleIndex = 0;
-  let lastExampleEntry = null;
+  // Sentence card (created once, shown/hidden as needed)
+  const sentenceCard = document.createElement('div');
+  sentenceCard.className = 'card kanji-example-card';
+  // carousel state for sentences on the current entry
+  let currentSentenceIndex = 0;
+  let lastSentenceEntry = null;
 
   // render a single card body
   function renderCard(body, entry) {
@@ -705,24 +705,24 @@ export function renderKanjiStudyCard({ store }) {
 
     wrapper.append(cornerCaption, body);
 
-    // Show/hide example card based on entry.examples (array)
-    if (entry && Array.isArray(entry.examples) && entry.examples.length) {
+    // Show/hide sentence card based on entry.sentences (array)
+    if (entry && Array.isArray(entry.sentences) && entry.sentences.length) {
       // reset carousel index when switching to a new entry
-      if (lastExampleEntry !== entry) {
-        currentExampleIndex = 0;
-        lastExampleEntry = entry;
+      if (lastSentenceEntry !== entry) {
+        currentSentenceIndex = 0;
+        lastSentenceEntry = entry;
       }
-      exampleCard.innerHTML = '';
-      const examples = entry.examples || [];
-      const idx = ((Number(currentExampleIndex) || 0) % examples.length + examples.length) % examples.length;
-      const ex = examples[idx] || {};
+      sentenceCard.innerHTML = '';
+      const sentences = entry.sentences || [];
+      const idx = ((Number(currentSentenceIndex) || 0) % sentences.length + sentences.length) % sentences.length;
+      const ex = sentences[idx] || {};
       const jaText = ex.ja || '';
       const enText = ex.en || '';
       const notes = Array.isArray(ex.notes) ? ex.notes : [];
       
       // Only show card if Japanese text exists
       if (!jaText) {
-        exampleCard.style.display = 'none';
+        sentenceCard.style.display = 'none';
         return;
       }
       
@@ -732,43 +732,43 @@ export function renderKanjiStudyCard({ store }) {
 
       const exampleLabel = document.createElement('div');
       exampleLabel.className = 'muted kanji-example-label';
-      exampleLabel.textContent = 'Example Sentence';
+      exampleLabel.textContent = 'Sentence';
 
-      // create speaker button bound to current example text
+      // create speaker button bound to current sentence text
       const speakerBtn = createSpeakerButton({ 
         text: jaText,
         fieldKey: 'reading'
       });
 
-      // Carousel controls (prev / index / next) when multiple examples
+      // Carousel controls (prev / index / next) when multiple sentences
       const controls = document.createElement('div');
       controls.className = 'example-carousel-controls';
       controls.style.display = 'flex';
-      if (examples.length > 1) {
+      if (sentences.length > 1) {
         const prevBtn = document.createElement('button');
         prevBtn.className = 'icon-button';
-        prevBtn.title = 'Previous example';
+        prevBtn.title = 'Previous sentence';
         prevBtn.textContent = '◀';
         prevBtn.addEventListener('click', (ev) => {
           ev.preventDefault();
-          currentExampleIndex = (idx - 1 + examples.length) % examples.length;
+          currentSentenceIndex = (idx - 1 + sentences.length) % sentences.length;
           render();
         });
 
         const nextBtn = document.createElement('button');
         nextBtn.className = 'icon-button';
-        nextBtn.title = 'Next example';
+        nextBtn.title = 'Next sentence';
         nextBtn.textContent = '▶';
         nextBtn.addEventListener('click', (ev) => {
           ev.preventDefault();
-          currentExampleIndex = (idx + 1) % examples.length;
+          currentSentenceIndex = (idx + 1) % sentences.length;
           render();
         });
 
         const counter = document.createElement('div');
         counter.className = 'muted kanji-example-label';
         counter.style.margin = '0 8px';
-        counter.textContent = `${idx + 1} / ${examples.length}`;
+        counter.textContent = `${idx + 1} / ${sentences.length}`;
 
         controls.append(prevBtn, counter, nextBtn);
       }
@@ -780,7 +780,7 @@ export function renderKanjiStudyCard({ store }) {
       exampleText.className = 'kanji-example-text';
       exampleText.textContent = jaText;
       
-      exampleCard.append(exampleHeader, exampleText);
+      sentenceCard.append(exampleHeader, exampleText);
       
       // English translation (shown only when revealed)
       if (enText && viewMode === 'full') {
@@ -794,7 +794,7 @@ export function renderKanjiStudyCard({ store }) {
         enDiv.style.fontSize = '1rem';
         enDiv.textContent = enText;
         
-        exampleCard.append(enLabel, enDiv);
+        sentenceCard.append(enLabel, enDiv);
       }
       
       // Notes (shown only when revealed)
@@ -812,12 +812,11 @@ export function renderKanjiStudyCard({ store }) {
           notesList.appendChild(li);
         });
         
-        exampleCard.append(notesLabel, notesList);
+        sentenceCard.append(notesLabel, notesList);
       }
-      
-      exampleCard.style.display = 'block';
+      sentenceCard.style.display = 'block';
     } else {
-      exampleCard.style.display = 'none';
+      sentenceCard.style.display = 'none';
     }
     
     // Update reveal button text based on current viewMode
@@ -915,7 +914,7 @@ export function renderKanjiStudyCard({ store }) {
   footer.textContent = '← / →: navigate  •  ↑: full  •  ↓: kanji only';
 
   card.appendChild(wrapper);
-  el.append(headerTools, card, exampleCard);
+  el.append(headerTools, card, sentenceCard);
   el.append(footerControls.el);
 
   // Tools behaviour

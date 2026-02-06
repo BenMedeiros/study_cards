@@ -21,8 +21,10 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
   // Folder-level entry index cache used to resolve set terms to real entries.
   const folderEntryIndexCache = new Map();
-  // Examples cache: baseFolder -> Array of example objects collected from loaded collection files' top-level `examples` arrays
-  const examplesCache = new Map();
+  // Sentences cache: baseFolder -> Array of sentence objects collected from loaded collection files' top-level `sentences` arrays
+  const sentencesCache = new Map();
+  // Sentences ref index: baseFolder -> Map(refKey -> Array of sentence objects)
+  const sentencesRefIndex = new Map();
 
   function emit() {
     emitter.emit();
@@ -187,10 +189,10 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       const v = entry[k];
       if (typeof v === 'string' && v.trim()) score += 1;
     }
-    if (Array.isArray(entry.examples) && entry.examples.length) {
+    if (Array.isArray(entry.sentences) && entry.sentences.length) {
       let hasJa = false;
       let hasEn = false;
-      for (const ex of entry.examples) {
+      for (const ex of entry.sentences) {
         if (!hasJa && typeof ex?.ja === 'string' && ex.ja.trim()) hasJa = true;
         if (!hasEn && typeof ex?.en === 'string' && ex.en.trim()) hasEn = true;
         if (hasJa && hasEn) break;
@@ -237,19 +239,15 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     folderEntryIndexCache.set(folder, index);
 
     try {
-      const examples = examplesCache.get(folder) || [];
-      if (Array.isArray(examples) && examples.length) {
-        for (const ex of examples) {
+      const refMap = sentencesRefIndex.get(folder) || new Map();
+      for (const [ref, arr] of refMap.entries()) {
+        if (!ref || !Array.isArray(arr) || arr.length === 0) continue;
+        const entry = index.get(ref);
+        if (!entry || typeof entry !== 'object') continue;
+        if (!Array.isArray(entry.sentences)) entry.sentences = [];
+        for (const ex of arr) {
           if (!ex || typeof ex !== 'object') continue;
-          const refs = Array.isArray(ex.refWords) ? ex.refWords : [];
-          for (const rawKey of refs) {
-            const key = String(rawKey || '').trim();
-            if (!key) continue;
-            const entry = index.get(key);
-            if (!entry || typeof entry !== 'object') continue;
-            if (!Array.isArray(entry.examples)) entry.examples = [];
-            entry.examples.push(ex);
-          }
+          entry.sentences.push(ex);
         }
       }
     } catch {
@@ -706,6 +704,34 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
 
     emit();
+    // Prefetch all collections in background to avoid lazy-loading surprises.
+    // Run async/non-blocking so UI startup isn't delayed.
+    try {
+      Promise.resolve().then(() => {
+        try {
+          prefetchCollectionsInFolder('');
+          // Also prefetch per-folder collection sets (/_collectionSets.json)
+          // so UI won't lazily fetch them later when browsing folders.
+          try {
+            const tops = new Set((state._availableCollectionPaths || []).map(p => {
+              const parts = String(p || '').split('/').filter(Boolean);
+              return parts.length ? parts[0] : '';
+            }).filter(Boolean));
+            for (const t of tops) {
+              // fire-and-forget
+              loadCollectionSetsForFolder(t).catch(() => null);
+            }
+          } catch (e) {
+            // ignore
+          }
+        } catch (e) {
+          // ignore
+        }
+      });
+    } catch (e) {
+      // ignore
+    }
+
     return paths;
   }
 
@@ -799,7 +825,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       }
 
       if (Array.isArray(data)) {
-        data = { metadata: {}, examples: data };
+        data = { metadata: {}, sentences: data };
       }
 
       const folderPath = dirname(key);
@@ -824,23 +850,70 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       }
 
       try {
-        const examples = Array.isArray(data.examples) ? data.examples : null;
-        if (examples) {
+        // Support sentence collections that place sentences under `sentences`
+        // or legacy `entries` (common for example files located under */examples/*).
+        let sentences = Array.isArray(data.sentences) ? data.sentences : null;
+        if (!sentences && Array.isArray(data.entries) && String(key || '').includes('/examples/')) {
+          sentences = data.entries.slice();
+          // Clear data.entries so these sentence files are not treated as regular collections
+          data.entries = [];
+        }
+        if (sentences) {
           const top = topFolderOfKey(key) || '';
-          const prev = examplesCache.get(top) || [];
-          examplesCache.set(top, prev.concat(examples));
+          const prev = sentencesCache.get(top) || [];
+          sentencesCache.set(top, prev.concat(sentences));
+          // Update sentencesRefIndex for quick lookup by ref key
+          try {
+            let refMap = sentencesRefIndex.get(top) || new Map();
+            for (const ex of sentences) {
+              if (!ex || typeof ex !== 'object') continue;
+              if (!Array.isArray(ex.chunks)) continue;
+              for (const ch of ex.chunks) {
+                if (!ch || typeof ch !== 'object') continue;
+                if (!Array.isArray(ch.refs)) continue;
+                for (const r of ch.refs) {
+                  if (r == null) continue;
+                  const keyStr = String(r || '').trim();
+                  if (!keyStr) continue;
+                  const arr = refMap.get(keyStr) || [];
+                  arr.push(ex);
+                  refMap.set(keyStr, arr);
+                }
+              }
+            }
+            sentencesRefIndex.set(top, refMap);
+            // Ensure any existing folder entry index is rebuilt so sentences
+            // are associated to already-loaded word entries immediately.
+            folderEntryIndexCache.delete(top);
+            if (top) buildFolderEntryIndex(top);
+          } catch (e) {
+            // ignore
+          }
 
           if (Array.isArray(data.entries) && data.entries.length) {
-            for (const ex of examples) {
+            for (const ex of sentences) {
               if (!ex || typeof ex !== 'object') continue;
-              const refs = Array.isArray(ex.refWords) ? ex.refWords : [];
+              // Collect refs from chunks in the sentence
+              const refs = [];
+              if (Array.isArray(ex.chunks)) {
+                for (const ch of ex.chunks) {
+                  if (!ch || typeof ch !== 'object') continue;
+                  if (Array.isArray(ch.refs)) {
+                    for (const r of ch.refs) {
+                      if (r == null) continue;
+                      const s = String(r || '').trim();
+                      if (s) refs.push(s);
+                    }
+                  }
+                }
+              }
               for (const rawKey of refs) {
                 const keyStr = String(rawKey || '').trim();
                 if (!keyStr) continue;
                 const entry = data.entries.find(e => e && String(e.kanji || '').trim() === keyStr);
                 if (!entry) continue;
-                if (!Array.isArray(entry.examples)) entry.examples = [];
-                entry.examples.push(ex);
+                if (!Array.isArray(entry.sentences)) entry.sentences = [];
+                entry.sentences.push(ex);
               }
             }
           }

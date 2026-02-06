@@ -23,27 +23,39 @@
       "entries": null
     },
     {
-      "path": "japanese/examples/examples_gemini.json",
-      "name": "Full Examples",
-      "description": "all old examples i had saved (v0 seed)",
-      "entries": 348
+      "path": "japanese/examples/counter_culture_set_01.json",
+      "name": "Counter + Culture Set 01",
+      "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
+      "entries": 13
     },
     {
-      "path": "japanese/words/adverb__mixed.json",
-      "name": "Japanese adverb (mixed)",
-      "description": "Mixed orthography group for type='adverb' — total 39 (both: 3, katakana: 10, kanji: 26).",
+      "path": "japanese/examples/gu_verb_examples.json",
+      "name": "Verb Variety Set 01",
+      "description": "Sentences using godan -ぐ verbs with varied conjugations and proper nouns.",
+      "entries": 11
+    },
+    {
+      "path": "japanese/examples/new_example_pattern.json",
+      "name": "Full Examples (repaired v1)",
+      "description": "Old examples reviewed and conformed to japanese.examples schema",
+      "entries": 12
+    },
+    {
+      "path": "japanese/words/adverb.json",
+      "name": "Japanese adverb",
+      "description": "Grouped entries for type='adverb' — total 39.",
       "entries": 39
     },
     {
-      "path": "japanese/words/compound-morpheme__mixed.json",
-      "name": "Japanese compound-morpheme (mixed)",
-      "description": "Mixed orthography group for type='compound-morpheme' — total 16 (katakana: 1, kanji: 4, none: 11).",
+      "path": "japanese/words/compound-morpheme.json",
+      "name": "Japanese compound-morpheme",
+      "description": "Grouped entries for type='compound-morpheme' — total 16.",
       "entries": 16
     },
     {
-      "path": "japanese/words/counter__kanji.json",
-      "name": "Japanese counter (kanji)",
-      "description": "Grouped entries for type='counter' and orthography='kanji' — total 10.",
+      "path": "japanese/words/counter.json",
+      "name": "Japanese counter",
+      "description": "Grouped entries for type='counter' — total 10.",
       "entries": 10
     },
     {
@@ -89,15 +101,15 @@
       "entries": 29
     },
     {
-      "path": "japanese/words/kanji__katakana.json",
-      "name": "Japanese kanji (katakana)",
-      "description": "Grouped entries for type='kanji' and orthography='katakana' — total 28.",
+      "path": "japanese/words/kanji.json",
+      "name": "Japanese kanji",
+      "description": "Grouped entries for type='kanji' — total 28.",
       "entries": 28
     },
     {
-      "path": "japanese/words/na-adjective__mixed.json",
-      "name": "Japanese na-adjective (mixed)",
-      "description": "Mixed orthography group for type='na-adjective' — total 25 (both: 1, kanji: 24).",
+      "path": "japanese/words/na-adjective.json",
+      "name": "Japanese na-adjective",
+      "description": "Grouped entries for type='na-adjective' — total 25.",
       "entries": 25
     },
     {
@@ -125,9 +137,9 @@
       "entries": 4
     },
     {
-      "path": "japanese/words/numeral__kanji.json",
-      "name": "Japanese numeral (kanji)",
-      "description": "Grouped entries for type='numeral' and orthography='kanji' — total 21.",
+      "path": "japanese/words/numeral.json",
+      "name": "Japanese numeral",
+      "description": "Grouped entries for type='numeral' — total 21.",
       "entries": 21
     },
     {

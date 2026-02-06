@@ -4,7 +4,7 @@
         "description": "Old examples reviewed and conformed to japanese.examples schema",
         "version": 1
     },
-    "entries": [
+    "sentences": [
         {
             "ja": "分からないことは何でも聞いてください。",
             "en": "Ask me anything you don’t understand.",
@@ -286,6 +286,34 @@
                     ]
                 }
             ]
+        },
+        {
+            "ja": "九時から勉強を始めます。",
+            "en": "I will start studying at nine o’clock.",
+            "grammarNotes": [
+                "Time＋から marks the starting point in time (contrast: Time＋に marks a specific time).",
+                "Vます is polite; it can express present habit or near-future intention depending on context."
+            ],
+            "chunks": [
+                {
+                    "ja": "九時から",
+                    "gloss": "from nine o’clock / starting at nine",
+                    "focus": "Time＋から",
+                    "refs": [
+                        "九時"
+                    ]
+                },
+                {
+                    "ja": "勉強を始めます",
+                    "gloss": "start studying (polite)",
+                    "focus": "NをV (object) + Vます",
+                    "refs": [
+                        "勉強",
+                        "始める"
+                    ]
+                }
+            ],
+            "notes": []
         }
     ]
 }

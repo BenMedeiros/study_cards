@@ -1,6 +1,6 @@
 {
-  "category": "japanese.examples",
-  "description": "Japanese example sentences structured as learner-optimized reading chunks with local grammar focus and vocabulary references.",
+  "category": "japanese.sentences",
+  "description": "Japanese sentences structured as learner-optimized reading chunks with local grammar focus and vocabulary references.",
   "version": 1,
   "fields": [
     {
@@ -25,7 +25,7 @@
       "jp_label": "メモ",
       "type": "array<string>",
       "required": false,
-      "description": "Sentence-specific nuance, cultural reminders, or irregularities tied only to this instance."
+      "description": "Instance-only notes: sentence-specific nuance, context assumptions, naturalness warnings, or culture/pragmatics tied to this exact sentence. Do NOT restate general grammar rules (use `grammarNotes`) or general vocabulary definitions (use word entries)."
     },
     {
       "key": "grammarNotes",
@@ -39,13 +39,13 @@
       "key": "chunks",
       "label": "Chunks",
       "jp_label": "チャンク",
-      "type": "array<exampleChunk>",
+      "type": "array<sentenceChunk>",
       "required": true,
       "description": "Ordered learner-optimized reading units composing the sentence. Each chunk may contain its own focus and references."
     }
   ],
   "types": {
-    "exampleChunk": {
+    "sentenceChunk": {
       "description": "A learner reading unit inside a sentence. Every chunk must link to at least one non-particle reference (content word or grammar pattern). Do not include particles in refs.",
       "fields": [
         {

@@ -1,0 +1,251 @@
+{
+  "metadata": {
+    "name": "Verb Variety Set 01",
+    "description": "Sentences using godan -ぐ verbs with varied conjugations and proper nouns.",
+    "version": 1
+  },
+  "sentences": [
+    {
+      "ja": "ハワイの海で三時間も泳いでいました。",
+      "en": "I was swimming in the ocean in Hawaii for three hours.",
+      "grammarNotes": [
+        "Vていました = past progressive / ongoing action in the past."
+      ],
+      "chunks": [
+        {
+          "ja": "ハワイの海で",
+          "gloss": "in the ocean in Hawaii",
+          "refs": ["ハワイ","海"]
+        },
+        {
+          "ja": "三時間も",
+          "gloss": "for as long as three hours",
+          "refs": ["三時間"]
+        },
+        {
+          "ja": "泳いでいました",
+          "gloss": "was swimming",
+          "focus": "Vていました",
+          "refs": ["泳ぐ"]
+        }
+      ]
+    },
+    {
+      "ja": "東京駅まで急がなければなりません。",
+      "en": "I have to hurry to Tokyo Station.",
+      "grammarNotes": [
+        "Vなければなりません = formal obligation “must do”."
+      ],
+      "chunks": [
+        {
+          "ja": "東京駅まで",
+          "gloss": "to Tokyo Station",
+          "refs": ["東京駅"]
+        },
+        {
+          "ja": "急がなければなりません",
+          "gloss": "must hurry",
+          "focus": "Vなければなりません",
+          "refs": ["急ぐ"]
+        }
+      ]
+    },
+    {
+      "ja": "家に入ったら、すぐコートを脱いでください。",
+      "en": "When you enter the house, please take off your coat right away.",
+      "grammarNotes": [
+        "Vたら = conditional “when/if”.",
+        "Vてください = polite request."
+      ],
+      "chunks": [
+        {
+          "ja": "家に入ったら",
+          "gloss": "when entering the house",
+          "focus": "Vたら",
+          "refs": ["家","入る"]
+        },
+        {
+          "ja": "すぐ",
+          "gloss": "right away",
+          "refs": ["すぐ"]
+        },
+        {
+          "ja": "コートを脱いでください",
+          "gloss": "please take off your coat",
+          "focus": "Vてください",
+          "refs": ["コート","脱ぐ"]
+        }
+      ]
+    },
+    {
+      "ja": "このアプリはウイルスを防げます。",
+      "en": "This app can prevent viruses.",
+      "grammarNotes": [
+        "Potential form (Vえる/られる) expresses ability."
+      ],
+      "chunks": [
+        {
+          "ja": "このアプリは",
+          "gloss": "this app",
+          "refs": ["アプリ"]
+        },
+        {
+          "ja": "ウイルスを防げます",
+          "gloss": "can prevent viruses",
+          "focus": "Potential",
+          "refs": ["ウイルス","防ぐ"]
+        }
+      ]
+    },
+    {
+      "ja": "彼はニューヨークでたくさんお金を稼いだ。",
+      "en": "He earned a lot of money in New York.",
+      "grammarNotes": [
+        "Plain past (Vた) indicates completed action."
+      ],
+      "chunks": [
+        {
+          "ja": "彼はニューヨークで",
+          "gloss": "he in New York",
+          "refs": ["彼","ニューヨーク"]
+        },
+        {
+          "ja": "たくさんお金を稼いだ",
+          "gloss": "earned a lot of money",
+          "focus": "Vた",
+          "refs": ["たくさん","お金","稼ぐ"]
+        }
+      ]
+    },
+    {
+      "ja": "子供たちが夜遅くまで騒いでいる。",
+      "en": "The children are being noisy until late at night.",
+      "grammarNotes": [
+        "Vている can express ongoing action or current state."
+      ],
+      "chunks": [
+        {
+          "ja": "子供たちが",
+          "gloss": "the children",
+          "refs": ["子供"]
+        },
+        {
+          "ja": "夜遅くまで",
+          "gloss": "until late at night",
+          "refs": ["夜","遅い"]
+        },
+        {
+          "ja": "騒いでいる",
+          "gloss": "are being noisy",
+          "focus": "Vている",
+          "refs": ["騒ぐ"]
+        }
+      ]
+    },
+    {
+      "ja": "Wi-Fiにスマホを繋げば、地図が見られます。",
+      "en": "If you connect your phone to Wi-Fi, you can see the map.",
+      "grammarNotes": [
+        "Vば = conditional “if/when”."
+      ],
+      "chunks": [
+        {
+          "ja": "Wi-Fiにスマホを繋げば",
+          "gloss": "if you connect your phone to Wi-Fi",
+          "focus": "Vば",
+          "refs": ["Wi-Fi","スマホ","繋ぐ"]
+        },
+        {
+          "ja": "地図が見られます",
+          "gloss": "you can see the map",
+          "refs": ["地図","見る"]
+        }
+      ]
+    },
+    {
+      "ja": "彼女は京都のカフェでコーヒーを注いでいた。",
+      "en": "She was pouring coffee at a café in Kyoto.",
+      "grammarNotes": [
+        "Vていた = past ongoing action."
+      ],
+      "chunks": [
+        {
+          "ja": "彼女は京都のカフェで",
+          "gloss": "she at a café in Kyoto",
+          "refs": ["彼女","京都","カフェ"]
+        },
+        {
+          "ja": "コーヒーを注いでいた",
+          "gloss": "was pouring coffee",
+          "focus": "Vていた",
+          "refs": ["コーヒー","注ぐ"]
+        }
+      ]
+    },
+    {
+      "ja": "朝、包丁を研いでから料理を始めます。",
+      "en": "In the morning, I sharpen the knife and then start cooking.",
+      "grammarNotes": [
+        "Vてから = do A and then B."
+      ],
+      "chunks": [
+        {
+          "ja": "朝、包丁を研いでから",
+          "gloss": "in the morning, after sharpening the knife",
+          "focus": "Vてから",
+          "refs": ["朝","包丁","研ぐ"]
+        },
+        {
+          "ja": "料理を始めます",
+          "gloss": "start cooking",
+          "refs": ["料理","始める"]
+        }
+      ]
+    },
+    {
+      "ja": "このシャツは手で濯いだほうがいい。",
+      "en": "It’s better to rinse this shirt by hand.",
+      "grammarNotes": [
+        "Vたほうがいい = giving advice or recommendation."
+      ],
+      "chunks": [
+        {
+          "ja": "このシャツは",
+          "gloss": "this shirt",
+          "refs": ["シャツ"]
+        },
+        {
+          "ja": "手で濯いだほうがいい",
+          "gloss": "it’s better to rinse by hand",
+          "focus": "Vたほうがいい",
+          "refs": ["手","濯ぐ"]
+        }
+      ]
+    },
+    {
+      "ja": "犬がバッグの中をずっと嗅いでいる。",
+      "en": "The dog keeps sniffing inside the bag.",
+      "grammarNotes": [
+        "Vている often indicates continuous action."
+      ],
+      "chunks": [
+        {
+          "ja": "犬が",
+          "gloss": "the dog",
+          "refs": ["犬"]
+        },
+        {
+          "ja": "バッグの中をずっと",
+          "gloss": "inside the bag continuously",
+          "refs": ["バッグ","中","ずっと"]
+        },
+        {
+          "ja": "嗅いでいる",
+          "gloss": "is sniffing",
+          "focus": "Vている",
+          "refs": ["嗅ぐ"]
+        }
+      ]
+    }
+  ]
+}
