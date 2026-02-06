@@ -1,0 +1,108 @@
+{
+  "name": "Cause, reason, explanation & inference",
+  "description": "Reason-giving (ので/から/ため) plus N2/N1 frames that express inference, commitment, or justification.",
+  "entries": [
+    {
+      "pattern": "〜ので",
+      "meaning": "because; since (softer/more objective)",
+      "example_jp": "雨なので、家にいます。",
+      "example_en": "Because it's raining, I'm staying home."
+    },
+    {
+      "pattern": "〜から",
+      "meaning": "because; since (more direct/subjective)",
+      "example_jp": "忙しいから、後で連絡します。",
+      "example_en": "Because I'm busy, I'll contact you later."
+    },
+    {
+      "pattern": "〜ため（に）",
+      "meaning": "because; due to / in order to",
+      "example_jp": "雪のため、電車が止まりました。",
+      "example_en": "Due to snow, the train stopped."
+    },
+    {
+      "pattern": "〜おかげで",
+      "meaning": "thanks to; due to (positive)",
+      "example_jp": "友達のおかげで助かりました。",
+      "example_en": "I was saved thanks to my friend."
+    },
+    {
+      "pattern": "〜せいで",
+      "meaning": "because of; due to (blame/negative)",
+      "example_jp": "雨のせいで試合が中止になった。",
+      "example_en": "Because of the rain, the game was canceled."
+    },
+    {
+      "pattern": "〜のでしょう",
+      "meaning": "probably because; explanatory conjecture",
+      "example_jp": "疲れているのでしょう、すぐ寝てしまった。",
+      "example_en": "They must have been tired, and fell asleep quickly."
+    },
+    {
+      "pattern": "〜ことから",
+      "meaning": "from the fact that; based on",
+      "example_jp": "名前に『山』が多いことから、山が多い地域だと分かる。",
+      "example_en": "From the fact many names include 'yama', you can tell it's a mountainous region."
+    },
+    {
+      "pattern": "〜によって",
+      "meaning": "depending on; due to; by means of",
+      "example_jp": "天気によって予定を変えます。",
+      "example_en": "I change plans depending on the weather."
+    },
+    {
+      "pattern": "〜からには",
+      "meaning": "now that; since (commitment)",
+      "example_jp": "約束したからには守ります。",
+      "example_en": "Now that I promised, I will keep it."
+    },
+    {
+      "pattern": "〜以上（は）",
+      "meaning": "since; now that (strong)",
+      "example_jp": "引き受けた以上、最後までやる。",
+      "example_en": "Since I accepted it, I'll do it to the end."
+    },
+    {
+      "pattern": "〜わけだ",
+      "meaning": "that's why; it makes sense that",
+      "example_jp": "道が混んでいた。だから遅れたわけだ。",
+      "example_en": "The roads were crowded. That's why you were late."
+    },
+    {
+      "pattern": "〜ものだから",
+      "meaning": "because (excuse; casual)",
+      "example_jp": "寝坊したものだから、間に合わなかった。",
+      "example_en": "Because I overslept, I didn't make it."
+    },
+    {
+      "pattern": "〜につき",
+      "meaning": "due to; because of (very formal signage)",
+      "example_jp": "本日休業につき、ご了承ください。",
+      "example_en": "We are closed today; thank you for your understanding."
+    },
+    {
+      "pattern": "〜ことだし",
+      "meaning": "since; (given that) (reason + suggestion)",
+      "example_jp": "せっかく来たことだし、ゆっくりしていきなよ。",
+      "example_en": "Since you came all this way, stay and relax."
+    },
+    {
+      "pattern": "〜により",
+      "meaning": "due to; by (formal)",
+      "example_jp": "システム障害により遅延しております。",
+      "example_en": "There is a delay due to a system issue."
+    },
+    {
+      "pattern": "〜に伴って",
+      "meaning": "as; along with (change)",
+      "example_jp": "制度変更に伴って手続きが必要です。",
+      "example_en": "Procedures are required along with the policy change."
+    },
+    {
+      "pattern": "〜に応じて",
+      "meaning": "according to; depending on",
+      "example_jp": "状況に応じて対応します。",
+      "example_en": "We will respond according to the situation."
+    }
+  ]
+}

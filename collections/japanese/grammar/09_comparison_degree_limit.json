@@ -1,0 +1,96 @@
+{
+  "name": "Comparison, degree, limitation, evaluation",
+  "description": "Comparisons and degree expressions plus N2/N1 limitation/evaluation forms common in arguments and reviews.",
+  "entries": [
+    {
+      "pattern": "Nより",
+      "meaning": "than (comparison)",
+      "example_jp": "電車よりバスのほうが安い。",
+      "example_en": "Buses are cheaper than trains."
+    },
+    {
+      "pattern": "Nほど",
+      "meaning": "as... as; to the extent",
+      "example_jp": "彼ほど日本語が上手な人はいない。",
+      "example_en": "There is no one as good at Japanese as him."
+    },
+    {
+      "pattern": "Nほど〜ない",
+      "meaning": "not as... as",
+      "example_jp": "今年は去年ほど暑くない。",
+      "example_en": "This year is not as hot as last year."
+    },
+    {
+      "pattern": "〜ほどではない",
+      "meaning": "not to the extent of; not that much",
+      "example_jp": "心配するほどではありません。",
+      "example_en": "It's not something to worry that much about."
+    },
+    {
+      "pattern": "Nに比べて / Nと比べて",
+      "meaning": "compared to",
+      "example_jp": "去年に比べて売り上げが増えた。",
+      "example_en": "Sales increased compared to last year."
+    },
+    {
+      "pattern": "Nに対して",
+      "meaning": "in contrast to; towards; against",
+      "example_jp": "兄は社交的なのに対して、私は人見知りだ。",
+      "example_en": "In contrast to my outgoing brother, I'm shy."
+    },
+    {
+      "pattern": "Nにしては",
+      "meaning": "considering N; for N",
+      "example_jp": "初心者にしては上手ですね。",
+      "example_en": "You're good for a beginner."
+    },
+    {
+      "pattern": "Nとして",
+      "meaning": "as; in the role of",
+      "example_jp": "客として丁寧に扱われたい。",
+      "example_en": "I want to be treated politely as a customer."
+    },
+    {
+      "pattern": "NほどのN",
+      "meaning": "N of such degree; enough to be N",
+      "example_jp": "驚くほどの速さだった。",
+      "example_en": "It was a speed that was surprising."
+    },
+    {
+      "pattern": "〜にすぎない",
+      "meaning": "nothing more than; merely",
+      "example_jp": "それは噂にすぎない。",
+      "example_en": "That's nothing more than a rumor."
+    },
+    {
+      "pattern": "〜にほかならない",
+      "meaning": "nothing other than; precisely",
+      "example_jp": "成功の鍵は継続にほかならない。",
+      "example_en": "The key to success is nothing other than persistence."
+    },
+    {
+      "pattern": "〜にしても〜にしても",
+      "meaning": "whether... or...; either way",
+      "example_jp": "行くにしても行かないにしても、早く決めて。",
+      "example_en": "Whether you go or not, decide soon."
+    },
+    {
+      "pattern": "〜に越したことはない",
+      "meaning": "best to; nothing better than",
+      "example_jp": "確認するに越したことはない。",
+      "example_en": "It's best to confirm."
+    },
+    {
+      "pattern": "〜どころではない",
+      "meaning": "not in a situation to; cannot afford to",
+      "example_jp": "忙しくて旅行どころではない。",
+      "example_en": "I'm too busy to even think about traveling."
+    },
+    {
+      "pattern": "〜ほどのことではない",
+      "meaning": "not that serious",
+      "example_jp": "謝るほどのことではありません。",
+      "example_en": "It's not something you need to apologize for."
+    }
+  ]
+}

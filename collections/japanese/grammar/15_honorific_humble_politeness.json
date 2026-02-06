@@ -1,0 +1,84 @@
+{
+  "name": "Honorifics, humble forms, and polite set phrases",
+  "description": "Core respectful/humble grammar for emails, customer service, and formal situations (N2–N1).",
+  "entries": [
+    {
+      "pattern": "お/ごN",
+      "meaning": "honorific prefix (polite)",
+      "example_jp": "お名前を教えてください。",
+      "example_en": "Please tell me your name."
+    },
+    {
+      "pattern": "お/ご〜になる",
+      "meaning": "honorific verb; subject (respected person) does",
+      "example_jp": "社長がお帰りになりました。",
+      "example_en": "The president has gone home."
+    },
+    {
+      "pattern": "〜なさる",
+      "meaning": "honorific 'do'",
+      "example_jp": "先生はもうお帰りなさいます。",
+      "example_en": "The teacher will go home soon."
+    },
+    {
+      "pattern": "〜ていらっしゃる",
+      "meaning": "honorific 'be doing / be'",
+      "example_jp": "部長は会議中でいらっしゃいます。",
+      "example_en": "The manager is in a meeting."
+    },
+    {
+      "pattern": "お/ご〜する",
+      "meaning": "humble 'do' (speaker)",
+      "example_jp": "私がご案内します。",
+      "example_en": "I will guide you."
+    },
+    {
+      "pattern": "〜いたす",
+      "meaning": "humble 'do' (polite)",
+      "example_jp": "こちらで確認いたします。",
+      "example_en": "I will check here."
+    },
+    {
+      "pattern": "〜申し上げる",
+      "meaning": "humble 'say'",
+      "example_jp": "お礼を申し上げます。",
+      "example_en": "I would like to express my thanks."
+    },
+    {
+      "pattern": "〜させていただく",
+      "meaning": "humbly be allowed to do (very common business)",
+      "example_jp": "本日は休ませていただきます。",
+      "example_en": "I will take the day off (humbly)."
+    },
+    {
+      "pattern": "恐れ入りますが",
+      "meaning": "polite preface; I'm sorry but...",
+      "example_jp": "恐れ入りますが、もう一度お願いします。",
+      "example_en": "I'm sorry, but could you please say it once more?"
+    },
+    {
+      "pattern": "失礼いたします",
+      "meaning": "excuse me; (formal)",
+      "example_jp": "先に失礼いたします。",
+      "example_en": "Excuse me, I'll leave first."
+    },
+    {
+      "pattern": "〜でございます",
+      "meaning": "polite copula (very formal)",
+      "example_jp": "こちらが資料でございます。",
+      "example_en": "Here are the materials."
+    },
+    {
+      "pattern": "〜になります",
+      "meaning": "polite phrase often used in service (sometimes overused)",
+      "example_jp": "こちらがメニューになります。",
+      "example_en": "Here is the menu."
+    },
+    {
+      "pattern": "かしこまりました",
+      "meaning": "certainly; understood (service)",
+      "example_jp": "かしこまりました。少々お待ちください。",
+      "example_en": "Certainly. Please wait a moment."
+    }
+  ]
+}

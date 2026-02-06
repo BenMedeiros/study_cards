@@ -1,0 +1,120 @@
+{
+  "name": "Evidentiality, appearance, hearsay, certainty",
+  "description": "How Japanese marks information source and confidence—from visual appearance to hearsay to strong conviction (N3–N1).",
+  "entries": [
+    {
+      "pattern": "〜そうだ（様態）",
+      "meaning": "looks like / appears that (visual impression)",
+      "example_jp": "雨が降りそうです。",
+      "example_en": "It looks like it’s going to rain."
+    },
+    {
+      "pattern": "〜そうだ（伝聞）",
+      "meaning": "I heard that / it is said that (reported information)",
+      "example_jp": "明日は寒くなるそうです。",
+      "example_en": "I heard that it will be cold tomorrow."
+    },
+    {
+      "pattern": "〜ようだ",
+      "meaning": "it seems that / it appears that (reasoned or indirect evidence)",
+      "example_jp": "外は静かなようです。",
+      "example_en": "It seems quiet outside."
+    },
+    {
+      "pattern": "〜みたいだ",
+      "meaning": "seems like / looks like (casual, subjective impression)",
+      "example_jp": "あの人は先生みたいです。",
+      "example_en": "That person seems like a teacher."
+    },
+    {
+      "pattern": "〜らしい",
+      "meaning": "apparently / I heard that / typical of (based on info or reputation)",
+      "example_jp": "彼は来ないらしいです。",
+      "example_en": "Apparently, he isn’t coming."
+    },
+    {
+      "pattern": "〜っぽい",
+      "meaning": "seems; -ish; tends to (casual)",
+      "example_jp": "今日は雨っぽいね。",
+      "example_en": "It seems rainy today."
+    },
+    {
+      "pattern": "〜に違いない",
+      "meaning": "must be; no doubt",
+      "example_jp": "あの態度は怒っているに違いない。",
+      "example_en": "With that attitude, they must be angry."
+    },
+    {
+      "pattern": "〜はずだ",
+      "meaning": "should; expected to; it stands to reason",
+      "example_jp": "もうすぐ着くはずです。",
+      "example_en": "We should arrive soon."
+    },
+    {
+      "pattern": "〜かもしれない",
+      "meaning": "might; maybe",
+      "example_jp": "明日は雪かもしれない。",
+      "example_en": "It might snow tomorrow."
+    },
+    {
+      "pattern": "〜に相違ない",
+      "meaning": "surely; no mistake (formal)",
+      "example_jp": "これは名作に相違ない。",
+      "example_en": "This is surely a masterpiece."
+    },
+    {
+      "pattern": "〜とのことだ",
+      "meaning": "I was told that; (reported)",
+      "example_jp": "先生によると、試験は延期とのことです。",
+      "example_en": "According to the teacher, the exam has been postponed."
+    },
+    {
+      "pattern": "〜という",
+      "meaning": "called; said; that (quotation/label)",
+      "example_jp": "『学び』という言葉が好きです。",
+      "example_en": "I like the word 'learning'."
+    },
+    {
+      "pattern": "〜みえる",
+      "meaning": "seems; appears (often written)",
+      "example_jp": "遠くに山が見える。",
+      "example_en": "Mountains can be seen in the distance."
+    },
+    {
+      "pattern": "〜気がする",
+      "meaning": "feel like; have a sense that",
+      "example_jp": "今日はうまくいく気がする。",
+      "example_en": "I have a feeling things will go well today."
+    },
+    {
+      "pattern": "〜に違いない",
+      "meaning": "must be",
+      "example_jp": "彼はもう知っているに違いない。",
+      "example_en": "He must already know."
+    },
+    {
+      "pattern": "〜に決まっている",
+      "meaning": "surely; bound to (often strong/casual)",
+      "example_jp": "そんなの失敗に決まってる。",
+      "example_en": "That is bound to fail."
+    },
+    {
+      "pattern": "〜に違いない / 〜に相違ない",
+      "meaning": "certain; no doubt (formal variant)",
+      "example_jp": "その判断は正しいに相違ない。",
+      "example_en": "That judgment is certainly correct."
+    },
+    {
+      "pattern": "〜らしい（典型）",
+      "meaning": "typical of; characteristic of",
+      "example_jp": "彼は彼らしいやり方で解決した。",
+      "example_en": "He solved it in a way that's typical of him."
+    },
+    {
+      "pattern": "〜っけ",
+      "meaning": "what was it again? (casual recall)",
+      "example_jp": "明日って何時だっけ？",
+      "example_en": "What time was it tomorrow again?"
+    }
+  ]
+}

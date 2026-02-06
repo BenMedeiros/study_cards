@@ -1,0 +1,105 @@
+{
+  "name": "Focus particles, emphasis, 'even', and scope",
+  "description": "Emphasis and scope control that changes meaning dramatically in reading (も/でも/さえ/すら/まで/こそ etc.).",
+  "entries": [
+    {
+      "pattern": "Nも",
+      "meaning": "also; too; even (emphasis)",
+      "example_jp": "一人も来なかった。",
+      "example_en": "Not even one person came.",
+      "notes_grammar": [
+        "In negative sentences, 'Nも〜ない' often means 'not even one'."
+      ]
+    },
+    {
+      "pattern": "Nでも",
+      "meaning": "even N; even a minimal example",
+      "example_jp": "子どもでも分かります。",
+      "example_en": "Even a child can understand."
+    },
+    {
+      "pattern": "〜さえ",
+      "meaning": "even; if only; as long as",
+      "example_jp": "水さえあれば生きられる。",
+      "example_en": "If only you have water, you can live."
+    },
+    {
+      "pattern": "〜すら",
+      "meaning": "even (strong; often written)",
+      "example_jp": "名前すら覚えていない。",
+      "example_en": "I don't even remember the name."
+    },
+    {
+      "pattern": "〜まで",
+      "meaning": "even; to the point of",
+      "example_jp": "泣くまで怒られた。",
+      "example_en": "I was scolded to the point of crying."
+    },
+    {
+      "pattern": "〜こそ",
+      "meaning": "precisely; exactly; emphasis",
+      "example_jp": "今こそ始めるべきだ。",
+      "example_en": "Now is exactly the time to start."
+    },
+    {
+      "pattern": "〜なんて",
+      "meaning": "something like; (dismissive/surprised)",
+      "example_jp": "彼が来ないなんて信じられない。",
+      "example_en": "I can't believe he won't come."
+    },
+    {
+      "pattern": "〜など",
+      "meaning": "etc.; (lowering/dismissive)",
+      "example_jp": "そんなことなど気にしないで。",
+      "example_en": "Don't worry about things like that."
+    },
+    {
+      "pattern": "〜だけでなく",
+      "meaning": "not only... but also",
+      "example_jp": "英語だけでなく、日本語も勉強しています。",
+      "example_en": "I study not only English but also Japanese."
+    },
+    {
+      "pattern": "〜に限らず",
+      "meaning": "not limited to; regardless of",
+      "example_jp": "年齢に限らず参加できます。",
+      "example_en": "You can participate regardless of age."
+    },
+    {
+      "pattern": "〜に限って",
+      "meaning": "only when; just on that occasion",
+      "example_jp": "忙しい日に限って電話が来る。",
+      "example_en": "Calls come only on busy days."
+    },
+    {
+      "pattern": "〜はもちろん",
+      "meaning": "needless to say",
+      "example_jp": "彼は日本語はもちろん、英語も話せる。",
+      "example_en": "He can speak English as well as Japanese, needless to say."
+    },
+    {
+      "pattern": "Nばかり",
+      "meaning": "only; nothing but (often criticism)",
+      "example_jp": "文句ばかり言っている。",
+      "example_en": "They do nothing but complain."
+    },
+    {
+      "pattern": "〜こそ〜が",
+      "meaning": "it is ... that ... (contrastive focus)",
+      "example_jp": "必要なのは才能ではなく努力こそが大事だ。",
+      "example_en": "What is necessary is not talent, but effort itself."
+    },
+    {
+      "pattern": "〜に限って〜ない",
+      "meaning": "never when it comes to; (someone) doesn't",
+      "example_jp": "彼に限って嘘をつくことはない。",
+      "example_en": "He, of all people, would never lie."
+    },
+    {
+      "pattern": "〜だに",
+      "meaning": "even (can't) (very formal)",
+      "example_jp": "想像だにしなかった。",
+      "example_en": "I never even imagined it."
+    }
+  ]
+}

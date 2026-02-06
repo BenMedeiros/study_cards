@@ -1,0 +1,78 @@
+{
+  "name": "Giving, receiving, benefactive actions",
+  "description": "Benefactive system (あげる/くれる/もらう) and polite counterparts; important for social nuance.",
+  "entries": [
+    {
+      "pattern": "NにNをあげる",
+      "meaning": "give (from speaker to others)",
+      "example_jp": "友達に本をあげました。",
+      "example_en": "I gave my friend a book."
+    },
+    {
+      "pattern": "NにNをくれる",
+      "meaning": "give (to speaker/in-group)",
+      "example_jp": "友達が私に本をくれました。",
+      "example_en": "My friend gave me a book."
+    },
+    {
+      "pattern": "NにNをもらう",
+      "meaning": "receive",
+      "example_jp": "友達に本をもらいました。",
+      "example_en": "I received a book from my friend."
+    },
+    {
+      "pattern": "Vてあげる",
+      "meaning": "do for someone (speaker as giver)",
+      "example_jp": "妹に宿題を手伝ってあげた。",
+      "example_en": "I helped my younger sister with her homework."
+    },
+    {
+      "pattern": "Vてくれる",
+      "meaning": "someone does for me (benefit)",
+      "example_jp": "友達が駅まで送ってくれた。",
+      "example_en": "My friend took me to the station."
+    },
+    {
+      "pattern": "Vてもらう",
+      "meaning": "have someone do for me",
+      "example_jp": "先生に作文を見てもらった。",
+      "example_en": "I had the teacher look over my composition."
+    },
+    {
+      "pattern": "お/ご〜してあげる",
+      "meaning": "do (honorific noun) for someone (polite)",
+      "example_jp": "荷物をお持ちしてあげます。",
+      "example_en": "I'll carry your luggage for you."
+    },
+    {
+      "pattern": "〜ていただく",
+      "meaning": "humbly receive action",
+      "example_jp": "説明していただき、ありがとうございました。",
+      "example_en": "Thank you for explaining (to me)."
+    },
+    {
+      "pattern": "〜てくださる",
+      "meaning": "honorific 'do for me/us'",
+      "example_jp": "先生が来てくださいました。",
+      "example_en": "The teacher kindly came (for us)."
+    },
+    {
+      "pattern": "〜てやる",
+      "meaning": "do for (to someone lower/animals) (rough)",
+      "example_jp": "犬に水を飲ませてやった。",
+      "example_en": "I gave the dog water to drink."
+    },
+    {
+      "pattern": "〜てさしあげる",
+      "meaning": "humble/polite 'do for'",
+      "example_jp": "私がご説明して差し上げます。",
+      "example_en": "I will explain (for you)."
+    },
+    {
+      "pattern": "〜ていただけませんか",
+      "meaning": "could you please (very polite request)",
+      "example_jp": "少し待っていただけませんか。",
+      "example_en": "Could you please wait a moment?"
+    }
+  ]
+}

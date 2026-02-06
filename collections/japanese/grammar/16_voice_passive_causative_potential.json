@@ -1,0 +1,69 @@
+{
+  "name": "Voice: passive, causative, potential, related forms",
+  "description": "Core voice transformations plus closely related result-state and honorific use of られる.",
+  "entries": [
+    {
+      "pattern": "Vられる（可能）",
+      "meaning": "can; be able to (potential)",
+      "example_jp": "日本語が話せます。/ 日本語が話せられる。",
+      "example_en": "I can speak Japanese.",
+      "notes_grammar": [
+        "Potential for ichidan: 食べられる; godan: 書ける (more common than 書かれる)."
+      ]
+    },
+    {
+      "pattern": "Vられる（受身）",
+      "meaning": "passive; be done to",
+      "example_jp": "犬にかまれました。",
+      "example_en": "I was bitten by a dog."
+    },
+    {
+      "pattern": "Vさせる（使役）",
+      "meaning": "causative; make/let do",
+      "example_jp": "母は子どもに野菜を食べさせた。",
+      "example_en": "The mother made the child eat vegetables."
+    },
+    {
+      "pattern": "Vさせられる（使役受身）",
+      "meaning": "causative-passive; be made to",
+      "example_jp": "残業させられました。",
+      "example_en": "I was made to work overtime."
+    },
+    {
+      "pattern": "〜てもらう（受益）",
+      "meaning": "receive benefit (not passive but related)",
+      "example_jp": "上司に助けてもらった。",
+      "example_en": "I got help from my boss."
+    },
+    {
+      "pattern": "〜られる（尊敬）",
+      "meaning": "honorific passive-like",
+      "example_jp": "先生はもう帰られました。",
+      "example_en": "The teacher has already gone home."
+    },
+    {
+      "pattern": "〜てある",
+      "meaning": "result state from intentional action",
+      "example_jp": "ドアが閉めてあります。",
+      "example_en": "The door has been closed (intentionally)."
+    },
+    {
+      "pattern": "〜てしまう（受身的）",
+      "meaning": "end up; be done unintentionally",
+      "example_jp": "大事なデータを消してしまった。",
+      "example_en": "I ended up deleting important data."
+    },
+    {
+      "pattern": "〜させてください",
+      "meaning": "please let me do",
+      "example_jp": "先に帰らせてください。",
+      "example_en": "Please let me go home first."
+    },
+    {
+      "pattern": "〜させていただく",
+      "meaning": "humbly be allowed to do",
+      "example_jp": "こちらで対応させていただきます。",
+      "example_en": "We will handle it here (humbly)."
+    }
+  ]
+}

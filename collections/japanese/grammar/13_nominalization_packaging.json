@@ -1,0 +1,120 @@
+{
+  "name": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
+  "description": "Structures that turn clauses into noun-like units—critical for reading explanations, arguments, and formal writing.",
+  "entries": [
+    {
+      "pattern": "Vること",
+      "meaning": "nominalize action; 'the act of V-ing'",
+      "example_jp": "走ることが好きです。",
+      "example_en": "I like running."
+    },
+    {
+      "pattern": "Vるの",
+      "meaning": "nominalize (colloquial); also explanation",
+      "example_jp": "食べるのが早いですね。",
+      "example_en": "You eat fast, don't you."
+    },
+    {
+      "pattern": "〜ことになる",
+      "meaning": "it is decided/it turns out that",
+      "example_jp": "来月引っ越すことになりました。",
+      "example_en": "It has been decided that I'll move next month."
+    },
+    {
+      "pattern": "〜ことにする",
+      "meaning": "decide to",
+      "example_jp": "今日は外食しないことにします。",
+      "example_en": "I've decided not to eat out today."
+    },
+    {
+      "pattern": "〜ということ",
+      "meaning": "the fact that; what it means is",
+      "example_jp": "遅れるということは、連絡が必要です。",
+      "example_en": "Being late means you need to contact them."
+    },
+    {
+      "pattern": "〜わけだ",
+      "meaning": "that explains; no wonder",
+      "example_jp": "なるほど、だから忙しいわけだ。",
+      "example_en": "I see—that explains why you're busy."
+    },
+    {
+      "pattern": "〜わけではない",
+      "meaning": "it's not that... (partial negation)",
+      "example_jp": "嫌いなわけではないが、今日は食べたくない。",
+      "example_en": "It's not that I dislike it, but I don't want to eat it today."
+    },
+    {
+      "pattern": "〜はずだ",
+      "meaning": "should; expected; logical conclusion",
+      "example_jp": "この道で合っているはずです。",
+      "example_en": "This road should be correct."
+    },
+    {
+      "pattern": "〜わけがない",
+      "meaning": "cannot be; impossible",
+      "example_jp": "彼がそんなことをするわけがない。",
+      "example_en": "There's no way he would do that."
+    },
+    {
+      "pattern": "〜もの",
+      "meaning": "because; also 'things that...' (noun)",
+      "example_jp": "子どもだもの、仕方ない。",
+      "example_en": "Because they're a child, it can't be helped."
+    },
+    {
+      "pattern": "〜というN",
+      "meaning": "N called; the N that is called",
+      "example_jp": "『和食』という料理が好きです。",
+      "example_en": "I like the cuisine called 'washoku'."
+    },
+    {
+      "pattern": "〜について / 〜に関して",
+      "meaning": "about; regarding",
+      "example_jp": "契約について説明します。",
+      "example_en": "I will explain about the contract."
+    },
+    {
+      "pattern": "〜において",
+      "meaning": "in; at; regarding (formal)",
+      "example_jp": "教育において大切なのは継続だ。",
+      "example_en": "In education, what's important is persistence."
+    },
+    {
+      "pattern": "〜というわけだ",
+      "meaning": "that's why; so it follows that",
+      "example_jp": "つまり、来週は休みというわけだ。",
+      "example_en": "So that means next week is a holiday."
+    },
+    {
+      "pattern": "〜わけにはいかない",
+      "meaning": "cannot (social reasons)",
+      "example_jp": "約束した以上、行かないわけにはいかない。",
+      "example_en": "Since I promised, I can't not go."
+    },
+    {
+      "pattern": "〜にすぎない",
+      "meaning": "nothing more than",
+      "example_jp": "それは推測にすぎない。",
+      "example_en": "That's nothing more than speculation."
+    },
+    {
+      "pattern": "〜にほかならない",
+      "meaning": "nothing other than",
+      "example_jp": "原因は準備不足にほかならない。",
+      "example_en": "The cause is nothing other than lack of preparation."
+    },
+    {
+      "pattern": "〜というより",
+      "meaning": "rather than; more like",
+      "example_jp": "寒いというより、痛い。",
+      "example_en": "Rather than cold, it's painful."
+    },
+    {
+      "pattern": "〜にほかならない",
+      "meaning": "nothing other than",
+      "example_jp": "これは努力の成果にほかならない。",
+      "example_en": "This is nothing other than the fruit of effort."
+    }
+  ]
+}

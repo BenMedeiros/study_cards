@@ -1,0 +1,132 @@
+{
+  "name": "Core particles & basic sentence roles",
+  "description": "High-frequency particles and core role-markers used from N5 up through N1. Treat these as building blocks that other patterns combine with.",
+  "entries": [
+    {
+      "pattern": "Nは",
+      "meaning": "topic marker; as for N",
+      "example_jp": "私は今、仕事中です。",
+      "example_en": "As for me, I'm working now."
+    },
+    {
+      "pattern": "Nが",
+      "meaning": "subject marker; identifies/introduces subject",
+      "example_jp": "雨が降っています。",
+      "example_en": "It is raining."
+    },
+    {
+      "pattern": "Nを",
+      "meaning": "direct object marker",
+      "example_jp": "本を読みます。",
+      "example_en": "I read a book."
+    },
+    {
+      "pattern": "Nに",
+      "meaning": "target/time/location of arrival; indirect object",
+      "example_jp": "駅に着きました。",
+      "example_en": "I arrived at the station."
+    },
+    {
+      "pattern": "Nで",
+      "meaning": "location of action; means/cause",
+      "example_jp": "家で勉強します。",
+      "example_en": "I study at home."
+    },
+    {
+      "pattern": "Nへ",
+      "meaning": "direction (toward)",
+      "example_jp": "学校へ行きます。",
+      "example_en": "I go to school."
+    },
+    {
+      "pattern": "Nから",
+      "meaning": "from; starting point; because (informal with clause)",
+      "example_jp": "東京から来ました。",
+      "example_en": "I came from Tokyo."
+    },
+    {
+      "pattern": "Nまで",
+      "meaning": "until; as far as",
+      "example_jp": "駅まで歩きます。",
+      "example_en": "I walk to the station."
+    },
+    {
+      "pattern": "Nと",
+      "meaning": "with; and; quote",
+      "example_jp": "友達と話しました。",
+      "example_en": "I talked with a friend."
+    },
+    {
+      "pattern": "NやNなど",
+      "meaning": "non-exhaustive list; etc.",
+      "example_jp": "果物や野菜などを買いました。",
+      "example_en": "I bought fruits, vegetables, etc."
+    },
+    {
+      "pattern": "Nも",
+      "meaning": "also; too; even (emphasis)",
+      "example_jp": "私も行きます。",
+      "example_en": "I will go too."
+    },
+    {
+      "pattern": "Nしか〜ない",
+      "meaning": "only N (and nothing else); negative required",
+      "example_jp": "水しかありません。",
+      "example_en": "There is only water."
+    },
+    {
+      "pattern": "Nだけ",
+      "meaning": "only; just",
+      "example_jp": "今日は一つだけ買いました。",
+      "example_en": "I bought only one today."
+    },
+    {
+      "pattern": "Nほど",
+      "meaning": "to the extent of; about (degree)",
+      "example_jp": "泣きたいほど疲れました。",
+      "example_en": "I was tired enough to cry."
+    },
+    {
+      "pattern": "Nくらい/ぐらい",
+      "meaning": "approximately; about; to the extent that",
+      "example_jp": "一時間ぐらい待ちました。",
+      "example_en": "I waited about an hour."
+    },
+    {
+      "pattern": "Nの",
+      "meaning": "possession/modification; of",
+      "example_jp": "山本さんの本です。",
+      "example_en": "It is Mr. Yamamoto's book."
+    },
+    {
+      "pattern": "Nとして",
+      "meaning": "as; in the capacity of",
+      "example_jp": "学生としての責任があります。",
+      "example_en": "There are responsibilities as a student."
+    },
+    {
+      "pattern": "Nにとって",
+      "meaning": "for; from N's standpoint",
+      "example_jp": "私にとって日本語は大切です。",
+      "example_en": "For me, Japanese is important."
+    },
+    {
+      "pattern": "NによるN",
+      "meaning": "N by; caused by; due to",
+      "example_jp": "地震による被害が広がった。",
+      "example_en": "Damage caused by the earthquake spread."
+    },
+    {
+      "pattern": "NにおけるN",
+      "meaning": "N in; within (formal)",
+      "example_jp": "日本における人口の変化",
+      "example_en": "Changes in population in Japan."
+    },
+    {
+      "pattern": "Nに対するN",
+      "meaning": "N toward; in response to (formal)",
+      "example_jp": "質問に対する答え",
+      "example_en": "An answer to the question."
+    }
+  ]
+}

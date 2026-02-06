@@ -1,0 +1,153 @@
+{
+  "name": "Tense, aspect, result-state, completion",
+  "description": "How actions unfold in time: ongoing, completed, resulting states, doing in advance, trying, finishing, and trends.",
+  "entries": [
+    {
+      "pattern": "〜ている",
+      "meaning": "progressive/state; habitual",
+      "example_jp": "今、雨が降っている。",
+      "example_en": "It is raining now.",
+      "notes_grammar": [
+        "Vている = ongoing action OR resulting state depending on verb (e.g., 結婚している)."
+      ]
+    },
+    {
+      "pattern": "〜てある",
+      "meaning": "resulting state (intentional action done)",
+      "example_jp": "机の上に資料が置いてある。",
+      "example_en": "The materials have been placed on the desk.",
+      "notes_grammar": [
+        "Often implies someone intentionally did it; focus on state/result."
+      ]
+    },
+    {
+      "pattern": "〜てしまう",
+      "meaning": "finish completely / unfortunately do / regretful completion",
+      "example_jp": "宿題を忘れてしまいました。",
+      "example_en": "I unfortunately forgot my homework.",
+      "notes_grammar": [
+        "Can mean completion or regret/undesirable outcome depending on context."
+      ]
+    },
+    {
+      "pattern": "〜ておく",
+      "meaning": "do in advance / do beforehand in preparation for something",
+      "example_jp": "旅行の前にホテルを予約しておきます。",
+      "example_en": "I will reserve the hotel in advance before the trip."
+    },
+    {
+      "pattern": "〜たまま",
+      "meaning": "leave something as is / remain in a resulting state",
+      "example_jp": "電気をつけたまま寝てしまいました。",
+      "example_en": "I fell asleep with the lights left on."
+    },
+    {
+      "pattern": "〜てみる",
+      "meaning": "try doing; do and see",
+      "example_jp": "この薬を飲んでみます。",
+      "example_en": "I'll try taking this medicine."
+    },
+    {
+      "pattern": "〜ておわる",
+      "meaning": "finish doing",
+      "example_jp": "レポートを書き終わりました。",
+      "example_en": "I finished writing the report."
+    },
+    {
+      "pattern": "〜ておく/〜ておいた",
+      "meaning": "do in advance; have done",
+      "example_jp": "明日の会議の資料を印刷しておいた。",
+      "example_en": "I printed the meeting materials in advance."
+    },
+    {
+      "pattern": "〜てしまった",
+      "meaning": "ended up doing; regrettably did",
+      "example_jp": "財布を忘れてしまった。",
+      "example_en": "I ended up forgetting my wallet."
+    },
+    {
+      "pattern": "〜つつある",
+      "meaning": "be in the process of; be on the way to (formal)",
+      "example_jp": "人口は減りつつある。",
+      "example_en": "The population is decreasing.",
+      "notes_grammar": [
+        "Written/formal; often used in news/essays."
+      ]
+    },
+    {
+      "pattern": "〜ところだ",
+      "meaning": "about to / in the middle of / just did",
+      "example_jp": "今から出かけるところです。",
+      "example_en": "I'm just about to go out.",
+      "notes_grammar": [
+        "Vるところだ=about to; Vているところだ=in the middle; Vたところだ=just did."
+      ]
+    },
+    {
+      "pattern": "〜ばかりだ",
+      "meaning": "only continue to; do nothing but (often negative trend)",
+      "example_jp": "物価は上がるばかりだ。",
+      "example_en": "Prices keep rising."
+    },
+    {
+      "pattern": "〜ことがある",
+      "meaning": "there are times when; have experience of",
+      "example_jp": "電車が遅れることがあります。",
+      "example_en": "There are times when trains are delayed."
+    },
+    {
+      "pattern": "〜ておく（放置）",
+      "meaning": "leave; keep as is for now",
+      "example_jp": "そのままにしておいてください。",
+      "example_en": "Please leave it as it is for now."
+    },
+    {
+      "pattern": "〜てある（目的）",
+      "meaning": "done and left for a purpose",
+      "example_jp": "飲み物が冷やしてあります。",
+      "example_en": "Drinks have been chilled (ready)."
+    },
+    {
+      "pattern": "〜てしまいがちだ",
+      "meaning": "tend to end up doing",
+      "example_jp": "夜更かししてしまいがちだ。",
+      "example_en": "I tend to stay up late."
+    },
+    {
+      "pattern": "〜てしょうがない / 〜てたまらない",
+      "meaning": "can't help but; extremely (feeling)",
+      "example_jp": "会いたくてたまらない。",
+      "example_en": "I can't stand how much I want to see you."
+    },
+    {
+      "pattern": "〜てしかたがない",
+      "meaning": "can't help but; very",
+      "example_jp": "心配でしかたがない。",
+      "example_en": "I can't help but worry."
+    },
+    {
+      "pattern": "〜てならない",
+      "meaning": "can't help but; very (often written)",
+      "example_jp": "残念でならない。",
+      "example_en": "I can't help but feel it's regrettable."
+    },
+    {
+      "pattern": "〜ているところだった",
+      "meaning": "was just in the middle of",
+      "example_jp": "ちょうど出かけているところでした。",
+      "example_en": "I was just in the middle of going out."
+    },
+    {
+      "pattern": "〜つもりで",
+      "meaning": "with the intention of; acting as if",
+      "example_jp": "冗談のつもりで言った。",
+      "example_en": "I said it intending it as a joke."
+    },
+    {
+      "pattern": "〜っぱなし",
+      "meaning": "leave (something) as is; keep doing",
+      "example_jp": "ドアを開けっぱなしにしないで。",
+      "example_en": "Don't leave the door open."
+    }
+  ]
+}

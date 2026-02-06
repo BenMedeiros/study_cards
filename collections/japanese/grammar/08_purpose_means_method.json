@@ -1,0 +1,96 @@
+{
+  "name": "Purpose, goals, means, and methods",
+  "description": "How actions are framed as aiming for an outcome or achieved via a method (useful for manuals, instructions, essays).",
+  "entries": [
+    {
+      "pattern": "〜ために",
+      "meaning": "in order to; for the sake of",
+      "example_jp": "日本語を上達するために毎日勉強しています。",
+      "example_en": "I study every day in order to improve my Japanese."
+    },
+    {
+      "pattern": "〜ように",
+      "meaning": "so that; in order that (goal)",
+      "example_jp": "忘れないようにメモします。",
+      "example_en": "I take notes so that I won't forget."
+    },
+    {
+      "pattern": "〜ようにする",
+      "meaning": "make it a habit to; try to",
+      "example_jp": "野菜を食べるようにしています。",
+      "example_en": "I try to eat vegetables."
+    },
+    {
+      "pattern": "Vて",
+      "meaning": "by doing; and then (means/sequence)",
+      "example_jp": "電車に乗って行きます。",
+      "example_en": "I go by taking the train."
+    },
+    {
+      "pattern": "〜ことによって",
+      "meaning": "by means of; through (formal)",
+      "example_jp": "努力することによって結果が変わる。",
+      "example_en": "Through effort, results change."
+    },
+    {
+      "pattern": "〜ことで",
+      "meaning": "by doing; because of (context)",
+      "example_jp": "少しずつ続けることで、上達します。",
+      "example_en": "By continuing little by little, you improve."
+    },
+    {
+      "pattern": "Nを通じて / Nを通して",
+      "meaning": "through; via (medium)",
+      "example_jp": "映画を通じて日本語を学びました。",
+      "example_en": "I learned Japanese through movies."
+    },
+    {
+      "pattern": "Nを利用して",
+      "meaning": "using; taking advantage of",
+      "example_jp": "アプリを利用して単語を覚えます。",
+      "example_en": "I memorize words using an app."
+    },
+    {
+      "pattern": "〜に向けて",
+      "meaning": "toward; for (a goal)",
+      "example_jp": "試験に向けて勉強しています。",
+      "example_en": "I'm studying toward the exam."
+    },
+    {
+      "pattern": "〜に沿って",
+      "meaning": "along; according to (policy/plan)",
+      "example_jp": "計画に沿って進めます。",
+      "example_en": "We will proceed according to the plan."
+    },
+    {
+      "pattern": "〜に際して",
+      "meaning": "on the occasion of; when (formal)",
+      "example_jp": "入学に際して、書類を提出してください。",
+      "example_en": "On the occasion of enrollment, please submit the documents."
+    },
+    {
+      "pattern": "〜に先立って",
+      "meaning": "prior to; before (formal)",
+      "example_jp": "開始に先立って説明します。",
+      "example_en": "Before starting, I'll explain."
+    },
+    {
+      "pattern": "〜をきっかけに",
+      "meaning": "triggered by; as a turning point",
+      "example_jp": "留学をきっかけに視野が広がった。",
+      "example_en": "Studying abroad broadened my perspective as a turning point."
+    },
+    {
+      "pattern": "〜を通して",
+      "meaning": "throughout; through (process)",
+      "example_jp": "一年を通して暖かい。",
+      "example_en": "It is warm throughout the year."
+    },
+    {
+      "pattern": "〜を皮切りに",
+      "meaning": "starting with; as a beginning (formal)",
+      "example_jp": "東京を皮切りに全国で開催される。",
+      "example_en": "Starting with Tokyo, it will be held nationwide."
+    }
+  ]
+}

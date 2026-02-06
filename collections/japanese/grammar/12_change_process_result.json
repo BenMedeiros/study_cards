@@ -1,0 +1,102 @@
+{
+  "name": "Change, process, outcomes, and trends",
+  "description": "Patterns describing how states change over time and how outcomes are reached (including N2/N1 'after much...').",
+  "entries": [
+    {
+      "pattern": "〜ようになる",
+      "meaning": "come to be able to / reach a new state or habit over time",
+      "example_jp": "毎日練習して、日本語が話せるようになりました。",
+      "example_en": "By practicing every day, I became able to speak Japanese."
+    },
+    {
+      "pattern": "〜てくる",
+      "meaning": "change or movement toward the speaker / something has started or continued up to now",
+      "example_jp": "だんだん寒くなってきました。",
+      "example_en": "It has gradually become cold."
+    },
+    {
+      "pattern": "〜ていく",
+      "meaning": "change or movement away from the speaker / continue into the future",
+      "example_jp": "これからも日本語を勉強していきます。",
+      "example_en": "I will continue studying Japanese from now on."
+    },
+    {
+      "pattern": "〜ようにする",
+      "meaning": "try to / make an effort to",
+      "example_jp": "毎日日本語を話すようにしています。",
+      "example_en": "I try to speak Japanese every day."
+    },
+    {
+      "pattern": "〜ことになる",
+      "meaning": "it has been decided that / end up doing",
+      "example_jp": "来月引っ越すことになりました。",
+      "example_en": "It has been decided that I will move next month."
+    },
+    {
+      "pattern": "〜になる / 〜となる",
+      "meaning": "become; come to be (となる more formal)",
+      "example_jp": "大人になると、時間が早く感じる。",
+      "example_en": "When you become an adult, time feels faster."
+    },
+    {
+      "pattern": "〜ようだ（結果）",
+      "meaning": "it turns out that; end up (contextual)",
+      "example_jp": "探したが、見つからないようだ。",
+      "example_en": "I searched, but it seems I can't find it (it turns out)."
+    },
+    {
+      "pattern": "〜あげく（に）",
+      "meaning": "after a long period; in the end (often negative)",
+      "example_jp": "迷ったあげく、買わなかった。",
+      "example_en": "After much hesitation, I didn't buy it."
+    },
+    {
+      "pattern": "〜末（に）",
+      "meaning": "after; at the end of (often effort)",
+      "example_jp": "話し合いの末、解決した。",
+      "example_en": "After discussions, it was resolved."
+    },
+    {
+      "pattern": "〜結果",
+      "meaning": "as a result (noun)",
+      "example_jp": "努力した結果、合格できた。",
+      "example_en": "As a result of effort, I passed."
+    },
+    {
+      "pattern": "〜ところ",
+      "meaning": "at the time/point of; when",
+      "example_jp": "ちょうど出かけるところに電話が来た。",
+      "example_en": "Right when I was about to go out, a call came."
+    },
+    {
+      "pattern": "〜につれて",
+      "meaning": "as; in proportion to",
+      "example_jp": "年を取るにつれて体力が落ちる。",
+      "example_en": "As you get older, your stamina declines."
+    },
+    {
+      "pattern": "〜にしたがって",
+      "meaning": "as; according to (trend)",
+      "example_jp": "状況が悪化するにしたがって、対策が必要だ。",
+      "example_en": "As the situation worsens, measures are needed."
+    },
+    {
+      "pattern": "〜にともない",
+      "meaning": "along with; as a result of",
+      "example_jp": "値上げにともない、サービスが変わった。",
+      "example_en": "Along with the price increase, the service changed."
+    },
+    {
+      "pattern": "〜を余儀なくされる",
+      "meaning": "be forced to (formal)",
+      "example_jp": "事故で計画の変更を余儀なくされた。",
+      "example_en": "We were forced to change plans due to the accident."
+    },
+    {
+      "pattern": "〜に至る",
+      "meaning": "to reach; result in (formal)",
+      "example_jp": "議論の末、合意に至った。",
+      "example_en": "After discussion, we reached an agreement."
+    }
+  ]
+}

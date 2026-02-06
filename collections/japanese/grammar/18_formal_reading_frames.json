@@ -1,0 +1,144 @@
+{
+  "name": "Formal frames for reading: stance, scope, basis, discourse",
+  "description": "High-frequency written/formal patterns that appear in articles, essays, and books (mostly N2–N1).",
+  "entries": [
+    {
+      "pattern": "〜にしても〜にしても",
+      "meaning": "whether... or...; either way",
+      "example_jp": "行くにしても行かないにしても、連絡してください。",
+      "example_en": "Whether you go or not, please contact me."
+    },
+    {
+      "pattern": "〜にせよ",
+      "meaning": "even if; whether or not (formal)",
+      "example_jp": "結果がどうであれ、やるにせよやらないにせよ、決めよう。",
+      "example_en": "Either way, let's decide whether to do it or not."
+    },
+    {
+      "pattern": "〜にあたって",
+      "meaning": "on the occasion of; when starting (formal)",
+      "example_jp": "申し込みにあたって、注意事項を確認してください。",
+      "example_en": "When applying, please check the notes."
+    },
+    {
+      "pattern": "〜をめぐって",
+      "meaning": "concerning; over (often dispute)",
+      "example_jp": "税金をめぐって議論が続いている。",
+      "example_en": "Debate continues over taxes."
+    },
+    {
+      "pattern": "〜を問わず",
+      "meaning": "regardless of; irrespective of",
+      "example_jp": "経験を問わず応募できます。",
+      "example_en": "You can apply regardless of experience."
+    },
+    {
+      "pattern": "〜に基づいて",
+      "meaning": "based on",
+      "example_jp": "データに基づいて判断する。",
+      "example_en": "Judge based on data."
+    },
+    {
+      "pattern": "〜に対して",
+      "meaning": "toward; against; in response to",
+      "example_jp": "質問に対して答えます。",
+      "example_en": "I will answer in response to the question."
+    },
+    {
+      "pattern": "〜に関しては",
+      "meaning": "as for; regarding (topic narrowing)",
+      "example_jp": "費用に関しては心配いりません。",
+      "example_en": "As for costs, there's no need to worry."
+    },
+    {
+      "pattern": "〜にほかならない",
+      "meaning": "nothing other than",
+      "example_jp": "これは努力の結果にほかならない。",
+      "example_en": "This is nothing other than the result of effort."
+    },
+    {
+      "pattern": "〜に違いない",
+      "meaning": "must be",
+      "example_jp": "彼は成功するに違いない。",
+      "example_en": "He must succeed."
+    },
+    {
+      "pattern": "〜にしては",
+      "meaning": "for; considering",
+      "example_jp": "初めてにしてはよくできた。",
+      "example_en": "You did well for a first time."
+    },
+    {
+      "pattern": "〜にすぎない",
+      "meaning": "merely",
+      "example_jp": "それは言い訳にすぎない。",
+      "example_en": "That's merely an excuse."
+    },
+    {
+      "pattern": "〜をもとに",
+      "meaning": "based on; using as a basis",
+      "example_jp": "アンケート結果をもとに改善する。",
+      "example_en": "We will improve based on survey results."
+    },
+    {
+      "pattern": "〜にわたって",
+      "meaning": "over; spanning (time/space)",
+      "example_jp": "三日にわたって会議が行われた。",
+      "example_en": "The conference was held over three days."
+    },
+    {
+      "pattern": "〜を通して / 〜を通じて",
+      "meaning": "through; via; throughout",
+      "example_jp": "一年を通して人気がある。",
+      "example_en": "It is popular throughout the year."
+    },
+    {
+      "pattern": "〜にかけて",
+      "meaning": "over; through (range)",
+      "example_jp": "週末にかけて雪が降る見込みだ。",
+      "example_en": "Snow is expected through the weekend."
+    },
+    {
+      "pattern": "〜にわける",
+      "meaning": "divide into",
+      "example_jp": "問題を三つに分けて考える。",
+      "example_en": "Think of the problem by dividing it into three parts."
+    },
+    {
+      "pattern": "〜を禁じ得ない",
+      "meaning": "cannot help but (formal)",
+      "example_jp": "同情を禁じ得ない。",
+      "example_en": "I cannot help but feel sympathy."
+    },
+    {
+      "pattern": "〜ずにはいられない",
+      "meaning": "cannot help but; can't refrain from",
+      "example_jp": "笑わずにはいられない。",
+      "example_en": "I can't help but laugh."
+    },
+    {
+      "pattern": "〜ないではいられない",
+      "meaning": "cannot help but",
+      "example_jp": "心配しないではいられない。",
+      "example_en": "I can't help but worry."
+    },
+    {
+      "pattern": "〜にたえない",
+      "meaning": "cannot bear; deeply (emotion) (formal)",
+      "example_jp": "残念にたえない。",
+      "example_en": "I cannot bear how regrettable it is."
+    },
+    {
+      "pattern": "〜を踏まえて",
+      "meaning": "based on; taking into account",
+      "example_jp": "状況を踏まえて判断する。",
+      "example_en": "Decide taking the situation into account."
+    },
+    {
+      "pattern": "〜を前提に",
+      "meaning": "on the premise that",
+      "example_jp": "安全を前提に計画を立てる。",
+      "example_en": "Make plans on the premise of safety."
+    }
+  ]
+}

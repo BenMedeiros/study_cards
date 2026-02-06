@@ -1,0 +1,96 @@
+{
+  "name": "Time, sequence, timing, and 'while'",
+  "description": "Time relations and sequencing expressions needed for narratives, instructions, and describing timing precisely.",
+  "entries": [
+    {
+      "pattern": "〜とき",
+      "meaning": "when; at the time of",
+      "example_jp": "日本に行ったとき、寿司を食べました。",
+      "example_en": "When I went to Japan, I ate sushi."
+    },
+    {
+      "pattern": "〜てから",
+      "meaning": "after doing",
+      "example_jp": "仕事が終わってから帰ります。",
+      "example_en": "I'll go home after work finishes."
+    },
+    {
+      "pattern": "〜前に",
+      "meaning": "before doing",
+      "example_jp": "寝る前に歯をみがきます。",
+      "example_en": "I brush my teeth before sleeping."
+    },
+    {
+      "pattern": "〜あとで",
+      "meaning": "after; later",
+      "example_jp": "会議のあとで話しましょう。",
+      "example_en": "Let's talk after the meeting."
+    },
+    {
+      "pattern": "〜間（あいだ）",
+      "meaning": "while; during (continuous period)",
+      "example_jp": "夏休みの間、毎日泳いだ。",
+      "example_en": "During summer vacation, I swam every day."
+    },
+    {
+      "pattern": "〜間に",
+      "meaning": "while (during), in the middle of (one-time event occurs)",
+      "example_jp": "留守の間に荷物が届いた。",
+      "example_en": "A package arrived while I was away."
+    },
+    {
+      "pattern": "〜うちに",
+      "meaning": "while; before it’s too late",
+      "example_jp": "熱いうちに食べてください。",
+      "example_en": "Please eat it while it's hot."
+    },
+    {
+      "pattern": "〜ついでに",
+      "meaning": "while you're at it; on the way",
+      "example_jp": "買い物のついでに郵便局に寄った。",
+      "example_en": "I stopped by the post office while I was out shopping."
+    },
+    {
+      "pattern": "〜たびに",
+      "meaning": "every time",
+      "example_jp": "見るたびに思い出す。",
+      "example_en": "Every time I see it, I remember."
+    },
+    {
+      "pattern": "〜次第",
+      "meaning": "as soon as; depending on (formal)",
+      "example_jp": "準備ができ次第、出発します。",
+      "example_en": "We will depart as soon as preparations are ready."
+    },
+    {
+      "pattern": "〜最中に",
+      "meaning": "in the middle of",
+      "example_jp": "会議の最中に電話が鳴った。",
+      "example_en": "The phone rang in the middle of the meeting."
+    },
+    {
+      "pattern": "〜ところだった",
+      "meaning": "was about to; almost did",
+      "example_jp": "危うく忘れるところだった。",
+      "example_en": "I almost forgot."
+    },
+    {
+      "pattern": "〜が早いか",
+      "meaning": "as soon as; no sooner than (formal)",
+      "example_jp": "ベルが鳴るが早いか、学生は飛び出した。",
+      "example_en": "As soon as the bell rang, students dashed out."
+    },
+    {
+      "pattern": "〜か〜ないかのうちに",
+      "meaning": "hardly; no sooner than",
+      "example_jp": "家を出るか出ないかのうちに雨が降ってきた。",
+      "example_en": "Hardly had I left home when it started raining."
+    },
+    {
+      "pattern": "〜折に",
+      "meaning": "on the occasion; when (formal)",
+      "example_jp": "お近くにお越しの折にお立ち寄りください。",
+      "example_en": "Please stop by when you are in the area."
+    }
+  ]
+}

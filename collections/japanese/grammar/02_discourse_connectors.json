@@ -1,0 +1,120 @@
+{
+  "name": "Discourse connectors & clause linking",
+  "description": "Connectors that manage flow (add, contrast, result, topic shift). Not grammar 'conjugations' but essential for reading and writing longer texts.",
+  "entries": [
+    {
+      "pattern": "そして",
+      "meaning": "and then; and",
+      "example_jp": "朝ご飯を食べて、そして会社へ行きました。",
+      "example_en": "I ate breakfast, and then went to work."
+    },
+    {
+      "pattern": "それから",
+      "meaning": "after that; then",
+      "example_jp": "宿題をして、それから寝ました。",
+      "example_en": "I did homework, then went to bed."
+    },
+    {
+      "pattern": "しかし",
+      "meaning": "however; but",
+      "example_jp": "行きたいです。しかし時間がありません。",
+      "example_en": "I want to go. However, I don't have time."
+    },
+    {
+      "pattern": "でも",
+      "meaning": "but (casual)",
+      "example_jp": "行きたい。でもお金がない。",
+      "example_en": "I want to go, but I have no money."
+    },
+    {
+      "pattern": "だから",
+      "meaning": "so; therefore (casual)",
+      "example_jp": "雨です。だから出かけません。",
+      "example_en": "It's raining, so I won't go out."
+    },
+    {
+      "pattern": "それで",
+      "meaning": "and so; as a result",
+      "example_jp": "道に迷いました。それで遅れました。",
+      "example_en": "I got lost, and so I was late."
+    },
+    {
+      "pattern": "つまり",
+      "meaning": "in other words",
+      "example_jp": "つまり、今日は休みということです。",
+      "example_en": "In other words, it means today is a holiday."
+    },
+    {
+      "pattern": "一方（で）",
+      "meaning": "on the other hand; whereas",
+      "example_jp": "兄は外で働いている。一方、私は家で勉強している。",
+      "example_en": "My older brother works outside; on the other hand, I study at home."
+    },
+    {
+      "pattern": "ちなみに",
+      "meaning": "by the way; incidentally",
+      "example_jp": "ちなみに、その店は現金だけです。",
+      "example_en": "By the way, that store is cash only."
+    },
+    {
+      "pattern": "ところで",
+      "meaning": "by the way (topic shift)",
+      "example_jp": "ところで、明日の予定は？",
+      "example_en": "By the way, what are your plans for tomorrow?"
+    },
+    {
+      "pattern": "それなのに",
+      "meaning": "even so; despite that",
+      "example_jp": "早く出た。それなのに遅刻した。",
+      "example_en": "I left early. Even so, I was late."
+    },
+    {
+      "pattern": "だからといって",
+      "meaning": "that said; just because... doesn't mean...",
+      "example_jp": "忙しい。だからといって、あきらめるわけではない。",
+      "example_en": "I'm busy, but that doesn't mean I'll give up."
+    },
+    {
+      "pattern": "とはいえ",
+      "meaning": "that said; though",
+      "example_jp": "忙しいとはいえ、少しは休んだほうがいい。",
+      "example_en": "That said, even if you're busy, you should rest a bit."
+    },
+    {
+      "pattern": "むしろ",
+      "meaning": "rather; instead",
+      "example_jp": "安いどころか、むしろ高い。",
+      "example_en": "Far from cheap, it's rather expensive."
+    },
+    {
+      "pattern": "要するに",
+      "meaning": "in short",
+      "example_jp": "要するに、準備が足りないということだ。",
+      "example_en": "In short, it means we're not prepared enough."
+    },
+    {
+      "pattern": "例えば",
+      "meaning": "for example",
+      "example_jp": "例えば、通勤時間を短くできます。",
+      "example_en": "For example, you can shorten commuting time."
+    },
+    {
+      "pattern": "例えば〜など",
+      "meaning": "for example (non-exhaustive)",
+      "example_jp": "例えば映画などで勉強すると続きやすい。",
+      "example_en": "For example, if you study with movies, it's easier to keep going."
+    },
+    {
+      "pattern": "それに",
+      "meaning": "besides; moreover",
+      "example_jp": "安い。それに近い。",
+      "example_en": "It's cheap. Besides, it's close."
+    },
+    {
+      "pattern": "さらに",
+      "meaning": "furthermore",
+      "example_jp": "さらに詳しく説明します。",
+      "example_en": "I'll explain in more detail."
+    }
+  ]
+}
