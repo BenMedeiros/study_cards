@@ -1,0 +1,66 @@
+{
+  "name": "Change / Result / Preparation / Conditionals",
+  "description": "Grammar patterns used to express preparation, resulting states, gradual change, directional change over time, completion/regret, and conditional logic.",
+  "entries": [
+    {
+      "pattern": "〜ておく",
+      "meaning": "do in advance / do beforehand in preparation for something",
+      "example_ja": "旅行の前にホテルを予約しておきます。",
+      "example_en": "I will reserve the hotel in advance before the trip."
+    },
+    {
+      "pattern": "〜たまま",
+      "meaning": "leave something as is / remain in a resulting state",
+      "example_ja": "電気をつけたまま寝てしまいました。",
+      "example_en": "I fell asleep with the lights left on."
+    },
+    {
+      "pattern": "〜ようになる",
+      "meaning": "come to be able to / reach a new state or habit over time",
+      "example_ja": "毎日練習して、日本語が話せるようになりました。",
+      "example_en": "By practicing every day, I became able to speak Japanese."
+    },
+    {
+      "pattern": "〜てくる",
+      "meaning": "change or movement toward the speaker / something has started or continued up to now",
+      "example_ja": "だんだん寒くなってきました。",
+      "example_en": "It has gradually become cold."
+    },
+    {
+      "pattern": "〜ていく",
+      "meaning": "change or movement away from the speaker / continue into the future",
+      "example_ja": "これからも日本語を勉強していきます。",
+      "example_en": "I will continue studying Japanese from now on."
+    },
+    {
+      "pattern": "〜てしまう",
+      "meaning": "finish completely / unfortunately do / regretful completion",
+      "example_ja": "宿題を忘れてしまいました。",
+      "example_en": "I unfortunately forgot my homework."
+    },
+    {
+      "pattern": "〜と",
+      "meaning": "when / whenever / if (natural or automatic result, general truth)",
+      "example_ja": "春になると、桜が咲きます。",
+      "example_en": "When spring comes, cherry blossoms bloom."
+    },
+    {
+      "pattern": "〜ば",
+      "meaning": "if (formal, logical conditional; focuses on condition)",
+      "example_ja": "時間があれば、映画を見ます。",
+      "example_en": "If I have time, I will watch a movie."
+    },
+    {
+      "pattern": "〜たら",
+      "meaning": "if / when (after something happens; flexible conditional)",
+      "example_ja": "雨が降ったら、家にいます。",
+      "example_en": "If it rains, I will stay home."
+    },
+    {
+      "pattern": "〜なら",
+      "meaning": "if it is the case that / given that (based on context or topic)",
+      "example_ja": "日本に行くなら、京都に行きたいです。",
+      "example_en": "If I go to Japan, I want to go to Kyoto."
+    }
+  ]
+}

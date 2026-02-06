@@ -1,0 +1,66 @@
+{
+  "name": "N3 Grammar",
+  "description": "A collection of grammar patterns commonly used in the JLPT N3 level.",
+  "entries": [
+    {
+      "pattern": "〜ようにする",
+      "meaning": "try to / make an effort to",
+      "example_ja": "毎日日本語を話すようにしています。",
+      "example_en": "I try to speak Japanese every day."
+    },
+    {
+      "pattern": "〜ようになる",
+      "meaning": "come to be able to / start to",
+      "example_ja": "日本語が少し分かるようになりました。",
+      "example_en": "I’ve come to understand Japanese a little."
+    },
+    {
+      "pattern": "〜てしまう",
+      "meaning": "finish completely / unfortunately do",
+      "example_ja": "宿題を忘れてしまいました。",
+      "example_en": "I (unfortunately) forgot my homework."
+    },
+    {
+      "pattern": "〜ことにする",
+      "meaning": "decide to do",
+      "example_ja": "明日早く起きることにします。",
+      "example_en": "I will decide to wake up early tomorrow."
+    },
+    {
+      "pattern": "〜ことになる",
+      "meaning": "it has been decided that / end up doing",
+      "example_ja": "来月引っ越すことになりました。",
+      "example_en": "It has been decided that I will move next month."
+    },
+    {
+      "pattern": "〜ておく",
+      "meaning": "do in advance / leave as is",
+      "example_ja": "先に予約しておきます。",
+      "example_en": "I’ll make a reservation in advance."
+    },
+    {
+      "pattern": "〜ながら",
+      "meaning": "while doing",
+      "example_ja": "音楽を聞きながら勉強します。",
+      "example_en": "I study while listening to music."
+    },
+    {
+      "pattern": "〜ば",
+      "meaning": "if (conditional)",
+      "example_ja": "時間があれば行きます。",
+      "example_en": "If I have time, I will go."
+    },
+    {
+      "pattern": "〜のに",
+      "meaning": "although / even though",
+      "example_ja": "雨なのに出かけました。",
+      "example_en": "Even though it was raining, I went out."
+    },
+    {
+      "pattern": "〜みたいだ",
+      "meaning": "seems like / looks like",
+      "example_ja": "彼は学生みたいです。",
+      "example_en": "He seems like a student."
+    }
+  ]
+}

@@ -80,6 +80,70 @@ function inlineWordsJson(obj) {
   return json + '\n';
 }
 
+// Find the first sentence across files that is missing `ja_fragments`.
+function findFirstMissingJaFragments(files) {
+  for (const f of files) {
+    const full = path.join(dir, f);
+    let raw;
+    try { raw = fs.readFileSync(full, 'utf8'); } catch (_) { continue; }
+    let obj;
+    try { obj = JSON.parse(raw); } catch (_) { continue; }
+    if (!Array.isArray(obj.sentences)) continue;
+    for (let i = 0; i < obj.sentences.length; i++) {
+      const s = obj.sentences[i];
+      if (!s || typeof s !== 'object') continue;
+      if (!Array.isArray(s.ja_fragments)) {
+        return { file: f, index: i, sentence: s };
+      }
+    }
+  }
+  return null;
+}
+
+// Seed scripts/fragments_payload.json with the first sentence missing
+// `ja_fragments` and include the prompt markdown text under `generationPrompt`.
+// Only does this when the payload file is effectively empty (missing, empty,
+// or contains `{}`/`null`/`undefined`). Returns true if it wrote the file.
+function seedFragmentsPayloadIfEmpty() {
+  const payloadPath = path.join(__dirname, 'fragments_payload.json');
+  let content = null;
+  if (fs.existsSync(payloadPath)) {
+    try { content = fs.readFileSync(payloadPath, 'utf8'); } catch (e) { content = null; }
+  }
+
+  const trimmed = content ? content.trim() : '';
+  const isEmpty = !trimmed || trimmed === '{}' || trimmed === 'null' || trimmed === 'undefined';
+
+  if (!isEmpty) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed && Array.isArray(parsed.sentences) && parsed.sentences.length > 0) return false;
+      if (parsed && Object.keys(parsed).length !== 0) return false;
+      // else fall through to seed
+    } catch (e) {
+      // invalid JSON: treat as empty and overwrite
+    }
+  }
+
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
+  const found = findFirstMissingJaFragments(files);
+  if (!found) return false;
+
+  let prompt = '';
+  const promptPath = path.join(__dirname, 'prompt_fragment_splitting.md');
+  try { prompt = fs.readFileSync(promptPath, 'utf8'); } catch (e) { prompt = ''; }
+
+  const payloadObj = { generationPrompt: prompt, sentences: [found.sentence] };
+  try {
+    fs.writeFileSync(payloadPath, JSON.stringify(payloadObj, null, 2) + '\n', 'utf8');
+    console.log(`Seeded fragments payload with ${found.file}[${found.index}] -> ${payloadPath}`);
+    return true;
+  } catch (e) {
+    console.error('Failed to write fragments payload:', e.message);
+    return false;
+  }
+}
+
 function run() {
   const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
   const summary = { checked: 0, updated: 0, errors: 0 };
@@ -162,6 +226,14 @@ function run() {
       console.warn(' -', jaText);
       console.warn('  --locations', locations);
     }
+  }
+
+  // If fragments payload is empty, seed it with the first sentence missing ja_fragments
+  try {
+    const seeded = seedFragmentsPayloadIfEmpty();
+    if (seeded) console.log('Fragments payload seeded.');
+  } catch (e) {
+    console.error('Error while attempting to seed fragments payload:', e && e.message ? e.message : e);
   }
 }
 

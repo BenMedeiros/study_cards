@@ -1,0 +1,36 @@
+{
+  "name": "Guess / Appearance / Hearsay",
+  "description": "Grammar patterns used to express uncertainty, visual impressions, indirect evidence, or reported information.",
+  "entries": [
+    {
+      "pattern": "〜みたいだ",
+      "meaning": "seems like / looks like (casual, subjective impression)",
+      "example_ja": "あの人は先生みたいです。",
+      "example_en": "That person seems like a teacher."
+    },
+    {
+      "pattern": "〜らしい",
+      "meaning": "apparently / I heard that / typical of (based on info or reputation)",
+      "example_ja": "彼は来ないらしいです。",
+      "example_en": "Apparently, he isn’t coming."
+    },
+    {
+      "pattern": "〜そうだ（様態）",
+      "meaning": "looks like / appears that (visual impression)",
+      "example_ja": "雨が降りそうです。",
+      "example_en": "It looks like it’s going to rain."
+    },
+    {
+      "pattern": "〜そうだ（伝聞）",
+      "meaning": "I heard that / it is said that (reported information)",
+      "example_ja": "明日は寒くなるそうです。",
+      "example_en": "I heard that it will be cold tomorrow."
+    },
+    {
+      "pattern": "〜ようだ",
+      "meaning": "it seems that / it appears that (reasoned or indirect evidence)",
+      "example_ja": "外は静かなようです。",
+      "example_en": "It seems quiet outside."
+    }
+  ]
+}

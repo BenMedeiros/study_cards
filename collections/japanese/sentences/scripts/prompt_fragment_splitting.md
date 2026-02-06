@@ -17,4 +17,4 @@
 
 * Omit `ja_fragments` if no useful split exists.
 
-* Recombine/print the whole JSON: `{ paragraph, sentences }`
+* Recombine/print the whole JSON: `{ sentences }`

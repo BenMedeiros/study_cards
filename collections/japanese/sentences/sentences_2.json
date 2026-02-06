@@ -250,7 +250,7 @@
     {
       "ja": "誰でも入れる店だと思ったが、予約がないと一人も入れないと言われた。",
       "en": "(Someone) thought it was a shop that anyone could enter, but was told that without a reservation, not even one person can enter.",
-      "pattern":   "QでもVれるNだと思うが、Nがないと数量+もVれないと言われる",
+      "pattern": "QでもVれるNだと思うが、Nがないと数量+もVれないと言われる",
       "words": ["誰","入る","店","思う","予約","ない","一人","言う"],
       "ja_fragments": [
         {
@@ -304,20 +304,172 @@
     {
       "ja": "何も問題がないと思っていたのに、少しも動かなくなって、結局新しいのを買うしかなかった。",
       "en": "Even though (someone) thought there were no problems at all, it stopped moving even a little, and in the end (someone) had no choice but to buy a new one.",
-      "pattern": "QもNがないと思っているのに、程度+もVなくなって、結局NをVるしかない",
-      "words": ["何","問題","思う","少し","動く","なる","結局","新しい","買う"]
+      "pattern": "何もNがないと思っていたのに、少しもVなくなって、結局NをVるしかなかった",
+      "words": ["何","問題","ない","思う","少し","動く","なる","結局","新しい","買う"],
+      "ja_fragments": [
+        {
+          "ja": "何も問題がないと思っていたのに",
+          "en": "(someone) was thinking “there are no problems at all,” but (contrary to that)",
+          "pattern": "何もNがない + と思っていたのに",
+          "words": ["何","問題","ない","思う"],
+          "ja_fragments": [
+            {
+              "ja": "何も問題がない",
+              "en": "there are no problems at all",
+              "pattern": "何もNがない",
+              "words": ["何","問題","ない"]
+            },
+            {
+              "ja": "と思っていたのに",
+              "en": "even though (someone) thought (that)",
+              "pattern": "と思っていたのに",
+              "words": ["思う"]
+            }
+          ]
+        },
+        {
+          "ja": "少しも動かなくなって",
+          "en": "(it) became not moving even a bit; stopped moving at all",
+          "pattern": "少しもVない + Vなくなる",
+          "words": ["少し","動く","ない","なる"]
+        },
+        {
+          "ja": "結局新しいのを買うしかなかった",
+          "en": "in the end, (someone) had no choice but to buy a new one",
+          "pattern": "結局 + NをVるしかなかった",
+          "words": ["結局","新しい","買う"],
+          "ja_fragments": [
+            {
+              "ja": "結局",
+              "en": "in the end; after all",
+              "pattern": "結局",
+              "words": ["結局"]
+            },
+            {
+              "ja": "新しいのを買うしかなかった",
+              "en": "there was no option but to buy a new one",
+              "pattern": "NをVるしかなかった",
+              "words": ["新しい","買う"],
+              "ja_fragments": [
+                {
+                  "ja": "新しいのを買う",
+                  "en": "buy a new one",
+                  "pattern": "Aい + の + を + V",
+                  "words": ["新しい","買う"]
+                },
+                {
+                  "ja": "しかなかった",
+                  "en": "had no choice but; there was only (that option)",
+                  "pattern": "しかない (past: しかなかった)",
+                  "words": ["ない"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     {
       "ja": "忙しくても手伝うと言ったのに、連絡が来なくて、誰にも何も伝えられなかった。",
       "en": "Even though (someone) said they would help even if busy, no contact came, and (someone) could not tell anyone anything.",
-      "pattern": "AくてもVと言うのに、NがVなくて、QにもQもVれない",
-      "words": ["忙しい","手伝う","言う","連絡","来る","誰","何","伝える"]
+      "pattern": "AくてもVと言ったのに、NがVなくて、QにもQもVれない",
+      "words": ["忙しい","手伝う","言う","連絡","来る","誰","何","伝える"],
+      "ja_fragments": [
+        {
+          "ja": "忙しくても手伝うと言ったのに",
+          "en": "even if (someone) was busy, (someone) said they would help, but (contrary to that)",
+          "pattern": "AくてもVと言ったのに",
+          "words": ["忙しい","手伝う","言う"],
+          "ja_fragments": [
+            {
+              "ja": "忙しくても",
+              "en": "even if (someone) is busy",
+              "pattern": "Aくても",
+              "words": ["忙しい"]
+            },
+            {
+              "ja": "手伝うと言ったのに",
+              "en": "(someone) said “(I/they) will help,” but",
+              "pattern": "Vと言ったのに",
+              "words": ["手伝う","言う"]
+            }
+          ]
+        },
+        {
+          "ja": "連絡が来なくて",
+          "en": "no contact came, and (so)",
+          "pattern": "NがVなくて",
+          "words": ["連絡","来る"]
+        },
+        {
+          "ja": "誰にも何も伝えられなかった",
+          "en": "(someone) could not tell anyone anything",
+          "pattern": "QにもQもVれない",
+          "words": ["誰","何","伝える"],
+          "ja_fragments": [
+            {
+              "ja": "誰にも",
+              "en": "to anyone",
+              "pattern": "疑問語+にも",
+              "words": ["誰"]
+            },
+            {
+              "ja": "何も伝えられなかった",
+              "en": "could not convey/tell anything",
+              "pattern": "疑問語+も+V(neg) / V(可能)ない",
+              "words": ["何","伝える"]
+            }
+          ]
+        }
+      ]
     },
     {
       "ja": "一度も会ったことがない人なのに、名前だけは誰でも知っている。",
-      "en": "Even though it is a person (someone) has never met even once, anyone knows only the name.",
+      "en": "Even though it is a person (someone) has never met even once, only the name (everyone) knows.",
       "pattern": "数量+もVたことがないNなのに、NだけはQでもVている",
-      "words": ["一度","会う","こと","人","名前","だけ","誰","知る"]
+      "words": ["一度","会う","こと","人","名前","だけ","誰","知る"],
+      "ja_fragments": [
+        {
+          "ja": "一度も会ったことがない人なのに",
+          "en": "even though (it is) a person (someone) has not met even once",
+          "pattern": "数量+もVたことがないN + なのに",
+          "words": ["一度","会う","こと","人"],
+          "ja_fragments": [
+            {
+              "ja": "一度も会ったことがない",
+              "en": "have not met even once",
+              "pattern": "数量+もVたことがない",
+              "words": ["一度","会う","こと","ない"]
+            },
+            {
+              "ja": "人なのに",
+              "en": "even though (it is) a person",
+              "pattern": "N + なのに",
+              "words": ["人"]
+            }
+          ]
+        },
+        {
+          "ja": "名前だけは誰でも知っている",
+          "en": "only the name, anyone knows",
+          "pattern": "Nだけは + QでもVている",
+          "words": ["名前","だけ","誰","知る"],
+          "ja_fragments": [
+            {
+              "ja": "名前だけは",
+              "en": "only the name (as for it)",
+              "pattern": "Nだけは",
+              "words": ["名前","だけ"]
+            },
+            {
+              "ja": "誰でも知っている",
+              "en": "anyone knows",
+              "pattern": "QでもVている",
+              "words": ["誰","知る"]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

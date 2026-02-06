@@ -1,0 +1,93 @@
+{
+  "generationPrompt": "Showcase [〜ながら, 〜ば, 〜のに, 〜みたいだ] grammar points in sentences. Use some of: location proper nouns, animals, food at a Japanese curry eatery.",
+  "sentences": [
+    {
+      "ja": "秋葉原で鳥の声を聞きながらチキンカレーを食べました。",
+      "en": "(Someone) ate chicken curry while listening to birds' voices in Akihabara.",
+      "pattern": "Nで / Nの声を聞きながらV",
+      "words": ["秋葉原","鳥","声","聞く","チキンカレー","食べる"],
+      "ja_fragments": [
+        {
+          "ja": "秋葉原で",
+          "en": "in Akihabara",
+          "pattern": "Nで",
+          "words": ["秋葉原"]
+        },
+        {
+          "ja": "鳥の声を聞きながら",
+          "en": "while listening to birds' voices",
+          "pattern": "Nの声を聞きながら",
+          "words": ["鳥","声","聞く"]
+        },
+        {
+          "ja": "チキンカレーを食べました。",
+          "en": "ate chicken curry.",
+          "pattern": "NをVました",
+          "words": ["チキンカレー","食べる"]
+        }
+      ]
+    },
+    {
+      "ja": "横浜の店でメニューを見ながらビーフカレーを選びました。",
+      "en": "(Someone) chose beef curry while looking at the menu at a shop in Yokohama.",
+      "pattern": "Nで / Nを見ながらV",
+      "words": ["横浜","店","メニュー","見る","ビーフカレー","選ぶ"],
+      "ja_fragments": [
+        {
+          "ja": "横浜の店で",
+          "en": "at a shop in Yokohama",
+          "pattern": "Nで",
+          "words": ["横浜","店"]
+        },
+        {
+          "ja": "メニューを見ながら",
+          "en": "while looking at the menu",
+          "pattern": "NをV(辞書形)+ながら",
+          "words": ["メニュー","見る"]
+        },
+        {
+          "ja": "ビーフカレーを選びました",
+          "en": "chose beef curry",
+          "pattern": "NをV",
+          "words": ["ビーフカレー","選ぶ"]
+        }
+      ]
+    },
+    {
+      "ja": "神田で野菜カレーを食べれば体が温まります。",
+      "en": "If (someone) eats vegetable curry in Kanda, the body warms up.",
+      "pattern": "Nで / Vば / NがV",
+      "words": ["神田","野菜カレー","食べる","体","温まる"]
+    },
+    {
+      "ja": "この店のカレーを頼めば犬も静かになります。",
+      "en": "If (someone) orders this shop’s curry, even a dog becomes quiet.",
+      "pattern": "NをVば / QもV",
+      "words": ["店","カレー","頼む","犬","静か","なる"]
+    },
+    {
+      "ja": "池袋のカレー屋にはうさぎがいるのに、誰も気づきませんでした。",
+      "en": "Even though there was a rabbit in the curry shop in Ikebukuro, no one noticed.",
+      "pattern": "NにはNがいるのに / QもVない",
+      "words": ["池袋","カレー屋","うさぎ","いる","誰","気づく"]
+    },
+    {
+      "ja": "名古屋の有名な店なのに、カレーがあまり辛くありません。",
+      "en": "Even though it is a famous shop in Nagoya, the curry is not very spicy.",
+      "pattern": "Nなのに / あまりAくない",
+      "words": ["名古屋","有名","店","カレー","辛い"]
+    },
+    {
+      "ja": "この味は京都の老舗のカレーみたいです。",
+      "en": "This taste seems like curry from a long-established shop in Kyoto.",
+      "pattern": "NはNみたいだ",
+      "words": ["味","京都","老舗","カレー"]
+    },
+    {
+      "ja": "あの猫は店のマスコットみたいです。",
+      "en": "That cat seems like the shop’s mascot.",
+      "pattern": "NはNみたいだ",
+      "words": ["猫","店","マスコット"]
+    }
+  ]
+}
