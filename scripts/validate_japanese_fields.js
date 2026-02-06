@@ -86,7 +86,7 @@ async function validateWordsDir() {
       for (const [key, allowed] of enumMap.entries()) {
         if (ent.hasOwnProperty(key) && !allowed.has(String(ent[key]))) {
           enumIssues++;
-          console.log(`[enum] invalid value for '${key}' in ${path.relative(process.cwd(), fp)}: '${ent[key]}' not in [${Array.from(allowed).join(', ')}]`);
+          console.warn(`WARN [enum] invalid value for '${key}' in ${path.relative(process.cwd(), fp)}: '${ent[key]}' not in [${Array.from(allowed).join(', ')}]`);
         }
       }
 

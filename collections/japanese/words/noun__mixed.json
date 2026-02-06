@@ -6,14 +6,14 @@
   },
   "defaults": {
     "type": "noun",
-    "orthography": "kana"
+    "orthography": "hiragana"
   },
   "entries": [
     {
       "kanji": "EV",
       "reading": "EV",
       "meaning": "EV (effort value; game term)",
-      "orthography": "either"
+      "orthography": "both"
     },
     {
       "kanji": "おすすめ",
