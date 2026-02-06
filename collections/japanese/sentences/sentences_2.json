@@ -1,0 +1,323 @@
+{
+  "generationPrompt": "Complex scenarios using も / でも (stacked patterns, multi-clause)",
+  "sentences": [
+    {
+      "ja": "昨日、誰も来なかったので、何も話さなかった。",
+      "en": "Yesterday, since no one came, (someone) did not say anything.",
+      "pattern": "QもVないので、QもVない",
+      "words": ["昨日","誰","来る","何","話す"],
+      "ja_fragments": [
+        {
+          "ja": "昨日",
+          "en": "yesterday",
+          "pattern": "",
+          "words": ["昨日"]
+        },
+        {
+          "ja": "誰も来なかったので",
+          "en": "since nobody came",
+          "pattern": "QもVないので",
+          "words": ["誰","来る"],
+          "ja_fragments": [
+            {
+              "ja": "誰も",
+              "en": "nobody",
+              "pattern": "疑問語+も",
+              "words": ["誰"]
+            },
+            {
+              "ja": "来なかったので",
+              "en": "since (someone/something) did not come",
+              "pattern": "Vない(過去)+ので",
+              "words": ["来る"]
+            }
+          ]
+        },
+        {
+          "ja": "何も話さなかった",
+          "en": "didn't say anything",
+          "pattern": "QもVない",
+          "words": ["何","話す"],
+          "ja_fragments": [
+            {
+              "ja": "何も",
+              "en": "nothing",
+              "pattern": "疑問語+も",
+              "words": ["何"]
+            },
+            {
+              "ja": "話さなかった",
+              "en": "did not speak / did not say",
+              "pattern": "Vない(過去)",
+              "words": ["話す"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "少しも準備していなかったから、一度も練習しなかったことに気づいた。",
+      "en": "Because (someone) had not prepared even a little, (someone) noticed that they had not practiced even once.",
+      "pattern": "程度+もVていないから、数量+もVないことに気づく",
+      "words": ["少し","準備する","一度","練習する","気づく"],
+      "ja_fragments": [
+        {
+          "ja": "少しも準備していなかったから",
+          "en": "because (someone) was not preparing even a little",
+          "pattern": "程度+もVていないから",
+          "words": ["少し","準備する"],
+          "ja_fragments": [
+            {
+              "ja": "少しも",
+              "en": "even a little",
+              "pattern": "程度+も",
+              "words": ["少し"]
+            },
+            {
+              "ja": "準備していなかったから",
+              "en": "because (someone) was not preparing",
+              "pattern": "Vていないから",
+              "words": ["準備する"]
+            }
+          ]
+        },
+        {
+          "ja": "一度も練習しなかったことに気づいた",
+          "en": "(someone) noticed the fact that (they) did not practice even once",
+          "pattern": "数量+もVないことに気づく",
+          "words": ["一度","練習する","気づく"],
+          "ja_fragments": [
+            {
+              "ja": "一度も練習しなかったこと",
+              "en": "the fact that (someone) did not practice even once",
+              "pattern": "数量+もVないこと",
+              "words": ["一度","練習する"],
+              "ja_fragments": [
+                {
+                  "ja": "一度も",
+                  "en": "not even once",
+                  "pattern": "数量+も",
+                  "words": ["一度"]
+                },
+                {
+                  "ja": "練習しなかったこと",
+                  "en": "the fact of not practicing",
+                  "pattern": "Vないこと",
+                  "words": ["練習する"]
+                }
+              ]
+            },
+            {
+              "ja": "に気づいた",
+              "en": "noticed; realized",
+              "pattern": "〜に気づく",
+              "words": ["気づく"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "今日は誰でも使える資料を作るつもりだが、少しも簡単じゃないと思う。",
+      "en": "Today, (someone) plans to make materials that anyone can use, but thinks it is not easy at all.",
+      "pattern": "NはQでもVれるNをVつもりだが、程度+もNaじゃないと思う",
+      "words": ["今日","誰","使う","資料","作る","つもり","少し","簡単","思う"],
+      "ja_fragments": [
+        {
+          "ja": "今日は誰でも使える資料を作るつもりだが",
+          "en": "today anyone-can-use materials make intend but",
+          "pattern": "NはQでもVれるNをVつもりだが",
+          "words": ["今日","誰","使う","資料","作る","つもり"],
+          "ja_fragments": [
+            {
+              "ja": "今日は",
+              "en": "today",
+              "pattern": "Nは",
+              "words": ["今日"]
+            },
+            {
+              "ja": "誰でも使える資料を作るつもりだが",
+              "en": "anyone-can-use materials make intend but",
+              "pattern": "QでもVれるNをVつもりだが",
+              "words": ["誰","使う","資料","作る","つもり"],
+              "ja_fragments": [
+                {
+                  "ja": "誰でも使える資料を",
+                  "en": "materials that anyone can use",
+                  "pattern": "QでもVれるNを",
+                  "words": ["誰","使う","資料"],
+                  "ja_fragments": [
+                    {
+                      "ja": "誰でも使える",
+                      "en": "anyone can use",
+                      "pattern": "QでもVれる",
+                      "words": ["誰","使う"]
+                    },
+                    {
+                      "ja": "資料を",
+                      "en": "materials (object)",
+                      "pattern": "Nを",
+                      "words": ["資料"]
+                    }
+                  ]
+                },
+                {
+                  "ja": "作るつもりだが",
+                  "en": "intend to make but",
+                  "pattern": "Vつもりだが",
+                  "words": ["作る","つもり"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "少しも簡単じゃないと思う",
+          "en": "think not even a little easy",
+          "pattern": "程度+もNaじゃないと思う",
+          "words": ["少し","簡単","思う"],
+          "ja_fragments": [
+            {
+              "ja": "少しも簡単じゃない",
+              "en": "not even a little easy",
+              "pattern": "程度+もNaじゃない",
+              "words": ["少し","簡単"]
+            },
+            {
+              "ja": "と思う",
+              "en": "think",
+              "pattern": "Vと思う",
+              "words": ["思う"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "雨でも出かけるつもりだったのに、電車が遅れて、どこにも行けなかった。",
+      "en": "Even though (someone) intended to go out even if it rained, the train was delayed, and (someone) couldn't go anywhere.",
+      "pattern": "NでもVるつもりだったのに、NがVて、どこにもVない",
+      "words": ["雨","出かける","つもり","電車","遅れる","どこ","行く"],
+      "ja_fragments": [
+        {
+          "ja": "雨でも出かけるつもりだったのに",
+          "en": "even if it rained, (someone) intended to go out, but",
+          "pattern": "NでもVるつもりだったのに",
+          "words": ["雨","出かける","つもり"],
+          "ja_fragments": [
+            {
+              "ja": "雨でも",
+              "en": "even if it rains / even in the rain",
+              "pattern": "Nでも",
+              "words": ["雨"]
+            },
+            {
+              "ja": "出かけるつもりだったのに",
+              "en": "intended to go out, but",
+              "pattern": "Vるつもりだったのに",
+              "words": ["出かける","つもり"],
+              "ja_fragments": [
+                {
+                  "ja": "出かけるつもりだった",
+                  "en": "had the intention to go out",
+                  "pattern": "Vるつもりだった",
+                  "words": ["出かける","つもり"]
+                },
+                {
+                  "ja": "のに",
+                  "en": "even though / but (contrary result)",
+                  "pattern": "のに",
+                  "words": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "電車が遅れて",
+          "en": "the train being delayed, and",
+          "pattern": "NがVて",
+          "words": ["電車","遅れる"]
+        },
+        {
+          "ja": "どこにも行けなかった",
+          "en": "couldn't go anywhere",
+          "pattern": "どこにもVない",
+          "words": ["どこ","行く"]
+        }
+      ]
+    },
+    {
+      "ja": "誰でも入れる店だと思ったが、予約がないと一人も入れないと言われた。",
+      "en": "(Someone) thought it was a shop that anyone could enter, but was told that without a reservation, not even one person can enter.",
+      "pattern":   "QでもVれるNだと思うが、Nがないと数量+もVれないと言われる",
+      "words": ["誰","入る","店","思う","予約","ない","一人","言う"],
+      "ja_fragments": [
+        {
+          "ja": "誰でも入れる店だと思ったが",
+          "en": "(Someone) thought it was a shop that anyone could enter, but",
+          "pattern": "QでもVれるNだと思うが",
+          "words": ["誰","入る","店","思う"],
+          "ja_fragments": [
+            {
+              "ja": "誰でも入れる店だ",
+              "en": "it is a shop that anyone can enter",
+              "pattern": "QでもVれるNだ",
+              "words": ["誰","入る","店"]
+            },
+            {
+              "ja": "と思ったが",
+              "en": "(someone) thought, but",
+              "pattern": "と思ったが",
+              "words": ["思う"]
+            }
+          ]
+        },
+        {
+          "ja": "予約がないと一人も入れないと言われた",
+          "en": "(someone) was told that if there is no reservation, not even one person can enter",
+          "pattern": "Nがないと数量+もVれないと言われる",
+          "words": ["予約","ない","一人","入る","言う"],
+          "ja_fragments": [
+            {
+              "ja": "予約がないと",
+              "en": "if there is no reservation",
+              "pattern": "Nがないと",
+              "words": ["予約","ない"]
+            },
+            {
+              "ja": "一人も入れない",
+              "en": "not even one person can enter",
+              "pattern": "数量+もVれない",
+              "words": ["一人","入る"]
+            },
+            {
+              "ja": "と言われた",
+              "en": "(someone) was told (that ...)",
+              "pattern": "と言われた",
+              "words": ["言う"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "何も問題がないと思っていたのに、少しも動かなくなって、結局新しいのを買うしかなかった。",
+      "en": "Even though (someone) thought there were no problems at all, it stopped moving even a little, and in the end (someone) had no choice but to buy a new one.",
+      "pattern": "QもNがないと思っているのに、程度+もVなくなって、結局NをVるしかない",
+      "words": ["何","問題","思う","少し","動く","なる","結局","新しい","買う"]
+    },
+    {
+      "ja": "忙しくても手伝うと言ったのに、連絡が来なくて、誰にも何も伝えられなかった。",
+      "en": "Even though (someone) said they would help even if busy, no contact came, and (someone) could not tell anyone anything.",
+      "pattern": "AくてもVと言うのに、NがVなくて、QにもQもVれない",
+      "words": ["忙しい","手伝う","言う","連絡","来る","誰","何","伝える"]
+    },
+    {
+      "ja": "一度も会ったことがない人なのに、名前だけは誰でも知っている。",
+      "en": "Even though it is a person (someone) has never met even once, anyone knows only the name.",
+      "pattern": "数量+もVたことがないNなのに、NだけはQでもVている",
+      "words": ["一度","会う","こと","人","名前","だけ","誰","知る"]
+    }
+  ]
+}

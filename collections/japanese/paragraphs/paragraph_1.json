@@ -1,0 +1,162 @@
+{
+  "paragraph": {
+    "englishStoryPrompt": "yamamotosan walks to work in shibuya prefecture everyday, but today he was running late so took the 615 train from Xstation. when he was going dwn the stairs to the sublevel to get to the train, he saw that he shoes were untied but also saw that train arriving. he had to make a choice lol and took off his shoe (so he wouldnt trip) and ran for the train.",
+    "localizedOutlineEn": "Yamamoto lives in Shibuya and usually walks to work every morning. One day he is late, so he decides to take the 6:15 train from Shibuya Station. While going down the stairs he notices his shoe is untied but also sees the train arriving, so he must quickly choose what to do.",
+    "ja": "山本さんは毎日渋谷で会社まで歩いて行きます。でも今日は遅くなったので、６時１５分の電車に乗ろうと思いました。階段を下りているとき、くつのひもがほどけているのに気づきましたが、電車も来るのが見えました。「走れ！」と思って、転ばないようにくつをぬいで、電車に乗ることができました。",
+    "en": "Mr. Yamamoto walks to his company in Shibuya every day. But today he was late, so he decided to try to get on the 6:15 train. While he was going down the stairs, he noticed his shoelace was untied, but he also saw the train arriving. He thought, “Run!” and so he took off his shoe so he wouldn’t trip, and he was able to get on the train."
+  },
+  "sentences": [
+    {
+      "ja": "山本さんは毎日渋谷で会社まで歩いて行きます。",
+      "en": "Mr. Yamamoto walks to his company in Shibuya every day.",
+      "pattern": "〜て行く / 毎日〜ます",
+      "words": ["山本さん", "毎日", "渋谷", "会社", "歩く", "行く"],
+      "ja_fragments": [
+        {
+          "ja": "山本さんは毎日渋谷で",
+          "en": "As for Mr. Yamamoto, every day in Shibuya",
+          "pattern": "は / で",
+          "words": ["山本さん", "毎日", "渋谷"]
+        },
+        {
+          "ja": "会社まで歩いて行きます",
+          "en": "walks and goes to the company",
+          "pattern": "〜まで / 〜て行く",
+          "words": ["会社", "歩く", "行く"]
+        }
+      ]
+    },
+    
+    {
+      "ja": "でも今日は遅くなったので、６時１５分の電車に乗ろうと思いました。",
+      "en": "But today I ended up running late, so I thought I'd take the 6:15 train.",
+      "pattern": "〜ので / 〜ようと思う",
+      "words": ["今日", "遅くなる", "六時十五分", "電車", "乗る", "思う"],
+      "ja_fragments": [
+        {
+          "ja": "でも今日は遅くなったので、",
+          "en": "but today, (because) became late, so",
+          "pattern": "〜ので",
+          "words": ["今日", "遅くなる"],
+          "ja_fragments": [
+            {
+              "ja": "でも今日は",
+              "en": "but today",
+              "pattern": "でも",
+              "words": ["今日"]
+            },
+            {
+              "ja": "遅くなったので",
+              "en": "because (I) became late / since (I) was late",
+              "pattern": "〜ので",
+              "words": ["遅くなる"]
+            }
+          ]
+        },
+        {
+          "ja": "６時１５分の電車に乗ろうと思いました。",
+          "en": "6:15 train on, ride-will (I) thought",
+          "pattern": "〜ようと思う",
+          "words": ["六時十五分", "電車", "乗る", "思う"],
+          "ja_fragments": [
+            {
+              "ja": "６時１５分の電車に",
+              "en": "to the 6:15 train",
+              "pattern": "N + に",
+              "words": ["六時十五分", "電車"]
+            },
+            {
+              "ja": "乗ろうと思いました",
+              "en": "thought to ride / decided to take (it)",
+              "pattern": "V-ようと思う",
+              "words": ["乗る", "思う"]
+            }
+          ]
+        }
+      ]
+    },
+   
+ {
+      "ja": "階段を下りているとき、くつのひもがほどけているのに気づきましたが、電車も来るのが見えました。",
+      "en": "While going down the stairs, he noticed his shoelace was untied, but he also saw the train arriving.",
+      "pattern": "〜ているとき / 〜のに気づく / 〜のが見える",
+      "words": ["階段", "下りる", "くつ", "ひも", "ほどける", "気づく", "電車", "来る", "見える"],
+      "ja_fragments": [
+        {
+          "ja": "階段を下りているとき、",
+          "en": "when (he was) going down the stairs,",
+          "pattern": "〜ているとき",
+          "words": ["階段", "下りる"]
+        },
+        {
+          "ja": "くつのひもがほどけているのに気づきましたが、",
+          "en": "(he) noticed (that) the shoelace was untied, but,",
+          "pattern": "〜のに気づく",
+          "words": ["くつ", "ひも", "ほどける", "気づく"],
+          "ja_fragments": [
+            {
+              "ja": "くつのひもがほどけている",
+              "en": "the shoelace is untied",
+              "pattern": "〜ている",
+              "words": ["くつ", "ひも", "ほどける"]
+            },
+            {
+              "ja": "のに気づきましたが、",
+              "en": "(he) noticed that, but,",
+              "pattern": "〜のに気づく / が(逆接)",
+              "words": ["気づく"]
+            }
+          ]
+        },
+        {
+          "ja": "電車も来るのが見えました。",
+          "en": "(he) could also see the train coming.",
+          "pattern": "〜のが見える / も",
+          "words": ["電車", "来る", "見える"],
+          "ja_fragments": [
+            {
+              "ja": "電車も",
+              "en": "the train also,",
+              "pattern": "N + も",
+              "words": ["電車"]
+            },
+            {
+              "ja": "来るのが見えました。",
+              "en": "coming (one) was visible; (he) could see it coming.",
+              "pattern": "V辞書形 + の + が + 見える",
+              "words": ["来る", "見える"]
+            }
+          ]
+        }
+      ]
+    },
+
+
+    {
+      "ja": "「走れ！」と思って、転ばないようにくつをぬいで、電車に乗ることができました。",
+      "en": "He thought, “Run!” and so he took off his shoe so he wouldn’t trip, and he was able to get on the train.",
+      "pattern": "命令形 / 〜ように / 可能形（〜ことができる）",
+      "words": ["走る", "思う", "転ぶ", "くつ", "ぬぐ", "電車", "乗る", "できる"],
+      "ja_fragments": [
+        {
+          "ja": "「走れ！」と思って",
+          "en": "thinking “Run!”",
+          "pattern": "命令形 / 〜と思って",
+          "words": ["走る", "思う"]
+        },
+        {
+          "ja": "転ばないようにくつをぬいで",
+          "en": "taking off his shoe so that he would not trip",
+          "pattern": "〜ないように / 〜て",
+          "words": ["転ぶ", "くつ", "ぬぐ"]
+        },
+        {
+          "ja": "電車に乗ることができました",
+          "en": "he was able to get on the train",
+          "pattern": "〜ことができる",
+          "words": ["電車", "乗る", "できる"]
+        }
+      ]
+    }
+  ]
+}

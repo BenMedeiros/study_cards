@@ -1,0 +1,193 @@
+{
+  "generationPrompt": "Use cases of でも and も",
+  "sentences": [
+    {
+      "ja": "雨でも行きます。",
+      "en": "I will go even if it rains.",
+      "pattern": "N + でも (concessive “even if”)",
+      "words": ["雨","行く"],
+      "ja_fragments": [
+        {
+          "ja": "雨でも",
+          "en": "even if (it’s) rain / even in rain",
+          "pattern": "N + でも",
+          "words": ["雨"]
+        },
+        {
+          "ja": "行きます",
+          "en": "go (polite)",
+          "pattern": "Vます",
+          "words": ["行く"]
+        }
+      ]
+    },
+    {
+      "ja": "子どもでも分かります。",
+      "en": "Even a child can understand.",
+      "pattern": "N + でも (inclusive / surprising minimum)",
+      "words": ["子ども","分かる"],
+      "ja_fragments": [
+        {
+          "ja": "子どもでも",
+          "en": "even a child",
+          "pattern": "N + でも",
+          "words": ["子ども"]
+        },
+        {
+          "ja": "分かります",
+          "en": "understand (polite)",
+          "pattern": "Vます",
+          "words": ["分かる"]
+        }
+      ]
+    },
+    {
+      "ja": "この店でも売っています。",
+      "en": "They sell it at this shop too.",
+      "pattern": "N + でも (also / too)",
+      "words": ["店","売る"],
+      "ja_fragments": [
+        {
+          "ja": "この店でも",
+          "en": "at this shop too",
+          "pattern": "N + でも (also/too)",
+          "words": ["店"]
+        },
+        {
+          "ja": "売っています",
+          "en": "are selling (polite; ongoing/state)",
+          "pattern": "Vている",
+          "words": ["売る"],
+          "ja_fragments": [
+            {
+              "ja": "売って",
+              "en": "sell (and/te-form)",
+              "pattern": "Vて",
+              "words": ["売る"]
+            },
+            {
+              "ja": "います",
+              "en": "be (polite; aux for ている)",
+              "pattern": "Vている（補助動詞）",
+              "words": ["いる"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "千円でも高いです。",
+      "en": "Even 1000 yen is expensive.",
+      "pattern": "Number + でも (emphasis on amount / “even as much as”)",
+      "words": ["千円","高い"],
+      "ja_fragments": [
+        {
+          "ja": "千円でも",
+          "en": "even (as much as) 1000 yen",
+          "pattern": "数量 + でも",
+          "words": ["千円"]
+        },
+        {
+          "ja": "高いです",
+          "en": "is expensive (polite)",
+          "pattern": "いA + です",
+          "words": ["高い"]
+        }
+      ]
+    },
+    {
+      "ja": "私も行きます。",
+      "en": "I will go too.",
+      "pattern": "N + も (also / too)",
+      "words": ["私","行く"],
+      "ja_fragments": [
+        {
+          "ja": "私も",
+          "en": "I also",
+          "pattern": "N + も",
+          "words": ["私"]
+        },
+        {
+          "ja": "行きます",
+          "en": "go (polite)",
+          "pattern": "Vます",
+          "words": ["行く"]
+        }
+      ]
+    },
+    {
+      "ja": "一日も休みませんでした。",
+      "en": "I didn’t rest even one day.",
+      "pattern": "Quantity + も + Negative (not even one)",
+      "words": ["一日","休む"],
+      "ja_fragments": [
+        {
+          "ja": "一日も",
+          "en": "(not) even one day",
+          "pattern": "数量 + も",
+          "words": ["一日"]
+        },
+        {
+          "ja": "休みませんでした",
+          "en": "did not rest (polite past negative)",
+          "pattern": "Vませんでした",
+          "words": ["休む"],
+          "ja_fragments": [
+            {
+              "ja": "休みません",
+              "en": "do not rest (polite negative)",
+              "pattern": "Vません",
+              "words": ["休む"]
+            },
+            {
+              "ja": "でした",
+              "en": "was (past; makes ません past)",
+              "pattern": "Vませんでした（過去）",
+              "words": ["です"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "水もありません。",
+      "en": "There isn’t even water.",
+      "pattern": "N + も + Negative (not even ~)",
+      "words": ["水","ある"],
+      "ja_fragments": [
+        {
+          "ja": "水も",
+          "en": "even water",
+          "pattern": "N + も",
+          "words": ["水"]
+        },
+        {
+          "ja": "ありません",
+          "en": "there is not (polite negative)",
+          "pattern": "ありません（ある→ない）",
+          "words": ["ある"]
+        }
+      ]
+    },
+    {
+      "ja": "彼も来ました。",
+      "en": "He came too.",
+      "pattern": "N + も (also / addition)",
+      "words": ["彼","来る"],
+      "ja_fragments": [
+        {
+          "ja": "彼も",
+          "en": "he also",
+          "pattern": "N + も",
+          "words": ["彼"]
+        },
+        {
+          "ja": "来ました",
+          "en": "came (polite past)",
+          "pattern": "Vました",
+          "words": ["来る"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+[
+  {
+    "ja": "先週、私は / 新しいカメラを / 買ったばかりです。",
+    "en": "Last week, I just bought a new camera.",
+    "pattern": "Vたばかり",
+    "mainPattern": "recent-completion",
+    "refs": ["先週", "私", "新しい", "カメラ", "買う"],
+    "ja_fragments": [
+      {
+        "ja": "先週、私は",
+        "en": "Last week, I",
+        "pattern": "",
+        "mainPattern": "time-topic",
+        "refs": ["先週", "私"]
+      },
+      {
+        "ja": "新しいカメラを",
+        "en": "a new camera",
+        "pattern": "",
+        "mainPattern": "object-phrase",
+        "refs": ["新しい", "カメラ"]
+      },
+      {
+        "ja": "買ったばかりです。",
+        "en": "just bought (it).",
+        "pattern": "Vたばかり",
+        "mainPattern": "recent-completion",
+        "refs": ["買う"]
+      }
+    ]
+  },
+  {
+    "ja": "週末に公園へ / 写真を撮りに / 行くことにしました。",
+    "en": "I decided to go to the park to take photos on the weekend.",
+    "pattern": "V辞書形＋ことにする",
+    "mainPattern": "decision",
+    "refs": ["週末", "公園", "写真", "撮る", "行く", "決める"],
+    "ja_fragments": [
+      {
+        "ja": "週末に公園へ",
+        "en": "to the park on the weekend",
+        "pattern": "",
+        "mainPattern": "time-destination",
+        "refs": ["週末", "公園"]
+      },
+      {
+        "ja": "写真を撮りに",
+        "en": "in order to take photos",
+        "pattern": "Vます形(去)＋に",
+        "mainPattern": "purpose",
+        "refs": ["写真", "撮る"]
+      },
+      {
+        "ja": "行くことにしました。",
+        "en": "I decided to go.",
+        "pattern": "V辞書形＋ことにする",
+        "mainPattern": "decision",
+        "refs": ["行く", "決める"]
+      }
+    ]
+  },
+  {
+    "ja": "天気がよければ / 山にも行こうと / 思っていました。",
+    "en": "If the weather were good, I was thinking of going to the mountain too.",
+    "pattern": "～ば＋V意向形＋と思っている",
+    "mainPattern": "conditional-thought",
+    "refs": ["天気", "山", "行く", "思う"],
+    "ja_fragments": [
+      {
+        "ja": "天気がよければ",
+        "en": "if the weather is good",
+        "pattern": "Aいければ",
+        "mainPattern": "condition",
+        "refs": ["天気", "良い"]
+      },
+      {
+        "ja": "山にも行こうと",
+        "en": "thinking of going to the mountain too",
+        "pattern": "V意向形＋と",
+        "mainPattern": "volition-quote",
+        "refs": ["山", "行く"]
+      },
+      {
+        "ja": "思っていました。",
+        "en": "I was thinking.",
+        "pattern": "Vている(過去)",
+        "mainPattern": "ongoing-thought-past",
+        "refs": ["思う"]
+      }
+    ]
+  },
+  {
+    "ja": "朝起きてみると / 少し曇っていたため、/ 近くの公園で練習することに / したのです。",
+    "en": "When I woke up and looked, it was a bit cloudy, so I decided to practice at a nearby park.",
+    "pattern": "Vてみる＋ため＋ことにする＋のです",
+    "mainPattern": "reason-decision",
+    "refs": ["朝", "起きる", "曇る", "近く", "公園", "練習する", "決める"],
+    "ja_fragments": [
+      {
+        "ja": "朝起きてみると",
+        "en": "When I tried waking up (and saw),",
+        "pattern": "Vてみる＋と",
+        "mainPattern": "try-and-discover",
+        "refs": ["朝", "起きる"]
+      },
+      {
+        "ja": "少し曇っていたため、",
+        "en": "because it was a bit cloudy,",
+        "pattern": "Vている＋ため",
+        "mainPattern": "reason",
+        "refs": ["少し", "曇る"]
+      },
+      {
+        "ja": "近くの公園で練習することに",
+        "en": "to decide to practice at a nearby park",
+        "pattern": "V辞書形＋ことにする",
+        "mainPattern": "decision-setup",
+        "refs": ["近く", "公園", "練習する"]
+      },
+      {
+        "ja": "したのです。",
+        "en": "that’s what I decided (explaining).",
+        "pattern": "のです",
+        "mainPattern": "explanatory-tone",
+        "refs": []
+      }
+    ]
+  },
+  {
+    "ja": "公園には / 犬を散歩している人や / ジョギングをしている人が多く、/ 思ったより / にぎやかでした。",
+    "en": "There were many people walking dogs and jogging in the park, and it was livelier than I expected.",
+    "pattern": "Vている＋より",
+    "mainPattern": "description-comparison",
+    "refs": ["公園", "犬", "散歩する", "ジョギング", "多い", "思う", "にぎやか"],
+    "ja_fragments": [
+      {
+        "ja": "公園には",
+        "en": "In the park,",
+        "pattern": "",
+        "mainPattern": "location-topic",
+        "refs": ["公園"]
+      },
+      {
+        "ja": "犬を散歩している人や",
+        "en": "people walking dogs and",
+        "pattern": "Vている＋人",
+        "mainPattern": "describing-people",
+        "refs": ["犬", "散歩する"]
+      },
+      {
+        "ja": "ジョギングをしている人が多く、",
+        "en": "many people jogging,",
+        "pattern": "Vている＋人＋が多い",
+        "mainPattern": "quantity-description",
+        "refs": ["ジョギング", "多い"]
+      },
+      {
+        "ja": "思ったより",
+        "en": "more than I thought,",
+        "pattern": "より",
+        "mainPattern": "comparison",
+        "refs": ["思う"]
+      },
+      {
+        "ja": "にぎやかでした。",
+        "en": "it was lively.",
+        "pattern": "Aでした",
+        "mainPattern": "past-state",
+        "refs": ["にぎやか"]
+      }
+    ]
+  },
+  {
+    "ja": "きれいな花を / 見つけたので、/ 何枚も写真を撮っているうちに / 時間がたつのを / 忘れてしまいました。",
+    "en": "Because I found beautiful flowers, while taking many photos, I forgot time was passing.",
+    "pattern": "～ので＋Vているうちに＋Vてしまう",
+    "mainPattern": "cause-regret",
+    "refs": ["きれい", "花", "見つける", "何枚", "写真", "時間", "忘れる"],
+    "ja_fragments": [
+      {
+        "ja": "きれいな花を",
+        "en": "beautiful flowers",
+        "pattern": "",
+        "mainPattern": "object-phrase",
+        "refs": ["きれい", "花"]
+      },
+      {
+        "ja": "見つけたので、",
+        "en": "because I found them,",
+        "pattern": "～ので",
+        "mainPattern": "cause",
+        "refs": ["見つける"]
+      },
+      {
+        "ja": "何枚も写真を撮っているうちに",
+        "en": "while taking many photos",
+        "pattern": "Vているうちに",
+        "mainPattern": "while-doing",
+        "refs": ["何枚", "写真", "撮る"]
+      },
+      {
+        "ja": "時間がたつのを",
+        "en": "that time was passing",
+        "pattern": "V辞書形＋のを",
+        "mainPattern": "nominalized-object",
+        "refs": ["時間", "たつ"]
+      },
+      {
+        "ja": "忘れてしまいました。",
+        "en": "I ended up forgetting.",
+        "pattern": "Vてしまう(過去)",
+        "mainPattern": "regret-completion",
+        "refs": ["忘れる"]
+      }
+    ]
+  },
+  {
+    "ja": "まだ上手に / 撮れるわけではありませんが、/ 続けていけば / もっと良い写真が / 撮れるようになる / はずだと思います。",
+    "en": "I’m not able to take good photos yet, but if I continue, I think I should become able to take better ones.",
+    "pattern": "～わけではない＋～ば＋Vれるようになる＋はずだ",
+    "mainPattern": "contrast-expectation",
+    "refs": ["上手", "撮る", "続ける", "良い", "写真", "なる", "思う"],
+    "ja_fragments": [
+      {
+        "ja": "まだ上手に",
+        "en": "yet skillfully",
+        "pattern": "",
+        "mainPattern": "adverbial",
+        "refs": ["まだ", "上手"]
+      },
+      {
+        "ja": "撮れるわけではありませんが、",
+        "en": "it’s not that I can take (good photos), but",
+        "pattern": "～わけではない",
+        "mainPattern": "partial-negation",
+        "refs": ["撮る"]
+      },
+      {
+        "ja": "続けていけば",
+        "en": "if I keep it up",
+        "pattern": "Vていく＋ば",
+        "mainPattern": "conditional-continuation",
+        "refs": ["続ける"]
+      },
+      {
+        "ja": "もっと良い写真が",
+        "en": "better photos",
+        "pattern": "",
+        "mainPattern": "subject-phrase",
+        "refs": ["もっと", "良い", "写真"]
+      },
+      {
+        "ja": "撮れるようになる",
+        "en": "I’ll become able to take",
+        "pattern": "Vれるようになる",
+        "mainPattern": "become-able",
+        "refs": ["撮る", "なる"]
+      },
+      {
+        "ja": "はずだと思います。",
+        "en": "I think it should be the case.",
+        "pattern": "はずだ＋と思う",
+        "mainPattern": "expectation-opinion",
+        "refs": ["思う"]
+      }
+    ]
+  }
+]
