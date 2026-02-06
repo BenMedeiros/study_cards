@@ -1,14 +1,20 @@
 {
   "metadata": {
     "name": "Japanese noun (both)",
-    "description": "Grouped entries for type='noun' and orthography='both' — total 40.",
-    "version": 4
+    "description": "Grouped entries for type='noun' and orthography='both' — total 41.",
+    "version": 5
   },
   "defaults": {
     "type": "noun",
     "orthography": "both"
   },
   "entries": [
+    {
+      "kanji": "友達",
+      "reading": "ともだち",
+      "meaning": "friend",
+      "lexicalClass": "regular"
+    },
     {
       "kanji": "子供",
       "reading": "こども",

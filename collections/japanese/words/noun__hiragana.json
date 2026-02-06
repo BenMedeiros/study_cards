@@ -1,14 +1,26 @@
 {
   "metadata": {
     "name": "Japanese noun (hiragana)",
-    "description": "Grouped entries for type='noun' and orthography='hiragana' — total 4.",
-    "version": 2
+    "description": "Grouped entries for type='noun' and orthography='hiragana' — total 6.",
+    "version": 3
   },
   "defaults": {
     "type": "noun",
     "orthography": "hiragana"
   },
   "entries": [
+    {
+      "kanji": "事",
+      "reading": "こと",
+      "meaning": "thing; matter; (nominalizer) the act/fact of ...",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "林檎",
+      "reading": "りんご",
+      "meaning": "apple",
+      "lexicalClass": "regular"
+    },
     {
       "kanji": "林檎",
       "reading": "りんご",

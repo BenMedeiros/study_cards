@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "name": "Japanese proper-noun (katakana)",
+    "description": "Grouped entries for type='proper-noun' and orthography='katakana' — total 2.",
+    "version": 2
+  },
+  "defaults": {
+    "lexicalClass": "regular",
+    "type": "proper-noun",
+    "orthography": "katakana",
+    "properNounType": "place",
+    "origin": "English"
+  },
+  "entries": [
+    {
+      "kanji": "ニューヨーク",
+      "reading": "ニューヨーク",
+      "meaning": "New York"
+    },
+    {
+      "kanji": "ハワイ",
+      "reading": "ハワイ",
+      "meaning": "Hawaii"
+    }
+  ]
+}

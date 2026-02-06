@@ -1,13 +1,13 @@
 {
   "metadata": {
     "name": "Japanese adverb (kanji)",
-    "description": "Grouped entries for type='adverb' and orthography='kanji' — total 28.",
-    "version": 1
+    "description": "Grouped entries for type='adverb' and orthography='kanji' — total 29.",
+    "version": 2
   },
   "defaults": {
-    "orthography": "kanji",
     "lexicalClass": "regular",
-    "type": "adverb"
+    "type": "adverb",
+    "orthography": "kanji"
   },
   "entries": [
     {
@@ -149,6 +149,11 @@
       "kanji": "多く",
       "reading": "おおく",
       "meaning": "many; much; in large numbers"
+    },
+    {
+      "kanji": "毎月",
+      "reading": "まいげつ",
+      "meaning": "every month"
     }
   ]
 }

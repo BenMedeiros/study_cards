@@ -1,13 +1,13 @@
 {
   "metadata": {
     "name": "Japanese descriptive-phrase",
-    "description": "Grouped entries for type='descriptive-phrase' — total 10.",
-    "version": 3
+    "description": "Grouped entries for type='descriptive-phrase' — total 14.",
+    "version": 5
   },
   "defaults": {
+    "lexicalClass": "regular",
     "type": "descriptive-phrase",
-    "orthography": "kanji",
-    "lexicalClass": "regular"
+    "orthography": "kanji"
   },
   "entries": [
     {
@@ -60,6 +60,26 @@
       "kanji": "二個",
       "reading": "にこ",
       "meaning": "two (items) (counter: 個)"
+    },
+    {
+      "kanji": "二人",
+      "reading": "ふたり",
+      "meaning": "two people"
+    },
+    {
+      "kanji": "二点",
+      "reading": "にてん",
+      "meaning": "two points; two items"
+    },
+    {
+      "kanji": "二分",
+      "reading": "にふん",
+      "meaning": "two minutes"
+    },
+    {
+      "kanji": "二本",
+      "reading": "にほん",
+      "meaning": "two (long cylindrical things; e.g., bottles, pencils)"
     }
   ]
 }

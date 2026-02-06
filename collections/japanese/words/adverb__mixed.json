@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "Japanese adverb (mixed)",
-    "description": "Mixed orthography group for type='adverb' — total 13 (both: 3, katakana: 10).",
-    "version": 2
+    "description": "Mixed orthography group for type='adverb' — total 16 (both: 3, hiragana: 3, katakana: 10).",
+    "version": 4
   },
   "defaults": {
     "type": "adverb",
@@ -29,6 +29,27 @@
       "reading": "まだ",
       "meaning": "still; not yet",
       "orthography": "both"
+    },
+    {
+      "kanji": "直ぐ",
+      "reading": "すぐ",
+      "meaning": "soon; immediately; right away",
+      "orthography": "hiragana",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ずっと",
+      "reading": "ずっと",
+      "meaning": "for a long time; all the time; (much) more",
+      "orthography": "hiragana",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "沢山",
+      "reading": "たくさん",
+      "meaning": "a lot; many; much",
+      "orthography": "hiragana",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "ビリビリ",

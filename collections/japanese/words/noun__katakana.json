@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "Japanese noun (katakana)",
-    "description": "Grouped entries for type='noun' and orthography='katakana' — total 208.",
-    "version": 2
+    "description": "Grouped entries for type='noun' and orthography='katakana' — total 211.",
+    "version": 3
   },
   "defaults": {
     "type": "noun",
@@ -10,6 +10,26 @@
     "origin": "English"
   },
   "entries": [
+    {
+      "kanji": "Wi-Fi",
+      "reading": "ワイファイ",
+      "meaning": "Wi-Fi; wireless internet",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ウイルス",
+      "reading": "ウイルス",
+      "meaning": "virus",
+      "origin": "German",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "スマホ",
+      "reading": "スマホ",
+      "meaning": "smartphone",
+      "origin": "English-derived",
+      "lexicalClass": "regular"
+    },
     {
       "kanji": "ニュース",
       "reading": "ニュース",

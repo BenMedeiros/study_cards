@@ -1,14 +1,44 @@
 {
   "metadata": {
     "name": "Japanese noun (kanji)",
-    "description": "Grouped entries for type='noun' and orthography='kanji' — total 478.",
-    "version": 2
+    "description": "Grouped entries for type='noun' and orthography='kanji' — total 483.",
+    "version": 3
   },
   "defaults": {
     "orthography": "kanji",
     "type": "noun"
   },
   "entries": [
+    {
+      "kanji": "彼",
+      "reading": "かれ",
+      "meaning": "he; him; boyfriend (context-dependent)",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "彼女",
+      "reading": "かのじょ",
+      "meaning": "she; her; girlfriend (context-dependent)",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "皮",
+      "reading": "かわ",
+      "meaning": "skin; peel; hide; leather",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "模型",
+      "reading": "もけい",
+      "meaning": "model; miniature; mock-up",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "話",
+      "reading": "はなし",
+      "meaning": "talk; story; topic",
+      "lexicalClass": "regular"
+    },
     {
       "kanji": "経費",
       "reading": "けいひ",

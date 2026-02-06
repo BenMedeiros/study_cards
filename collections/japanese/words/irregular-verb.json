@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "name": "Japanese irregular-verb",
+    "description": "Grouped entries for type='irregular-verb' — total 1.",
+    "version": 2
+  },
+  "defaults": {
+    "lexicalClass": "regular",
+    "type": "irregular-verb",
+    "verbType": "simple",
+    "orthography": "hiragana"
+  },
+  "entries": [
+    {
+      "kanji": "する",
+      "reading": "する",
+      "meaning": "to do"
+    }
+  ]
+}
