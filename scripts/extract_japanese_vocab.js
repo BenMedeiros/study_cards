@@ -87,14 +87,41 @@ async function collectPokemonFields(rootDir, pokemonTypesSet, pokemonRootsSet) {
   });
 }
 
+async function collectJapaneseSentenceRefs(rootDir, refsSet) {
+  await walk(rootDir, async (filePath) => {
+    let txt;
+    try { txt = await fs.readFile(filePath, 'utf8'); } catch (e) { return; }
+    let doc;
+    try { doc = JSON.parse(txt); } catch (e) { return; }
+
+    // Accept top-level `sentences` array (or legacy `entries` used as sentences)
+    const sentences = Array.isArray(doc.sentences) ? doc.sentences
+      : (Array.isArray(doc.entries) && filePath.includes(path.sep + 'examples' + path.sep) ? doc.entries : null);
+    if (!Array.isArray(sentences)) return;
+
+    for (const s of sentences) {
+      if (!s || !Array.isArray(s.chunks)) continue;
+      for (const c of s.chunks) {
+        if (!c || c.refs == null) continue;
+        if (typeof c.refs === 'string') refsSet.add(c.refs);
+        else if (Array.isArray(c.refs)) {
+          for (const r of c.refs) if (typeof r === 'string') refsSet.add(r);
+        }
+      }
+    }
+  });
+}
+
 async function main() {
   const labelsSet = new Set();
   const entriesKanjiSet = new Set();
+  const sentenceRefsSet = new Set();
   const pokemonTypesSet = new Set();
   const pokemonRootsSet = new Set();
 
   // Collect explicit `entries[].kanji` only (no general token extraction)
-  await collectJapaneseEntriesKanji(japaneseDir, entriesKanjiSet);
+  // Restrict to `collections/japanese/words` as requested
+  await collectJapaneseEntriesKanji(path.join(japaneseDir, 'words'), entriesKanjiSet);
 
   // Also collect jp_label from all _metadata.json files across collections
   await collectMetadataLabels(collectionsDir, labelsSet);
@@ -102,10 +129,14 @@ async function main() {
   // Collect Pokemon entry fields
   await collectPokemonFields(pokemonDir, pokemonTypesSet, pokemonRootsSet);
 
+  // Collect sentence refs from collections/japanese/**.json (sentences[].chunks[].refs[])
+  await collectJapaneseSentenceRefs(japaneseDir, sentenceRefsSet);
+
   const jp_labels = Array.from(labelsSet).sort((a,b)=>a.localeCompare(b,'ja'));
   const entriesKanji = Array.from(entriesKanjiSet).sort((a,b)=>a.localeCompare(b,'ja'));
   const pokemon_types = Array.from(pokemonTypesSet).sort((a,b)=>a.localeCompare(b,'ja'));
   const pokemon_roots = Array.from(pokemonRootsSet).sort((a,b)=>a.localeCompare(b,'ja'));
+  const sentence_refs = Array.from(sentenceRefsSet).sort((a,b)=>a.localeCompare(b,'ja'));
 
   // ensure output dir
   await fs.mkdir(outDir, { recursive: true });
@@ -115,7 +146,8 @@ async function main() {
     japanese_entries_kanji: '__JAPANESE_ENTRIES_KANJI__',
     jp_labels: '__JP_LABELS__',
     pokemon_types: '__POKEMON_TYPES__',
-    pokemon_roots: '__POKEMON_ROOTS__'
+    pokemon_roots: '__POKEMON_ROOTS__',
+    japanese_sentence_refs: '__JAPANESE_SENTENCE_REFS__'
   };
 
   const out = {
@@ -123,8 +155,8 @@ async function main() {
     searchPatterns: [
       {
         name: 'japanese_entries_kanji',
-        description: 'Unique values from collections/japanese/**.json entries[].kanji.',
-        sources: ['collections/japanese'],
+        description: 'Unique values from collections/japanese/words/*.json entries[].kanji.',
+        sources: ['collections/japanese/words'],
         unique_words_count: entriesKanji.length,
         unique_words: placeholders.japanese_entries_kanji
       },
@@ -149,8 +181,59 @@ async function main() {
         unique_words_count: pokemon_roots.length,
         unique_words: placeholders.pokemon_roots
       }
+      ,
+      {
+        name: 'japanese_sentence_refs',
+        description: 'Unique values from collections/japanese/**.json sentences[].chunks[].refs[].',
+        sources: ['collections/japanese/examples'],
+        unique_words_count: sentence_refs.length,
+        unique_words: placeholders.japanese_sentence_refs
+      }
     ]
   };
+
+  // Annotate missing kanji definitions: any unique words (other than the
+  // primary `japanese_entries_kanji`) that are not present in the
+  // `japanese_entries_kanji` list will get `missing_kanji_definition`.
+  const definedKanjiSet = new Set(entriesKanji.map(s => (typeof s === 'string' ? s.trim() : s)));
+
+  function computeMissingForArray(arr) {
+    if (!Array.isArray(arr)) return [];
+    const missing = [];
+    const seen = new Set();
+    for (const v of arr) {
+      if (typeof v !== 'string') continue;
+      const norm = v.trim();
+      if (!norm) continue;
+      if (definedKanjiSet.has(norm)) continue;
+      if (seen.has(norm)) continue;
+      seen.add(norm);
+      missing.push(norm);
+    }
+    missing.sort((a, b) => a.localeCompare(b, 'ja'));
+    return missing;
+  }
+
+  // Map our in-memory arrays so we can compute missing values without
+  // parsing the placeholders later.
+  const patternArrays = {
+    japanese_entries_kanji: entriesKanji,
+    jp_labels: jp_labels,
+    pokemon_types: pokemon_types,
+    pokemon_roots: pokemon_roots,
+    japanese_sentence_refs: sentence_refs
+  };
+
+  for (const p of out.searchPatterns) {
+    if (!p || typeof p.name !== 'string') continue;
+    if (p.name === 'japanese_entries_kanji') continue;
+    const arr = patternArrays[p.name];
+    const missing = computeMissingForArray(arr);
+    if (missing.length) {
+      p.missing_kanji_definition_count = missing.length;
+      p.missing_kanji_definition = missing;
+    }
+  }
 
   let txtOut = JSON.stringify(out, null, 2);
   const repl = new Map();
@@ -158,12 +241,19 @@ async function main() {
   repl.set(JSON.stringify(placeholders.jp_labels), JSON.stringify(jp_labels));
   repl.set(JSON.stringify(placeholders.pokemon_types), JSON.stringify(pokemon_types));
   repl.set(JSON.stringify(placeholders.pokemon_roots), JSON.stringify(pokemon_roots));
+  repl.set(JSON.stringify(placeholders.japanese_sentence_refs), JSON.stringify(sentence_refs));
 
   for (const [k, v] of repl.entries()) txtOut = txtOut.replace(k, v);
   if (!txtOut.endsWith('\n')) txtOut += '\n';
   await fs.writeFile(outPath, txtOut, 'utf8');
-  console.log(`Wrote ${outPath}`);
-  console.log(`Counts: japanese_entries_kanji=${entriesKanji.length}, jp_labels=${jp_labels.length}, pokemon_types=${pokemon_types.length}, pokemon_roots=${pokemon_roots.length}`);
+  const shortOutPath = path.basename(scriptsDir) + '/' + path.basename(outPath);
+  console.log(`Wrote ${shortOutPath}`);
+  console.log('Counts:');
+  console.log(`  japanese_entries_kanji: ${entriesKanji.length}`);
+  console.log(`  jp_labels: ${jp_labels.length}`);
+  console.log(`  pokemon_types: ${pokemon_types.length}`);
+  console.log(`  pokemon_roots: ${pokemon_roots.length}`);
+  console.log(`  japanese_sentence_refs: ${sentence_refs.length}`);
 }
 
 if (require.main === module) main().catch(err=>{ console.error(err); process.exit(1); });

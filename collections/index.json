@@ -26,19 +26,19 @@
       "path": "japanese/examples/counter_culture_set_01.json",
       "name": "Counter + Culture Set 01",
       "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
-      "entries": 13
+      "entries": null
     },
     {
       "path": "japanese/examples/gu_verb_examples.json",
       "name": "Verb Variety Set 01",
       "description": "Sentences using godan -ぐ verbs with varied conjugations and proper nouns.",
-      "entries": 11
+      "entries": null
     },
     {
       "path": "japanese/examples/new_example_pattern.json",
       "name": "Full Examples (repaired v1)",
       "description": "Old examples reviewed and conformed to japanese.examples schema",
-      "entries": 12
+      "entries": null
     },
     {
       "path": "japanese/words/adverb.json",
