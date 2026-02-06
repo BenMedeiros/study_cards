@@ -30,6 +30,7 @@
       "description": "Grammatical classification: how it behaves in sentences. Use `lexicalClass` to capture families like onomatopoeia or greetings that can cross POS. Rules of thumb: if it is one lexical word, pick noun/verb/adj/adverb/etc. If it is multi-word or a fixed chunk, pick expression/phrase/sentence types.",
       "values": {
         "noun": "Standalone noun (名詞). Can take particles like が/を/に. Example: 本, 勉強.",
+        "proper-noun": "Proper noun (固有名詞): specific names of people/places/organizations (e.g., 太郎, 東京, 日本, アメリカ, ユニクロ). Use for names you generally don’t want treated as normal vocab.",
         "standalone-noun": "A single kanji that can stand alone as a noun WITHOUT okurigana (rare; only when truly used alone).",
         "compound-morpheme": "Bound morpheme used mainly inside compounds; not typically a standalone word (e.g., 〜学, 〜性).",
         "verb-stem": "Kanji/root that appears as part of a verb requiring okurigana; not a full dictionary-form verb by itself (e.g., 受け in 受ける).",
@@ -80,7 +81,14 @@
   ],
   "conditionalFields": [
     {
-      "when": { "field": "type", "in": ["ichidan-verb", "godan-verb", "irregular-verb"] },
+      "when": {
+        "field": "type",
+        "in": [
+          "ichidan-verb",
+          "godan-verb",
+          "irregular-verb"
+        ]
+      },
       "fields": [
         {
           "key": "verbType",
@@ -98,7 +106,12 @@
       ]
     },
     {
-      "when": { "field": "verbType", "in": ["compound"] },
+      "when": {
+        "field": "verbType",
+        "in": [
+          "compound"
+        ]
+      },
       "fields": [
         {
           "key": "compoundType",
@@ -117,7 +130,12 @@
       ]
     },
     {
-      "when": { "field": "orthography", "in": ["katakana"] },
+      "when": {
+        "field": "orthography",
+        "in": [
+          "katakana"
+        ]
+      },
       "fields": [
         {
           "key": "origin",
@@ -135,6 +153,31 @@
             "German": "Loanword originating from German.",
             "Japanese": "Native Japanese word or internal formation.",
             "Other": "Loanword from another language not listed."
+          }
+        }
+      ]
+    },
+    {
+      "when": {
+        "field": "type",
+        "in": [
+          "proper-noun"
+        ]
+      },
+      "fields": [
+        {
+          "key": "properNounType",
+          "label": "Proper Noun Type",
+          "jp_label": "固有名詞タイプ",
+          "type": "enum",
+          "description": "Category of proper noun for generation and filtering. Use 'person' for given/family names, 'place' for geographic names, 'org' for organizations/brands, 'work' for titles.",
+          "values": {
+            "person": "Person name (first/last/full).",
+            "place": "Place name (city, district, prefecture, country, station).",
+            "org": "Organization/brand/company/school.",
+            "work": "Title of a work (book/movie/game).",
+            "event": "Named event (festival, conference).",
+            "other": "Other named entity."
           }
         }
       ]

@@ -1,47 +1,86 @@
 {
   "category": "japanese.examples",
+  "description": "Japanese example sentences structured as learner-optimized reading chunks with local grammar focus and vocabulary references.",
+  "version": 1,
   "fields": [
     {
       "key": "ja",
       "label": "Japanese",
       "jp_label": "日本語",
       "type": "string",
-      "description": "Japanese example sentence."
+      "required": true,
+      "description": "Full Japanese sentence in natural surface form."
     },
     {
       "key": "en",
       "label": "English",
       "jp_label": "英訳",
       "type": "string",
-      "description": "English translation of the example sentence."
-    },
-    {
-      "key": "grammar",
-      "label": "Grammar",
-      "jp_label": "文法",
-      "type": "string",
-      "description": "Optional short grammar/pattern tag for the sentence (e.g., 'Verb-te + ください', 'Onomatopoeia + する')."
-    },
-    {
-      "key": "grammarNote",
-      "label": "Grammar Note",
-      "jp_label": "文法メモ",
-      "type": "string",
-      "description": "Optional explanation of the grammar/pattern tag (e.g., register, nuance, constraints)."
+      "required": true,
+      "description": "Natural English translation conveying overall meaning rather than literal structure."
     },
     {
       "key": "notes",
       "label": "Notes",
       "jp_label": "メモ",
       "type": "array<string>",
-      "description": "Optional usage notes (nuance, register, restrictions, common collocations)."
+      "required": false,
+      "description": "Sentence-specific nuance, cultural reminders, or irregularities tied only to this instance."
     },
     {
-      "key": "refWords",
-      "label": "Reference Words",
-      "jp_label": "参照語",
+      "key": "grammarNotes",
+      "label": "Grammar Notes",
+      "jp_label": "文法ノート",
       "type": "array<string>",
-      "description": "Optional array of lookup keys referencing other entry `kanji` values. When collections are loaded, matching examples can be attached to `entry.examples` by matching each refWord to `entry.kanji`."
+      "required": false,
+      "description": "High-value grammar recognition notes and common contrast pairs relevant to patterns appearing in this sentence. Prefer short disambiguation insights that help learners distinguish easily confused structures (e.g., Vてきた vs Vていく, ので vs から). Avoid sentence-specific nuance or long theoretical explanations; those belong in `notes`."
+    },
+    {
+      "key": "chunks",
+      "label": "Chunks",
+      "jp_label": "チャンク",
+      "type": "array<exampleChunk>",
+      "required": true,
+      "description": "Ordered learner-optimized reading units composing the sentence. Each chunk may contain its own focus and references."
     }
-  ]
+  ],
+  "types": {
+    "exampleChunk": {
+      "description": "A learner reading unit inside a sentence. Every chunk must link to at least one non-particle reference (content word or grammar pattern). Do not include particles in refs.",
+      "fields": [
+        {
+          "key": "ja",
+          "label": "Chunk Japanese",
+          "jp_label": "チャンク日本語",
+          "type": "string",
+          "required": true,
+          "description": "Japanese surface text for this chunk exactly as it appears in the sentence."
+        },
+        {
+          "key": "gloss",
+          "label": "Gloss",
+          "jp_label": "意味",
+          "type": "string",
+          "required": true,
+          "description": "Short learner-friendly meaning/paraphrase for this chunk."
+        },
+        {
+          "key": "focus",
+          "label": "Grammar Focus",
+          "jp_label": "文型",
+          "type": "string",
+          "required": false,
+          "description": "Canonical grammar/pattern label if this chunk targets a structure (e.g., 'AながらB', 'Vていく')."
+        },
+        {
+          "key": "refs",
+          "label": "References",
+          "jp_label": "参照語",
+          "type": "array<string>",
+          "required": true,
+          "description": "REQUIRED, NON-EMPTY. Must include at least one lookup key for a content word or grammar pattern used in this chunk. Do NOT include particles (は/が/を/に/で/と/へ/も/や/の/ね/よ/か etc.). Authoring rule: do not create particle-only chunks; attach particles to an adjacent chunk that contains a referencable item."
+        }
+      ]
+    }
+  }
 }

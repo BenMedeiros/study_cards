@@ -1,0 +1,291 @@
+{
+    "metadata": {
+        "name": "Full Examples (repaired v1)",
+        "description": "Old examples reviewed and conformed to japanese.examples schema",
+        "version": 1
+    },
+    "entries": [
+        {
+            "ja": "分からないことは何でも聞いてください。",
+            "en": "Ask me anything you don’t understand.",
+            "chunks": [
+                {
+                    "ja": "分からないことは",
+                    "gloss": "things you don’t understand",
+                    "refs": [
+                        "分かる",
+                        "こと"
+                    ]
+                },
+                {
+                    "ja": "何でも聞いてください",
+                    "gloss": "please ask anything",
+                    "focus": "～てください",
+                    "refs": [
+                        "何でも",
+                        "聞く"
+                    ]
+                }
+            ],
+            "notes": [
+                "Common teacher/host phrase."
+            ]
+        },
+        {
+            "ja": "星がキラキラ光っている。",
+            "en": "The stars are sparkling.",
+            "chunks": [
+                {
+                    "ja": "星が",
+                    "gloss": "the stars",
+                    "refs": [
+                        "星"
+                    ]
+                },
+                {
+                    "ja": "キラキラ光っている",
+                    "gloss": "are sparkling",
+                    "focus": "～ている",
+                    "refs": [
+                        "キラキラ",
+                        "光る"
+                    ]
+                }
+            ],
+            "notes": [
+                "Onomatopoeia usually written in katakana."
+            ]
+        },
+        {
+            "ja": "試験の前はドキドキする。",
+            "en": "Before an exam, my heart pounds / I get nervous.",
+            "chunks": [
+                {
+                    "ja": "試験の前は",
+                    "gloss": "before an exam",
+                    "refs": [
+                        "試験",
+                        "前"
+                    ]
+                },
+                {
+                    "ja": "ドキドキする",
+                    "gloss": "feel nervous / heart pounds",
+                    "focus": "Nする",
+                    "refs": [
+                        "ドキドキ",
+                        "する"
+                    ]
+                }
+            ],
+            "notes": [
+                "Used for excitement or anxiety."
+            ]
+        },
+        {
+            "ja": "りんごの皮を剥いでください。",
+            "en": "Please peel the apple.",
+            "chunks": [
+                {
+                    "ja": "りんごの皮を",
+                    "gloss": "the apple peel",
+                    "refs": [
+                        "りんご",
+                        "皮"
+                    ]
+                },
+                {
+                    "ja": "剥いでください",
+                    "gloss": "please peel",
+                    "focus": "～てください",
+                    "refs": [
+                        "剥ぐ"
+                    ]
+                }
+            ],
+            "notes": [
+                "剥ぐ → 剥いで irregular te change."
+            ]
+        },
+        {
+            "ja": "先生の話をよく聞いてください。",
+            "en": "Please listen carefully to the teacher.",
+            "chunks": [
+                {
+                    "ja": "先生の話を",
+                    "gloss": "the teacher’s talk",
+                    "refs": [
+                        "先生",
+                        "話"
+                    ]
+                },
+                {
+                    "ja": "よく聞いてください",
+                    "gloss": "please listen carefully",
+                    "focus": "～てください",
+                    "refs": [
+                        "聞く"
+                    ]
+                }
+            ]
+        },
+        {
+            "ja": "自転車を漕いで学校に行きます。",
+            "en": "I pedal my bike and go to school.",
+            "chunks": [
+                {
+                    "ja": "自転車を漕いで",
+                    "gloss": "pedal the bike and",
+                    "focus": "VてB (sequence)",
+                    "refs": [
+                        "自転車",
+                        "漕ぐ"
+                    ]
+                },
+                {
+                    "ja": "学校に行きます",
+                    "gloss": "go to school",
+                    "refs": [
+                        "学校",
+                        "行く"
+                    ]
+                }
+            ],
+            "notes": [
+                "Simple action sequence, not Vていく."
+            ]
+        },
+        {
+            "ja": "窓が開いているので、部屋が寒い。",
+            "en": "Since the window is open, the room is cold.",
+            "chunks": [
+                {
+                    "ja": "窓が開いているので",
+                    "gloss": "since the window is open",
+                    "focus": "～ので",
+                    "refs": [
+                        "窓",
+                        "開く"
+                    ]
+                },
+                {
+                    "ja": "部屋が寒い",
+                    "gloss": "the room is cold",
+                    "refs": [
+                        "部屋",
+                        "寒い"
+                    ]
+                }
+            ]
+        },
+        {
+            "ja": "時間が空いたら、手紙を書きます。",
+            "en": "If I have free time, I’ll write a letter.",
+            "chunks": [
+                {
+                    "ja": "時間が空いたら",
+                    "gloss": "if time becomes free",
+                    "focus": "～たら",
+                    "refs": [
+                        "時間",
+                        "空く"
+                    ]
+                },
+                {
+                    "ja": "手紙を書きます",
+                    "gloss": "write a letter",
+                    "refs": [
+                        "手紙",
+                        "書く"
+                    ]
+                }
+            ]
+        },
+        {
+            "ja": "彼は両親を仰いで生きてきた。",
+            "en": "He has lived looking up to his parents.",
+            "grammarNotes": [
+                "Vてきた = action/state continuing from the past up to now.",
+                "Contrast: Vていく = action/state continuing from now into the future."
+            ],
+            "chunks": [
+                {
+                    "ja": "彼は",
+                    "gloss": "he",
+                    "refs": [
+                        "彼"
+                    ]
+                },
+                {
+                    "ja": "両親を仰いで",
+                    "gloss": "looking up to his parents",
+                    "refs": [
+                        "両親",
+                        "仰ぐ"
+                    ]
+                },
+                {
+                    "ja": "生きてきた",
+                    "gloss": "has lived up to now",
+                    "focus": "Vてくる",
+                    "refs": [
+                        "生きる"
+                    ]
+                }
+            ]
+        },
+        {
+            "ja": "無駄な経費を削がなければならない。",
+            "en": "We must cut unnecessary expenses.",
+            "chunks": [
+                {
+                    "ja": "無駄な経費を",
+                    "gloss": "unnecessary expenses",
+                    "refs": [
+                        "無駄",
+                        "経費"
+                    ]
+                },
+                {
+                    "ja": "削がなければならない",
+                    "gloss": "must cut",
+                    "focus": "～なければならない",
+                    "refs": [
+                        "削ぐ"
+                    ]
+                }
+            ]
+        },
+        {
+            "ja": "彼女は毎月多くのお金を家族に貢いでいる。",
+            "en": "She gives a lot of money to her family every month.",
+            "chunks": [
+                {
+                    "ja": "彼女は毎月",
+                    "gloss": "she every month",
+                    "refs": [
+                        "彼女",
+                        "毎月"
+                    ]
+                },
+                {
+                    "ja": "多くのお金を家族に",
+                    "gloss": "a lot of money to her family",
+                    "refs": [
+                        "多く",
+                        "お金",
+                        "家族"
+                    ]
+                },
+                {
+                    "ja": "貢いでいる",
+                    "gloss": "is giving devoted support",
+                    "focus": "～ている",
+                    "refs": [
+                        "貢ぐ"
+                    ]
+                }
+            ]
+        }
+    ]
+}
