@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "name": "Japanese noun (mixed)",
-    "description": "Mixed orthography group for type='noun' — total 4 (either: 1, kana: 3).",
-    "version": 3
+    "name": "Japanese noun (hiragana)",
+    "description": "Grouped entries for type='noun' and orthography='hiragana' — total 4.",
+    "version": 2
   },
   "defaults": {
     "type": "noun",
@@ -10,10 +10,10 @@
   },
   "entries": [
     {
-      "kanji": "EV",
-      "reading": "EV",
-      "meaning": "EV (effort value; game term)",
-      "orthography": "both"
+      "kanji": "林檎",
+      "reading": "りんご",
+      "meaning": "apple",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "おすすめ",

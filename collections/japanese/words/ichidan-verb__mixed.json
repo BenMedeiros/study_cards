@@ -1,7 +1,7 @@
 {
   "metadata": {
     "name": "Japanese ichidan-verb (mixed)",
-    "description": "Mixed orthography group for type='ichidan-verb' — total 29 (kana: 2, both: 7, none: 20).",
+    "description": "Mixed orthography group for type='ichidan-verb' — total 29 (hiragana: 2, both: 7, none: 20).",
     "version": 3
   },
   "defaults": {

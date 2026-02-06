@@ -1,14 +1,26 @@
 {
   "metadata": {
     "name": "Japanese noun (both)",
-    "description": "Grouped entries for type='noun' and orthography='both' — total 37.",
-    "version": 2
+    "description": "Grouped entries for type='noun' and orthography='both' — total 40.",
+    "version": 4
   },
   "defaults": {
     "type": "noun",
     "orthography": "both"
   },
   "entries": [
+    {
+      "kanji": "子供",
+      "reading": "こども",
+      "meaning": "child; children",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "私",
+      "reading": "わたし",
+      "meaning": "I; me",
+      "lexicalClass": "regular"
+    },
     {
       "kanji": "毒ガス",
       "reading": "どくガス",
@@ -193,6 +205,11 @@
       "kanji": "ひらがな",
       "reading": "ひらがな",
       "meaning": "hiragana"
+    },
+    {
+      "kanji": "EV",
+      "reading": "EV",
+      "meaning": "EV (effort value; game term)"
     }
   ]
 }

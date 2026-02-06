@@ -1,14 +1,32 @@
 {
   "metadata": {
     "name": "Japanese noun (kanji)",
-    "description": "Grouped entries for type='noun' and orthography='kanji' — total 475.",
-    "version": 1
+    "description": "Grouped entries for type='noun' and orthography='kanji' — total 478.",
+    "version": 2
   },
   "defaults": {
-    "type": "noun",
-    "orthography": "kanji"
+    "orthography": "kanji",
+    "type": "noun"
   },
   "entries": [
+    {
+      "kanji": "経費",
+      "reading": "けいひ",
+      "meaning": "expenses; costs",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "研究",
+      "reading": "けんきゅう",
+      "meaning": "research; study",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "手",
+      "reading": "て",
+      "meaning": "hand; arm",
+      "lexicalClass": "regular"
+    },
     {
       "kanji": "悪魔",
       "reading": "あくま",

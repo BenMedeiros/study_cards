@@ -1,17 +1,65 @@
 {
   "metadata": {
     "name": "Japanese descriptive-phrase",
-    "description": "Grouped entries for type='descriptive-phrase' — total 1.",
-    "version": 1
+    "description": "Grouped entries for type='descriptive-phrase' — total 10.",
+    "version": 3
   },
   "defaults": {
-    "type": "descriptive-phrase"
+    "type": "descriptive-phrase",
+    "orthography": "kanji",
+    "lexicalClass": "regular"
   },
   "entries": [
+    {
+      "kanji": "一ページ",
+      "reading": "いちページ",
+      "meaning": "one page",
+      "orthography": "both"
+    },
     {
       "kanji": "単独の漢字",
       "reading": "たんどくのかんじ",
       "meaning": "standalone kanji; a kanji used alone, not in a compound or with okurigana"
+    },
+    {
+      "kanji": "一時間",
+      "reading": "いちじかん",
+      "meaning": "one hour"
+    },
+    {
+      "kanji": "九時",
+      "reading": "くじ",
+      "meaning": "nine o'clock"
+    },
+    {
+      "kanji": "五秒",
+      "reading": "ごびょう",
+      "meaning": "five seconds"
+    },
+    {
+      "kanji": "三回",
+      "reading": "さんかい",
+      "meaning": "three times"
+    },
+    {
+      "kanji": "三時間",
+      "reading": "さんじかん",
+      "meaning": "three hours"
+    },
+    {
+      "kanji": "三日",
+      "reading": "みっか",
+      "meaning": "three days; the third day of the month"
+    },
+    {
+      "kanji": "三枚",
+      "reading": "さんまい",
+      "meaning": "three (flat objects; e.g., sheets, plates)"
+    },
+    {
+      "kanji": "二個",
+      "reading": "にこ",
+      "meaning": "two (items) (counter: 個)"
     }
   ]
 }

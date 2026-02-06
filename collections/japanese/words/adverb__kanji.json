@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "name": "Japanese adverb (kanji)",
+    "description": "Grouped entries for type='adverb' and orthography='kanji' — total 28.",
+    "version": 1
+  },
+  "defaults": {
+    "orthography": "kanji",
+    "lexicalClass": "regular",
+    "type": "adverb"
+  },
+  "entries": [
+    {
+      "kanji": "程",
+      "reading": "ほど",
+      "meaning": "about; approximately; extent/degree (approximation/extent marker)"
+    },
+    {
+      "kanji": "全部",
+      "reading": "ぜんぶ",
+      "meaning": "all; entirely"
+    },
+    {
+      "kanji": "全然",
+      "reading": "ぜんぜん",
+      "meaning": "(not) at all"
+    },
+    {
+      "kanji": "絶対",
+      "reading": "ぜったい",
+      "meaning": "absolutely; definitely"
+    },
+    {
+      "kanji": "必ず",
+      "reading": "かならず",
+      "meaning": "surely; without fail"
+    },
+    {
+      "kanji": "特に",
+      "reading": "とくに",
+      "meaning": "especially; particularly"
+    },
+    {
+      "kanji": "例えば",
+      "reading": "たとえば",
+      "meaning": "for example"
+    },
+    {
+      "kanji": "最近",
+      "reading": "さいきん",
+      "meaning": "recently; lately"
+    },
+    {
+      "kanji": "最初に",
+      "reading": "さいしょに",
+      "meaning": "first; in the beginning"
+    },
+    {
+      "kanji": "最後に",
+      "reading": "さいごに",
+      "meaning": "finally; at the end"
+    },
+    {
+      "kanji": "早く",
+      "reading": "はやく",
+      "meaning": "quickly; early"
+    },
+    {
+      "kanji": "本当に",
+      "reading": "ほんとうに",
+      "meaning": "really; truly"
+    },
+    {
+      "kanji": "急に",
+      "reading": "きゅうに",
+      "meaning": "suddenly"
+    },
+    {
+      "kanji": "程",
+      "reading": "ほど",
+      "meaning": "about; approximately; extent/degree (approximation/extent marker)"
+    },
+    {
+      "kanji": "全部",
+      "reading": "ぜんぶ",
+      "meaning": "all; entirely"
+    },
+    {
+      "kanji": "全然",
+      "reading": "ぜんぜん",
+      "meaning": "(not) at all"
+    },
+    {
+      "kanji": "絶対",
+      "reading": "ぜったい",
+      "meaning": "absolutely; definitely"
+    },
+    {
+      "kanji": "必ず",
+      "reading": "かならず",
+      "meaning": "surely; without fail"
+    },
+    {
+      "kanji": "特に",
+      "reading": "とくに",
+      "meaning": "especially; particularly"
+    },
+    {
+      "kanji": "例えば",
+      "reading": "たとえば",
+      "meaning": "for example"
+    },
+    {
+      "kanji": "最近",
+      "reading": "さいきん",
+      "meaning": "recently; lately"
+    },
+    {
+      "kanji": "最初に",
+      "reading": "さいしょに",
+      "meaning": "first; in the beginning"
+    },
+    {
+      "kanji": "最後に",
+      "reading": "さいごに",
+      "meaning": "finally; at the end"
+    },
+    {
+      "kanji": "早く",
+      "reading": "はやく",
+      "meaning": "quickly; early"
+    },
+    {
+      "kanji": "本当に",
+      "reading": "ほんとうに",
+      "meaning": "really; truly"
+    },
+    {
+      "kanji": "急に",
+      "reading": "きゅうに",
+      "meaning": "suddenly"
+    },
+    {
+      "kanji": "一体",
+      "reading": "いったい",
+      "meaning": "on earth; in the world (used in questions for emphasis)"
+    },
+    {
+      "kanji": "多く",
+      "reading": "おおく",
+      "meaning": "many; much; in large numbers"
+    }
+  ]
+}

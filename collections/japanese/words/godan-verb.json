@@ -1,11 +1,13 @@
 {
   "metadata": {
     "name": "Japanese godan-verb",
-    "description": "Grouped entries for type='godan-verb' — total 138.",
-    "version": 4
+    "description": "Grouped entries for type='godan-verb' — total 139.",
+    "version": 5
   },
   "defaults": {
-    "type": "godan-verb"
+    "type": "godan-verb",
+    "lexicalClass": "regular",
+    "verbType": "simple"
   },
   "entries": [
     {
@@ -870,6 +872,11 @@
       "reading": "いとなむ",
       "meaning": "to run (a business); to operate",
       "ending": "mu"
+    },
+    {
+      "kanji": "光る",
+      "reading": "ひかる",
+      "meaning": "to shine; to glitter"
     }
   ]
 }

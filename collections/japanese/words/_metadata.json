@@ -5,7 +5,7 @@
       "key": "kanji",
       "label": "Kanji",
       "jp_label": "漢字",
-      "description": "The written form of the entry as it typically appears (kanji, kana, or mixed). This field is the DISPLAY spelling, not necessarily 'kanji-only'. Examples: 悪魔, ありがとう, ドキドキ, 毒ガス.",
+      "description": "Canonical dictionary/headword kanji form if one exists, EVEN IF it is rare or not commonly used in daily writing. This field represents the linguistically recognized kanji spelling, not the most common display form. If no established kanji exists, use the standard kana/katakana headword instead. Use `orthography` to indicate what people typically write in real-world usage. Examples: 林檎 (usually written りんご), 今日, 勉強, ありがとう (no standard kanji), ドキドキ (no kanji).",
       "type": "string"
     },
     {

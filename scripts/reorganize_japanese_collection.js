@@ -115,15 +115,23 @@ function liftCommonFields(data, fp, enumMap) {
   for (const [k, rec] of candidateKeys.entries()) {
     const values = Array.from(rec.freq.keys());
     const count = rec.count;
-    // Non-enum: Only lift when every entry has the key present (count === totalEntries)
+    // Non-enum: prefer to lift when either unanimous or when a strict majority
+    // of all entries share the same primitive value. This allows defaults to
+    // flip over time as new records arrive.
     if (!enumMap || !enumMap.has(k)) {
-      if (count === totalEntries && values.length === 1) {
-        const val = values[0];
-        if (!defaultsObj.hasOwnProperty(k)) {
+      // determine most common value and its count
+      let best = null; let bestCount = 0;
+      for (const [val, c] of rec.freq.entries()) { if (c > bestCount) { best = val; bestCount = c; } }
+      const unanimous = (count === totalEntries && values.length === 1);
+      const majority = (best !== null && bestCount > Math.floor(totalEntries / 2));
+      if (unanimous || majority) {
+        const val = unanimous ? values[0] : best;
+        const shouldSetDefault = !defaultsObj.hasOwnProperty(k) || String(defaultsObj[k]) !== String(val);
+        if (shouldSetDefault) {
           if (defaultsLocation === 'defaults') data.defaults = data.defaults || {}, data.defaults[k] = val;
           else if (defaultsLocation === 'root.defaults') data.root = data.root || {}, data.root.defaults = data.root.defaults || {}, data.root.defaults[k] = val;
           else data.defaults = data.defaults || {}, data.defaults[k] = val;
-          for (const ent of shape.entries) { if (ent.hasOwnProperty(k)) delete ent[k]; }
+          for (const ent of shape.entries) { if (ent.hasOwnProperty(k) && String(ent[k]) === String(val)) delete ent[k]; }
           liftedKeys.push({ key: k, value: val });
         }
       }
@@ -132,7 +140,10 @@ function liftCommonFields(data, fp, enumMap) {
       let best = null; let bestCount = 0;
       for (const [val, c] of rec.freq.entries()) { if (c > bestCount) { best = val; bestCount = c; } }
       if (best !== null && bestCount > Math.floor(totalEntries / 2)) {
-        if (!defaultsObj.hasOwnProperty(k)) {
+        // For enum keys, promote the majority value. If a default exists but
+        // disagrees with the majority, replace it so entries reflect the majority.
+        const shouldSetEnumDefault = !defaultsObj.hasOwnProperty(k) || String(defaultsObj[k]) !== String(best);
+        if (shouldSetEnumDefault) {
           if (defaultsLocation === 'defaults') data.defaults = data.defaults || {}, data.defaults[k] = best;
           else if (defaultsLocation === 'root.defaults') data.root = data.root || {}, data.root.defaults = data.root.defaults || {}, data.root.defaults[k] = best;
           else data.defaults = data.defaults || {}, data.defaults[k] = best;

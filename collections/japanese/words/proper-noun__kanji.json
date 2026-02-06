@@ -1,0 +1,405 @@
+{
+  "metadata": {
+    "name": "Japanese proper-noun (kanji)",
+    "description": "Grouped entries for type='proper-noun' and orthography='kanji' — total 78.",
+    "version": 2
+  },
+  "defaults": {
+    "lexicalClass": "regular",
+    "orthography": "kanji",
+    "type": "proper-noun",
+    "properNounType": "place"
+  },
+  "entries": [
+    {
+      "kanji": "京都",
+      "reading": "きょうと",
+      "meaning": "Kyoto"
+    },
+    {
+      "kanji": "東京駅",
+      "reading": "とうきょうえき",
+      "meaning": "Tokyo Station"
+    },
+    {
+      "kanji": "北海道",
+      "reading": "ほっかいどう",
+      "meaning": "Hokkaido"
+    },
+    {
+      "kanji": "青森県",
+      "reading": "あおもりけん",
+      "meaning": "Aomori Prefecture"
+    },
+    {
+      "kanji": "岩手県",
+      "reading": "いわてけん",
+      "meaning": "Iwate Prefecture"
+    },
+    {
+      "kanji": "宮城県",
+      "reading": "みやぎけん",
+      "meaning": "Miyagi Prefecture"
+    },
+    {
+      "kanji": "秋田県",
+      "reading": "あきたけん",
+      "meaning": "Akita Prefecture"
+    },
+    {
+      "kanji": "山形県",
+      "reading": "やまがたけん",
+      "meaning": "Yamagata Prefecture"
+    },
+    {
+      "kanji": "福島県",
+      "reading": "ふくしまけん",
+      "meaning": "Fukushima Prefecture"
+    },
+    {
+      "kanji": "茨城県",
+      "reading": "いばらきけん",
+      "meaning": "Ibaraki Prefecture"
+    },
+    {
+      "kanji": "栃木県",
+      "reading": "とちぎけん",
+      "meaning": "Tochigi Prefecture"
+    },
+    {
+      "kanji": "群馬県",
+      "reading": "ぐんまけん",
+      "meaning": "Gunma Prefecture"
+    },
+    {
+      "kanji": "埼玉県",
+      "reading": "さいたまけん",
+      "meaning": "Saitama Prefecture"
+    },
+    {
+      "kanji": "千葉県",
+      "reading": "ちばけん",
+      "meaning": "Chiba Prefecture"
+    },
+    {
+      "kanji": "東京都",
+      "reading": "とうきょうと",
+      "meaning": "Tokyo Metropolis"
+    },
+    {
+      "kanji": "神奈川県",
+      "reading": "かながわけん",
+      "meaning": "Kanagawa Prefecture"
+    },
+    {
+      "kanji": "新潟県",
+      "reading": "にいがたけん",
+      "meaning": "Niigata Prefecture"
+    },
+    {
+      "kanji": "富山県",
+      "reading": "とやまけん",
+      "meaning": "Toyama Prefecture"
+    },
+    {
+      "kanji": "石川県",
+      "reading": "いしかわけん",
+      "meaning": "Ishikawa Prefecture"
+    },
+    {
+      "kanji": "福井県",
+      "reading": "ふくいけん",
+      "meaning": "Fukui Prefecture"
+    },
+    {
+      "kanji": "山梨県",
+      "reading": "やまなしけん",
+      "meaning": "Yamanashi Prefecture"
+    },
+    {
+      "kanji": "長野県",
+      "reading": "ながのけん",
+      "meaning": "Nagano Prefecture"
+    },
+    {
+      "kanji": "岐阜県",
+      "reading": "ぎふけん",
+      "meaning": "Gifu Prefecture"
+    },
+    {
+      "kanji": "静岡県",
+      "reading": "しずおかけん",
+      "meaning": "Shizuoka Prefecture"
+    },
+    {
+      "kanji": "愛知県",
+      "reading": "あいちけん",
+      "meaning": "Aichi Prefecture"
+    },
+    {
+      "kanji": "三重県",
+      "reading": "みえけん",
+      "meaning": "Mie Prefecture"
+    },
+    {
+      "kanji": "滋賀県",
+      "reading": "しがけん",
+      "meaning": "Shiga Prefecture"
+    },
+    {
+      "kanji": "京都府",
+      "reading": "きょうとふ",
+      "meaning": "Kyoto Prefecture"
+    },
+    {
+      "kanji": "大阪府",
+      "reading": "おおさかふ",
+      "meaning": "Osaka Prefecture"
+    },
+    {
+      "kanji": "兵庫県",
+      "reading": "ひょうごけん",
+      "meaning": "Hyogo Prefecture"
+    },
+    {
+      "kanji": "奈良県",
+      "reading": "ならけん",
+      "meaning": "Nara Prefecture"
+    },
+    {
+      "kanji": "和歌山県",
+      "reading": "わかやまけん",
+      "meaning": "Wakayama Prefecture"
+    },
+    {
+      "kanji": "鳥取県",
+      "reading": "とっとりけん",
+      "meaning": "Tottori Prefecture"
+    },
+    {
+      "kanji": "島根県",
+      "reading": "しまねけん",
+      "meaning": "Shimane Prefecture"
+    },
+    {
+      "kanji": "岡山県",
+      "reading": "おかやまけん",
+      "meaning": "Okayama Prefecture"
+    },
+    {
+      "kanji": "広島県",
+      "reading": "ひろしまけん",
+      "meaning": "Hiroshima Prefecture"
+    },
+    {
+      "kanji": "山口県",
+      "reading": "やまぐちけん",
+      "meaning": "Yamaguchi Prefecture"
+    },
+    {
+      "kanji": "徳島県",
+      "reading": "とくしまけん",
+      "meaning": "Tokushima Prefecture"
+    },
+    {
+      "kanji": "香川県",
+      "reading": "かがわけん",
+      "meaning": "Kagawa Prefecture"
+    },
+    {
+      "kanji": "愛媛県",
+      "reading": "えひめけん",
+      "meaning": "Ehime Prefecture"
+    },
+    {
+      "kanji": "高知県",
+      "reading": "こうちけん",
+      "meaning": "Kochi Prefecture"
+    },
+    {
+      "kanji": "福岡県",
+      "reading": "ふくおかけん",
+      "meaning": "Fukuoka Prefecture"
+    },
+    {
+      "kanji": "佐賀県",
+      "reading": "さがけん",
+      "meaning": "Saga Prefecture"
+    },
+    {
+      "kanji": "長崎県",
+      "reading": "ながさきけん",
+      "meaning": "Nagasaki Prefecture"
+    },
+    {
+      "kanji": "熊本県",
+      "reading": "くまもとけん",
+      "meaning": "Kumamoto Prefecture"
+    },
+    {
+      "kanji": "大分県",
+      "reading": "おおいたけん",
+      "meaning": "Oita Prefecture"
+    },
+    {
+      "kanji": "宮崎県",
+      "reading": "みやざきけん",
+      "meaning": "Miyazaki Prefecture"
+    },
+    {
+      "kanji": "鹿児島県",
+      "reading": "かごしまけん",
+      "meaning": "Kagoshima Prefecture"
+    },
+    {
+      "kanji": "沖縄県",
+      "reading": "おきなわけん",
+      "meaning": "Okinawa Prefecture"
+    },
+    {
+      "kanji": "札幌市",
+      "reading": "さっぽろし",
+      "meaning": "Sapporo City"
+    },
+    {
+      "kanji": "仙台市",
+      "reading": "せんだいし",
+      "meaning": "Sendai City"
+    },
+    {
+      "kanji": "さいたま市",
+      "reading": "さいたまし",
+      "meaning": "Saitama City"
+    },
+    {
+      "kanji": "千葉市",
+      "reading": "ちばし",
+      "meaning": "Chiba City"
+    },
+    {
+      "kanji": "横浜市",
+      "reading": "よこはまし",
+      "meaning": "Yokohama City"
+    },
+    {
+      "kanji": "川崎市",
+      "reading": "かわさきし",
+      "meaning": "Kawasaki City"
+    },
+    {
+      "kanji": "名古屋市",
+      "reading": "なごやし",
+      "meaning": "Nagoya City"
+    },
+    {
+      "kanji": "京都市",
+      "reading": "きょうとし",
+      "meaning": "Kyoto City"
+    },
+    {
+      "kanji": "大阪市",
+      "reading": "おおさかし",
+      "meaning": "Osaka City"
+    },
+    {
+      "kanji": "神戸市",
+      "reading": "こうべし",
+      "meaning": "Kobe City"
+    },
+    {
+      "kanji": "広島市",
+      "reading": "ひろしまし",
+      "meaning": "Hiroshima City"
+    },
+    {
+      "kanji": "福岡市",
+      "reading": "ふくおかし",
+      "meaning": "Fukuoka City"
+    },
+    {
+      "kanji": "那覇市",
+      "reading": "なはし",
+      "meaning": "Naha City"
+    },
+    {
+      "kanji": "箱根町",
+      "reading": "はこねまち",
+      "meaning": "Hakone Town"
+    },
+    {
+      "kanji": "軽井沢町",
+      "reading": "かるいざわまち",
+      "meaning": "Karuizawa Town"
+    },
+    {
+      "kanji": "白川郷",
+      "reading": "しらかわごう",
+      "meaning": "Shirakawa-go"
+    },
+    {
+      "kanji": "鎌倉市",
+      "reading": "かまくらし",
+      "meaning": "Kamakura City"
+    },
+    {
+      "kanji": "日光市",
+      "reading": "にっこうし",
+      "meaning": "Nikko City"
+    },
+    {
+      "kanji": "東京駅",
+      "reading": "とうきょうえき",
+      "meaning": "Tokyo Station"
+    },
+    {
+      "kanji": "新宿駅",
+      "reading": "しんじゅくえき",
+      "meaning": "Shinjuku Station"
+    },
+    {
+      "kanji": "渋谷駅",
+      "reading": "しぶやえき",
+      "meaning": "Shibuya Station"
+    },
+    {
+      "kanji": "品川駅",
+      "reading": "しながわえき",
+      "meaning": "Shinagawa Station"
+    },
+    {
+      "kanji": "横浜駅",
+      "reading": "よこはまえき",
+      "meaning": "Yokohama Station"
+    },
+    {
+      "kanji": "名古屋駅",
+      "reading": "なごやえき",
+      "meaning": "Nagoya Station"
+    },
+    {
+      "kanji": "京都駅",
+      "reading": "きょうとえき",
+      "meaning": "Kyoto Station"
+    },
+    {
+      "kanji": "大阪駅",
+      "reading": "おおさかえき",
+      "meaning": "Osaka Station"
+    },
+    {
+      "kanji": "博多駅",
+      "reading": "はかたえき",
+      "meaning": "Hakata Station"
+    },
+    {
+      "kanji": "京都",
+      "reading": "きょうと",
+      "meaning": "Kyoto"
+    },
+    {
+      "kanji": "東京駅",
+      "reading": "とうきょうえき",
+      "meaning": "Tokyo Station"
+    }
+  ]
+}
