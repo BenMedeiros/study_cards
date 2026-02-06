@@ -56,38 +56,176 @@
     {
       "ja": "神田で野菜カレーを食べれば体が温まります。",
       "en": "If (someone) eats vegetable curry in Kanda, the body warms up.",
-      "pattern": "Nで / Vば / NがV",
-      "words": ["神田","野菜カレー","食べる","体","温まる"]
+      "pattern": "Nで / NをVば / NがV",
+      "words": ["神田","野菜カレー","食べる","体","温まる"],
+      "ja_fragments": [
+        {
+          "ja": "神田で",
+          "en": "in Kanda",
+          "pattern": "Nで",
+          "words": ["神田"]
+        },
+        {
+          "ja": "野菜カレーを食べれば",
+          "en": "if (someone) eats vegetable curry",
+          "pattern": "NをVば",
+          "words": ["野菜カレー","食べる"]
+        },
+        {
+          "ja": "体が温まります",
+          "en": "the body warms up",
+          "pattern": "NがV",
+          "words": ["体","温まる"]
+        }
+      ]
     },
     {
       "ja": "この店のカレーを頼めば犬も静かになります。",
       "en": "If (someone) orders this shop’s curry, even a dog becomes quiet.",
-      "pattern": "NをVば / QもV",
-      "words": ["店","カレー","頼む","犬","静か","なる"]
+      "pattern": "NをVば、NもA/Naになる",
+      "words": ["店","カレー","頼む","犬","静か","なる"],
+      "ja_fragments": [
+        {
+          "ja": "この店のカレーを頼めば",
+          "en": "if (someone) orders this shop's curry",
+          "pattern": "NをVば",
+          "words": ["店","カレー","頼む"],
+          "ja_fragments": [
+            {
+              "ja": "この店のカレーを",
+              "en": "this shop's curry (OBJ)",
+              "pattern": "NのNを",
+              "words": ["店","カレー"]
+            },
+            {
+              "ja": "頼めば",
+              "en": "if (someone) orders",
+              "pattern": "Vば",
+              "words": ["頼む"]
+            }
+          ]
+        },
+        {
+          "ja": "犬も静かになります",
+          "en": "even a dog becomes quiet",
+          "pattern": "NもNaになる",
+          "words": ["犬","静か","なる"],
+          "ja_fragments": [
+            {
+              "ja": "犬も",
+              "en": "even a dog",
+              "pattern": "Nも",
+              "words": ["犬"]
+            },
+            {
+              "ja": "静かになります",
+              "en": "becomes quiet",
+              "pattern": "Naになる",
+              "words": ["静か","なる"]
+            }
+          ]
+        }
+      ]
     },
     {
       "ja": "池袋のカレー屋にはうさぎがいるのに、誰も気づきませんでした。",
-      "en": "Even though there was a rabbit in the curry shop in Ikebukuro, no one noticed.",
-      "pattern": "NにはNがいるのに / QもVない",
-      "words": ["池袋","カレー屋","うさぎ","いる","誰","気づく"]
+      "en": "Even though there is a rabbit at the curry shop in Ikebukuro, nobody noticed.",
+      "pattern": "NのNにはNがいるのに、QもVない",
+      "words": ["池袋","カレー屋","うさぎ","いる","誰","気づく"],
+      "ja_fragments": [
+        {
+          "ja": "池袋のカレー屋には",
+          "en": "at the curry shop in Ikebukuro,",
+          "pattern": "NのNには (location/topic: “at/in N”)",
+          "words": ["池袋","カレー屋"]
+        },
+        {
+          "ja": "うさぎがいるのに",
+          "en": "even though there is a rabbit,",
+          "pattern": "Nがいるのに",
+          "words": ["うさぎ","いる"]
+        },
+        {
+          "ja": "誰も気づきませんでした",
+          "en": "nobody noticed.",
+          "pattern": "QもVない",
+          "words": ["誰","気づく"]
+        }
+      ]
     },
     {
       "ja": "名古屋の有名な店なのに、カレーがあまり辛くありません。",
       "en": "Even though it is a famous shop in Nagoya, the curry is not very spicy.",
       "pattern": "Nなのに / あまりAくない",
-      "words": ["名古屋","有名","店","カレー","辛い"]
+      "words": ["名古屋","有名","店","カレー","辛い"],
+      "ja_fragments": [
+        {
+          "ja": "名古屋の有名な店なのに",
+          "en": "even though it is a famous shop in Nagoya",
+          "pattern": "NのN / AなN / Nなのに",
+          "words": ["名古屋","有名","店"]
+        },
+        {
+          "ja": "カレーがあまり辛くありません",
+          "en": "the curry is not very spicy",
+          "pattern": "Nが / あまりAくない",
+          "words": ["カレー","辛い"]
+        }
+      ]
     },
     {
       "ja": "この味は京都の老舗のカレーみたいです。",
       "en": "This taste seems like curry from a long-established shop in Kyoto.",
       "pattern": "NはNみたいだ",
-      "words": ["味","京都","老舗","カレー"]
+      "words": ["味","京都","老舗","カレー"],
+      "ja_fragments": [
+        {
+          "ja": "この味は",
+          "en": "as for this taste,",
+          "pattern": "Nは",
+          "words": ["味"]
+        },
+        {
+          "ja": "京都の老舗のカレーみたいです",
+          "en": "seems like Kyoto long-established-shop curry",
+          "pattern": "Nみたいだ",
+          "words": ["京都","老舗","カレー"]
+        }
+      ]
     },
     {
       "ja": "あの猫は店のマスコットみたいです。",
       "en": "That cat seems like the shop’s mascot.",
-      "pattern": "NはNみたいだ",
-      "words": ["猫","店","マスコット"]
+      "pattern": "あのNはNみたいだ",
+      "words": ["猫","店","マスコット","みたいだ"],
+      "ja_fragments": [
+        {
+          "ja": "あの猫は",
+          "en": "that cat (topic)",
+          "pattern": "Nは",
+          "words": ["猫"]
+        },
+        {
+          "ja": "店のマスコットみたいです。",
+          "en": "seems like the shop's mascot.",
+          "pattern": "NのNみたいだ",
+          "words": ["店","マスコット","みたいだ"],
+          "ja_fragments": [
+            {
+              "ja": "店のマスコット",
+              "en": "the shop's mascot",
+              "pattern": "NのN",
+              "words": ["店","マスコット"]
+            },
+            {
+              "ja": "みたいです。",
+              "en": "seems like (polite).",
+              "pattern": "みたいだ",
+              "words": ["みたいだ"]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
