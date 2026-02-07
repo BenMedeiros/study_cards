@@ -110,39 +110,91 @@ export function renderEntityExplorer({ store }) {
 
   const headerTools = createViewHeaderTools();
 
-  const sources = [
-    { id: 'idb:collection_settings', label: 'IndexedDB: collection_settings' },
-    { id: 'idb:kanji_progress', label: 'IndexedDB: kanji_progress' },
-    { id: 'idb:grammar_progress', label: 'IndexedDB: grammar_progress' },
-    { id: 'idb:study_time_sessions', label: 'IndexedDB: study_time_sessions' },
-    { id: 'ls:shell', label: 'localStorage: shell' },
-    { id: 'ls:apps', label: 'localStorage: apps' },
-    { id: 'ls:kv__kanji_progress', label: 'localStorage: kv__kanji_progress (fallback)' },
-    { id: 'ls:kv__grammar_progress', label: 'localStorage: kv__grammar_progress (fallback)' },
-    { id: 'ls:ALL', label: 'localStorage: ALL keys' },
+  const baseSources = [
+    { id: 'idb:collection_settings', label: 'IndexedDB: collection_settings', manager: 'idb' },
+    { id: 'idb:kanji_progress', label: 'IndexedDB: kanji_progress', manager: 'idb' },
+    { id: 'idb:grammar_progress', label: 'IndexedDB: grammar_progress', manager: 'idb' },
+    { id: 'idb:study_time_sessions', label: 'IndexedDB: study_time_sessions', manager: 'idb' },
+    { id: 'ls:shell', label: 'localStorage: shell', manager: 'ls' },
+    { id: 'ls:apps', label: 'localStorage: apps', manager: 'ls' },
+    { id: 'ls:kv__kanji_progress', label: 'localStorage: kv__kanji_progress (fallback)', manager: 'ls' },
+    { id: 'ls:kv__grammar_progress', label: 'localStorage: kv__grammar_progress (fallback)', manager: 'ls' },
+    { id: 'ls:ALL', label: 'localStorage: ALL keys', manager: 'ls' },
   ];
 
-  function labelForGroup(group, source) {
-    const g = String(group || 'all');
+  function getCollectionsRuntimeSources() {
+    try {
+      const items = store?.collections?.debugListRuntimeMaps?.() || [];
+      return (Array.isArray(items) ? items : [])
+        .filter(it => it && typeof it === 'object')
+        .map(it => ({
+          id: `mgr:collections:${String(it.id || '').trim()}`,
+          label: `Collections: ${String(it.label || it.id || '').trim()}`,
+          manager: 'collections',
+        }))
+        .filter(it => it.id !== 'mgr:collections:');
+    } catch {
+      return [];
+    }
+  }
+
+  function getCollectionsRuntimeDrilldownItems(parentMapId) {
+    const mapId = String(parentMapId || '').trim();
+    if (!mapId) return [];
+    try {
+      if (mapId === 'sentencesCache') {
+        const rows = store?.collections?.debugGetRuntimeMapDump?.('sentencesCache', { limit: 1000 }) || [];
+        const arr = Array.isArray(rows) ? rows : [];
+        return arr
+          .map(r => ({ value: String(r?.top ?? ''), label: `${String(r?.top ?? '')} (${Number(r?.count) || 0})` }))
+          .filter(it => it.value);
+      }
+      if (mapId === 'sentencesRefIndex') {
+        const rows = store?.collections?.debugGetRuntimeMapDump?.('sentencesRefIndex', { limit: 1000 }) || [];
+        const arr = Array.isArray(rows) ? rows : [];
+        return arr
+          .map(r => ({ value: String(r?.top ?? ''), label: `${String(r?.top ?? '')} (${Number(r?.refCount) || 0})` }))
+          .filter(it => it.value);
+      }
+      if (mapId === 'folderEntryIndexCache') {
+        const rows = store?.collections?.debugGetRuntimeMapDump?.('folderEntryIndexCache', { limit: 1000 }) || [];
+        const arr = Array.isArray(rows) ? rows : [];
+        return arr
+          .map(r => ({ value: String(r?.folder ?? ''), label: `${String(r?.folder ?? '')} (${Number(r?.terms) || 0})` }))
+          .filter(it => it.value);
+      }
+      return [];
+    } catch {
+      return [];
+    }
+  }
+
+  function getAllSources() {
+    return [...baseSources, ...getCollectionsRuntimeSources()];
+  }
+
+  function labelForManager(managerId, source) {
+    const m = String(managerId || 'all');
     const raw = String(source?.label || source?.id || '').trim();
-    if (g === 'idb') return raw.replace(/^IndexedDB:\s*/i, '');
-    if (g === 'ls') return raw.replace(/^localStorage:\s*/i, '');
+    if (m === 'idb') return raw.replace(/^IndexedDB:\s*/i, '');
+    if (m === 'ls') return raw.replace(/^localStorage:\s*/i, '');
+    if (m === 'collections') return raw.replace(/^Collections:\s*/i, '');
     return raw;
   }
 
-  function buildItemsForGroup(group) {
-    const g = String(group || 'all');
-    const filtered = (g === 'idb')
-      ? sources.filter(s => String(s.id).startsWith('idb:'))
-      : (g === 'ls')
-        ? sources.filter(s => String(s.id).startsWith('ls:'))
-        : sources;
+  function buildItemsForManager(managerId) {
+    const m = String(managerId || 'all');
+    const sources = getAllSources();
+    const filtered = (m === 'all')
+      ? sources
+      : sources.filter(s => String(s.manager) === m);
 
-    return filtered.map(s => ({ value: s.id, label: labelForGroup(g, s) }));
+    return filtered.map(s => ({ value: s.id, label: labelForManager(m, s) }));
   }
 
-  const groupItems = [
+  const managerItems = [
     { value: 'all', label: 'All' },
+    { value: 'collections', label: 'Collections Manager' },
     { value: 'idb', label: 'IndexedDB' },
     { value: 'ls', label: 'localStorage' },
   ];
@@ -153,18 +205,21 @@ export function renderEntityExplorer({ store }) {
   function getPersistedState() {
     try {
       const st = store?.apps?.getState?.('entityExplorer') || {};
-      // Backwards compatibility: older state stored only `selection`.
+      // Backwards compatibility:
+      // - older state stored only `selection`
+      // - older state stored `{ group, selection }`
       const selection = String(st.selection || '').trim() || null;
-      const group = String(st.group || '').trim() || null;
-      return { group, selection };
+      const manager = String(st.manager || '').trim() || null;
+      const legacyGroup = String(st.group || '').trim() || null;
+      return { manager: manager || legacyGroup, selection };
     } catch {
-      return { group: null, selection: null };
+      return { manager: null, selection: null };
     }
   }
 
-  function setPersistedState({ group, selection }) {
+  function setPersistedState({ manager, selection }) {
     try {
-      store?.apps?.setState?.('entityExplorer', { group, selection });
+      store?.apps?.setState?.('entityExplorer', { manager, selection });
     } catch (e) {}
   }
 
@@ -192,6 +247,19 @@ export function renderEntityExplorer({ store }) {
           value = readLocalStorageValue(key);
           mode = (Array.isArray(value)) ? 'table' : 'json';
         }
+      } else if (selection.startsWith('mgr:collections:')) {
+        // Selection format:
+        // - mgr:collections:<mapId>
+        // - mgr:collections:<mapId>:<subKey>
+        const rest = selection.slice('mgr:collections:'.length);
+        const parts = rest.split(':');
+        const mapId = String(parts[0] || '').trim();
+        const subKey = parts.length > 1 ? parts.slice(1).join(':') : null;
+
+        const effectiveId = subKey ? `${mapId}:${subKey}` : mapId;
+        const dump = store?.collections?.debugGetRuntimeMapDump?.(effectiveId, { limit: 500, includeSample: true });
+        value = dump;
+        mode = Array.isArray(value) ? 'table' : 'json';
       }
     } catch (e) {
       value = { error: String(e?.message || e) };
@@ -205,35 +273,41 @@ export function renderEntityExplorer({ store }) {
 
   const persisted = getPersistedState();
 
-  function inferGroupFromSelection(selection) {
+  function inferManagerFromSelection(selection) {
     const s = String(selection || '');
+    if (s.startsWith('mgr:collections:')) return 'collections';
     if (s.startsWith('idb:')) return 'idb';
     if (s.startsWith('ls:')) return 'ls';
     return 'all';
   }
 
-  let currentSelection = persisted.selection || sources[0].id;
-  let currentGroup = persisted.group || inferGroupFromSelection(currentSelection) || 'all';
+  const allSources = getAllSources();
+  const defaultSelection = allSources[0]?.id || 'ls:ALL';
+  let currentSelection = persisted.selection || defaultSelection;
+  let currentManager = persisted.manager || inferManagerFromSelection(currentSelection) || 'all';
 
-  function itemsForGroup(group) {
-    return buildItemsForGroup(group);
+  // Dynamic drilldown state (only used for Collections Manager runtime maps)
+  let currentSubSelection = null;
+
+  function itemsForManager(manager) {
+    return buildItemsForManager(manager);
   }
 
   const controlsRow = document.createElement('div');
   controlsRow.className = 'entity-explorer-controls-row';
 
-  const sourceGroupDropdown = createDropdown({
-    items: groupItems,
-    value: currentGroup,
-    onChange: (nextGroup) => {
-      currentGroup = String(nextGroup || 'all');
-      // If the selection isn't valid for the group anymore, pick first available.
-      const allowed = itemsForGroup(currentGroup);
-      if (!allowed.some(it => it.value === currentSelection)) {
-        currentSelection = allowed[0]?.value || sources[0].id;
+  const managerDropdown = createDropdown({
+    items: managerItems,
+    value: currentManager,
+    onChange: (nextManager) => {
+      currentManager = String(nextManager || 'all');
+      const allowed = itemsForManager(currentManager);
+      const normalized = normalizeSelectionForSourceDropdown(currentSelection);
+      if (!allowed.some(it => it.value === normalized)) {
+        currentSelection = allowed[0]?.value || defaultSelection;
       }
       rebuildSourceDropdown();
-      setPersistedState({ group: currentGroup, selection: currentSelection });
+      setPersistedState({ manager: currentManager, selection: currentSelection });
       loadAndRender(currentSelection);
     },
     className: '',
@@ -243,38 +317,130 @@ export function renderEntityExplorer({ store }) {
   const sourceDropdownSlot = document.createElement('div');
   sourceDropdownSlot.className = 'entity-explorer-source-slot';
 
+  const subDropdownSlot = document.createElement('div');
+  subDropdownSlot.className = 'entity-explorer-source-slot';
+
+  function selectionHasCollectionsDrilldown(selection) {
+    const s = String(selection || '');
+    if (!s.startsWith('mgr:collections:')) return false;
+    const rest = s.slice('mgr:collections:'.length);
+    const mapId = String(rest.split(':')[0] || '').trim();
+    return mapId === 'sentencesCache' || mapId === 'sentencesRefIndex' || mapId === 'folderEntryIndexCache';
+  }
+
+  function parseCollectionsSelection(selection) {
+    const s = String(selection || '');
+    if (!s.startsWith('mgr:collections:')) return { mapId: null, subKey: null };
+    const rest = s.slice('mgr:collections:'.length);
+    const parts = rest.split(':');
+    const mapId = String(parts[0] || '').trim() || null;
+    const subKey = parts.length > 1 ? parts.slice(1).join(':') : null;
+    return { mapId, subKey };
+  }
+
+  function buildCollectionsSelection(mapId, subKey) {
+    const m = String(mapId || '').trim();
+    if (!m) return 'mgr:collections:';
+    const s = (subKey == null || String(subKey).trim() === '') ? null : String(subKey);
+    return s ? `mgr:collections:${m}:${s}` : `mgr:collections:${m}`;
+  }
+
+  function normalizeSelectionForSourceDropdown(selection) {
+    const s = String(selection || '');
+    if (!s.startsWith('mgr:collections:')) return s;
+    const { mapId } = parseCollectionsSelection(s);
+    return mapId ? `mgr:collections:${mapId}` : s;
+  }
+
   function rebuildSourceDropdown() {
-    const allowed = itemsForGroup(currentGroup);
+    const allowed = itemsForManager(currentManager);
     if (!allowed.length) return;
 
     // Ensure currentSelection is still valid.
-    if (!allowed.some(it => it.value === currentSelection)) {
+    const normalized = normalizeSelectionForSourceDropdown(currentSelection);
+    if (!allowed.some(it => it.value === normalized)) {
       currentSelection = allowed[0].value;
     }
 
     sourceDropdownSlot.innerHTML = '';
+    subDropdownSlot.innerHTML = '';
+
     const sourceDropdown = createDropdown({
       items: allowed,
-      value: currentSelection,
+      value: normalizeSelectionForSourceDropdown(currentSelection),
       onChange: (next) => {
         currentSelection = String(next || '').trim();
-        setPersistedState({ group: currentGroup, selection: currentSelection });
+
+        // Reset sub-selection when changing main selection.
+        currentSubSelection = null;
+
+        // If the selected runtime map supports drilldown, ensure we show the drilldown dropdown
+        // and pick a default sub-selection.
+        if (selectionHasCollectionsDrilldown(currentSelection)) {
+          const { mapId } = parseCollectionsSelection(currentSelection);
+          const items = getCollectionsRuntimeDrilldownItems(mapId);
+          if (items.length) {
+            currentSubSelection = items[0].value;
+            currentSelection = buildCollectionsSelection(mapId, currentSubSelection);
+          }
+        }
+
+        setPersistedState({ manager: currentManager, selection: currentSelection });
+        rebuildSubDropdown();
         loadAndRender(currentSelection);
       },
       className: '',
       closeOverlaysOnOpen: true,
     });
     sourceDropdownSlot.append(sourceDropdown);
+
+    rebuildSubDropdown();
+  }
+
+  function rebuildSubDropdown() {
+    subDropdownSlot.innerHTML = '';
+    if (!String(currentSelection || '').startsWith('mgr:collections:')) return;
+    const { mapId, subKey } = parseCollectionsSelection(currentSelection);
+    if (!mapId) return;
+    if (!selectionHasCollectionsDrilldown(currentSelection)) return;
+
+    const drillItems = getCollectionsRuntimeDrilldownItems(mapId);
+    if (!drillItems.length) return;
+
+    // Ensure current sub-selection is valid.
+    const current = (subKey != null) ? String(subKey) : (currentSubSelection != null ? String(currentSubSelection) : null);
+    const nextSub = drillItems.some(it => it.value === current) ? current : drillItems[0].value;
+    currentSubSelection = nextSub;
+
+    // If persisted subKey is invalid/missing, repair currentSelection.
+    if (String(subKey || '') !== String(nextSub || '')) {
+      currentSelection = buildCollectionsSelection(mapId, nextSub);
+      setPersistedState({ manager: currentManager, selection: currentSelection });
+    }
+
+    const dd = createDropdown({
+      items: drillItems,
+      value: nextSub,
+      onChange: (next) => {
+        currentSubSelection = String(next || '').trim() || null;
+        currentSelection = buildCollectionsSelection(mapId, currentSubSelection);
+        setPersistedState({ manager: currentManager, selection: currentSelection });
+        loadAndRender(currentSelection);
+      },
+      className: '',
+      closeOverlaysOnOpen: true,
+    });
+    subDropdownSlot.append(dd);
   }
 
   rebuildSourceDropdown();
 
-  controlsRow.append(sourceGroupDropdown, sourceDropdownSlot);
+  controlsRow.append(managerDropdown, sourceDropdownSlot, subDropdownSlot);
   headerTools.append(el('div', { className: 'hint', text: 'Entity Explorer (read-only)' }), controlsRow);
 
   root.append(headerTools, content);
-  // Persist initial normalized state (in case we inferred group)
-  setPersistedState({ group: currentGroup, selection: currentSelection });
+  // Persist initial normalized state (in case we inferred manager)
+  setPersistedState({ manager: currentManager, selection: currentSelection });
   loadAndRender(currentSelection);
   return root;
 }

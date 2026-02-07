@@ -99,6 +99,12 @@ export function createStore() {
       loadCollectionState: collections.loadCollectionState,
       saveCollectionState: collections.saveCollectionState,
       getInheritedFolderMetadata: collections.getInheritedFolderMetadata,
+
+      // Debug/read-only runtime inspection helpers (Entity Explorer)
+      debugListRuntimeMaps: collections.debugListRuntimeMaps,
+      debugGetRuntimeMapDump: collections.debugGetRuntimeMapDump,
+
+      ensureWordSentenceIndexBuiltForTop: collections.ensureWordSentenceIndexBuiltForTop,
     },
     shell: {
       getLastRoute: shell.getLastRoute,

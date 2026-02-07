@@ -26,6 +26,310 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   // Sentences ref index: baseFolder -> Map(refKey -> Array of sentence objects)
   const sentencesRefIndex = new Map();
 
+  // Dedup helpers for sentences/examples.
+  // - Per top-folder, track which sentence records were already indexed from a specific source file.
+  // - When associating sentences to entries, avoid repeated pushes across rebuilds.
+  const sentenceSourceIdBySentence = new WeakMap();
+  const seenSentenceSourceIdsByTop = new Map(); // top -> Set(sourceId)
+  const seenRefSentenceSourceIdsByTop = new Map(); // top -> Map(refKey -> Set(sourceId))
+  const entrySentenceKeys = new WeakMap(); // entry -> Set(uniqueKey)
+
+  // Word↔sentence association should be built once per top-folder, after relevant collections load.
+  // This prevents incremental "rebuild" churn during background prefetch.
+  const wordSentenceIndexFinalizedByTop = new Map(); // top -> boolean
+  const wordSentenceIndexFinalizeInFlightByTop = new Map(); // top -> Promise
+
+  function getOrCreateSet(map, k) {
+    const key = String(k ?? '');
+    const existing = map.get(key);
+    if (existing) return existing;
+    const created = new Set();
+    map.set(key, created);
+    return created;
+  }
+
+  function sentenceUniqueKey(ex) {
+    if (!ex || typeof ex !== 'object') return '';
+    const sid = sentenceSourceIdBySentence.get(ex);
+    if (sid) return String(sid);
+    // Fallback: content-ish key. This can dedupe identical sentences even across different files,
+    // but it's only used when we don't know the source.
+    const ja = (typeof ex.ja === 'string') ? ex.ja.trim() : '';
+    const en = (typeof ex.en === 'string') ? ex.en.trim() : '';
+    if (ja || en) return `${ja}\n${en}`;
+    return '';
+  }
+
+  function ensureEntrySentenceKeySet(entry) {
+    if (!entry || typeof entry !== 'object') return null;
+    let set = entrySentenceKeys.get(entry);
+    if (set) return set;
+    set = new Set();
+    try {
+      if (Array.isArray(entry.sentences)) {
+        for (const ex of entry.sentences) {
+          const k = sentenceUniqueKey(ex);
+          if (k) set.add(k);
+        }
+      }
+    } catch {
+      // ignore
+    }
+    entrySentenceKeys.set(entry, set);
+    return set;
+  }
+
+  function attachSentenceToEntry(entry, ex) {
+    if (!entry || typeof entry !== 'object') return;
+    if (!ex || typeof ex !== 'object') return;
+    if (!Array.isArray(entry.sentences)) entry.sentences = [];
+    const set = ensureEntrySentenceKeySet(entry);
+    const k = sentenceUniqueKey(ex);
+    if (set && k) {
+      if (set.has(k)) return;
+      set.add(k);
+    } else {
+      // no key, last-ditch: avoid pushing same object twice
+      if (entry.sentences.includes(ex)) return;
+    }
+    entry.sentences.push(ex);
+  }
+
+  function hasAnyCollectionUnder(prefix) {
+    const p = String(prefix || '').trim();
+    if (!p) return false;
+    const full = p.endsWith('/') ? p : `${p}/`;
+    return (state._availableCollectionPaths || []).some(k => typeof k === 'string' && k.startsWith(full));
+  }
+
+  async function ensureWordSentenceIndexBuiltForTop(top, { force = false } = {}) {
+    const t = String(top || '').trim();
+    if (!t) return;
+    if (!force && wordSentenceIndexFinalizedByTop.get(t) === true) return;
+    if (!force && wordSentenceIndexFinalizeInFlightByTop.has(t)) {
+      return wordSentenceIndexFinalizeInFlightByTop.get(t);
+    }
+
+    const p = (async () => {
+      // Load relevant data for the top folder.
+      // Japanese is the main case: words + sentences + examples.
+      try {
+        if (t === 'japanese') {
+          if (hasAnyCollectionUnder('japanese/words')) await ensureCollectionsLoadedInFolder('japanese/words', { excludeCollectionSets: true });
+          if (hasAnyCollectionUnder('japanese/sentences')) await ensureCollectionsLoadedInFolder('japanese/sentences', { excludeCollectionSets: true });
+          if (hasAnyCollectionUnder('japanese/examples')) await ensureCollectionsLoadedInFolder('japanese/examples', { excludeCollectionSets: true });
+        } else {
+          await ensureCollectionsLoadedInFolder(t, { excludeCollectionSets: true });
+        }
+      } catch {
+        // ignore load failures; we'll still try to associate what we have
+      }
+
+      // Rebuild the entry index for this top folder once, and attach sentences via sentencesRefIndex.
+      try {
+        folderEntryIndexCache.delete(t);
+        buildFolderEntryIndex(t);
+      } catch {
+        // ignore
+      }
+      wordSentenceIndexFinalizedByTop.set(t, true);
+      emit();
+    })();
+
+    wordSentenceIndexFinalizeInFlightByTop.set(t, p);
+    try {
+      return await p;
+    } finally {
+      wordSentenceIndexFinalizeInFlightByTop.delete(t);
+    }
+  }
+
+  const DEBUG_PREVIEW_LIMIT = 200;
+
+  function debugPreviewLimit(n) {
+    const v = Math.round(Number(n));
+    if (!Number.isFinite(v)) return DEBUG_PREVIEW_LIMIT;
+    return Math.max(10, Math.min(2000, v));
+  }
+
+  function debugMapKeys(m, limit) {
+    try {
+      const out = [];
+      if (!(m instanceof Map)) return out;
+      const lim = debugPreviewLimit(limit);
+      for (const k of m.keys()) {
+        out.push(String(k));
+        if (out.length >= lim) break;
+      }
+      return out;
+    } catch {
+      return [];
+    }
+  }
+
+  function debugSerializeFolderEntryIndex(map, limit) {
+    const lim = debugPreviewLimit(limit);
+    const out = [];
+    if (!(map instanceof Map)) return out;
+    let i = 0;
+    for (const [term, entry] of map.entries()) {
+      out.push({
+        term: String(term || ''),
+        entry: (entry && typeof entry === 'object') ? {
+          kanji: entry.kanji ?? null,
+          reading: entry.reading ?? entry.kana ?? null,
+          meaning: entry.meaning ?? entry.definition ?? entry.gloss ?? null,
+          type: entry.type ?? null,
+          sentencesCount: Array.isArray(entry.sentences) ? entry.sentences.length : 0,
+        } : null,
+      });
+      i++;
+      if (i >= lim) break;
+    }
+    return out;
+  }
+
+  function debugSerializeSentence(ex) {
+    if (!ex || typeof ex !== 'object') return null;
+    return {
+      ja: ex.ja ?? null,
+      en: ex.en ?? null,
+      chunksCount: Array.isArray(ex.chunks) ? ex.chunks.length : 0,
+      notes: ex.notes ?? null,
+    };
+  }
+
+  function debugSerializeSentencesRefIndex(refMap, { limit = DEBUG_PREVIEW_LIMIT, includeSample = false } = {}) {
+    const lim = debugPreviewLimit(limit);
+    const out = [];
+    if (!(refMap instanceof Map)) return out;
+    let i = 0;
+    for (const [ref, arr] of refMap.entries()) {
+      const row = { ref: String(ref || ''), count: Array.isArray(arr) ? arr.length : 0 };
+      if (includeSample && Array.isArray(arr) && arr.length) {
+        row.sample = debugSerializeSentence(arr[0]);
+      }
+      out.push(row);
+      i++;
+      if (i >= lim) break;
+    }
+    return out;
+  }
+
+  function debugListRuntimeMaps() {
+    const items = [];
+    items.push({ id: 'availableCollectionsMap', label: 'availableCollectionsMap (index metadata)' });
+    items.push({ id: 'pendingLoads', label: 'pendingLoads (in-flight fetches)' });
+    items.push({ id: 'pendingFolderMetadataLoads', label: 'pendingFolderMetadataLoads' });
+    items.push({ id: 'folderMetadataMap', label: 'folderMetadataMap (index folderMetadata)' });
+    items.push({ id: 'metadataCache', label: 'metadataCache (resolved folder metadata)' });
+    items.push({ id: 'collectionSetsCache', label: 'collectionSetsCache' });
+    items.push({ id: 'pendingCollectionSetsLoads', label: 'pendingCollectionSetsLoads' });
+    items.push({ id: 'sentencesCache', label: 'sentencesCache' });
+    items.push({ id: 'sentencesRefIndex', label: 'sentencesRefIndex' });
+    items.push({ id: 'folderEntryIndexCache', label: 'folderEntryIndexCache' });
+    return items;
+  }
+
+  function debugGetRuntimeMapDump(mapId, opts = {}) {
+    const id = String(mapId || '').trim();
+    const limit = debugPreviewLimit(opts?.limit);
+
+    if (id === 'availableCollectionsMap') {
+      const out = [];
+      for (const [path, meta] of availableCollectionsMap.entries()) {
+        out.push({ path, ...(meta && typeof meta === 'object' ? meta : {}) });
+        if (out.length >= limit) break;
+      }
+      return out;
+    }
+
+    if (id === 'pendingLoads') {
+      return debugMapKeys(pendingLoads, limit);
+    }
+
+    if (id === 'pendingFolderMetadataLoads') {
+      return debugMapKeys(pendingFolderMetadataLoads, limit);
+    }
+
+    if (id === 'folderMetadataMap') {
+      if (!(folderMetadataMap instanceof Map)) return [];
+      const out = [];
+      for (const [k, v] of folderMetadataMap.entries()) {
+        out.push({ folder: String(k || ''), file: String(v || '') });
+        if (out.length >= limit) break;
+      }
+      return out;
+    }
+
+    if (id === 'metadataCache') {
+      const out = [];
+      for (const k of Object.keys(metadataCache || {})) {
+        const v = metadataCache[k];
+        out.push({ folder: k, hasValue: v != null, fieldsCount: Array.isArray(v?.fields) ? v.fields.length : null });
+        if (out.length >= limit) break;
+      }
+      return out;
+    }
+
+    if (id === 'collectionSetsCache') {
+      const out = [];
+      for (const [folder, cs] of collectionSetsCache.entries()) {
+        out.push({ folder: String(folder || ''), setCount: Array.isArray(cs?.sets) ? cs.sets.length : 0, name: cs?.name ?? null, version: cs?.version ?? null });
+        if (out.length >= limit) break;
+      }
+      return out;
+    }
+
+    if (id === 'pendingCollectionSetsLoads') {
+      return debugMapKeys(pendingCollectionSetsLoads, limit);
+    }
+
+    if (id === 'sentencesCache') {
+      const out = [];
+      for (const [top, arr] of sentencesCache.entries()) {
+        out.push({ top: String(top || ''), count: Array.isArray(arr) ? arr.length : 0 });
+        if (out.length >= limit) break;
+      }
+      return out;
+    }
+    if (id.startsWith('sentencesCache:')) {
+      const top = id.slice('sentencesCache:'.length);
+      const arr = sentencesCache.get(top) || [];
+      return (Array.isArray(arr) ? arr : []).slice(0, limit).map(debugSerializeSentence);
+    }
+
+    if (id === 'sentencesRefIndex') {
+      const out = [];
+      for (const [top, refMap] of sentencesRefIndex.entries()) {
+        out.push({ top: String(top || ''), refCount: (refMap instanceof Map) ? refMap.size : 0 });
+        if (out.length >= limit) break;
+      }
+      return out;
+    }
+    if (id.startsWith('sentencesRefIndex:')) {
+      const top = id.slice('sentencesRefIndex:'.length);
+      const refMap = sentencesRefIndex.get(top);
+      return debugSerializeSentencesRefIndex(refMap, { limit, includeSample: !!opts?.includeSample });
+    }
+
+    if (id === 'folderEntryIndexCache') {
+      const out = [];
+      for (const [folder, idx] of folderEntryIndexCache.entries()) {
+        out.push({ folder: String(folder || ''), terms: (idx instanceof Map) ? idx.size : 0 });
+        if (out.length >= limit) break;
+      }
+      return out;
+    }
+    if (id.startsWith('folderEntryIndexCache:')) {
+      const folder = id.slice('folderEntryIndexCache:'.length);
+      const idx = folderEntryIndexCache.get(folder);
+      return debugSerializeFolderEntryIndex(idx, limit);
+    }
+
+    return { error: `Unknown runtime map: ${id}` };
+  }
+
   function emit() {
     emitter.emit();
   }
@@ -244,10 +548,9 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         if (!ref || !Array.isArray(arr) || arr.length === 0) continue;
         const entry = index.get(ref);
         if (!entry || typeof entry !== 'object') continue;
-        if (!Array.isArray(entry.sentences)) entry.sentences = [];
         for (const ex of arr) {
           if (!ex || typeof ex !== 'object') continue;
-          entry.sentences.push(ex);
+          attachSentenceToEntry(entry, ex);
         }
       }
     } catch {
@@ -848,14 +1151,32 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         }
         if (sentences) {
           const top = topFolderOfKey(key) || '';
+          // Track which sentences have already been indexed for this top-folder.
+          // Use sourceId = `${collectionKey}#${index}` so re-loading the same file doesn't duplicate.
+          const seenSourceIds = getOrCreateSet(seenSentenceSourceIdsByTop, top);
+
           const prev = sentencesCache.get(top) || [];
-          sentencesCache.set(top, prev.concat(sentences));
+          const append = [];
+          for (let i = 0; i < sentences.length; i++) {
+            const ex = sentences[i];
+            if (!ex || typeof ex !== 'object') continue;
+            const sourceId = `${String(key)}#${i}`;
+            sentenceSourceIdBySentence.set(ex, sourceId);
+            if (seenSourceIds.has(sourceId)) continue;
+            seenSourceIds.add(sourceId);
+            append.push(ex);
+          }
+          if (append.length) sentencesCache.set(top, prev.concat(append));
           // Update sentencesRefIndex for quick lookup by ref key
           try {
             let refMap = sentencesRefIndex.get(top) || new Map();
+            const refSeenByKey = (seenRefSentenceSourceIdsByTop.get(top) instanceof Map)
+              ? seenRefSentenceSourceIdsByTop.get(top)
+              : new Map();
             for (const ex of sentences) {
               if (!ex || typeof ex !== 'object') continue;
               if (!Array.isArray(ex.chunks)) continue;
+              const sourceId = sentenceSourceIdBySentence.get(ex) || '';
               for (const ch of ex.chunks) {
                 if (!ch || typeof ch !== 'object') continue;
                 if (!Array.isArray(ch.refs)) continue;
@@ -863,6 +1184,17 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
                   if (r == null) continue;
                   const keyStr = String(r || '').trim();
                   if (!keyStr) continue;
+
+                  if (sourceId) {
+                    let seenSet = refSeenByKey.get(keyStr);
+                    if (!seenSet) {
+                      seenSet = new Set();
+                      refSeenByKey.set(keyStr, seenSet);
+                    }
+                    if (seenSet.has(sourceId)) continue;
+                    seenSet.add(sourceId);
+                  }
+
                   const arr = refMap.get(keyStr) || [];
                   arr.push(ex);
                   refMap.set(keyStr, arr);
@@ -870,10 +1202,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
               }
             }
             sentencesRefIndex.set(top, refMap);
-            // Ensure any existing folder entry index is rebuilt so sentences
-            // are associated to already-loaded word entries immediately.
-            folderEntryIndexCache.delete(top);
-            if (top) buildFolderEntryIndex(top);
+            seenRefSentenceSourceIdsByTop.set(top, refSeenByKey);
           } catch (e) {
             // ignore
           }
@@ -900,8 +1229,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
                 if (!keyStr) continue;
                 const entry = data.entries.find(e => e && String(e.kanji || '').trim() === keyStr);
                 if (!entry) continue;
-                if (!Array.isArray(entry.sentences)) entry.sentences = [];
-                entry.sentences.push(ex);
+                attachSentenceToEntry(entry, ex);
               }
             }
           }
@@ -928,7 +1256,18 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         return ai - bi;
       });
 
-      if (opts?.notify !== false) emit();
+      if (opts.notify !== false) emit();
+
+      // Kick off a one-time association build for this top folder.
+      // Do this in the background so lazy loads don't block UI.
+      try {
+        const top = topFolderOfKey(key) || '';
+        if (top && wordSentenceIndexFinalizedByTop.get(top) !== true) {
+          Promise.resolve().then(() => ensureWordSentenceIndexBuiltForTop(top).catch(() => null));
+        }
+      } catch {
+        // ignore
+      }
       return record;
     })();
 
@@ -981,6 +1320,16 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
           return;
         }
       }
+    }
+
+    // Ensure word↔sentence association for this top folder is built.
+    try {
+      const top = topFolderOfKey(nextId) || '';
+      if (top) {
+        Promise.resolve().then(() => ensureWordSentenceIndexBuiltForTop(top).catch(() => null));
+      }
+    } catch {
+      // ignore
     }
 
     if (!same) state.activeCollectionId = nextId;
@@ -1053,5 +1402,12 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     saveCollectionState,
     getInheritedFolderMetadata,
     collectionSetsDirPath,
+
+    // Debug/read-only runtime inspection helpers (Entity Explorer)
+    debugListRuntimeMaps,
+    debugGetRuntimeMapDump,
+
+    // Platform-level association build control
+    ensureWordSentenceIndexBuiltForTop,
   };
 }
