@@ -1,7 +1,9 @@
 {
   "folderMetadata": {
     "greek": "greek/_metadata.json",
-    "japanese": "japanese/words/_metadata.json",
+    "japanese/examples": "japanese/examples/_metadata.json",
+    "japanese/grammar": "japanese/grammar/_metadata.json",
+    "japanese/words": "japanese/words/_metadata.json",
     "languageHistory": "languageHistory/_metadata.json",
     "linguistics": "linguistics/_metadata.json",
     "mythology": "mythology/_metadata.json",
@@ -15,12 +17,6 @@
       "name": "Greek Alphabet",
       "description": "Classical Greek letters with lowercase, uppercase, and names.",
       "entries": 24
-    },
-    {
-      "path": "japanese/_collectionSets.json",
-      "name": "_collectionSets",
-      "description": null,
-      "entries": null
     },
     {
       "path": "japanese/examples/counter_culture_set_01.json",
@@ -38,6 +34,156 @@
       "path": "japanese/examples/new_example_pattern.json",
       "name": "Full Examples (repaired v1)",
       "description": "Old examples reviewed and conformed to japanese.examples schema",
+      "entries": null
+    },
+    {
+      "path": "japanese/examples/new_style_Xmo.json",
+      "name": "new_style_Xmo",
+      "description": null,
+      "entries": null
+    },
+    {
+      "path": "japanese/examples/new_style_Xtemodemo.json",
+      "name": "new_style_Xtemodemo",
+      "description": null,
+      "entries": null
+    },
+    {
+      "path": "japanese/grammar/01_core_particles.json",
+      "name": "01_core_particles",
+      "description": null,
+      "entries": 21
+    },
+    {
+      "path": "japanese/grammar/02_discourse_connectors.json",
+      "name": "02_discourse_connectors",
+      "description": null,
+      "entries": 19
+    },
+    {
+      "path": "japanese/grammar/03_aspect_result_state.json",
+      "name": "03_aspect_result_state",
+      "description": null,
+      "entries": 22
+    },
+    {
+      "path": "japanese/grammar/04_modality_intent_obligation.json",
+      "name": "04_modality_intent_obligation",
+      "description": null,
+      "entries": 24
+    },
+    {
+      "path": "japanese/grammar/05_conditionals_hypotheticals.json",
+      "name": "05_conditionals_hypotheticals",
+      "description": null,
+      "entries": 18
+    },
+    {
+      "path": "japanese/grammar/06_cause_reason_explanation.json",
+      "name": "06_cause_reason_explanation",
+      "description": null,
+      "entries": 17
+    },
+    {
+      "path": "japanese/grammar/07_contrast_concession.json",
+      "name": "07_contrast_concession",
+      "description": null,
+      "entries": 15
+    },
+    {
+      "path": "japanese/grammar/08_purpose_means_method.json",
+      "name": "08_purpose_means_method",
+      "description": null,
+      "entries": 15
+    },
+    {
+      "path": "japanese/grammar/09_comparison_degree_limit.json",
+      "name": "09_comparison_degree_limit",
+      "description": null,
+      "entries": 15
+    },
+    {
+      "path": "japanese/grammar/10_focus_emphasis_quantifiers.json",
+      "name": "10_focus_emphasis_quantifiers",
+      "description": null,
+      "entries": 16
+    },
+    {
+      "path": "japanese/grammar/11_evidentiality_guess_hearsay.json",
+      "name": "11_evidentiality_guess_hearsay",
+      "description": null,
+      "entries": 19
+    },
+    {
+      "path": "japanese/grammar/12_change_process_result.json",
+      "name": "12_change_process_result",
+      "description": null,
+      "entries": 16
+    },
+    {
+      "path": "japanese/grammar/13_nominalization_packaging.json",
+      "name": "13_nominalization_packaging",
+      "description": null,
+      "entries": 19
+    },
+    {
+      "path": "japanese/grammar/14_giving_receiving.json",
+      "name": "14_giving_receiving",
+      "description": null,
+      "entries": 12
+    },
+    {
+      "path": "japanese/grammar/15_honorific_humble_politeness.json",
+      "name": "15_honorific_humble_politeness",
+      "description": null,
+      "entries": 13
+    },
+    {
+      "path": "japanese/grammar/16_voice_passive_causative_potential.json",
+      "name": "16_voice_passive_causative_potential",
+      "description": null,
+      "entries": 10
+    },
+    {
+      "path": "japanese/grammar/17_time_sequence.json",
+      "name": "17_time_sequence",
+      "description": null,
+      "entries": 15
+    },
+    {
+      "path": "japanese/grammar/18_formal_reading_frames.json",
+      "name": "18_formal_reading_frames",
+      "description": null,
+      "entries": 23
+    },
+    {
+      "path": "japanese/paragraphs/paragraph_1.json",
+      "name": "paragraph_1",
+      "description": null,
+      "entries": null
+    },
+    {
+      "path": "japanese/sentences/_scripts/fragments_payload.json",
+      "name": "fragments_payload",
+      "description": null,
+      "entries": null
+    },
+    {
+      "path": "japanese/sentences/sentences_1.json",
+      "name": "sentences_1",
+      "description": null,
+      "entries": null
+    },
+    {
+      "path": "japanese/sentences/sentences_2.json",
+      "name": "sentences_2",
+      "description": null,
+      "entries": null
+    },
+    {
+      "path": "japanese/sentences/sentences_3.json",
+      "name": "sentences_3",
+      "description": null,
       "entries": null
     },
     {

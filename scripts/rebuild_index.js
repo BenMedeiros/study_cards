@@ -41,13 +41,16 @@ async function rebuildIndex() {
     const posixRel = parts.join('/');
     const base = path.basename(f);
     if (base === '_metadata.json') {
-      // map top-level folder name -> its metadata path
-      const top = parts[0] || '.';
-      folderMetadata[top] = posixRel;
+      // map the folder (relative to collections/) -> its metadata path
+      // e.g. "japanese/grammar" -> "japanese/grammar/_metadata.json"
+      const dir = parts.slice(0, -1).join('/') || '.';
+      folderMetadata[dir] = posixRel;
       continue;
     }
     // skip the generated top-level index.json so it doesn't appear in collections
     if (posixRel === 'index.json') continue;
+    // skip any special/hidden JSON files that start with '_' (tooling/metadata files)
+    if (base.startsWith('_')) continue;
     collectionsFiles.push(posixRel);
   }
 
@@ -79,6 +82,20 @@ async function rebuildIndex() {
       // ignore parse/read errors and fall back to filename
     }
     entries.push({ path: posixRel, parent, baseNameNoExt, metaName, description, entryCount, parsedJson, full });
+  }
+
+  // Warn if a folder contains JSON collection files but does not have a _metadata.json
+  // Ignore any folder path that contains a segment beginning with '_' (these are special/tooling folders)
+  const parentsWithCollections = new Set(entries.map(e => e.parent));
+  function hasUnderscoreSegment(p) {
+    if (!p || p === '.') return false;
+    return p.split('/').some(seg => seg.startsWith('_'));
+  }
+  for (const parent of parentsWithCollections) {
+    if (hasUnderscoreSegment(parent)) continue;
+    if (!folderMetadata[parent]) {
+      console.warn(`Warning: folder "${parent}" contains JSON files but is missing _metadata.json`);
+    }
   }
 
   // Determine duplicates within each immediate folder and create display names

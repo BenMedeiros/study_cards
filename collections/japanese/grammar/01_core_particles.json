@@ -6,127 +6,148 @@
       "pattern": "Nは",
       "meaning": "topic marker; as for N",
       "example_jp": "私は今、仕事中です。",
-      "example_en": "As for me, I'm working now."
+      "example_en": "As for me, I'm working now.",
+      "words": ["私", "今", "仕事"]
     },
     {
       "pattern": "Nが",
       "meaning": "subject marker; identifies/introduces subject",
       "example_jp": "雨が降っています。",
-      "example_en": "It is raining."
+      "example_en": "It is raining.",
+      "words": ["雨", "降る"]
     },
     {
       "pattern": "Nを",
       "meaning": "direct object marker",
       "example_jp": "本を読みます。",
-      "example_en": "I read a book."
+      "example_en": "I read a book.",
+      "words": ["本", "読む"]
     },
     {
       "pattern": "Nに",
       "meaning": "target/time/location of arrival; indirect object",
       "example_jp": "駅に着きました。",
-      "example_en": "I arrived at the station."
+      "example_en": "I arrived at the station.",
+      "words": ["駅", "着く"]
     },
     {
       "pattern": "Nで",
       "meaning": "location of action; means/cause",
       "example_jp": "家で勉強します。",
-      "example_en": "I study at home."
+      "example_en": "I study at home.",
+      "words": ["家", "勉強する"]
     },
     {
       "pattern": "Nへ",
       "meaning": "direction (toward)",
       "example_jp": "学校へ行きます。",
-      "example_en": "I go to school."
+      "example_en": "I go to school.",
+      "words": ["学校", "行く"]
     },
     {
       "pattern": "Nから",
       "meaning": "from; starting point; because (informal with clause)",
       "example_jp": "東京から来ました。",
-      "example_en": "I came from Tokyo."
+      "example_en": "I came from Tokyo.",
+      "words": ["東京", "来る"]
     },
     {
       "pattern": "Nまで",
       "meaning": "until; as far as",
       "example_jp": "駅まで歩きます。",
-      "example_en": "I walk to the station."
+      "example_en": "I walk to the station.",
+      "words": ["駅", "歩く"]
     },
     {
       "pattern": "Nと",
       "meaning": "with; and; quote",
       "example_jp": "友達と話しました。",
-      "example_en": "I talked with a friend."
+      "example_en": "I talked with a friend.",
+      "words": ["友達", "話す"]
     },
     {
       "pattern": "NやNなど",
       "meaning": "non-exhaustive list; etc.",
       "example_jp": "果物や野菜などを買いました。",
-      "example_en": "I bought fruits, vegetables, etc."
+      "example_en": "I bought fruits, vegetables, etc.",
+      "words": ["果物", "野菜", "買う"]
     },
     {
       "pattern": "Nも",
       "meaning": "also; too; even (emphasis)",
       "example_jp": "私も行きます。",
-      "example_en": "I will go too."
+      "example_en": "I will go too.",
+      "words": ["私", "行く"]
     },
     {
       "pattern": "Nしか〜ない",
       "meaning": "only N (and nothing else); negative required",
       "example_jp": "水しかありません。",
-      "example_en": "There is only water."
+      "example_en": "There is only water.",
+      "words": ["水", "ある"]
     },
     {
       "pattern": "Nだけ",
       "meaning": "only; just",
       "example_jp": "今日は一つだけ買いました。",
-      "example_en": "I bought only one today."
+      "example_en": "I bought only one today.",
+      "words": ["今日", "一つ", "買う"]
     },
     {
       "pattern": "Nほど",
       "meaning": "to the extent of; about (degree)",
       "example_jp": "泣きたいほど疲れました。",
-      "example_en": "I was tired enough to cry."
+      "example_en": "I was tired enough to cry.",
+      "words": ["泣く", "疲れる"]
     },
     {
       "pattern": "Nくらい/ぐらい",
       "meaning": "approximately; about; to the extent that",
       "example_jp": "一時間ぐらい待ちました。",
-      "example_en": "I waited about an hour."
+      "example_en": "I waited about an hour.",
+      "words": ["一時間", "待つ"]
     },
     {
       "pattern": "Nの",
       "meaning": "possession/modification; of",
       "example_jp": "山本さんの本です。",
-      "example_en": "It is Mr. Yamamoto's book."
+      "example_en": "It is Mr. Yamamoto's book.",
+      "words": ["山本", "本"]
     },
     {
       "pattern": "Nとして",
       "meaning": "as; in the capacity of",
       "example_jp": "学生としての責任があります。",
-      "example_en": "There are responsibilities as a student."
+      "example_en": "There are responsibilities as a student.",
+      "words": ["学生", "責任", "ある"]
     },
     {
       "pattern": "Nにとって",
       "meaning": "for; from N's standpoint",
       "example_jp": "私にとって日本語は大切です。",
-      "example_en": "For me, Japanese is important."
+      "example_en": "For me, Japanese is important.",
+      "words": ["私", "日本語", "大切"]
     },
     {
       "pattern": "NによるN",
       "meaning": "N by; caused by; due to",
       "example_jp": "地震による被害が広がった。",
-      "example_en": "Damage caused by the earthquake spread."
+      "example_en": "Damage caused by the earthquake spread.",
+      "words": ["地震", "被害", "広がる"]
     },
     {
       "pattern": "NにおけるN",
       "meaning": "N in; within (formal)",
       "example_jp": "日本における人口の変化",
-      "example_en": "Changes in population in Japan."
+      "example_en": "Changes in population in Japan.",
+      "words": ["日本", "人口", "変化"]
     },
     {
       "pattern": "Nに対するN",
       "meaning": "N toward; in response to (formal)",
       "example_jp": "質問に対する答え",
-      "example_en": "An answer to the question."
+      "example_en": "An answer to the question.",
+      "words": ["質問", "答え"]
     }
   ]
 }

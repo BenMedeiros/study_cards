@@ -1,0 +1,40 @@
+{
+  "category": "japanese.grammar",
+  "fields": [
+    {
+      "key": "pattern",
+      "label": "Pattern",
+      "jp_label": "文法パターン",
+      "description": "Surface form or pattern (e.g., 〜と, 〜たら).",
+      "type": "string"
+    },
+    {
+      "key": "meaning",
+      "label": "Meaning",
+      "jp_label": "意味",
+      "description": "Concise gloss or explanation of the pattern's core meaning.",
+      "type": "string"
+    },
+    {
+      "key": "notes_grammar",
+      "label": "Notes / Grammar",
+      "jp_label": "文法ノート",
+      "description": "Usage notes, nuance, restrictions, common confusions. Prefer short paragraphs or bullet points.",
+      "type": "string[]"
+    },
+    {
+      "key": "example_jp",
+      "label": "Example (JP)",
+      "jp_label": "例文（日本語）",
+      "description": "Example sentence in Japanese illustrating the pattern.",
+      "type": "string"
+    },
+    {
+      "key": "example_en",
+      "label": "Example (EN)",
+      "jp_label": "例文（英語）",
+      "description": "Natural English translation of the example sentence.",
+      "type": "string"
+    }
+  ]
+}
