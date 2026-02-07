@@ -6,145 +6,169 @@
       "pattern": "〜つもりだ",
       "meaning": "intend to; plan to",
       "example_jp": "今年は毎日走るつもりです。",
-      "example_en": "I intend to run every day this year."
+      "example_en": "I intend to run every day this year.",
+      "words": ["今年","毎日","走る"]
     },
     {
       "pattern": "〜予定だ",
       "meaning": "scheduled to; plan (objective)",
       "example_jp": "来週出張の予定です。",
-      "example_en": "I'm scheduled for a business trip next week."
+      "example_en": "I'm scheduled for a business trip next week.",
+      "words": ["来週","出張","予定"]
     },
     {
       "pattern": "〜ようと思う",
       "meaning": "thinking of doing; intend (softer)",
       "example_jp": "早く寝ようと思います。",
-      "example_en": "I think I'll go to bed early."
+      "example_en": "I think I'll go to bed early.",
+      "words": ["早い","寝る","思う"]
     },
     {
       "pattern": "〜ことにする",
       "meaning": "decide to do",
       "example_jp": "明日早く起きることにします。",
-      "example_en": "I will decide to wake up early tomorrow."
+      "example_en": "I will decide to wake up early tomorrow.",
+      "words": ["明日","早い","起きる","する"]
     },
     {
       "pattern": "〜ことになる",
       "meaning": "it has been decided that / end up doing",
       "example_jp": "来月引っ越すことになりました。",
-      "example_en": "It has been decided that I will move next month."
+      "example_en": "It has been decided that I will move next month.",
+      "words": ["来月","引っ越す","なる"]
     },
     {
       "pattern": "〜ようにする",
       "meaning": "try to / make an effort to",
       "example_jp": "毎日日本語を話すようにしています。",
-      "example_en": "I try to speak Japanese every day."
+      "example_en": "I try to speak Japanese every day.",
+      "words": ["毎日","日本語","話す","する"]
     },
     {
       "pattern": "〜なければならない / 〜なくてはいけない",
       "meaning": "must; have to",
       "example_jp": "明日までに出さなければならない。",
-      "example_en": "I must submit it by tomorrow."
+      "example_en": "I must submit it by tomorrow.",
+      "words": ["明日","出す","なる"]
     },
     {
       "pattern": "〜てもいい",
       "meaning": "may; it's okay to",
       "example_jp": "ここに座ってもいいですか。",
-      "example_en": "May I sit here?"
+      "example_en": "May I sit here?",
+      "words": ["ここ","座る","いい"]
     },
     {
       "pattern": "〜てはいけない",
       "meaning": "must not; not allowed to",
       "example_jp": "ここでタバコを吸ってはいけません。",
-      "example_en": "You must not smoke here."
+      "example_en": "You must not smoke here.",
+      "words": ["ここ","タバコ","吸う","いけない"]
     },
     {
       "pattern": "〜なくてもいい",
       "meaning": "don't have to; not necessary",
       "example_jp": "急がなくてもいいですよ。",
-      "example_en": "You don't have to rush."
+      "example_en": "You don't have to rush.",
+      "words": ["急ぐ","いい"]
     },
     {
       "pattern": "〜べきだ",
       "meaning": "should; ought to",
       "example_jp": "約束は守るべきです。",
-      "example_en": "You should keep promises."
+      "example_en": "You should keep promises.",
+      "words": ["約束","守る"]
     },
     {
       "pattern": "〜ざるをえない",
       "meaning": "have no choice but to",
       "example_jp": "電車が止まって、歩かざるをえなかった。",
-      "example_en": "The train stopped, so I had no choice but to walk."
+      "example_en": "The train stopped, so I had no choice but to walk.",
+      "words": ["電車","止まる","歩く"]
     },
     {
       "pattern": "〜しかない",
       "meaning": "there is nothing but to; only option",
       "example_jp": "もう待つしかない。",
-      "example_en": "There's nothing to do but wait."
+      "example_en": "There's nothing to do but wait.",
+      "words": ["待つ"]
     },
     {
       "pattern": "〜わけにはいかない",
       "meaning": "cannot (due to social/moral reasons)",
       "example_jp": "今日は休むわけにはいかない。",
-      "example_en": "I can't take the day off today (for reasons)."
+      "example_en": "I can't take the day off today (for reasons).",
+      "words": ["今日","休む","いく"]
     },
     {
       "pattern": "〜ものだ",
       "meaning": "it is natural/expected to; used to (reminiscence)",
       "example_jp": "子どものころはよく川で遊んだものだ。",
-      "example_en": "When I was a kid, I used to play in the river a lot."
+      "example_en": "When I was a kid, I used to play in the river a lot.",
+      "words": ["子ども","ころ","よく","川","遊ぶ"]
     },
     {
       "pattern": "〜ように言う",
       "meaning": "tell (someone) to; instruct",
       "example_jp": "先生に早く来るように言われた。",
-      "example_en": "The teacher told me to come early."
+      "example_en": "The teacher told me to come early.",
+      "words": ["先生","早い","来る","言う"]
     },
     {
       "pattern": "〜ように頼む",
       "meaning": "ask/request someone to",
       "example_jp": "友達に手伝ってくれるように頼んだ。",
-      "example_en": "I asked my friend to help."
+      "example_en": "I asked my friend to help.",
+      "words": ["友達","手伝う","くれる","頼む"]
     },
     {
       "pattern": "〜てほしい",
       "meaning": "want someone to do",
       "example_jp": "静かにしてほしいです。",
-      "example_en": "I want you to be quiet."
+      "example_en": "I want you to be quiet.",
+      "words": ["静か","する","ほしい"]
     },
     {
       "pattern": "〜てもらいたい",
       "meaning": "would like to have someone do",
       "example_jp": "説明してもらいたいことがあります。",
-      "example_en": "There is something I'd like you to explain."
+      "example_en": "There is something I'd like you to explain.",
+      "words": ["説明","する","もらう","こと","ある"]
     },
     {
       "pattern": "〜かねない",
       "meaning": "might; could (undesirable)",
       "example_jp": "その言い方は誤解を招きかねない。",
-      "example_en": "That phrasing could lead to misunderstanding."
+      "example_en": "That phrasing could lead to misunderstanding.",
+      "words": ["言い方","誤解","招く"]
     },
     {
       "pattern": "〜おそれがある",
       "meaning": "there is a risk that (formal)",
       "example_jp": "台風で停電するおそれがある。",
-      "example_en": "There is a risk of a power outage due to the typhoon."
+      "example_en": "There is a risk of a power outage due to the typhoon.",
+      "words": ["台風","停電","する","おそれ","ある"]
     },
     {
       "pattern": "〜に越したことはない",
       "meaning": "there is nothing better than; best to",
       "example_jp": "早めに準備するに越したことはない。",
-      "example_en": "There's nothing better than preparing early."
+      "example_en": "There's nothing better than preparing early.",
+      "words": ["早め","準備","する","越す","こと"]
     },
     {
       "pattern": "〜まい",
       "meaning": "will not; probably not (formal, volitional neg.)",
       "example_jp": "二度と同じ失敗はするまい。",
-      "example_en": "I will not make the same mistake again."
+      "example_en": "I will not make the same mistake again.",
+      "words": ["二度","同じ","失敗","する"]
     },
     {
       "pattern": "〜べく",
       "meaning": "in order to (formal)",
       "example_jp": "問題を解決すべく、話し合いを続けた。",
-      "example_en": "We continued discussions in order to solve the problem."
+      "example_en": "We continued discussions in order to solve the problem.",
+      "words": ["問題","解決","する","話し合い","続ける"]
     }
   ]
 }

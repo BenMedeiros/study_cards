@@ -6,91 +6,106 @@
       "pattern": "〜が / 〜けど",
       "meaning": "but; though",
       "example_jp": "行きたいですが、時間がありません。",
-      "example_en": "I want to go, but I don't have time."
+      "example_en": "I want to go, but I don't have time.",
+      "words": ["行く", "時間", "ある"]
     },
     {
       "pattern": "〜のに",
       "meaning": "although / even though",
       "example_jp": "雨なのに出かけました。",
-      "example_en": "Even though it was raining, I went out."
+      "example_en": "Even though it was raining, I went out.",
+      "words": ["雨", "出かける"]
     },
     {
       "pattern": "〜ても",
       "meaning": "even if; even though",
       "example_jp": "安くても、買いません。",
-      "example_en": "Even if it's cheap, I won't buy it."
+      "example_en": "Even if it's cheap, I won't buy it.",
+      "words": ["安い", "買う"]
     },
     {
       "pattern": "〜ところが",
       "meaning": "however; despite expectations (written)",
       "example_jp": "急いだところが、間に合わなかった。",
-      "example_en": "Even though I hurried, I didn't make it."
+      "example_en": "Even though I hurried, I didn't make it.",
+      "words": ["急ぐ", "間に合う"]
     },
     {
       "pattern": "〜くせに",
       "meaning": "even though; despite (blame)",
       "example_jp": "知っているくせに教えてくれない。",
-      "example_en": "Even though you know, you won't tell me."
+      "example_en": "Even though you know, you won't tell me.",
+      "words": ["知る", "教える", "くれる"]
     },
     {
       "pattern": "〜にもかかわらず",
       "meaning": "despite; in spite of (formal)",
       "example_jp": "雨にもかかわらず、多くの人が来た。",
-      "example_en": "Despite the rain, many people came."
+      "example_en": "Despite the rain, many people came.",
+      "words": ["雨", "多い", "人", "来る"]
     },
     {
       "pattern": "〜とはいえ",
       "meaning": "though; although; that said",
       "example_jp": "便利とはいえ、料金が高い。",
-      "example_en": "Though it's convenient, the fee is high."
+      "example_en": "Though it's convenient, the fee is high.",
+      "words": ["便利", "料金", "高い"]
     },
     {
       "pattern": "〜ものの",
       "meaning": "although; but (written)",
       "example_jp": "努力したものの、結果は出なかった。",
-      "example_en": "Although I tried hard, I got no results."
+      "example_en": "Although I tried hard, I got no results.",
+      "words": ["努力", "する", "結果", "出る"]
     },
     {
       "pattern": "〜ながら（も）",
       "meaning": "although; despite (same subject)",
       "example_jp": "知っていながら、黙っていた。",
-      "example_en": "Although they knew, they kept silent."
+      "example_en": "Although they knew, they kept silent.",
+      "words": ["知る", "黙る", "いる"]
     },
     {
       "pattern": "〜にしても",
       "meaning": "even if; even assuming",
       "example_jp": "行くにしても、連絡してからにしてください。",
-      "example_en": "Even if you go, please contact me first."
+      "example_en": "Even if you go, please contact me first.",
+      "words": ["行く", "連絡", "する"]
     },
     {
       "pattern": "〜それでも",
       "meaning": "even so",
       "example_jp": "失敗した。それでも続ける。",
-      "example_en": "I failed. Even so, I'll continue."
+      "example_en": "I failed. Even so, I'll continue.",
+      "words": ["失敗", "する", "続ける"]
     },
     {
       "pattern": "〜どころか",
       "meaning": "far from; not only not..., but...",
       "example_jp": "簡単どころか、とても難しい。",
-      "example_en": "Far from easy, it's very difficult."
+      "example_en": "Far from easy, it's very difficult.",
+      "words": ["簡単", "難しい"]
     },
     {
       "pattern": "〜にしても",
       "meaning": "even if; whether or not",
       "example_jp": "高いにしても、品質が良ければ買う。",
-      "example_en": "Even if it's expensive, I'll buy it if the quality is good."
+      "example_en": "Even if it's expensive, I'll buy it if the quality is good.",
+      "words": ["高い", "品質", "良い", "買う"]
     },
     {
       "pattern": "〜にしては",
       "meaning": "for; considering",
       "example_jp": "彼は年のわりに若く見える。",
-      "example_en": "He looks young for his age."
+      "example_en": "He looks young for his age.",
+      "words": ["彼", "年", "若い", "見える"]
     },
     {
       "pattern": "〜とはいえ",
       "meaning": "though; that said",
       "example_jp": "便利とはいえ、完璧ではない。",
-      "example_en": "Though convenient, it's not perfect."
+      "example_en": "Though convenient, it's not perfect.",
+      "words": ["便利", "完璧", "ある"]
     }
   ]
 }

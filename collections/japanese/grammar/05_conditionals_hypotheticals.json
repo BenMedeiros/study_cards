@@ -9,109 +9,127 @@
       "example_en": "When spring comes, cherry blossoms bloom.",
       "notes_grammar": [
         "Often for natural consequence/habit; not for speaker's intention/commands."
-      ]
+      ],
+      "words": ["春","なる","桜","咲く"]
     },
     {
       "pattern": "〜たら",
       "meaning": "if / when (after something happens; flexible conditional)",
       "example_jp": "雨が降ったら、家にいます。",
-      "example_en": "If it rains, I will stay home."
+      "example_en": "If it rains, I will stay home.",
+      "words": ["雨","降る","家","いる"]
     },
     {
       "pattern": "〜なら",
       "meaning": "if it is the case that / given that (based on context or topic)",
       "example_jp": "日本に行くなら、京都に行きたいです。",
-      "example_en": "If I go to Japan, I want to go to Kyoto."
+      "example_en": "If I go to Japan, I want to go to Kyoto.",
+      "words": ["日本","行く","京都","行く","たい"]
     },
     {
       "pattern": "〜ば",
       "meaning": "if (formal, logical conditional; focuses on condition)",
       "example_jp": "時間があれば、映画を見ます。",
-      "example_en": "If I have time, I will watch a movie."
+      "example_en": "If I have time, I will watch a movie.",
+      "words": ["時間","ある","映画","見る"]
     },
     {
       "pattern": "もし〜なら",
       "meaning": "if (hypothetical)",
       "example_jp": "もし時間があるなら、一緒に行きませんか。",
-      "example_en": "If you have time, would you like to go together?"
+      "example_en": "If you have time, would you like to go together?",
+      "words": ["時間","ある","一緒","行く"]
     },
     {
       "pattern": "〜さえ〜ば",
       "meaning": "if only; as long as",
       "example_jp": "あなたさえ来れば、みんな喜びます。",
-      "example_en": "If only you come, everyone will be happy."
+      "example_en": "If only you come, everyone will be happy.",
+      "words": ["あなた","来る","みんな","喜ぶ"]
     },
     {
       "pattern": "〜ないと",
       "meaning": "if not; unless (casual warning)",
       "example_jp": "急がないと間に合わない。",
-      "example_en": "If we don't hurry, we won't make it."
+      "example_en": "If we don't hurry, we won't make it.",
+      "words": ["急ぐ","間に合う"]
     },
     {
       "pattern": "〜ても",
       "meaning": "even if; even though (concessive conditional)",
       "example_jp": "雨でも行きます。",
-      "example_en": "I'll go even if it rains."
+      "example_en": "I'll go even if it rains.",
+      "words": ["雨","行く"]
     },
     {
       "pattern": "〜といい",
       "meaning": "it would be good if; hope/suggestion",
       "example_jp": "明日晴れるといいですね。",
-      "example_en": "I hope it will be sunny tomorrow."
+      "example_en": "I hope it will be sunny tomorrow.",
+      "words": ["明日","晴れる","いい"]
     },
     {
       "pattern": "〜ばよかった",
       "meaning": "should have; regret",
       "example_jp": "もっと早く聞けばよかった。",
-      "example_en": "I should have asked earlier."
+      "example_en": "I should have asked earlier.",
+      "words": ["もっと","早い","聞く","よい"]
     },
     {
       "pattern": "〜たところ",
       "meaning": "when; upon doing; discovered result",
       "example_jp": "駅に着いたところ、電車が出たあとだった。",
-      "example_en": "When I arrived at the station, the train had already left."
+      "example_en": "When I arrived at the station, the train had already left.",
+      "words": ["駅","着く","電車","出る","あと"]
     },
     {
       "pattern": "〜かぎり",
       "meaning": "as long as; while (condition)",
       "example_jp": "知っているかぎり、彼は無実です。",
-      "example_en": "As far as I know, he is innocent."
+      "example_en": "As far as I know, he is innocent.",
+      "words": ["知る","彼","無実"]
     },
     {
       "pattern": "〜にかぎって",
       "meaning": "on (a particular day) of all times; ironically",
       "example_jp": "こういう日にかぎって雨が降る。",
-      "example_en": "It rains on days like this of all times."
+      "example_en": "It rains on days like this of all times.",
+      "words": ["こういう","日","雨","降る"]
     },
     {
       "pattern": "〜ものなら",
       "meaning": "if (but it's unlikely); if you were to",
       "example_jp": "今そんなことを言おうものなら、怒られる。",
-      "example_en": "If you were to say that now, you'd get scolded."
+      "example_en": "If you were to say that now, you'd get scolded.",
+      "words": ["今","そんな","こと","言う","怒る"]
     },
     {
       "pattern": "〜ないものか",
       "meaning": "isn't there a way to...? (wish)",
       "example_jp": "もう少し安くならないものか。",
-      "example_en": "Isn't there some way it could get a bit cheaper?"
+      "example_en": "Isn't there some way it could get a bit cheaper?",
+      "words": ["もう","少し","安い","なる"]
     },
     {
       "pattern": "〜としたら / 〜とすれば",
       "meaning": "if; assuming",
       "example_jp": "もし私が社長だとしたら、制度を変える。",
-      "example_en": "If I were the president, I'd change the system."
+      "example_en": "If I were the president, I'd change the system.",
+      "words": ["私","社長","制度","変える"]
     },
     {
       "pattern": "〜ともなると",
       "meaning": "when it comes to; once it becomes",
       "example_jp": "年末ともなると忙しくなる。",
-      "example_en": "When it gets to year-end, it gets busy."
+      "example_en": "When it gets to year-end, it gets busy.",
+      "words": ["年末","忙しい","なる"]
     },
     {
       "pattern": "〜ては",
       "meaning": "if (repeated negative consequence)",
       "example_jp": "こんなに寝ては、疲れが取れない。",
-      "example_en": "If you sleep this much, you won't recover."
+      "example_en": "If you sleep this much, you won't recover.",
+      "words": ["こんなに","寝る","疲れ","取れる"]
     }
   ]
 }
