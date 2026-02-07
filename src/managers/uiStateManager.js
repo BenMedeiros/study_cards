@@ -1,4 +1,8 @@
-export function createShellStateManager({ uiState, persistence, emitter }) {
+export function createUIStateManager({ uiState, persistence, emitter }) {
+  // ============================================================================
+  // Shell State (routes, voice settings, global UI state)
+  // ============================================================================
+
   function getLastRoute() {
     try {
       const v = uiState?.shell?.lastRoute;
@@ -73,7 +77,7 @@ export function createShellStateManager({ uiState, persistence, emitter }) {
     }
   }
 
-  function getState() {
+  function getShellState() {
     try {
       const v = uiState?.shell;
       return (v && typeof v === 'object') ? { ...v } : {};
@@ -82,7 +86,7 @@ export function createShellStateManager({ uiState, persistence, emitter }) {
     }
   }
 
-  function setState(patch, opts = {}) {
+  function setShellState(patch, opts = {}) {
     try {
       uiState.shell = uiState.shell || {};
       const prev = (uiState.shell && typeof uiState.shell === 'object') ? uiState.shell : {};
@@ -98,12 +102,48 @@ export function createShellStateManager({ uiState, persistence, emitter }) {
     }
   }
 
+  // ============================================================================
+  // App State (per-app/view state storage)
+  // ============================================================================
+
+  function getAppState(appId) {
+    try {
+      if (!appId) return {};
+      const v = uiState?.apps?.[appId];
+      return (v && typeof v === 'object') ? { ...v } : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function setAppState(appId, patch, opts = {}) {
+    try {
+      if (!appId) return;
+      uiState.apps = uiState.apps || {};
+      const prev = (uiState.apps[appId] && typeof uiState.apps[appId] === 'object') ? uiState.apps[appId] : {};
+      const patchObj = (patch && typeof patch === 'object') ? patch : {};
+      uiState.apps[appId] = { ...prev, ...patchObj };
+
+      persistence.markDirty({ apps: true });
+      persistence.scheduleFlush({ immediate: !!opts.immediate });
+      const notify = (opts.notify ?? !opts.silent) !== false;
+      if (notify) emitter.emit();
+    } catch {
+      // ignore
+    }
+  }
+
   return {
+    // Shell state
     getLastRoute,
     setLastRoute,
     getVoiceSettings,
     setVoiceSettings,
-    getState,
-    setState,
+    getShellState,
+    setShellState,
+
+    // App state
+    getAppState,
+    setAppState,
   };
 }

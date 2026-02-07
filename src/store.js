@@ -1,7 +1,6 @@
-import { createEmitter } from './managers/emitter.js';
+import { createEmitter } from './utils/emitter.js';
 import { createPersistenceManager } from './managers/persistenceManager.js';
-import { createShellStateManager } from './managers/shellStateManager.js';
-import { createAppStateManager } from './managers/appStateManager.js';
+import { createUIStateManager } from './managers/uiStateManager.js';
 import { createProgressManager } from './managers/progressManager.js';
 import { createGrammarProgressManager } from './managers/grammarProgressManager.js';
 import { createStudyTimeManager } from './managers/studyTimeManager.js';
@@ -35,8 +34,7 @@ export function createStore() {
   const kanjiProgress = createProgressManager({ uiState, persistence, emitter, kanjiProgressKey: 'kanji_progress' });
   const grammarProgress = createGrammarProgressManager({ uiState, persistence, emitter, grammarProgressKey: 'grammar_progress' });
   const studyTime = createStudyTimeManager({ uiState, persistence, emitter, studyTimeKey: 'study_time' });
-  const shell = createShellStateManager({ uiState, persistence, emitter });
-  const apps = createAppStateManager({ uiState, persistence, emitter });
+  const ui = createUIStateManager({ uiState, persistence, emitter });
   const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress });
 
   function subscribe(fn) {
@@ -124,20 +122,20 @@ export function createStore() {
       clearLearnedForCollection: collections.clearLearnedForCollection,
     },
     shell: {
-      getLastRoute: shell.getLastRoute,
-      setLastRoute: shell.setLastRoute,
+      getLastRoute: ui.getLastRoute,
+      setLastRoute: ui.setLastRoute,
       getCollectionBrowserPath: () => (typeof state.collectionBrowserPath === 'string') ? state.collectionBrowserPath : null,
       setCollectionBrowserPath: (path) => {
         state.collectionBrowserPath = typeof path === 'string' ? path : String(path || '');
       },
-      getVoiceSettings: shell.getVoiceSettings,
-      setVoiceSettings: shell.setVoiceSettings,
-      getState: shell.getState,
-      setState: shell.setState,
+      getVoiceSettings: ui.getVoiceSettings,
+      setVoiceSettings: ui.setVoiceSettings,
+      getState: ui.getShellState,
+      setState: ui.setShellState,
     },
     apps: {
-      getState: apps.getState,
-      setState: apps.setState,
+      getState: ui.getAppState,
+      setState: ui.setAppState,
     },
     kanjiProgress: {
       isKanjiLearned: kanjiProgress.isKanjiLearned,
