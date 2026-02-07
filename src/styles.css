@@ -784,6 +784,35 @@ input[type="number"].button::-webkit-inner-spin-button {
   border-color: rgba(255, 255, 255, 0.92);
 }
 
+/* Data view: adjective expansion dropdowns */
+.data-expansion-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.data-expansion-group {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.18rem;
+}
+
+.data-expansion-caption {
+  font-size: 0.62rem;
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+}
+
+/* Make expansion dropdown button show multi-line selections (\n). */
+.data-expansion-dropdown .custom-dropdown-button,
+.custom-dropdown-button.custom-dropdown-button-multiline {
+  white-space: pre-line;
+  line-height: 1.05;
+}
+
 /* Disabled state for header buttons */
 .view-header-tools .btn:disabled,
 .view-header-tools .btn[disabled] {
@@ -1368,6 +1397,14 @@ select:hover {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  /* Override for multi-line buttons (e.g., multi-select). */
+  .custom-dropdown-button.custom-dropdown-button-multiline,
+  .data-expansion-dropdown .custom-dropdown-button {
+    white-space: pre-line;
+    overflow: visible;
+    text-overflow: clip;
+  }
 }
 
 .custom-dropdown-button::after {
@@ -1434,6 +1471,27 @@ select:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.custom-dropdown-option-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.custom-dropdown-option-left {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-dropdown-option-right {
+  color: var(--muted);
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  flex: 0 0 auto;
 }
 
 @media (min-width: 500px) {

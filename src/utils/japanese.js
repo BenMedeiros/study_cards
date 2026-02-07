@@ -170,3 +170,67 @@ export function splitKana(str) {
 
   return out;
 }
+
+// ============================================
+// Morphology: Adjective inflection helpers
+// ============================================
+
+export function stripTrailingCopulaNa(text) {
+  const t = String(text || '').trim();
+  if (!t) return '';
+  if (t.endsWith('です')) return t.slice(0, -2);
+  if (t.endsWith('だ')) return t.slice(0, -1);
+  return t;
+}
+
+export function inflectNaAdjective(text, form) {
+  const base = stripTrailingCopulaNa(text);
+  if (!base) return String(text || '');
+  switch (String(form || '')) {
+    case 'plain': return `${base}だ`;
+    case 'negative': return `${base}じゃない`;
+    case 'past': return `${base}だった`;
+    case 'pastNegative': return `${base}じゃなかった`;
+    case 'te': return `${base}で`;
+    case 'adverb': return `${base}に`;
+    default: return String(text || '');
+  }
+}
+
+function iAdjStem(text) {
+  const t = String(text || '').trim();
+  if (!t) return '';
+  // Special: いい (good) conjugates from よい
+  if (t === 'いい') return 'よ';
+  if (t.endsWith('い')) return t.slice(0, -1);
+  return '';
+}
+
+export function inflectIAdjective(text, form) {
+  const t = String(text || '').trim();
+  if (!t) return String(text || '');
+  if (String(form || '') === 'plain') return t;
+
+  // Special-case reading for いい.
+  if (t === 'いい') {
+    switch (String(form || '')) {
+      case 'negative': return 'よくない';
+      case 'past': return 'よかった';
+      case 'pastNegative': return 'よくなかった';
+      case 'te': return 'よくて';
+      case 'adverb': return 'よく';
+      default: return t;
+    }
+  }
+
+  const stem = iAdjStem(t);
+  if (!stem) return t;
+  switch (String(form || '')) {
+    case 'negative': return `${stem}くない`;
+    case 'past': return `${stem}かった`;
+    case 'pastNegative': return `${stem}くなかった`;
+    case 'te': return `${stem}くて`;
+    case 'adverb': return `${stem}く`;
+    default: return t;
+  }
+}

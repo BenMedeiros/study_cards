@@ -1,5 +1,5 @@
 import { nowMs } from '../utils/helpers.js';
-import { getCollectionView, entryMatchesTableSearch } from '../utils/collectionManagement.js';
+import { getCollectionView, entryMatchesTableSearch, getEntryStudyKey } from '../utils/collectionManagement.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
 
 import { createViewFooterControls } from '../components/viewFooterControls.js';
@@ -28,7 +28,7 @@ export function renderFlashcards({ store }) {
   }
 
   function getPrimaryValue(entry) {
-    return String(getFieldValue(entry, ['kanji', 'character', 'text']) || '').trim();
+    return String(getEntryStudyKey(entry) || '').trim();
   }
 
   function speakEntry(entry) {
@@ -80,8 +80,7 @@ export function renderFlashcards({ store }) {
     if (skipLearned || focusOnly) {
       const filtered = [];
       for (const entry of nextEntries) {
-        const v = (entry && typeof entry === 'object') ? (entry.kanji || entry.character || entry.text || '') : '';
-        const s = String(v || '').trim();
+        const s = String(getEntryStudyKey(entry) || '').trim();
         if (!s) {
           filtered.push(entry);
           continue;

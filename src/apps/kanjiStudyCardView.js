@@ -2,7 +2,7 @@ import { nowMs } from '../utils/helpers.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
 import { createAutoplayControls } from '../components/autoplay.js';
 import { createSpeakerButton } from '../components/ui.js';
-import { getCollectionView, filterEntriesAndIndicesByTableSearch } from '../utils/collectionManagement.js';
+import { getCollectionView, filterEntriesAndIndicesByTableSearch, getEntryStudyKey } from '../utils/collectionManagement.js';
 
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createViewFooterControls } from '../components/viewFooterControls.js';
@@ -35,8 +35,7 @@ export function renderKanjiStudyCard({ store }) {
 
   function getCurrentKanjiKey() {
     const entry = entries && entries.length ? entries[index] : null;
-    const v = getPrimaryKanjiValue(entry);
-    return String(v || '').trim();
+    return String(getEntryStudyKey(entry) || '').trim();
   }
 
   function flushTimingCredit({ immediate = false } = {}) {
@@ -221,7 +220,7 @@ export function renderKanjiStudyCard({ store }) {
     { key: 'sound', icon: '🔊', text: 'Sound', caption: 'Space', shortcut: ' ', action: () => speakCurrent() },
     { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', ariaPressed: false, action: () => {
       const entry = entries[index];
-      const v = getPrimaryKanjiValue(entry);
+      const v = getEntryStudyKey(entry);
       if (!v) return;
       const originalIdxBefore = Number.isFinite(Number(viewIndices[index])) ? Number(viewIndices[index]) : null;
       if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiLearned === 'function') {
@@ -257,7 +256,7 @@ export function renderKanjiStudyCard({ store }) {
     } },
     { key: 'practice', icon: '🎯', text: 'Practice', caption: 'X', shortcut: 'x', ariaPressed: false, action: () => {
       const entry = entries[index];
-      const v = getPrimaryKanjiValue(entry);
+      const v = getEntryStudyKey(entry);
       if (!v) return;
       if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiFocus === 'function') {
         store.kanjiProgress.toggleKanjiFocus(v);
@@ -468,7 +467,7 @@ export function renderKanjiStudyCard({ store }) {
       const filteredIndices = [];
       for (let i = 0; i < nextEntries.length; i++) {
         const entry = nextEntries[i];
-        const v = getPrimaryKanjiValue(entry);
+        const v = getEntryStudyKey(entry);
         if (!v) {
           filteredEntries.push(entry);
           filteredIndices.push(nextIndices[i]);
@@ -547,7 +546,7 @@ export function renderKanjiStudyCard({ store }) {
 
   function updateMarkButtons() {
     const entry = entries[index];
-    const v = getPrimaryKanjiValue(entry);
+    const v = getEntryStudyKey(entry);
     const isLearned = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiLearned === 'function' && v) ? store.kanjiProgress.isKanjiLearned(v) : false;
     const isFocus = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiFocus === 'function' && v) ? store.kanjiProgress.isKanjiFocus(v) : false;
 

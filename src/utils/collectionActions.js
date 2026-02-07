@@ -5,6 +5,8 @@ function serializeStudyFilter({ skipLearned, focusOnly }) {
   return parts.join(',');
 }
 
+import { getEntryStudyKey } from './collectionManagement.js';
+
 export function createCollectionActions(store) {
   if (!store) throw new Error('store is required');
 
@@ -62,6 +64,29 @@ export function createCollectionActions(store) {
     return true;
   }
 
+  function setAdjectiveExpansionForms(collKey, { iForms = [], naForms = [], iForm = '', naForm = '' } = {}) {
+    const coll = _getCollectionByKey(collKey) || (typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : null);
+    if (!coll) return false;
+
+    const normalizeList = (v, fallbackSingle) => {
+      if (Array.isArray(v)) return v.map(x => String(x || '').trim()).filter(Boolean);
+      const s = String(fallbackSingle || '').trim();
+      if (!s) return [];
+      return s.split(/[,|\s]+/g).map(x => String(x || '').trim()).filter(Boolean);
+    };
+
+    const i = normalizeList(iForms, iForm);
+    const na = normalizeList(naForms, naForm);
+    if (typeof store?.collections?.saveCollectionState === 'function') {
+      store.collections.saveCollectionState(coll.key, {
+        expansion_i: i,
+        expansion_na: na,
+        currentIndex: 0,
+      });
+    }
+    return true;
+  }
+
   function clearLearnedForCollection(collKey) {
     const coll = _getCollectionByKey(collKey) || (typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : null);
     if (!coll) return false;
@@ -80,12 +105,7 @@ export function createCollectionActions(store) {
 
   // small helper replicated from apps: get primary kanji value from entry
   function getEntryKanjiValue(entry) {
-    if (!entry || typeof entry !== 'object') return '';
-    for (const k of ['kanji', 'character', 'text', 'word', 'reading', 'kana']) {
-      const v = entry[k];
-      if (typeof v === 'string' && v.trim()) return v.trim();
-    }
-    return '';
+    return getEntryStudyKey(entry);
   }
 
   return {
@@ -93,6 +113,7 @@ export function createCollectionActions(store) {
     clearCollectionShuffle,
     setStudyFilter,
     setHeldTableSearch,
+    setAdjectiveExpansionForms,
     clearLearnedForCollection,
   };
 }

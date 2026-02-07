@@ -2,17 +2,40 @@
  * Create a custom styled dropdown that replaces native <select>
  * @param {Object} options
  * @param {Array<{value: string, label: string}>} options.items - Dropdown items
- * @param {string} options.value - Currently selected value
- * @param {Function} options.onChange - Callback when selection changes
+ * @param {string} options.value - Currently selected value (single-select)
+ * @param {string[]} options.values - Currently selected values (multi-select)
+ * @param {boolean} options.multi - Enable multi-select
+ * @param {Function} options.onChange - Callback when selection changes (value|values)
  * @param {string} options.className - Optional CSS class
  * @param {boolean} options.closeOverlaysOnOpen - If true, dispatches ui:closeOverlays before opening.
+ * @param {Function} options.getButtonLabel - Optional function to render button label.
+ * @param {Function} options.renderOption - Optional function to render an option row.
  * @returns {HTMLElement} Custom dropdown element
  */
-export function createDropdown({ items, value, onChange, className = '', closeOverlaysOnOpen = true }) {
+export function createDropdown({
+  items,
+  value,
+  values,
+  multi = false,
+  onChange,
+  className = '',
+  closeOverlaysOnOpen = true,
+  getButtonLabel = null,
+  renderOption = null,
+}) {
   const container = document.createElement('div');
   container.className = `custom-dropdown ${className}`;
   
-  const selected = items.find(item => item.value === value) || items[0];
+  const normalizedItems = Array.isArray(items) ? items : [];
+
+  // internal selection state
+  let selectedValues = [];
+  if (multi) {
+    if (Array.isArray(values)) selectedValues = values.map(v => String(v || '')).filter(Boolean);
+    else if (value != null && String(value).trim()) selectedValues = [String(value).trim()];
+  }
+
+  const selected = normalizedItems.find(item => item.value === value) || normalizedItems[0];
   
   const button = document.createElement('button');
   button.type = 'button';
@@ -39,40 +62,124 @@ export function createDropdown({ items, value, onChange, className = '', closeOv
     }
     if (focusButton) button.focus();
   }
+
+  function setButtonLabel() {
+    try {
+      if (typeof getButtonLabel === 'function') {
+        const set = new Set(selectedValues);
+        const selectedItems = normalizedItems.filter(it => set.has(String(it?.value)));
+        const rendered = getButtonLabel({ selectedValues: selectedValues.slice(), selectedItems, items: normalizedItems.slice() });
+        if (rendered && typeof rendered === 'object' && rendered.nodeType === 1) {
+          button.innerHTML = '';
+          button.append(rendered);
+          button.classList.add('custom-dropdown-button-multiline');
+          return;
+        }
+        if (typeof rendered === 'string') {
+          button.textContent = rendered;
+          // heuristically treat multi-line strings as multi-line labels
+          if (rendered.includes('\n')) button.classList.add('custom-dropdown-button-multiline');
+          else button.classList.remove('custom-dropdown-button-multiline');
+          return;
+        }
+      }
+    } catch (e) {
+      // fallback to default
+    }
+
+    // Default label behavior
+    if (!multi) {
+      const sel = normalizedItems.find(item => item.value === value) || normalizedItems[0];
+      button.textContent = sel?.label || '';
+      button.classList.remove('custom-dropdown-button-multiline');
+      return;
+    }
+
+    const set = new Set(selectedValues);
+    const selectedItems = normalizedItems.filter(it => set.has(String(it?.value)));
+    if (!selectedItems.length) {
+      button.textContent = '';
+      return;
+    }
+    button.textContent = selectedItems.map(it => it.label).join(', ');
+  }
+
+  function renderOptionNode({ item, isSelected }) {
+    if (typeof renderOption === 'function') {
+      const node = renderOption({ item, selected: !!isSelected });
+      if (node && typeof node === 'object' && node.nodeType === 1) return node;
+    }
+
+    // Default: label text, but support optional left/right columns
+    const left = item?.left;
+    const right = item?.right;
+    if (left != null || right != null) {
+      const row = document.createElement('div');
+      row.className = 'custom-dropdown-option-row';
+      const l = document.createElement('span');
+      l.className = 'custom-dropdown-option-left';
+      l.textContent = String(left ?? item?.label ?? '');
+      const r = document.createElement('span');
+      r.className = 'custom-dropdown-option-right';
+      r.textContent = String(right ?? '');
+      row.append(l, r);
+      return row;
+    }
+
+    const txt = document.createElement('span');
+    txt.textContent = item?.label || '';
+    return txt;
+  }
   
-  for (const item of items) {
+  for (const item of normalizedItems) {
     const option = document.createElement('div');
     option.className = 'custom-dropdown-option';
-    if (item.value === value) {
-      option.classList.add('selected');
-    }
-    option.textContent = item.label;
+    const itemValue = String(item?.value ?? '');
+
+    const isSelected = multi
+      ? selectedValues.includes(itemValue)
+      : (itemValue === String(value ?? ''));
+
+    if (isSelected) option.classList.add('selected');
+    option.innerHTML = '';
+    option.append(renderOptionNode({ item, isSelected }));
     option.dataset.value = item.value;
     
     option.addEventListener('click', () => {
-      // Keep internal value in sync for keyboard navigation
-      value = item.value;
+      if (!multi) {
+        // Keep internal value in sync for keyboard navigation
+        value = item.value;
+
+        // Update selected state
+        menu.querySelectorAll('.custom-dropdown-option').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+        option.classList.add('selected');
+
+        setButtonLabel();
+        closeMenu();
+        if (onChange) onChange(item.value);
+        return;
+      }
+
+      // Multi-select: toggle and keep open
+      const v = itemValue;
+      const set = new Set(selectedValues);
+      if (set.has(v)) set.delete(v);
+      else set.add(v);
+      selectedValues = Array.from(set);
 
       // Update selected state
-      menu.querySelectorAll('.custom-dropdown-option').forEach(opt => {
-        opt.classList.remove('selected');
-      });
-      option.classList.add('selected');
-      
-      // Update button text
-      button.textContent = item.label;
-      
-      // Close menu
-      closeMenu();
-      
-      // Trigger callback
-      if (onChange) {
-        onChange(item.value);
-      }
+      option.classList.toggle('selected', set.has(v));
+      setButtonLabel();
+      if (onChange) onChange(selectedValues.slice());
     });
     
     menu.append(option);
   }
+
+  // Initialize button label after options built
+  setButtonLabel();
   
   button.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -187,15 +294,17 @@ export function createDropdown({ items, value, onChange, className = '', closeOv
       button.click();
     } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
-      const currentIndex = items.findIndex(item => item.value === value);
+      if (multi) return;
+      const currentIndex = normalizedItems.findIndex(item => item.value === value);
       const nextIndex = e.key === 'ArrowDown' 
-        ? Math.min(currentIndex + 1, items.length - 1)
+        ? Math.min(currentIndex + 1, normalizedItems.length - 1)
         : Math.max(currentIndex - 1, 0);
       
-      const nextItem = items[nextIndex];
+      const nextItem = normalizedItems[nextIndex];
       if (nextItem && onChange) {
         onChange(nextItem.value);
-        button.textContent = nextItem.label;
+        value = nextItem.value;
+        setButtonLabel();
         
         // Update selected state
         menu.querySelectorAll('.custom-dropdown-option').forEach((opt, i) => {

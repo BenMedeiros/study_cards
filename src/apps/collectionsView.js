@@ -85,7 +85,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
         const id = tr?.dataset?.rowId || rowData.__id;
         try {
           if (store?.collections && typeof store.collections.saveCollectionState === 'function') {
-            store.collections.saveCollectionState(id, { order_hash_int: null, isShuffled: false, currentIndex: 0, studyFilter: '', defaultViewMode: null, holdTableSearch: false, heldTableSearch: '' });
+            store.collections.saveCollectionState(id, { order_hash_int: null, isShuffled: false, currentIndex: 0, studyFilter: '', defaultViewMode: null, holdTableSearch: false, heldTableSearch: '', expansion_i: [], expansion_na: [] });
           }
         } catch (e) {}
         // update the row cells in-place so UI reflects cleared settings

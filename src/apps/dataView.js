@@ -2,8 +2,9 @@ import { createTable } from '../components/table.js';
 import { card } from '../components/ui.js';
 import { el } from '../components/ui.js';
 import { createViewHeaderTools, createStudyFilterToggle } from '../components/viewHeaderTools.js';
+import { createDropdown } from '../components/dropdown.js';
 import { createCollectionActions } from '../utils/collectionActions.js';
-import { entryMatchesTableSearch } from '../utils/collectionManagement.js';
+import { entryMatchesTableSearch, expandEntriesByAdjectiveForm, getEntryStudyKey } from '../utils/collectionManagement.js';
 
 export function renderData({ store }) {
   const root = document.createElement('div');
@@ -16,6 +17,67 @@ export function renderData({ store }) {
   // Persisted per-collection table search filter ("Hold Filter")
   let holdTableSearch = false;
   let heldTableSearch = '';
+
+  // Persisted per-collection adjective expansion (Data view header dropdowns)
+  let expansionIForms = [];
+  let expansionNaForms = [];
+
+  const I_ADJ_FORM_ITEMS = [
+    { value: 'plain', label: 'plain', left: 'plain', right: '~i' },
+    { value: 'negative', label: 'negative', left: 'negative', right: '~kunai' },
+    { value: 'past', label: 'past', left: 'past', right: '~katta' },
+    { value: 'pastNegative', label: 'past neg', left: 'past', right: '~kunakatta' },
+    { value: 'te', label: 'te-form', left: 'te-form', right: '~kute' },
+    { value: 'adverb', label: 'adverb', left: 'adverb', right: '~ku' },
+  ];
+
+  const NA_ADJ_FORM_ITEMS = [
+    { value: 'plain', label: 'plain', left: 'plain', right: '~da' },
+    { value: 'negative', label: 'negative', left: 'negative', right: '~janai' },
+    { value: 'past', label: 'past', left: 'past', right: '~datta' },
+    { value: 'pastNegative', label: 'past neg', left: 'past', right: '~janakatta' },
+    { value: 'te', label: 'te-form', left: 'te-form', right: '~de' },
+    { value: 'adverb', label: 'adverb', left: 'adverb', right: '~ni' },
+  ];
+
+  function normalizeFormList(v) {
+    if (Array.isArray(v)) return v.map(x => String(x || '').trim()).filter(Boolean);
+    const s = String(v || '').trim();
+    if (!s) return [];
+    // accept legacy strings (single) or comma/space separated
+    return s.split(/[,|\s]+/g).map(x => String(x || '').trim()).filter(Boolean);
+  }
+
+  function sameStringArray(a, b) {
+    const aa = Array.isArray(a) ? a : [];
+    const bb = Array.isArray(b) ? b : [];
+    if (aa.length !== bb.length) return false;
+    for (let i = 0; i < aa.length; i++) {
+      if (String(aa[i]) !== String(bb[i])) return false;
+    }
+    return true;
+  }
+
+  function formatMultiSelectButtonLabel(selectedValues, items) {
+    const allValues = (Array.isArray(items) ? items : []).map(it => String(it?.value ?? '')).filter(Boolean);
+    const selectedSet = new Set((Array.isArray(selectedValues) ? selectedValues : []).map(v => String(v || '').trim()).filter(Boolean));
+    const selectedInOrder = allValues.filter(v => selectedSet.has(v));
+
+    if (!selectedInOrder.length) return '—';
+    if (selectedInOrder.length === allValues.length) return 'all';
+    if (selectedInOrder.length > 3) return `${selectedInOrder.length} selected`;
+
+    const byValue = new Map((Array.isArray(items) ? items : []).map(it => [String(it?.value ?? ''), String(it?.right ?? it?.label ?? it?.value ?? '')]));
+    return selectedInOrder.map(v => byValue.get(v) || v).join('\n');
+  }
+
+  function orderFormsByItems(values, items) {
+    const set = new Set((Array.isArray(values) ? values : []).map(v => String(v || '').trim()).filter(Boolean));
+    const ordered = (Array.isArray(items) ? items : [])
+      .map(it => String(it?.value ?? ''))
+      .filter(v => v && set.has(v));
+    return ordered;
+  }
 
   function parseStudyFilter(value) {
     const raw = String(value || '').trim();
@@ -76,6 +138,60 @@ export function renderData({ store }) {
   // append the study filter toggle after the header-controlled buttons
   controls.append(studyFilterToggle.el);
 
+  // Adjective expansion dropdowns (persisted per-collection)
+  const expansionWrap = document.createElement('div');
+  expansionWrap.className = 'data-expansion-tools';
+  controls.append(expansionWrap);
+
+  function renderExpansionControls() {
+    expansionWrap.innerHTML = '';
+    const iGroup = document.createElement('div');
+    iGroup.className = 'data-expansion-group';
+    const iDd = createDropdown({
+      items: I_ADJ_FORM_ITEMS,
+      multi: true,
+      values: expansionIForms,
+      getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
+      onChange: (vals) => {
+        expansionIForms = orderFormsByItems(normalizeFormList(vals), I_ADJ_FORM_ITEMS);
+        persistAdjectiveExpansions();
+        renderTable();
+        updateStudyLabel();
+        markStudyRows();
+        updateControlStates();
+      },
+      className: 'data-expansion-dropdown',
+    });
+    const iCaption = document.createElement('div');
+    iCaption.className = 'data-expansion-caption';
+    iCaption.textContent = 'i-adj';
+    iGroup.append(iDd, iCaption);
+
+    const naGroup = document.createElement('div');
+    naGroup.className = 'data-expansion-group';
+    const naDd = createDropdown({
+      items: NA_ADJ_FORM_ITEMS,
+      multi: true,
+      values: expansionNaForms,
+      getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
+      onChange: (vals) => {
+        expansionNaForms = orderFormsByItems(normalizeFormList(vals), NA_ADJ_FORM_ITEMS);
+        persistAdjectiveExpansions();
+        renderTable();
+        updateStudyLabel();
+        markStudyRows();
+        updateControlStates();
+      },
+      className: 'data-expansion-dropdown',
+    });
+    const naCaption = document.createElement('div');
+    naCaption.className = 'data-expansion-caption';
+    naCaption.textContent = 'na-adj';
+    naGroup.append(naDd, naCaption);
+
+    expansionWrap.append(iGroup, naGroup);
+  }
+
   // studyLabel element is owned by the header controls when createControls=true
   let studyLabel = null;
   root.appendChild(controls);
@@ -105,9 +221,14 @@ export function renderData({ store }) {
     const held = String(saved?.heldTableSearch || '').trim();
     holdTableSearch = !!saved?.holdTableSearch;
     heldTableSearch = held;
+
+    expansionIForms = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);
+    expansionNaForms = normalizeFormList(saved?.expansion_na ?? saved?.expansion_naAdj ?? []);
   } catch (e) {
     // ignore
   }
+
+  renderExpansionControls();
 
   // Helpers to read/save per-collection state
   function readCollState() {
@@ -124,12 +245,7 @@ export function renderData({ store }) {
   }
 
   function getEntryKanjiValue(entry) {
-    if (!entry || typeof entry !== 'object') return '';
-    for (const k of ['kanji', 'character', 'text', 'word', 'reading', 'kana']) {
-      const v = entry[k];
-      if (typeof v === 'string' && v.trim()) return v.trim();
-    }
-    return '';
+    return getEntryStudyKey(entry);
   }
 
   function getEntryGrammarKey(entry) {
@@ -214,16 +330,30 @@ export function renderData({ store }) {
     actions.setHeldTableSearch(coll.key, { hold: !!hold, query: String(query || '') });
   }
 
+  function persistAdjectiveExpansions() {
+    const coll = store.collections.getActiveCollection();
+    if (!coll) return;
+    const actions = createCollectionActions(store);
+    actions.setAdjectiveExpansionForms(coll.key, { iForms: expansionIForms, naForms: expansionNaForms });
+  }
+
   // pruneStudyIndicesToFilters removed — studyIndices/studyStart no longer used.
 
   const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
-  const allEntries = Array.isArray(active.entries) ? active.entries : [];
+  const baseEntries = Array.isArray(active.entries) ? active.entries : [];
+  let allEntriesView = expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
   let rowToOriginalIndex = [];
+
+  function refreshEntriesView() {
+    allEntriesView = expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
+    return allEntriesView;
+  }
 
   function getVisibleOriginalIndices() {
     const out = [];
-    for (let i = 0; i < allEntries.length; i++) {
-      if (passesFilters(allEntries[i])) out.push(i);
+    const entriesView = refreshEntriesView();
+    for (let i = 0; i < entriesView.length; i++) {
+      if (passesFilters(entriesView[i])) out.push(i);
     }
     return out;
   }
@@ -253,8 +383,8 @@ export function renderData({ store }) {
       // clearLearned disabled if no learned items in this collection
       const adapter = getProgressAdapter();
       let hasLearned = false;
-      const entries = Array.isArray(coll.entries) ? coll.entries : [];
-      for (const e of entries) {
+      const entries = refreshEntriesView();
+      for (const e of (Array.isArray(entries) ? entries : [])) {
         const key = adapter.getKey(e);
         if (key && adapter.isLearned(key)) { hasLearned = true; break; }
       }
@@ -287,7 +417,8 @@ export function renderData({ store }) {
   function renderTable() {
     const visibleIdxs = getVisibleOriginalIndices();
     rowToOriginalIndex = visibleIdxs.slice();
-    const visibleEntries = visibleIdxs.map(i => allEntries[i]);
+    const entriesView = refreshEntriesView();
+    const visibleEntries = visibleIdxs.map(i => entriesView[i]);
 
     const adapter = getProgressAdapter();
 
@@ -423,7 +554,7 @@ export function renderData({ store }) {
     try {
       const corner = root.querySelector('#data-card .card-corner-caption');
       if (corner) {
-        const total = allEntries.length;
+        const total = entriesView.length;
         const visible = visibleIdxs.length;
         corner.textContent = (visible < total) ? `${visible}/${total} Entries` : `${total} Entries`;
       }
@@ -451,7 +582,8 @@ export function renderData({ store }) {
         const rowId = tr?.dataset?.rowId;
         const parsed = (rowId != null && rowId !== '' && !Number.isNaN(Number(rowId))) ? Number(rowId) : null;
         const originalIndex = (typeof parsed === 'number') ? parsed : rowToOriginalIndex[rowIndex];
-        const entry = (typeof originalIndex === 'number') ? allEntries[originalIndex] : null;
+        const entriesView = refreshEntriesView();
+        const entry = (typeof originalIndex === 'number') ? entriesView[originalIndex] : null;
         const key = adapter.getKey(entry);
         const learned = adapter.isLearned(key);
         const focus = adapter.isFocus(key);
@@ -504,6 +636,13 @@ export function renderData({ store }) {
           const held = String(saved?.heldTableSearch || '').trim();
           holdTableSearch = !!saved?.holdTableSearch;
           heldTableSearch = held;
+
+          const nextI = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);
+          const nextNa = normalizeFormList(saved?.expansion_na ?? saved?.expansion_naAdj ?? []);
+          const changed = (!sameStringArray(nextI, expansionIForms)) || (!sameStringArray(nextNa, expansionNaForms));
+          expansionIForms = nextI;
+          expansionNaForms = nextNa;
+          if (changed) renderExpansionControls();
         } catch (e) {
           // ignore
         }
@@ -511,6 +650,7 @@ export function renderData({ store }) {
         renderTable();
         updateStudyLabel();
         markStudyRows();
+        updateControlStates();
       });
     } catch (e) { /* ignore */ }
   }
@@ -563,7 +703,7 @@ export function renderData({ store }) {
 
   const dataCard = card({
     id: 'data-card',
-    cornerCaption: `${allEntries.length} Entries`,
+    cornerCaption: `${refreshEntriesView().length} Entries`,
     children: [tableMount]
   });
 
