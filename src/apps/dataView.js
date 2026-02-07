@@ -22,7 +22,7 @@ export function renderData({ store }) {
   let expansionIForms = [];
   let expansionNaForms = [];
 
-  const I_ADJ_FORM_ITEMS = [
+  const I_ADJ_BASE_FORM_ITEMS = [
     { value: 'plain', label: 'plain', left: 'plain', right: '~i' },
     { value: 'negative', label: 'negative', left: 'negative', right: '~kunai' },
     { value: 'past', label: 'past', left: 'past', right: '~katta' },
@@ -31,13 +31,23 @@ export function renderData({ store }) {
     { value: 'adverb', label: 'adverb', left: 'adverb', right: '~ku' },
   ];
 
-  const NA_ADJ_FORM_ITEMS = [
+  const NA_ADJ_BASE_FORM_ITEMS = [
     { value: 'plain', label: 'plain', left: 'plain', right: '~da' },
     { value: 'negative', label: 'negative', left: 'negative', right: '~janai' },
     { value: 'past', label: 'past', left: 'past', right: '~datta' },
     { value: 'pastNegative', label: 'past neg', left: 'past', right: '~janakatta' },
     { value: 'te', label: 'te-form', left: 'te-form', right: '~de' },
     { value: 'adverb', label: 'adverb', left: 'adverb', right: '~ni' },
+  ];
+
+  const I_ADJ_FORM_ITEMS = [
+    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
+    ...I_ADJ_BASE_FORM_ITEMS,
+  ];
+
+  const NA_ADJ_FORM_ITEMS = [
+    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
+    ...NA_ADJ_BASE_FORM_ITEMS,
   ];
 
   function normalizeFormList(v) {
@@ -59,7 +69,12 @@ export function renderData({ store }) {
   }
 
   function formatMultiSelectButtonLabel(selectedValues, items) {
-    const allValues = (Array.isArray(items) ? items : []).map(it => String(it?.value ?? '')).filter(Boolean);
+    const baseItems = (Array.isArray(items) ? items : []).filter(it => {
+      const kind = String(it?.kind || '').trim();
+      return kind !== 'action' && kind !== 'divider';
+    });
+
+    const allValues = baseItems.map(it => String(it?.value ?? '')).filter(Boolean);
     const selectedSet = new Set((Array.isArray(selectedValues) ? selectedValues : []).map(v => String(v || '').trim()).filter(Boolean));
     const selectedInOrder = allValues.filter(v => selectedSet.has(v));
 
@@ -67,7 +82,7 @@ export function renderData({ store }) {
     if (selectedInOrder.length === allValues.length) return 'all';
     if (selectedInOrder.length > 3) return `${selectedInOrder.length} selected`;
 
-    const byValue = new Map((Array.isArray(items) ? items : []).map(it => [String(it?.value ?? ''), String(it?.right ?? it?.label ?? it?.value ?? '')]));
+    const byValue = new Map(baseItems.map(it => [String(it?.value ?? ''), String(it?.right ?? it?.label ?? it?.value ?? '')]));
     return selectedInOrder.map(v => byValue.get(v) || v).join('\n');
   }
 
@@ -77,6 +92,37 @@ export function renderData({ store }) {
       .map(it => String(it?.value ?? ''))
       .filter(v => v && set.has(v));
     return ordered;
+  }
+
+  function normalizeType(v) {
+    return String(v || '').trim().toLowerCase();
+  }
+
+  function collectionHasAdjectiveKind(kind) {
+    const want = String(kind || '').trim().toLowerCase();
+    if (want !== 'i' && want !== 'na') return false;
+    const entries = Array.isArray(active?.entries) ? active.entries : [];
+    for (const e of entries) {
+      if (!e || typeof e !== 'object') continue;
+      const t = normalizeType(e.type);
+      const isI = t === 'i-adjective' || t === 'i_adj' || t === 'i-adj';
+      const isNa = t === 'na-adjective' || t === 'na_adj' || t === 'na-adj';
+      if (want === 'i' && isI) return true;
+      if (want === 'na' && isNa) return true;
+    }
+    return false;
+  }
+
+  function deleteExpansionSettingIfPresent(keys) {
+    try {
+      const coll = store.collections.getActiveCollection();
+      if (!coll?.key) return;
+      if (typeof store?.collections?.deleteCollectionStateKeys === 'function') {
+        store.collections.deleteCollectionStateKeys(coll.key, keys);
+      }
+    } catch (e) {
+      // ignore
+    }
   }
 
   function parseStudyFilter(value) {
@@ -145,15 +191,19 @@ export function renderData({ store }) {
 
   function renderExpansionControls() {
     expansionWrap.innerHTML = '';
+    const hasI = collectionHasAdjectiveKind('i');
+    const hasNa = collectionHasAdjectiveKind('na');
+
     const iGroup = document.createElement('div');
     iGroup.className = 'data-expansion-group';
+    if (!hasI) iGroup.style.display = 'none';
     const iDd = createDropdown({
       items: I_ADJ_FORM_ITEMS,
       multi: true,
       values: expansionIForms,
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
       onChange: (vals) => {
-        expansionIForms = orderFormsByItems(normalizeFormList(vals), I_ADJ_FORM_ITEMS);
+        expansionIForms = orderFormsByItems(normalizeFormList(vals), I_ADJ_BASE_FORM_ITEMS);
         persistAdjectiveExpansions();
         renderTable();
         updateStudyLabel();
@@ -169,13 +219,14 @@ export function renderData({ store }) {
 
     const naGroup = document.createElement('div');
     naGroup.className = 'data-expansion-group';
+    if (!hasNa) naGroup.style.display = 'none';
     const naDd = createDropdown({
       items: NA_ADJ_FORM_ITEMS,
       multi: true,
       values: expansionNaForms,
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
       onChange: (vals) => {
-        expansionNaForms = orderFormsByItems(normalizeFormList(vals), NA_ADJ_FORM_ITEMS);
+        expansionNaForms = orderFormsByItems(normalizeFormList(vals), NA_ADJ_BASE_FORM_ITEMS);
         persistAdjectiveExpansions();
         renderTable();
         updateStudyLabel();
@@ -224,6 +275,23 @@ export function renderData({ store }) {
 
     expansionIForms = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);
     expansionNaForms = normalizeFormList(saved?.expansion_na ?? saved?.expansion_naAdj ?? []);
+
+    // If the "true" active collection has no matching adjective types,
+    // hide the control and delete the persisted setting to avoid future issues.
+    const hasI = collectionHasAdjectiveKind('i');
+    const hasNa = collectionHasAdjectiveKind('na');
+    if (!hasI) {
+      expansionIForms = [];
+      if (saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_i')) {
+        deleteExpansionSettingIfPresent(['expansion_i', 'expansion_iAdj', 'expansion_i_adjective']);
+      }
+    }
+    if (!hasNa) {
+      expansionNaForms = [];
+      if (saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_na')) {
+        deleteExpansionSettingIfPresent(['expansion_na', 'expansion_naAdj', 'expansion_na_adjective']);
+      }
+    }
   } catch (e) {
     // ignore
   }
@@ -639,9 +707,23 @@ export function renderData({ store }) {
 
           const nextI = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);
           const nextNa = normalizeFormList(saved?.expansion_na ?? saved?.expansion_naAdj ?? []);
-          const changed = (!sameStringArray(nextI, expansionIForms)) || (!sameStringArray(nextNa, expansionNaForms));
-          expansionIForms = nextI;
-          expansionNaForms = nextNa;
+
+          const hasI = collectionHasAdjectiveKind('i');
+          const hasNa = collectionHasAdjectiveKind('na');
+          const cleanedI = hasI ? nextI : [];
+          const cleanedNa = hasNa ? nextNa : [];
+
+          // If settings exist for a kind the collection doesn't contain, delete them.
+          if (!hasI && saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_i')) {
+            deleteExpansionSettingIfPresent(['expansion_i', 'expansion_iAdj', 'expansion_i_adjective']);
+          }
+          if (!hasNa && saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_na')) {
+            deleteExpansionSettingIfPresent(['expansion_na', 'expansion_naAdj', 'expansion_na_adjective']);
+          }
+
+          const changed = (!sameStringArray(cleanedI, expansionIForms)) || (!sameStringArray(cleanedNa, expansionNaForms));
+          expansionIForms = cleanedI;
+          expansionNaForms = cleanedNa;
           if (changed) renderExpansionControls();
         } catch (e) {
           // ignore

@@ -98,6 +98,7 @@ export function createStore() {
       prefetchCollectionsInFolder: collections.prefetchCollectionsInFolder,
       loadCollectionState: collections.loadCollectionState,
       saveCollectionState: collections.saveCollectionState,
+      deleteCollectionStateKeys: collections.deleteCollectionStateKeys,
       getInheritedFolderMetadata: collections.getInheritedFolderMetadata,
 
       // Debug/read-only runtime inspection helpers (Entity Explorer)

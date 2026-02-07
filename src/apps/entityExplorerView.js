@@ -78,8 +78,8 @@ function renderTable(rows) {
       const td = document.createElement('td');
       const v = r ? r[c] : null;
       if (isPlainObject(v) || Array.isArray(v)) {
-        td.textContent = safeJson(v);
         td.className = 'mono wrap';
+        td.append(renderJsonViewer(v));
       } else {
         td.textContent = (v == null) ? '' : String(v);
       }

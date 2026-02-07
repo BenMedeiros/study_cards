@@ -1383,6 +1383,33 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
   }
 
+  function deleteCollectionStateKeys(collId, keys = []) {
+    try {
+      const id = String(collId || '').trim();
+      if (!id) return;
+      uiState.collections = uiState.collections || {};
+      const prev = uiState.collections[id] || {};
+      if (!prev || typeof prev !== 'object') return;
+      const next = { ...prev };
+      let changed = false;
+      for (const k of (Array.isArray(keys) ? keys : [])) {
+        const key = String(k || '');
+        if (!key) continue;
+        if (Object.prototype.hasOwnProperty.call(next, key)) {
+          delete next[key];
+          changed = true;
+        }
+      }
+      if (!changed) return;
+      uiState.collections[id] = next;
+      persistence.markDirty({ collectionId: id });
+      persistence.scheduleFlush();
+      emit();
+    } catch {
+      // ignore
+    }
+  }
+
   return {
     isCollectionSetVirtualKey,
     parseCollectionSetVirtualKey,
@@ -1400,6 +1427,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     prefetchCollectionsInFolder,
     loadCollectionState,
     saveCollectionState,
+    deleteCollectionStateKeys,
     getInheritedFolderMetadata,
     collectionSetsDirPath,
 

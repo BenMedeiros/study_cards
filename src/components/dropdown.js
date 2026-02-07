@@ -130,13 +130,49 @@ export function createDropdown({
     txt.textContent = item?.label || '';
     return txt;
   }
+
+  function isSelectableItem(it) {
+    const kind = String(it?.kind || '').trim();
+    return kind !== 'divider' && kind !== 'action';
+  }
+
+  function selectableValues() {
+    return normalizedItems
+      .filter(isSelectableItem)
+      .map(it => String(it?.value ?? ''))
+      .filter(Boolean);
+  }
+
+  function syncSelectedClasses() {
+    try {
+      const set = new Set(selectedValues);
+      menu.querySelectorAll('.custom-dropdown-option').forEach(opt => {
+        const kind = opt?.dataset?.kind;
+        if (kind === 'divider' || kind === 'action') return;
+        const v = String(opt?.dataset?.value ?? '');
+        opt.classList.toggle('selected', set.has(v));
+      });
+    } catch (e) {
+      // ignore
+    }
+  }
   
   for (const item of normalizedItems) {
     const option = document.createElement('div');
     option.className = 'custom-dropdown-option';
     const itemValue = String(item?.value ?? '');
+    const kind = String(item?.kind || '').trim();
+    if (kind) option.dataset.kind = kind;
 
-    const isSelected = multi
+    // Divider row (non-interactive)
+    if (kind === 'divider') {
+      option.classList.add('divider');
+      option.textContent = item?.label || '—';
+      menu.append(option);
+      continue;
+    }
+
+    const isSelected = (multi && isSelectableItem(item))
       ? selectedValues.includes(itemValue)
       : (itemValue === String(value ?? ''));
 
@@ -146,6 +182,36 @@ export function createDropdown({
     option.dataset.value = item.value;
     
     option.addEventListener('click', () => {
+      // Action rows (None / All) for multi-select
+      if (multi && kind === 'action') {
+        const action = String(item?.action || '').trim().toLowerCase();
+        if (action === 'none') {
+          selectedValues = [];
+          syncSelectedClasses();
+          setButtonLabel();
+          if (onChange) onChange(selectedValues.slice());
+          return;
+        }
+        if (action === 'all') {
+          selectedValues = selectableValues();
+          syncSelectedClasses();
+          setButtonLabel();
+          if (onChange) onChange(selectedValues.slice());
+          return;
+        }
+        if (action === 'toggleallnone') {
+          const all = selectableValues();
+          const set = new Set(selectedValues);
+          const isAll = all.length > 0 && all.every(v => set.has(v));
+          selectedValues = isAll ? [] : all;
+          syncSelectedClasses();
+          setButtonLabel();
+          if (onChange) onChange(selectedValues.slice());
+          return;
+        }
+        return;
+      }
+
       if (!multi) {
         // Keep internal value in sync for keyboard navigation
         value = item.value;
