@@ -106,6 +106,22 @@ export function createStore() {
       debugGetRuntimeMapDump: collections.debugGetRuntimeMapDump,
 
       ensureWordSentenceIndexBuiltForTop: collections.ensureWordSentenceIndexBuiltForTop,
+
+      // Collection view utilities (filtering, expansion, shuffle)
+      getCollectionView: collections.getCollectionView,
+      getEntryStudyKey: collections.getEntryStudyKey,
+      entryMatchesTableSearch: collections.entryMatchesTableSearch,
+      filterEntriesAndIndicesByTableSearch: collections.filterEntriesAndIndicesByTableSearch,
+      expandEntriesByAdjectiveForm: collections.expandEntriesByAdjectiveForm,
+      expandEntriesAndIndicesByAdjectiveForms: collections.expandEntriesAndIndicesByAdjectiveForms,
+
+      // Collection actions (state modifications)
+      shuffleCollection: collections.shuffleCollection,
+      clearCollectionShuffle: collections.clearCollectionShuffle,
+      setStudyFilter: collections.setStudyFilter,
+      setHeldTableSearch: collections.setHeldTableSearch,
+      setAdjectiveExpansionForms: collections.setAdjectiveExpansionForms,
+      clearLearnedForCollection: collections.clearLearnedForCollection,
     },
     shell: {
       getLastRoute: shell.getLastRoute,

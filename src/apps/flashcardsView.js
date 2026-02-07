@@ -1,5 +1,4 @@
 import { nowMs } from '../utils/helpers.js';
-import { getCollectionView, entryMatchesTableSearch, getEntryStudyKey } from '../utils/collectionManagement.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
 
 import { createViewFooterControls } from '../components/viewFooterControls.js';
@@ -28,7 +27,7 @@ export function renderFlashcards({ store }) {
   }
 
   function getPrimaryValue(entry) {
-    return String(getEntryStudyKey(entry) || '').trim();
+    return String(store.collections.getEntryStudyKey(entry) || '').trim();
   }
 
   function speakEntry(entry) {
@@ -48,7 +47,7 @@ export function renderFlashcards({ store }) {
     const collState = (store?.collections && typeof store.collections.loadCollectionState === 'function')
       ? store.collections.loadCollectionState(active?.key)
       : null;
-    const view = getCollectionView(active?.entries, collState, { windowSize: 10 });
+    const view = store.collections.getCollectionView(active?.entries, collState, { windowSize: 10 });
     let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
 
     // Apply persisted held table-search filter (Data view "Hold Filter").
@@ -57,7 +56,7 @@ export function renderFlashcards({ store }) {
       const hold = !!collState?.holdTableSearch && !!held;
       if (hold) {
         const fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : null;
-        nextEntries = nextEntries.filter(e => entryMatchesTableSearch(e, { query: held, fields }));
+        nextEntries = nextEntries.filter(e => store.collections.entryMatchesTableSearch(e, { query: held, fields }));
       }
     } catch (e) {
       // ignore
@@ -80,7 +79,7 @@ export function renderFlashcards({ store }) {
     if (skipLearned || focusOnly) {
       const filtered = [];
       for (const entry of nextEntries) {
-        const s = String(getEntryStudyKey(entry) || '').trim();
+        const s = String(store.collections.getEntryStudyKey(entry) || '').trim();
         if (!s) {
           filtered.push(entry);
           continue;

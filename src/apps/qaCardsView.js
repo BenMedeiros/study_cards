@@ -1,5 +1,4 @@
 import { nowMs } from '../utils/helpers.js';
-import { getCollectionView, entryMatchesTableSearch } from '../utils/collectionManagement.js';
 import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } from '../utils/japanese.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createSpeakerButton } from '../components/ui.js';
@@ -27,7 +26,7 @@ export function renderQaCards({ store }) {
   const collState = (store?.collections && typeof store.collections.loadCollectionState === 'function')
     ? store.collections.loadCollectionState(active?.key)
     : null;
-  let entries = getCollectionView(active.entries, collState, { windowSize: 10 }).entries;
+  let entries = store.collections.getCollectionView(active.entries, collState, { windowSize: 10 }).entries;
 
   // Apply persisted held table-search filter (Data view "Hold Filter").
   try {
@@ -35,7 +34,7 @@ export function renderQaCards({ store }) {
     const hold = !!collState?.holdTableSearch && !!held;
     if (hold) {
       const metaFields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : null;
-      entries = (Array.isArray(entries) ? entries : []).filter(e => entryMatchesTableSearch(e, { query: held, fields: metaFields }));
+      entries = (Array.isArray(entries) ? entries : []).filter(e => store.collections.entryMatchesTableSearch(e, { query: held, fields: metaFields }));
     }
   } catch (e) {
     // ignore

@@ -3,8 +3,6 @@ import { card } from '../components/ui.js';
 import { el } from '../components/ui.js';
 import { createViewHeaderTools, createStudyFilterToggle } from '../components/viewHeaderTools.js';
 import { createDropdown } from '../components/dropdown.js';
-import { createCollectionActions } from '../utils/collectionActions.js';
-import { entryMatchesTableSearch, expandEntriesByAdjectiveForm, getEntryStudyKey } from '../utils/collectionManagement.js';
 
 export function renderData({ store }) {
   const root = document.createElement('div');
@@ -149,16 +147,14 @@ export function renderData({ store }) {
     onShuffle: () => {
       const coll = store.collections.getActiveCollection();
       if (!coll) return;
-      const actions = createCollectionActions(store);
-      actions.shuffleCollection(coll.key);
+      store.collections.shuffleCollection(coll.key);
       updateStudyLabel();
       markStudyRows();
     },
     onClearShuffle: () => {
       const coll = store.collections.getActiveCollection();
       if (!coll) return;
-      const actions = createCollectionActions(store);
-      actions.clearCollectionShuffle(coll.key);
+      store.collections.clearCollectionShuffle(coll.key);
       updateStudyLabel();
       markStudyRows();
     },
@@ -313,7 +309,7 @@ export function renderData({ store }) {
   }
 
   function getEntryKanjiValue(entry) {
-    return getEntryStudyKey(entry);
+    return store.collections.getEntryStudyKey(entry);
   }
 
   function getEntryGrammarKey(entry) {
@@ -352,8 +348,7 @@ export function renderData({ store }) {
       clearLearned: () => {
         try {
           const coll = store?.collections?.getActiveCollection?.();
-          const actions = createCollectionActions(store);
-          actions.clearLearnedForCollection(coll?.key);
+          store.collections.clearLearnedForCollection(coll?.key);
         } catch (e) {
           // ignore
         }
@@ -371,7 +366,7 @@ export function renderData({ store }) {
 
     if (holdTableSearch && heldTableSearch) {
       try {
-        if (!entryMatchesTableSearch(entry, { query: heldTableSearch, fields })) return false;
+        if (!store.collections.entryMatchesTableSearch(entry, { query: heldTableSearch, fields })) return false;
       } catch (e) {
         // ignore
       }
@@ -387,33 +382,30 @@ export function renderData({ store }) {
   function persistFilters() {
     const coll = store.collections.getActiveCollection();
     if (!coll) return;
-    const actions = createCollectionActions(store);
-    actions.setStudyFilter(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
+    store.collections.setStudyFilter(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
   }
 
   function persistHeldTableSearch({ hold, query }) {
     const coll = store.collections.getActiveCollection();
     if (!coll) return;
-    const actions = createCollectionActions(store);
-    actions.setHeldTableSearch(coll.key, { hold: !!hold, query: String(query || '') });
+    store.collections.setHeldTableSearch(coll.key, { hold: !!hold, query: String(query || '') });
   }
 
   function persistAdjectiveExpansions() {
     const coll = store.collections.getActiveCollection();
     if (!coll) return;
-    const actions = createCollectionActions(store);
-    actions.setAdjectiveExpansionForms(coll.key, { iForms: expansionIForms, naForms: expansionNaForms });
+    store.collections.setAdjectiveExpansionForms(coll.key, { iForms: expansionIForms, naForms: expansionNaForms });
   }
 
   // pruneStudyIndicesToFilters removed — studyIndices/studyStart no longer used.
 
   const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
   const baseEntries = Array.isArray(active.entries) ? active.entries : [];
-  let allEntriesView = expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
+  let allEntriesView = store.collections.expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
   let rowToOriginalIndex = [];
 
   function refreshEntriesView() {
-    allEntriesView = expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
+    allEntriesView = store.collections.expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
     return allEntriesView;
   }
 

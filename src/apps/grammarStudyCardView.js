@@ -2,12 +2,9 @@ import { nowMs } from '../utils/helpers.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
 import { createAutoplayControls } from '../components/autoplay.js';
 import { createSpeakerButton } from '../components/ui.js';
-import { getCollectionView, filterEntriesAndIndicesByTableSearch } from '../utils/collectionManagement.js';
 
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createViewFooterControls } from '../components/viewFooterControls.js';
-
-import { createCollectionActions } from '../utils/collectionActions.js';
 
 export function renderGrammarStudyCard({ store }) {
   const el = document.createElement('div');
@@ -171,7 +168,7 @@ export function renderGrammarStudyCard({ store }) {
 
     const prevKey = (!resetIndex && entries && entries.length && entries[index]) ? getPrimaryKey(entries[index]) : null;
 
-    const view = getCollectionView(baseEntries, collState);
+    const view = store.collections.getCollectionView(baseEntries, collState);
     let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
     let nextIndices = Array.isArray(view.indices) ? view.indices.slice() : [];
 
@@ -218,7 +215,7 @@ export function renderGrammarStudyCard({ store }) {
       const hold = !!collState?.holdTableSearch && !!held;
       if (hold) {
         const fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : null;
-        const filtered = filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields });
+        const filtered = store.collections.filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields });
         nextEntries = filtered.entries;
         nextIndices = filtered.indices;
       }
@@ -335,8 +332,6 @@ export function renderGrammarStudyCard({ store }) {
     scheduleAutoplayNextStep(600);
   }
 
-  const collectionActions = createCollectionActions(store);
-
   function saveUIState() {
     try {
       const active = store?.collections?.getActiveCollection?.();
@@ -408,11 +403,11 @@ export function renderGrammarStudyCard({ store }) {
     const collKey = active?.key || null;
     if (!collKey) return;
     if (!isShuffled) {
-      const seed = collectionActions.shuffleCollection(collKey);
+      const seed = store.collections.shuffleCollection(collKey);
       orderHashInt = typeof seed === 'number' ? seed : null;
       isShuffled = true;
     } else {
-      collectionActions.clearCollectionShuffle(collKey);
+      store.collections.clearCollectionShuffle(collKey);
       orderHashInt = null;
       isShuffled = false;
     }
