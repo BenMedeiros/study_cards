@@ -4,46 +4,62 @@
     "description": "Grouped entries for type='expression' and orthography='kanji' — total 7.",
     "version": 3
   },
-  "defaults": {
-    "type": "expression",
-    "orthography": "kanji",
-    "lexicalClass": "regular"
-  },
   "entries": [
     {
       "kanji": "登録済み",
       "reading": "とうろくずみ",
-      "meaning": "subscribed; already registered"
+      "meaning": "subscribed; already registered",
+      "type": "expression",
+      "orthography": "kanji",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第一",
       "reading": "だいいち",
-      "meaning": "first; number one (ordinal form using 第)"
+      "meaning": "first; number one (ordinal form using 第)",
+      "type": "expression",
+      "orthography": "kanji",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第二",
       "reading": "だいに",
-      "meaning": "second (ordinal form using 第)"
+      "meaning": "second (ordinal form using 第)",
+      "type": "expression",
+      "orthography": "kanji",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第三",
       "reading": "だいさん",
-      "meaning": "third (ordinal form using 第)"
+      "meaning": "third (ordinal form using 第)",
+      "type": "expression",
+      "orthography": "kanji",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第四",
       "reading": "だいよん",
-      "meaning": "fourth (ordinal form using 第)"
+      "meaning": "fourth (ordinal form using 第)",
+      "type": "expression",
+      "orthography": "kanji",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第五",
       "reading": "だいご",
-      "meaning": "fifth (ordinal form using 第)"
+      "meaning": "fifth (ordinal form using 第)",
+      "type": "expression",
+      "orthography": "kanji",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "第十",
       "reading": "だいじゅう",
-      "meaning": "tenth (ordinal form using 第)"
+      "meaning": "tenth (ordinal form using 第)",
+      "type": "expression",
+      "orthography": "kanji",
+      "lexicalClass": "regular"
     }
   ]
 }

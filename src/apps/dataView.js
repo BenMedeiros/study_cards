@@ -403,14 +403,6 @@ export function renderData({ store }) {
     ]
   });
 
-  const defaultsDetails = el('details', {
-    className: 'defaults-details',
-    children: [
-      el('summary', { text: 'Collection defaults' }),
-      el('pre', { text: JSON.stringify(active.defaults || {}, null, 2) })
-    ]
-  });
-
   const folderMetaDetails = el('details', {
     className: 'folder-meta-details',
     children: [
@@ -419,7 +411,7 @@ export function renderData({ store }) {
     ]
   });
 
-  wrapper.append(collMetaDetails, defaultsDetails, folderMetaDetails);
+  wrapper.append(collMetaDetails, folderMetaDetails);
 
   // Load inherited folder metadata asynchronously via the store API
   if (store?.collections && typeof store.collections.getInheritedFolderMetadata === 'function') {

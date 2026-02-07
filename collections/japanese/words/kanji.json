@@ -4,150 +4,202 @@
     "description": "Grouped entries for type='kanji' — total 28.",
     "version": 1
   },
-  "defaults": {
-    "type": "kanji",
-    "orthography": "katakana"
-  },
   "entries": [
     {
       "kanji": "促",
       "reading": "ソク",
-      "meaning": "urge; prompt; hasten"
+      "meaning": "urge; prompt; hasten",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "進",
       "reading": "シン",
-      "meaning": "advance; progress"
+      "meaning": "advance; progress",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "長",
       "reading": "チョウ",
-      "meaning": "long; leader; head"
+      "meaning": "long; leader; head",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "社",
       "reading": "シャ",
-      "meaning": "company; shrine"
+      "meaning": "company; shrine",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "部",
       "reading": "ブ",
-      "meaning": "section; department; part"
+      "meaning": "section; department; part",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "成",
       "reading": "セイ",
-      "meaning": "become; form; achieve"
+      "meaning": "become; form; achieve",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "清",
       "reading": "セイ",
-      "meaning": "pure; clean; clear"
+      "meaning": "pure; clean; clear",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "潔",
       "reading": "ケツ",
-      "meaning": "clean; pure; righteous"
+      "meaning": "clean; pure; righteous",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "濁",
       "reading": "ダク",
-      "meaning": "muddy; turbid; voiced (phonetics)"
+      "meaning": "muddy; turbid; voiced (phonetics)",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "半",
       "reading": "ハン",
-      "meaning": "half"
+      "meaning": "half",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "分",
       "reading": "ブン",
-      "meaning": "part; minute; divide"
+      "meaning": "part; minute; divide",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "平",
       "reading": "ヘイ",
-      "meaning": "flat; calm; ordinary"
+      "meaning": "flat; calm; ordinary",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "日",
       "reading": "ニチ",
-      "meaning": "day; sun"
+      "meaning": "day; sun",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "和",
       "reading": "ワ",
-      "meaning": "harmony; peace; Japan/Japanese style"
+      "meaning": "harmony; peace; Japan/Japanese style",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "気",
       "reading": "キ",
-      "meaning": "spirit; mind; air; feeling"
+      "meaning": "spirit; mind; air; feeling",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "仮",
       "reading": "カ",
-      "meaning": "temporary; provisional; assumption"
+      "meaning": "temporary; provisional; assumption",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "定",
       "reading": "テイ",
-      "meaning": "decide; set; fixed"
+      "meaning": "decide; set; fixed",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "片",
       "reading": "ヘン",
-      "meaning": "one-sided; fragment; piece"
+      "meaning": "one-sided; fragment; piece",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "方",
       "reading": "ホウ",
-      "meaning": "direction; side; method; person (polite)"
+      "meaning": "direction; side; method; person (polite)",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "付",
       "reading": "フ",
-      "meaning": "attach; add; append"
+      "meaning": "attach; add; append",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "漢",
       "reading": "カン",
-      "meaning": "Han/Chinese; Sino-"
+      "meaning": "Han/Chinese; Sino-",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "読",
       "reading": "ドク",
-      "meaning": "read"
+      "meaning": "read",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "書",
       "reading": "ショ",
-      "meaning": "write; book"
+      "meaning": "write; book",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "訓",
       "reading": "クン",
-      "meaning": "instruction; training; kun-reading"
+      "meaning": "instruction; training; kun-reading",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "練",
       "reading": "レン",
-      "meaning": "practice; train; refine"
+      "meaning": "practice; train; refine",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "送",
       "reading": "ソウ",
-      "meaning": "send; see off"
+      "meaning": "send; see off",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "料",
       "reading": "リョウ",
-      "meaning": "fee; materials; charge"
+      "meaning": "fee; materials; charge",
+      "type": "kanji",
+      "orthography": "katakana"
     },
     {
       "kanji": "見",
       "reading": "ケン",
-      "meaning": "see; look; view"
+      "meaning": "see; look; view",
+      "type": "kanji",
+      "orthography": "katakana"
     }
   ]
 }

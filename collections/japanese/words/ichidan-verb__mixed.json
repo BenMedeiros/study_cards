@@ -4,193 +4,238 @@
     "description": "Mixed orthography group for type='ichidan-verb' — total 29 (hiragana: 2, both: 7, none: 20).",
     "version": 3
   },
-  "defaults": {
-    "type": "ichidan-verb",
-    "verbType": "compound"
-  },
   "entries": [
     {
       "kanji": "いる",
       "reading": "いる",
       "meaning": "to exist (animate); to be (someone is here)",
       "orthography": "hiragana",
-      "verbType": "simple"
+      "verbType": "simple",
+      "type": "ichidan-verb"
     },
     {
       "kanji": "できる",
       "reading": "できる",
       "meaning": "to be able to; can do; to be made; to be completed",
       "orthography": "hiragana",
-      "verbType": "simple"
+      "verbType": "simple",
+      "type": "ichidan-verb"
     },
     {
       "kanji": "片付ける",
       "reading": "かたづける",
       "meaning": "to tidy up; to put in order; to clean up",
       "orthography": "both",
-      "verbType": "simple"
+      "verbType": "simple",
+      "type": "ichidan-verb"
     },
     {
       "kanji": "付ける",
       "reading": "つける",
       "meaning": "to attach; to add; to turn on (a light); to set (a rule/condition)",
       "orthography": "both",
-      "verbType": "simple"
+      "verbType": "simple",
+      "type": "ichidan-verb"
     },
     {
       "kanji": "止める",
       "reading": "とめる",
       "meaning": "to stop (something); to turn off; to park (a car)",
       "orthography": "both",
-      "verbType": "simple"
+      "verbType": "simple",
+      "type": "ichidan-verb"
     },
     {
       "kanji": "取れる",
       "reading": "とれる",
       "meaning": "to come off; to be removed; to be obtained/caught",
       "orthography": "both",
-      "verbType": "simple"
+      "verbType": "simple",
+      "type": "ichidan-verb"
     },
     {
       "kanji": "掛ける",
       "reading": "かける",
       "meaning": "to hang (something); to put on; to apply; to make a call",
       "orthography": "both",
-      "verbType": "simple"
+      "verbType": "simple",
+      "type": "ichidan-verb"
     },
     {
       "kanji": "出かける",
       "reading": "でかける",
       "meaning": "to go out; to leave (home) for a while",
       "orthography": "both",
-      "verbType": "simple"
+      "verbType": "simple",
+      "type": "ichidan-verb"
     },
     {
       "kanji": "見つける",
       "reading": "みつける",
       "meaning": "to find; to discover",
       "orthography": "both",
-      "verbType": "simple"
+      "verbType": "simple",
+      "type": "ichidan-verb"
     },
     {
       "kanji": "飲み比べる",
       "reading": "のみくらべる",
       "meaning": "to compare drinks; taste test",
-      "compoundType": "compositional"
+      "compoundType": "compositional",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "買い替える",
       "reading": "かいかえる",
       "meaning": "to replace by buying a new one",
-      "compoundType": "compositional"
+      "compoundType": "compositional",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "書き換える",
       "reading": "かきかえる",
       "meaning": "to rewrite; to reword",
-      "compoundType": "compositional"
+      "compoundType": "compositional",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "引き受ける",
       "reading": "ひきうける",
       "meaning": "to take on; to undertake",
-      "compoundType": "compositional"
+      "compoundType": "compositional",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "見届ける",
       "reading": "みとどける",
       "meaning": "to see something through; to witness to completion",
-      "compoundType": "compositional"
+      "compoundType": "compositional",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "取り替える",
       "reading": "とりかえる",
       "meaning": "to exchange; to replace",
-      "compoundType": "compositional"
+      "compoundType": "compositional",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "受け止める",
       "reading": "うけとめる",
       "meaning": "to catch; to receive (emotion/information)",
-      "compoundType": "compositional"
+      "compoundType": "compositional",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "取り入れる",
       "reading": "とりいれる",
       "meaning": "to adopt; to incorporate",
-      "compoundType": "compositional"
+      "compoundType": "compositional",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "書き直せる",
       "reading": "かきなおせる",
       "meaning": "can rewrite (useful example form)",
-      "compoundType": "compositional"
+      "compoundType": "compositional",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "試し見る",
       "reading": "ためしみる",
       "meaning": "to try looking/try seeing (rare example)",
-      "compoundType": "compositional"
+      "compoundType": "compositional",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "話しかける",
       "reading": "はなしかける",
       "meaning": "to address; to speak to someone",
-      "compoundType": "grammaticalized"
+      "compoundType": "grammaticalized",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "持ち上げる",
       "reading": "もちあげる",
       "meaning": "to lift up; to praise (colloquial)",
-      "compoundType": "grammaticalized"
+      "compoundType": "grammaticalized",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "見合わせる",
       "reading": "みあわせる",
       "meaning": "to postpone; to refrain after consideration",
-      "compoundType": "grammaticalized"
+      "compoundType": "grammaticalized",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "申し合わせる",
       "reading": "もうしあわせる",
       "meaning": "to arrange/agree (by prior arrangement)",
-      "compoundType": "grammaticalized"
+      "compoundType": "grammaticalized",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "差し上げる",
       "reading": "さしあげる",
       "meaning": "humble form of 'to give' (polite compound)",
-      "compoundType": "grammaticalized"
+      "compoundType": "grammaticalized",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "引き上げる",
       "reading": "ひきあげる",
       "meaning": "to pull up; to raise; to withdraw",
-      "compoundType": "grammaticalized"
+      "compoundType": "grammaticalized",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "受け渡せる",
       "reading": "うけわたせる",
       "meaning": "can hand over (example grammaticalized usage)",
-      "compoundType": "grammaticalized"
+      "compoundType": "grammaticalized",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "連れ戻せる",
       "reading": "つれもどせる",
       "meaning": "can bring back (example form)",
-      "compoundType": "grammaticalized"
+      "compoundType": "grammaticalized",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "申し上げる",
       "reading": "もうしあげる",
       "meaning": "humble/polite say; to say (humble)",
-      "compoundType": "grammaticalized"
+      "compoundType": "grammaticalized",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     },
     {
       "kanji": "見つけ合わせる",
       "reading": "みつけあわせる",
       "meaning": "to cross-check by finding/matching (rare example)",
-      "compoundType": "grammaticalized"
+      "compoundType": "grammaticalized",
+      "type": "ichidan-verb",
+      "verbType": "compound"
     }
   ]
 }

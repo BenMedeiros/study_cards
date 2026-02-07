@@ -50,7 +50,8 @@ async function rebuildIndex() {
     // skip the generated top-level index.json so it doesn't appear in collections
     if (posixRel === 'index.json') continue;
     // skip any special/hidden JSON files that start with '_' (tooling/metadata files)
-    if (base.startsWith('_')) continue;
+    // except for per-folder collection sets which the app needs to discover.
+    if (base.startsWith('_') && base !== '_collectionSets.json') continue;
     collectionsFiles.push(posixRel);
   }
 

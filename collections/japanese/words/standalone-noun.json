@@ -4,84 +4,96 @@
     "description": "Grouped entries for type='standalone-noun' — total 15.",
     "version": 1
   },
-  "defaults": {
-    "type": "standalone-noun"
-  },
   "entries": [
     {
       "kanji": "種",
       "reading": "たね",
-      "meaning": "seed; kind; variety"
+      "meaning": "seed; kind; variety",
+      "type": "standalone-noun"
     },
     {
       "kanji": "草",
       "reading": "くさ",
-      "meaning": "grass; weeds; vegetation"
+      "meaning": "grass; weeds; vegetation",
+      "type": "standalone-noun"
     },
     {
       "kanji": "花",
       "reading": "はな",
-      "meaning": "flower; blossom"
+      "meaning": "flower; blossom",
+      "type": "standalone-noun"
     },
     {
       "kanji": "火",
       "reading": "ひ",
-      "meaning": "fire; flame"
+      "meaning": "fire; flame",
+      "type": "standalone-noun"
     },
     {
       "kanji": "銭",
       "reading": "ぜに",
-      "meaning": "money; coins; small change"
+      "meaning": "money; coins; small change",
+      "type": "standalone-noun"
     },
     {
       "kanji": "蜥蜴",
       "reading": "とかげ",
-      "meaning": "lizard"
+      "meaning": "lizard",
+      "type": "standalone-noun"
     },
     {
       "kanji": "毒",
       "reading": "どく",
-      "meaning": "poison; toxicity"
+      "meaning": "poison; toxicity",
+      "type": "standalone-noun"
     },
     {
       "kanji": "炎",
       "reading": "ほのお",
-      "meaning": "flame; blaze"
+      "meaning": "flame; blaze",
+      "type": "standalone-noun"
     },
     {
       "kanji": "水",
       "reading": "みず",
-      "meaning": "water"
+      "meaning": "water",
+      "type": "standalone-noun"
     },
     {
       "kanji": "亀",
       "reading": "かめ",
-      "meaning": "turtle; tortoise"
+      "meaning": "turtle; tortoise",
+      "type": "standalone-noun"
     },
     {
       "kanji": "甲羅",
       "reading": "こうら",
-      "meaning": "shell; carapace"
+      "meaning": "shell; carapace",
+      "type": "standalone-noun"
     },
     {
       "kanji": "砲",
       "reading": "ほう",
-      "meaning": "cannon; artillery gun"
+      "meaning": "cannon; artillery gun",
+      "type": "standalone-noun"
     },
     {
       "kanji": "虫",
       "reading": "むし",
-      "meaning": "insect; bug; worm"
+      "meaning": "insect; bug; worm",
+      "type": "standalone-noun"
     },
     {
       "kanji": "電気",
       "reading": "でんき",
-      "meaning": "electricity; electric power"
+      "meaning": "electricity; electric power",
+      "type": "standalone-noun"
     },
     {
       "kanji": "雷",
       "reading": "かみなり",
-      "meaning": "thunder; lightning"
+      "meaning": "thunder; lightning",
+      "type": "standalone-noun"
     }
   ]
 }

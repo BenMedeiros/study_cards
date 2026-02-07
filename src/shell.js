@@ -915,9 +915,9 @@ export function createAppShell({ store, onNavigate }) {
       // only include Kanji when active collection category is japanese
       ...(activeCategory.toLowerCase() === 'japanese' ? [{ href: '#/kanji', label: 'Kanji Study' }] : []),
       ...(String(activeCategory || '').toLowerCase().startsWith('japanese.grammar') ? [{ href: '#/grammar', label: 'Grammar Study' }] : []),
-      { href: '#/explorer', label: 'Explorer' },
       { href: '#/data', label: 'Data' },
       { href: '#/collections', label: 'Collections' },
+      { href: '#/explorer', label: 'Explorer' },
     ];
 
     const currentPath = getCurrentRoute().pathname;

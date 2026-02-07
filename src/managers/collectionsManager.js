@@ -832,18 +832,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       const fm = (await loadInheritedFolderMetadata(folderPath, metadataCache, folderMetadataMap)) || { fields: [], category: folderPath.split('/')[0] || '' };
       data = mergeMetadata(data, fm);
 
-      if (data && data.defaults && Array.isArray(data.entries)) {
-        const defs = data.defaults;
-        data.entries = data.entries.map((entry) => {
-          if (!entry || typeof entry !== 'object') return entry;
-          const merged = { ...entry };
-          for (const [k, v] of Object.entries(defs)) {
-            if (typeof merged[k] === 'undefined') merged[k] = v;
-          }
-          return merged;
-        });
-      }
-
       data.metadata = data.metadata || {};
       if (!data.metadata.name) {
         data.metadata.name = titleFromFilename(basename(key));

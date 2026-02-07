@@ -4,142 +4,189 @@
     "description": "Grouped entries for type='na-adjective' — total 26.",
     "version": 3
   },
-  "defaults": {
-    "type": "na-adjective",
-    "orthography": "kanji"
-  },
   "entries": [
     {
       "kanji": "綺麗",
       "reading": "きれい",
       "meaning": "pretty; beautiful; clean",
-      "orthography": "both"
+      "orthography": "both",
+      "type": "na-adjective"
     },
     {
       "kanji": "無駄",
       "reading": "むだ",
       "meaning": "waste; useless; pointless",
-      "lexicalClass": "regular"
+      "lexicalClass": "regular",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "清潔",
       "reading": "せいけつ",
-      "meaning": "clean; sanitary"
+      "meaning": "clean; sanitary",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "平気",
       "reading": "へいき",
-      "meaning": "calm; composed; alright"
+      "meaning": "calm; composed; alright",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "不思議",
       "reading": "ふしぎ",
-      "meaning": "mysterious; strange; wonder"
+      "meaning": "mysterious; strange; wonder",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "通常",
       "reading": "つうじょう",
-      "meaning": "usual; ordinary; normal state"
+      "meaning": "usual; ordinary; normal state",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "大丈夫",
       "reading": "だいじょうぶ",
-      "meaning": "okay; all right; safe"
+      "meaning": "okay; all right; safe",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "便利",
       "reading": "べんり",
-      "meaning": "convenient; useful"
+      "meaning": "convenient; useful",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "重要",
       "reading": "じゅうよう",
-      "meaning": "important"
+      "meaning": "important",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "有名",
       "reading": "ゆうめい",
-      "meaning": "famous; well-known"
+      "meaning": "famous; well-known",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "元気",
       "reading": "げんき",
-      "meaning": "healthy; energetic; fine"
+      "meaning": "healthy; energetic; fine",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "静か",
       "reading": "しずか",
-      "meaning": "quiet"
+      "meaning": "quiet",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "安全",
       "reading": "あんぜん",
-      "meaning": "safe; secure"
+      "meaning": "safe; secure",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "危険",
       "reading": "きけん",
-      "meaning": "dangerous; risky"
+      "meaning": "dangerous; risky",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "必要",
       "reading": "ひつよう",
-      "meaning": "necessary; needed"
+      "meaning": "necessary; needed",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "簡単",
       "reading": "かんたん",
-      "meaning": "easy; simple"
+      "meaning": "easy; simple",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "大切",
       "reading": "たいせつ",
-      "meaning": "important; valuable; precious"
+      "meaning": "important; valuable; precious",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "特別",
       "reading": "とくべつ",
-      "meaning": "special"
+      "meaning": "special",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "真面目",
       "reading": "まじめ",
-      "meaning": "serious; diligent"
+      "meaning": "serious; diligent",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "自由",
       "reading": "じゆう",
-      "meaning": "free; freedom"
+      "meaning": "free; freedom",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "上手",
       "reading": "じょうず",
-      "meaning": "good at; skillful"
+      "meaning": "good at; skillful",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "下手",
       "reading": "へた",
-      "meaning": "bad at; unskillful"
+      "meaning": "bad at; unskillful",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "親切",
       "reading": "しんせつ",
-      "meaning": "kind; helpful"
+      "meaning": "kind; helpful",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "賑やか",
       "reading": "にぎやか",
-      "meaning": "lively; bustling"
+      "meaning": "lively; bustling",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "不便",
       "reading": "ふべん",
-      "meaning": "inconvenient"
+      "meaning": "inconvenient",
+      "type": "na-adjective",
+      "orthography": "kanji"
     },
     {
       "kanji": "大変",
       "reading": "たいへん",
-      "meaning": "tough; hard; serious; very (adverbial use also common)"
+      "meaning": "tough; hard; serious; very (adverbial use also common)",
+      "type": "na-adjective",
+      "orthography": "kanji"
     }
   ]
 }

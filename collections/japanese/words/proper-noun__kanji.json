@@ -4,402 +4,708 @@
     "description": "Grouped entries for type='proper-noun' and orthography='kanji' — total 78.",
     "version": 2
   },
-  "defaults": {
-    "lexicalClass": "regular",
-    "orthography": "kanji",
-    "type": "proper-noun",
-    "properNounType": "place"
-  },
   "entries": [
     {
       "kanji": "京都",
       "reading": "きょうと",
-      "meaning": "Kyoto"
+      "meaning": "Kyoto",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "東京駅",
       "reading": "とうきょうえき",
-      "meaning": "Tokyo Station"
+      "meaning": "Tokyo Station",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "北海道",
       "reading": "ほっかいどう",
-      "meaning": "Hokkaido"
+      "meaning": "Hokkaido",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "青森県",
       "reading": "あおもりけん",
-      "meaning": "Aomori Prefecture"
+      "meaning": "Aomori Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "岩手県",
       "reading": "いわてけん",
-      "meaning": "Iwate Prefecture"
+      "meaning": "Iwate Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "宮城県",
       "reading": "みやぎけん",
-      "meaning": "Miyagi Prefecture"
+      "meaning": "Miyagi Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "秋田県",
       "reading": "あきたけん",
-      "meaning": "Akita Prefecture"
+      "meaning": "Akita Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "山形県",
       "reading": "やまがたけん",
-      "meaning": "Yamagata Prefecture"
+      "meaning": "Yamagata Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "福島県",
       "reading": "ふくしまけん",
-      "meaning": "Fukushima Prefecture"
+      "meaning": "Fukushima Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "茨城県",
       "reading": "いばらきけん",
-      "meaning": "Ibaraki Prefecture"
+      "meaning": "Ibaraki Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "栃木県",
       "reading": "とちぎけん",
-      "meaning": "Tochigi Prefecture"
+      "meaning": "Tochigi Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "群馬県",
       "reading": "ぐんまけん",
-      "meaning": "Gunma Prefecture"
+      "meaning": "Gunma Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "埼玉県",
       "reading": "さいたまけん",
-      "meaning": "Saitama Prefecture"
+      "meaning": "Saitama Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "千葉県",
       "reading": "ちばけん",
-      "meaning": "Chiba Prefecture"
+      "meaning": "Chiba Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "東京都",
       "reading": "とうきょうと",
-      "meaning": "Tokyo Metropolis"
+      "meaning": "Tokyo Metropolis",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "神奈川県",
       "reading": "かながわけん",
-      "meaning": "Kanagawa Prefecture"
+      "meaning": "Kanagawa Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "新潟県",
       "reading": "にいがたけん",
-      "meaning": "Niigata Prefecture"
+      "meaning": "Niigata Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "富山県",
       "reading": "とやまけん",
-      "meaning": "Toyama Prefecture"
+      "meaning": "Toyama Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "石川県",
       "reading": "いしかわけん",
-      "meaning": "Ishikawa Prefecture"
+      "meaning": "Ishikawa Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "福井県",
       "reading": "ふくいけん",
-      "meaning": "Fukui Prefecture"
+      "meaning": "Fukui Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "山梨県",
       "reading": "やまなしけん",
-      "meaning": "Yamanashi Prefecture"
+      "meaning": "Yamanashi Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "長野県",
       "reading": "ながのけん",
-      "meaning": "Nagano Prefecture"
+      "meaning": "Nagano Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "岐阜県",
       "reading": "ぎふけん",
-      "meaning": "Gifu Prefecture"
+      "meaning": "Gifu Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "静岡県",
       "reading": "しずおかけん",
-      "meaning": "Shizuoka Prefecture"
+      "meaning": "Shizuoka Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "愛知県",
       "reading": "あいちけん",
-      "meaning": "Aichi Prefecture"
+      "meaning": "Aichi Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "三重県",
       "reading": "みえけん",
-      "meaning": "Mie Prefecture"
+      "meaning": "Mie Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "滋賀県",
       "reading": "しがけん",
-      "meaning": "Shiga Prefecture"
+      "meaning": "Shiga Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "京都府",
       "reading": "きょうとふ",
-      "meaning": "Kyoto Prefecture"
+      "meaning": "Kyoto Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "大阪府",
       "reading": "おおさかふ",
-      "meaning": "Osaka Prefecture"
+      "meaning": "Osaka Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "兵庫県",
       "reading": "ひょうごけん",
-      "meaning": "Hyogo Prefecture"
+      "meaning": "Hyogo Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "奈良県",
       "reading": "ならけん",
-      "meaning": "Nara Prefecture"
+      "meaning": "Nara Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "和歌山県",
       "reading": "わかやまけん",
-      "meaning": "Wakayama Prefecture"
+      "meaning": "Wakayama Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "鳥取県",
       "reading": "とっとりけん",
-      "meaning": "Tottori Prefecture"
+      "meaning": "Tottori Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "島根県",
       "reading": "しまねけん",
-      "meaning": "Shimane Prefecture"
+      "meaning": "Shimane Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "岡山県",
       "reading": "おかやまけん",
-      "meaning": "Okayama Prefecture"
+      "meaning": "Okayama Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "広島県",
       "reading": "ひろしまけん",
-      "meaning": "Hiroshima Prefecture"
+      "meaning": "Hiroshima Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "山口県",
       "reading": "やまぐちけん",
-      "meaning": "Yamaguchi Prefecture"
+      "meaning": "Yamaguchi Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "徳島県",
       "reading": "とくしまけん",
-      "meaning": "Tokushima Prefecture"
+      "meaning": "Tokushima Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "香川県",
       "reading": "かがわけん",
-      "meaning": "Kagawa Prefecture"
+      "meaning": "Kagawa Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "愛媛県",
       "reading": "えひめけん",
-      "meaning": "Ehime Prefecture"
+      "meaning": "Ehime Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "高知県",
       "reading": "こうちけん",
-      "meaning": "Kochi Prefecture"
+      "meaning": "Kochi Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "福岡県",
       "reading": "ふくおかけん",
-      "meaning": "Fukuoka Prefecture"
+      "meaning": "Fukuoka Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "佐賀県",
       "reading": "さがけん",
-      "meaning": "Saga Prefecture"
+      "meaning": "Saga Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "長崎県",
       "reading": "ながさきけん",
-      "meaning": "Nagasaki Prefecture"
+      "meaning": "Nagasaki Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "熊本県",
       "reading": "くまもとけん",
-      "meaning": "Kumamoto Prefecture"
+      "meaning": "Kumamoto Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "大分県",
       "reading": "おおいたけん",
-      "meaning": "Oita Prefecture"
+      "meaning": "Oita Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "宮崎県",
       "reading": "みやざきけん",
-      "meaning": "Miyazaki Prefecture"
+      "meaning": "Miyazaki Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "鹿児島県",
       "reading": "かごしまけん",
-      "meaning": "Kagoshima Prefecture"
+      "meaning": "Kagoshima Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "沖縄県",
       "reading": "おきなわけん",
-      "meaning": "Okinawa Prefecture"
+      "meaning": "Okinawa Prefecture",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "札幌市",
       "reading": "さっぽろし",
-      "meaning": "Sapporo City"
+      "meaning": "Sapporo City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "仙台市",
       "reading": "せんだいし",
-      "meaning": "Sendai City"
+      "meaning": "Sendai City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "さいたま市",
       "reading": "さいたまし",
-      "meaning": "Saitama City"
+      "meaning": "Saitama City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "千葉市",
       "reading": "ちばし",
-      "meaning": "Chiba City"
+      "meaning": "Chiba City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "横浜市",
       "reading": "よこはまし",
-      "meaning": "Yokohama City"
+      "meaning": "Yokohama City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "川崎市",
       "reading": "かわさきし",
-      "meaning": "Kawasaki City"
+      "meaning": "Kawasaki City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "名古屋市",
       "reading": "なごやし",
-      "meaning": "Nagoya City"
+      "meaning": "Nagoya City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "京都市",
       "reading": "きょうとし",
-      "meaning": "Kyoto City"
+      "meaning": "Kyoto City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "大阪市",
       "reading": "おおさかし",
-      "meaning": "Osaka City"
+      "meaning": "Osaka City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "神戸市",
       "reading": "こうべし",
-      "meaning": "Kobe City"
+      "meaning": "Kobe City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "広島市",
       "reading": "ひろしまし",
-      "meaning": "Hiroshima City"
+      "meaning": "Hiroshima City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "福岡市",
       "reading": "ふくおかし",
-      "meaning": "Fukuoka City"
+      "meaning": "Fukuoka City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "那覇市",
       "reading": "なはし",
-      "meaning": "Naha City"
+      "meaning": "Naha City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "箱根町",
       "reading": "はこねまち",
-      "meaning": "Hakone Town"
+      "meaning": "Hakone Town",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "軽井沢町",
       "reading": "かるいざわまち",
-      "meaning": "Karuizawa Town"
+      "meaning": "Karuizawa Town",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "白川郷",
       "reading": "しらかわごう",
-      "meaning": "Shirakawa-go"
+      "meaning": "Shirakawa-go",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "鎌倉市",
       "reading": "かまくらし",
-      "meaning": "Kamakura City"
+      "meaning": "Kamakura City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "日光市",
       "reading": "にっこうし",
-      "meaning": "Nikko City"
+      "meaning": "Nikko City",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "東京駅",
       "reading": "とうきょうえき",
-      "meaning": "Tokyo Station"
+      "meaning": "Tokyo Station",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "新宿駅",
       "reading": "しんじゅくえき",
-      "meaning": "Shinjuku Station"
+      "meaning": "Shinjuku Station",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "渋谷駅",
       "reading": "しぶやえき",
-      "meaning": "Shibuya Station"
+      "meaning": "Shibuya Station",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "品川駅",
       "reading": "しながわえき",
-      "meaning": "Shinagawa Station"
+      "meaning": "Shinagawa Station",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "横浜駅",
       "reading": "よこはまえき",
-      "meaning": "Yokohama Station"
+      "meaning": "Yokohama Station",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "名古屋駅",
       "reading": "なごやえき",
-      "meaning": "Nagoya Station"
+      "meaning": "Nagoya Station",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "京都駅",
       "reading": "きょうとえき",
-      "meaning": "Kyoto Station"
+      "meaning": "Kyoto Station",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "大阪駅",
       "reading": "おおさかえき",
-      "meaning": "Osaka Station"
+      "meaning": "Osaka Station",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "博多駅",
       "reading": "はかたえき",
-      "meaning": "Hakata Station"
+      "meaning": "Hakata Station",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "京都",
       "reading": "きょうと",
-      "meaning": "Kyoto"
+      "meaning": "Kyoto",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     },
     {
       "kanji": "東京駅",
       "reading": "とうきょうえき",
-      "meaning": "Tokyo Station"
+      "meaning": "Tokyo Station",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "type": "proper-noun",
+      "properNounType": "place"
     }
   ]
 }

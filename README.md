@@ -32,7 +32,7 @@ Collections and metadata
 
 Collections tooling
 - Rebuild index: `node scripts/rebuild_index.js` regenerates `collections/index.json`.
-- Extraction: `node scripts/extract_defaults_japanese.js` extracts common entry fields into `defaults` for Japanese files.
+- Flatten legacy per-file defaults: `node scripts/flatten_collection_defaults.js --write` expands `defaults` / `root.defaults` into entries and removes the defaults objects.
 - Vocab aggregate: `node scripts/extract_japanese_vocab.js` writes `scripts/extract_japanese_vocab_output.json`.
 
 Note: older `_collections/scripts/*` utilities (aggregate/restore/validate) are no longer present after the scripts folder was moved to the repo root.

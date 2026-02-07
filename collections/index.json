@@ -19,6 +19,12 @@
       "entries": 24
     },
     {
+      "path": "japanese/_collectionSets.json",
+      "name": "_collectionSets",
+      "description": null,
+      "entries": null
+    },
+    {
       "path": "japanese/examples/counter_culture_set_01.json",
       "name": "Counter + Culture Set 01",
       "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",

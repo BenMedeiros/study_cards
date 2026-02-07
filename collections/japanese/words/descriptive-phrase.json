@@ -4,82 +4,118 @@
     "description": "Grouped entries for type='descriptive-phrase' — total 14.",
     "version": 5
   },
-  "defaults": {
-    "lexicalClass": "regular",
-    "type": "descriptive-phrase",
-    "orthography": "kanji"
-  },
   "entries": [
     {
       "kanji": "一ページ",
       "reading": "いちページ",
       "meaning": "one page",
-      "orthography": "both"
+      "orthography": "both",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase"
     },
     {
       "kanji": "単独の漢字",
       "reading": "たんどくのかんじ",
-      "meaning": "standalone kanji; a kanji used alone, not in a compound or with okurigana"
+      "meaning": "standalone kanji; a kanji used alone, not in a compound or with okurigana",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "一時間",
       "reading": "いちじかん",
-      "meaning": "one hour"
+      "meaning": "one hour",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "九時",
       "reading": "くじ",
-      "meaning": "nine o'clock"
+      "meaning": "nine o'clock",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "五秒",
       "reading": "ごびょう",
-      "meaning": "five seconds"
+      "meaning": "five seconds",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "三回",
       "reading": "さんかい",
-      "meaning": "three times"
+      "meaning": "three times",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "三時間",
       "reading": "さんじかん",
-      "meaning": "three hours"
+      "meaning": "three hours",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "三日",
       "reading": "みっか",
-      "meaning": "three days; the third day of the month"
+      "meaning": "three days; the third day of the month",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "三枚",
       "reading": "さんまい",
-      "meaning": "three (flat objects; e.g., sheets, plates)"
+      "meaning": "three (flat objects; e.g., sheets, plates)",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "二個",
       "reading": "にこ",
-      "meaning": "two (items) (counter: 個)"
+      "meaning": "two (items) (counter: 個)",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "二人",
       "reading": "ふたり",
-      "meaning": "two people"
+      "meaning": "two people",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "二点",
       "reading": "にてん",
-      "meaning": "two points; two items"
+      "meaning": "two points; two items",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "二分",
       "reading": "にふん",
-      "meaning": "two minutes"
+      "meaning": "two minutes",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     },
     {
       "kanji": "二本",
       "reading": "にほん",
-      "meaning": "two (long cylindrical things; e.g., bottles, pencils)"
+      "meaning": "two (long cylindrical things; e.g., bottles, pencils)",
+      "lexicalClass": "regular",
+      "type": "descriptive-phrase",
+      "orthography": "kanji"
     }
   ]
 }

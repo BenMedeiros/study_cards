@@ -4,115 +4,153 @@
     "description": "Grouped entries for type='numeral' — total 21.",
     "version": 1
   },
-  "defaults": {
-    "type": "numeral",
-    "orthography": "kanji"
-  },
   "entries": [
     {
       "kanji": "壱",
       "reading": "いち",
-      "meaning": "one (formal/financial numeral; used in documents)"
+      "meaning": "one (formal/financial numeral; used in documents)",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "弐",
       "reading": "に",
-      "meaning": "two (formal/financial numeral; used in documents)"
+      "meaning": "two (formal/financial numeral; used in documents)",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "参",
       "reading": "さん",
-      "meaning": "three (formal/financial numeral; used in documents)"
+      "meaning": "three (formal/financial numeral; used in documents)",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "拾",
       "reading": "じゅう",
-      "meaning": "ten (formal/financial numeral; used in documents)"
+      "meaning": "ten (formal/financial numeral; used in documents)",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "阡",
       "reading": "せん",
-      "meaning": "one thousand (formal/old variant used in documents)"
+      "meaning": "one thousand (formal/old variant used in documents)",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "萬",
       "reading": "まん",
-      "meaning": "ten thousand (old/traditional form of 万)"
+      "meaning": "ten thousand (old/traditional form of 万)",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "零",
       "reading": "れい",
-      "meaning": "zero"
+      "meaning": "zero",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "一",
       "reading": "いち",
-      "meaning": "one"
+      "meaning": "one",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "二",
       "reading": "に",
-      "meaning": "two"
+      "meaning": "two",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "三",
       "reading": "さん",
-      "meaning": "three"
+      "meaning": "three",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "四",
       "reading": "よん",
-      "meaning": "four"
+      "meaning": "four",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "五",
       "reading": "ご",
-      "meaning": "five"
+      "meaning": "five",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "六",
       "reading": "ろく",
-      "meaning": "six"
+      "meaning": "six",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "七",
       "reading": "なな",
-      "meaning": "seven"
+      "meaning": "seven",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "八",
       "reading": "はち",
-      "meaning": "eight"
+      "meaning": "eight",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "九",
       "reading": "きゅう",
-      "meaning": "nine"
+      "meaning": "nine",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "十",
       "reading": "じゅう",
-      "meaning": "ten"
+      "meaning": "ten",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "百",
       "reading": "ひゃく",
-      "meaning": "hundred"
+      "meaning": "hundred",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "千",
       "reading": "せん",
-      "meaning": "thousand"
+      "meaning": "thousand",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "万",
       "reading": "まん",
-      "meaning": "ten thousand"
+      "meaning": "ten thousand",
+      "type": "numeral",
+      "orthography": "kanji"
     },
     {
       "kanji": "億",
       "reading": "おく",
-      "meaning": "hundred million"
+      "meaning": "hundred million",
+      "type": "numeral",
+      "orthography": "kanji"
     }
   ]
 }

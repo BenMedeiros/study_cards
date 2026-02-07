@@ -4,23 +4,24 @@
     "description": "Mixed orthography group for type='godan-verb' — total 2 (kanji: 1, both: 1).",
     "version": 2
   },
-  "defaults": {
-    "lexicalClass": "regular",
-    "type": "godan-verb",
-    "verbType": "simple"
-  },
   "entries": [
     {
       "kanji": "入る",
       "reading": "はいる",
       "meaning": "to enter; to go in; to come in",
-      "orthography": "kanji"
+      "orthography": "kanji",
+      "lexicalClass": "regular",
+      "type": "godan-verb",
+      "verbType": "simple"
     },
     {
       "kanji": "分かる",
       "reading": "わかる",
       "meaning": "to understand; to know",
-      "orthography": "both"
+      "orthography": "both",
+      "lexicalClass": "regular",
+      "type": "godan-verb",
+      "verbType": "simple"
     }
   ]
 }

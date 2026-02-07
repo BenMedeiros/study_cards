@@ -20,9 +20,9 @@ function buildEnumMap(meta) {
   return { enumMap, conditionalFields: meta.conditionalFields || [] };
 }
 
-function evaluateWhen(when, entry, defaults) {
+function evaluateWhen(when, entry) {
   if (!when || !when.field) return false;
-  const v = entry.hasOwnProperty(when.field) ? entry[when.field] : (defaults ? defaults[when.field] : undefined);
+  const v = entry && Object.prototype.hasOwnProperty.call(entry, when.field) ? entry[when.field] : undefined;
   if (when.in && Array.isArray(when.in)) return when.in.includes(v);
   return false;
 }
@@ -50,38 +50,18 @@ async function validateWordsDir() {
   const files = await fs.readdir(wordsDir, { withFileTypes: true });
   const jsonFiles = files.filter(f => f.isFile() && f.name.endsWith('.json') && f.name !== '_metadata.json').map(f => path.join(wordsDir, f.name));
 
-  let scanned = 0, updated = 0, enumIssues = 0, removedDefaults = 0, removedConditional = 0;
-  let liftedTotal = 0;
-  const liftedDetails = [];
+  let scanned = 0, updated = 0, enumIssues = 0, removedConditional = 0;
 
   for (const fp of jsonFiles) {
     scanned++;
     let data;
     try { data = await readJson(fp); } catch (e) { console.log(`[skip] ${path.relative(process.cwd(), fp)} — read error: ${e.message}`); continue; }
-
-      // determine where defaults live so we can update them when we lift common values
-      let defaultsObj = null;
-      let defaultsLocation = null; // 'defaults' or 'root.defaults'
-      if (data.defaults) { defaultsObj = data.defaults; defaultsLocation = 'defaults'; }
-      else if (data.root && data.root.defaults) { defaultsObj = data.root.defaults; defaultsLocation = 'root.defaults'; }
-      else { defaultsObj = {}; defaultsLocation = 'defaults'; }
-      const defaults = defaultsObj;
     const shape = findEntriesShape(data);
     if (!shape.entries) { console.log(`[skip] ${path.relative(process.cwd(), fp)} — no entries array found`); continue; }
 
     let changed = false;
 
     for (const ent of shape.entries) {
-      // remove fields equal to defaults
-      for (const k of Object.keys(defaults)) {
-        if (ent.hasOwnProperty(k) && String(ent[k]) === String(defaults[k])) {
-          delete ent[k];
-          removedDefaults++;
-          changed = true;
-          console.log(`[clean] removed defaulted field '${k}' from ${path.relative(process.cwd(), fp)}`);
-        }
-      }
-
       // validate enums
       for (const [key, allowed] of enumMap.entries()) {
         if (ent.hasOwnProperty(key) && !allowed.has(String(ent[key]))) {
@@ -92,7 +72,7 @@ async function validateWordsDir() {
 
       // enforce conditional fields
       for (const cond of conditionalFields) {
-        const ok = evaluateWhen(cond.when, ent, defaults);
+        const ok = evaluateWhen(cond.when, ent);
         for (const f of cond.fields || []) {
           if (!ok && ent.hasOwnProperty(f.key)) {
             delete ent[f.key];
@@ -102,53 +82,6 @@ async function validateWordsDir() {
           }
         }
       }
-    }
-
-    // Lift common fields to defaults: if every entry has the same primitive value for a key
-    // Track candidate keys with value set and occurrence count
-    const candidateKeys = new Map();
-    const totalEntries = shape.entries.length;
-    for (const ent of shape.entries) {
-      for (const k of Object.keys(ent)) {
-        const v = ent[k];
-        if (v === undefined || v === null) continue;
-        if (typeof v === 'object') continue;
-        if (k === 'kanji' || k === 'reading' || k === 'meaning') continue;
-        if (!candidateKeys.has(k)) candidateKeys.set(k, { values: new Set(), count: 0 });
-        const rec = candidateKeys.get(k);
-        rec.values.add(String(v));
-        rec.count += 1;
-      }
-    }
-
-    const liftedKeys = [];
-    for (const [k, { values, count }] of candidateKeys.entries()) {
-      // Only lift when every entry has the key present (count === totalEntries)
-      if (count === totalEntries && values.size === 1) {
-        const val = Array.from(values)[0];
-        if (!defaults.hasOwnProperty(k)) {
-          // promote to defaults
-          if (defaultsLocation === 'defaults') data.defaults = data.defaults || {}, data.defaults[k] = val;
-          else if (defaultsLocation === 'root.defaults') data.root = data.root || {}, data.root.defaults = data.root.defaults || {}, data.root.defaults[k] = val;
-          else data.defaults = data.defaults || {}, data.defaults[k] = val;
-
-          // remove from entries
-          for (const ent of shape.entries) {
-            if (ent.hasOwnProperty(k)) delete ent[k];
-          }
-          liftedKeys.push({ key: k, value: val });
-          changed = true;
-          console.log(`[lift] promoted common field '${k}'='${val}' to defaults in ${path.relative(process.cwd(), fp)}`);
-        }
-      } else if (values.size === 1 && count < totalEntries) {
-        // skip lifting because not all entries had the key
-        console.log(`[lift-skip] key '${k}' has same value='${Array.from(values)[0]}' but present in ${count}/${totalEntries} entries; not lifted for ${path.relative(process.cwd(), fp)}`);
-      }
-    }
-    if (liftedKeys.length) {
-      liftedTotal += liftedKeys.length;
-      liftedDetails.push({ file: path.relative(process.cwd(), fp), keys: liftedKeys });
-      console.log(`[lift] promoted ${liftedKeys.length} field(s) in ${path.relative(process.cwd(), fp)}`);
     }
 
     if (changed) {
@@ -178,16 +111,7 @@ async function validateWordsDir() {
   console.log(`  scanned: ${scanned}`);
   console.log(`  updated: ${updated}`);
   console.log(`  enum issues: ${enumIssues}`);
-  console.log(`  removed defaulted fields: ${removedDefaults}`);
   console.log(`  removed conditional fields: ${removedConditional}`);
-  console.log(`  lifted default: ${liftedTotal}`);
-  if (liftedDetails.length) {
-    console.log('\nLifted defaults:');
-    for (const d of liftedDetails) {
-      const parts = d.keys.map(kv => `${kv.key}='${kv.value}'`).join(', ');
-      console.log(`  ${d.file}: ${parts}`);
-    }
-  }
 }
 
 if (require.main === module) {

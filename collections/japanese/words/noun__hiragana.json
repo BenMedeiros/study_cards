@@ -4,43 +4,51 @@
     "description": "Grouped entries for type='noun' and orthography='hiragana' — total 6.",
     "version": 3
   },
-  "defaults": {
-    "type": "noun",
-    "orthography": "hiragana"
-  },
   "entries": [
     {
       "kanji": "事",
       "reading": "こと",
       "meaning": "thing; matter; (nominalizer) the act/fact of ...",
-      "lexicalClass": "regular"
+      "lexicalClass": "regular",
+      "type": "noun",
+      "orthography": "hiragana"
     },
     {
       "kanji": "林檎",
       "reading": "りんご",
       "meaning": "apple",
-      "lexicalClass": "regular"
+      "lexicalClass": "regular",
+      "type": "noun",
+      "orthography": "hiragana"
     },
     {
       "kanji": "林檎",
       "reading": "りんご",
       "meaning": "apple",
-      "lexicalClass": "regular"
+      "lexicalClass": "regular",
+      "type": "noun",
+      "orthography": "hiragana"
     },
     {
       "kanji": "おすすめ",
       "reading": "おすすめ",
-      "meaning": "recommendation; suggested (content)"
+      "meaning": "recommendation; suggested (content)",
+      "type": "noun",
+      "orthography": "hiragana"
     },
     {
       "kanji": "もんじゃ",
       "reading": "もんじゃ",
-      "meaning": "monjayaki (Tokyo-style griddle dish)"
+      "meaning": "monjayaki (Tokyo-style griddle dish)",
+      "type": "noun",
+      "orthography": "hiragana"
     },
     {
       "kanji": "かばん",
       "reading": "かばん",
-      "meaning": "bag"
+      "meaning": "bag",
+      "type": "noun",
+      "orthography": "hiragana"
     }
   ]
 }
