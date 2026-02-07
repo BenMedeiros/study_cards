@@ -1,8 +1,43 @@
 {
   "metadata": {
     "name": "Pokémon Starters (Kanto)",
-    "description": "First-generation Kanto starter Pokémon and first 26 Pokémon. Type kanji use the official Japanese main-series game terminology; verified against Bulbapedia and Pokémon Database.",
-    "version": 2
+    "description": "First-generation Kanto starter Pokémon and first 151 Pokémon. Type kanji use the official Japanese main-series game terminology; verified against Bulbapedia and Pokémon Database.",
+    "version": 2,
+    "category": "pokemon",
+    "source": "Official Japanese main-series game text (Game Freak / Nintendo); verified against Bulbapedia and Pokémon Database",
+    "schema": [
+      {
+        "key": "englishName",
+        "label": "English Name",
+        "jp_label": "英語名",
+        "type": "string"
+      },
+      {
+        "key": "japaneseName",
+        "label": "Japanese Name",
+        "jp_label": "日本語名",
+        "type": "string"
+      },
+      {
+        "key": "pokedexNumber",
+        "label": "Pokedex #",
+        "jp_label": "図鑑番号",
+        "type": "number"
+      },
+      {
+        "key": "type",
+        "label": "Type",
+        "jp_label": "タイプ",
+        "type": "string[]"
+      },
+      {
+        "key": "japaneseNameRoots",
+        "label": "Japanese Name Roots",
+        "jp_label": "名前ルーツ",
+        "type": "string[]",
+        "description": "Canonical roots (single kanji or katakana tokens) that compose the Japanese name; used for filtering/grouping. Use katakana when the root derives from a loanword (e.g. リザード)."
+      }
+    ]
   },
   "entries": [
     {

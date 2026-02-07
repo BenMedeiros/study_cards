@@ -266,7 +266,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       const out = [];
       for (const k of Object.keys(metadataCache || {})) {
         const v = metadataCache[k];
-        out.push({ folder: k, hasValue: v != null, fieldsCount: Array.isArray(v?.fields) ? v.fields.length : null });
+        const fmFields = Array.isArray(v?.fields) ? v.fields : (Array.isArray(v?.schema) ? v.schema : null);
+        out.push({ folder: k, hasValue: v != null, fieldsCount: fmFields ? fmFields.length : null });
         if (out.length >= limit) break;
       }
       return out;
@@ -712,7 +713,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
 
     const fm = (await loadInheritedFolderMetadata(folder, metadataCache, folderMetadataMap)) || null;
-    const fields = Array.isArray(fm?.fields) ? fm.fields : null;
+    const fields = Array.isArray(fm?.fields) ? fm.fields : (Array.isArray(fm?.schema) ? fm.schema : null);
 
     record.entries = resolved;
     record.metadata = record.metadata || {};
@@ -872,21 +873,25 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   }
 
   function mergeMetadata(collection, categoryMetadata) {
-    const fields = Array.isArray(categoryMetadata?.fields) ? categoryMetadata.fields : [];
-    const collectionFields = collection.metadata?.fields || [];
+    const categoryFields = Array.isArray(categoryMetadata?.fields) ? categoryMetadata.fields : (Array.isArray(categoryMetadata?.schema) ? categoryMetadata.schema : []);
+    const collectionFields = Array.isArray(collection.metadata?.fields) ? collection.metadata.fields : (Array.isArray(collection.metadata?.schema) ? collection.metadata.schema : []);
     const collectionFieldKeys = new Set(collectionFields.map(f => f.key));
 
     const mergedFields = [
-      ...fields.filter(f => !collectionFieldKeys.has(f.key)),
+      ...categoryFields.filter(f => !collectionFieldKeys.has(f.key)),
       ...collectionFields
     ];
+
+    const category = categoryMetadata?.category || categoryMetadata?.language || (categoryMetadata?.metadata && categoryMetadata.metadata.category) || null;
 
     return {
       ...collection,
       metadata: {
         ...collection.metadata,
+        // keep `fields` for backwards compatibility, but also expose `schema`
         fields: mergedFields,
-        category: categoryMetadata?.category || categoryMetadata?.language
+        schema: mergedFields,
+        category: category
       }
     };
   }

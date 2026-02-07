@@ -1,0 +1,216 @@
+{
+  "metadata": {
+    "name": "Language History",
+    "description": "Combined language history entries",
+    "version": 2,
+    "category": "languageHistory",
+    "schema": [
+      {
+        "key": "language",
+        "label": "Language",
+        "jp_label": "言語",
+        "type": "string"
+      },
+      {
+        "key": "stage",
+        "label": "Stage / Period",
+        "jp_label": "時代 / 期間",
+        "type": "string"
+      },
+      {
+        "key": "dates",
+        "label": "Approximate Dates",
+        "jp_label": "おおよその年代",
+        "type": "string"
+      },
+      {
+        "key": "usage",
+        "label": "Usage / Context",
+        "jp_label": "使用状況 / 文脈",
+        "type": "string"
+      },
+      {
+        "key": "orthography",
+        "label": "Alphabet / Orthography",
+        "jp_label": "文字体系 / 正書法",
+        "type": "string"
+      },
+      {
+        "key": "pronunciation",
+        "label": "Pronunciation / Phonology",
+        "jp_label": "発音 / 音声学",
+        "type": "string"
+      },
+      {
+        "key": "grammar",
+        "label": "Grammar / Morphology",
+        "jp_label": "文法 / 形態論",
+        "type": "string"
+      },
+      {
+        "key": "notableTexts",
+        "label": "Notable Texts / Literature",
+        "jp_label": "代表的な文献",
+        "type": "string"
+      },
+      {
+        "key": "phoneticExample",
+        "label": "Sample Text / Phonetic",
+        "jp_label": "例文 / 発音例",
+        "type": "string"
+      },
+      {
+        "key": "notes",
+        "label": "Notes / Remarks",
+        "jp_label": "備考",
+        "type": "string"
+      }
+    ]
+  },
+  "entries": [
+    {
+      "language": "English",
+      "stage": "Old English (Anglo-Saxon)",
+      "dates": "5th–11th century CE",
+      "usage": "Anglo-Saxon chronicles, poetry, legal documents",
+      "orthography": "Runes (futhorc) then Latin alphabet; letters like þ, ð, æ",
+      "pronunciation": "Highly inflected; vowel length distinctive; consonant clusters complex",
+      "grammar": "Strong vs weak verbs; case system; three genders; dual pronouns",
+      "notableTexts": "Beowulf, Anglo-Saxon Chronicle, Caedmon's Hymn",
+      "phoneticExample": "Hwæt! We Gardena in geardagum… / hwæt we ˈɡɑrdɛna in ˈjɛɑrdaɣum…",
+      "notes": "Germanic language heavily inflected; limited Latin/French influence before Norman Conquest."
+    },
+    {
+      "language": "English",
+      "stage": "Middle English",
+      "dates": "11th–15th century CE",
+      "usage": "Literature, legal, administrative documents; oral speech",
+      "orthography": "Latin alphabet; inconsistent spelling; French influence",
+      "pronunciation": "Vowel shifts begin (Middle English Vowels); consonants simplify",
+      "grammar": "Loss of most inflections; case system simplified; gender mostly lost",
+      "notableTexts": "Chaucer's Canterbury Tales, Pearl, Sir Gawain and the Green Knight",
+      "phoneticExample": "Whan that Aprille with his shoures soote… / wan θat aˈprilːe wið hɪs ˈʃuːres ˈsoːtə…",
+      "notes": "French influence dominant after Norman Conquest; regional dialects varied."
+    },
+    {
+      "language": "English",
+      "stage": "Early Modern English",
+      "dates": "15th–17th century CE",
+      "usage": "Printing press literature, official documents, poetry, drama",
+      "orthography": "Latin alphabet standardized gradually; spelling varies",
+      "pronunciation": "Great Vowel Shift ongoing; consonants largely modern",
+      "grammar": "Verb endings simplify; auxiliary verbs more common; word order stabilizes",
+      "notableTexts": "Shakespeare, King James Bible, Spenser's Faerie Queene",
+      "phoneticExample": "To be, or not to be: that is the question… / tə bi, ɔːr nɒt tə bi: ðæt ɪz ðə ˈkwɛstʃən…",
+      "notes": "Transition to modern spelling and grammar; increased literacy and standardization."
+    },
+    {
+      "language": "English",
+      "stage": "Modern English",
+      "dates": "17th century CE–present",
+      "usage": "All domains: spoken, literary, scientific, official",
+      "orthography": "Latin alphabet; standardized spelling; diacritics rare",
+      "pronunciation": "Contemporary English; regional variation; stress-timed",
+      "grammar": "Analytic language; word order fixed; auxiliary verbs for tense/aspect",
+      "notableTexts": "Contemporary literature, newspapers, academic writing",
+      "phoneticExample": "Hello, how are you? / həˈloʊ haʊ ɑr ju?",
+      "notes": "Global spread; standard British and American forms; English as international lingua franca."
+    },
+    {
+      "language": "Greek",
+      "stage": "Ancient/Classical",
+      "dates": "9th–4th century BCE",
+      "usage": "Literature, philosophy, drama, historical texts",
+      "orthography": "24 letters; pitch accent; diacritics: acute, grave, circumflex, rough/smooth breathing",
+      "pronunciation": "β = /b/, γ = /g/, δ = /d/, θ = /tʰ/, φ = /pʰ/, χ = /kʰ/; long vs short vowels mattered",
+      "grammar": "Complex morphology; optative mood; dual number; multiple tenses",
+      "notableTexts": "Homer, Plato, Sophocles",
+      "phoneticExample": "Ὅμηρος: ἄνδρα μοι ἔννεπε, Μοῦσα… / ˈhomɛːros ˈandra moi ˈennepe, ˈmusa…",
+      "notes": "Classical Greek forms the basis of most later Greek scholarship and literature."
+    },
+    {
+      "language": "Greek",
+      "stage": "Koine",
+      "dates": "4th century BCE–4th century CE",
+      "usage": "Common spoken and written Greek; biblical texts; Hellenistic literature",
+      "orthography": "24 letters; diacritics simplified over time",
+      "pronunciation": "Shift toward stress accent; β → /v/ begins; γ softening",
+      "grammar": "Simplified morphology; optative less common; dative merges with genitive",
+      "notableTexts": "Septuagint, New Testament, early Hellenistic poetry",
+      "phoneticExample": "Ἐν ἀρχῇ ἦν ὁ λόγος / en arˈkʰɛː ɛːn ho ˈloɡos",
+      "notes": "Lingua franca of the eastern Mediterranean after Alexander the Great."
+    },
+    {
+      "language": "Greek",
+      "stage": "Medieval / Byzantine",
+      "dates": "5th–15th century CE",
+      "usage": "Liturgy, administration, literature",
+      "orthography": "Diacritics largely abandoned; monotonic writing emerges later",
+      "pronunciation": "Stress accent; β = /v/, γ = /ɣ/, δ = /ð/; vowels simplified",
+      "grammar": "Further morphological simplification",
+      "notableTexts": "Byzantine chronicles, liturgical texts",
+      "phoneticExample": "Κωνσταντῖνος ἐποίησεν… / konsˈtan.tinos eˈpoisen…",
+      "notes": "Transition period bridging Koine and Modern Greek; strong liturgical influence."
+    },
+    {
+      "language": "Greek",
+      "stage": "Modern",
+      "dates": "15th century CE–present",
+      "usage": "Spoken language, modern literature, official Greek",
+      "orthography": "24 letters; monotonic system with tonos (´); sigma has final form ς",
+      "pronunciation": "Stress accent; η, ι, υ, ει, οι → /i/; consonants: φ = /f/, θ = /θ/, χ = /x/, γ = /ɣ/",
+      "grammar": "Simplified morphology; modern tense and mood system",
+      "notableTexts": "Modern novels, newspapers, official documents",
+      "phoneticExample": "Καλημέρα! / ka.liˈme.ra!",
+      "notes": "Standard Modern Greek based on Demotic, official since 1976."
+    },
+    {
+      "language": "Japanese",
+      "stage": "Old Japanese (上代日本語)",
+      "dates": "8th century CE and earlier",
+      "usage": "Poetry (Manyoshu), inscriptions, early chronicles",
+      "orthography": "Man’yōgana (Chinese characters used phonetically)",
+      "pronunciation": "Eight-vowel system, pitch accent system",
+      "grammar": "Complex verb endings, case particles, honorific forms in nascent form",
+      "notableTexts": "Kojiki, Nihon Shoki, Manyoshu",
+      "phoneticExample": "天皇の命 / Ama-no-kami no mikoto / ama no kami no mikoto",
+      "notes": "Earliest attested form of Japanese; influenced by Chinese in writing."
+    },
+    {
+      "language": "Japanese",
+      "stage": "Classical Japanese (中古日本語)",
+      "dates": "9th–12th century CE",
+      "usage": "Court literature, poetry, official documents",
+      "orthography": "Kanji + kana; kana syllabary emerges",
+      "pronunciation": "Eight-vowel system reduces; pitch accent develops",
+      "grammar": "Refined verb conjugations; keigo (polite forms) develop; auxiliary verbs stabilize",
+      "notableTexts": "Genji Monogatari, Heike Monogatari",
+      "phoneticExample": "いづれの御時にか / izure no on toki ni ka / idzure no on toki ni ka",
+      "notes": "Language of Heian court literature; literary style differs from spoken language."
+    },
+    {
+      "language": "Japanese",
+      "stage": "Early Modern Japanese (近世日本語)",
+      "dates": "17th–19th century CE",
+      "usage": "Literature, official documents, oral speech",
+      "orthography": "Modern kana orthography begins; kanji usage expands",
+      "pronunciation": "Seven-vowel system; pitch accent begins approximating modern forms",
+      "grammar": "Verb endings simplified; honorifics system standardized",
+      "notableTexts": "Oku no Hosomichi, Kabuki plays",
+      "phoneticExample": "奥の細道 / Oku no Hosomichi / oku no hosomichi",
+      "notes": "Transition toward modern language; Edo-period vernacular emerges."
+    },
+    {
+      "language": "Japanese",
+      "stage": "Modern Japanese (現代日本語)",
+      "dates": "19th century CE–present",
+      "usage": "Spoken and written language, literature, media, official",
+      "orthography": "Modern kanji, hiragana, katakana; romanization used academically",
+      "pronunciation": "Modern pitch accent; standard Tokyo dialect phonology",
+      "grammar": "Simplified morphology; modern verb and adjective conjugation; keigo system standardized",
+      "notableTexts": "Modern novels, newspapers, official documents",
+      "phoneticExample": "こんにちは / konnichiwa / kon.ni.tɕi.wa",
+      "notes": "Contemporary Japanese; official standard based on Tokyo dialect; spoken and written converge."
+    }
+  ]
+}
