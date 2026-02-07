@@ -1603,3 +1603,102 @@ select:hover {
 :focus {
   outline: none;
 }
+
+/* Grammar study card */
+#grammar-study-root .grammar-card {
+  width: min(54rem, 100%);
+  margin: 0 auto;
+  /* Override the generic .card fixed max-height (better for grammar blocks) */
+  max-height: calc(100vh - 13.5rem);
+}
+
+#grammar-study-root .grammar-card-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+#grammar-study-root .grammar-card-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+#grammar-study-root .grammar-card-meaning {
+  font-size: 1.1rem;
+  margin-bottom: 0.6rem;
+}
+
+#grammar-study-root .grammar-card-example-jp {
+  font-size: 1.15rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+#grammar-study-root .grammar-card-example-en {
+  opacity: 0.9;
+  margin-bottom: 0.75rem;
+}
+
+#grammar-study-root .grammar-card-notes {
+  margin-top: 0.5rem;
+}
+
+#grammar-study-root .grammar-card-notes-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+#grammar-study-root .grammar-card-notes ul {
+  margin: 0.25rem 0 0 1.1rem;
+}
+
+#grammar-study-root .grammar-card-speaker-row {
+  margin-top: 0.75rem;
+}
+
+/* Entity Explorer */
+#entity-explorer-root .entity-explorer-content {
+  padding: 0.5rem;
+}
+
+#entity-explorer-root .entity-explorer-controls-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+#entity-explorer-root .table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#entity-explorer-root .table th,
+#entity-explorer-root .table td {
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.45rem;
+  vertical-align: top;
+}
+
+#entity-explorer-root .mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+#entity-explorer-root .wrap {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#entity-explorer-root .json-view {
+  max-width: 70rem;
+  margin: 0.5rem auto;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--panel);
+  overflow: auto;
+}

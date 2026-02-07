@@ -51,12 +51,9 @@ export function renderData({ store }) {
     },
     onClearLearned: () => {
       try {
-        const coll = store?.collections?.getActiveCollection?.();
-        const actions = createCollectionActions(store);
-        actions.clearLearnedForCollection(coll?.key);
-      } catch (e) {
-        // ignore
-      }
+        const adapter = getProgressAdapter();
+        adapter.clearLearned();
+      } catch (e) {}
     }
   });
 
@@ -126,15 +123,57 @@ export function renderData({ store }) {
     return '';
   }
 
+  function getEntryGrammarKey(entry) {
+    if (!entry || typeof entry !== 'object') return '';
+    const v = entry.pattern;
+    return (typeof v === 'string') ? v.trim() : '';
+  }
+
+  function getProgressAdapter() {
+    const coll = (store?.collections && typeof store.collections.getActiveCollection === 'function')
+      ? store.collections.getActiveCollection()
+      : active;
+
+    const category = String(coll?.metadata?.category || '').trim();
+    const isGrammar = category === 'japanese.grammar' || category.endsWith('.grammar') || category.includes('.grammar.');
+
+    if (isGrammar && store?.grammarProgress) {
+      return {
+        kind: 'grammar',
+        getKey: (entry) => getEntryGrammarKey(entry),
+        isLearned: (key) => !!(key && typeof store?.grammarProgress?.isGrammarLearned === 'function' && store.grammarProgress.isGrammarLearned(key)),
+        isFocus: (key) => !!(key && typeof store?.grammarProgress?.isGrammarFocus === 'function' && store.grammarProgress.isGrammarFocus(key)),
+        clearLearned: () => {
+          try {
+            if (typeof store?.grammarProgress?.clearLearnedGrammar === 'function') store.grammarProgress.clearLearnedGrammar();
+          } catch (e) {}
+        },
+      };
+    }
+
+    return {
+      kind: 'kanji',
+      getKey: (entry) => getEntryKanjiValue(entry),
+      isLearned: (key) => !!(key && typeof store?.kanjiProgress?.isKanjiLearned === 'function' && store.kanjiProgress.isKanjiLearned(key)),
+      isFocus: (key) => !!(key && typeof store?.kanjiProgress?.isKanjiFocus === 'function' && store.kanjiProgress.isKanjiFocus(key)),
+      clearLearned: () => {
+        try {
+          const coll = store?.collections?.getActiveCollection?.();
+          const actions = createCollectionActions(store);
+          actions.clearLearnedForCollection(coll?.key);
+        } catch (e) {
+          // ignore
+        }
+      },
+    };
+  }
+
   function passesFilters(entry) {
-    const v = getEntryKanjiValue(entry);
-    if (!v) return true;
-    if (skipLearned && typeof store?.kanjiProgress?.isKanjiLearned === 'function') {
-      if (store.kanjiProgress.isKanjiLearned(v)) return false;
-    }
-    if (focusOnly && typeof store?.kanjiProgress?.isKanjiFocus === 'function') {
-      if (!store.kanjiProgress.isKanjiFocus(v)) return false;
-    }
+    const adapter = getProgressAdapter();
+    const key = adapter.getKey(entry);
+    if (!key) return true;
+    if (skipLearned && adapter.isLearned(key)) return false;
+    if (focusOnly && !adapter.isFocus(key)) return false;
     return true;
   }
 
@@ -187,12 +226,12 @@ export function renderData({ store }) {
       const isShuffled = !!saved.isShuffled;
       if (headerBtns && headerBtns.clearShuffleBtn) headerBtns.clearShuffleBtn.disabled = !isShuffled;
       // clearLearned disabled if no learned items in this collection
+      const adapter = getProgressAdapter();
       let hasLearned = false;
-      if (typeof store?.kanjiProgress?.isKanjiLearned === 'function') {
-        const entries = Array.isArray(coll.entries) ? coll.entries : [];
-        for (const e of entries) {
-          if (store.kanjiProgress.isKanjiLearned(getEntryKanjiValue(e))) { hasLearned = true; break; }
-        }
+      const entries = Array.isArray(coll.entries) ? coll.entries : [];
+      for (const e of entries) {
+        const key = adapter.getKey(e);
+        if (key && adapter.isLearned(key)) { hasLearned = true; break; }
       }
       if (headerBtns && headerBtns.clearLearnedBtn) headerBtns.clearLearnedBtn.disabled = !hasLearned;
       // no study subset controls remain; nothing to do here
@@ -225,10 +264,12 @@ export function renderData({ store }) {
     rowToOriginalIndex = visibleIdxs.slice();
     const visibleEntries = visibleIdxs.map(i => allEntries[i]);
 
+    const adapter = getProgressAdapter();
+
     const rows = visibleEntries.map(entry => {
-      const v = getEntryKanjiValue(entry);
-      const learned = (v && typeof store?.kanjiProgress?.isKanjiLearned === 'function') ? store.kanjiProgress.isKanjiLearned(v) : false;
-      const focus = (v && typeof store?.kanjiProgress?.isKanjiFocus === 'function') ? store.kanjiProgress.isKanjiFocus(v) : false;
+      const key = adapter.getKey(entry);
+      const learned = adapter.isLearned(key);
+      const focus = adapter.isFocus(key);
 
       const icon = document.createElement('span');
       icon.className = 'kanji-status-icon';
@@ -271,6 +312,8 @@ export function renderData({ store }) {
     if (!coll) return;
     // Only update learned/focus icons; study subset highlighting removed.
 
+    const adapter = getProgressAdapter();
+
     const wrapperEl = tableMount;
     const tbl = wrapperEl.querySelector('table');
     if (!tbl) return;
@@ -281,9 +324,9 @@ export function renderData({ store }) {
       try {
         const originalIndex = rowToOriginalIndex[rowIndex];
         const entry = (typeof originalIndex === 'number') ? allEntries[originalIndex] : null;
-        const v = getEntryKanjiValue(entry);
-        const learned = (v && typeof store?.kanjiProgress?.isKanjiLearned === 'function') ? store.kanjiProgress.isKanjiLearned(v) : false;
-        const focus = (v && typeof store?.kanjiProgress?.isKanjiFocus === 'function') ? store.kanjiProgress.isKanjiFocus(v) : false;
+        const key = adapter.getKey(entry);
+        const learned = adapter.isLearned(key);
+        const focus = adapter.isFocus(key);
 
         const firstCell = tr.querySelector('td');
         const icon = firstCell ? firstCell.querySelector('.kanji-status-icon') : null;

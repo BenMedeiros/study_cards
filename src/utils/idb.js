@@ -23,7 +23,7 @@ export function isIndexedDBAvailable() {
   }
 }
 
-export function openStudyDb({ dbName = 'study_cards', version = 2 } = {}) {
+export function openStudyDb({ dbName = 'study_cards', version = 3 } = {}) {
   if (dbPromise) return dbPromise;
 
   dbPromise = new Promise((resolve, reject) => {
@@ -47,6 +47,9 @@ export function openStudyDb({ dbName = 'study_cards', version = 2 } = {}) {
       }
       if (!db.objectStoreNames.contains('kanji_progress')) {
         db.createObjectStore('kanji_progress', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('grammar_progress')) {
+        db.createObjectStore('grammar_progress', { keyPath: 'id' });
       }
       if (!db.objectStoreNames.contains('study_time_sessions')) {
         // keyPath startIso asserted unique by app
@@ -144,6 +147,7 @@ export async function idbDumpAll() {
   const kv = await idbGetAll('kv').catch(() => null);
   const collections = await idbGetAll('collection_settings').catch(() => null);
   const kanji = await idbGetAll('kanji_progress').catch(() => null);
+  const grammar = await idbGetAll('grammar_progress').catch(() => null);
   const sessions = await idbGetAll('study_time_sessions').catch(() => null);
-  return { kv, collections, kanji_progress: kanji, study_time_sessions: sessions };
+  return { kv, collections, kanji_progress: kanji, grammar_progress: grammar, study_time_sessions: sessions };
 }

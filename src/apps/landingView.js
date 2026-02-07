@@ -6,6 +6,8 @@ const APP_META = {
   flashcards: { label: 'Flashcards', path: '/flashcards' },
   'qa-cards': { label: 'QA Cards', path: '/qa-cards' },
   kanji: { label: 'Kanji Study', path: '/kanji' },
+  grammar: { label: 'Grammar Study', path: '/grammar' },
+  explorer: { label: 'Explorer', path: '/explorer' },
   data: { label: 'Data', path: '/data' },
   collections: { label: 'Collections', path: '/collections' },
 };

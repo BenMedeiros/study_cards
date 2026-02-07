@@ -6,6 +6,8 @@ import { parseHashRoute } from './utils/helpers.js';
 import { renderData } from './apps/dataView.js';
 import { renderPlaceholderTool } from './apps/placeholderView.js';
 import { renderKanjiStudyCard } from './apps/kanjiStudyCardView.js';
+import { renderGrammarStudyCard } from './apps/grammarStudyCardView.js';
+import { renderEntityExplorer } from './apps/entityExplorerView.js';
 import { createCollectionBrowserDropdown } from './components/collectionBrowser.js';
 import { speak } from './utils/speech.js';
 import { createDropdown } from './components/dropdown.js';
@@ -391,6 +393,7 @@ export function createAppShell({ store, onNavigate }) {
     if (p === '/flashcards') return 'flashcards';
     if (p === '/qa-cards') return 'qa-cards';
     if (p === '/kanji') return 'kanji';
+    if (p === '/explorer') return 'explorer';
     if (p === '/data') return 'data';
     if (p === '/collections') return 'collections';
     return null;
@@ -911,6 +914,8 @@ export function createAppShell({ store, onNavigate }) {
       { href: '#/qa-cards', label: 'QA Cards' },
       // only include Kanji when active collection category is japanese
       ...(activeCategory.toLowerCase() === 'japanese' ? [{ href: '#/kanji', label: 'Kanji Study' }] : []),
+      ...(String(activeCategory || '').toLowerCase().startsWith('japanese.grammar') ? [{ href: '#/grammar', label: 'Grammar Study' }] : []),
+      { href: '#/explorer', label: 'Explorer' },
       { href: '#/data', label: 'Data' },
       { href: '#/collections', label: 'Collections' },
     ];
@@ -970,6 +975,23 @@ export function createAppShell({ store, onNavigate }) {
       }
 
       main.append(renderKanjiStudyCard({ store }));
+      return;
+    }
+
+
+    if (route.pathname === '/grammar') {
+      const active = store.collections.getActiveCollection();
+      const category = String(active?.metadata?.category || '');
+      if (!category.toLowerCase().startsWith('japanese.grammar')) {
+        onNavigate('/');
+        return;
+      }
+      main.append(renderGrammarStudyCard({ store }));
+      return;
+    }
+
+    if (route.pathname === '/explorer') {
+      main.append(renderEntityExplorer({ store }));
       return;
     }
 

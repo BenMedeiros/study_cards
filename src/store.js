@@ -3,6 +3,7 @@ import { createPersistenceManager } from './managers/persistenceManager.js';
 import { createShellStateManager } from './managers/shellStateManager.js';
 import { createAppStateManager } from './managers/appStateManager.js';
 import { createProgressManager } from './managers/progressManager.js';
+import { createGrammarProgressManager } from './managers/grammarProgressManager.js';
 import { createStudyTimeManager } from './managers/studyTimeManager.js';
 import { createCollectionsManager } from './managers/collectionsManager.js';
 
@@ -14,6 +15,7 @@ export function createStore() {
     collections: {},
     kv: {
       kanji_progress: {},
+      grammar_progress: {},
       study_time: null,
     },
   };
@@ -28,9 +30,10 @@ export function createStore() {
   };
 
   const emitter = createEmitter();
-  const persistence = createPersistenceManager({ uiState, emitter, kanjiProgressKey: 'kanji_progress', studyTimeKey: 'study_time' });
+  const persistence = createPersistenceManager({ uiState, emitter, kanjiProgressKey: 'kanji_progress', grammarProgressKey: 'grammar_progress', studyTimeKey: 'study_time' });
 
   const kanjiProgress = createProgressManager({ uiState, persistence, emitter, kanjiProgressKey: 'kanji_progress' });
+  const grammarProgress = createGrammarProgressManager({ uiState, persistence, emitter, grammarProgressKey: 'grammar_progress' });
   const studyTime = createStudyTimeManager({ uiState, persistence, emitter, studyTimeKey: 'study_time' });
   const shell = createShellStateManager({ uiState, persistence, emitter });
   const apps = createAppStateManager({ uiState, persistence, emitter });
@@ -46,6 +49,7 @@ export function createStore() {
 
       // Ensure expected kv shapes exist.
       kanjiProgress.ensureKanjiProgressMap();
+      grammarProgress.ensureGrammarProgressMap();
       studyTime.ensureStudyTimeRecord();
 
       const paths = await collections.loadSeedCollections();
@@ -123,6 +127,17 @@ export function createStore() {
       recordKanjiSeenInKanjiStudyCard: kanjiProgress.recordKanjiSeenInKanjiStudyCard,
       addTimeMsStudiedInKanjiStudyCard: kanjiProgress.addTimeMsStudiedInKanjiStudyCard,
       getFocusKanjiValues: kanjiProgress.getFocusKanjiValues,
+    },
+
+    grammarProgress: {
+      isGrammarLearned: grammarProgress.isGrammarLearned,
+      isGrammarFocus: grammarProgress.isGrammarFocus,
+      toggleGrammarLearned: grammarProgress.toggleGrammarLearned,
+      toggleGrammarFocus: grammarProgress.toggleGrammarFocus,
+      clearLearnedGrammar: grammarProgress.clearLearnedGrammar,
+      getGrammarProgressRecord: grammarProgress.getGrammarProgressRecord,
+      recordGrammarSeenInGrammarStudyCard: grammarProgress.recordGrammarSeenInGrammarStudyCard,
+      addTimeMsStudiedInGrammarStudyCard: grammarProgress.addTimeMsStudiedInGrammarStudyCard,
     },
     studyTime: {
       recordAppCollectionStudySession: studyTime.recordAppCollectionStudySession,
