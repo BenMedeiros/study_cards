@@ -1,5 +1,5 @@
 import { nowMs } from '../utils/helpers.js';
-import { getCollectionView } from '../utils/collectionManagement.js';
+import { getCollectionView, entryMatchesTableSearch } from '../utils/collectionManagement.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
 
 import { createViewFooterControls } from '../components/viewFooterControls.js';
@@ -50,6 +50,18 @@ export function renderFlashcards({ store }) {
       : null;
     const view = getCollectionView(active?.entries, collState, { windowSize: 10 });
     let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
+
+    // Apply persisted held table-search filter (Data view "Hold Filter").
+    try {
+      const held = String(collState?.heldTableSearch || '').trim();
+      const hold = !!collState?.holdTableSearch && !!held;
+      if (hold) {
+        const fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : null;
+        nextEntries = nextEntries.filter(e => entryMatchesTableSearch(e, { query: held, fields }));
+      }
+    } catch (e) {
+      // ignore
+    }
 
     // Apply optional per-collection filters using global learned/focus lists.
     let skipLearned = false;

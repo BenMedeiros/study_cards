@@ -47,6 +47,21 @@ export function createCollectionActions(store) {
     return true;
   }
 
+  function setHeldTableSearch(collKey, { hold = false, query = '' } = {}) {
+    const coll = _getCollectionByKey(collKey) || (typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : null);
+    if (!coll) return false;
+    const q = String(query || '').trim();
+    const enabled = !!hold;
+    if (typeof store?.collections?.saveCollectionState === 'function') {
+      store.collections.saveCollectionState(coll.key, {
+        holdTableSearch: enabled,
+        heldTableSearch: q,
+        currentIndex: 0,
+      });
+    }
+    return true;
+  }
+
   function clearLearnedForCollection(collKey) {
     const coll = _getCollectionByKey(collKey) || (typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : null);
     if (!coll) return false;
@@ -77,6 +92,7 @@ export function createCollectionActions(store) {
     shuffleCollection,
     clearCollectionShuffle,
     setStudyFilter,
+    setHeldTableSearch,
     clearLearnedForCollection,
   };
 }

@@ -450,7 +450,14 @@ export function createTable({ headers, rows, className = '', id, collection, sor
         });
       }
       sortAndRender();
+      try {
+        const has = String(q || '').trim().length > 0;
+        clearBtn.disabled = !has;
+      } catch (e) {}
     }
+
+    // Initial state
+    try { clearBtn.disabled = !(String(searchInput.value || '').trim().length > 0); } catch (e) {}
 
     searchInput.addEventListener('input', () => applyFilter(searchInput.value));
     clearBtn.addEventListener('click', () => { searchInput.value = ''; applyFilter(''); searchInput.focus(); });

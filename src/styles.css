@@ -1215,6 +1215,70 @@ input[type="number"].button::-webkit-inner-spin-button {
   background: rgba(96, 165, 250, 0.08);
 }
 
+/* Hold Filter switch (Data view) */
+.table-hold-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.35rem;
+  border-radius: 0.5rem;
+  user-select: none;
+  cursor: pointer;
+}
+
+.table-hold-filter-text {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.table-hold-filter-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.table-hold-filter-ui {
+  position: relative;
+  width: 2.35rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.10);
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.table-hold-filter-ui::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0.12rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  transform: translateY(-50%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  transition: transform 140ms ease;
+}
+
+.table-hold-filter-input:checked + .table-hold-filter-ui {
+  background: rgba(34, 197, 94, 0.55);
+  border-color: rgba(34, 197, 94, 0.65);
+}
+
+.table-hold-filter-input:checked + .table-hold-filter-ui::after {
+  transform: translate(1.20rem, -50%);
+}
+
+.table-hold-filter-input:focus-visible + .table-hold-filter-ui {
+  outline: 2px solid rgba(96, 165, 250, 0.28);
+  outline-offset: 2px;
+}
+
 /* Highlight rows that are in the current study subset */
 .table tbody tr.in-study td {
   background: rgba(96, 165, 250, 0.06);

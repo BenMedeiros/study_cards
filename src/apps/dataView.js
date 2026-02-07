@@ -3,6 +3,7 @@ import { card } from '../components/ui.js';
 import { el } from '../components/ui.js';
 import { createViewHeaderTools, createStudyFilterToggle } from '../components/viewHeaderTools.js';
 import { createCollectionActions } from '../utils/collectionActions.js';
+import { entryMatchesTableSearch } from '../utils/collectionManagement.js';
 
 export function renderData({ store }) {
   const root = document.createElement('div');
@@ -11,6 +12,10 @@ export function renderData({ store }) {
 
   let skipLearned = false;
   let focusOnly = false;
+
+  // Persisted per-collection table search filter ("Hold Filter")
+  let holdTableSearch = false;
+  let heldTableSearch = '';
 
   function parseStudyFilter(value) {
     const raw = String(value || '').trim();
@@ -96,6 +101,10 @@ export function renderData({ store }) {
       skipLearned = !!saved?.skipLearned;
       focusOnly = !!saved?.focusOnly;
     }
+
+    const held = String(saved?.heldTableSearch || '').trim();
+    holdTableSearch = !!saved?.holdTableSearch;
+    heldTableSearch = held;
   } catch (e) {
     // ignore
   }
@@ -171,9 +180,18 @@ export function renderData({ store }) {
   function passesFilters(entry) {
     const adapter = getProgressAdapter();
     const key = adapter.getKey(entry);
-    if (!key) return true;
-    if (skipLearned && adapter.isLearned(key)) return false;
-    if (focusOnly && !adapter.isFocus(key)) return false;
+    if (key) {
+      if (skipLearned && adapter.isLearned(key)) return false;
+      if (focusOnly && !adapter.isFocus(key)) return false;
+    }
+
+    if (holdTableSearch && heldTableSearch) {
+      try {
+        if (!entryMatchesTableSearch(entry, { query: heldTableSearch, fields })) return false;
+      } catch (e) {
+        // ignore
+      }
+    }
     return true;
   }
 
@@ -187,6 +205,13 @@ export function renderData({ store }) {
     if (!coll) return;
     const actions = createCollectionActions(store);
     actions.setStudyFilter(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
+  }
+
+  function persistHeldTableSearch({ hold, query }) {
+    const coll = store.collections.getActiveCollection();
+    if (!coll) return;
+    const actions = createCollectionActions(store);
+    actions.setHeldTableSearch(coll.key, { hold: !!hold, query: String(query || '') });
   }
 
   // pruneStudyIndicesToFilters removed — studyIndices/studyStart no longer used.
@@ -266,7 +291,8 @@ export function renderData({ store }) {
 
     const adapter = getProgressAdapter();
 
-    const rows = visibleEntries.map(entry => {
+    const rows = visibleEntries.map((entry, i) => {
+      const originalIndex = visibleIdxs[i];
       const key = adapter.getKey(entry);
       const learned = adapter.isLearned(key);
       const focus = adapter.isFocus(key);
@@ -286,12 +312,112 @@ export function renderData({ store }) {
         icon.title = '';
       }
 
-      return [icon, ...fields.map(f => entry[f.key] ?? '')];
+      const row = [icon, ...fields.map(f => entry[f.key] ?? '')];
+      // Stable identifier for this row so we can resolve the source entry
+      // even after the table component filters/sorts.
+      try { row.__id = String(originalIndex); } catch (e) {}
+      return row;
     });
 
     const tbl = createTable({ headers, rows, id: 'data-table', sortable: true, searchable: true });
     tableMount.innerHTML = '';
     tableMount.append(tbl);
+
+    // Insert Hold Filter switch next to Copy JSON.
+    try {
+      const wrapper = tableMount.querySelector('.table-wrapper');
+      const searchWrap = wrapper ? wrapper.querySelector('.table-search') : null;
+      const searchInput = searchWrap ? searchWrap.querySelector('.table-search-input') : null;
+      const clearBtn = searchWrap ? searchWrap.querySelector('.table-search-clear') : null;
+      const copyBtn = searchWrap ? searchWrap.querySelector('.table-copy-json') : null;
+      if (searchWrap && searchInput && copyBtn) {
+        const holdLabel = document.createElement('label');
+        holdLabel.className = 'table-hold-filter';
+        const holdText = document.createElement('span');
+        holdText.className = 'table-hold-filter-text';
+        holdText.textContent = 'Hold Filter';
+
+        const holdInput = document.createElement('input');
+        holdInput.type = 'checkbox';
+        holdInput.className = 'table-hold-filter-input';
+        holdInput.setAttribute('role', 'switch');
+
+        const holdUi = document.createElement('span');
+        holdUi.className = 'table-hold-filter-ui';
+
+        holdLabel.append(holdText, holdInput, holdUi);
+        copyBtn.insertAdjacentElement('afterend', holdLabel);
+
+        const syncUI = () => {
+          holdInput.checked = !!holdTableSearch;
+          holdLabel.title = holdTableSearch
+            ? 'Hold Filter is On (saved for this collection)'
+            : 'Hold Filter is Off (not saved)';
+        };
+
+        // Initialize input from persisted held filter.
+        if (holdTableSearch && heldTableSearch) {
+          searchInput.value = heldTableSearch;
+          try { searchInput.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+        }
+
+        searchInput.addEventListener('input', () => {
+          // no-op; the switch is independent of input
+        });
+
+        // When held, persist on blur/change so we don't rerender while typing.
+        searchInput.addEventListener('change', () => {
+          if (!holdTableSearch) return;
+          const q = String(searchInput.value || '').trim();
+          heldTableSearch = q;
+          persistHeldTableSearch({ hold: true, query: q });
+          renderTable();
+          updateStudyLabel();
+          markStudyRows();
+        });
+
+        // The table's Clear button sets input.value programmatically and applies its
+        // own filter, but it does not trigger input/change events. If Hold Filter is
+        // on, we must also clear the persisted held query immediately.
+        if (clearBtn) {
+          clearBtn.addEventListener('click', () => {
+            if (!holdTableSearch) return;
+            // Defer so the table's handler runs first.
+            setTimeout(() => {
+              try {
+                const q = String(searchInput.value || '').trim();
+                heldTableSearch = q;
+                persistHeldTableSearch({ hold: true, query: q });
+              } catch (e) {}
+              renderTable();
+              updateStudyLabel();
+              markStudyRows();
+            }, 0);
+          });
+        }
+
+        holdInput.addEventListener('change', () => {
+          const next = !!holdInput.checked;
+          holdTableSearch = next;
+          const q = String(searchInput.value || '').trim();
+          if (next) {
+            heldTableSearch = q;
+            persistHeldTableSearch({ hold: true, query: q });
+          } else {
+            // keep the last held query persisted so turning it back on restores it
+            persistHeldTableSearch({ hold: false, query: heldTableSearch });
+          }
+          syncUI();
+          renderTable();
+          updateStudyLabel();
+          markStudyRows();
+        });
+
+        syncUI();
+      }
+    } catch (e) {
+      // ignore
+    }
 
     // Update corner caption if present. Use visible count (filtered) so it stays correct
     try {
@@ -322,7 +448,9 @@ export function renderData({ store }) {
     Array.from(tbody.querySelectorAll('tr')).forEach((tr, rowIndex) => {
       // Update learned/focus icon in the leftmost column.
       try {
-        const originalIndex = rowToOriginalIndex[rowIndex];
+        const rowId = tr?.dataset?.rowId;
+        const parsed = (rowId != null && rowId !== '' && !Number.isNaN(Number(rowId))) ? Number(rowId) : null;
+        const originalIndex = (typeof parsed === 'number') ? parsed : rowToOriginalIndex[rowIndex];
         const entry = (typeof originalIndex === 'number') ? allEntries[originalIndex] : null;
         const key = adapter.getKey(entry);
         const learned = adapter.isLearned(key);
@@ -372,6 +500,10 @@ export function renderData({ store }) {
             skipLearned = !!saved?.skipLearned;
             focusOnly = !!saved?.focusOnly;
           }
+
+          const held = String(saved?.heldTableSearch || '').trim();
+          holdTableSearch = !!saved?.holdTableSearch;
+          heldTableSearch = held;
         } catch (e) {
           // ignore
         }

@@ -2,7 +2,7 @@ import { nowMs } from '../utils/helpers.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
 import { createAutoplayControls } from '../components/autoplay.js';
 import { createSpeakerButton } from '../components/ui.js';
-import { getCollectionView } from '../utils/collectionManagement.js';
+import { getCollectionView, filterEntriesAndIndicesByTableSearch } from '../utils/collectionManagement.js';
 
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createViewFooterControls } from '../components/viewFooterControls.js';
@@ -485,6 +485,20 @@ export function renderKanjiStudyCard({ store }) {
       }
       nextEntries = filteredEntries;
       nextIndices = filteredIndices;
+    }
+
+    // Apply persisted held table-search filter (Data view "Hold Filter").
+    try {
+      const held = String(collState?.heldTableSearch || '').trim();
+      const hold = !!collState?.holdTableSearch && !!held;
+      if (hold) {
+        const fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : null;
+        const filtered = filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields });
+        nextEntries = filtered.entries;
+        nextIndices = filtered.indices;
+      }
+    } catch (e) {
+      // ignore
     }
 
     entries = nextEntries;
