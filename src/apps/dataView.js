@@ -77,10 +77,11 @@ export function renderData({ store }) {
 
     if (!selectedInOrder.length) return '—';
     if (selectedInOrder.length === allValues.length) return 'all';
-    if (selectedInOrder.length > 3) return `${selectedInOrder.length} selected`;
+    if (selectedInOrder.length >= 2) return `${selectedInOrder.length} selected`;
 
     const byValue = new Map(baseItems.map(it => [String(it?.value ?? ''), String(it?.right ?? it?.label ?? it?.value ?? '')]));
-    return selectedInOrder.map(v => byValue.get(v) || v).join('\n');
+    const v = selectedInOrder[0];
+    return byValue.get(v) || v;
   }
 
   function orderFormsByItems(values, items) {

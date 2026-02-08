@@ -1423,6 +1423,9 @@ select:hover {
 }
 
 .custom-dropdown-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   cursor: pointer;
   color: var(--text);
@@ -1438,6 +1441,7 @@ select:hover {
   justify-content: space-between;
   gap: 0.9rem;
   min-width: 0;
+  flex: 1 1 auto;
 }
 
 .custom-dropdown-option-left {
@@ -1498,8 +1502,9 @@ select:hover {
 }
 
 .custom-dropdown-option.selected::after {
-  content: ' ✓';
-  margin-left: 0.75rem;
+  content: '✓';
+  margin-left: auto;
+  flex: 0 0 auto;
 }
 
 /* Crossword and wordsearch app styles removed */
