@@ -1134,7 +1134,7 @@ input[type="number"].button::-webkit-inner-spin-button {
 
 .table td.col-meaning {
   text-wrap-mode: wrap;
-  min-width: 20rem;
+  min-width: 14rem;
   word-break: keep-all;
 }
 
@@ -1152,10 +1152,38 @@ input[type="number"].button::-webkit-inner-spin-button {
 
 .table thead {
   position: sticky;
-  top: 0;
+  top: var(--table-sticky-top, 0px);
   background: rgba(17, 24, 39, 0.95);
   backdrop-filter: blur(8px);
   box-shadow: 0 1px 0 var(--border);
+}
+
+/* Keep the table search controls visible while scrolling tables */
+.table-wrapper .table-search {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Virtualized table rendering (only used when many rows) */
+.table.is-virtualized tbody tr:not(.table-virtual-spacer-row) {
+  height: 36px;
+}
+
+.table.is-virtualized tbody td {
+  /* white-space: nowrap; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table-virtual-spacer-row td,
+.table-virtual-spacer-cell {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
 }
 
 .table th {
@@ -1196,6 +1224,10 @@ input[type="number"].button::-webkit-inner-spin-button {
   position: relative;
   margin-top: 15px;
   max-height: calc(100vh - 12rem);
+}
+
+#data-root .table-wrapper {
+  max-height: 25rem;
 }
 
 /* Search box for tables */
@@ -1266,17 +1298,6 @@ input[type="number"].button::-webkit-inner-spin-button {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 0.75rem;
 }
-
-details>summary {
-  cursor: pointer;
-  color: var(--text);
-}
-
-details {
-  margin-top: 0.625rem;
-}
-
-
 
 select {
   padding: 0.5rem 0.625rem;

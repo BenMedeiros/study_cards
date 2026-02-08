@@ -22,6 +22,11 @@ export function createDropdown({
   closeOverlaysOnOpen = true,
   getButtonLabel = null,
   renderOption = null,
+  // If true (multi-select only), defer onChange until the menu closes.
+  // This supports "apply on close" UX and avoids triggering expensive work on each click.
+  commitOnClose = false,
+  // Optional hook fired whenever the menu closes.
+  onClose = null,
 }) {
   const container = document.createElement('div');
   container.className = `custom-dropdown ${className}`;
@@ -47,11 +52,15 @@ export function createDropdown({
 
   const isOpen = () => container.classList.contains('open');
 
+  // Track whether we've committed changes for the current open/close cycle.
+  let didCommitThisOpen = false;
+
   function onCloseOverlaysEvent() {
     if (isOpen()) closeMenu({ focusButton: true });
   }
 
   function closeMenu({ focusButton = false } = {}) {
+    const wasOpen = isOpen();
     container.classList.remove('open');
     container.classList.remove('align-right');
     document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);
@@ -59,6 +68,22 @@ export function createDropdown({
     if (container._ddKeyHandler) {
       document.removeEventListener('keydown', container._ddKeyHandler);
       delete container._ddKeyHandler;
+    }
+    // For multi-select "apply on close", fire a single commit when the menu closes.
+    if (wasOpen && multi && commitOnClose && !didCommitThisOpen) {
+      didCommitThisOpen = true;
+      try {
+        if (typeof onChange === 'function') onChange(selectedValues.slice());
+      } catch (e) {}
+    }
+    // Always notify close hook after commit.
+    if (wasOpen && typeof onClose === 'function') {
+      try {
+        onClose({
+          value: (multi ? null : value),
+          values: (multi ? selectedValues.slice() : null),
+        });
+      } catch (e) {}
     }
     if (focusButton) button.focus();
   }
@@ -189,14 +214,14 @@ export function createDropdown({
           selectedValues = [];
           syncSelectedClasses();
           setButtonLabel();
-          if (onChange) onChange(selectedValues.slice());
+          if (!commitOnClose && onChange) onChange(selectedValues.slice());
           return;
         }
         if (action === 'all') {
           selectedValues = selectableValues();
           syncSelectedClasses();
           setButtonLabel();
-          if (onChange) onChange(selectedValues.slice());
+          if (!commitOnClose && onChange) onChange(selectedValues.slice());
           return;
         }
         if (action === 'toggleallnone') {
@@ -206,7 +231,7 @@ export function createDropdown({
           selectedValues = isAll ? [] : all;
           syncSelectedClasses();
           setButtonLabel();
-          if (onChange) onChange(selectedValues.slice());
+          if (!commitOnClose && onChange) onChange(selectedValues.slice());
           return;
         }
         return;
@@ -238,7 +263,7 @@ export function createDropdown({
       // Update selected state
       option.classList.toggle('selected', set.has(v));
       setButtonLabel();
-      if (onChange) onChange(selectedValues.slice());
+      if (!commitOnClose && onChange) onChange(selectedValues.slice());
     });
     
     menu.append(option);
@@ -268,6 +293,7 @@ export function createDropdown({
     // Toggle this dropdown
     if (!open) {
       container.classList.add('open');
+      didCommitThisOpen = false;
       document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
 
       // After opening, measure the menu and align to the right if it would overflow the viewport.

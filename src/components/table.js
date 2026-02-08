@@ -1,3 +1,33 @@
+let _tableGlobalResizeHookInstalled = false;
+
+function _installGlobalTableResizeHook() {
+  if (_tableGlobalResizeHookInstalled) return;
+  _tableGlobalResizeHookInstalled = true;
+  try {
+    let t = null;
+    window.addEventListener('resize', () => {
+      if (t) clearTimeout(t);
+      t = setTimeout(() => {
+        t = null;
+        try {
+          for (const wrapper of Array.from(document.querySelectorAll('.table-wrapper'))) {
+            const searchWrap = wrapper.querySelector('.table-search');
+            const top = searchWrap ? (searchWrap.offsetHeight || 0) : 0;
+            try { wrapper.style.setProperty('--table-sticky-top', `${top}px`); } catch (e) {}
+            try {
+              if (wrapper.querySelector('table.table.is-virtualized')) {
+                wrapper.dispatchEvent(new Event('scroll'));
+              }
+            } catch (e) {}
+          }
+        } catch (e) {}
+      }, 120);
+    });
+  } catch (e) {
+    // ignore
+  }
+}
+
 /**
  * Create a table component with headers and rows
  * @param {Object} options
@@ -9,9 +39,19 @@
  * @returns {HTMLTableElement}
  */
 export function createTable({ headers, rows, className = '', id, collection, sortable = false, searchable = false, rowActions = [], colGroups = [] } = {}) {
+  _installGlobalTableResizeHook();
+
   const wrapper = document.createElement('div');
   wrapper.className = 'table-wrapper';
   if (id) wrapper.id = `${id}-wrapper`;
+
+  const VIRTUALIZE_THRESHOLD = 50;
+  const VIRTUAL_ROW_HEIGHT_PX = 36;
+  const VIRTUAL_OVERSCAN = 10;
+  let searchWrapEl = null;
+  let displayRows = Array.isArray(rows) ? rows.slice() : [];
+  let _virtualScrollHandlerAttached = false;
+  let _lastVirtualKey = '';
   
   const table = document.createElement('table');
   table.className = `table ${className}`.trim();
@@ -154,94 +194,195 @@ export function createTable({ headers, rows, className = '', id, collection, sor
   // Keep original rows and a current filtered/sorted set
   const originalRows = Array.isArray(rows) ? rows.slice() : [];
   let currentRows = originalRows.slice();
+  displayRows = currentRows.slice();
+
+  function getStickyTopPx() {
+    try { return searchWrapEl ? (searchWrapEl.offsetHeight || 0) : 0; } catch (e) { return 0; }
+  }
+
+  function updateStickyOffsets() {
+    try {
+      const top = getStickyTopPx();
+      wrapper.style.setProperty('--table-sticky-top', `${top}px`);
+    } catch (e) {}
+  }
+
+  function shouldVirtualize(rowsArr) {
+    return Array.isArray(rowsArr) && rowsArr.length > VIRTUALIZE_THRESHOLD;
+  }
+
+  function getTotalColumnCount() {
+    return headerKeys.length + ((Array.isArray(rowActions) && rowActions.length) ? 1 : 0);
+  }
+
+  function getTableHeadHeightPx() {
+    try {
+      const r = thead.getBoundingClientRect();
+      return Math.max(0, Math.round(r.height || 0));
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  function createSpacerRow(heightPx) {
+    const tr = document.createElement('tr');
+    tr.dataset.kind = 'spacer';
+    tr.className = 'table-virtual-spacer-row';
+    const td = document.createElement('td');
+    td.colSpan = Math.max(1, getTotalColumnCount());
+    td.className = 'table-virtual-spacer-cell';
+    td.style.height = `${Math.max(0, Math.round(heightPx || 0))}px`;
+    td.style.padding = '0';
+    td.style.border = '0';
+    td.style.background = 'transparent';
+    tr.append(td);
+    return tr;
+  }
+
+  function applyCollapsedGroupCellState(td, colIndex, g) {
+    const gId = (g.id ?? g.label) || String((Number.isFinite(g.start) ? g.start : (g.startIndex ?? colIndex))) + '-' + String((Number.isFinite(g.end) ? g.end : (g.endIndex ?? colIndex)));
+    const startIdx = Number.isFinite(g.start) ? g.start : (g.startIndex ?? colIndex);
+    if (collapsedGroups.has(gId)) {
+      if (colIndex === startIdx) {
+        const w = (g && g.placeholderWidth) ? (typeof g.placeholderWidth === 'number' ? `${g.placeholderWidth}px` : g.placeholderWidth) : `${defaultPlaceholderWidth}px`;
+        td.style.width = w;
+        td.style.minWidth = w;
+        td.style.maxWidth = w;
+        td.textContent = '';
+        td.classList.add('col-collapsed');
+        td.style.display = '';
+      } else {
+        td.style.display = 'none';
+      }
+    } else {
+      td.style.display = '';
+      td.style.width = '';
+      td.style.minWidth = '';
+      td.style.maxWidth = '';
+      td.classList.remove('col-collapsed');
+    }
+  }
+
+  function createRowTr(rowData, rowIndex) {
+    const tr = document.createElement('tr');
+
+    for (let i = 0; i < rowData.length; i++) {
+      const cellData = rowData[i];
+      const td = document.createElement('td');
+      const hk = headerKeys[i] ?? { key: `col-${i}`, keyClass: `col-${i}` };
+      const key = hk.key;
+      const keyClass = hk.keyClass ?? String(key).replace(/\s+/g, '-').replace(/[^A-Za-z0-9\-_]/g, '');
+
+      td.dataset.field = key;
+      td.classList.add(`col-${keyClass}`);
+
+      if (typeof cellData === 'string' || typeof cellData === 'number') {
+        td.textContent = cellData;
+      } else if (cellData instanceof HTMLElement) {
+        td.append(cellData);
+      } else {
+        td.textContent = String(cellData ?? '');
+      }
+
+      const g = getGroupForIndex(i);
+      if (g) applyCollapsedGroupCellState(td, i, g);
+      else {
+        td.style.width = '';
+        td.style.minWidth = '';
+        td.style.maxWidth = '';
+        td.classList.remove('col-collapsed');
+        td.style.display = '';
+      }
+
+      tr.append(td);
+    }
+
+    try { if (rowData && (rowData.__id || (rowData.meta && rowData.meta.id))) tr.dataset.rowId = rowData.__id || rowData.meta.id; } catch (e) {}
+
+    if (Array.isArray(rowActions) && rowActions.length) {
+      const td = document.createElement('td');
+      td.dataset.field = 'actions';
+      td.classList.add('col-actions');
+      for (const act of rowActions) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        if (act.className) btn.className = act.className;
+        btn.classList.add('btn');
+        btn.textContent = act.label || act.title || '';
+        if (act.title) btn.title = act.title;
+        btn.addEventListener('click', () => {
+          try {
+            if (typeof act.onClick === 'function') act.onClick(rowData, rowIndex, { tr, td, table });
+          } catch (e) {}
+        });
+        td.append(btn);
+      }
+      tr.append(td);
+    }
+
+    return tr;
+  }
 
   // Render rows into tbody from a provided rows array
   function renderRows(rowsArr) {
     tbody.innerHTML = '';
     rowsArr.forEach((rowData, rowIndex) => {
-      const tr = document.createElement('tr');
-      for (let i = 0; i < rowData.length; i++) {
-        const cellData = rowData[i];
-        const td = document.createElement('td');
-        const hk = headerKeys[i] ?? { key: `col-${i}`, keyClass: `col-${i}` };
-        const key = hk.key;
-        const keyClass = hk.keyClass ?? String(key).replace(/\s+/g, '-').replace(/[^A-Za-z0-9\-_]/g, '');
-
-        td.dataset.field = key;
-        td.classList.add(`col-${keyClass}`);
-
-        if (typeof cellData === 'string' || typeof cellData === 'number') {
-          td.textContent = cellData;
-        } else if (cellData instanceof HTMLElement) {
-          td.append(cellData);
-        } else {
-          td.textContent = String(cellData ?? '');
-        }
-
-        // If this column belongs to a collapsed group: keep only the group's
-        // first column as a narrow placeholder, hide the others completely.
-        const g = getGroupForIndex(i);
-        if (g) {
-          const gId = (g.id ?? g.label) || String((Number.isFinite(g.start) ? g.start : (g.startIndex ?? i))) + '-' + String((Number.isFinite(g.end) ? g.end : (g.endIndex ?? i)));
-          const startIdx = Number.isFinite(g.start) ? g.start : (g.startIndex ?? i);
-          if (collapsedGroups.has(gId)) {
-            if (i === startIdx) {
-              const w = (g && g.placeholderWidth) ? (typeof g.placeholderWidth === 'number' ? `${g.placeholderWidth}px` : g.placeholderWidth) : `${defaultPlaceholderWidth}px`;
-              td.style.width = w;
-              td.style.minWidth = w;
-              td.style.maxWidth = w;
-              td.textContent = '';
-              td.classList.add('col-collapsed');
-              td.style.display = '';
-            } else {
-              td.style.display = 'none';
-            }
-          } else {
-            td.style.display = '';
-            td.style.width = '';
-            td.style.minWidth = '';
-            td.style.maxWidth = '';
-            td.classList.remove('col-collapsed');
-          }
-        } else {
-          td.style.width = '';
-          td.style.minWidth = '';
-          td.style.maxWidth = '';
-          td.classList.remove('col-collapsed');
-          td.style.display = '';
-        }
-        tr.append(td);
-      }
-
-      // attach optional row id/meta from array-like property so action handlers
-      // can resolve the original item if needed (e.g. rowData.__id)
-      try { if (rowData && (rowData.__id || (rowData.meta && rowData.meta.id))) tr.dataset.rowId = rowData.__id || rowData.meta.id; } catch (e) {}
-
-      // render action buttons if provided
-      if (Array.isArray(rowActions) && rowActions.length) {
-        const td = document.createElement('td');
-        td.dataset.field = 'actions';
-        td.classList.add('col-actions');
-        for (const act of rowActions) {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          if (act.className) btn.className = act.className;
-          // ensure app-wide button styling is applied
-          btn.classList.add('btn');
-          btn.textContent = act.label || act.title || '';
-          if (act.title) btn.title = act.title;
-          btn.addEventListener('click', (ev) => {
-            try {
-              if (typeof act.onClick === 'function') act.onClick(rowData, rowIndex, { tr, td, table });
-            } catch (e) {}
-          });
-          td.append(btn);
-        }
-        tr.append(td);
-      }
-
-      tbody.append(tr);
+      tbody.append(createRowTr(rowData, rowIndex));
     });
+  }
+
+  function renderVirtualRows(rowsArr) {
+    const total = rowsArr.length;
+    if (total === 0) {
+      tbody.innerHTML = '';
+      return;
+    }
+
+    const stickyTop = getStickyTopPx();
+    const headH = getTableHeadHeightPx();
+    const viewportH = Math.max(0, wrapper.clientHeight - stickyTop - headH);
+    const visibleCount = Math.max(1, Math.ceil(viewportH / VIRTUAL_ROW_HEIGHT_PX));
+    const scrollTop = wrapper.scrollTop || 0;
+    const rawStart = Math.floor(scrollTop / VIRTUAL_ROW_HEIGHT_PX) - VIRTUAL_OVERSCAN;
+    const start = Math.max(0, Math.min(total - 1, rawStart));
+    const end = Math.max(start, Math.min(total - 1, start + visibleCount + (VIRTUAL_OVERSCAN * 2)));
+
+    const key = `${total}:${start}:${end}`;
+    if (_lastVirtualKey === key) return;
+    _lastVirtualKey = key;
+
+    const topPad = start * VIRTUAL_ROW_HEIGHT_PX;
+    const bottomPad = Math.max(0, (total - (end + 1)) * VIRTUAL_ROW_HEIGHT_PX);
+
+    tbody.innerHTML = '';
+    tbody.append(createSpacerRow(topPad));
+    for (let i = start; i <= end; i++) {
+      tbody.append(createRowTr(rowsArr[i], i));
+    }
+    tbody.append(createSpacerRow(bottomPad));
+  }
+
+  function attachVirtualScrollHandler() {
+    if (_virtualScrollHandlerAttached) return;
+    _virtualScrollHandlerAttached = true;
+    wrapper.addEventListener('scroll', () => {
+      if (!shouldVirtualize(displayRows)) return;
+      renderVirtualRows(displayRows);
+    }, { passive: true });
+  }
+
+  function renderMaybeVirtual(rowsArr) {
+    displayRows = Array.isArray(rowsArr) ? rowsArr : [];
+    if (!shouldVirtualize(displayRows)) {
+      _lastVirtualKey = '';
+      table.classList.remove('is-virtualized');
+      renderRows(displayRows);
+      return;
+    }
+
+    table.classList.add('is-virtualized');
+    attachVirtualScrollHandler();
+    renderVirtualRows(displayRows);
   }
 
   // Sorting state
@@ -354,6 +495,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     }
     // update body cells
     for (const tr of Array.from(tbody.children)) {
+      if (tr && tr.dataset && tr.dataset.kind === 'spacer') continue;
       for (let ci = start; ci <= end; ci++) {
         const td = tr.children[ci];
         if (!td) continue;
@@ -409,6 +551,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
   if (searchable) {
     const searchWrap = document.createElement('div');
     searchWrap.className = 'table-search';
+    searchWrapEl = searchWrap;
     const searchInput = document.createElement('input');
     searchInput.type = 'search';
     searchInput.className = 'table-search-input';
@@ -425,6 +568,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     searchWrap.append(searchInput, clearBtn);
     searchWrap.append(copyBtn);
     wrapper.append(searchWrap);
+    updateStickyOffsets();
 
     function makeRegex(q) {
       const s = String(q || '');
@@ -459,12 +603,29 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     // Initial state
     try { clearBtn.disabled = !(String(searchInput.value || '').trim().length > 0); } catch (e) {}
 
-    searchInput.addEventListener('input', () => applyFilter(searchInput.value));
-    clearBtn.addEventListener('click', () => { searchInput.value = ''; applyFilter(''); searchInput.focus(); });
+    // Debounce filtering to avoid running expensive filter on every keystroke.
+    let _filterTimeout = null;
+    const _debounceMs = 150;
+    function scheduleApplyFilter(q) {
+      if (_filterTimeout) clearTimeout(_filterTimeout);
+      _filterTimeout = setTimeout(() => { applyFilter(q); _filterTimeout = null; }, _debounceMs);
+    }
+
+    // Apply immediately on Enter for snappy UX.
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        if (_filterTimeout) { clearTimeout(_filterTimeout); _filterTimeout = null; }
+        applyFilter(searchInput.value);
+      }
+    });
+
+    searchInput.addEventListener('input', () => scheduleApplyFilter(searchInput.value));
+    clearBtn.addEventListener('click', () => { searchInput.value = ''; if (_filterTimeout) { clearTimeout(_filterTimeout); _filterTimeout = null; } applyFilter(''); searchInput.focus(); });
     copyBtn.addEventListener('click', async () => {
       try {
-        // Build array of objects from currentRows using headerKeys
-        const out = currentRows.map(r => {
+        // Build array of objects from current (filtered + sorted) rows using headerKeys
+        const srcRows = Array.isArray(displayRows) ? displayRows : currentRows;
+        const out = srcRows.map(r => {
           const obj = {};
           for (let i = 0; i < headerKeys.length; i++) {
             const key = headerKeys[i]?.key || String(i);
@@ -494,12 +655,12 @@ export function createTable({ headers, rows, className = '', id, collection, sor
   }
 
   // Perform initial render
-  renderRows(currentRows);
+  renderMaybeVirtual(currentRows);
 
   // Sorting helper
   function sortAndRender() {
     if (sortCol === null) {
-      renderRows(currentRows);
+      renderMaybeVirtual(currentRows);
       Array.from(headerRow.children).forEach(th => th.setAttribute('aria-sort', 'none'));
       return;
     }
@@ -520,7 +681,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
 
     if (sortDir === 'desc') paired.reverse();
 
-    renderRows(paired.map(p => p.data));
+    renderMaybeVirtual(paired.map(p => p.data));
 
     Array.from(headerRow.children).forEach((th, j) => {
       if (j === sortCol) th.setAttribute('aria-sort', sortDir === 'asc' ? 'ascending' : 'descending');
@@ -530,5 +691,6 @@ export function createTable({ headers, rows, className = '', id, collection, sor
 
   table.append(thead, tbody);
   wrapper.append(table);
+  updateStickyOffsets();
   return wrapper;
 }

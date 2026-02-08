@@ -196,14 +196,11 @@ export function renderData({ store }) {
       items: I_ADJ_FORM_ITEMS,
       multi: true,
       values: expansionIForms,
+      commitOnClose: true,
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
       onChange: (vals) => {
         expansionIForms = orderFormsByItems(normalizeFormList(vals), I_ADJ_BASE_FORM_ITEMS);
         persistAdjectiveExpansions();
-        renderTable();
-        updateStudyLabel();
-        markStudyRows();
-        updateControlStates();
       },
       className: 'data-expansion-dropdown',
     });
@@ -219,14 +216,11 @@ export function renderData({ store }) {
       items: NA_ADJ_FORM_ITEMS,
       multi: true,
       values: expansionNaForms,
+      commitOnClose: true,
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
       onChange: (vals) => {
         expansionNaForms = orderFormsByItems(normalizeFormList(vals), NA_ADJ_BASE_FORM_ITEMS);
         persistAdjectiveExpansions();
-        renderTable();
-        updateStudyLabel();
-        markStudyRows();
-        updateControlStates();
       },
       className: 'data-expansion-dropdown',
     });
@@ -683,60 +677,16 @@ export function renderData({ store }) {
   });
   mo.observe(document.body, { childList: true, subtree: true });
 
-  // Collapsible metadata sections (each collapsible individually)
-  const wrapper = el('div', { className: 'collection-metadata' });
-
-  const collMetaDetails = el('details', {
-    className: 'metadata-details',
-    children: [
-      el('summary', { text: 'Collection metadata' }),
-      el('pre', { text: JSON.stringify(active.metadata || {}, null, 2) })
-    ]
-  });
-
-  const folderMetaDetails = el('details', {
-    className: 'folder-meta-details',
-    children: [
-      el('summary', { text: 'Inherited folder _metadata.json' }),
-      el('pre', { id: 'folder-meta-pre', text: 'Loading...' })
-    ]
-  });
-
-  wrapper.append(collMetaDetails, folderMetaDetails);
-
-  // Load inherited folder metadata asynchronously via the store API
-  if (store?.collections && typeof store.collections.getInheritedFolderMetadata === 'function') {
-    store.collections.getInheritedFolderMetadata(active.key)
-      .then(folderMeta => {
-        const pre = wrapper.querySelector('#folder-meta-pre');
-        if (pre) pre.textContent = folderMeta ? JSON.stringify(folderMeta, null, 2) : 'None';
-      })
-      .catch(() => {
-        const pre = wrapper.querySelector('#folder-meta-pre');
-        if (pre) pre.textContent = 'Error loading folder metadata';
-      });
-  } else {
-    const pre = wrapper.querySelector('#folder-meta-pre');
-    if (pre) pre.textContent = 'Unavailable';
-  }
-
   const dataCard = card({
     id: 'data-card',
     cornerCaption: `${refreshEntriesView().length} Entries`,
     children: [tableMount]
   });
 
-  const metaCard = card({
-    id: 'metadata-card',
-    children: [wrapper]
-  });
-
   // Show the full path to the currently displayed collection file.
   const pathLabel = active?.key ? `Path: ${active.key}` : 'Path: (unknown)';
   root.append(
-    el('div', { className: 'hint', text: pathLabel }),
-    dataCard,
-    metaCard
+    dataCard
   );
   // initial UI updates now that the card is mounted and corner caption exists
   updateFilterButtons();

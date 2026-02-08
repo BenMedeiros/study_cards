@@ -1,0 +1,478 @@
+{
+  "metadata": {
+    "name": "adj forms (i/na unified where possible)",
+    "description": "Core adjective morphology and high-frequency derivational suffixes. Uses [adj] when a form applies productively to both i-adj and na-adj (with class-specific stem handling as needed). When forms differ, i/na variants are adjacent. Negative copula results (じゃない / ではない) are treated as i-adj because they enter the i-adj inflection pipeline. Some entries include second-order productive morphology (e.g., verb-conditionals applied to derivational verbs like すぎる); these are included when the derived form is productive and high-frequency.",
+    "version": 4,
+    "category": "japanese-grammar",
+    "schema": [
+      { "key": "pattern", "label": "Pattern", "type": "string" },
+      { "key": "conditional", "label": "Is Conditional", "type": "boolean" },
+      { "key": "past", "label": "Has Past Morphology", "type": "boolean" },
+      { "key": "meaning", "label": "Meaning / Function", "type": "string" },
+      { "key": "commonness", "label": "Commonness (0–100)", "type": "number" },
+      { "key": "notes", "label": "Notes", "type": "array" },
+      {
+        "key": "new_class",
+        "label": "Resulting Class",
+        "type": "enum",
+        "description": "Primary grammatical class or functional role the pattern results in after application. Used for parsing, UI grouping, and generation logic.",
+        "values": {
+          "i-adj": "Inflects using i-adjective morphology (〜くない, 〜かった, 〜ければ, etc.).",
+          "na-adj": "Behaves like a na-adjective; typically requires な before nouns and copula forms in predicates.",
+          "noun": "Nominalized form functioning as a noun (can take particles, be modified, etc.).",
+          "verb": "Derives or results in a verb phrase that conjugates with verb morphology.",
+          "adverb": "Functions adverbially; modifies verbs or clauses.",
+          "connector": "Clause-linking connective form (〜くて / 〜で).",
+          "clause": "Results in a full predicate or conditional clause rather than a single lexical class.",
+          "other": "Fallback for rare or mixed behaviors not cleanly fitting the above."
+        }
+      }
+    ]
+  },
+  "entries": [
+    {
+      "pattern": "[i-adj]",
+      "new_class": "i-adj",
+      "conditional": false,
+      "past": false,
+      "meaning": "base form",
+      "commonness": 100,
+      "notes": ["Dictionary/plain form used attributively (高い本) and predicatively (高い)."]
+    },
+    {
+      "pattern": "[na-adj]",
+      "new_class": "na-adj",
+      "conditional": false,
+      "past": false,
+      "meaning": "base stem",
+      "commonness": 100,
+      "notes": ["Requires な before nouns (静かな部屋). Predicative typically uses copula (静かだ/です)."]
+    },
+
+    {
+      "pattern": "[i-adj]かった",
+      "new_class": "i-adj",
+      "conditional": false,
+      "past": true,
+      "meaning": "was ~",
+      "commonness": 95,
+      "notes": ["Past form of i-adj (高かった)."]
+    },
+    {
+      "pattern": "[na-adj]だった",
+      "new_class": "clause",
+      "conditional": false,
+      "past": true,
+      "meaning": "was ~",
+      "commonness": 80,
+      "notes": ["Past copula for na-adj predicates (静かだった). Morphologically a copula past clause-ending form."]
+    },
+
+    {
+      "pattern": "[i-adj]かったら",
+      "new_class": "clause",
+      "conditional": true,
+      "past": true,
+      "meaning": "if it was ~",
+      "commonness": 75,
+      "notes": ["Conditional built from past (〜たら). Often used for ‘if it turns out ~’ or after-the-fact conditions."]
+    },
+    {
+      "pattern": "[na-adj]だったら",
+      "new_class": "clause",
+      "conditional": true,
+      "past": true,
+      "meaning": "if it was ~",
+      "commonness": 70,
+      "notes": ["Conditional built from copula past (〜だったら)."]
+    },
+
+    {
+      "pattern": "[i-adj]く",
+      "new_class": "adverb",
+      "conditional": false,
+      "past": false,
+      "meaning": "adverbial",
+      "commonness": 90,
+      "notes": ["Adverb form: 早く、上手く. Also used in set expressions and some verb-like derivations (〜くなる/〜くする)."]
+    },
+    {
+      "pattern": "[na-adj]に",
+      "new_class": "adverb",
+      "conditional": false,
+      "past": false,
+      "meaning": "adverbial",
+      "commonness": 95,
+      "notes": ["Adverb form: 静かに、便利に. Also used for 〜になる/〜にする."]
+    },
+
+    {
+      "pattern": "[i-adj]くて",
+      "new_class": "connector",
+      "conditional": false,
+      "past": false,
+      "meaning": "connective (and/because)",
+      "commonness": 90,
+      "notes": [
+        "Links clauses (AくてB) and can express reason/cause.",
+        "Common in explanations and soft lead-ins (暑くて…すみません)."
+      ]
+    },
+    {
+      "pattern": "[na-adj]で",
+      "new_class": "connector",
+      "conditional": false,
+      "past": false,
+      "meaning": "connective (and/because)",
+      "commonness": 95,
+      "notes": ["Connective form for na-adj predicates (静かで、便利で). Also used for nouns (学生で)."]
+    },
+
+    {
+      "pattern": "[i-adj]くない",
+      "new_class": "i-adj",
+      "conditional": false,
+      "past": false,
+      "meaning": "not ~",
+      "commonness": 95,
+      "notes": ["Negative i-adj (高くない). Conjugates further (高くなかった, 高くなければ)."]
+    },
+    {
+      "pattern": "[na-adj]じゃない",
+      "new_class": "i-adj",
+      "conditional": false,
+      "past": false,
+      "meaning": "not ~",
+      "commonness": 90,
+      "notes": [
+        "Negative copula; treated as i-adj for further inflection (じゃなかった / じゃなければ).",
+        "Colloquial; formal counterpart is ではない."
+      ]
+    },
+    {
+      "pattern": "[na-adj]ではない",
+      "new_class": "i-adj",
+      "conditional": false,
+      "past": false,
+      "meaning": "not ~ (formal)",
+      "commonness": 75,
+      "notes": [
+        "More formal/written counterpart to じゃない.",
+        "Inflects like i-adj: ではなかった / ではなければ / ではなかったら."
+      ]
+    },
+
+    {
+      "pattern": "[i-adj]くなかった",
+      "new_class": "i-adj",
+      "conditional": false,
+      "past": true,
+      "meaning": "was not ~",
+      "commonness": 85,
+      "notes": ["Past negative i-adj (高くなかった)."]
+    },
+    {
+      "pattern": "[na-adj]じゃなかった",
+      "new_class": "i-adj",
+      "conditional": false,
+      "past": true,
+      "meaning": "was not ~",
+      "commonness": 75,
+      "notes": ["Past of じゃない; continues i-adj-like inflection behavior."]
+    },
+    {
+      "pattern": "[na-adj]ではなかった",
+      "new_class": "i-adj",
+      "conditional": false,
+      "past": true,
+      "meaning": "was not ~ (formal)",
+      "commonness": 60,
+      "notes": ["Formal/written past negative copula."]
+    },
+
+    {
+      "pattern": "[i-adj]くなかったら",
+      "new_class": "clause",
+      "conditional": true,
+      "past": true,
+      "meaning": "if it was not ~",
+      "commonness": 65,
+      "notes": ["Conditional on past negative (〜なかったら)."]
+    },
+    {
+      "pattern": "[na-adj]じゃなかったら",
+      "new_class": "clause",
+      "conditional": true,
+      "past": true,
+      "meaning": "if it was not ~",
+      "commonness": 60,
+      "notes": ["Conditional on past negative copula (colloquial)."]
+    },
+    {
+      "pattern": "[na-adj]ではなかったら",
+      "new_class": "clause",
+      "conditional": true,
+      "past": true,
+      "meaning": "if it was not ~ (formal)",
+      "commonness": 45,
+      "notes": ["More formal/written variant of the same conditional."]
+    },
+
+    {
+      "pattern": "[i-adj]くなければ",
+      "new_class": "clause",
+      "conditional": true,
+      "past": false,
+      "meaning": "if not ~",
+      "commonness": 60,
+      "notes": ["Negative conditional (〜なければ). Often used for obligations as part of set patterns (〜なければならない)."]
+    },
+    {
+      "pattern": "[na-adj]じゃなければ",
+      "new_class": "clause",
+      "conditional": true,
+      "past": false,
+      "meaning": "if not ~",
+      "commonness": 55,
+      "notes": ["Negative conditional built from じゃない (colloquial)."]
+    },
+    {
+      "pattern": "[na-adj]ではなければ",
+      "new_class": "clause",
+      "conditional": true,
+      "past": false,
+      "meaning": "if not ~ (formal)",
+      "commonness": 45,
+      "notes": ["Formal/written variant; common in writing and formal speech."]
+    },
+
+    {
+      "pattern": "[i-adj]ければ",
+      "new_class": "clause",
+      "conditional": true,
+      "past": false,
+      "meaning": "if ~",
+      "commonness": 70,
+      "notes": ["Standard i-adj conditional (高ければ)."]
+    },
+    {
+      "pattern": "[na-adj]なら",
+      "new_class": "clause",
+      "conditional": true,
+      "past": false,
+      "meaning": "if/assuming ~",
+      "commonness": 85,
+      "notes": [
+        "Assumption/topic-based conditional (静かなら).",
+        "Often implies ‘given that/if that’s the case’ rather than purely logical ‘if’."
+      ]
+    },
+
+    {
+      "pattern": "[adj]さ",
+      "new_class": "noun",
+      "conditional": false,
+      "past": false,
+      "meaning": "~ness (quality noun)",
+      "commonness": 70,
+      "notes": [
+        "Nominalizes degree/quality (高さ, 便利さ).",
+        "More freely productive with i-adj; with na-adj usage is common but not equally natural for every word."
+      ]
+    },
+
+    {
+      "pattern": "[adj]すぎる",
+      "new_class": "verb",
+      "conditional": false,
+      "past": false,
+      "meaning": "too ~",
+      "commonness": 80,
+      "notes": [
+        "Derives a verb meaning ‘exceed; be too ~’.",
+        "Stem handling differs: i-adj drop い (高い→高すぎる); na-adj attach directly (静か→静かすぎる)."
+      ]
+    },
+    {
+      "pattern": "[adj]すぎたら",
+      "new_class": "clause",
+      "conditional": true,
+      "past": true,
+      "meaning": "if too ~",
+      "commonness": 55,
+      "notes": ["Second-order: conditional on derived verb すぎる (すぎたら). Included because productive and common."]
+    },
+    {
+      "pattern": "[adj]すぎるなら",
+      "new_class": "clause",
+      "conditional": true,
+      "past": false,
+      "meaning": "if it’s too ~",
+      "commonness": 50,
+      "notes": ["Second-order: なら applied to the derived verb phrase すぎる. Included as a productive high-frequency frame."]
+    },
+
+    {
+      "pattern": "[adj]そう",
+      "new_class": "na-adj",
+      "conditional": false,
+      "past": false,
+      "meaning": "looks/seems ~",
+      "commonness": 75,
+      "notes": [
+        "Visual/appearance-based inference (おいしそう).",
+        "Stem handling differs: i-adj drop い (高い→高そう); na-adj attach directly (静か→静かそう).",
+        "Not the hearsay pattern そうだ (『〜そうだ』 meaning ‘I heard that…’)."
+      ]
+    },
+    {
+      "pattern": "[adj]そうだったら",
+      "new_class": "clause",
+      "conditional": true,
+      "past": true,
+      "meaning": "if it looked ~",
+      "commonness": 45,
+      "notes": ["Second-order: past/conditional built on 〜そう (そうだったら). Included as productive but less core than base そう."]
+    },
+    {
+      "pattern": "[adj]そうなら",
+      "new_class": "clause",
+      "conditional": true,
+      "past": false,
+      "meaning": "if it looks ~",
+      "commonness": 55,
+      "notes": ["Second-order: conditional built on 〜そう (そうなら). Often used when taking the appearance as a premise."]
+    },
+
+    {
+      "pattern": "[i-adj]め",
+      "new_class": "na-adj",
+      "conditional": false,
+      "past": false,
+      "meaning": "slightly ~",
+      "commonness": 60,
+      "notes": [
+        "Means ‘somewhat / on the ~ side’ (高め, 早め).",
+        "Productive but not for every adjective; common in casual speech and specs (温度は高め)."
+      ]
+    },
+
+    {
+      "pattern": "[i-adj]み",
+      "new_class": "noun",
+      "conditional": false,
+      "past": false,
+      "meaning": "~ness (felt quality)",
+      "commonness": 48,
+      "notes": [
+        "Often lexicalized/limited set (苦み, 甘み, 弱み, 強み).",
+        "Tends to express an experiential/subjective ‘feel’ rather than an abstract measure."
+      ]
+    },
+
+    {
+      "pattern": "[i-adj]がる",
+      "new_class": "verb",
+      "conditional": false,
+      "past": false,
+      "meaning": "show signs of ~",
+      "commonness": 65,
+      "notes": [
+        "Typically used for observable behavior, often 3rd person (子どもは怖がっている).",
+        "Common with emotion/sensation adjectives (怖い, 嫌だ/嫌い, うれしい etc.; some are irregular/lexical)."
+      ]
+    },
+
+    {
+      "pattern": "[adj]気味",
+      "new_class": "na-adj",
+      "conditional": false,
+      "past": false,
+      "meaning": "a bit ~; tending ~",
+      "commonness": 40,
+      "notes": [
+        "Means ‘somewhat / slightly / tending toward’ (疲れ気味, 太り気味).",
+        "Often attaches to nouns/verb stems in addition to adjectives; kept here as a high-frequency adjectival-like derivation."
+      ]
+    },
+
+    {
+      "pattern": "[i-adj]くなる",
+      "new_class": "verb",
+      "conditional": false,
+      "past": false,
+      "meaning": "become ~",
+      "commonness": 85,
+      "notes": ["Change of state from i-adj: 暑くなる, 安くなる."]
+    },
+    {
+      "pattern": "[na-adj]になる",
+      "new_class": "verb",
+      "conditional": false,
+      "past": false,
+      "meaning": "become ~",
+      "commonness": 85,
+      "notes": ["Change of state from na-adj: 静かになる, 便利になる."]
+    },
+
+    {
+      "pattern": "[i-adj]くする",
+      "new_class": "verb",
+      "conditional": false,
+      "past": false,
+      "meaning": "make ~",
+      "commonness": 75,
+      "notes": ["Cause/make change from i-adj: 安くする, 速くする."]
+    },
+    {
+      "pattern": "[na-adj]にする",
+      "new_class": "verb",
+      "conditional": false,
+      "past": false,
+      "meaning": "make/choose ~",
+      "commonness": 75,
+      "notes": ["Cause/make change or choose a state: 静かにする, 便利にする, これにする."]
+    },
+
+    {
+      "pattern": "[i-adj]ようだ",
+      "new_class": "clause",
+      "conditional": false,
+      "past": false,
+      "meaning": "seems ~ (inference)",
+      "commonness": 70,
+      "notes": [
+        "Inference/similarity: 雨が降るようだ.",
+        "Can modify nouns with ような and take adverbial ように; broadly behaves like a na-adj-like expression."
+      ]
+    },
+    {
+      "pattern": "[na-adj]なようだ",
+      "new_class": "clause",
+      "conditional": false,
+      "past": false,
+      "meaning": "seems ~ (inference)",
+      "commonness": 70,
+      "notes": ["Na-adj requires な before ようだ in attributive linkage (静かなようだ)."]
+    },
+
+    {
+      "pattern": "[i-adj]みたい",
+      "new_class": "clause",
+      "conditional": false,
+      "past": false,
+      "meaning": "seems/like ~ (casual)",
+      "commonness": 75,
+      "notes": ["Casual counterpart to ようだ; also used as みたいな / みたいに."]
+    },
+    {
+      "pattern": "[na-adj]みたい",
+      "new_class": "clause",
+      "conditional": false,
+      "past": false,
+      "meaning": "seems/like ~ (casual)",
+      "commonness": 75,
+      "notes": ["Commonly no な (静かみたい). Used as みたいな / みたいに for attribution/adverbial use."]
+    }
+  ]
+}

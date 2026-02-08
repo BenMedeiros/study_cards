@@ -157,6 +157,12 @@
       "entries": 23
     },
     {
+      "path": "japanese/i-adj.json",
+      "name": "adj forms (i/na unified where possible)",
+      "description": "Core adjective morphology and high-frequency derivational suffixes. Uses [adj] when a form applies productively to both i-adj and na-adj (with class-specific stem handling as needed). When forms differ, i/na variants are adjacent. Negative copula results (じゃない / ではない) are treated as i-adj because they enter the i-adj inflection pipeline. Some entries include second-order productive morphology (e.g., verb-conditionals applied to derivational verbs like すぎる); these are included when the derived form is productive and high-frequency.",
+      "entries": 43
+    },
+    {
       "path": "japanese/paragraphs/paragraph_1.json",
       "name": "paragraph_1",
       "description": null,
