@@ -1769,9 +1769,9 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const coll = collKey ? getCollections().find(c => c?.key === collKey) : getActiveCollection();
     if (!coll) return false;
     const q = String(query || '').trim();
-    const enabled = !!hold;
+    // Persist only the held query. The system now always applies the held query
+    // (no per-collection "hold" toggle is stored).
     saveCollectionState(coll.key, {
-      holdTableSearch: enabled,
       heldTableSearch: q,
       currentIndex: 0,
     });

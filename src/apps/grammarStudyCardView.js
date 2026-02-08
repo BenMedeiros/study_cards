@@ -212,7 +212,7 @@ export function renderGrammarStudyCard({ store }) {
     // Apply persisted held table-search filter (Data view "Hold Filter").
     try {
       const held = String(collState?.heldTableSearch || '').trim();
-      const hold = !!collState?.holdTableSearch && !!held;
+      const hold = !!held;
       if (hold) {
         const fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : null;
         const filtered = store.collections.filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields });

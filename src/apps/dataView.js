@@ -12,8 +12,7 @@ export function renderData({ store }) {
   let skipLearned = false;
   let focusOnly = false;
 
-  // Persisted per-collection table search filter ("Hold Filter")
-  let holdTableSearch = false;
+  // Persisted per-collection table search query (always applied)
   let heldTableSearch = '';
 
   // Persisted per-collection adjective expansion (Data view header dropdowns)
@@ -266,7 +265,6 @@ export function renderData({ store }) {
     }
 
     const held = String(saved?.heldTableSearch || '').trim();
-    holdTableSearch = !!saved?.holdTableSearch;
     heldTableSearch = held;
 
     expansionIForms = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);
@@ -364,7 +362,7 @@ export function renderData({ store }) {
       if (focusOnly && !adapter.isFocus(key)) return false;
     }
 
-    if (holdTableSearch && heldTableSearch) {
+    if (heldTableSearch) {
       try {
         if (!store.collections.entryMatchesTableSearch(entry, { query: heldTableSearch, fields })) return false;
       } catch (e) {
@@ -385,10 +383,11 @@ export function renderData({ store }) {
     store.collections.setStudyFilter(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
   }
 
-  function persistHeldTableSearch({ hold, query }) {
+  function persistHeldTableSearch({ query }) {
     const coll = store.collections.getActiveCollection();
     if (!coll) return;
-    store.collections.setHeldTableSearch(coll.key, { hold: !!hold, query: String(query || '') });
+    // Persist only the held query; system always applies the held query.
+    store.collections.saveCollectionState(coll.key, { heldTableSearch: String(query || '') });
   }
 
   function persistAdjectiveExpansions() {
@@ -522,63 +521,29 @@ export function renderData({ store }) {
       const clearBtn = searchWrap ? searchWrap.querySelector('.table-search-clear') : null;
       const copyBtn = searchWrap ? searchWrap.querySelector('.table-copy-json') : null;
       if (searchWrap && searchInput && copyBtn) {
-        const holdLabel = document.createElement('label');
-        holdLabel.className = 'table-hold-filter';
-        const holdText = document.createElement('span');
-        holdText.className = 'table-hold-filter-text';
-        holdText.textContent = 'Hold Filter';
-
-        const holdInput = document.createElement('input');
-        holdInput.type = 'checkbox';
-        holdInput.className = 'table-hold-filter-input';
-        holdInput.setAttribute('role', 'switch');
-
-        const holdUi = document.createElement('span');
-        holdUi.className = 'table-hold-filter-ui';
-
-        holdLabel.append(holdText, holdInput, holdUi);
-        copyBtn.insertAdjacentElement('afterend', holdLabel);
-
-        const syncUI = () => {
-          holdInput.checked = !!holdTableSearch;
-          holdLabel.title = holdTableSearch
-            ? 'Hold Filter is On (saved for this collection)'
-            : 'Hold Filter is Off (not saved)';
-        };
-
-        // Initialize input from persisted held filter.
-        if (holdTableSearch && heldTableSearch) {
+        // If a held query exists, initialize the table search with it.
+        if (heldTableSearch) {
           searchInput.value = heldTableSearch;
           try { searchInput.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
         }
 
-        searchInput.addEventListener('input', () => {
-          // no-op; the switch is independent of input
-        });
-
-        // When held, persist on blur/change so we don't rerender while typing.
+        // Persist held query whenever the input changes (system always applies it).
         searchInput.addEventListener('change', () => {
-          if (!holdTableSearch) return;
           const q = String(searchInput.value || '').trim();
           heldTableSearch = q;
-          persistHeldTableSearch({ hold: true, query: q });
+          persistHeldTableSearch({ query: q });
           renderTable();
           updateStudyLabel();
           markStudyRows();
         });
 
-        // The table's Clear button sets input.value programmatically and applies its
-        // own filter, but it does not trigger input/change events. If Hold Filter is
-        // on, we must also clear the persisted held query immediately.
         if (clearBtn) {
           clearBtn.addEventListener('click', () => {
-            if (!holdTableSearch) return;
-            // Defer so the table's handler runs first.
             setTimeout(() => {
               try {
                 const q = String(searchInput.value || '').trim();
                 heldTableSearch = q;
-                persistHeldTableSearch({ hold: true, query: q });
+                persistHeldTableSearch({ query: q });
               } catch (e) {}
               renderTable();
               updateStudyLabel();
@@ -586,25 +551,6 @@ export function renderData({ store }) {
             }, 0);
           });
         }
-
-        holdInput.addEventListener('change', () => {
-          const next = !!holdInput.checked;
-          holdTableSearch = next;
-          const q = String(searchInput.value || '').trim();
-          if (next) {
-            heldTableSearch = q;
-            persistHeldTableSearch({ hold: true, query: q });
-          } else {
-            // keep the last held query persisted so turning it back on restores it
-            persistHeldTableSearch({ hold: false, query: heldTableSearch });
-          }
-          syncUI();
-          renderTable();
-          updateStudyLabel();
-          markStudyRows();
-        });
-
-        syncUI();
       }
     } catch (e) {
       // ignore
@@ -694,7 +640,6 @@ export function renderData({ store }) {
           }
 
           const held = String(saved?.heldTableSearch || '').trim();
-          holdTableSearch = !!saved?.holdTableSearch;
           heldTableSearch = held;
 
           const nextI = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);

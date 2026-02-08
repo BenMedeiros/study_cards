@@ -31,7 +31,7 @@ export function renderQaCards({ store }) {
   // Apply persisted held table-search filter (Data view "Hold Filter").
   try {
     const held = String(collState?.heldTableSearch || '').trim();
-    const hold = !!collState?.holdTableSearch && !!held;
+    const hold = !!held;
     if (hold) {
       const metaFields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : null;
       entries = (Array.isArray(entries) ? entries : []).filter(e => store.collections.entryMatchesTableSearch(e, { query: held, fields: metaFields }));
