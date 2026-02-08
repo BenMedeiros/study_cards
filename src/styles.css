@@ -1827,6 +1827,40 @@ select:hover {
   flex-shrink: 0;
 }
 
+/* QA Cards: use standard header tools instead of in-card tool rows */
+#qa-cards-root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#qa-cards-card {
+  width: min(60rem, 100%);
+  margin: 0 auto;
+}
+
+.qa-header-tools.view-header-tools {
+  width: min(60rem, 100%);
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.qa-header-selectors {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.qa-header-spacer {
+  flex: 1 1 auto;
+}
+
+/* Kanji / Japanese looks odd with global letter-spacing in this view. */
+#qa-cards-root .simple-card-question {
+  letter-spacing: 0;
+}
+
 .cardtools-bottom {
   border-bottom: none;
   border-top: 1px solid var(--border);

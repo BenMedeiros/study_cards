@@ -219,36 +219,18 @@ export function renderKanjiStudyCard({ store }) {
       const entry = entries[index];
       const v = store.collections.getEntryStudyKey(entry);
       if (!v) return;
-      const originalIdxBefore = Number.isFinite(Number(viewIndices[index])) ? Number(viewIndices[index]) : null;
       if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiLearned === 'function') {
-        const nowLearned = store.kanjiProgress.toggleKanjiLearned(v);
+        store.kanjiProgress.toggleKanjiLearned(v);
         updateMarkButtons();
-        if (nowLearned) {
-          try {
-            const active = store?.collections?.getActiveCollection?.();
-            const key = active?.key;
-            const collState = (store?.collections && typeof store.collections.loadCollectionState === 'function')
-              ? (store.collections.loadCollectionState(key) || {})
-              : {};
-            let skipLearnedMode = false;
-            if (typeof collState?.studyFilter === 'string') {
-              const raw = String(collState.studyFilter || '').trim();
-              const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
-              const set = new Set(parts);
-              skipLearnedMode = set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned');
-            } else {
-              skipLearnedMode = !!collState?.skipLearned;
-            }
-            if (skipLearnedMode) {
-              refreshEntriesFromStore();
-              index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
-              render();
-              saveUIState();
-            }
-          } catch (e) {
-            // ignore
+        try {
+          const view = store.collections.getActiveCollectionView({ windowSize: 10 })?.view;
+          if (view?.skipLearned) {
+            refreshEntriesFromStore();
+            index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+            render();
+            saveUIState();
           }
-        }
+        } catch (e) {}
       }
     } },
     { key: 'practice', icon: '🎯', text: 'Practice', caption: 'X', shortcut: 'x', ariaPressed: false, action: () => {
@@ -258,6 +240,15 @@ export function renderKanjiStudyCard({ store }) {
       if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiFocus === 'function') {
         store.kanjiProgress.toggleKanjiFocus(v);
         updateMarkButtons();
+        try {
+          const view = store.collections.getActiveCollectionView({ windowSize: 10 })?.view;
+          if (view?.focusOnly) {
+            refreshEntriesFromStore();
+            index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+            render();
+            saveUIState();
+          }
+        } catch (e) {}
       }
     } },
     { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', action: () => showNext() },
@@ -432,75 +423,16 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   function refreshEntriesFromStore() {
-    const active = store.collections.getActiveCollection();
+    const res = store.collections.getActiveCollectionView({ windowSize: 10 });
+    const active = res?.collection || null;
+    const collState = res?.collState || {};
+    const view = res?.view || {};
+
     originalEntries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
-    // Use shared collection management to build the view (study window + shuffle)
-    const key = active?.key;
-    let collState = (store?.collections && typeof store.collections.loadCollectionState === 'function') ? (store.collections.loadCollectionState(key) || {}) : {};
-
-    let skipLearned = false;
-    let focusOnly = false;
-    if (typeof collState?.studyFilter === 'string') {
-      const raw = String(collState.studyFilter || '').trim();
-      const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
-      const set = new Set(parts);
-      skipLearned = set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned');
-      focusOnly = set.has('focusOnly') || set.has('focus_only') || set.has('focus') || set.has('morePractice') || set.has('more_practice');
-    } else {
-      // legacy
-      skipLearned = !!collState?.skipLearned;
-      focusOnly = !!collState?.focusOnly;
-    }
-
-    
-
-    const view = store.collections.getCollectionView(originalEntries, collState, { windowSize: 10 });
-    let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
-    let nextIndices = Array.isArray(view.indices) ? view.indices.slice() : [];
-
-    // Apply filters to the rendered view even when not using studyIndices.
-    if (skipLearned || focusOnly) {
-      const filteredEntries = [];
-      const filteredIndices = [];
-      for (let i = 0; i < nextEntries.length; i++) {
-        const entry = nextEntries[i];
-        const v = store.collections.getEntryStudyKey(entry);
-        if (!v) {
-          filteredEntries.push(entry);
-          filteredIndices.push(nextIndices[i]);
-          continue;
-        }
-        if (skipLearned && typeof store?.kanjiProgress?.isKanjiLearned === 'function') {
-          if (store.kanjiProgress.isKanjiLearned(v)) continue;
-        }
-        if (focusOnly && typeof store?.kanjiProgress?.isKanjiFocus === 'function') {
-          if (!store.kanjiProgress.isKanjiFocus(v)) continue;
-        }
-        filteredEntries.push(entry);
-        filteredIndices.push(nextIndices[i]);
-      }
-      nextEntries = filteredEntries;
-      nextIndices = filteredIndices;
-    }
-
-    // Apply persisted held table-search filter (Data view "Hold Filter").
-    try {
-      const held = String(collState?.heldTableSearch || '').trim();
-      const hold = !!held;
-      if (hold) {
-        const fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : null;
-        const filtered = store.collections.filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields });
-        nextEntries = filtered.entries;
-        nextIndices = filtered.indices;
-      }
-    } catch (e) {
-      // ignore
-    }
-
-    entries = nextEntries;
-    viewIndices = nextIndices;
-    isShuffled = !!view.isShuffled;
-    orderHashInt = view.order_hash_int || null;
+    entries = Array.isArray(view?.entries) ? view.entries : [];
+    viewIndices = Array.isArray(view?.indices) ? view.indices : [];
+    isShuffled = !!view?.isShuffled;
+    orderHashInt = (typeof view?.order_hash_int === 'number') ? view.order_hash_int : null;
     currentOrder = null;
     // If a saved index exists in collection state, restore it once on initial load
     if (!uiStateRestored && collState && typeof collState.currentIndex === 'number') {

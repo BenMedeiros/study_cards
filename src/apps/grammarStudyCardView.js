@@ -123,9 +123,6 @@ export function renderGrammarStudyCard({ store }) {
   window.addEventListener('blur', () => flushTimingCredit({ immediate: true }));
   window.addEventListener('focus', () => maybeResumeTiming());
 
-  const active = store.collections.getActiveCollection();
-  const collKey = active?.key || null;
-
   let entries = [];
   let indices = [];
   let isShuffled = false;
@@ -137,96 +134,16 @@ export function renderGrammarStudyCard({ store }) {
   // display mode: 'pattern-only' or 'full'
   let viewMode = 'pattern-only';
 
-  function parseStudyFilter(value) {
-    const raw = String(value || '').trim();
-    if (!raw) return { skipLearned: false, focusOnly: false };
-    const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
-    const set = new Set(parts);
-    return {
-      skipLearned: set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned'),
-      focusOnly: set.has('focusOnly') || set.has('focus_only') || set.has('focus') || set.has('morePractice') || set.has('more_practice'),
-    };
-  }
-
-  function readCollState(key) {
-    try {
-      if (!key) return {};
-      if (store?.collections && typeof store.collections.loadCollectionState === 'function') {
-        return store.collections.loadCollectionState(key) || {};
-      }
-      return {};
-    } catch (e) {
-      return {};
-    }
-  }
-
   function refreshFromStore({ resetIndex = false } = {}) {
-    const active = store?.collections?.getActiveCollection?.() || null;
-    const key = active?.key || null;
-    const collState = readCollState(key);
-    const baseEntries = Array.isArray(active?.entries) ? active.entries : [];
-
+    const res = store.collections.getActiveCollectionView();
+    const collState = res?.collState || {};
     const prevKey = (!resetIndex && entries && entries.length && entries[index]) ? getPrimaryKey(entries[index]) : null;
 
-    const view = store.collections.getCollectionView(baseEntries, collState);
-    let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
-    let nextIndices = Array.isArray(view.indices) ? view.indices.slice() : [];
-
-    // Apply per-collection studyFilter (skipLearned/focusOnly) using grammarProgress.
-    let skipLearned = false;
-    let focusOnly = false;
-    if (typeof collState?.studyFilter === 'string') {
-      const parsed = parseStudyFilter(collState.studyFilter);
-      skipLearned = !!parsed.skipLearned;
-      focusOnly = !!parsed.focusOnly;
-    } else {
-      // legacy booleans
-      skipLearned = !!collState?.skipLearned;
-      focusOnly = !!collState?.focusOnly;
-    }
-
-    if (skipLearned || focusOnly) {
-      const filteredEntries = [];
-      const filteredIndices = [];
-      for (let i = 0; i < nextEntries.length; i++) {
-        const e = nextEntries[i];
-        const k = getPrimaryKey(e);
-        if (!k) {
-          filteredEntries.push(e);
-          filteredIndices.push(nextIndices[i]);
-          continue;
-        }
-        if (skipLearned && typeof store?.grammarProgress?.isGrammarLearned === 'function') {
-          if (store.grammarProgress.isGrammarLearned(k)) continue;
-        }
-        if (focusOnly && typeof store?.grammarProgress?.isGrammarFocus === 'function') {
-          if (!store.grammarProgress.isGrammarFocus(k)) continue;
-        }
-        filteredEntries.push(e);
-        filteredIndices.push(nextIndices[i]);
-      }
-      nextEntries = filteredEntries;
-      nextIndices = filteredIndices;
-    }
-
-    // Apply persisted held table-search filter (Data view "Hold Filter").
-    try {
-      const held = String(collState?.heldTableSearch || '').trim();
-      const hold = !!held;
-      if (hold) {
-        const fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : null;
-        const filtered = store.collections.filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields });
-        nextEntries = filtered.entries;
-        nextIndices = filtered.indices;
-      }
-    } catch (e) {
-      // ignore
-    }
-
-    entries = nextEntries;
-    indices = nextIndices;
-    isShuffled = !!view.isShuffled;
-    orderHashInt = (typeof view.order_hash_int === 'number') ? view.order_hash_int : null;
+    const view = res?.view || {};
+    entries = Array.isArray(view?.entries) ? view.entries.slice() : [];
+    indices = Array.isArray(view?.indices) ? view.indices.slice() : [];
+    isShuffled = !!view?.isShuffled;
+    orderHashInt = (typeof view?.order_hash_int === 'number') ? view.order_hash_int : null;
 
     const savedMode = (typeof collState.defaultViewMode === 'string') ? collState.defaultViewMode : null;
     viewMode = (savedMode === 'pattern-only' || savedMode === 'full') ? savedMode : viewMode;

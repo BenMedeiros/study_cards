@@ -2,49 +2,133 @@ import { nowMs } from '../utils/helpers.js';
 import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } from '../utils/japanese.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createSpeakerButton } from '../components/ui.js';
+import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 
 export function renderQaCards({ store }) {
   const el = document.createElement('div');
   el.id = 'qa-cards-root';
 
+  // Header tools (standardized across views)
+  const headerTools = createViewHeaderTools();
+  headerTools.classList.add('qa-header-tools');
+
   const wrapper = document.createElement('div');
   wrapper.className = 'card';
   wrapper.id = 'qa-cards-card';
 
-  const active = store.collections.getActiveCollection();
-  if (!active) {
-    wrapper.innerHTML = '<h2>QA Cards</h2><p class="hint">No active collection.</p>';
-    el.append(wrapper);
-    return el;
-  }
-
-  const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
-  let questionField = fields[0]?.key ?? 'question';
-  let answerField = fields[1]?.key ?? 'answer';
-  
-  // derive entries view (study window + shuffle) from shared util
-  const collState = (store?.collections && typeof store.collections.loadCollectionState === 'function')
-    ? store.collections.loadCollectionState(active?.key)
-    : null;
-  let entries = store.collections.getCollectionView(active.entries, collState, { windowSize: 10 }).entries;
-
-  // Apply persisted held table-search filter (Data view "Hold Filter").
-  try {
-    const held = String(collState?.heldTableSearch || '').trim();
-    const hold = !!held;
-    if (hold) {
-      const metaFields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : null;
-      entries = (Array.isArray(entries) ? entries : []).filter(e => store.collections.entryMatchesTableSearch(e, { query: held, fields: metaFields }));
-    }
-  } catch (e) {
-    // ignore
-  }
+  let active = null;
+  let collState = {};
+  let fields = [];
+  let questionField = 'question';
+  let answerField = 'answer';
+  let entries = [];
   let index = 0;
   let shownAt = nowMs();
   let feedbackMode = false;
   let userAnswer = '';
   let isCorrect = false;
   let completed = false;
+
+  function ensureQAFieldsAreValid() {
+    const keys = new Set((Array.isArray(fields) ? fields : []).map(f => String(f?.key ?? '').trim()).filter(Boolean));
+    if (!keys.size) return;
+    if (!keys.has(String(questionField || '').trim())) questionField = String(fields[0]?.key ?? 'question');
+    if (!keys.has(String(answerField || '').trim())) answerField = String(fields[1]?.key ?? fields[0]?.key ?? 'answer');
+  }
+
+  function rebuildEntriesFromCollectionState() {
+    const res = store.collections.getActiveCollectionView({ windowSize: 10 });
+    active = res?.collection || null;
+    collState = (res?.collState && typeof res.collState === 'object') ? res.collState : {};
+
+    fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : [];
+    ensureQAFieldsAreValid();
+
+    const nextEntries = Array.isArray(res?.view?.entries) ? res.view.entries : [];
+    entries = nextEntries;
+    index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+  }
+
+  function renderHeader({ showContinue = false, onContinue = null } = {}) {
+    headerTools.innerHTML = '';
+
+    const selectorsWrap = document.createElement('div');
+    selectorsWrap.className = 'qa-header-selectors';
+
+    const questionLabel = document.createElement('span');
+    questionLabel.className = 'hint';
+    questionLabel.textContent = 'Question:';
+
+    const questionSelect = createDropdown({
+      items: fields.map(f => ({ value: f.key, label: f.label ?? f.key })),
+      value: questionField,
+      onChange: (value) => {
+        questionField = value;
+        feedbackMode = false;
+        userAnswer = '';
+        completed = false;
+        render();
+      }
+    });
+    questionSelect.style.minWidth = '120px';
+
+    const answerLabel = document.createElement('span');
+    answerLabel.className = 'hint';
+    answerLabel.textContent = 'Answer:';
+
+    const answerSelect = createDropdown({
+      items: fields.map(f => ({ value: f.key, label: f.label ?? f.key })),
+      value: answerField,
+      onChange: (value) => {
+        answerField = value;
+        feedbackMode = false;
+        userAnswer = '';
+        completed = false;
+        render();
+      }
+    });
+    answerSelect.style.minWidth = '120px';
+
+    selectorsWrap.append(questionLabel, questionSelect, answerLabel, answerSelect);
+
+    const spacer = document.createElement('div');
+    spacer.className = 'qa-header-spacer';
+
+    // Collection-level shuffle (shared action via collectionsManager)
+    const shuffleBtn = document.createElement('button');
+    shuffleBtn.type = 'button';
+    shuffleBtn.className = 'btn small';
+    shuffleBtn.textContent = 'Shuffle';
+    shuffleBtn.addEventListener('click', () => {
+      try {
+        if (store?.collections && typeof store.collections.shuffleCollection === 'function') {
+          store.collections.shuffleCollection(active?.key);
+          rebuildEntriesFromCollectionState();
+          index = 0;
+          shownAt = nowMs();
+          feedbackMode = false;
+          userAnswer = '';
+          completed = false;
+          render();
+        }
+      } catch (e) {
+        // ignore
+      }
+    });
+
+    headerTools.append(selectorsWrap, spacer, shuffleBtn);
+
+    if (showContinue) {
+      const continueBtn = document.createElement('button');
+      continueBtn.type = 'button';
+      continueBtn.className = 'btn small';
+      continueBtn.textContent = 'Continue';
+      continueBtn.addEventListener('click', (e) => {
+        if (typeof onContinue === 'function') onContinue(e);
+      });
+      headerTools.append(continueBtn);
+    }
+  }
 
   function renderCard(body, entry) {
     const questionValue = entry[questionField] ?? '';
@@ -281,66 +365,24 @@ export function renderQaCards({ store }) {
     cornerCaption.className = 'card-corner-caption';
     cornerCaption.textContent = total ? `${index + 1} / ${total}` : 'Empty';
 
-    // Tools row with position and field selectors
-    const toolsRow = document.createElement('div');
-    toolsRow.className = 'cardtools-row';
-    toolsRow.id = 'qa-cards-tools';
-
-    const questionLabel = document.createElement('span');
-    questionLabel.className = 'hint';
-    questionLabel.textContent = 'Question:';
-
-    const questionSelect = createDropdown({
-      items: fields.map(f => ({ value: f.key, label: f.label ?? f.key })),
-      value: questionField,
-      onChange: (value) => {
-        questionField = value;
+    const handleContinue = () => {
+      if (index < total - 1) {
         feedbackMode = false;
         userAnswer = '';
+        index += 1;
+        shownAt = nowMs();
+        render();
+      } else {
+        // Last card - show completion
+        completed = true;
         render();
       }
-    });
-    questionSelect.style.minWidth = '120px';
+    };
 
-    const answerLabel = document.createElement('span');
-    answerLabel.className = 'hint';
-    answerLabel.textContent = 'Answer:';
+    // Header tools (question/answer selectors + shuffle + continue)
+    renderHeader({ showContinue: !!feedbackMode && !completed, onContinue: handleContinue });
 
-    const answerSelect = createDropdown({
-      items: fields.map(f => ({ value: f.key, label: f.label ?? f.key })),
-      value: answerField,
-      onChange: (value) => {
-        answerField = value;
-        feedbackMode = false;
-        userAnswer = '';
-        render();
-      }
-    });
-    answerSelect.style.minWidth = '120px';
-
-    if (feedbackMode) {
-      const handleContinue = () => {
-        if (index < total - 1) {
-          feedbackMode = false;
-          userAnswer = '';
-          index += 1;
-          shownAt = nowMs();
-          render();
-        } else {
-          // Last card - show completion
-          completed = true;
-          render();
-        }
-      };
-      
-      const continueBtn = document.createElement('button');
-      continueBtn.className = 'button';
-      continueBtn.textContent = 'Continue';
-      continueBtn.addEventListener('click', handleContinue);
-      continueBtn.style.marginLeft = 'auto';
-      
-      toolsRow.append(questionLabel, questionSelect, answerLabel, answerSelect, continueBtn);
-      
+    if (feedbackMode && !completed) {
       // Allow Enter to continue to next card
       const keyHandler = (e) => {
         if (e.key === 'Enter') {
@@ -350,11 +392,9 @@ export function renderQaCards({ store }) {
         }
       };
       wrapper.addEventListener('keydown', keyHandler);
-      
+
       // Focus wrapper so Enter key works immediately
       setTimeout(() => wrapper.focus(), 0);
-    } else {
-      toolsRow.append(questionLabel, questionSelect, answerLabel, answerSelect);
     }
 
     const body = document.createElement('div');
@@ -389,11 +429,19 @@ export function renderQaCards({ store }) {
       renderCard(body, entry);
     }
 
-    wrapper.append(cornerCaption, toolsRow, body);
+    wrapper.append(cornerCaption, body);
+  }
+
+  rebuildEntriesFromCollectionState();
+
+  if (!active) {
+    wrapper.innerHTML = '<h2>QA Cards</h2><p class="hint">No active collection.</p>';
+    el.append(wrapper);
+    return el;
   }
 
   render();
 
-  el.append(wrapper);
+  el.append(headerTools, wrapper);
   return el;
 }

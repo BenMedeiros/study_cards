@@ -43,59 +43,9 @@ export function renderFlashcards({ store }) {
 
   // derive entries view (study window + shuffle) from shared util
   function refreshFromStore() {
-    active = store.collections.getActiveCollection();
-    const collState = (store?.collections && typeof store.collections.loadCollectionState === 'function')
-      ? store.collections.loadCollectionState(active?.key)
-      : null;
-    const view = store.collections.getCollectionView(active?.entries, collState, { windowSize: 10 });
-    let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
-
-    // Apply persisted held table-search filter (Data view "Hold Filter").
-    try {
-      const held = String(collState?.heldTableSearch || '').trim();
-      const hold = !!held;
-      if (hold) {
-        const fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : null;
-        nextEntries = nextEntries.filter(e => store.collections.entryMatchesTableSearch(e, { query: held, fields }));
-      }
-    } catch (e) {
-      // ignore
-    }
-
-    // Apply optional per-collection filters using global learned/focus lists.
-    let skipLearned = false;
-    let focusOnly = false;
-    if (typeof collState?.studyFilter === 'string') {
-      const raw = String(collState.studyFilter || '').trim();
-      const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
-      const set = new Set(parts);
-      skipLearned = set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned');
-      focusOnly = set.has('focusOnly') || set.has('focus_only') || set.has('focus') || set.has('morePractice') || set.has('more_practice');
-    } else {
-      // legacy
-      skipLearned = !!collState?.skipLearned;
-      focusOnly = !!collState?.focusOnly;
-    }
-    if (skipLearned || focusOnly) {
-      const filtered = [];
-      for (const entry of nextEntries) {
-        const s = String(store.collections.getEntryStudyKey(entry) || '').trim();
-        if (!s) {
-          filtered.push(entry);
-          continue;
-        }
-        if (skipLearned && typeof store?.kanjiProgress?.isKanjiLearned === 'function') {
-          if (store.kanjiProgress.isKanjiLearned(s)) continue;
-        }
-        if (focusOnly && typeof store?.kanjiProgress?.isKanjiFocus === 'function') {
-          if (!store.kanjiProgress.isKanjiFocus(s)) continue;
-        }
-        filtered.push(entry);
-      }
-      nextEntries = filtered;
-    }
-
-    entries = nextEntries;
+    const res = store.collections.getActiveCollectionView({ windowSize: 10 });
+    active = res?.collection || null;
+    entries = Array.isArray(res?.view?.entries) ? res.view.entries.slice() : [];
     index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
   }
 

@@ -35,7 +35,7 @@ export function createStore() {
   const grammarProgress = createGrammarProgressManager({ uiState, persistence, emitter, grammarProgressKey: 'grammar_progress' });
   const studyTime = createStudyTimeManager({ uiState, persistence, emitter, studyTimeKey: 'study_time' });
   const ui = createUIStateManager({ uiState, persistence, emitter });
-  const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress });
+  const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, grammarProgressManager: grammarProgress });
 
   function subscribe(fn) {
     return emitter.subscribe(fn);
@@ -106,7 +106,9 @@ export function createStore() {
       ensureWordSentenceIndexBuiltForTop: collections.ensureWordSentenceIndexBuiltForTop,
 
       // Collection view utilities (filtering, expansion, shuffle)
-      getCollectionView: collections.getCollectionView,
+      getCollectionViewForCollection: collections.getCollectionViewForCollection,
+      getActiveCollectionView: collections.getActiveCollectionView,
+      getActiveCollectionFilteredSet: collections.getActiveCollectionFilteredSet,
       getEntryStudyKey: collections.getEntryStudyKey,
       entryMatchesTableSearch: collections.entryMatchesTableSearch,
       filterEntriesAndIndicesByTableSearch: collections.filterEntriesAndIndicesByTableSearch,

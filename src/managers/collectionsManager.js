@@ -2,7 +2,7 @@ import { basename, dirname, normalizeFolderPath, titleFromFilename } from '../ut
 import { buildHashRoute, parseHashRoute } from '../utils/helpers.js';
 import { timed } from '../utils/timing.js';
 
-export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager }) {
+export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, grammarProgressManager = null }) {
   // Folder metadata helpers/storage used for lazy loads
   let folderMetadataMap = null;
   const metadataCache = {};
@@ -1748,6 +1748,74 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   // Collection View (with shuffle, expansion, filtering)
   // ============================================================================
 
+  function parseStudyFilterState(collState = {}) {
+    let skipLearned = false;
+    let focusOnly = false;
+    if (collState && typeof collState.studyFilter === 'string') {
+      const raw = String(collState.studyFilter || '').trim();
+      if (raw) {
+        const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
+        const set = new Set(parts);
+        skipLearned = set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned');
+        focusOnly = set.has('focusOnly') || set.has('focus_only') || set.has('focus') || set.has('morePractice') || set.has('more_practice');
+      }
+    } else {
+      // legacy booleans
+      skipLearned = !!collState?.skipLearned;
+      focusOnly = !!collState?.focusOnly;
+    }
+    return { skipLearned, focusOnly };
+  }
+
+  function progressAdapterForCollection(coll) {
+    const category = String(coll?.metadata?.category || '').trim();
+    const isGrammar = category === 'japanese.grammar' || category.endsWith('.grammar') || category.includes('.grammar.');
+
+    if (isGrammar) {
+      return {
+        kind: 'grammar',
+        getKey: (entry) => {
+          const p = entry && typeof entry === 'object' ? entry.pattern : '';
+          return String(p || '').trim();
+        },
+        isLearned: (key) => !!(key && typeof grammarProgressManager?.isGrammarLearned === 'function' && grammarProgressManager.isGrammarLearned(key)),
+        isFocus: (key) => !!(key && typeof grammarProgressManager?.isGrammarFocus === 'function' && grammarProgressManager.isGrammarFocus(key)),
+      };
+    }
+
+    return {
+      kind: 'kanji',
+      getKey: (entry) => String(getEntryStudyKey(entry) || '').trim(),
+      isLearned: (key) => !!(key && typeof progressManager?.isKanjiLearned === 'function' && progressManager.isKanjiLearned(key)),
+      isFocus: (key) => !!(key && typeof progressManager?.isKanjiFocus === 'function' && progressManager.isKanjiFocus(key)),
+    };
+  }
+
+  function applyStudyFilterToView(entries, indices, { skipLearned = false, focusOnly = false } = {}, adapter) {
+    const arr = Array.isArray(entries) ? entries : [];
+    const idx = Array.isArray(indices) ? indices : arr.map((_, i) => i);
+    if (!arr.length) return { entries: [], indices: [] };
+    if (!skipLearned && !focusOnly) return { entries: arr.slice(), indices: idx.slice() };
+    const a = adapter || { getKey: (e) => String(getEntryStudyKey(e) || '').trim(), isLearned: () => false, isFocus: () => true };
+
+    const outEntries = [];
+    const outIdx = [];
+    for (let i = 0; i < arr.length; i++) {
+      const e = arr[i];
+      const key = a.getKey(e);
+      if (!key) {
+        outEntries.push(e);
+        outIdx.push(idx[i]);
+        continue;
+      }
+      if (skipLearned && a.isLearned(key)) continue;
+      if (focusOnly && !a.isFocus(key)) continue;
+      outEntries.push(e);
+      outIdx.push(idx[i]);
+    }
+    return { entries: outEntries, indices: outIdx };
+  }
+
   function getCollectionView(originalEntries, collState = {}, opts = { windowSize: 10 }) {
     const n = Array.isArray(originalEntries) ? originalEntries.length : 0;
     const baseIndices = [];
@@ -1773,6 +1841,66 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       return { entries: shuffledEntries, indices: shuffledIndices, isShuffled: true, order_hash_int: orderHashInt };
     }
     return { entries: baseEntries, indices: expandedIndices.slice(), isShuffled: false, order_hash_int: null };
+  }
+
+  // Like getCollectionView, but also applies per-collection filters that are stored
+  // in collection state (studyFilter + heldTableSearch). This is the preferred API
+  // for apps so they don't duplicate the same filtering logic.
+  function getCollectionViewForCollection(collection, collState = {}, opts = { windowSize: 10 }) {
+    const coll = (collection && typeof collection === 'object') ? collection : null;
+    const baseEntries = Array.isArray(coll?.entries) ? coll.entries : (Array.isArray(opts?.entries) ? opts.entries : []);
+    const stateObj = (collState && typeof collState === 'object') ? collState : {};
+
+    const view = getCollectionView(baseEntries, stateObj, opts);
+    let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
+    let nextIndices = Array.isArray(view.indices) ? view.indices.slice() : [];
+
+    // Apply per-collection studyFilter (skipLearned/focusOnly)
+    const { skipLearned, focusOnly } = parseStudyFilterState(stateObj);
+    if (skipLearned || focusOnly) {
+      const adapter = progressAdapterForCollection(coll);
+      const filtered = applyStudyFilterToView(nextEntries, nextIndices, { skipLearned, focusOnly }, adapter);
+      nextEntries = filtered.entries;
+      nextIndices = filtered.indices;
+    }
+
+    // Apply persisted held table-search filter (Data view "Hold Filter")
+    try {
+      const held = String(stateObj?.heldTableSearch || '').trim();
+      if (held) {
+        const fields = Array.isArray(coll?.metadata?.fields) ? coll.metadata.fields : null;
+        const filtered = filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields });
+        nextEntries = filtered.entries;
+        nextIndices = filtered.indices;
+      }
+    } catch {
+      // ignore
+    }
+
+    return {
+      ...view,
+      entries: nextEntries,
+      indices: nextIndices,
+      skipLearned,
+      focusOnly,
+    };
+  }
+
+  // Convenience: fetch the active collection, load its persisted state,
+  // and return the fully-filtered view. Apps can call this directly.
+  function getActiveCollectionView(opts = { windowSize: 10 }) {
+    const coll = getActiveCollection();
+    if (!coll) {
+      return { collection: null, collState: {}, view: { entries: [], indices: [], isShuffled: false, order_hash_int: null, skipLearned: false, focusOnly: false } };
+    }
+    const collState = loadCollectionState(coll.key) || {};
+    const view = getCollectionViewForCollection(coll, collState, opts);
+    return { collection: coll, collState, view };
+  }
+
+  // Alias with the naming you described: returns just the filtered set/view.
+  function getActiveCollectionFilteredSet(opts = { windowSize: 10 }) {
+    return getActiveCollectionView(opts).view;
   }
 
   // ============================================================================
@@ -1895,7 +2023,9 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     ensureWordSentenceIndexBuiltForTop,
 
     // Collection view utilities (filtering, expansion, shuffle)
-    getCollectionView,
+    getCollectionViewForCollection,
+    getActiveCollectionView,
+    getActiveCollectionFilteredSet,
     getEntryStudyKey,
     entryMatchesTableSearch,
     filterEntriesAndIndicesByTableSearch,
