@@ -592,6 +592,10 @@ export function createTable({ headers, rows, className = '', id, collection, sor
       return new RegExp(pat, 'i');
     }
 
+    // Local (ephemeral) table filter.
+    // This only affects the currently-rendered rows in this table component.
+    // Views can additionally listen for explicit "apply" events (Enter/Clear) to
+    // persist a domain-level filter and re-render from their source data.
     function applyFilter(q) {
       const total = Array.isArray(originalRows) ? originalRows.length : 0;
       const label = `table.applyFilter (${total})`;
@@ -615,6 +619,23 @@ export function createTable({ headers, rows, className = '', id, collection, sor
       });
     }
 
+    // Emitted when the user explicitly applies the search (Enter/Clear).
+    // This is intentionally *not* emitted on every keystroke so consumers can
+    // keep fast local filtering while typing without persisting/requerying.
+    function emitSearchApplied({ via = 'enter' } = {}) {
+      try {
+        wrapper.dispatchEvent(new CustomEvent('table:searchApplied', {
+          bubbles: true,
+          detail: {
+            query: String(searchInput.value || '').trim(),
+            via: String(via || '').trim() || 'enter',
+          }
+        }));
+      } catch (e) {
+        // ignore
+      }
+    }
+
     // Initial state
     try { clearBtn.disabled = !(String(searchInput.value || '').trim().length > 0); } catch (e) {}
 
@@ -631,11 +652,18 @@ export function createTable({ headers, rows, className = '', id, collection, sor
       if (e.key === 'Enter') {
         if (_filterTimeout) { clearTimeout(_filterTimeout); _filterTimeout = null; }
         applyFilter(searchInput.value);
+        emitSearchApplied({ via: 'enter' });
       }
     });
 
     searchInput.addEventListener('input', () => scheduleApplyFilter(searchInput.value));
-    clearBtn.addEventListener('click', () => { searchInput.value = ''; if (_filterTimeout) { clearTimeout(_filterTimeout); _filterTimeout = null; } applyFilter(''); searchInput.focus(); });
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      if (_filterTimeout) { clearTimeout(_filterTimeout); _filterTimeout = null; }
+      applyFilter('');
+      emitSearchApplied({ via: 'clear' });
+      searchInput.focus();
+    });
     copyBtn.addEventListener('click', async () => {
       try {
         // Build array of objects from current (filtered + sorted) rows using headerKeys

@@ -16,6 +16,9 @@ export function renderData({ store }) {
   // Persisted per-collection table search query (always applied)
   let heldTableSearch = '';
 
+  // Persisted per-collection saved table search filters (autocomplete suggestions)
+  let savedTableSearches = [];
+
   // Persisted per-collection adjective expansion (Data view header dropdowns)
   let expansionIForms = [];
   let expansionNaForms = [];
@@ -54,6 +57,27 @@ export function renderData({ store }) {
     if (!s) return [];
     // accept legacy strings (single) or comma/space separated
     return s.split(/[,|\s]+/g).map(x => String(x || '').trim()).filter(Boolean);
+  }
+
+  function normalizeSavedSearchList(v) {
+    const arr = Array.isArray(v) ? v : normalizeFormList(v);
+    const out = [];
+    const seen = new Set();
+    for (const raw of arr) {
+      const s = String(raw || '').trim();
+      if (!s) continue;
+      if (seen.has(s)) continue;
+      seen.add(s);
+      out.push(s);
+      if (out.length >= 100) break;
+    }
+    return out;
+  }
+
+  function isSavedTableSearch(q) {
+    const s = String(q || '').trim();
+    if (!s) return false;
+    return savedTableSearches.includes(s);
   }
 
   function sameStringArray(a, b) {
@@ -325,6 +349,10 @@ export function renderData({ store }) {
     const held = String(saved?.heldTableSearch || '').trim();
     heldTableSearch = held;
 
+    savedTableSearches = normalizeSavedSearchList(
+      saved?.savedTableSearches ?? saved?.saved_table_searches ?? saved?.savedTableSearch ?? saved?.savedFiltersTableSearch ?? []
+    );
+
     expansionIForms = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);
     expansionNaForms = normalizeFormList(saved?.expansion_na ?? saved?.expansion_naAdj ?? []);
 
@@ -446,6 +474,28 @@ export function renderData({ store }) {
     if (!coll) return;
     // Persist only the held query; system always applies the held query.
     store.collections.saveCollectionState(coll.key, { heldTableSearch: String(query || '') });
+  }
+
+  function persistSavedTableSearches(nextList) {
+    const coll = store.collections.getActiveCollection();
+    if (!coll) return;
+    const list = normalizeSavedSearchList(nextList);
+    if (!list.length) {
+      try {
+        if (typeof store?.collections?.deleteCollectionStateKeys === 'function') {
+          store.collections.deleteCollectionStateKeys(coll.key, ['savedTableSearches', 'saved_table_searches', 'savedTableSearch', 'savedFiltersTableSearch']);
+        } else {
+          store.collections.saveCollectionState(coll.key, { savedTableSearches: [] });
+        }
+      } catch (e) {
+        // ignore
+      }
+      savedTableSearches = [];
+      return;
+    }
+
+    savedTableSearches = list;
+    store.collections.saveCollectionState(coll.key, { savedTableSearches: list });
   }
 
   function persistAdjectiveExpansions() {
@@ -573,48 +623,240 @@ export function renderData({ store }) {
       const clearBtn = searchWrap ? searchWrap.querySelector('.table-search-clear') : null;
       const copyBtn = searchWrap ? searchWrap.querySelector('.table-copy-json') : null;
       if (searchWrap && searchInput && copyBtn) {
+        // NOTE (intentional UX): Data View has a two-layer search.
+        // 1) The table component always supports a fast, local ("dumb") search while typing.
+        //    This only filters the currently-rendered rows and is not persisted.
+        // 2) When the user explicitly applies the search (Enter / Clear / pick saved filter),
+        //    Data View persists it as `heldTableSearch` and re-renders by filtering the
+        //    underlying collection entries (domain-aware via collectionsManager helpers).
+        // This is desired: you can keep a persisted held filter while still doing ad-hoc
+        // local filtering of the currently visible results.
+        function applyHeldSearch(q) {
+          const query = String(q || '').trim();
+          heldTableSearch = query;
+          persistHeldTableSearch({ query });
+          renderTable();
+          updateStudyLabel();
+          markStudyRows();
+          updateControlStates();
+        }
+
+        const saveBtn = document.createElement('button');
+        saveBtn.type = 'button';
+        saveBtn.className = 'table-save-filter btn small';
+        saveBtn.title = 'Save this search filter for quick reuse';
+        saveBtn.textContent = 'Save Filter';
+
+        // Insert after Copy JSON
+        if (!searchWrap.querySelector('.table-save-filter')) {
+          copyBtn.insertAdjacentElement('afterend', saveBtn);
+        }
+
+        function updateSavedFilterButtons(q) {
+          const query = String(q || '').trim();
+          const has = !!query;
+          const saved = has && isSavedTableSearch(query);
+          saveBtn.disabled = !has || saved;
+        }
+
+        // Saved filter combobox UI (input + attached arrow + popover list)
+        const comboboxClass = 'table-search-combobox';
+        const toggleClass = 'table-search-saved-toggle';
+        const menuClass = 'table-search-saved-menu';
+
+        function ensureComboboxWrapper() {
+          const existing = searchWrap.querySelector(`.${comboboxClass}`);
+          if (existing && existing.contains(searchInput)) return existing;
+
+          const wrap = document.createElement('div');
+          wrap.className = comboboxClass;
+          // Replace input position with wrapper containing the input
+          searchWrap.insertBefore(wrap, searchInput);
+          wrap.appendChild(searchInput);
+          return wrap;
+        }
+
+        const comboWrap = ensureComboboxWrapper();
+
+        function closeSavedMenu() {
+          try { comboWrap.classList.remove('open'); } catch (e) {}
+        }
+
+        function isSavedMenuOpen() {
+          try { return comboWrap.classList.contains('open'); } catch (e) { return false; }
+        }
+
+        function renderSavedMenu() {
+          let menu = comboWrap.querySelector(`.${menuClass}`);
+          if (!menu) {
+            menu = document.createElement('div');
+            menu.className = menuClass;
+            comboWrap.appendChild(menu);
+          }
+          menu.innerHTML = '';
+
+          const list = Array.isArray(savedTableSearches) ? savedTableSearches : [];
+          if (!list.length) {
+            const empty = document.createElement('div');
+            empty.className = 'table-search-saved-empty';
+            empty.textContent = '(no saved filters)';
+            menu.appendChild(empty);
+            return;
+          }
+
+          for (const s of list) {
+            const v = String(s || '').trim();
+            if (!v) continue;
+            const row = document.createElement('div');
+            row.className = 'table-search-saved-item';
+            row.tabIndex = 0;
+
+            const label = document.createElement('span');
+            label.className = 'table-search-saved-label';
+            label.textContent = v;
+
+            const x = document.createElement('button');
+            x.type = 'button';
+            x.className = 'table-saved-filter-x';
+            x.textContent = '×';
+            x.title = 'Delete saved filter';
+            x.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const next = (Array.isArray(savedTableSearches) ? savedTableSearches : []).filter(x => String(x || '').trim() !== v);
+              persistSavedTableSearches(next);
+              updateSavedFilterButtons(searchInput.value);
+              renderSavedMenu();
+              renderTable();
+              updateStudyLabel();
+              markStudyRows();
+              updateControlStates();
+            });
+
+            row.addEventListener('click', () => {
+              try {
+                searchInput.value = v;
+                searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+              } catch (e) {}
+              closeSavedMenu();
+              applyHeldSearch(v);
+              try { searchInput.focus(); } catch (e) {}
+            });
+
+            row.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                row.click();
+              } else if (e.key === 'Escape') {
+                e.preventDefault();
+                closeSavedMenu();
+                try { searchInput.focus(); } catch (e) {}
+              }
+            });
+
+            row.append(label, x);
+            menu.appendChild(row);
+          }
+        }
+
+        let toggleBtn = comboWrap.querySelector(`button.${toggleClass}`);
+        if (!toggleBtn) {
+          toggleBtn = document.createElement('button');
+          toggleBtn.type = 'button';
+          toggleBtn.className = toggleClass;
+          toggleBtn.title = 'Saved filters';
+          toggleBtn.setAttribute('aria-label', 'Saved filters');
+          toggleBtn.textContent = '▾';
+          comboWrap.appendChild(toggleBtn);
+        }
+
+        renderSavedMenu();
+
+        toggleBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const willOpen = !isSavedMenuOpen();
+          if (willOpen) {
+            renderSavedMenu();
+            comboWrap.classList.add('open');
+          } else {
+            closeSavedMenu();
+          }
+        });
+
+        // Close on outside click (scoped per-render; avoids global component complexity)
+        setTimeout(() => {
+          const onDocClick = (e) => {
+            if (!comboWrap.isConnected) {
+              document.removeEventListener('click', onDocClick);
+              return;
+            }
+            if (comboWrap.contains(e.target)) return;
+            closeSavedMenu();
+          };
+          document.addEventListener('click', onDocClick);
+        }, 0);
+
         // If a held query exists, initialize the table search with it.
         if (heldTableSearch) {
           searchInput.value = heldTableSearch;
           try { searchInput.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
         }
 
-        // Persist held query whenever the input changes (system always applies it).
-        searchInput.addEventListener('change', () => {
+        updateSavedFilterButtons(searchInput.value);
+
+        // Update save/delete button states while typing.
+        searchInput.addEventListener('input', () => {
+          try { updateSavedFilterButtons(searchInput.value); } catch (e) {}
+        });
+
+        // Persist held query when the table explicitly applies it (Enter/Clear).
+        wrapper.addEventListener('table:searchApplied', (e) => {
+          const q = String(e?.detail?.query ?? searchInput.value ?? '').trim();
+          try { updateSavedFilterButtons(q); } catch (e) {}
+          if (q === String(heldTableSearch || '').trim()) return;
+          applyHeldSearch(q);
+        });
+
+        saveBtn.addEventListener('click', () => {
           const q = String(searchInput.value || '').trim();
+          if (!q) return;
+          if (isSavedTableSearch(q)) {
+            updateSavedFilterButtons(q);
+            return;
+          }
           heldTableSearch = q;
-          persistHeldTableSearch({ query: q });
+          try { persistHeldTableSearch({ query: q }); } catch (e) {}
+          persistSavedTableSearches([...(savedTableSearches || []), q]);
+          updateSavedFilterButtons(q);
           renderTable();
           updateStudyLabel();
           markStudyRows();
+          updateControlStates();
         });
-
-        if (clearBtn) {
-          clearBtn.addEventListener('click', () => {
-            setTimeout(() => {
-              try {
-                const q = String(searchInput.value || '').trim();
-                heldTableSearch = q;
-                persistHeldTableSearch({ query: q });
-              } catch (e) {}
-              renderTable();
-              updateStudyLabel();
-              markStudyRows();
-            }, 0);
-          });
-        }
       }
     } catch (e) {
       // ignore
     }
 
-    // Update corner caption if present. Use visible count (filtered) so it stays correct
+    // Update corner caption if present.
+    // Show the *persisted* (held) filter, not the table's ephemeral local filter.
     try {
       const corner = root.querySelector('#data-card .card-corner-caption');
       if (corner) {
         const total = entriesView.length;
         const visible = visibleIdxs.length;
-        corner.textContent = (visible < total) ? `${visible}/${total} Entries` : `${total} Entries`;
+        const base = (visible < total) ? `${visible}/${total} Entries` : `${total} Entries`;
+        const q = String(heldTableSearch || '').trim();
+        if (q) {
+          const max = 28;
+          const short = (q.length > max) ? `${q.slice(0, max - 1)}…` : q;
+          corner.textContent = `${base} • filter: ${short}`;
+          corner.title = `Held filter: ${q}`;
+        } else {
+          corner.textContent = base;
+          corner.title = '';
+        }
       }
     } catch (e) {
       // ignore
@@ -693,6 +935,13 @@ export function renderData({ store }) {
 
           const held = String(saved?.heldTableSearch || '').trim();
           heldTableSearch = held;
+
+          const nextSavedSearches = normalizeSavedSearchList(
+            saved?.savedTableSearches ?? saved?.saved_table_searches ?? saved?.savedTableSearch ?? saved?.savedFiltersTableSearch ?? []
+          );
+          if (!sameStringArray(nextSavedSearches, savedTableSearches)) {
+            savedTableSearches = nextSavedSearches;
+          }
 
           const nextI = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);
           const nextNa = normalizeFormList(saved?.expansion_na ?? saved?.expansion_naAdj ?? []);

@@ -1349,6 +1349,109 @@ input[type="number"].button::-webkit-inner-spin-button {
   background: rgba(96, 165, 250, 0.08);
 }
 
+/* Search combobox: input + saved filters arrow + popover */
+.table-search-combobox {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 8rem;
+}
+
+.table-search-combobox .table-search-input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.table-search-saved-toggle {
+  flex: 0 0 auto;
+  min-width: 2.25rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.12);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.table-search-saved-toggle:hover {
+  border-color: var(--accent);
+  background: rgba(96, 165, 250, 0.08);
+  color: var(--text);
+}
+
+.table-search-combobox.open .table-search-saved-toggle {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.table-search-saved-menu {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.25rem);
+  z-index: 50;
+  background: rgba(17, 24, 39, 0.98);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  max-height: 15rem;
+  overflow: auto;
+}
+
+.table-search-combobox.open .table-search-saved-menu {
+  display: block;
+}
+
+.table-search-saved-empty {
+  padding: 0.5rem 0.75rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.table-search-saved-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+.table-search-saved-item:hover {
+  background: rgba(96, 165, 250, 0.08);
+}
+
+.table-search-saved-item:focus {
+  outline: none;
+  background: rgba(96, 165, 250, 0.10);
+}
+
+.table-search-saved-label {
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table-saved-filter-x {
+  margin-left: auto;
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  padding: 0.05rem 0.4rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  line-height: 1.1;
+}
+
+.table-saved-filter-x:hover {
+  border-color: var(--border);
+  background: rgba(96, 165, 250, 0.08);
+  color: var(--text);
+}
+
 /* Hold Filter UI removed: persisted heldTableSearch is always applied */
 
 /* Highlight rows that are in the current study subset */

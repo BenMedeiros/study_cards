@@ -93,7 +93,16 @@ export function createDropdown({
       if (typeof getButtonLabel === 'function') {
         const set = new Set(selectedValues);
         const selectedItems = normalizedItems.filter(it => set.has(String(it?.value)));
-        const rendered = getButtonLabel({ selectedValues: selectedValues.slice(), selectedItems, items: normalizedItems.slice() });
+        const selectedItem = (!multi)
+          ? (normalizedItems.find(item => item.value === value) || normalizedItems[0] || null)
+          : null;
+        const rendered = getButtonLabel({
+          selectedValues: (multi ? selectedValues.slice() : []),
+          selectedItems,
+          selectedItem,
+          value: (multi ? null : value),
+          items: normalizedItems.slice(),
+        });
         if (rendered && typeof rendered === 'object' && rendered.nodeType === 1) {
           button.innerHTML = '';
           button.append(rendered);
