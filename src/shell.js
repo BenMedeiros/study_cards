@@ -12,6 +12,7 @@ import { createCollectionBrowserDropdown } from './components/collectionBrowser.
 import { speak } from './utils/speech.js';
 import { createDropdown } from './components/dropdown.js';
 import * as idb from './utils/idb.js';
+import { isTimingEnabled, setTimingEnabled, timed } from './utils/timing.js';
 
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
@@ -549,6 +550,17 @@ export function createAppShell({ store, onNavigate }) {
         } catch (err) { console.error('Log Persisted Data failed', err); }
       });
 
+      // Timing logs toggle
+      try {
+        const enabled = isTimingEnabled();
+        addItem(`${enabled ? '☑' : '☐'} Timing Logs`, () => {
+          const next = setTimingEnabled(!isTimingEnabled());
+          try { console.info(`[Timing] ${next ? 'enabled' : 'disabled'}`); } catch (e) {}
+        });
+      } catch (e) {
+        // ignore
+      }
+
       // Append menu and wire dismissal
       document.body.appendChild(menu);
       brandMenuEl = menu;
@@ -937,75 +949,78 @@ export function createAppShell({ store, onNavigate }) {
   }
 
   function renderRoute(route) {
-    // Study-time bookkeeping: close previous view session and start the next.
-    try {
-      const nextPath = String(route?.pathname || '/');
-      if (activeRoutePathname !== nextPath) {
-        swapStudySessionFor(nextPath);
-        activeRoutePathname = nextPath;
-      }
-    } catch (e) {}
+    const path = String(route?.pathname || '/');
+    return timed(`shell.renderRoute ${path}`, () => {
+      // Study-time bookkeeping: close previous view session and start the next.
+      try {
+        const nextPath = String(route?.pathname || '/');
+        if (activeRoutePathname !== nextPath) {
+          swapStudySessionFor(nextPath);
+          activeRoutePathname = nextPath;
+        }
+      } catch (e) {}
 
-    renderHeader();
-    main.innerHTML = '';
+      renderHeader();
+      main.innerHTML = '';
 
-    if (route.pathname === '/') {
-      main.append(renderLanding({ store, onNavigate }));
-      return;
-    }
-
-    if (route.pathname === '/flashcards') {
-      main.append(renderFlashcards({ store }));
-      return;
-    }
-
-    if (route.pathname === '/qa-cards') {
-      main.append(renderQaCards({ store, onNavigate }));
-      return;
-    }
-    // Crossword and Word Search routes removed
-
-    if (route.pathname === '/kanji') {
-      const active = store.collections.getActiveCollection();
-      const category = active?.metadata?.category || '';
-      if (category.toLowerCase() !== 'japanese') {
-        // redirect to home if the active collection isn't Japanese
-        onNavigate('/');
+      if (route.pathname === '/') {
+        main.append(timed('view.renderLanding', () => renderLanding({ store, onNavigate })));
         return;
       }
 
-      main.append(renderKanjiStudyCard({ store }));
-      return;
-    }
-
-
-    if (route.pathname === '/grammar') {
-      const active = store.collections.getActiveCollection();
-      const category = String(active?.metadata?.category || '');
-      if (!category.toLowerCase().startsWith('japanese.grammar')) {
-        onNavigate('/');
+      if (route.pathname === '/flashcards') {
+        main.append(timed('view.renderFlashcards', () => renderFlashcards({ store })));
         return;
       }
-      main.append(renderGrammarStudyCard({ store }));
-      return;
-    }
 
-    if (route.pathname === '/explorer') {
-      main.append(renderEntityExplorer({ store }));
-      return;
-    }
+      if (route.pathname === '/qa-cards') {
+        main.append(timed('view.renderQaCards', () => renderQaCards({ store, onNavigate })));
+        return;
+      }
+      // Crossword and Word Search routes removed
 
-    if (route.pathname === '/data') {
-      main.append(renderData({ store }));
-      return;
-    }
+      if (route.pathname === '/kanji') {
+        const active = store.collections.getActiveCollection();
+        const category = active?.metadata?.category || '';
+        if (category.toLowerCase() !== 'japanese') {
+          // redirect to home if the active collection isn't Japanese
+          onNavigate('/');
+          return;
+        }
 
-    if (route.pathname === '/collections') {
-      main.append(renderCollectionsManager({ store, onNavigate, route }));
-      return;
-    }
+        main.append(timed('view.renderKanjiStudyCard', () => renderKanjiStudyCard({ store })));
+        return;
+      }
 
-    main.append(renderPlaceholderTool({ title: 'Not Found', hint: `No route for ${route.pathname}` }));
+
+      if (route.pathname === '/grammar') {
+        const active = store.collections.getActiveCollection();
+        const category = String(active?.metadata?.category || '');
+        if (!category.toLowerCase().startsWith('japanese.grammar')) {
+          onNavigate('/');
+          return;
+        }
+        main.append(timed('view.renderGrammarStudyCard', () => renderGrammarStudyCard({ store })));
+        return;
+      }
+
+      if (route.pathname === '/explorer') {
+        main.append(timed('view.renderEntityExplorer', () => renderEntityExplorer({ store })));
+        return;
+      }
+
+      if (route.pathname === '/data') {
+        main.append(timed('view.renderData', () => renderData({ store })));
+        return;
+      }
+
+      if (route.pathname === '/collections') {
+        main.append(timed('view.renderCollectionsManager', () => renderCollectionsManager({ store, onNavigate, route })));
+        return;
+      }
+
+      main.append(renderPlaceholderTool({ title: 'Not Found', hint: `No route for ${route.pathname}` }));
+    });
   }
 
   store.subscribe(() => {

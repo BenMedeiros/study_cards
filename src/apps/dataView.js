@@ -3,6 +3,7 @@ import { card } from '../components/ui.js';
 import { el } from '../components/ui.js';
 import { createViewHeaderTools, createStudyFilterToggle } from '../components/viewHeaderTools.js';
 import { createDropdown } from '../components/dropdown.js';
+import { confirmDialog } from '../components/confirmDialog.js';
 
 export function renderData({ store }) {
   const root = document.createElement('div');
@@ -141,6 +142,38 @@ export function renderData({ store }) {
     return parts.join(',');
   }
 
+  function getClearLearnedStats() {
+    const adapter = getProgressAdapter();
+    const keys = new Set();
+
+    try {
+      const entriesView = refreshEntriesView();
+      for (const entry of (Array.isArray(entriesView) ? entriesView : [])) {
+        if (!passesFilters(entry)) continue;
+        const key = adapter.getKey(entry);
+        if (!key) continue;
+        if (!adapter.isLearned(key)) continue;
+        keys.add(String(key));
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    const coll = store?.collections?.getActiveCollection?.() || active;
+    const detailParts = [];
+    if (coll?.key) detailParts.push(`Collection: ${coll.key}`);
+    if (heldTableSearch) detailParts.push(`Held search: ${heldTableSearch}`);
+    const filterState = skipLearned ? 'skipLearned' : (focusOnly ? 'focusOnly' : 'off');
+    if (filterState !== 'off') detailParts.push(`Study filter: ${filterState}`);
+
+    return {
+      kind: adapter?.kind || 'kanji',
+      count: keys.size,
+      keys: Array.from(keys),
+      detail: detailParts.join(' • '),
+    };
+  }
+
   // Controls: header owns primary collection actions; pass callbacks so it can render and handle them
   const controls = createViewHeaderTools({ createControls: true,
     
@@ -158,10 +191,40 @@ export function renderData({ store }) {
       updateStudyLabel();
       markStudyRows();
     },
-    onClearLearned: () => {
+    onClearLearned: async () => {
+      const stats = getClearLearnedStats();
+      const n = Math.max(0, Math.round(Number(stats?.count) || 0));
+      if (!n) return;
+
+      const unit = (stats?.kind === 'grammar') ? 'pattern' : 'item';
+      const unitPlural = `${unit}s`;
+
+      const ok = await confirmDialog({
+        title: 'Clear learned?',
+        message: `Remove Learned flags for ${n} ${n === 1 ? unit : unitPlural}?`,
+        detail: String(stats?.detail || '').trim(),
+        confirmText: 'Clear Learned',
+        cancelText: 'Cancel',
+        danger: true,
+      });
+      if (!ok) return;
       try {
+        const keys = Array.isArray(stats?.keys) ? stats.keys : [];
         const adapter = getProgressAdapter();
-        adapter.clearLearned();
+        if (adapter?.kind === 'grammar') {
+          if (typeof store?.grammarProgress?.clearLearnedGrammarForKeys === 'function') {
+            store.grammarProgress.clearLearnedGrammarForKeys(keys);
+          }
+        } else {
+          if (typeof store?.kanjiProgress?.clearLearnedKanjiForValues === 'function') {
+            store.kanjiProgress.clearLearnedKanjiForValues(keys);
+          }
+        }
+      } catch (e) {}
+      try {
+        updateStudyLabel();
+        markStudyRows();
+        updateControlStates();
       } catch (e) {}
     }
   });
@@ -434,15 +497,9 @@ export function renderData({ store }) {
       // clearShuffle disabled if not shuffled
       const isShuffled = !!saved.isShuffled;
       if (headerBtns && headerBtns.clearShuffleBtn) headerBtns.clearShuffleBtn.disabled = !isShuffled;
-      // clearLearned disabled if no learned items in this collection
-      const adapter = getProgressAdapter();
-      let hasLearned = false;
-      const entries = refreshEntriesView();
-      for (const e of (Array.isArray(entries) ? entries : [])) {
-        const key = adapter.getKey(e);
-        if (key && adapter.isLearned(key)) { hasLearned = true; break; }
-      }
-      if (headerBtns && headerBtns.clearLearnedBtn) headerBtns.clearLearnedBtn.disabled = !hasLearned;
+      // clearLearned disabled if no learned items in the CURRENT filtered results
+      const stats = getClearLearnedStats();
+      if (headerBtns && headerBtns.clearLearnedBtn) headerBtns.clearLearnedBtn.disabled = !(stats && stats.count > 0);
       // no study subset controls remain; nothing to do here
     } catch (e) {
       // ignore

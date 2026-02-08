@@ -23,7 +23,7 @@ export function createViewHeaderTools(opts = {}) {
   clearLearnedBtn.type = 'button';
   clearLearnedBtn.className = 'btn small';
   clearLearnedBtn.textContent = 'Clear Learned';
-  clearLearnedBtn.title = 'Remove Learned flags for items in this collection';
+  clearLearnedBtn.title = 'Remove Learned flags';
 
   el.append(shuffleBtn, clearShuffleBtn, clearLearnedBtn);
 

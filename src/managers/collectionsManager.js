@@ -1,5 +1,6 @@
 import { basename, dirname, normalizeFolderPath, titleFromFilename } from '../utils/helpers.js';
 import { buildHashRoute, parseHashRoute } from '../utils/helpers.js';
+import { timed } from '../utils/timing.js';
 
 export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager }) {
   // Folder metadata helpers/storage used for lazy loads
@@ -110,38 +111,40 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       return wordSentenceIndexFinalizeInFlightByTop.get(t);
     }
 
-    const p = (async () => {
-      // Load relevant data for the top folder.
-      // Japanese is the main case: words + sentences + examples.
-      try {
-        if (t === 'japanese') {
-          if (hasAnyCollectionUnder('japanese/words')) await ensureCollectionsLoadedInFolder('japanese/words', { excludeCollectionSets: true });
-          if (hasAnyCollectionUnder('japanese/sentences')) await ensureCollectionsLoadedInFolder('japanese/sentences', { excludeCollectionSets: true });
-          if (hasAnyCollectionUnder('japanese/examples')) await ensureCollectionsLoadedInFolder('japanese/examples', { excludeCollectionSets: true });
-        } else {
-          await ensureCollectionsLoadedInFolder(t, { excludeCollectionSets: true });
+    return timed(`collections.ensureWordSentenceIndexBuiltForTop ${t}`, async () => {
+      const p = (async () => {
+        // Load relevant data for the top folder.
+        // Japanese is the main case: words + sentences + examples.
+        try {
+          if (t === 'japanese') {
+            if (hasAnyCollectionUnder('japanese/words')) await ensureCollectionsLoadedInFolder('japanese/words', { excludeCollectionSets: true });
+            if (hasAnyCollectionUnder('japanese/sentences')) await ensureCollectionsLoadedInFolder('japanese/sentences', { excludeCollectionSets: true });
+            if (hasAnyCollectionUnder('japanese/examples')) await ensureCollectionsLoadedInFolder('japanese/examples', { excludeCollectionSets: true });
+          } else {
+            await ensureCollectionsLoadedInFolder(t, { excludeCollectionSets: true });
+          }
+        } catch {
+          // ignore load failures; we'll still try to associate what we have
         }
-      } catch {
-        // ignore load failures; we'll still try to associate what we have
-      }
 
-      // Rebuild the entry index for this top folder once, and attach sentences via sentencesRefIndex.
+        // Rebuild the entry index for this top folder once, and attach sentences via sentencesRefIndex.
+        try {
+          folderEntryIndexCache.delete(t);
+          buildFolderEntryIndex(t);
+        } catch {
+          // ignore
+        }
+        wordSentenceIndexFinalizedByTop.set(t, true);
+        emit();
+      })();
+
+      wordSentenceIndexFinalizeInFlightByTop.set(t, p);
       try {
-        folderEntryIndexCache.delete(t);
-        buildFolderEntryIndex(t);
-      } catch {
-        // ignore
+        return await p;
+      } finally {
+        wordSentenceIndexFinalizeInFlightByTop.delete(t);
       }
-      wordSentenceIndexFinalizedByTop.set(t, true);
-      emit();
-    })();
-
-    wordSentenceIndexFinalizeInFlightByTop.set(t, p);
-    try {
-      return await p;
-    } finally {
-      wordSentenceIndexFinalizeInFlightByTop.delete(t);
-    }
+    });
   }
 
   const DEBUG_PREVIEW_LIMIT = 200;
@@ -402,7 +405,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     if (collectionSetsCache.has(folder)) return collectionSetsCache.get(folder);
     if (pendingCollectionSetsLoads.has(folder)) return pendingCollectionSetsLoads.get(folder);
 
-    const p = (async () => {
+    const p = timed(`collections.loadCollectionSetsForFolder ${folder || '(root)'}`, async () => {
       if (!hasCollectionSetsFile(folder)) {
         collectionSetsCache.set(folder, null);
         return null;
@@ -448,7 +451,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
       collectionSetsCache.set(folder, normalized);
       return normalized;
-    })();
+    });
 
     pendingCollectionSetsLoads.set(folder, p);
     try {
@@ -482,7 +485,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
 
     if (loads.length) {
-      await Promise.all(loads);
+      await timed(`collections.ensureCollectionsLoadedInFolder ${folder || '(root)'} (${loads.length})`, () => Promise.all(loads));
     }
   }
 
@@ -512,10 +515,12 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const folder = normalizeFolderPath(baseFolder);
     if (folderEntryIndexCache.has(folder)) return folderEntryIndexCache.get(folder);
 
-    const prefix = folder ? `${folder}/` : '';
-    const index = new Map();
-    const scoreMap = new Map();
-    const candidateKeys = ['kanji', 'character', 'text', 'word', 'kana', 'reading'];
+    return timed(`collections.buildFolderEntryIndex ${folder || '(root)'}`, () => {
+
+      const prefix = folder ? `${folder}/` : '';
+      const index = new Map();
+      const scoreMap = new Map();
+      const candidateKeys = ['kanji', 'character', 'text', 'word', 'kana', 'reading'];
 
     const relevantCollections = state.collections
       .filter(c => c && typeof c.key === 'string')
@@ -541,7 +546,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       }
     }
 
-    folderEntryIndexCache.set(folder, index);
+      folderEntryIndexCache.set(folder, index);
 
     try {
       const refMap = sentencesRefIndex.get(folder) || new Map();
@@ -558,15 +563,17 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       // ignore
     }
 
-    return index;
+      return index;
+    });
   }
 
   async function resolveVirtualSetRecord(record, baseFolder, setObj) {
     const folder = normalizeFolderPath(baseFolder);
-    await ensureCollectionsLoadedInFolder(folder, { excludeCollectionSets: true });
+    return timed(`collections.resolveVirtualSetRecord ${folder || '(root)'}`, async () => {
+      await ensureCollectionsLoadedInFolder(folder, { excludeCollectionSets: true });
 
-    folderEntryIndexCache.delete(folder);
-    const index = buildFolderEntryIndex(folder);
+      folderEntryIndexCache.delete(folder);
+      const index = buildFolderEntryIndex(folder);
 
     const resolved = [];
     if (Array.isArray(setObj?.kanjiFilter) && setObj.kanjiFilter.length) {
@@ -719,7 +726,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     record.metadata = record.metadata || {};
     if (fields) record.metadata.fields = fields;
 
-    emit();
+      emit();
+    });
   }
 
   function getCachedCollectionSetsForFolder(baseFolder) {
@@ -836,7 +844,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       return pendingFolderMetadataLoads.get(folder);
     }
 
-    const p = (async () => {
+    const p = timed(`collections.loadInheritedFolderMetadata ${folder || '(root)'}`, async () => {
       const direct = await tryLoadFolderMetadata(folder, folderMetadataMapParam);
       if (direct) {
         cache[folder] = direct;
@@ -852,7 +860,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       const inherited = folder ? await loadInheritedFolderMetadata(parent, cache, folderMetadataMapParam) : null;
       cache[folder] = inherited;
       return inherited;
-    })();
+    });
 
     pendingFolderMetadataLoads.set(folder, p);
     try {
@@ -979,68 +987,70 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   }
 
   async function loadSeedCollections() {
-    const indexRes = await fetch('./collections/index.json');
-    if (!indexRes.ok) throw new Error(`Failed to load collections index (status ${indexRes.status})`);
-    let index;
-    try {
-      const indexText = await indexRes.text();
-      if (!indexText) throw new Error('collections/index.json is empty');
-      index = JSON.parse(indexText);
-    } catch (err) {
-      throw new Error(`Failed to parse collections/index.json: ${err.message}`);
-    }
-
-    const rawCollections = Array.isArray(index?.collections) ? index.collections : [];
-    const paths = rawCollections.map(c => (typeof c === 'string' ? c : (c.path || ''))).filter(Boolean);
-
-    folderMetadataMap = buildFolderMetadataMap(index?.folderMetadata);
-    state.collectionTree = buildCollectionTreeFromPaths(paths);
-    state._availableCollectionPaths = paths.slice();
-
-    availableCollectionsMap = new Map();
-    for (const raw of rawCollections) {
-      if (typeof raw === 'string') {
-        availableCollectionsMap.set(raw, { path: raw, name: null, description: null, entries: null });
-      } else if (raw && typeof raw.path === 'string') {
-        availableCollectionsMap.set(raw.path, {
-          path: raw.path,
-          name: raw.name || null,
-          description: raw.description || null,
-          entries: (typeof raw.entries === 'number') ? raw.entries : null
-        });
+    return timed('collections.loadSeedCollections', async () => {
+      const indexRes = await fetch('./collections/index.json');
+      if (!indexRes.ok) throw new Error(`Failed to load collections index (status ${indexRes.status})`);
+      let index;
+      try {
+        const indexText = await indexRes.text();
+        if (!indexText) throw new Error('collections/index.json is empty');
+        index = JSON.parse(indexText);
+      } catch (err) {
+        throw new Error(`Failed to parse collections/index.json: ${err.message}`);
       }
-    }
 
-    emit();
-    // Prefetch all collections in background to avoid lazy-loading surprises.
-    // Run async/non-blocking so UI startup isn't delayed.
-    try {
-      Promise.resolve().then(() => {
-        try {
-          prefetchCollectionsInFolder('');
-          // Also prefetch per-folder collection sets (/_collectionSets.json)
-          // so UI won't lazily fetch them later when browsing folders.
+      const rawCollections = Array.isArray(index?.collections) ? index.collections : [];
+      const paths = rawCollections.map(c => (typeof c === 'string' ? c : (c.path || ''))).filter(Boolean);
+
+      folderMetadataMap = buildFolderMetadataMap(index?.folderMetadata);
+      state.collectionTree = buildCollectionTreeFromPaths(paths);
+      state._availableCollectionPaths = paths.slice();
+
+      availableCollectionsMap = new Map();
+      for (const raw of rawCollections) {
+        if (typeof raw === 'string') {
+          availableCollectionsMap.set(raw, { path: raw, name: null, description: null, entries: null });
+        } else if (raw && typeof raw.path === 'string') {
+          availableCollectionsMap.set(raw.path, {
+            path: raw.path,
+            name: raw.name || null,
+            description: raw.description || null,
+            entries: (typeof raw.entries === 'number') ? raw.entries : null
+          });
+        }
+      }
+
+      emit();
+      // Prefetch all collections in background to avoid lazy-loading surprises.
+      // Run async/non-blocking so UI startup isn't delayed.
+      try {
+        Promise.resolve().then(() => {
           try {
-            const tops = new Set((state._availableCollectionPaths || []).map(p => {
-              const parts = String(p || '').split('/').filter(Boolean);
-              return parts.length ? parts[0] : '';
-            }).filter(Boolean));
-            for (const t of tops) {
-              // fire-and-forget
-              loadCollectionSetsForFolder(t).catch(() => null);
+            prefetchCollectionsInFolder('');
+            // Also prefetch per-folder collection sets (/_collectionSets.json)
+            // so UI won't lazily fetch them later when browsing folders.
+            try {
+              const tops = new Set((state._availableCollectionPaths || []).map(p => {
+                const parts = String(p || '').split('/').filter(Boolean);
+                return parts.length ? parts[0] : '';
+              }).filter(Boolean));
+              for (const t of tops) {
+                // fire-and-forget
+                loadCollectionSetsForFolder(t).catch(() => null);
+              }
+            } catch (e) {
+              // ignore
             }
           } catch (e) {
             // ignore
           }
-        } catch (e) {
-          // ignore
-        }
-      });
-    } catch (e) {
-      // ignore
-    }
+        });
+      } catch (e) {
+        // ignore
+      }
 
-    return paths;
+      return paths;
+    });
   }
 
   function getAvailableCollections() {
@@ -1057,7 +1067,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     if (existing) return existing;
     if (pendingLoads.has(key)) return pendingLoads.get(key);
 
-    const p = (async () => {
+    const p = timed(`collections.loadCollection ${key}`, async () => {
       const virtual = parseCollectionSetVirtualKey(key);
       if (virtual) {
         const { baseFolder, setId } = virtual;
@@ -1274,7 +1284,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         // ignore
       }
       return record;
-    })();
+    });
 
     pendingLoads.set(key, p);
     try {
@@ -1506,19 +1516,23 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   function filterEntriesAndIndicesByTableSearch(entries, indices, { query, fields = null } = {}) {
     const arr = Array.isArray(entries) ? entries : [];
     const idx = Array.isArray(indices) ? indices : arr.map((_, i) => i);
-    const rx = makeTableSearchRegex(query);
-    if (!rx) return { entries: arr.slice(), indices: idx.slice() };
+    const q = String(query || '').trim();
+    const label = `collections.filterEntriesAndIndicesByTableSearch (${arr.length}) q=${q.length}`;
+    return timed(label, () => {
+      const rx = makeTableSearchRegex(q);
+      if (!rx) return { entries: arr.slice(), indices: idx.slice() };
 
-    const outEntries = [];
-    const outIdx = [];
-    for (let i = 0; i < arr.length; i++) {
-      const e = arr[i];
-      if (entryMatchesTableSearch(e, { regex: rx, fields })) {
-        outEntries.push(e);
-        outIdx.push(idx[i]);
+      const outEntries = [];
+      const outIdx = [];
+      for (let i = 0; i < arr.length; i++) {
+        const e = arr[i];
+        if (entryMatchesTableSearch(e, { regex: rx, fields })) {
+          outEntries.push(e);
+          outIdx.push(idx[i]);
+        }
       }
-    }
-    return { entries: outEntries, indices: outIdx };
+      return { entries: outEntries, indices: outIdx };
+    });
   }
 
   // ============================================================================

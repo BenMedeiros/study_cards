@@ -100,6 +100,32 @@ export function createGrammarProgressManager({ uiState, persistence, emitter, gr
     emitter.emit();
   }
 
+  function clearLearnedGrammarForKeys(keys) {
+    try {
+      const arr = Array.isArray(keys) ? keys : [];
+      if (!arr.length) return;
+      const toClear = new Set(arr.map(normalizeGrammarKey).filter(Boolean));
+      if (!toClear.size) return;
+
+      const map = ensureGrammarProgressMap();
+      let changed = false;
+      for (const k of toClear) {
+        const rec = map[k];
+        if (rec && typeof rec === 'object' && rec.state === 'learned') {
+          map[k] = { ...rec, state: null };
+          changed = true;
+        }
+      }
+      if (!changed) return;
+
+      persistence.markDirty({ kvKey: grammarProgressKey });
+      persistence.scheduleFlush({ immediate: true });
+      emitter.emit();
+    } catch {
+      // ignore
+    }
+  }
+
   function _unsafeGetMap() {
     return ensureGrammarProgressMap();
   }
@@ -124,5 +150,6 @@ export function createGrammarProgressManager({ uiState, persistence, emitter, gr
     addTimeMsStudiedInGrammarStudyCard,
 
     clearLearnedGrammar,
+    clearLearnedGrammarForKeys,
   };
 }

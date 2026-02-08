@@ -1,5 +1,7 @@
 let _tableGlobalResizeHookInstalled = false;
 
+import { timed } from '../utils/timing.js';
+
 function _installGlobalTableResizeHook() {
   if (_tableGlobalResizeHookInstalled) return;
   _tableGlobalResizeHookInstalled = true;
@@ -39,6 +41,15 @@ function _installGlobalTableResizeHook() {
  * @returns {HTMLTableElement}
  */
 export function createTable({ headers, rows, className = '', id, collection, sortable = false, searchable = false, rowActions = [], colGroups = [] } = {}) {
+  const __tableLabel = (() => {
+    const parts = [];
+    if (id) parts.push(String(id));
+    if (collection) parts.push(String(collection));
+    const s = parts.join(' / ').trim();
+    return s ? `table.create ${s}` : 'table.create';
+  })();
+
+  return timed(__tableLabel, () => {
   _installGlobalTableResizeHook();
 
   const wrapper = document.createElement('div');
@@ -582,22 +593,26 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     }
 
     function applyFilter(q) {
-      const rx = makeRegex(q);
-      if (!rx) currentRows = originalRows.slice();
-      else {
-        currentRows = originalRows.filter(r => {
-          for (const cell of r) {
-            const v = extractCellValue(cell);
-            if (rx.test(String(v))) return true;
-          }
-          return false;
-        });
-      }
-      sortAndRender();
-      try {
-        const has = String(q || '').trim().length > 0;
-        clearBtn.disabled = !has;
-      } catch (e) {}
+      const total = Array.isArray(originalRows) ? originalRows.length : 0;
+      const label = `table.applyFilter (${total})`;
+      return timed(label, () => {
+        const rx = makeRegex(q);
+        if (!rx) currentRows = originalRows.slice();
+        else {
+          currentRows = originalRows.filter(r => {
+            for (const cell of r) {
+              const v = extractCellValue(cell);
+              if (rx.test(String(v))) return true;
+            }
+            return false;
+          });
+        }
+        sortAndRender();
+        try {
+          const has = String(q || '').trim().length > 0;
+          clearBtn.disabled = !has;
+        } catch (e) {}
+      });
     }
 
     // Initial state
@@ -655,10 +670,11 @@ export function createTable({ headers, rows, className = '', id, collection, sor
   }
 
   // Perform initial render
-  renderMaybeVirtual(currentRows);
+  timed('table.initialRender', () => renderMaybeVirtual(currentRows));
 
   // Sorting helper
   function sortAndRender() {
+    return timed('table.sortAndRender', () => {
     if (sortCol === null) {
       renderMaybeVirtual(currentRows);
       Array.from(headerRow.children).forEach(th => th.setAttribute('aria-sort', 'none'));
@@ -687,10 +703,12 @@ export function createTable({ headers, rows, className = '', id, collection, sor
       if (j === sortCol) th.setAttribute('aria-sort', sortDir === 'asc' ? 'ascending' : 'descending');
       else th.setAttribute('aria-sort', 'none');
     });
+    });
   }
 
   table.append(thead, tbody);
   wrapper.append(table);
   updateStickyOffsets();
   return wrapper;
+  });
 }
