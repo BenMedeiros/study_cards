@@ -1709,6 +1709,41 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     return expandEntriesAndIndicesByAdjectiveForms(arr, null, { iForms: nextIForms, naForms: nextNaForms }).entries;
   }
 
+  // Report how many extra rows adjective expansion adds.
+  // This is useful for UI summaries (e.g., Data View corner caption).
+  // NOTE: Expansion replaces each adjective entry with N "form" rows; the delta is (N-1) per matching entry.
+  function getAdjectiveExpansionDeltas(entries, { iForms = [], naForms = [] } = {}) {
+    const arr = Array.isArray(entries) ? entries : [];
+    const iSel = uniqueInOrder(normalizeExpansionForms(iForms));
+    const naSel = uniqueInOrder(normalizeExpansionForms(naForms));
+
+    let iBaseCount = 0;
+    let naBaseCount = 0;
+    for (const entry of arr) {
+      if (!entry || typeof entry !== 'object') continue;
+      const type = normalizeType(String(entry.type || '').trim());
+      const isI = type === 'i-adjective' || type === 'i_adj' || type === 'i-adj';
+      const isNa = type === 'na-adjective' || type === 'na_adj' || type === 'na-adj';
+      if (isI) iBaseCount++;
+      else if (isNa) naBaseCount++;
+    }
+
+    const iFormsCount = iSel.length;
+    const naFormsCount = naSel.length;
+    const iDelta = (iFormsCount > 0) ? (iBaseCount * Math.max(0, iFormsCount - 1)) : 0;
+    const naDelta = (naFormsCount > 0) ? (naBaseCount * Math.max(0, naFormsCount - 1)) : 0;
+
+    return {
+      iDelta,
+      naDelta,
+      totalDelta: iDelta + naDelta,
+      iBaseCount,
+      naBaseCount,
+      iFormsCount,
+      naFormsCount,
+    };
+  }
+
   // ============================================================================
   // Collection View (with shuffle, expansion, filtering)
   // ============================================================================
@@ -1866,6 +1901,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     filterEntriesAndIndicesByTableSearch,
     expandEntriesByAdjectiveForm,
     expandEntriesAndIndicesByAdjectiveForms,
+    getAdjectiveExpansionDeltas,
 
     // Collection actions (state modifications)
     shuffleCollection,

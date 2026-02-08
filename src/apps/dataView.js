@@ -847,16 +847,70 @@ export function renderData({ store }) {
         const total = entriesView.length;
         const visible = visibleIdxs.length;
         const base = (visible < total) ? `${visible}/${total} Entries` : `${total} Entries`;
-        const q = String(heldTableSearch || '').trim();
-        if (q) {
+
+        // Architecture note: treat collection state as the source of truth for held filters.
+        // Data View keeps a local copy (`heldTableSearch`) in sync for fast filtering.
+        const saved = readCollState() || {};
+        const held = String(saved?.heldTableSearch ?? heldTableSearch ?? '').trim();
+
+        const parts = [base];
+        const titleParts = [];
+
+        if (held) {
           const max = 28;
-          const short = (q.length > max) ? `${q.slice(0, max - 1)}…` : q;
-          corner.textContent = `${base} • filter: ${short}`;
-          corner.title = `Held filter: ${q}`;
-        } else {
-          corner.textContent = base;
-          corner.title = '';
+          const short = (held.length > max) ? `${held.slice(0, max - 1)}…` : held;
+          parts.push(`filter: ${short}`);
+          titleParts.push(`Held filter: ${held}`);
         }
+
+        // Ask CollectionsManager for expansion deltas so UI doesn't need to re-derive them.
+        // IMPORTANT: these deltas should be based on the held-filtered base entries (pre-expansion),
+        // so the numbers reflect the currently-held Data View dataset.
+        try {
+          let baseForDelta = baseEntries;
+          try {
+            const adapter = getProgressAdapter();
+            const filtered = [];
+            for (const entry of (Array.isArray(baseEntries) ? baseEntries : [])) {
+              if (!entry || typeof entry !== 'object') continue;
+
+              // Apply study filter toggles (these are part of the held view state)
+              try {
+                const key = adapter.getKey(entry);
+                if (key) {
+                  if (skipLearned && adapter.isLearned(key)) continue;
+                  if (focusOnly && !adapter.isFocus(key)) continue;
+                }
+              } catch (e) {}
+
+              // Apply held table search to base entries
+              if (held) {
+                try {
+                  if (!store.collections.entryMatchesTableSearch(entry, { query: held, fields })) continue;
+                } catch (e) {}
+              }
+
+              filtered.push(entry);
+            }
+            baseForDelta = filtered;
+          } catch (e) {
+            baseForDelta = baseEntries;
+          }
+
+          const stats = (typeof store?.collections?.getAdjectiveExpansionDeltas === 'function')
+            ? store.collections.getAdjectiveExpansionDeltas(baseForDelta, { iForms: expansionIForms, naForms: expansionNaForms })
+            : null;
+          const iDelta = Math.max(0, Math.round(Number(stats?.iDelta) || 0));
+          const naDelta = Math.max(0, Math.round(Number(stats?.naDelta) || 0));
+          if (iDelta) parts.push(`+${iDelta} i-adj`);
+          if (naDelta) parts.push(`+${naDelta} na-adj`);
+          if (iDelta || naDelta) titleParts.push(`Expansion delta: +${iDelta} i-adj, +${naDelta} na-adj`);
+        } catch (e) {
+          // ignore
+        }
+
+        corner.textContent = parts.join(' • ');
+        corner.title = titleParts.join('\n');
       }
     } catch (e) {
       // ignore

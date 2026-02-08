@@ -112,6 +112,7 @@ export function createStore() {
       filterEntriesAndIndicesByTableSearch: collections.filterEntriesAndIndicesByTableSearch,
       expandEntriesByAdjectiveForm: collections.expandEntriesByAdjectiveForm,
       expandEntriesAndIndicesByAdjectiveForms: collections.expandEntriesAndIndicesByAdjectiveForms,
+      getAdjectiveExpansionDeltas: collections.getAdjectiveExpansionDeltas,
 
       // Collection actions (state modifications)
       shuffleCollection: collections.shuffleCollection,
