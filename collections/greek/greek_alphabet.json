@@ -1,180 +1,376 @@
 {
   "metadata": {
     "name": "Greek Alphabet",
-    "description": "Classical Greek letters with lowercase, uppercase, and names.",
-    "version": 1,
+    "description": "Greek letters with standard alphabetical order, lowercase/uppercase forms, classical names, letter type classification, and pronunciation guides split into Classical vs Modern (IPA + simple helpers).",
+    "version": 4,
     "category": "greek",
     "schema": [
+      {
+        "key": "order",
+        "label": "Alphabet Order",
+        "jp_label": "順番",
+        "type": "number",
+        "description": "Standard Greek alphabetical index starting at 1."
+      },
       {
         "key": "lowercase",
         "label": "Lowercase",
         "jp_label": "小文字",
-        "type": "string"
+        "type": "string",
+        "description": "The lowercase letter form."
       },
       {
         "key": "uppercase",
         "label": "Uppercase",
         "jp_label": "大文字",
-        "type": "string"
+        "type": "string",
+        "description": "The uppercase letter form."
       },
       {
         "key": "classical_greek_name",
         "label": "Classical Greek Name",
         "jp_label": "古典ギリシャ語名",
-        "type": "string"
+        "type": "string",
+        "description": "Traditional letter name used for Classical Greek (Latin transliteration)."
+      },
+      {
+        "key": "letter_type",
+        "label": "Letter Type",
+        "jp_label": "文字種別",
+        "type": "enum",
+        "description": "Phonetic classification of the letter.",
+        "values": {
+          "vowel": "Pure vowel letter.",
+          "consonant": "Pure consonant letter.",
+          "cluster": "Represents a consonant cluster (e.g., /ks/, /ps/).",
+          "semivowel": "Glide or vowel-like consonant (future-proof classification)."
+        }
+      },
+      {
+        "key": "classical_sound",
+        "label": "Classical Sound (IPA)",
+        "jp_label": "古典発音 (IPA)",
+        "type": "string",
+        "description": "Common Classical/Attic-era phonetic value(s) in IPA."
+      },
+      {
+        "key": "classical_sound_helper",
+        "label": "Classical Sound Helper",
+        "jp_label": "古典発音ヘルパー",
+        "type": "string",
+        "description": "Plain-English cue for the Classical sound with a short example."
+      },
+      {
+        "key": "modern_sound",
+        "label": "Modern Greek Sound (IPA)",
+        "jp_label": "現代発音 (IPA)",
+        "type": "string",
+        "description": "Common Modern Greek phonetic value(s) in IPA."
+      },
+      {
+        "key": "modern_sound_helper",
+        "label": "Modern Sound Helper",
+        "jp_label": "現代発音ヘルパー",
+        "type": "string",
+        "description": "Plain-English cue for the Modern sound with a short example."
       },
       {
         "key": "notes",
-        "label": "Notes / Pronunciation",
-        "jp_label": "備考 / 発音",
-        "type": "string"
+        "label": "Notes",
+        "jp_label": "備考",
+        "type": "string",
+        "description": "Contextual or positional pronunciation notes."
       }
     ]
   },
   "entries": [
     {
+      "order": 1,
       "lowercase": "α",
       "uppercase": "Α",
       "classical_greek_name": "alpha",
-      "notes": "Classical /a/, modern /a/; vowel"
+      "letter_type": "vowel",
+      "classical_sound": "/a/",
+      "classical_sound_helper": "AH as in 'father'.",
+      "modern_sound": "/a/",
+      "modern_sound_helper": "AH as in 'father'.",
+      "notes": ""
     },
     {
+      "order": 2,
       "lowercase": "β",
       "uppercase": "Β",
       "classical_greek_name": "beta",
-      "notes": "Classical /b/, modern /v/"
+      "letter_type": "consonant",
+      "classical_sound": "/b/",
+      "classical_sound_helper": "B as in 'book'.",
+      "modern_sound": "/v/",
+      "modern_sound_helper": "V as in 'vine'.",
+      "notes": ""
     },
     {
+      "order": 3,
       "lowercase": "γ",
       "uppercase": "Γ",
       "classical_greek_name": "gamma",
-      "notes": "Classical /g/; before front vowels /γ/ softens to /ʝ/"
+      "letter_type": "consonant",
+      "classical_sound": "/g/",
+      "classical_sound_helper": "Hard G as in 'go'.",
+      "modern_sound": "/ɣ/ ~ /ʝ/",
+      "modern_sound_helper": "Soft throaty G; before E/I like a friction 'y'.",
+      "notes": "Modern: /ɣ/ before back vowels, /ʝ/ before front vowels."
     },
     {
+      "order": 4,
       "lowercase": "δ",
       "uppercase": "Δ",
       "classical_greek_name": "delta",
-      "notes": "Classical /d/, modern /ð/ (like 'th' in 'this')"
+      "letter_type": "consonant",
+      "classical_sound": "/d/",
+      "classical_sound_helper": "D as in 'dog'.",
+      "modern_sound": "/ð/",
+      "modern_sound_helper": "TH as in 'this'.",
+      "notes": ""
     },
     {
+      "order": 5,
       "lowercase": "ε",
       "uppercase": "Ε",
       "classical_greek_name": "epsilon",
-      "notes": "Short /e/ vowel"
+      "letter_type": "vowel",
+      "classical_sound": "/e/",
+      "classical_sound_helper": "EH as in 'met'.",
+      "modern_sound": "/e/",
+      "modern_sound_helper": "EH as in 'met'.",
+      "notes": "Historically short vowel."
     },
     {
+      "order": 6,
       "lowercase": "ζ",
       "uppercase": "Ζ",
       "classical_greek_name": "zeta",
-      "notes": "Classical /zd/ or /dz/, modern /z/"
+      "letter_type": "consonant",
+      "classical_sound": "/zd/ or /dz/",
+      "classical_sound_helper": "Either 'zd' or 'dz' like 'adze'.",
+      "modern_sound": "/z/",
+      "modern_sound_helper": "Z as in 'zoo'.",
+      "notes": ""
     },
     {
+      "order": 7,
       "lowercase": "η",
       "uppercase": "Η",
       "classical_greek_name": "eta",
-      "notes": "Long /ɛː/ in Classical, modern /i/"
+      "letter_type": "vowel",
+      "classical_sound": "/ɛː/",
+      "classical_sound_helper": "Long EH, stretched.",
+      "modern_sound": "/i/",
+      "modern_sound_helper": "EE as in 'see'.",
+      "notes": "Long vowel in Classical."
     },
     {
+      "order": 8,
       "lowercase": "θ",
       "uppercase": "Θ",
       "classical_greek_name": "theta",
-      "notes": "Classical /tʰ/, modern /θ/ (like 'th' in 'think')"
+      "letter_type": "consonant",
+      "classical_sound": "/tʰ/",
+      "classical_sound_helper": "T with strong puff of air.",
+      "modern_sound": "/θ/",
+      "modern_sound_helper": "TH as in 'think'.",
+      "notes": ""
     },
     {
+      "order": 9,
       "lowercase": "ι",
       "uppercase": "Ι",
       "classical_greek_name": "iota",
-      "notes": "Short /i/ vowel"
+      "letter_type": "vowel",
+      "classical_sound": "/i/",
+      "classical_sound_helper": "EE as in 'see'.",
+      "modern_sound": "/i/",
+      "modern_sound_helper": "EE as in 'see'.",
+      "notes": ""
     },
     {
+      "order": 10,
       "lowercase": "κ",
       "uppercase": "Κ",
       "classical_greek_name": "kappa",
-      "notes": "Classical /k/, modern /k/"
+      "letter_type": "consonant",
+      "classical_sound": "/k/",
+      "classical_sound_helper": "K as in 'skin'.",
+      "modern_sound": "/k/",
+      "modern_sound_helper": "K as in 'skin'.",
+      "notes": ""
     },
     {
+      "order": 11,
       "lowercase": "λ",
       "uppercase": "Λ",
       "classical_greek_name": "lambda",
-      "notes": "Classical /l/, consonant"
+      "letter_type": "consonant",
+      "classical_sound": "/l/",
+      "classical_sound_helper": "L as in 'lip'.",
+      "modern_sound": "/l/",
+      "modern_sound_helper": "L as in 'lip'.",
+      "notes": ""
     },
     {
+      "order": 12,
       "lowercase": "μ",
       "uppercase": "Μ",
       "classical_greek_name": "mu",
-      "notes": "Classical /m/, consonant"
+      "letter_type": "consonant",
+      "classical_sound": "/m/",
+      "classical_sound_helper": "M as in 'man'.",
+      "modern_sound": "/m/",
+      "modern_sound_helper": "M as in 'man'.",
+      "notes": ""
     },
     {
+      "order": 13,
       "lowercase": "ν",
       "uppercase": "Ν",
       "classical_greek_name": "nu",
-      "notes": "Classical /n/, consonant"
+      "letter_type": "consonant",
+      "classical_sound": "/n/",
+      "classical_sound_helper": "N as in 'no'.",
+      "modern_sound": "/n/",
+      "modern_sound_helper": "N as in 'no'.",
+      "notes": ""
     },
     {
+      "order": 14,
       "lowercase": "ξ",
       "uppercase": "Ξ",
       "classical_greek_name": "xi",
-      "notes": "Classical /ks/, consonant cluster"
+      "letter_type": "cluster",
+      "classical_sound": "/ks/",
+      "classical_sound_helper": "KS as in 'books'.",
+      "modern_sound": "/ks/",
+      "modern_sound_helper": "KS as in 'books'.",
+      "notes": ""
     },
     {
+      "order": 15,
       "lowercase": "ο",
       "uppercase": "Ο",
       "classical_greek_name": "omicron",
-      "notes": "Short /o/ vowel"
+      "letter_type": "vowel",
+      "classical_sound": "/o/",
+      "classical_sound_helper": "Short OH.",
+      "modern_sound": "/o/",
+      "modern_sound_helper": "OH as in 'told'.",
+      "notes": "Historically short vowel."
     },
     {
+      "order": 16,
       "lowercase": "π",
       "uppercase": "Π",
       "classical_greek_name": "pi",
-      "notes": "Classical /p/, consonant"
+      "letter_type": "consonant",
+      "classical_sound": "/p/",
+      "classical_sound_helper": "P as in 'spin'.",
+      "modern_sound": "/p/",
+      "modern_sound_helper": "P as in 'spin'.",
+      "notes": ""
     },
     {
+      "order": 17,
       "lowercase": "ρ",
       "uppercase": "Ρ",
       "classical_greek_name": "rho",
-      "notes": "Classical /r/, trilled; can be aspirated /rh/ word-initially"
+      "letter_type": "consonant",
+      "classical_sound": "/r/ ~ /r̥/",
+      "classical_sound_helper": "Rolled R; breathy at word start.",
+      "modern_sound": "/r/",
+      "modern_sound_helper": "Rolled or tapped R.",
+      "notes": "Word-initial rho historically voiceless."
     },
     {
+      "order": 18,
       "lowercase": "σ",
       "uppercase": "Σ",
       "classical_greek_name": "sigma",
-      "notes": "Classical /s/; final form ς in word-final position"
+      "letter_type": "consonant",
+      "classical_sound": "/s/",
+      "classical_sound_helper": "S as in 'see'.",
+      "modern_sound": "/s/",
+      "modern_sound_helper": "S as in 'see'.",
+      "notes": "Final form ς at word end."
     },
     {
+      "order": 19,
       "lowercase": "τ",
       "uppercase": "Τ",
       "classical_greek_name": "tau",
-      "notes": "Classical /t/, consonant"
+      "letter_type": "consonant",
+      "classical_sound": "/t/",
+      "classical_sound_helper": "T as in 'stop'.",
+      "modern_sound": "/t/",
+      "modern_sound_helper": "T as in 'stop'.",
+      "notes": ""
     },
     {
+      "order": 20,
       "lowercase": "υ",
       "uppercase": "Υ",
       "classical_greek_name": "upsilon",
-      "notes": "Classical /y/ front rounded vowel, modern /i/"
+      "letter_type": "vowel",
+      "classical_sound": "/y/",
+      "classical_sound_helper": "Say 'ee' with rounded lips.",
+      "modern_sound": "/i/",
+      "modern_sound_helper": "EE as in 'see'.",
+      "notes": ""
     },
     {
+      "order": 21,
       "lowercase": "φ",
       "uppercase": "Φ",
       "classical_greek_name": "phi",
-      "notes": "Classical /pʰ/, aspirated; modern /f/"
+      "letter_type": "consonant",
+      "classical_sound": "/pʰ/",
+      "classical_sound_helper": "Strong aspirated P.",
+      "modern_sound": "/f/",
+      "modern_sound_helper": "F as in 'fine'.",
+      "notes": ""
     },
     {
+      "order": 22,
       "lowercase": "χ",
       "uppercase": "Χ",
       "classical_greek_name": "chi",
-      "notes": "Classical /kʰ/, aspirated; modern /x/"
+      "letter_type": "consonant",
+      "classical_sound": "/kʰ/",
+      "classical_sound_helper": "Strong aspirated K.",
+      "modern_sound": "/x/ ~ /ç/",
+      "modern_sound_helper": "German 'Bach' / softer 'ich' before E/I.",
+      "notes": "Modern varies by following vowel."
     },
     {
+      "order": 23,
       "lowercase": "ψ",
       "uppercase": "Ψ",
       "classical_greek_name": "psi",
-      "notes": "Classical /ps/, consonant cluster"
+      "letter_type": "cluster",
+      "classical_sound": "/ps/",
+      "classical_sound_helper": "PS as in 'lapse'.",
+      "modern_sound": "/ps/",
+      "modern_sound_helper": "PS as in 'lapse'.",
+      "notes": ""
     },
     {
+      "order": 24,
       "lowercase": "ω",
       "uppercase": "Ω",
       "classical_greek_name": "omega",
-      "notes": "Long /ɔː/ vowel in Classical, modern /o/"
+      "letter_type": "vowel",
+      "classical_sound": "/ɔː/",
+      "classical_sound_helper": "Long 'awe' sound.",
+      "modern_sound": "/o/",
+      "modern_sound_helper": "OH as in 'told'.",
+      "notes": "Long vowel in Classical."
     }
   ]
 }
