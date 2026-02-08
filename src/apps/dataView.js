@@ -265,7 +265,13 @@ export function renderData({ store }) {
     markStudyRows();
   } });
   // append the study filter toggle after the header-controlled buttons
-  controls.append(studyFilterToggle.el);
+  const studyFilterGroup = document.createElement('div');
+  studyFilterGroup.className = 'data-expansion-group';
+  const studyFilterCaption = document.createElement('div');
+  studyFilterCaption.className = 'data-expansion-caption';
+  studyFilterCaption.textContent = 'col.study-filter';
+  studyFilterGroup.append(studyFilterToggle.el, studyFilterCaption);
+  controls.append(studyFilterGroup);
 
   // Adjective expansion dropdowns (persisted per-collection)
   const expansionWrap = document.createElement('div');

@@ -348,10 +348,21 @@ export function renderGrammarStudyCard({ store }) {
   // Root UI
   const headerTools = createViewHeaderTools();
 
+  function wrapHeaderTool(controlEl, captionText) {
+    const group = document.createElement('div');
+    group.className = 'data-expansion-group';
+    const caption = document.createElement('div');
+    caption.className = 'data-expansion-caption';
+    caption.textContent = String(captionText || '').trim();
+    group.append(controlEl, caption);
+    return group;
+  }
+
   const shuffleBtn = document.createElement('button');
   shuffleBtn.type = 'button';
   shuffleBtn.className = 'btn small';
-  shuffleBtn.textContent = '🔀 Shuffle';
+  shuffleBtn.textContent = 'Shuffle';
+  shuffleBtn.setAttribute('aria-pressed', String(!!isShuffled));
 
   const toggleBtn = document.createElement('button');
   toggleBtn.type = 'button';
@@ -367,7 +378,11 @@ export function renderGrammarStudyCard({ store }) {
   autoSpeakBtn.title = 'Toggle auto-speak';
   autoSpeakBtn.setAttribute('aria-pressed', 'false');
 
-  headerTools.append(shuffleBtn, toggleBtn, autoSpeakBtn);
+  const shuffleGroup = wrapHeaderTool(shuffleBtn, 'col.shuffle');
+  const detailsGroup = wrapHeaderTool(toggleBtn, 'app.card-details');
+  const autoSpeakGroup = wrapHeaderTool(autoSpeakBtn, 'app.auto-speak');
+
+  headerTools.append(shuffleGroup, detailsGroup, autoSpeakGroup);
 
   // Autoplay controls live in the header tools bar (consistent with Kanji Study).
   autoplayControlsEl = createAutoplayControls({
@@ -380,7 +395,7 @@ export function renderGrammarStudyCard({ store }) {
     }
   });
   // place autoplay controls at start of headerTools, grouped visually
-  headerTools.insertBefore(autoplayControlsEl, shuffleBtn);
+  headerTools.insertBefore(autoplayControlsEl, shuffleGroup);
 
   let prevBtn, revealBtn, soundBtn, nextBtn, learnedBtn, practiceBtn;
 
@@ -446,7 +461,8 @@ export function renderGrammarStudyCard({ store }) {
     refreshFromStore({ resetIndex: false });
     toggleBtn.textContent = viewMode === 'pattern-only' ? 'Details: Off' : 'Details: On';
     toggleBtn.setAttribute('aria-pressed', String(viewMode !== 'pattern-only'));
-    shuffleBtn.textContent = isShuffled ? '🔀 Shuffle: On' : '🔀 Shuffle';
+    shuffleBtn.textContent = 'Shuffle';
+    shuffleBtn.setAttribute('aria-pressed', String(!!isShuffled));
 
     const entry = currentEntry();
 

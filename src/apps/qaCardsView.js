@@ -55,41 +55,48 @@ export function renderQaCards({ store }) {
     const selectorsWrap = document.createElement('div');
     selectorsWrap.className = 'qa-header-selectors';
 
-    const questionLabel = document.createElement('span');
-    questionLabel.className = 'hint';
-    questionLabel.textContent = 'Question:';
+    // Helper to build a dropdown wrapped like the data-expansion-group pattern
+    function buildFieldDropdown(currentValue, onChange) {
+      const dd = createDropdown({
+        items: fields.map(f => ({ value: f.key, label: f.label ?? f.key })),
+        value: currentValue,
+        onChange: onChange
+      });
+      dd.style.minWidth = '120px';
 
-    const questionSelect = createDropdown({
-      items: fields.map(f => ({ value: f.key, label: f.label ?? f.key })),
-      value: questionField,
-      onChange: (value) => {
-        questionField = value;
-        feedbackMode = false;
-        userAnswer = '';
-        completed = false;
-        render();
-      }
+      const group = document.createElement('div');
+      group.className = 'data-expansion-group';
+
+      // The dropdown returned by createDropdown already has class 'custom-dropdown'
+      // append it directly so structure matches existing components.
+      group.appendChild(dd);
+
+      const caption = document.createElement('div');
+      caption.className = 'data-expansion-caption';
+      const sel = fields.find(f => f.key === currentValue);
+      caption.textContent = sel?.label ?? String(currentValue || '');
+      group.appendChild(caption);
+
+      return { group, dropdown: dd, caption };
+    }
+
+    const q = buildFieldDropdown(questionField, (value) => {
+      questionField = value;
+      feedbackMode = false;
+      userAnswer = '';
+      completed = false;
+      render();
     });
-    questionSelect.style.minWidth = '120px';
 
-    const answerLabel = document.createElement('span');
-    answerLabel.className = 'hint';
-    answerLabel.textContent = 'Answer:';
-
-    const answerSelect = createDropdown({
-      items: fields.map(f => ({ value: f.key, label: f.label ?? f.key })),
-      value: answerField,
-      onChange: (value) => {
-        answerField = value;
-        feedbackMode = false;
-        userAnswer = '';
-        completed = false;
-        render();
-      }
+    const a = buildFieldDropdown(answerField, (value) => {
+      answerField = value;
+      feedbackMode = false;
+      userAnswer = '';
+      completed = false;
+      render();
     });
-    answerSelect.style.minWidth = '120px';
 
-    selectorsWrap.append(questionLabel, questionSelect, answerLabel, answerSelect);
+    selectorsWrap.append(q.group, a.group);
 
     const spacer = document.createElement('div');
     spacer.className = 'qa-header-spacer';
@@ -116,7 +123,14 @@ export function renderQaCards({ store }) {
       }
     });
 
-    headerTools.append(selectorsWrap, spacer, shuffleBtn);
+    const shuffleGroup = document.createElement('div');
+    shuffleGroup.className = 'data-expansion-group';
+    const shuffleCaption = document.createElement('div');
+    shuffleCaption.className = 'data-expansion-caption';
+    shuffleCaption.textContent = 'col.shuffle';
+    shuffleGroup.append(shuffleBtn, shuffleCaption);
+
+    headerTools.append(selectorsWrap, spacer, shuffleGroup);
 
     if (showContinue) {
       const continueBtn = document.createElement('button');

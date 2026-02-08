@@ -50,6 +50,100 @@ export function createDropdown({
   const menu = document.createElement('div');
   menu.className = 'custom-dropdown-menu';
 
+  // When dropdowns live inside horizontally-scrollable containers (e.g. view header tools),
+  // the menu can get clipped by overflow. To avoid this, we "portal" the menu to a top-level
+  // mount when opened and position it with fixed coordinates.
+  let isPortaled = false;
+  let menuHome = null;
+  let repositionHandler = null;
+
+  function getPortalMount() {
+    return document.getElementById('shell-root') || document.getElementById('app') || document.body;
+  }
+
+  function portalMenu() {
+    if (isPortaled) return;
+    menuHome = {
+      parent: container,
+      nextSibling: menu.nextSibling,
+    };
+    const mount = getPortalMount();
+    try {
+      mount.appendChild(menu);
+      isPortaled = true;
+      // Ensure the menu is visible even when it is no longer a descendant of `.custom-dropdown.open`.
+      menu.style.display = 'block';
+      menu.style.position = 'fixed';
+      menu.style.zIndex = '1300';
+    } catch (e) {
+      // If portaling fails for any reason, keep the menu in place.
+      isPortaled = false;
+      menuHome = null;
+      menu.style.display = '';
+      menu.style.position = '';
+      menu.style.zIndex = '';
+    }
+  }
+
+  function restoreMenu() {
+    if (!isPortaled) return;
+    try {
+      // Clear fixed positioning styles before restoring.
+      menu.style.left = '';
+      menu.style.top = '';
+      menu.style.zIndex = '';
+      menu.style.position = '';
+      menu.style.display = '';
+    } catch (e) {}
+
+    try {
+      const parent = menuHome?.parent || container;
+      const next = menuHome?.nextSibling || null;
+      if (next && next.parentNode === parent) parent.insertBefore(menu, next);
+      else parent.appendChild(menu);
+    } catch (e) {
+      try { container.appendChild(menu); } catch (e2) {}
+    }
+    isPortaled = false;
+    menuHome = null;
+  }
+
+  function positionPortaledMenu() {
+    if (!isPortaled) return;
+    try {
+      const btnRect = button.getBoundingClientRect();
+      const margin = 8;
+      const gap = 6;
+
+      // Start aligned to the button's left.
+      let left = btnRect.left;
+      let top = btnRect.bottom + gap;
+
+      // Temporarily set to measure.
+      menu.style.left = `${Math.round(left)}px`;
+      menu.style.top = `${Math.round(top)}px`;
+
+      const rect = menu.getBoundingClientRect();
+
+      // Clamp horizontally inside the viewport.
+      if (rect.right > window.innerWidth - margin) {
+        left = Math.max(margin, btnRect.right - rect.width);
+      }
+      if (left < margin) left = margin;
+
+      // If it would go off the bottom, flip above (when possible).
+      if (rect.bottom > window.innerHeight - margin) {
+        const aboveTop = btnRect.top - gap - rect.height;
+        if (aboveTop >= margin) top = aboveTop;
+      }
+
+      menu.style.left = `${Math.round(left)}px`;
+      menu.style.top = `${Math.round(top)}px`;
+    } catch (e) {
+      // ignore
+    }
+  }
+
   const isOpen = () => container.classList.contains('open');
 
   // Track whether we've committed changes for the current open/close cycle.
@@ -64,6 +158,17 @@ export function createDropdown({
     container.classList.remove('open');
     container.classList.remove('align-right');
     document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent);
+
+    // If the menu was portaled out, restore it before we remove handlers.
+    try {
+      if (repositionHandler) {
+        window.removeEventListener('scroll', repositionHandler, true);
+        window.removeEventListener('resize', repositionHandler);
+        repositionHandler = null;
+      }
+    } catch (e) {}
+    restoreMenu();
+
     // remove dropdown-specific keyboard handler if present
     if (container._ddKeyHandler) {
       document.removeEventListener('keydown', container._ddKeyHandler);
@@ -305,9 +410,24 @@ export function createDropdown({
       didCommitThisOpen = false;
       document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
 
+      // Portal the menu so it isn't clipped by overflow containers.
+      portalMenu();
+      positionPortaledMenu();
+
+      // Keep it positioned correctly on scroll/resize while open.
+      repositionHandler = () => positionPortaledMenu();
+      window.addEventListener('scroll', repositionHandler, true);
+      window.addEventListener('resize', repositionHandler);
+
       // After opening, measure the menu and align to the right if it would overflow the viewport.
       // Use a microtask to ensure styles are applied and menu is rendered.
       Promise.resolve().then(() => {
+        // If the menu is portaled, we already clamp it.
+        if (isPortaled) {
+          positionPortaledMenu();
+          return;
+        }
+
         const rect = menu.getBoundingClientRect();
         const margin = 8; // keep a small gap from the viewport edge
         if (rect.right > (window.innerWidth - margin) || rect.left < 0) {

@@ -26,7 +26,21 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
   const gearBtn = el('button', { className: 'btn small', text: '⚙' });
   gearBtn.title = 'Autoplay settings';
 
-  group.append(playBtn, gearBtn);
+  // Wrap header buttons in a consistent "button + caption" group.
+  function wrapWithCaption(btn, captionText) {
+    const g = document.createElement('div');
+    g.className = 'data-expansion-group';
+    const cap = document.createElement('div');
+    cap.className = 'data-expansion-caption';
+    cap.textContent = String(captionText || '').trim();
+    g.append(btn, cap);
+    return g;
+  }
+
+  const playWrap = wrapWithCaption(playBtn, 'app.play');
+  const gearWrap = wrapWithCaption(gearBtn, 'app.play-settings');
+
+  group.append(playWrap, gearWrap);
 
   // Overlay / sequencer editor
   // Create overlay without aria-hidden initially to avoid hiding a focused descendant.

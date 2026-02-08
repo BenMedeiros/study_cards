@@ -181,10 +181,21 @@ export function renderKanjiStudyCard({ store }) {
   // Root UI pieces
   const headerTools = createViewHeaderTools();
 
+  function wrapHeaderTool(controlEl, captionText) {
+    const group = document.createElement('div');
+    group.className = 'data-expansion-group';
+    const caption = document.createElement('div');
+    caption.className = 'data-expansion-caption';
+    caption.textContent = String(captionText || '').trim();
+    group.append(controlEl, caption);
+    return group;
+  }
+
   const shuffleBtn = document.createElement('button');
   shuffleBtn.type = 'button';
   shuffleBtn.className = 'btn small';
-  shuffleBtn.textContent = '🔀 Shuffle';
+  shuffleBtn.textContent = 'Shuffle';
+  shuffleBtn.setAttribute('aria-pressed', String(!!isShuffled));
 
   const toggleBtn = document.createElement('button');
   toggleBtn.type = 'button';
@@ -201,7 +212,11 @@ export function renderKanjiStudyCard({ store }) {
   autoSpeakBtn.textContent = '🔊 Auto-speak: Off';
   autoSpeakBtn.title = 'Toggle auto-speak';
 
-  headerTools.append(shuffleBtn, toggleBtn, autoSpeakBtn);
+  const shuffleGroup = wrapHeaderTool(shuffleBtn, 'col.shuffle');
+  const detailsGroup = wrapHeaderTool(toggleBtn, 'app.card-details');
+  const autoSpeakGroup = wrapHeaderTool(autoSpeakBtn, 'app.auto-speak');
+
+  headerTools.append(shuffleGroup, detailsGroup, autoSpeakGroup);
 
   // No legacy UI load: visual defaults used; autoplay/defaults remain runtime-only
 
@@ -367,7 +382,7 @@ export function renderKanjiStudyCard({ store }) {
     }
   });
   // place autoplay controls at start of headerTools, grouped visually
-  headerTools.insertBefore(autoplayControlsEl, shuffleBtn);
+  headerTools.insertBefore(autoplayControlsEl, shuffleGroup);
 
   const wrapper = document.createElement('div');
   wrapper.className = 'kanji-card-wrapper';
@@ -537,6 +552,7 @@ export function renderKanjiStudyCard({ store }) {
     index = 0;
     viewMode = defaultViewMode;
     isShuffled = true;
+    try { shuffleBtn.setAttribute('aria-pressed', 'true'); } catch (e) {}
     render();
   }
 
@@ -617,6 +633,7 @@ export function renderKanjiStudyCard({ store }) {
       if (!isShuffled) {
     refreshEntriesFromStore();
       }
+    try { shuffleBtn.setAttribute('aria-pressed', String(!!isShuffled)); } catch (e) {}
     // render
 
     // If the underlying entry changed due to refresh, keep timing aligned.
