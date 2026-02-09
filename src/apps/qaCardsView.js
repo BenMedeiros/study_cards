@@ -21,6 +21,7 @@ export function renderQaCards({ store }) {
   let fields = [];
   let questionField = 'question';
   let answerField = 'answer';
+  let submitMethod = 'enter';
   let entries = [];
   let index = 0;
   let uiStateRestored = false;
@@ -49,9 +50,11 @@ export function renderQaCards({ store }) {
       try {
         const savedQ = collState?.qaCardsView?.questionField;
         const savedA = collState?.qaCardsView?.answerField;
+        const savedSubmit = collState?.qaCardsView?.submitMethod;
         const keys = new Set((Array.isArray(fields) ? fields : []).map(f => String(f?.key ?? '').trim()).filter(Boolean));
         if (typeof savedQ === 'string' && keys.has(savedQ)) questionField = savedQ;
         if (typeof savedA === 'string' && keys.has(savedA)) answerField = savedA;
+        if (typeof savedSubmit === 'string' && (savedSubmit === 'enter' || savedSubmit === 'space')) submitMethod = savedSubmit;
       } catch (e) {}
     }
     const nextEntries = Array.isArray(res?.view?.entries) ? res.view.entries : [];
@@ -118,7 +121,33 @@ export function renderQaCards({ store }) {
       render();
     }, 'Answer');
 
-    selectorsWrap.append(q.group, a.group);
+    // Submit method dropdown (enter / space)
+    const submitItems = [
+      { value: 'enter', label: 'Enter' },
+      { value: 'space', label: 'Space' },
+    ];
+      const submitDd = createDropdown({
+      items: submitItems,
+      value: submitMethod,
+      onChange: (value) => {
+        submitMethod = value || 'enter';
+        feedbackMode = false;
+        userAnswer = '';
+        completed = false;
+        try { store.collections.saveCollectionState?.(active?.key, { qaCardsView: { submitMethod: submitMethod } }); } catch (e) {}
+        render();
+      }
+    });
+    submitDd.style.minWidth = '120px';
+    const submitGroup = document.createElement('div');
+    submitGroup.className = 'data-expansion-group';
+    submitGroup.appendChild(submitDd);
+    const submitCaption = document.createElement('div');
+    submitCaption.className = 'data-expansion-caption';
+    submitCaption.textContent = 'submit-method';
+    submitGroup.appendChild(submitCaption);
+
+    selectorsWrap.append(q.group, a.group, submitGroup);
 
     const spacer = document.createElement('div');
     spacer.className = 'qa-header-spacer';
@@ -153,7 +182,36 @@ export function renderQaCards({ store }) {
     shuffleCaption.textContent = 'col.shuffle';
     shuffleGroup.append(shuffleBtn, shuffleCaption);
 
-    headerTools.append(selectorsWrap, spacer, shuffleGroup);
+    const clearShuffleBtn = document.createElement('button');
+    clearShuffleBtn.type = 'button';
+    clearShuffleBtn.className = 'btn small';
+    clearShuffleBtn.textContent = 'Clear Shuffle';
+    // Disabled when collection state isn't shuffled
+    try { clearShuffleBtn.disabled = !(collState && !!collState.isShuffled); } catch (e) { clearShuffleBtn.disabled = true; }
+    clearShuffleBtn.addEventListener('click', () => {
+      try {
+        if (store?.collections && typeof store.collections.clearCollectionShuffle === 'function') {
+          store.collections.clearCollectionShuffle(active?.key);
+          rebuildEntriesFromCollectionState();
+          index = Math.min(index, Math.max(0, entries.length - 1));
+          try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
+          shownAt = nowMs();
+          feedbackMode = false;
+          userAnswer = '';
+          completed = false;
+          render();
+        }
+      } catch (e) {}
+    });
+
+    const clearShuffleGroup = document.createElement('div');
+    clearShuffleGroup.className = 'data-expansion-group';
+    const clearShuffleCaption = document.createElement('div');
+    clearShuffleCaption.className = 'data-expansion-caption';
+    clearShuffleCaption.textContent = 'col.clear-shuffle';
+    clearShuffleGroup.append(clearShuffleBtn, clearShuffleCaption);
+
+    headerTools.append(selectorsWrap, spacer, shuffleGroup, clearShuffleGroup);
 
     if (showContinue) {
       const continueBtn = document.createElement('button');
@@ -194,13 +252,17 @@ export function renderQaCards({ store }) {
     input.dataset.romajiBuffer = '';
 
     function handleSubmit() {
+      // Do not submit empty answers
+      const trimmed = String(input.value || '').trim();
+      if (!trimmed) return;
+
       const currentEntry = entries[index];
       if (!currentEntry) return;
-      
+
       const correctAnswer = String(currentEntry[answerField] ?? '').trim();
       const answerIsJapanese = /[\u3040-\u30ff]/.test(correctAnswer);
-      
-      userAnswer = input.value.trim();
+
+      userAnswer = trimmed;
       
       // Use normalized comparison for Japanese text, case-insensitive for others
       if (answerIsJapanese) {
@@ -223,6 +285,25 @@ export function renderQaCards({ store }) {
         e.preventDefault();
         e.stopPropagation(); // Prevent event from bubbling to wrapper
         handleSubmit();
+        return;
+      }
+
+      // Space can act as a submit method when configured
+      if ((key === ' ' || key === 'Spacebar' || key === 'Space') && submitMethod === 'space') {
+        // Decide hard vs soft check based on whether the correct answer contains a space
+        // Prevent submission if input is empty
+        const trimmed = String(input.value || '').trim();
+        if (!trimmed) return;
+
+        const currentEntry = entries[index];
+        const correctAnswer = String(currentEntry?.[answerField] ?? '').trim();
+        if (!correctAnswer.includes(' ')) {
+          e.preventDefault();
+          e.stopPropagation();
+          handleSubmit();
+          return;
+        }
+        // If correct answer contains spaces, allow the space to be inserted (soft check)
         return;
       }
       
@@ -424,7 +505,7 @@ export function renderQaCards({ store }) {
     if (feedbackMode && !completed) {
       // Allow Enter to continue to next card
       const keyHandler = (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' || (submitMethod === 'space' && (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Space'))) {
           e.preventDefault();
           wrapper.removeEventListener('keydown', keyHandler);
           handleContinue();
@@ -445,6 +526,7 @@ export function renderQaCards({ store }) {
           <h3>🎉 Completed!</h3>
           <p>You've finished all ${total} cards in this collection.</p>
           <button class="button" id="restart-btn" >Start Over</button>
+          <div class="hint small">Press Space or Enter to start over</div>
         </div>
       `;
       setTimeout(() => {
@@ -460,6 +542,22 @@ export function renderQaCards({ store }) {
             render();
           });
         }
+        // Allow Enter or Space to restart as well
+        const keyHandlerRestart = (e) => {
+          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar' || e.key === 'Space') {
+            e.preventDefault();
+            wrapper.removeEventListener('keydown', keyHandlerRestart);
+            index = 0;
+            try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
+            feedbackMode = false;
+            userAnswer = '';
+            completed = false;
+            shownAt = nowMs();
+            render();
+          }
+        };
+        wrapper.addEventListener('keydown', keyHandlerRestart);
+        setTimeout(() => wrapper.focus(), 0);
       }, 0);
     } else if (!entry) {
       body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';

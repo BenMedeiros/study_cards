@@ -1518,6 +1518,28 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
   }
 
+  // parse optional field-specific query syntaxes supported by the table UI.
+  // Supported forms: '{{field}:term}' and '{field:term}'
+  function parseFieldQuery(q) {
+    const s = String(q || '').trim();
+    if (!s) return { field: null, term: '' };
+    const m1 = s.match(/^\{\{\s*([^}\s]+)\s*\}\s*:\s*(.*)\}$/);
+    if (m1) {
+      const field = String(m1[1] || '').trim();
+      let term = String(m1[2] || '').trim();
+      if (term === '') term = '%';
+      return { field, term };
+    }
+    const m2 = s.match(/^\{\s*([^:\s}]+)\s*:\s*(.*)\}$/);
+    if (m2) {
+      const field = String(m2[1] || '').trim();
+      let term = String(m2[2] || '').trim();
+      if (term === '') term = '%';
+      return { field, term };
+    }
+    return { field: null, term: s };
+  }
+
   function fieldKeyListFromMetadataFields(fields) {
     if (!Array.isArray(fields)) return [];
     return fields
@@ -1555,14 +1577,33 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   }
 
   function entryMatchesTableSearch(entry, { query, regex = null, fields = null } = {}) {
-    const rx = regex || makeTableSearchRegex(query);
-    if (!rx) return true;
-    const fieldKeys = fieldKeyListFromMetadataFields(fields);
-    const values = shallowEntryValueStrings(entry, fieldKeys);
-    for (const v of values) {
-      if (rx.test(String(v))) return true;
+    try {
+      const parsed = parseFieldQuery(query);
+      const term = parsed.term;
+      const rx = regex || makeTableSearchRegex(term);
+      if (!rx) return false;
+
+      if (parsed.field) {
+        const f = String(parsed.field || '').trim();
+        if (!f) return false;
+        // direct property match
+        if (Object.prototype.hasOwnProperty.call(entry, f)) {
+          const vals = shallowEntryValueStrings({ [f]: entry[f] }, [f]);
+          for (const v of vals) if (rx.test(String(v))) return true;
+          return false;
+        }
+        return false;
+      }
+
+      const fieldKeys = fieldKeyListFromMetadataFields(fields);
+      const values = shallowEntryValueStrings(entry, fieldKeys);
+      for (const v of values) {
+        if (rx.test(String(v))) return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
     }
-    return false;
   }
 
   function filterEntriesAndIndicesByTableSearch(entries, indices, { query, fields = null } = {}) {
@@ -1571,14 +1612,15 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const q = String(query || '').trim();
     const label = `collections.filterEntriesAndIndicesByTableSearch (${arr.length}) q=${q.length}`;
     return timed(label, () => {
-      const rx = makeTableSearchRegex(q);
+      const parsed = parseFieldQuery(q);
+      const rx = makeTableSearchRegex(parsed.term);
       if (!rx) return { entries: arr.slice(), indices: idx.slice() };
 
       const outEntries = [];
       const outIdx = [];
       for (let i = 0; i < arr.length; i++) {
         const e = arr[i];
-        if (entryMatchesTableSearch(e, { regex: rx, fields })) {
+        if (entryMatchesTableSearch(e, { query: q, regex: rx, fields })) {
           outEntries.push(e);
           outIdx.push(idx[i]);
         }

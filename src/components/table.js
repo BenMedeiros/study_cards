@@ -1,6 +1,7 @@
 let _tableGlobalResizeHookInstalled = false;
 
 import { timed } from '../utils/timing.js';
+import { openRightClickMenu } from './rightClickMenu.js';
 
 function _installGlobalTableResizeHook() {
   if (_tableGlobalResizeHookInstalled) return;
@@ -60,6 +61,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
   const VIRTUAL_ROW_HEIGHT_PX = 36;
   const VIRTUAL_OVERSCAN = 10;
   let searchWrapEl = null;
+  let searchInputEl = null;
   let displayRows = Array.isArray(rows) ? rows.slice() : [];
   let _virtualScrollHandlerAttached = false;
   let _lastVirtualKey = '';
@@ -113,24 +115,24 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     let key = '';
 
     if (typeof header === 'string') {
-      // Treat bare strings as field keys (from metadata). Normalize to camelCase.
-      key = toCamelCase(header);
+      // Treat bare strings as field keys (from metadata). Use key as-is.
+      key = String(header).trim();
       label = humanizeKey(header);
     } else if (header && typeof header === 'object') {
-      // Prefer explicit key; normalize it to camelCase. If missing, derive from the label.
+      // Prefer explicit key; use it as provided. If missing, derive a key from the label.
       if (header.key) {
-        key = toCamelCase(String(header.key).trim());
+        key = String(header.key).trim();
         label = header.label ?? humanizeKey(String(header.key).trim());
       } else if (header.label) {
         label = header.label;
-        key = toCamelCase(header.label);
+        key = String(header.label).trim();
       } else {
         label = '';
         key = '';
       }
     } else {
       label = String(header ?? '');
-      key = toCamelCase(label);
+      key = String(label).trim();
     }
 
     const keyClass = toKebabCase(key || 'col');
@@ -138,7 +140,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     th.textContent = label;
     th.dataset.field = key;
     th.classList.add(`col-${keyClass}`);
-    headerKeys.push({ key, keyClass });
+    headerKeys.push({ key, keyClass, label });
     headerRow.append(th);
   }
   // Build optional <colgroup> so we can mark columns and control layout
@@ -408,7 +410,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
   for (let i = 0; i < headerKeys.length; i++) {
     const hk = headerKeys[i];
     const th = document.createElement('th');
-    const label = hk && hk.key ? (hk.key.charAt(0).toUpperCase() + hk.key.slice(1)) : '';
+    const label = (hk && hk.label) ? hk.label : (hk && hk.key ? humanizeKey(hk.key) : '');
     th.textContent = label;
     th.dataset.field = hk.key || '';
     th.classList.add(`col-${hk.keyClass}`);
@@ -423,6 +425,32 @@ export function createTable({ headers, rows, className = '', id, collection, sor
       });
       th.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); th.click(); } });
       th.setAttribute('aria-sort', 'none');
+      // right-click context menu for column header
+      th.addEventListener('contextmenu', (ev) => {
+        try {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const field = String(th.dataset.field || '').trim();
+          const items = [];
+          items.push({ label: 'Sort ascending', onClick: () => { sortCol = i; sortDir = 'asc'; sortAndRender(); } });
+          items.push({ label: 'Sort descending', onClick: () => { sortCol = i; sortDir = 'desc'; sortAndRender(); } });
+          items.push({ label: 'Clear sort', onClick: () => { sortCol = null; sortAndRender(); } });
+          if (field) {
+            items.push({ label: 'Add to search', onClick: () => {
+              try {
+                if (!searchInputEl) return;
+                const existing = String(searchInputEl.value || '').trim();
+                const token = `{${field}:}`;
+                const sep = existing && !existing.endsWith(' ') ? ' ' : '';
+                searchInputEl.value = existing + sep + token;
+                searchInputEl.focus();
+                try { searchInputEl.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+              } catch (e) {}
+            } });
+          }
+          openRightClickMenu({ x: ev.clientX, y: ev.clientY, items });
+        } catch (e) {}
+      });
     }
 
     headerRow.append(th);
@@ -570,6 +598,8 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     searchInput.type = 'search';
     searchInput.className = 'table-search-input';
     searchInput.placeholder = 'Search (use % as wildcard)';
+    // expose search input so header context menu can append tokens
+    searchInputEl = searchInput;
     const clearBtn = document.createElement('button');
     clearBtn.type = 'button';
     clearBtn.className = 'table-search-clear';
@@ -595,6 +625,33 @@ export function createTable({ headers, rows, className = '', id, collection, sor
       return new RegExp(pat, 'i');
     }
 
+    // Parse optional field-specific query syntaxes.
+    // Supported forms:
+    // - {{field}:term}
+    // - {field:term}
+    // Returns { field: string|null, term: string }
+    function parseFieldQuery(q) {
+      const s = String(q || '').trim();
+      if (!s) return { field: null, term: '' };
+      // form: {{field}:term} (allow empty term)
+      const m1 = s.match(/^\{\{\s*([^}\s]+)\s*\}\s*:\s*(.*)\}$/);
+      if (m1) {
+        const field = String(m1[1] || '').trim();
+        let term = String(m1[2] || '').trim();
+        if (term === '') term = '%';
+        return { field, term };
+      }
+      // form: {field:term} (allow empty term)
+      const m2 = s.match(/^\{\s*([^:\s}]+)\s*:\s*(.*)\}$/);
+      if (m2) {
+        const field = String(m2[1] || '').trim();
+        let term = String(m2[2] || '').trim();
+        if (term === '') term = '%';
+        return { field, term };
+      }
+      return { field: null, term: s };
+    }
+
     // Local (ephemeral) table filter.
     // This only affects the currently-rendered rows in this table component.
     // Views can additionally listen for explicit "apply" events (Enter/Clear) to
@@ -603,16 +660,32 @@ export function createTable({ headers, rows, className = '', id, collection, sor
       const total = Array.isArray(originalRows) ? originalRows.length : 0;
       const label = `table.applyFilter (${total})`;
       return timed(label, () => {
-        const rx = makeRegex(q);
+        const parsed = parseFieldQuery(q);
+        const rx = makeRegex(parsed.term);
         if (!rx) currentRows = originalRows.slice();
         else {
-          currentRows = originalRows.filter(r => {
-            for (const cell of r) {
-              const v = extractCellValue(cell);
-              if (rx.test(String(v))) return true;
+          if (parsed.field) {
+            // find column index matching the requested field key (exact match)
+            const ci = headerKeys.findIndex(h => h.key === String(parsed.field));
+            if (ci >= 0) {
+              currentRows = originalRows.filter(r => {
+                const cell = r[ci];
+                const v = extractCellValue(cell);
+                return rx.test(String(v));
+              });
+            } else {
+              // field key not found -> no matches (require exact keys)
+              currentRows = [];
             }
-            return false;
-          });
+          } else {
+            currentRows = originalRows.filter(r => {
+              for (const cell of r) {
+                const v = extractCellValue(cell);
+                if (rx.test(String(v))) return true;
+              }
+              return false;
+            });
+          }
         }
         sortAndRender();
         try {

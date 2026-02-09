@@ -64,7 +64,7 @@ export function renderData({ store }) {
     const out = [];
     const seen = new Set();
     for (const raw of arr) {
-      const s = String(raw || '').trim();
+      const s = String(raw || '').trim().replace(/\s+/g, ' ');
       if (!s) continue;
       if (seen.has(s)) continue;
       seen.add(s);
@@ -75,9 +75,17 @@ export function renderData({ store }) {
   }
 
   function isSavedTableSearch(q) {
-    const s = String(q || '').trim();
+    const s = String(q || '').trim().replace(/\s+/g, ' ');
     if (!s) return false;
-    return savedTableSearches.includes(s);
+    try {
+      const list = Array.isArray(savedTableSearches) ? savedTableSearches : [];
+      for (const it of list) {
+        if (String(it || '').trim().replace(/\s+/g, ' ') === s) return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 
   function sameStringArray(a, b) {
@@ -578,8 +586,8 @@ export function renderData({ store }) {
     updateControlStates();
   }
 
-  // Build table headers from fields
-  const headers = [{ key: 'status', label: '' }, ...fields.map(f => f.label || f.key)];
+  // Build table headers from fields (preserve schema `key` and `label` separately)
+  const headers = [{ key: 'status', label: '' }, ...fields.map(f => ({ key: f.key, label: f.label || f.key }))];
 
   function renderTable() {
     const visibleIdxs = getVisibleOriginalIndices();
@@ -853,6 +861,11 @@ export function renderData({ store }) {
           updateStudyLabel();
           markStudyRows();
           updateControlStates();
+          try {
+            const prev = saveBtn.textContent;
+            saveBtn.textContent = 'Saved';
+            setTimeout(() => { try { saveBtn.textContent = prev; } catch (e) {} }, 1200);
+          } catch (e) {}
         });
       }
     } catch (e) {

@@ -210,6 +210,23 @@ body.using-keyboard .view-footer-controls .btn .caption {
   font-size: 0.75rem;
 }
 
+/* Prevent text selection on interactive header/brand and table headers
+   so right-click and keyboard interactions don't show text highlights. */
+.brand, .brand .brand-title, .brand .brand-subtitle {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Table headers are interactive (sortable/contextmenu) — disable selection */
+.table thead th, .table thead th * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .header-right {
   display: flex;
   align-items: center;
@@ -426,6 +443,16 @@ body.using-keyboard .view-footer-controls .btn .caption {
 .button:disabled {
   opacity: 0.75;
   cursor: not-allowed;
+}
+
+/* `.btn` is the primary button class used across the app; ensure disabled state styles match `.button` */
+.btn:disabled,
+.btn[disabled] {
+  opacity: 0.75;
+  cursor: not-allowed;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.01);
+  border-color: rgba(255, 255, 255, 0.04);
 }
 
 input[type="number"].button {
@@ -2024,4 +2051,47 @@ select:hover {
   overflow: auto;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* Standardized right-click / context menu used across the app */
+.context-menu,
+.brand-context-menu {
+  position: fixed; /* left/top set inline by caller */
+  z-index: 1400;
+  min-width: 12rem;
+  background: var(--panel);
+  border: var(--border-1);
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+  box-shadow: 0 8px 24px rgba(2,6,23,0.6);
+}
+
+.context-menu-item,
+.brand-context-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  font-size: 0.95rem;
+
+  /* Prevent accidental text selection inside context menus */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.context-menu-item:hover,
+.brand-context-item:hover {
+  background: rgba(96,165,250,0.08);
+}
+
+.context-menu-item[disabled],
+.brand-context-item[disabled] {
+  opacity: 0.65;
+  cursor: not-allowed;
 }

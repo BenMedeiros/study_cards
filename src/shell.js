@@ -9,6 +9,7 @@ import { renderKanjiStudyCard } from './apps/kanjiStudyCardView.js';
 import { renderGrammarStudyCard } from './apps/grammarStudyCardView.js';
 import { renderEntityExplorer } from './apps/entityExplorerView.js';
 import { createCollectionBrowserDropdown } from './components/collectionBrowser.js';
+import { openRightClickMenu } from './components/rightClickMenu.js';
 import { speak } from './utils/speech.js';
 import { createDropdown } from './components/dropdown.js';
 import * as idb from './utils/idb.js';
@@ -474,67 +475,26 @@ export function createAppShell({ store, onNavigate }) {
     brand.append(brandTitle, brandSubtitle);
 
     // Right-click on brand opens a small command menu for dev actions
-    let brandMenuEl = null;
+    // Use the shared `openRightClickMenu` so the shell and table reuse the same DOM/menu.
+    let brandMenuHandle = null;
 
     function closeBrandMenu() {
-      if (brandMenuEl) {
-        try { brandMenuEl.remove(); } catch (e) {}
-        brandMenuEl = null;
-      }
-      document.removeEventListener('click', onBodyClick, true);
-      document.removeEventListener('keydown', onKeyDown, true);
+      try { if (brandMenuHandle && typeof brandMenuHandle.close === 'function') brandMenuHandle.close(); } catch (e) {}
+      brandMenuHandle = null;
     }
 
-    function onBodyClick(e) {
-      // Click outside removes menu
-      if (!brandMenuEl) return;
-      if (!brandMenuEl.contains(e.target)) closeBrandMenu();
-    }
-
-    function onKeyDown(e) {
-      if (e.key === 'Escape') closeBrandMenu();
-    }
-
-    // If renderHeader runs while the menu is open, force-close any orphan.
-    try {
-      document.querySelectorAll('.brand-context-menu').forEach((el) => el.remove());
-    } catch (e) {}
+    // If renderHeader runs while a menu is open, ensure overlays are closed.
+    try { document.querySelectorAll('.context-menu, .brand-context-menu').forEach((el) => { try { el.style.display = 'none'; } catch (e) {} }); } catch (e) {}
     closeBrandMenu();
 
     function openBrandMenu(x, y) {
       document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
-      // Prevent multiple instances: always replace any existing menu.
       closeBrandMenu();
 
-      const menu = document.createElement('div');
-      menu.className = 'brand-context-menu';
-      menu.style.position = 'fixed';
-      menu.style.left = `${Math.round(x)}px`;
-      menu.style.top = `${Math.round(y)}px`;
-      menu.style.background = 'var(--panel)';
-      menu.style.border = '1px solid var(--border)';
-      menu.style.borderRadius = '0.5rem';
-      menu.style.padding = '0.25rem';
-      menu.style.zIndex = '1400';
-      menu.style.minWidth = '12rem';
-
-      const addItem = (label, onClick) => {
-        const it = document.createElement('div');
-        it.className = 'brand-context-item';
-        it.textContent = label;
-        it.style.padding = '0.5rem 0.75rem';
-        it.style.cursor = 'pointer';
-        it.style.color = 'var(--text)';
-        it.addEventListener('click', (ev) => { ev.stopPropagation(); try { onClick(); } catch (e) {} closeBrandMenu(); });
-        it.addEventListener('mouseenter', () => { it.style.background = 'rgba(96,165,250,0.06)'; });
-        it.addEventListener('mouseleave', () => { it.style.background = 'transparent'; });
-        menu.appendChild(it);
-      };
-
-      addItem('Log Persisted Data (IDB)', () => {
+      const items = [];
+      items.push({ label: 'Log Persisted Data (IDB)', onClick: () => {
         try {
           console.group('Persisted Data (IndexedDB)');
-          // Dump kv + collections and log as raw objects (no pretty JSON)
           idb.idbDumpAll().then((dump) => {
             const kvRecs = dump?.kv || [];
             const collRecs = dump?.collections || [];
@@ -548,27 +508,14 @@ export function createAppShell({ store, onNavigate }) {
             console.groupEnd();
           }).catch((err) => { console.error('IDB read error', err); console.groupEnd(); });
         } catch (err) { console.error('Log Persisted Data failed', err); }
-      });
+      } });
 
-      // Timing logs toggle
       try {
         const enabled = isTimingEnabled();
-        addItem(`${enabled ? '☑' : '☐'} Timing Logs`, () => {
-          const next = setTimingEnabled(!isTimingEnabled());
-          try { console.info(`[Timing] ${next ? 'enabled' : 'disabled'}`); } catch (e) {}
-        });
-      } catch (e) {
-        // ignore
-      }
+        items.push({ label: `${enabled ? '☑' : '☐'} Timing Logs`, onClick: () => { const next = setTimingEnabled(!isTimingEnabled()); try { console.info(`[Timing] ${next ? 'enabled' : 'disabled'}`); } catch (e) {} } });
+      } catch (e) {}
 
-      // Append menu and wire dismissal
-      document.body.appendChild(menu);
-      brandMenuEl = menu;
-      // Use capture so we close even if inner code stops propagation.
-      setTimeout(() => {
-        document.addEventListener('click', onBodyClick, true);
-        document.addEventListener('keydown', onKeyDown, true);
-      }, 0);
+      try { brandMenuHandle = openRightClickMenu({ x, y, items }); } catch (e) { brandMenuHandle = null; }
     }
 
     brand.addEventListener('contextmenu', (e) => {
