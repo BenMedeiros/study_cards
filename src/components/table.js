@@ -40,7 +40,7 @@ function _installGlobalTableResizeHook() {
  * @param {string} [options.collection] - Optional collection name the table was populated from
  * @returns {HTMLTableElement}
  */
-export function createTable({ headers, rows, className = '', id, collection, sortable = false, searchable = false, rowActions = [], colGroups = [] } = {}) {
+export function createTable({ headers, rows, className = '', id, collection, sortable = false, searchable = false, rowActions = [], colGroups = [], initialSortKey = null, initialSortDir = 'asc' } = {}) {
   const __tableLabel = (() => {
     const parts = [];
     if (id) parts.push(String(id));
@@ -63,6 +63,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
   let displayRows = Array.isArray(rows) ? rows.slice() : [];
   let _virtualScrollHandlerAttached = false;
   let _lastVirtualKey = '';
+  let _virtualRenderNonce = 0;
   
   const table = document.createElement('table');
   table.className = `table ${className}`.trim();
@@ -358,7 +359,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     const start = Math.max(0, Math.min(total - 1, rawStart));
     const end = Math.max(start, Math.min(total - 1, start + visibleCount + (VIRTUAL_OVERSCAN * 2)));
 
-    const key = `${total}:${start}:${end}`;
+    const key = `${_virtualRenderNonce}:${total}:${start}:${end}`;
     if (_lastVirtualKey === key) return;
     _lastVirtualKey = key;
 
@@ -384,6 +385,8 @@ export function createTable({ headers, rows, className = '', id, collection, sor
 
   function renderMaybeVirtual(rowsArr) {
     displayRows = Array.isArray(rowsArr) ? rowsArr : [];
+    // Bump nonce so virtual renderer knows the underlying data changed
+    _virtualRenderNonce++;
     if (!shouldVirtualize(displayRows)) {
       _lastVirtualKey = '';
       table.classList.remove('is-virtualized');
@@ -697,8 +700,20 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     });
   }
 
-  // Perform initial render
-  timed('table.initialRender', () => renderMaybeVirtual(currentRows));
+  // Perform initial render (respect any initial sort passed in)
+  timed('table.initialRender', () => {
+    // If caller provided an initial sort key, resolve it to a column index
+    try {
+      if (initialSortKey) {
+        const idx = headerKeys.findIndex(h => h.key === String(initialSortKey));
+        if (idx >= 0) {
+          sortCol = idx;
+          sortDir = (String(initialSortDir || '').toLowerCase() === 'desc') ? 'desc' : 'asc';
+        }
+      }
+    } catch (e) {}
+    sortAndRender();
+  });
 
   // Sorting helper
   function sortAndRender() {

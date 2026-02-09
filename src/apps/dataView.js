@@ -617,7 +617,21 @@ export function renderData({ store }) {
       return row;
     });
 
-    const tbl = createTable({ headers, rows, id: 'data-table', sortable: true, searchable: true });
+    // Preserve previous sort state when recreating the table (so applying held search doesn't lose sort)
+    let initialSortKey = null;
+    let initialSortDir = 'asc';
+    try {
+      const existing = tableMount.querySelector('table');
+      if (existing) {
+        const thSorted = existing.querySelector('th[aria-sort="ascending"], th[aria-sort="descending"]');
+        if (thSorted && thSorted.dataset && thSorted.dataset.field) {
+          initialSortKey = String(thSorted.dataset.field || '') || null;
+          initialSortDir = thSorted.getAttribute('aria-sort') === 'descending' ? 'desc' : 'asc';
+        }
+      }
+    } catch (e) {}
+
+    const tbl = createTable({ headers, rows, id: 'data-table', sortable: true, searchable: true, initialSortKey, initialSortDir });
     tableMount.innerHTML = '';
     tableMount.append(tbl);
 
