@@ -19,12 +19,16 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
   const container = el('div', { className: 'autoplay-controls' });
   const group = el('div', { className: 'btn-group' });
 
-  const playBtn = el('button', { className: 'btn small', text: isPlaying ? '⏸' : '▶' });
+  // Build a standard-styled play button (icon + text + caption managed by wrapper)
+  const playBtn = document.createElement('button');
+  playBtn.type = 'button';
+  playBtn.className = 'btn small';
+  const playIcon = document.createElement('span'); playIcon.className = 'icon'; playIcon.textContent = isPlaying ? '⏸' : '▶';
+  const playText = document.createElement('span'); playText.className = 'text'; playText.textContent = 'Play';
+  const playCap = document.createElement('span'); playCap.className = 'caption'; playCap.textContent = '';
+  playBtn.append(playIcon, playText, playCap);
   playBtn.title = isPlaying ? 'Pause autoplay' : 'Start autoplay';
   playBtn.setAttribute('aria-pressed', String(!!isPlaying));
-
-  const gearBtn = el('button', { className: 'btn small', text: '⚙' });
-  gearBtn.title = 'Autoplay settings';
 
   // Wrap header buttons in a consistent "button + caption" group.
   function wrapWithCaption(btn, captionText) {
@@ -38,9 +42,7 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
   }
 
   const playWrap = wrapWithCaption(playBtn, 'app.play');
-  const gearWrap = wrapWithCaption(gearBtn, 'app.play-settings');
-
-  group.append(playWrap, gearWrap);
+  group.append(playWrap);
 
   // Overlay / sequencer editor
   // Create overlay without aria-hidden initially to avoid hiding a focused descendant.
@@ -245,12 +247,12 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
   }
 
   function hideOverlay() {
-    // If focus is inside the overlay, move it back to the gear button so assistive
+    // If focus is inside the overlay, move it back to the play button so assistive
     // tech isn't left pointing at hidden content.
     try {
       const active = document.activeElement;
       if (active && overlay.contains(active)) {
-        gearBtn && gearBtn.focus && gearBtn.focus();
+        playBtn && playBtn.focus && playBtn.focus();
       }
     } catch (e) {
       // ignore
@@ -278,7 +280,7 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
   }
 
   function onDocClick(e) {
-    if (!overlay.contains(e.target) && e.target !== gearBtn && e.target !== playBtn) hideOverlay();
+    if (!overlay.contains(e.target) && e.target !== playBtn) hideOverlay();
   }
 
   playBtn.addEventListener('click', () => {
@@ -289,7 +291,8 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
     }
     const nextState = !(playBtn.getAttribute('aria-pressed') === 'true');
     playBtn.setAttribute('aria-pressed', String(!!nextState));
-    playBtn.textContent = nextState ? '⏸' : '▶';
+    // update icon + accessible title
+    try { playIcon.textContent = nextState ? '⏸' : '▶'; } catch (e) {}
     playBtn.title = nextState ? 'Pause autoplay' : 'Start autoplay';
     onTogglePlay && onTogglePlay(nextState);
   });
@@ -300,12 +303,6 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
     showOverlay(rect.right + 6, rect.top);
   });
 
-  gearBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const rect = gearBtn.getBoundingClientRect();
-    showOverlay(rect.right + 6, rect.top);
-  });
-
   container.append(group, overlay);
 
   // Imperative API for hosts (optional). This keeps existing call sites working
@@ -313,7 +310,7 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
   container.__setPlaying = (playing) => {
     const nextState = !!playing;
     playBtn.setAttribute('aria-pressed', String(nextState));
-    playBtn.textContent = nextState ? '⏸' : '▶';
+    try { playIcon.textContent = nextState ? '⏸' : '▶'; } catch (e) {}
     playBtn.title = nextState ? 'Pause autoplay' : 'Start autoplay';
   };
   container.__getPlaying = () => playBtn.getAttribute('aria-pressed') === 'true';

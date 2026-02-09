@@ -29,68 +29,16 @@ export function createAppShell({ store, onNavigate }) {
     }
   }
 
-  // Track whether the user is actively using a keyboard vs pointer input.
-  // Persist to shell state so other parts of the app can read it.
-  let usingKeyboard = false;
-  let __keyboardTimeout = null;
-  const KEYBOARD_TIMEOUT_MS = 600 * 1000; // 600 seconds
-
-  function clearKeyboardTimeout() {
-    if (__keyboardTimeout) {
-      clearTimeout(__keyboardTimeout);
-      __keyboardTimeout = null;
-    }
-  }
-
-  function setUsingKeyboardState(val) {
-    const next = !!val;
-    if (next === usingKeyboard) {
-      // refresh timeout when already true
-      if (next) {
-        clearKeyboardTimeout();
-        __keyboardTimeout = setTimeout(() => setUsingKeyboardState(false), KEYBOARD_TIMEOUT_MS);
-      }
-      return;
-    }
-
-    usingKeyboard = next;
+  // Caption visibility is controlled explicitly via the brand toggle button.
+  // We intentionally do NOT auto-detect keyboard usage or persist this state.
+  let captionsVisible = false;
+  function setCaptionsVisible(val) {
+    captionsVisible = !!val;
     try {
-      if (usingKeyboard) document.body.classList.add('using-keyboard');
+      if (captionsVisible) document.body.classList.add('using-keyboard');
       else document.body.classList.remove('using-keyboard');
     } catch (e) {}
-
-    if (store?.shell && typeof store.shell.setState === 'function') {
-      try {
-        const payload = { usingKeyboard };
-        if (usingKeyboard) payload.usingKeyboardLastSeen = new Date().toISOString();
-        // Persist without notifying subscribers to avoid re-rendering the
-        // header/menu while key handlers are active. scheduleFlush still
-        // debounces actual persistence to disk.
-        try { store.shell.setState(payload, { silent: true }); } catch (e) {}
-      } catch (e) {}
-    }
-
-    clearKeyboardTimeout();
-    if (usingKeyboard) {
-      __keyboardTimeout = setTimeout(() => setUsingKeyboardState(false), KEYBOARD_TIMEOUT_MS);
-    }
   }
-
-  // Initialize from persisted shell state (respect 600s timeout if provided)
-  try {
-    const persisted = (store?.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
-    let initial = !!persisted.usingKeyboard;
-    if (initial && persisted.usingKeyboardLastSeen) {
-      const then = Date.parse(String(persisted.usingKeyboardLastSeen || '')) || 0;
-      if ((Date.now() - then) > KEYBOARD_TIMEOUT_MS) initial = false;
-    }
-    setUsingKeyboardState(initial);
-  } catch (e) {}
-
-  // Simple heuristic: any keydown -> keyboard usage. We do NOT flip back to
-  // pointer usage immediately on mouse/pointer events; instead `usingKeyboard`
-  // is cleared only after the inactivity timeout (KEYBOARD_TIMEOUT_MS).
-  window.addEventListener('keydown', () => setUsingKeyboardState(true), { capture: true, passive: true });
 
   // Global key handling: keep document-level listeners centralized here.
   // Components should subscribe to `ui:closeOverlays` when they are open.
@@ -474,6 +422,8 @@ export function createAppShell({ store, onNavigate }) {
 
     brand.append(brandTitle, brandSubtitle);
 
+    // (Captions toggle moved to the brand context menu.)
+
     // Right-click on brand opens a small command menu for dev actions
     // Use the shared `openRightClickMenu` so the shell and table reuse the same DOM/menu.
     let brandMenuHandle = null;
@@ -513,6 +463,11 @@ export function createAppShell({ store, onNavigate }) {
       try {
         const enabled = isTimingEnabled();
         items.push({ label: `${enabled ? '☑' : '☐'} Timing Logs`, onClick: () => { const next = setTimingEnabled(!isTimingEnabled()); try { console.info(`[Timing] ${next ? 'enabled' : 'disabled'}`); } catch (e) {} } });
+      } catch (e) {}
+
+      // Caption visibility toggle (non-persistent) with checkbox-style label
+      try {
+        items.push({ label: `${captionsVisible ? '☑' : '☐'} Show Footer Captions`, onClick: () => { setCaptionsVisible(!captionsVisible); } });
       } catch (e) {}
 
       try { brandMenuHandle = openRightClickMenu({ x, y, items }); } catch (e) { brandMenuHandle = null; }
