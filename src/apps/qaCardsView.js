@@ -56,11 +56,11 @@ export function renderQaCards({ store }) {
     }
     const nextEntries = Array.isArray(res?.view?.entries) ? res.view.entries : [];
     entries = nextEntries;
-    // Restore saved index once (prefer app-scoped bucket)
+    // Restore saved index once from app-scoped bucket only
     if (!uiStateRestored) {
       const savedIndex = (collState && collState.qaCardsView && typeof collState.qaCardsView.currentIndex === 'number')
         ? collState.qaCardsView.currentIndex
-        : collState.currentIndex;
+        : undefined;
       if (typeof savedIndex === 'number' && Number.isFinite(savedIndex)) {
         index = Math.max(0, Math.min(entries.length - 1, Math.round(savedIndex)));
       }

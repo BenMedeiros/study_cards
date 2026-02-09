@@ -1381,33 +1381,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     try {
       if (!uiState.collections) return null;
       const obj = uiState.collections[collId] || null;
-      if (!obj) return null;
-      try {
-        // Migrate legacy top-level QA field settings into the app-scoped bucket
-        let migrated = false;
-        const next = { ...obj };
-        const app = 'qaCardsView';
-        const appObj = { ...(next[app] || {}) };
-        if (Object.prototype.hasOwnProperty.call(next, 'questionField') && !Object.prototype.hasOwnProperty.call(appObj, 'questionField')) {
-          appObj.questionField = next.questionField;
-          delete next.questionField;
-          migrated = true;
-        }
-        if (Object.prototype.hasOwnProperty.call(next, 'answerField') && !Object.prototype.hasOwnProperty.call(appObj, 'answerField')) {
-          appObj.answerField = next.answerField;
-          delete next.answerField;
-          migrated = true;
-        }
-        if (migrated) {
-          if (Object.keys(appObj).length) next[app] = appObj;
-          uiState.collections[collId] = next;
-          try { persistence.markDirty({ collectionId: collId }); } catch (e) {}
-          try { persistence.scheduleFlush(); } catch (e) {}
-          return next;
-        }
-      } catch (err) {
-        // ignore migration errors
-      }
       return obj;
     } catch {
       return null;

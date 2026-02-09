@@ -3,6 +3,9 @@ import * as idb from '../utils/idb.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createDropdown } from '../components/dropdown.js';
 
+// Threshold used when deciding whether to inline small objects
+let jsonInlineKeyThreshold = 2;
+
 function safeJson(v) {
   try {
     return JSON.stringify(v, null, 2);
@@ -100,8 +103,47 @@ function renderTable(rows) {
 function renderJsonViewer(value) {
   const pre = document.createElement('pre');
   pre.className = 'json-view mono';
-  pre.textContent = safeJson(value);
+  try {
+    pre.textContent = formatJson(value);
+  } catch {
+    pre.textContent = safeJson(value);
+  }
   return pre;
+}
+
+function indentStr(level) {
+  return '  '.repeat(level);
+}
+
+function formatJson(value) {
+  function fmt(v, level = 0) {
+    if (v === null) return 'null';
+    const t = typeof v;
+    if (t === 'string' || t === 'number' || t === 'boolean') return JSON.stringify(v);
+    if (Array.isArray(v)) {
+      if (v.length === 0) return '[]';
+      const parts = v.map(it => {
+        const s = fmt(it, level + 1);
+        // ensure proper indentation for multi-line items
+        if (s.indexOf('\n') === -1) return indentStr(level + 1) + s;
+        return s.split('\n').map((ln, i) => (i === 0 ? indentStr(level + 1) + ln : indentStr(level + 1) + ln)).join('\n');
+      });
+      return '[\n' + parts.join(',\n') + '\n' + indentStr(level) + ']';
+    }
+    if (t === 'object') {
+      const keys = Object.keys(v);
+      if (keys.length === 0) return '{}';
+      const inline = keys.length < jsonInlineKeyThreshold;
+      if (inline) {
+        const parts = keys.map(k => JSON.stringify(k) + ': ' + fmt(v[k], 0));
+        return '{ ' + parts.join(', ') + ' }';
+      }
+      const parts = keys.map(k => indentStr(level + 1) + JSON.stringify(k) + ': ' + fmt(v[k], level + 1));
+      return '{\n' + parts.join(',\n') + '\n' + indentStr(level) + '}';
+    }
+    return JSON.stringify(String(v));
+  }
+  return fmt(value, 0);
 }
 
 export function renderEntityExplorer({ store }) {
@@ -211,15 +253,21 @@ export function renderEntityExplorer({ store }) {
       const selection = String(st.selection || '').trim() || null;
       const manager = String(st.manager || '').trim() || null;
       const legacyGroup = String(st.group || '').trim() || null;
-      return { manager: manager || legacyGroup, selection };
+      const threshold = (typeof st.jsonInlineKeyThreshold !== 'undefined') ? Number(st.jsonInlineKeyThreshold) : null;
+      return { manager: manager || legacyGroup, selection, jsonInlineKeyThreshold: threshold };
     } catch {
-      return { manager: null, selection: null };
+      return { manager: null, selection: null, jsonInlineKeyThreshold: null };
     }
   }
 
-  function setPersistedState({ manager, selection }) {
+  function setPersistedState({ manager, selection, jsonInlineKeyThreshold: threshold } = {}) {
     try {
-      store?.apps?.setState?.('entityExplorer', { manager, selection });
+      const old = store?.apps?.getState?.('entityExplorer') || {};
+      const next = Object.assign({}, old, {});
+      if (typeof manager !== 'undefined') next.manager = manager;
+      if (typeof selection !== 'undefined') next.selection = selection;
+      if (typeof threshold !== 'undefined') next.jsonInlineKeyThreshold = threshold;
+      store?.apps?.setState?.('entityExplorer', next);
     } catch (e) {}
   }
 
@@ -272,6 +320,10 @@ export function renderEntityExplorer({ store }) {
   }
 
   const persisted = getPersistedState();
+  // initialize runtime threshold from persisted state (default 2)
+  jsonInlineKeyThreshold = (typeof persisted.jsonInlineKeyThreshold === 'number' && !Number.isNaN(persisted.jsonInlineKeyThreshold))
+    ? Number(persisted.jsonInlineKeyThreshold)
+    : 2;
 
   function inferManagerFromSelection(selection) {
     const s = String(selection || '');
@@ -435,8 +487,69 @@ export function renderEntityExplorer({ store }) {
 
   rebuildSourceDropdown();
 
-  controlsRow.append(managerDropdown, sourceDropdownSlot, subDropdownSlot);
-  headerTools.append(el('div', { className: 'hint', text: 'Entity Explorer (read-only)' }), controlsRow);
+  // JSON inline-key threshold dropdown (persisted to apps.entityExplorer.jsonInlineKeyThreshold)
+  const thresholdItems = [1, 2, 3, 4, 5, 10].map(n => ({ value: String(n), label: String(n) }));
+  const thresholdDropdown = createDropdown({
+    items: thresholdItems,
+    value: String(jsonInlineKeyThreshold),
+    onChange: (next) => {
+      jsonInlineKeyThreshold = Number(next) || 2;
+      setPersistedState({ manager: currentManager, selection: currentSelection, jsonInlineKeyThreshold });
+      // re-render current selection to apply new formatting
+      loadAndRender(currentSelection);
+    },
+    className: '',
+    closeOverlaysOnOpen: true,
+  });
+
+  // Build a captioned group for the threshold so it shows the explanatory caption below
+  const thresholdGroup = document.createElement('div');
+  thresholdGroup.className = 'data-expansion-group';
+  thresholdGroup.append(thresholdDropdown);
+  const thresholdCaption = document.createElement('div');
+  thresholdCaption.className = 'data-expansion-caption';
+  thresholdCaption.textContent = 'Inline keys';
+  thresholdGroup.append(thresholdCaption);
+
+  // Header layout similar to qaCardsView: left / spacer / right
+  const left = document.createElement('div');
+
+  // Manager dropdown with caption
+  const managerGroup = document.createElement('div');
+  managerGroup.className = 'data-expansion-group';
+  managerGroup.append(managerDropdown);
+  const managerCaption = document.createElement('div');
+  managerCaption.className = 'data-expansion-caption';
+  managerCaption.textContent = 'Manager';
+  managerGroup.append(managerCaption);
+
+  // Source dropdown (and optional sub-dropdown) with caption
+  const sourceGroup = document.createElement('div');
+  sourceGroup.className = 'data-expansion-group';
+  sourceGroup.append(sourceDropdownSlot, subDropdownSlot);
+  const sourceCaption = document.createElement('div');
+  sourceCaption.className = 'data-expansion-caption';
+  sourceCaption.textContent = 'Source';
+  sourceGroup.append(sourceCaption);
+
+  const leftControls = document.createElement('div');
+  leftControls.style.display = 'flex';
+  leftControls.style.alignItems = 'center';
+  leftControls.style.gap = '0.5rem';
+  leftControls.append(managerGroup, sourceGroup);
+
+  left.append(leftControls);
+
+  const spacer = document.createElement('div');
+  spacer.className = 'qa-header-spacer';
+
+  const right = document.createElement('div');
+  right.style.display = 'flex';
+  right.style.alignItems = 'center';
+  right.style.gap = '0.5rem';
+  right.append(thresholdGroup);
+
+  headerTools.append(left, spacer, right);
 
   root.append(headerTools, content);
   // Persist initial normalized state (in case we inferred manager)

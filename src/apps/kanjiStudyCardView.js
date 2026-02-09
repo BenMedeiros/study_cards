@@ -166,13 +166,19 @@ export function renderKanjiStudyCard({ store }) {
       const key = active && active.key ? active.key : null;
       if (!key) return;
       if (typeof store?.collections?.saveCollectionState === 'function') {
+        // persist collection fundamentals at top-level
         store.collections.saveCollectionState(key, {
           isShuffled: !!isShuffled,
-          defaultViewMode: defaultViewMode,
           order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
-        }, { app: 'kanjiStudyCardView' });
+        });
         // persist app-scoped index
         store.collections.saveCollectionState(key, { currentIndex: index }, { app: 'kanjiStudyCardView' });
+        // persist app-global default view mode and auto-speak under uiState.apps.kanjiStudy
+        try {
+          if (store?.apps && typeof store.apps.setState === 'function') {
+            store.apps.setState('kanjiStudy', { defaultViewMode: defaultViewMode, isAutoSpeak: !!autoSpeakKanji });
+          }
+        } catch (e) {}
       }
     } catch (e) {
       // ignore
@@ -306,6 +312,28 @@ export function renderKanjiStudyCard({ store }) {
     if (store?.apps && typeof store.apps.getState === 'function') {
       const appState = store.apps.getState('kanjiStudy') || {};
       if (Array.isArray(appState.autoplaySequence)) autoplayConfig = appState.autoplaySequence.slice();
+        // restore app-global default view mode if present and auto-speak preference
+      try {
+        if (typeof appState.defaultViewMode === 'string') {
+          defaultViewMode = appState.defaultViewMode;
+        }
+      } catch (e) {}
+      // Ensure toggle UI and viewMode reflect restored default
+      try {
+        viewMode = defaultViewMode;
+        if (typeof toggleBtn !== 'undefined' && toggleBtn) {
+          toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Details: Off' : 'Details: On';
+          toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
+        }
+      } catch (e) {}
+        // restore auto-speak preference if present
+        try {
+          if (typeof appState.isAutoSpeak === 'boolean') {
+            autoSpeakKanji = !!appState.isAutoSpeak;
+            try { autoSpeakBtn.setAttribute('aria-pressed', String(!!autoSpeakKanji)); } catch (e) {}
+            try { autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto-speak: On' : '🔊 Auto-speak: Off'; } catch (e) {}
+          }
+        } catch (e) {}
     }
   } catch (e) {}
 
@@ -451,11 +479,11 @@ export function renderKanjiStudyCard({ store }) {
     orderHashInt = (typeof view?.order_hash_int === 'number') ? view.order_hash_int : null;
     currentOrder = null;
     // If a saved index exists in collection state, restore it once on initial load.
-    // Prefer app-scoped `kanjiStudyCardView.currentIndex`, fallback to legacy top-level `currentIndex`.
+    // Only use the app-scoped `kanjiStudyCardView.currentIndex` (no legacy fallbacks).
     if (!uiStateRestored && collState) {
       const savedIndex = (collState && collState.kanjiStudyCardView && typeof collState.kanjiStudyCardView.currentIndex === 'number')
         ? collState.kanjiStudyCardView.currentIndex
-        : collState.currentIndex;
+        : undefined;
       if (typeof savedIndex === 'number') {
         index = savedIndex;
       }

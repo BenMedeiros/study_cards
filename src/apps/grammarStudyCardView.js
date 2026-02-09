@@ -145,8 +145,13 @@ export function renderGrammarStudyCard({ store }) {
     isShuffled = !!view?.isShuffled;
     orderHashInt = (typeof view?.order_hash_int === 'number') ? view.order_hash_int : null;
 
-    const savedMode = (typeof collState.defaultViewMode === 'string') ? collState.defaultViewMode : null;
-    viewMode = (savedMode === 'pattern-only' || savedMode === 'full') ? savedMode : viewMode;
+    // Prefer app-level defaultViewMode when present; do not migrate legacy collection keys.
+    try {
+      const appState = (store?.apps && typeof store.apps.getState === 'function') ? (store.apps.getState('grammarStudy') || {}) : {};
+      if (typeof appState.defaultViewMode === 'string') {
+        viewMode = (appState.defaultViewMode === 'pattern-only' || appState.defaultViewMode === 'full') ? appState.defaultViewMode : viewMode;
+      }
+    } catch (e) {}
 
     if (resetIndex) {
       index = 0;
@@ -154,10 +159,10 @@ export function renderGrammarStudyCard({ store }) {
       const found = entries.findIndex(en => getPrimaryKey(en) === prevKey);
       if (found >= 0) index = found;
     } else {
-      // initial load: prefer saved index (app-scoped first, then legacy top-level)
+      // initial load: prefer saved index from app-scoped bucket only
         const savedIndex = (collState && collState.grammarStudyCardView && typeof collState.grammarStudyCardView.currentIndex === 'number')
           ? collState.grammarStudyCardView.currentIndex
-          : collState.currentIndex;
+          : undefined;
         if (typeof savedIndex === 'number' && Number.isFinite(savedIndex)) {
           index = Math.max(0, Math.min(entries.length - 1, Math.round(savedIndex)));
         }

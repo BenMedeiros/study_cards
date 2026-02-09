@@ -47,11 +47,11 @@ export function renderFlashcards({ store }) {
     active = res?.collection || null;
     const collState = (res?.collState && typeof res.collState === 'object') ? res.collState : {};
     entries = Array.isArray(res?.view?.entries) ? res.view.entries.slice() : [];
-    // restore per-app index once
+    // restore per-app index once (no legacy fallback)
     if (!uiStateRestored) {
       const savedIndex = (collState && collState.flashcardsView && typeof collState.flashcardsView.currentIndex === 'number')
         ? collState.flashcardsView.currentIndex
-        : collState.currentIndex;
+        : undefined;
       if (typeof savedIndex === 'number' && Number.isFinite(savedIndex)) index = Math.max(0, Math.min(entries.length - 1, Math.round(savedIndex)));
       uiStateRestored = true;
     }
