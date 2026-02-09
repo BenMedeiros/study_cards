@@ -6,7 +6,8 @@
     "dev": "node scripts/rebuild_index.js && npx http-server -p 3000 -c-1",
     "test": "echo \"No tests yet\"",
     "build": "node scripts/rebuild_index.js",
-    "rebuild:collectionSets": "node scripts/rebuild_collectionSets.js"
+    "rebuild:collectionSets": "node scripts/rebuild_collectionSets.js",
+    "backup": "node scripts/backup_zips.js --clean"
   },
   "keywords": [],
   "author": "",

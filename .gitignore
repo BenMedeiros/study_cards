@@ -5,3 +5,6 @@ data/settings.local.json
 /_collections/*
 !/_collections/scripts/
 !/_collections/scripts/**
+
+# Build/export outputs
+dist/
