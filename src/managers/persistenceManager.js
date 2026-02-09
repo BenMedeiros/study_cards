@@ -1,5 +1,8 @@
 import * as idb from '../utils/idb.js';
 
+// Namespaced localStorage key for shell UI state
+const SHELL_LS_KEY = 'study_cards:v1';
+
 // Legacy decompression removed — app assumes new per-session store shape.
 
 function loadLocalKey(key) {
@@ -89,8 +92,21 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
       if (idbAvailable && !idbBroken) {
         try {
           const puts = [];
-          if (doShell) saveLocalKey('shell', uiState.shell || {});
-          if (doApps) saveLocalKey('apps', uiState.apps || {});
+          // Merge updates into a single namespaced blob so shell/apps are
+          // stored together under `study_cards:v1`.
+          if (doShell || doApps) {
+            try {
+              const existing = loadLocalKey(SHELL_LS_KEY) || {};
+              const blob = (existing && typeof existing === 'object') ? { ...existing } : {};
+              if (doShell) blob.shell = uiState.shell || {};
+              if (doApps) blob.apps = uiState.apps || {};
+              saveLocalKey(SHELL_LS_KEY, blob);
+            } catch (e) {
+              // fallback to separate writes
+              if (doShell) saveLocalKey(SHELL_LS_KEY, uiState.shell || {});
+              if (doApps) saveLocalKey('apps', uiState.apps || {});
+            }
+          }
           for (const k of kvKeys) {
             if (k === kanjiProgressKey) {
               // Write individual kanji progress rows into the new store.
@@ -145,10 +161,12 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
     let loaded = null;
     if (idbAvailable && !idbBroken) {
       try {
-        const shellLocal = loadLocalKey('shell');
-        const appsLocal = loadLocalKey('apps');
-        const shellRec = shellLocal ? { value: shellLocal } : null;
-        const appsRec = appsLocal ? { value: appsLocal } : null;
+        const blobLocal = loadLocalKey(SHELL_LS_KEY) || {};
+        // Backwards-compat: if an old `apps` key exists, prefer it for apps
+        // unless the namespaced blob already contains apps.
+        const legacyApps = loadLocalKey('apps');
+        const shellRec = (blobLocal && blobLocal.shell && typeof blobLocal.shell === 'object') ? { value: blobLocal.shell } : null;
+        const appsRec = (blobLocal && blobLocal.apps && typeof blobLocal.apps === 'object') ? { value: blobLocal.apps } : (legacyApps ? { value: legacyApps } : null);
         const kanjiProgressRows = await idb.idbGetAll('kanji_progress');
         const grammarProgressRows = await idb.idbGetAll('grammar_progress');
         const studyTimeRows = await idb.idbGetAll('study_time_sessions');

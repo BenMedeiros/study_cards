@@ -30,13 +30,25 @@ export function createAppShell({ store, onNavigate }) {
   }
 
   // Caption visibility is controlled explicitly via the brand toggle button.
-  // We intentionally do NOT auto-detect keyboard usage or persist this state.
+  // Persist this preference in the shell uiState so it survives reloads.
   let captionsVisible = false;
-  function setCaptionsVisible(val) {
+  try {
+    const s = (store && store.shell && typeof store.shell.getState === 'function') ? store.shell.getState() : null;
+    if (s && typeof s === 'object' && typeof s.showFooterCaptions === 'boolean') captionsVisible = !!s.showFooterCaptions;
+  } catch (e) {}
+
+  function setCaptionsVisible(val, opts = {}) {
     captionsVisible = !!val;
     try {
       if (captionsVisible) document.body.classList.add('using-keyboard');
       else document.body.classList.remove('using-keyboard');
+    } catch (e) {}
+
+    // Persist to shell state so preference survives reloads.
+    try {
+      if (store && store.shell && typeof store.shell.setState === 'function') {
+        store.shell.setState({ showFooterCaptions: captionsVisible }, { immediate: !!opts.immediate, notify: !!opts.notify });
+      }
     } catch (e) {}
   }
 

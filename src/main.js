@@ -2,6 +2,7 @@ import { createAppShell } from './shell.js';
 import { installHashRouter, navigateTo } from './router.js';
 import { createStore } from './store.js';
 import { setVoiceSettingsGetter } from './utils/speech.js';
+import { migrateLegacyLocalSettings } from './utils/helpers.js';
 import { isTimingEnabled, setTimingEnabled, timed } from './utils/timing.js';
 
 const root = document.getElementById('app');
@@ -10,6 +11,8 @@ if (!root) throw new Error('Missing #app');
 const store = createStore();
 // Expose store for console debugging
 window.__STORE__ = store;
+// Run localStorage -> shell.blob migration before persistence loads.
+try { migrateLegacyLocalSettings(); } catch (e) {}
 // Expose timing controls for console debugging
 window.__TIMING__ = {
   isEnabled: isTimingEnabled,

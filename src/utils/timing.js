@@ -1,13 +1,19 @@
-import { nowMs, parseHashRoute } from './helpers.js';
+import { nowMs, parseHashRoute, lsGetJson, lsSetJson } from './helpers.js';
 
-const LS_KEY = 'study_cards_timing';
+const LS_LEGACY_KEY = 'study_cards_timing';
+const SHELL_NS_KEY = 'study_cards:v1';
 
 // Keep a simple nesting stack so logs show call structure.
 const _stack = [];
 
 function _readLocalStorageFlag() {
   try {
-    const v = localStorage.getItem(LS_KEY);
+    // Prefer the namespaced shell blob.
+    const shell = lsGetJson(SHELL_NS_KEY, null);
+    if (shell && typeof shell === 'object' && typeof shell.timingEnabled === 'boolean') return shell.timingEnabled;
+
+    // Fallback to legacy single-value flag if present.
+    const v = localStorage.getItem(LS_LEGACY_KEY);
     if (v === '1' || v === 'true' || v === 'on' || v === 'yes') return true;
     if (v === '0' || v === 'false' || v === 'off' || v === 'no') return false;
     return null;
@@ -40,6 +46,16 @@ export function isTimingEnabled() {
     // ignore
   }
 
+  // If a store is exposed on window, read a persisted shell value first.
+  try {
+    const s = (typeof window !== 'undefined' && window.__STORE__ && window.__STORE__.shell && typeof window.__STORE__.shell.getState === 'function')
+      ? window.__STORE__.shell.getState()
+      : null;
+    if (s && typeof s === 'object' && typeof s.timingEnabled === 'boolean') return s.timingEnabled;
+  } catch {
+    // ignore
+  }
+
   const hash = _readHashFlag();
   if (hash !== null) return hash;
 
@@ -52,7 +68,26 @@ export function isTimingEnabled() {
 export function setTimingEnabled(enabled) {
   const val = !!enabled;
   try {
-    localStorage.setItem(LS_KEY, val ? '1' : '0');
+    // Prefer persisting into app store shell state when available.
+    try {
+      if (typeof window !== 'undefined' && window.__STORE__ && window.__STORE__.shell && typeof window.__STORE__.shell.setState === 'function') {
+        window.__STORE__.shell.setState({ timingEnabled: val });
+      } else {
+        // Fallback: update the namespaced shell blob directly so persistence
+        // behaviour remains consistent across reloads.
+        const shell = lsGetJson(SHELL_NS_KEY, {}) || {};
+        shell.timingEnabled = val;
+        lsSetJson(SHELL_NS_KEY, shell);
+      }
+    } catch {
+      try {
+        const shell = lsGetJson(SHELL_NS_KEY, {}) || {};
+        shell.timingEnabled = val;
+        lsSetJson(SHELL_NS_KEY, shell);
+      } catch {
+        // ignore
+      }
+    }
   } catch {
     // ignore
   }
