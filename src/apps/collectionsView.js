@@ -84,8 +84,17 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
       onClick: (rowData, rowIndex, { tr }) => {
         const id = tr?.dataset?.rowId || rowData.__id;
         try {
-          if (store?.collections && typeof store.collections.saveCollectionState === 'function') {
-            store.collections.saveCollectionState(id, { order_hash_int: null, isShuffled: false, currentIndex: 0, studyFilter: '', defaultViewMode: null, heldTableSearch: '', expansion_i: [], expansion_na: [] });
+            if (store?.collections && typeof store.collections.saveCollectionState === 'function') {
+            store.collections.saveCollectionState(id, { order_hash_int: null, isShuffled: false, studyFilter: '', defaultViewMode: null, heldTableSearch: '', expansion_i: [], expansion_na: [] });
+            // clear app-scoped indices (kanji/grammar/qa/flashcard views)
+            try {
+              if (typeof store.collections.deleteCollectionStateKeys === 'function') {
+                store.collections.deleteCollectionStateKeys(id, ['currentIndex'], { app: 'kanjiStudyCardView' });
+                store.collections.deleteCollectionStateKeys(id, ['currentIndex'], { app: 'grammarStudyCardView' });
+                store.collections.deleteCollectionStateKeys(id, ['currentIndex'], { app: 'qaCardsView' });
+                store.collections.deleteCollectionStateKeys(id, ['currentIndex'], { app: 'flashcardsView' });
+              }
+            } catch (e) {}
           }
         } catch (e) {}
         // update the row cells in-place so UI reflects cleared settings

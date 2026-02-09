@@ -154,10 +154,13 @@ export function renderGrammarStudyCard({ store }) {
       const found = entries.findIndex(en => getPrimaryKey(en) === prevKey);
       if (found >= 0) index = found;
     } else {
-      // initial load: prefer saved index
-      if (typeof collState.currentIndex === 'number' && Number.isFinite(collState.currentIndex)) {
-        index = Math.max(0, Math.min(entries.length - 1, Math.round(collState.currentIndex)));
-      }
+      // initial load: prefer saved index (app-scoped first, then legacy top-level)
+        const savedIndex = (collState && collState.grammarStudyCardView && typeof collState.grammarStudyCardView.currentIndex === 'number')
+          ? collState.grammarStudyCardView.currentIndex
+          : collState.currentIndex;
+        if (typeof savedIndex === 'number' && Number.isFinite(savedIndex)) {
+          index = Math.max(0, Math.min(entries.length - 1, Math.round(savedIndex)));
+        }
     }
 
     index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
@@ -255,11 +258,12 @@ export function renderGrammarStudyCard({ store }) {
       const key = active?.key || null;
       if (!key) return;
       store.collections.saveCollectionState?.(key, {
-        isShuffled: !!isShuffled,
-        defaultViewMode: viewMode,
-        order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
-        currentIndex: index,
-      });
+          isShuffled: !!isShuffled,
+          defaultViewMode: viewMode,
+          order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
+        }, { app: 'grammarStudyCardView' });
+      // persist app-scoped index
+      store.collections.saveCollectionState?.(key, { currentIndex: index }, { app: 'grammarStudyCardView' });
     } catch (e) {}
   }
 

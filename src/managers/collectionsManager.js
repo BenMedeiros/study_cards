@@ -1380,17 +1380,74 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   function loadCollectionState(collId) {
     try {
       if (!uiState.collections) return null;
-      return uiState.collections[collId] || null;
+      const obj = uiState.collections[collId] || null;
+      if (!obj) return null;
+      try {
+        // Migrate legacy top-level QA field settings into the app-scoped bucket
+        let migrated = false;
+        const next = { ...obj };
+        const app = 'qaCardsView';
+        const appObj = { ...(next[app] || {}) };
+        if (Object.prototype.hasOwnProperty.call(next, 'questionField') && !Object.prototype.hasOwnProperty.call(appObj, 'questionField')) {
+          appObj.questionField = next.questionField;
+          delete next.questionField;
+          migrated = true;
+        }
+        if (Object.prototype.hasOwnProperty.call(next, 'answerField') && !Object.prototype.hasOwnProperty.call(appObj, 'answerField')) {
+          appObj.answerField = next.answerField;
+          delete next.answerField;
+          migrated = true;
+        }
+        if (migrated) {
+          if (Object.keys(appObj).length) next[app] = appObj;
+          uiState.collections[collId] = next;
+          try { persistence.markDirty({ collectionId: collId }); } catch (e) {}
+          try { persistence.scheduleFlush(); } catch (e) {}
+          return next;
+        }
+      } catch (err) {
+        // ignore migration errors
+      }
+      return obj;
     } catch {
       return null;
     }
   }
 
-  function saveCollectionState(collId, patch) {
+  // Save per-collection UI state. `opts` may include `{ app: 'appName' }` to
+  // scope certain properties (notably `currentIndex`) to a specific app/view.
+  function saveCollectionState(collId, patch, opts = {}) {
     try {
       uiState.collections = uiState.collections || {};
       const prev = uiState.collections[collId] || {};
-      uiState.collections[collId] = { ...prev, ...(patch || {}) };
+      const next = { ...prev };
+
+      const app = String(opts?.app || '').trim();
+
+      // If an app is provided, move certain keys into the app-scoped bucket.
+      // Keys that should be stored per-app: `currentIndex`, `questionField`, `answerField`.
+      const keysToApp = new Set(['currentIndex', 'questionField', 'answerField']);
+      if (app && patch && typeof patch === 'object') {
+        const appObj = { ...(next[app] || {}) };
+        const rest = { ...patch };
+        for (const k of Object.keys(patch)) {
+          if (keysToApp.has(k)) {
+            const v = patch[k];
+            if (k === 'currentIndex') {
+              if (typeof v === 'number' && Number.isFinite(v)) appObj.currentIndex = Math.round(v);
+              else appObj.currentIndex = v;
+            } else {
+              appObj[k] = v;
+            }
+            delete rest[k];
+          }
+        }
+        if (Object.keys(appObj).length) next[app] = appObj;
+        uiState.collections[collId] = { ...next, ...(rest || {}) };
+      } else {
+        uiState.collections[collId] = { ...next, ...(patch || {}) };
+      }
+
       persistence.markDirty({ collectionId: collId });
       persistence.scheduleFlush();
     } catch {
@@ -1398,7 +1455,9 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
   }
 
-  function deleteCollectionStateKeys(collId, keys = []) {
+  // Delete collection state keys. If `opts.app` is provided, keys will be
+  // removed from the app-scoped bucket instead of top-level properties.
+  function deleteCollectionStateKeys(collId, keys = [], opts = {}) {
     try {
       const id = String(collId || '').trim();
       if (!id) return;
@@ -1407,14 +1466,34 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       if (!prev || typeof prev !== 'object') return;
       const next = { ...prev };
       let changed = false;
-      for (const k of (Array.isArray(keys) ? keys : [])) {
-        const key = String(k || '');
-        if (!key) continue;
-        if (Object.prototype.hasOwnProperty.call(next, key)) {
-          delete next[key];
-          changed = true;
+
+      const app = String(opts?.app || '').trim();
+      if (app) {
+        const appObj = { ...(next[app] || {}) };
+        for (const k of (Array.isArray(keys) ? keys : [])) {
+          const key = String(k || '');
+          if (!key) continue;
+          if (Object.prototype.hasOwnProperty.call(appObj, key)) {
+            delete appObj[key];
+            changed = true;
+          }
+        }
+        if (changed) {
+          // if appObj is empty, remove the bucket entirely
+          if (Object.keys(appObj).length === 0) delete next[app];
+          else next[app] = appObj;
+        }
+      } else {
+        for (const k of (Array.isArray(keys) ? keys : [])) {
+          const key = String(k || '');
+          if (!key) continue;
+          if (Object.prototype.hasOwnProperty.call(next, key)) {
+            delete next[key];
+            changed = true;
+          }
         }
       }
+
       if (!changed) return;
       uiState.collections[id] = next;
       persistence.markDirty({ collectionId: id });
@@ -1921,7 +2000,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       ? (window.crypto.getRandomValues(new Uint32Array(1))[0] >>> 0)
       : (Math.floor(Math.random() * 0x100000000) >>> 0);
 
-    saveCollectionState(coll.key, { order_hash_int: seed, isShuffled: true, currentIndex: 0 });
+    saveCollectionState(coll.key, { order_hash_int: seed, isShuffled: true });
     emit();
     return seed;
   }
@@ -1929,7 +2008,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   function clearCollectionShuffle(collKey) {
     const coll = collKey ? getCollections().find(c => c?.key === collKey) : getActiveCollection();
     if (!coll) return false;
-    saveCollectionState(coll.key, { order_hash_int: null, isShuffled: false, currentIndex: 0 });
+    saveCollectionState(coll.key, { order_hash_int: null, isShuffled: false });
     emit();
     return true;
   }
@@ -1937,7 +2016,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   function setStudyFilter(collKey, { skipLearned = false, focusOnly = false } = {}) {
     const coll = collKey ? getCollections().find(c => c?.key === collKey) : getActiveCollection();
     if (!coll) return false;
-    saveCollectionState(coll.key, { studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }), currentIndex: 0 });
+    saveCollectionState(coll.key, { studyFilter: serializeStudyFilter({ skipLearned: !!skipLearned, focusOnly: !!focusOnly }) });
     emit();
     return true;
   }
@@ -1950,7 +2029,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     // (no per-collection "hold" toggle is stored).
     saveCollectionState(coll.key, {
       heldTableSearch: q,
-      currentIndex: 0,
     });
     emit();
     return true;
@@ -1972,7 +2050,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     saveCollectionState(coll.key, {
       expansion_i: i,
       expansion_na: na,
-      currentIndex: 0,
     });
     emit();
     return true;

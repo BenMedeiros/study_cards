@@ -9,7 +9,7 @@
     {
       "path": "greek/greek_alphabet.json",
       "name": "Greek Alphabet",
-      "description": "Classical Greek letters with lowercase, uppercase, and names.",
+      "description": "Greek letters with standard alphabetical order, lowercase/uppercase forms, classical names, letter type classification, and pronunciation guides split into Classical vs Modern (IPA + simple helpers).",
       "entries": 24
     },
     {

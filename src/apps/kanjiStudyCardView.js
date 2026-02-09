@@ -170,8 +170,9 @@ export function renderKanjiStudyCard({ store }) {
           isShuffled: !!isShuffled,
           defaultViewMode: defaultViewMode,
           order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
-          currentIndex: index,
-        });
+        }, { app: 'kanjiStudyCardView' });
+        // persist app-scoped index
+        store.collections.saveCollectionState(key, { currentIndex: index }, { app: 'kanjiStudyCardView' });
       }
     } catch (e) {
       // ignore
@@ -449,9 +450,15 @@ export function renderKanjiStudyCard({ store }) {
     isShuffled = !!view?.isShuffled;
     orderHashInt = (typeof view?.order_hash_int === 'number') ? view.order_hash_int : null;
     currentOrder = null;
-    // If a saved index exists in collection state, restore it once on initial load
-    if (!uiStateRestored && collState && typeof collState.currentIndex === 'number') {
-      index = collState.currentIndex;
+    // If a saved index exists in collection state, restore it once on initial load.
+    // Prefer app-scoped `kanjiStudyCardView.currentIndex`, fallback to legacy top-level `currentIndex`.
+    if (!uiStateRestored && collState) {
+      const savedIndex = (collState && collState.kanjiStudyCardView && typeof collState.kanjiStudyCardView.currentIndex === 'number')
+        ? collState.kanjiStudyCardView.currentIndex
+        : collState.currentIndex;
+      if (typeof savedIndex === 'number') {
+        index = savedIndex;
+      }
       uiStateRestored = true;
     }
     const prevIndex = index;

@@ -45,12 +45,22 @@ export function renderFlashcards({ store }) {
   function refreshFromStore() {
     const res = store.collections.getActiveCollectionView({ windowSize: 10 });
     active = res?.collection || null;
+    const collState = (res?.collState && typeof res.collState === 'object') ? res.collState : {};
     entries = Array.isArray(res?.view?.entries) ? res.view.entries.slice() : [];
+    // restore per-app index once
+    if (!uiStateRestored) {
+      const savedIndex = (collState && collState.flashcardsView && typeof collState.flashcardsView.currentIndex === 'number')
+        ? collState.flashcardsView.currentIndex
+        : collState.currentIndex;
+      if (typeof savedIndex === 'number' && Number.isFinite(savedIndex)) index = Math.max(0, Math.min(entries.length - 1, Math.round(savedIndex)));
+      uiStateRestored = true;
+    }
     index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
   }
 
   let entries = [];
   let index = 0;
+  let uiStateRestored = false;
   let shownAt = nowMs();
 
   refreshFromStore();
@@ -85,6 +95,7 @@ export function renderFlashcards({ store }) {
     if (newIndex < 0 || newIndex >= entries.length) return;
     index = newIndex;
     shownAt = nowMs();
+    try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'flashcardsView' }); } catch (e) {}
     render();
   }
 
@@ -184,7 +195,8 @@ export function renderFlashcards({ store }) {
           const key = store?.collections?.getActiveCollection?.()?.key || null;
           if (key !== lastKey) {
             lastKey = key;
-            index = 0;
+            // New active collection: allow restoration from saved per-app state
+            uiStateRestored = false;
           }
           refreshFromStore();
           render();

@@ -23,6 +23,7 @@ export function renderQaCards({ store }) {
   let answerField = 'answer';
   let entries = [];
   let index = 0;
+  let uiStateRestored = false;
   let shownAt = nowMs();
   let feedbackMode = false;
   let userAnswer = '';
@@ -43,9 +44,28 @@ export function renderQaCards({ store }) {
 
     fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : [];
     ensureQAFieldsAreValid();
-
+    // Restore saved question/answer field choices once (store field keys, not labels)
+    if (!uiStateRestored) {
+      try {
+        const savedQ = collState?.qaCardsView?.questionField;
+        const savedA = collState?.qaCardsView?.answerField;
+        const keys = new Set((Array.isArray(fields) ? fields : []).map(f => String(f?.key ?? '').trim()).filter(Boolean));
+        if (typeof savedQ === 'string' && keys.has(savedQ)) questionField = savedQ;
+        if (typeof savedA === 'string' && keys.has(savedA)) answerField = savedA;
+      } catch (e) {}
+    }
     const nextEntries = Array.isArray(res?.view?.entries) ? res.view.entries : [];
     entries = nextEntries;
+    // Restore saved index once (prefer app-scoped bucket)
+    if (!uiStateRestored) {
+      const savedIndex = (collState && collState.qaCardsView && typeof collState.qaCardsView.currentIndex === 'number')
+        ? collState.qaCardsView.currentIndex
+        : collState.currentIndex;
+      if (typeof savedIndex === 'number' && Number.isFinite(savedIndex)) {
+        index = Math.max(0, Math.min(entries.length - 1, Math.round(savedIndex)));
+      }
+      uiStateRestored = true;
+    }
     index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
   }
 
@@ -56,7 +76,7 @@ export function renderQaCards({ store }) {
     selectorsWrap.className = 'qa-header-selectors';
 
     // Helper to build a dropdown wrapped like the data-expansion-group pattern
-    function buildFieldDropdown(currentValue, onChange) {
+    function buildFieldDropdown(currentValue, onChange, captionText = null) {
       const dd = createDropdown({
         items: fields.map(f => ({ value: f.key, label: f.label ?? f.key })),
         value: currentValue,
@@ -74,7 +94,7 @@ export function renderQaCards({ store }) {
       const caption = document.createElement('div');
       caption.className = 'data-expansion-caption';
       const sel = fields.find(f => f.key === currentValue);
-      caption.textContent = sel?.label ?? String(currentValue || '');
+      caption.textContent = (typeof captionText === 'string' && captionText) ? captionText : (sel?.label ?? String(currentValue || ''));
       group.appendChild(caption);
 
       return { group, dropdown: dd, caption };
@@ -85,16 +105,18 @@ export function renderQaCards({ store }) {
       feedbackMode = false;
       userAnswer = '';
       completed = false;
+      try { store.collections.saveCollectionState?.(active?.key, { questionField: value }, { app: 'qaCardsView' }); } catch (e) {}
       render();
-    });
+    }, 'Question');
 
     const a = buildFieldDropdown(answerField, (value) => {
       answerField = value;
       feedbackMode = false;
       userAnswer = '';
       completed = false;
+      try { store.collections.saveCollectionState?.(active?.key, { answerField: value }, { app: 'qaCardsView' }); } catch (e) {}
       render();
-    });
+    }, 'Answer');
 
     selectorsWrap.append(q.group, a.group);
 
@@ -112,6 +134,7 @@ export function renderQaCards({ store }) {
           store.collections.shuffleCollection(active?.key);
           rebuildEntriesFromCollectionState();
           index = 0;
+          try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
           shownAt = nowMs();
           feedbackMode = false;
           userAnswer = '';
@@ -384,11 +407,13 @@ export function renderQaCards({ store }) {
         feedbackMode = false;
         userAnswer = '';
         index += 1;
+        try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
         shownAt = nowMs();
         render();
       } else {
         // Last card - show completion
         completed = true;
+        try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
         render();
       }
     };
@@ -427,6 +452,7 @@ export function renderQaCards({ store }) {
         if (restartBtn) {
           restartBtn.addEventListener('click', () => {
             index = 0;
+            try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
             feedbackMode = false;
             userAnswer = '';
             completed = false;
