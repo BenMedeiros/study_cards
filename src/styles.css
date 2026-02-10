@@ -1948,12 +1948,6 @@ select:hover {
   margin: 0 auto;
 }
 
-.qa-header-tools.view-header-tools {
-  width: min(60rem, 100%);
-  justify-content: flex-start;
-  flex-wrap: wrap;
-}
-
 .qa-header-selectors {
   display: inline-flex;
   align-items: center;
