@@ -266,6 +266,8 @@ export function migrateLegacyLocalSettings() {
 export function parseFieldQuery(q) {
   const s = String(q || '').trim();
   if (!s) return { field: null, term: '' };
+
+  // Match explicit double-brace `{ {field} : term }` form
   const m1 = s.match(/^\{\{\s*([^}\s]+)\s*\}\s*:\s*(.*)\}$/);
   if (m1) {
     const field = String(m1[1] || '').trim();
@@ -273,6 +275,25 @@ export function parseFieldQuery(q) {
     if (term === '') term = '%';
     return { field, term };
   }
+
+  // Match comparator/equals or simple `{field:term}` forms
+  // comparator form: {field>value}, {field>=value}, {field<value}, {field<=value}
+  // equals-list form: {field=val1,val2}
+  const compMatch = s.match(/^\{\s*([^:\s{}><=]+)\s*([<>]=?|=)\s*(.*)\}$/);
+  if (compMatch) {
+    const field = String(compMatch[1] || '').trim();
+    const op = String(compMatch[2] || '').trim();
+    let rhs = String(compMatch[3] || '').trim();
+    if (op === '=') {
+      // support CSV lists on right-hand side
+      const list = rhs === '' ? [] : rhs.split(',').map(x => String(x || '').trim()).filter(Boolean);
+      return { field, term: rhs, op: '=', list };
+    }
+    // numeric comparator
+    return { field, term: rhs, op };
+  }
+
+  // Match single-brace field: {field:term}
   const m2 = s.match(/^\{\s*([^:\s}]+)\s*:\s*(.*)\}$/);
   if (m2) {
     const field = String(m2[1] || '').trim();
@@ -280,6 +301,8 @@ export function parseFieldQuery(q) {
     if (term === '') term = '%';
     return { field, term };
   }
+
+  // Fallback: no field specified
   return { field: null, term: s };
 }
 
@@ -290,13 +313,31 @@ export function splitTopLevel(s, sep) {
   let depth = 0;
   for (let i = 0; i < s.length; i++) {
     const ch = s[i];
-    if (ch === '{') { depth++; cur += ch; continue; }
-    if (ch === '}') { depth = Math.max(0, depth - 1); cur += ch; continue; }
+    // treat braces, parentheses, and brackets as grouping
+    if (ch === '{' || ch === '(' || ch === '[') { depth++; cur += ch; continue; }
+    if (ch === '}' || ch === ')' || ch === ']') { depth = Math.max(0, depth - 1); cur += ch; continue; }
     if (ch === sep && depth === 0) { out.push(cur.trim()); cur = ''; continue; }
     cur += ch;
   }
   if (cur.trim()) out.push(cur.trim());
   return out;
+}
+
+function _stripOuterParens(s) {
+  if (typeof s !== 'string') return s;
+  let str = s.trim();
+  if (str.length >= 2 && str[0] === '(' && str[str.length - 1] === ')') {
+    let depth = 0;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str[i];
+      if (ch === '(') depth++;
+      else if (ch === ')') {
+        depth--;
+        if (depth === 0 && i === str.length - 1) return str.slice(1, -1).trim();
+      }
+    }
+  }
+  return str;
 }
 
 export function escapeRegexForWildcard(term) {
@@ -336,17 +377,20 @@ export function parseTableQuery(query) {
   if (!q) return { parts: [] };
   const parts = String(q).split(';').map(s => String(s || '').trim()).filter(Boolean);
   const out = [];
-  const compRe = /([<>]=?|=)\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)/g;
+
   for (const p of parts) {
     const parsed = parseFieldQuery(p);
     const term = parsed.term ?? '';
-    const comps = [];
-    let m;
-    while ((m = compRe.exec(term)) !== null) {
-      comps.push({ op: m[1], val: Number(m[2]) });
-    }
-    const alts = splitTopLevel(term, '|').filter(Boolean);
-    out.push({ raw: p, field: parsed.field, term, comps, alts });
+
+    // Build alternatives split by top-level '|'
+    const rawAlts = splitTopLevel(term, '|').map(a => String(a || '').trim()).filter(Boolean);
+    const alts = rawAlts.map(a => {
+      // Each alt may contain top-level '&' (AND). Split into AND-parts and strip outer parentheses
+      const ands = splitTopLevel(a, '&').map(x => _stripOuterParens(String(x || '').trim())).filter(Boolean);
+      return { raw: a, ands };
+    });
+
+    out.push({ raw: p, field: parsed.field, term, op: parsed.op ?? null, list: parsed.list ?? null, alts });
   }
   return { parts: out };
 }
@@ -357,37 +401,91 @@ export function parseTableQuery(query) {
 // - Ensures single-space padding around top-level pipes
 export function cleanSearchQuery(q) {
   const s = String(q || '');
+  console.debug('cleanSearchQuery input:', s);
   if (!s.trim()) return '';
   // Split into top-level AND parts (respecting braces), then clean each part's OR-list
   const andParts = splitTopLevel(s, ';').map(x => String(x || '').trim()).filter(Boolean);
   const outParts = [];
+
   for (const part of andParts) {
-    const alts = splitTopLevel(part, '|').map(a => String(a || '').trim()).filter(Boolean);
-    const seen = new Set();
-    const outAlts = [];
-    for (let alt of alts) {
-      if (!alt) continue;
-      // normalize spacing
-      alt = alt.replace(/\s+/g, ' ').trim();
-      if (alt.startsWith('{') && alt.endsWith('}')) {
-        const sub = parseFieldQuery(alt);
-        const f = String(sub.field || '').trim();
-        const t = String(sub.term ?? '').trim();
-        const keyTerm = t === '%' ? '' : t.toLowerCase();
-        const key = `{${f}:${keyTerm}}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        // reconstruct: show empty term as `{field:}` for brevity
-        const outTerm = (t === '%') ? '' : sub.term;
-        outAlts.push(`{${f}:${outTerm}}`);
-      } else {
-        const key = alt.toLowerCase();
-        if (seen.has(key)) continue;
-        seen.add(key);
-        outAlts.push(alt);
+    const rawOrs = splitTopLevel(part, '|').map(a => String(a || '').trim()).filter(Boolean);
+    const seenOr = new Set();
+    const cleanedOrs = [];
+
+    for (let orItem of rawOrs) {
+      if (!orItem) continue;
+      // Normalize whitespace while respecting braces
+      let norm = '';
+      let depth = 0;
+      for (let i = 0; i < orItem.length; i++) {
+        const ch = orItem[i];
+        if (ch === '{') { depth++; norm += ch; continue; }
+        if (ch === '}') { depth = Math.max(0, depth - 1); norm += ch; continue; }
+        if (depth === 0) {
+          if (/\s/.test(ch)) {
+            if (norm.endsWith(' ')) continue; // collapse runs
+            norm += ' ';
+          } else {
+            norm += ch;
+          }
+        } else {
+          norm += ch;
+        }
       }
+
+      // If no explicit '&' but there are spaces, treat spaces as AND
+      const hasExplicitAnd = splitTopLevel(norm, '&').length > 1;
+      if (!hasExplicitAnd && /\s/.test(norm)) {
+        // replace top-level runs of spaces with ' & '
+        let rebuilt = '';
+        depth = 0;
+        for (let i = 0; i < norm.length; i++) {
+          const ch = norm[i];
+          if (ch === '{') { depth++; rebuilt += ch; continue; }
+          if (ch === '}') { depth = Math.max(0, depth - 1); rebuilt += ch; continue; }
+          if (depth === 0) {
+            if (/\s/.test(ch)) {
+              let j = i + 1;
+              while (j < norm.length && /\s/.test(norm[j])) j++;
+              rebuilt += ' & ';
+              i = j - 1;
+              continue;
+            }
+            rebuilt += ch;
+          } else {
+            rebuilt += ch;
+          }
+        }
+        norm = rebuilt.trim();
+      }
+
+      // Split top-level on '&', remove empty operands, and rejoin with single ' & '
+      const andPartsLocal = splitTopLevel(norm, '&').map(x => String(x || '').trim()).filter(Boolean);
+      if (!andPartsLocal.length) continue;
+      let finalAlt = andPartsLocal.join(' & ');
+      // Collapse any repeated ampersands (e.g. "& & &") into a single ' & ' to ensure idempotence
+      finalAlt = finalAlt.replace(/(?:\s*&\s*){2,}/g, ' & ');
+
+      const key = finalAlt.toLowerCase();
+      if (seenOr.has(key)) continue;
+      seenOr.add(key);
+      cleanedOrs.push(finalAlt);
     }
-    if (outAlts.length) outParts.push(outAlts.join(' | '));
+
+    if (cleanedOrs.length) {
+      // Parenthesize any alternative that contains '&' when there is more than one OR
+      const processed = cleanedOrs.map(item => {
+        // also collapse repeated ampersands inside the displayed item just in case
+        const collapsed = String(item || '').replace(/(?:\s*&\s*){2,}/g, ' & ');
+        if (cleanedOrs.length > 1 && collapsed.includes('&') && !/^\(.+\)$/.test(collapsed.trim())) return `(${collapsed})`;
+        return collapsed;
+      });
+      outParts.push(processed.join(' | '));
+    }
   }
-  return outParts.join('; ');
+  let result = outParts.join('; ');
+  // Final pass: collapse any accidental repeated ampersands at the top-level
+  result = result.replace(/(?:\s*&\s*){2,}/g, ' & ');
+  console.debug('cleanSearchQuery output:', result);
+  return result;
 }

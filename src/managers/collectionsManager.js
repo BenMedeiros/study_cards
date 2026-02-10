@@ -1576,101 +1576,115 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
       // uses shared helpers from helpers.js: buildRegexFromWildcard, splitTopLevel, isNumericType, evalComparators
 
-      const parts = q.split(';').map(s => String(s || '').trim()).filter(Boolean);
-      if (!parts.length) return false;
+      // Use parseTableQuery to get structured parts (handles | and & with grouping)
+      const parsedQ = parseTableQuery(q);
+      if (!parsedQ.parts || !parsedQ.parts.length) return false;
 
       const fieldKeys = fieldKeyListFromMetadataFields(fields);
 
-      for (const part of parts) {
-        const parsed = parseFieldQuery(part);
-        const term = parsed.term ?? '';
-        if (!term) continue;
+      for (const partObj of parsedQ.parts) {
+        const field = partObj.field || null;
+        const op = partObj.op || null;
+        const list = partObj.list || null;
 
-        // detect numeric comparators in term: sequence like <=23 or >3
-        const compRe = /([<>]=?|=)\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)/g;
-        const comps = [];
-        let m;
-        while ((m = compRe.exec(term)) !== null) {
-          comps.push({ op: m[1], val: Number(m[2]) });
-        }
-
-        if (parsed.field) {
-          const f = String(parsed.field || '').trim();
+        if (field) {
+          const f = String(field || '').trim();
           if (!f) return false;
           if (!Object.prototype.hasOwnProperty.call(entry, f)) return false;
           const cellVal = entry[f];
 
-          if (comps.length) {
-            // numeric comparators only allowed when metadata indicates numeric type
-            const metaField = (Array.isArray(fields) ? fields.find(x => String((x && x.key) || '') === f) : null);
-            const metaType = metaField ? (metaField.type ?? (metaField.schema && metaField.schema.type) ?? null) : null;
-            if (!isNumericType(metaType)) return false;
-            const n = Number(cellVal);
-            if (Number.isNaN(n)) return false;
-            if (!evalComparators(n, comps)) return false;
-            continue;
+          // comparator / equals-list handled when op present
+          if (op) {
+            if (op === '=') {
+              if (Array.isArray(list) && list.length) {
+                const found = list.some(item => String(cellVal ?? '').trim().toLowerCase() === String(item || '').toLowerCase());
+                if (!found) return false;
+                continue;
+              } else {
+                // fallback to direct match of term
+              }
+            } else {
+              // numeric comparator
+              const metaField = (Array.isArray(fields) ? fields.find(x => String((x && x.key) || '') === f) : null);
+              const metaType = metaField ? (metaField.type ?? (metaField.schema && metaField.schema.type) ?? null) : null;
+              if (!isNumericType(metaType)) return false;
+              const n = Number(cellVal);
+              const rn = Number(partObj.term);
+              if (Number.isNaN(n) || Number.isNaN(rn)) return false;
+              if (!evalComparators(n, [{ op, val: rn }])) return false;
+              continue;
+            }
           }
 
-          const alts = splitTopLevel(term, '|').filter(Boolean);
+          // string alternatives with AND/OR
           let anyAltMatch = false;
-          for (const alt of alts) {
-            if (alt.startsWith('{')) {
-              const sub = parseFieldQuery(alt);
-              if (sub.field && String(sub.field) === f) {
+          for (const alt of (partObj.alts || [])) {
+            // alt.ands must all match against this field
+            let allMatch = true;
+            for (const andTerm of (alt.ands || [])) {
+              const t = String(andTerm || '').trim();
+              if (!t) { allMatch = false; break; }
+              if (t.startsWith('{') && t.endsWith('}')) {
+                const sub = parseFieldQuery(t);
+                if (!(sub.field && String(sub.field) === f)) { allMatch = false; break; }
                 const subTerm = sub.term ?? '';
                 if (subTerm.includes('%')) {
                   const rx = buildRegexFromWildcard(subTerm);
-                  if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+                  if (!rx.test(String(cellVal ?? ''))) { allMatch = false; break; }
                 } else {
-                  if (String(cellVal ?? '').trim().toLowerCase() === subTerm.toLowerCase()) { anyAltMatch = true; break; }
+                  if (!(String(cellVal ?? '').trim().toLowerCase() === String(subTerm).toLowerCase())) { allMatch = false; break; }
+                }
+              } else {
+                if (t.includes('%')) {
+                  const rx = buildRegexFromWildcard(t);
+                  if (!rx.test(String(cellVal ?? ''))) { allMatch = false; break; }
+                } else {
+                  if (!(String(cellVal ?? '').trim().toLowerCase() === t.toLowerCase())) { allMatch = false; break; }
                 }
               }
-            } else {
-              if (alt.includes('%')) {
-                const rx = buildRegexFromWildcard(alt);
-                if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
-              } else {
-                if (String(cellVal ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
-              }
             }
+            if (allMatch) { anyAltMatch = true; break; }
           }
           if (!anyAltMatch) return false;
           continue;
         } else {
-          // global: comparators not allowed
-          if (comps.length) return false;
-          const alts = splitTopLevel(term, '|').filter(Boolean);
+          // global: each alt must match somewhere (AND parts must all match somewhere)
           let anyAltMatch = false;
-          let values = shallowEntryValueStrings(entry, fieldKeys);
-          for (const alt of alts) {
-            if (alt.startsWith('{')) {
-              const sub = parseFieldQuery(alt);
-              if (sub.field) {
+          const values = shallowEntryValueStrings(entry, fieldKeys);
+          for (const alt of (partObj.alts || [])) {
+            let allMatch = true;
+            for (const andTerm of (alt.ands || [])) {
+              const t = String(andTerm || '').trim();
+              if (!t) { allMatch = false; break; }
+              if (t.startsWith('{') && t.endsWith('}')) {
+                const sub = parseFieldQuery(t);
+                if (!sub.field) { allMatch = false; break; }
                 const f = String(sub.field || '').trim();
-                if (Object.prototype.hasOwnProperty.call(entry, f)) {
-                  const cellVal = entry[f];
-                  const subTerm = sub.term ?? '';
-                  if (subTerm.includes('%')) {
-                    const rx = buildRegexFromWildcard(subTerm);
-                    if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; }
+                if (!Object.prototype.hasOwnProperty.call(entry, f)) { allMatch = false; break; }
+                const cellVal = entry[f];
+                const subTerm = sub.term ?? '';
+                if (subTerm.includes('%')) {
+                  const rx = buildRegexFromWildcard(subTerm);
+                  if (!rx.test(String(cellVal ?? ''))) { allMatch = false; break; }
+                } else {
+                  if (!(String(cellVal ?? '').trim().toLowerCase() === String(subTerm).toLowerCase())) { allMatch = false; break; }
+                }
+              } else {
+                // token must match at least one value
+                let anyCell = false;
+                for (const v of values) {
+                  if (t.includes('%')) {
+                    const rx = buildRegexFromWildcard(t);
+                    if (rx.test(String(v ?? ''))) { anyCell = true; break; }
                   } else {
-                    if (String(cellVal ?? '').trim().toLowerCase() === subTerm.toLowerCase()) { anyAltMatch = true; }
+                    if (String(v ?? '').trim().toLowerCase() === t.toLowerCase()) { anyCell = true; break; }
                   }
                 }
-              }
-            } else {
-              for (const v of values) {
-                if (alt.includes('%')) {
-                  const rx = buildRegexFromWildcard(alt);
-                  if (rx.test(String(v ?? ''))) { anyAltMatch = true; break; }
-                } else {
-                  if (String(v ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
-                }
+                if (!anyCell) { allMatch = false; break; }
               }
             }
-            if (anyAltMatch) break;
+            if (allMatch) { anyAltMatch = true; break; }
           }
-          // (no fallback) only consider metadata-specified fields for global matches
           if (!anyAltMatch) return false;
           continue;
         }
