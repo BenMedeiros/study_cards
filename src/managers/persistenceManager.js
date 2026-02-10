@@ -109,19 +109,23 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
           }
           for (const k of kvKeys) {
             if (k === kanjiProgressKey) {
-              // Write individual kanji progress rows into the new store.
+              // Write individual kanji progress rows into the generic study_progress store.
               const kp = uiState.kv?.[kanjiProgressKey] || {};
               if (kp && typeof kp === 'object') {
                 for (const kid of Object.keys(kp)) {
-                  puts.push(idb.idbPut('kanji_progress', { id: String(kid), value: kp[kid] }));
+                  const entryId = String(kid);
+                  const rec = { id: `japanese.words|${entryId}`, collection: 'japanese.words', entryKey: entryId, value: kp[kid] };
+                  puts.push(idb.idbPut('study_progress', rec));
                 }
               }
             } else if (k === grammarProgressKey) {
-              // Write individual grammar progress rows into the grammar store.
+              // Write individual grammar progress rows into the generic study_progress store.
               const gp = uiState.kv?.[grammarProgressKey] || {};
               if (gp && typeof gp === 'object') {
                 for (const gid of Object.keys(gp)) {
-                  puts.push(idb.idbPut('grammar_progress', { id: String(gid), value: gp[gid] }));
+                  const entryId = String(gid);
+                  const rec = { id: `grammar|${entryId}`, collection: 'grammar', entryKey: entryId, value: gp[gid] };
+                  puts.push(idb.idbPut('study_progress', rec));
                 }
               }
             } else if (k === studyTimeKey) {
@@ -167,8 +171,28 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
         const legacyApps = loadLocalKey('apps');
         const shellRec = (blobLocal && blobLocal.shell && typeof blobLocal.shell === 'object') ? { value: blobLocal.shell } : null;
         const appsRec = (blobLocal && blobLocal.apps && typeof blobLocal.apps === 'object') ? { value: blobLocal.apps } : (legacyApps ? { value: legacyApps } : null);
-        const kanjiProgressRows = await idb.idbGetAll('kanji_progress');
-        const grammarProgressRows = await idb.idbGetAll('grammar_progress');
+        // Prefer new consolidated `study_progress` store; fall back to legacy stores if missing.
+        const studyProgressRows = await idb.idbGetAll('study_progress').catch(() => null);
+        let kanjiProgressRows = null;
+        let grammarProgressRows = null;
+        if (Array.isArray(studyProgressRows) && studyProgressRows.length > 0) {
+          // Extract per-collection maps from study_progress rows.
+          kanjiProgressRows = [];
+          grammarProgressRows = [];
+          for (const r of studyProgressRows) {
+            if (!r || typeof r !== 'object') continue;
+            const coll = String(r.collection || '');
+            if (coll === 'japanese.words') {
+              kanjiProgressRows.push({ id: String(r.entryKey || r.id || ''), value: r.value });
+            } else if (coll === 'grammar') {
+              grammarProgressRows.push({ id: String(r.entryKey || r.id || ''), value: r.value });
+            }
+          }
+        } else {
+          // fallback to legacy per-store reads
+          kanjiProgressRows = await idb.idbGetAll('kanji_progress').catch(() => []);
+          grammarProgressRows = await idb.idbGetAll('grammar_progress').catch(() => []);
+        }
         const studyTimeRows = await idb.idbGetAll('study_time_sessions');
         const collRecs = await idb.idbGetAll('collection_settings');
 
@@ -179,7 +203,6 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
           if (!id) continue;
           kanjiMap[id] = (r.value && typeof r.value === 'object') ? r.value : r.value;
         }
-
         const grammarMap = {};
         for (const r of (Array.isArray(grammarProgressRows) ? grammarProgressRows : [])) {
           if (!r || typeof r !== 'object') continue;

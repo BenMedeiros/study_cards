@@ -1,9 +1,7 @@
 import { createEmitter } from './utils/emitter.js';
 import { createPersistenceManager } from './managers/persistenceManager.js';
 import { createUIStateManager } from './managers/uiStateManager.js';
-import { createProgressManager } from './managers/progressManager.js';
-import { createGrammarProgressManager } from './managers/grammarProgressManager.js';
-import { createStudyTimeManager } from './managers/studyTimeManager.js';
+import { createStudyProgressManager } from './managers/studyProgressManager.js';
 import { createCollectionsManager } from './managers/collectionsManager.js';
 
 export function createStore() {
@@ -31,9 +29,10 @@ export function createStore() {
   const emitter = createEmitter();
   const persistence = createPersistenceManager({ uiState, emitter, kanjiProgressKey: 'kanji_progress', grammarProgressKey: 'grammar_progress', studyTimeKey: 'study_time' });
 
-  const kanjiProgress = createProgressManager({ uiState, persistence, emitter, kanjiProgressKey: 'kanji_progress' });
-  const grammarProgress = createGrammarProgressManager({ uiState, persistence, emitter, grammarProgressKey: 'grammar_progress' });
-  const studyTime = createStudyTimeManager({ uiState, persistence, emitter, studyTimeKey: 'study_time' });
+  const studyProgress = createStudyProgressManager({ uiState, persistence, emitter, kanjiProgressKey: 'kanji_progress', grammarProgressKey: 'grammar_progress', studyTimeKey: 'study_time' });
+  const kanjiProgress = studyProgress;
+  const grammarProgress = studyProgress;
+  const studyTime = studyProgress;
   const ui = createUIStateManager({ uiState, persistence, emitter });
   const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, grammarProgressManager: grammarProgress });
 
