@@ -1410,7 +1410,8 @@ input[type="number"].button::-webkit-inner-spin-button {
 }
 
 #data-root .table-wrapper {
-  max-height: 25rem;
+  /* subtract height for shell and header-tools */
+  max-height: calc(100vh - 19rem);
 }
 
 /* Search box for tables */
