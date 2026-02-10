@@ -7,7 +7,7 @@
     "test": "echo \"No tests yet\"",
     "build": "node scripts/rebuild_index.js",
     "rebuild:collectionSets": "node scripts/rebuild_collectionSets.js",
-    "backup": "node scripts/backup_zips.js --clean"
+    "backup": "node scripts/backup_zips.js --clean --openDistFolder"
   },
   "keywords": [],
   "author": "",

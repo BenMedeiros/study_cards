@@ -89,6 +89,7 @@ function main() {
 
   const args = process.argv.slice(2);
   const clean = args.includes('--clean') || args.includes('-c');
+  const openDist = args.includes('--openDistFolder') || args.includes('--open-dist-folder') || args.includes('-o');
 
   if (clean) cleanDist();
 
@@ -108,6 +109,22 @@ function main() {
   } else {
     console.log('\nArchives created:');
     for (const c of created) console.log(' -', c);
+    if (openDist) {
+      // attempt to open the destination folder so the user can see the files
+      try {
+        if (os.platform() === 'win32') {
+          // Use cmd start to open Explorer on Windows
+          execSync(`cmd /c start "" "${winPath(destDir)}"`, { stdio: 'ignore', shell: true });
+        } else if (os.platform() === 'darwin') {
+          execSync(`open "${destDir}"`, { stdio: 'ignore' });
+        } else {
+          // Most linux desktops support xdg-open
+          execSync(`xdg-open "${destDir}"`, { stdio: 'ignore' });
+        }
+      } catch (e) {
+        // ignore failures to open the folder
+      }
+    }
   }
 }
 
