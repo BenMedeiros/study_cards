@@ -360,13 +360,12 @@ export function createTable({ headers, rows, className = '', id, collection, sor
           items.push({ label: 'Sort descending', onClick: () => { sortCol = i; sortDir = 'desc'; sortAndRender(); } });
           items.push({ label: 'Clear sort', onClick: () => { sortCol = null; sortAndRender(); } });
           if (field) {
+            // generic placeholder add-to-search (keeps existing behavior)
             items.push({ label: 'Add to search', onClick: () => {
               try {
                 if (!searchInputEl) return;
-                // preserve existing value (do not trim so we can detect trailing separators)
                 const existing = String(searchInputEl.value || '');
                 const token = `{${field}:}`;
-                // if existing ends with whitespace or a pipe, don't add an extra separator
                 const needsSep = existing.length > 0 && !(/[\s|]$/.test(existing));
                 const sep = needsSep ? ' | ' : '';
                 searchInputEl.value = existing + sep + token;
@@ -374,6 +373,46 @@ export function createTable({ headers, rows, className = '', id, collection, sor
                 try { searchInputEl.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
               } catch (e) {}
             } });
+
+            // Add per-column stats (value -> count) and top-5 quick-add entries
+            try {
+              if (searchInputEl) {
+                const ci = headerKeys.findIndex(h => h.key === String(field));
+                if (ci >= 0 && Array.isArray(currentRows) && currentRows.length) {
+                  const counts = new Map();
+                  for (const r of currentRows) {
+                    try {
+                      const v = extractCellValue(r[ci]);
+                      const k = String(v ?? '');
+                      counts.set(k, (counts.get(k) || 0) + 1);
+                    } catch (e) {}
+                  }
+                  const entries = Array.from(counts.entries()).sort((a, b) => {
+                    const diff = b[1] - a[1];
+                    if (diff !== 0) return diff;
+                    return String(a[0] ?? '').localeCompare(String(b[0] ?? ''), undefined, { sensitivity: 'base' });
+                  });
+                  const top = entries.slice(0, 5);
+                  for (const [val, cnt] of top) {
+                    const displayVal = (val === '') ? '(empty)' : val;
+                    const safeVal = (val === '') ? '' : String(val).replace(/}/g, '').replace(/\|/g, ' ').trim();
+                    const label = `Add to Search {${displayVal}} | ${cnt}`;
+                    items.push({ label, onClick: () => {
+                      try {
+                        if (!searchInputEl) return;
+                        const existing = String(searchInputEl.value || '');
+                        const token = `{${field}:${safeVal}}`;
+                        const needsSep = existing.length > 0 && !(/[\s|]$/.test(existing));
+                        const sep = needsSep ? ' | ' : '';
+                        searchInputEl.value = existing + sep + token;
+                        searchInputEl.focus();
+                        try { searchInputEl.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+                      } catch (e) {}
+                    } });
+                  }
+                }
+              }
+            } catch (e) {}
           }
           openRightClickMenu({ x: ev.clientX, y: ev.clientY, items, context: 'table-context-menu' });
         } catch (e) {}

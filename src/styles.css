@@ -1345,7 +1345,6 @@ input[type="number"].button::-webkit-inner-spin-button {
 .table-wrapper .table-search {
   position: sticky;
   top: 0;
-  z-index: 12;
   background: rgba(17, 24, 39, 0.95);
   backdrop-filter: blur(8px);
   border-bottom: var(--border-1);
