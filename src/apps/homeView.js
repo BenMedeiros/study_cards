@@ -32,7 +32,8 @@ function makeLink({ label, goTo, sublabel, meta }) {
     className: 'home-link',
     children: [
       el('span', { className: 'home-link-label', text: label }),
-      meta ? el('span', { className: 'home-link-meta', text: meta }) : null,
+      // always include the meta span (may be empty) so layout is stable
+      el('span', { className: 'home-link-meta', text: meta ?? '' }),
     ].filter(Boolean),
     attrs: { href: `#${goTo}`, 'data-go': goTo },
   });
@@ -152,8 +153,6 @@ export function renderHome({ store, onNavigate }) {
     return cardEl;
   }
 
-  const sectionLabel = el('div', { className: 'section-label-row', children: [el('h3', { className: 'section-label', text: 'Japanese — Kanji study' })] });
-
   // Combine the time-window cards into a single "Total Study Time" card
   // Merge all windowed items into a single deduplicated list for a single card
   const windows = [
@@ -207,7 +206,8 @@ export function renderHome({ store, onNavigate }) {
         const list = Array.isArray(state?.savedTableSearches) ? state.savedTableSearches : (Array.isArray(coll?.savedTableSearches) ? coll.savedTableSearches : []);
         if (!list || !list.length) continue;
         const group = el('div', { className: 'saved-filters-group' });
-        group.append(el('div', { className: 'saved-filters-collection-title', text: coll.metadata?.name || coll.key }));
+        // collection title removed to keep layout consistent; the collection
+        // name is shown as the hint under each saved-filter link instead.
         const wrap = el('div', { className: 'home-links' });
         for (const q of list) {
           const qStr = String(q || '').trim();
@@ -225,7 +225,7 @@ export function renderHome({ store, onNavigate }) {
 
   const savedFiltersCard = renderSavedFiltersCard();
 
-  root.append(sectionLabel, totalCard, savedFiltersCard);
+  root.append(totalCard, savedFiltersCard);
 
   root.addEventListener('click', (e) => {
     const t = e.target;

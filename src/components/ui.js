@@ -52,12 +52,13 @@ export function safeId(value) {
 export function card({ title, subtitle, cornerCaption, className = '', id, children = [] }) {
   const titleEl = title ? el('h2', { text: title }) : null;
   const subtitleEl = subtitle ? el('p', { className: 'hint', text: subtitle }) : null;
-  const cornerEl = cornerCaption ? el('div', { className: 'card-corner-caption', text: cornerCaption }) : null;
+  // Always render the corner caption element to keep card layout consistent
+  const cornerEl = el('div', { className: 'card-corner-caption', text: cornerCaption ?? '' });
 
   return el('div', {
     className: `card ${className}`.trim(),
     id,
-    children: [cornerEl, titleEl, subtitleEl, ...children].filter(Boolean)
+    children: [cornerEl, titleEl, subtitleEl, ...children]
   });
 }
 

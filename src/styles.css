@@ -78,12 +78,6 @@ body {
 
 #shell-main {
   flex: 1 1 auto;
-  min-height: 0; /* allow children to scroll inside */
-  /* Compute a maximum height for the main scroll area so its scrollbar
-     ends above the floating view controls and thin shell footer.
-     Header height is measured at runtime and populated into
-     `--shell-header-height`. Fall back to 0 if absent. */
-  max-height: calc(100vh - var(--shell-header-height, 0px) - var(--shell-footer-height) - var(--view-footer-height));
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -145,7 +139,7 @@ body {
   border-color: var(--accent);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
 
   /* Mobile footer: force a consistent 3-per-row grid with equal widths */
   .view-footer-controls {
@@ -232,7 +226,7 @@ body.using-keyboard .view-footer-controls .btn .caption {
   padding: 0.25rem 0.75rem;
   height: 28px;
   min-height: 28px;
-  background: rgba(17,24,39,0.6);
+  background: rgba(17,24,39,1);
   border-top: var(--border-1);
   color: var(--muted);
   font-size: 0.8rem;
@@ -317,7 +311,7 @@ body.hide-view-header-tools .view-header-tools {
   justify-content: flex-end;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
 
   /* Single row header on mobile */
   .header-inner {
@@ -599,7 +593,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   max-height: 34rem;
 }
 
-@media (max-width: 750px) {
+@media (max-width: 700px) {
   .card {
     max-height: 35rem;
   }
@@ -725,8 +719,14 @@ input[type="number"].button::-webkit-inner-spin-button {
 /* Home page */
 #home-root {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 1rem;
+}
+
+@media (max-width: 700px) {
+  #home-root {
+    flex-direction: column;
+  }
 }
 
 .home-links {
@@ -831,17 +831,6 @@ input[type="number"].button::-webkit-inner-spin-button {
   flex: 0 0 auto;
 }
 
-/* Remove the gap between the card title and its hint for window cards */
-.home-window-card h2  {
-  margin: 0;
-}
-
-/* Ensure 24h card still reserves vertical space for the hint even if empty */
-.home-window-24h .hint {
-  min-height: 1rem;
-  opacity: 0.95;
-}
-
 /* Small caption-style footer for kanji controls (sibling under the card) */
 .view-footer-caption {
   margin: 0.75rem auto 0;
@@ -914,7 +903,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   border-color: var(--accent);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
 
   /* Header tools - tighter padding on mobile */
   .view-header-tools .btn {
@@ -1226,7 +1215,7 @@ input[type="number"].button::-webkit-inner-spin-button {
 }
 
 /* Smaller overlay on mobile */
-@media (max-width: 640px) {
+@media (max-width: 700px) {
   .autoplay-overlay {
     min-width: 90vw;
   }
@@ -1433,7 +1422,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   max-width: 50%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .table-search {
     max-width: 100%;
   }
@@ -1645,7 +1634,7 @@ select:hover {
   position: relative;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .custom-dropdown-button {
     min-width: 0;
     max-width: 100%;
@@ -1988,7 +1977,7 @@ select:hover {
   flex-shrink: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 700px) {
   .cardtools-bottom .button {
     flex: 1;
     min-width: 0;
