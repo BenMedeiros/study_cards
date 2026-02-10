@@ -258,3 +258,136 @@ export function migrateLegacyLocalSettings() {
     // ignore migration errors
   }
 }
+
+// ---------------------------------------------------------------------------
+// Query parsing helpers shared by table and collections manager
+// ---------------------------------------------------------------------------
+
+export function parseFieldQuery(q) {
+  const s = String(q || '').trim();
+  if (!s) return { field: null, term: '' };
+  const m1 = s.match(/^\{\{\s*([^}\s]+)\s*\}\s*:\s*(.*)\}$/);
+  if (m1) {
+    const field = String(m1[1] || '').trim();
+    let term = String(m1[2] || '').trim();
+    if (term === '') term = '%';
+    return { field, term };
+  }
+  const m2 = s.match(/^\{\s*([^:\s}]+)\s*:\s*(.*)\}$/);
+  if (m2) {
+    const field = String(m2[1] || '').trim();
+    let term = String(m2[2] || '').trim();
+    if (term === '') term = '%';
+    return { field, term };
+  }
+  return { field: null, term: s };
+}
+
+export function splitTopLevel(s, sep) {
+  const out = [];
+  if (typeof s !== 'string') return out;
+  let cur = '';
+  let depth = 0;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === '{') { depth++; cur += ch; continue; }
+    if (ch === '}') { depth = Math.max(0, depth - 1); cur += ch; continue; }
+    if (ch === sep && depth === 0) { out.push(cur.trim()); cur = ''; continue; }
+    cur += ch;
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+
+export function escapeRegexForWildcard(term) {
+  return String(term || '').replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
+export function buildRegexFromWildcard(term) {
+  const esc = escapeRegexForWildcard(term).replace(/%/g, '.*');
+  return new RegExp(`^${esc}$`, 'i');
+}
+
+export function isNumericType(t) {
+  if (!t && t !== 0) return false;
+  const s = String(t || '').toLowerCase();
+  return /int|float|number|numeric|double/.test(s);
+}
+
+export function evalComparators(valueNum, comps) {
+  for (const c of comps) {
+    const v = c.val;
+    switch (c.op) {
+      case '<': if (!(valueNum < v)) return false; break;
+      case '<=': if (!(valueNum <= v)) return false; break;
+      case '>': if (!(valueNum > v)) return false; break;
+      case '>=': if (!(valueNum >= v)) return false; break;
+      case '=': if (!(valueNum === v)) return false; break;
+      default: return false;
+    }
+  }
+  return true;
+}
+
+// Parse a table-style query into an object useful for evaluation.
+// Returns { parts: [ { raw, field, term, comps, alts } ] }
+export function parseTableQuery(query) {
+  const q = String(query || '').trim();
+  if (!q) return { parts: [] };
+  const parts = String(q).split(';').map(s => String(s || '').trim()).filter(Boolean);
+  const out = [];
+  const compRe = /([<>]=?|=)\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)/g;
+  for (const p of parts) {
+    const parsed = parseFieldQuery(p);
+    const term = parsed.term ?? '';
+    const comps = [];
+    let m;
+    while ((m = compRe.exec(term)) !== null) {
+      comps.push({ op: m[1], val: Number(m[2]) });
+    }
+    const alts = splitTopLevel(term, '|').filter(Boolean);
+    out.push({ raw: p, field: parsed.field, term, comps, alts });
+  }
+  return { parts: out };
+}
+
+// Normalize a user-entered table query string.
+// - Removes empty alternatives and duplicate pipes
+// - Trims and collapses repeated whitespace outside of brace groups
+// - Ensures single-space padding around top-level pipes
+export function cleanSearchQuery(q) {
+  const s = String(q || '');
+  if (!s.trim()) return '';
+  // Split into top-level AND parts (respecting braces), then clean each part's OR-list
+  const andParts = splitTopLevel(s, ';').map(x => String(x || '').trim()).filter(Boolean);
+  const outParts = [];
+  for (const part of andParts) {
+    const alts = splitTopLevel(part, '|').map(a => String(a || '').trim()).filter(Boolean);
+    const seen = new Set();
+    const outAlts = [];
+    for (let alt of alts) {
+      if (!alt) continue;
+      // normalize spacing
+      alt = alt.replace(/\s+/g, ' ').trim();
+      if (alt.startsWith('{') && alt.endsWith('}')) {
+        const sub = parseFieldQuery(alt);
+        const f = String(sub.field || '').trim();
+        const t = String(sub.term ?? '').trim();
+        const keyTerm = t === '%' ? '' : t.toLowerCase();
+        const key = `{${f}:${keyTerm}}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        // reconstruct: show empty term as `{field:}` for brevity
+        const outTerm = (t === '%') ? '' : sub.term;
+        outAlts.push(`{${f}:${outTerm}}`);
+      } else {
+        const key = alt.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        outAlts.push(alt);
+      }
+    }
+    if (outAlts.length) outParts.push(outAlts.join(' | '));
+  }
+  return outParts.join('; ');
+}

@@ -2,6 +2,7 @@ let _tableGlobalResizeHookInstalled = false;
 
 import { timed } from '../utils/timing.js';
 import { openRightClickMenu, registerRightClickContext } from './rightClickMenu.js';
+import { parseFieldQuery, splitTopLevel, buildRegexFromWildcard, isNumericType, evalComparators, cleanSearchQuery } from '../utils/helpers.js';
 
 // register the table context class so CSS and code searches can find it
 try { registerRightClickContext('table-context-menu'); } catch (e) {}
@@ -362,9 +363,12 @@ export function createTable({ headers, rows, className = '', id, collection, sor
             items.push({ label: 'Add to search', onClick: () => {
               try {
                 if (!searchInputEl) return;
-                const existing = String(searchInputEl.value || '').trim();
+                // preserve existing value (do not trim so we can detect trailing separators)
+                const existing = String(searchInputEl.value || '');
                 const token = `{${field}:}`;
-                const sep = existing && !existing.endsWith(' ') ? ' ' : '';
+                // if existing ends with whitespace or a pipe, don't add an extra separator
+                const needsSep = existing.length > 0 && !(/[\s|]$/.test(existing));
+                const sep = needsSep ? ' | ' : '';
                 searchInputEl.value = existing + sep + token;
                 searchInputEl.focus();
                 try { searchInputEl.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
@@ -433,33 +437,6 @@ export function createTable({ headers, rows, className = '', id, collection, sor
       return new RegExp(pat, 'i');
     }
 
-    // Parse optional field-specific query syntaxes.
-    // Supported forms:
-    // - {{field}:term}
-    // - {field:term}
-    // Returns { field: string|null, term: string }
-    function parseFieldQuery(q) {
-      const s = String(q || '').trim();
-      if (!s) return { field: null, term: '' };
-      // form: {{field}:term} (allow empty term)
-      const m1 = s.match(/^\{\{\s*([^}\s]+)\s*\}\s*:\s*(.*)\}$/);
-      if (m1) {
-        const field = String(m1[1] || '').trim();
-        let term = String(m1[2] || '').trim();
-        if (term === '') term = '%';
-        return { field, term };
-      }
-      // form: {field:term} (allow empty term)
-      const m2 = s.match(/^\{\s*([^:\s}]+)\s*:\s*(.*)\}$/);
-      if (m2) {
-        const field = String(m2[1] || '').trim();
-        let term = String(m2[2] || '').trim();
-        if (term === '') term = '%';
-        return { field, term };
-      }
-      return { field: null, term: s };
-    }
-
     // Local (ephemeral) table filter.
     // This only affects the currently-rendered rows in this table component.
     // Views can additionally listen for explicit "apply" events (Enter/Clear) to
@@ -477,36 +454,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
           return;
         }
 
-        function escapeRegex(s) {
-          return String(s || '').replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-        }
-
-        function buildRegexFromWildcard(term) {
-          // term may include % as wildcard; do not auto-wrap
-          const esc = escapeRegex(term).replace(/%/g, '.*');
-          return new RegExp(`^${esc}$`, 'i');
-        }
-
-        function isNumericType(t) {
-          if (!t && t !== 0) return false;
-          const s = String(t || '').toLowerCase();
-          return /int|float|number|numeric|double/.test(s);
-        }
-
-        function evalComparators(valueNum, comps) {
-          for (const c of comps) {
-            const v = c.val;
-            switch (c.op) {
-              case '<': if (!(valueNum < v)) return false; break;
-              case '<=': if (!(valueNum <= v)) return false; break;
-              case '>': if (!(valueNum > v)) return false; break;
-              case '>=': if (!(valueNum >= v)) return false; break;
-              case '=': if (!(valueNum === v)) return false; break;
-              default: return false;
-            }
-          }
-          return true;
-        }
+        // uses shared helpers from src/utils/helpers.js
 
         // Precompute column count
         const colCount = headerKeys.length;
@@ -543,15 +491,29 @@ export function createTable({ headers, rows, className = '', id, collection, sor
                 }
 
                 // string alternatives (OR split by '|')
-                const alts = term.split('|').map(s => String(s || '').trim()).filter(Boolean);
+                const alts = splitTopLevel(term, '|').filter(Boolean);
                 let anyAltMatch = false;
                 for (const alt of alts) {
-                  if (alt.includes('%')) {
-                    const rx = buildRegexFromWildcard(alt);
-                    if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+                  if (alt.startsWith('{')) {
+                    // field-scoped sub-expression inside OR-list
+                    const sub = parseFieldQuery(alt);
+                    if (sub.field && (String(sub.field) === String(headerKeys[ci]?.key))) {
+                      const subTerm = sub.term ?? '';
+                      if (subTerm.includes('%')) {
+                        const rx = buildRegexFromWildcard(subTerm);
+                        if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+                      } else {
+                        if (String(cellVal ?? '').trim().toLowerCase() === String(subTerm).toLowerCase()) { anyAltMatch = true; break; }
+                      }
+                    }
                   } else {
-                    // exact case-insensitive match
-                    if (String(cellVal ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+                    if (alt.includes('%')) {
+                      const rx = buildRegexFromWildcard(alt);
+                      if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+                    } else {
+                      // exact case-insensitive match
+                      if (String(cellVal ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+                    }
                   }
                 }
                 if (!anyAltMatch) return false;
@@ -560,17 +522,34 @@ export function createTable({ headers, rows, className = '', id, collection, sor
               } else {
                 // global (no field): comparators not allowed
                 if (comps.length) return false;
-                const alts = term.split('|').map(s => String(s || '').trim()).filter(Boolean);
+                const alts = splitTopLevel(term, '|').filter(Boolean);
                 let anyAltMatch = false;
                 for (const alt of alts) {
                   // try alt against any column
-                  for (let ci = 0; ci < colCount; ci++) {
-                    const cellVal = extractCellValue(row[ci]);
-                    if (alt.includes('%')) {
-                      const rx = buildRegexFromWildcard(alt);
-                      if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
-                    } else {
-                      if (String(cellVal ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+                  if (alt.startsWith('{')) {
+                    const sub = parseFieldQuery(alt);
+                    if (sub.field) {
+                      const ci = headerKeys.findIndex(h => h.key === String(sub.field));
+                      if (ci >= 0) {
+                        const cellVal = extractCellValue(row[ci]);
+                        const subTerm = sub.term ?? '';
+                        if (subTerm.includes('%')) {
+                          const rx = buildRegexFromWildcard(subTerm);
+                          if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+                        } else {
+                          if (String(cellVal ?? '').trim().toLowerCase() === subTerm.toLowerCase()) { anyAltMatch = true; break; }
+                        }
+                      }
+                    }
+                  } else {
+                    for (let ci = 0; ci < colCount; ci++) {
+                      const cellVal = extractCellValue(row[ci]);
+                      if (alt.includes('%')) {
+                        const rx = buildRegexFromWildcard(alt);
+                        if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+                      } else {
+                        if (String(cellVal ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+                      }
                     }
                   }
                   if (anyAltMatch) break;
@@ -623,8 +602,15 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     searchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         if (_filterTimeout) { clearTimeout(_filterTimeout); _filterTimeout = null; }
-        applyFilter(searchInput.value);
-        emitSearchApplied({ via: 'enter' });
+        try {
+          const cleaned = cleanSearchQuery(searchInput.value);
+          searchInput.value = cleaned;
+          applyFilter(cleaned);
+          emitSearchApplied({ via: 'enter' });
+        } catch (err) {
+          applyFilter(searchInput.value);
+          emitSearchApplied({ via: 'enter' });
+        }
       }
     });
 

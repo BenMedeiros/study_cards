@@ -1,4 +1,4 @@
-import { basename, dirname, normalizeFolderPath, titleFromFilename } from '../utils/helpers.js';
+import { basename, dirname, normalizeFolderPath, titleFromFilename, parseFieldQuery, splitTopLevel, buildRegexFromWildcard, isNumericType, evalComparators, parseTableQuery } from '../utils/helpers.js';
 import { buildHashRoute, parseHashRoute } from '../utils/helpers.js';
 import { timed } from '../utils/timing.js';
 
@@ -1526,27 +1526,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
   }
 
-  // parse optional field-specific query syntaxes supported by the table UI.
-  // Supported forms: '{{field}:term}' and '{field:term}'
-  function parseFieldQuery(q) {
-    const s = String(q || '').trim();
-    if (!s) return { field: null, term: '' };
-    const m1 = s.match(/^\{\{\s*([^}\s]+)\s*\}\s*:\s*(.*)\}$/);
-    if (m1) {
-      const field = String(m1[1] || '').trim();
-      let term = String(m1[2] || '').trim();
-      if (term === '') term = '%';
-      return { field, term };
-    }
-    const m2 = s.match(/^\{\s*([^:\s}]+)\s*:\s*(.*)\}$/);
-    if (m2) {
-      const field = String(m2[1] || '').trim();
-      let term = String(m2[2] || '').trim();
-      if (term === '') term = '%';
-      return { field, term };
-    }
-    return { field: null, term: s };
-  }
+  // (use shared parseFieldQuery from helpers.js)
 
   function fieldKeyListFromMetadataFields(fields) {
     if (!Array.isArray(fields)) return [];
@@ -1594,35 +1574,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       const q = String(query || '').trim();
       if (!q) return false;
 
-      function escapeRegex(s) {
-        return String(s || '').replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-      }
-
-      function buildRegexFromWildcard(term) {
-        const esc = escapeRegex(term).replace(/%/g, '.*');
-        return new RegExp(`^${esc}$`, 'i');
-      }
-
-      function isNumericType(t) {
-        if (!t && t !== 0) return false;
-        const s = String(t || '').toLowerCase();
-        return /int|float|number|numeric|double/.test(s);
-      }
-
-      function evalComparators(valueNum, comps) {
-        for (const c of comps) {
-          const v = c.val;
-          switch (c.op) {
-            case '<': if (!(valueNum < v)) return false; break;
-            case '<=': if (!(valueNum <= v)) return false; break;
-            case '>': if (!(valueNum > v)) return false; break;
-            case '>=': if (!(valueNum >= v)) return false; break;
-            case '=': if (!(valueNum === v)) return false; break;
-            default: return false;
-          }
-        }
-        return true;
-      }
+      // uses shared helpers from helpers.js: buildRegexFromWildcard, splitTopLevel, isNumericType, evalComparators
 
       const parts = q.split(';').map(s => String(s || '').trim()).filter(Boolean);
       if (!parts.length) return false;
@@ -1659,14 +1611,27 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
             continue;
           }
 
-          const alts = term.split('|').map(s => String(s || '').trim()).filter(Boolean);
+          const alts = splitTopLevel(term, '|').filter(Boolean);
           let anyAltMatch = false;
           for (const alt of alts) {
-            if (alt.includes('%')) {
-              const rx = buildRegexFromWildcard(alt);
-              if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+            if (alt.startsWith('{')) {
+              const sub = parseFieldQuery(alt);
+              if (sub.field && String(sub.field) === f) {
+                const subTerm = sub.term ?? '';
+                if (subTerm.includes('%')) {
+                  const rx = buildRegexFromWildcard(subTerm);
+                  if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+                } else {
+                  if (String(cellVal ?? '').trim().toLowerCase() === subTerm.toLowerCase()) { anyAltMatch = true; break; }
+                }
+              }
             } else {
-              if (String(cellVal ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+              if (alt.includes('%')) {
+                const rx = buildRegexFromWildcard(alt);
+                if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+              } else {
+                if (String(cellVal ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+              }
             }
           }
           if (!anyAltMatch) return false;
@@ -1674,16 +1639,33 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         } else {
           // global: comparators not allowed
           if (comps.length) return false;
-          const alts = term.split('|').map(s => String(s || '').trim()).filter(Boolean);
+          const alts = splitTopLevel(term, '|').filter(Boolean);
           let anyAltMatch = false;
           let values = shallowEntryValueStrings(entry, fieldKeys);
           for (const alt of alts) {
-            for (const v of values) {
-              if (alt.includes('%')) {
-                const rx = buildRegexFromWildcard(alt);
-                if (rx.test(String(v ?? ''))) { anyAltMatch = true; break; }
-              } else {
-                if (String(v ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+            if (alt.startsWith('{')) {
+              const sub = parseFieldQuery(alt);
+              if (sub.field) {
+                const f = String(sub.field || '').trim();
+                if (Object.prototype.hasOwnProperty.call(entry, f)) {
+                  const cellVal = entry[f];
+                  const subTerm = sub.term ?? '';
+                  if (subTerm.includes('%')) {
+                    const rx = buildRegexFromWildcard(subTerm);
+                    if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; }
+                  } else {
+                    if (String(cellVal ?? '').trim().toLowerCase() === subTerm.toLowerCase()) { anyAltMatch = true; }
+                  }
+                }
+              }
+            } else {
+              for (const v of values) {
+                if (alt.includes('%')) {
+                  const rx = buildRegexFromWildcard(alt);
+                  if (rx.test(String(v ?? ''))) { anyAltMatch = true; break; }
+                } else {
+                  if (String(v ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+                }
               }
             }
             if (anyAltMatch) break;
