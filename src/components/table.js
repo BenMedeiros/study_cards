@@ -140,7 +140,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     th.textContent = label;
     th.dataset.field = key;
     th.classList.add(`col-${keyClass}`);
-    headerKeys.push({ key, keyClass, label });
+    headerKeys.push({ key, keyClass, label, type: (header && typeof header === 'object') ? (header.type ?? null) : null });
     headerRow.append(th);
   }
   
@@ -468,36 +468,124 @@ export function createTable({ headers, rows, className = '', id, collection, sor
       const total = Array.isArray(originalRows) ? originalRows.length : 0;
       const label = `table.applyFilter (${total})`;
       return timed(label, () => {
-        const parsed = parseFieldQuery(q);
-        const rx = makeRegex(parsed.term);
-        if (!rx) currentRows = originalRows.slice();
-        else {
-          if (parsed.field) {
-            // find column index matching the requested field key (exact match)
-            const ci = headerKeys.findIndex(h => h.key === String(parsed.field));
-            if (ci >= 0) {
-              currentRows = originalRows.filter(r => {
-                const cell = r[ci];
-                const v = extractCellValue(cell);
-                return rx.test(String(v));
-              });
-            } else {
-              // field key not found -> no matches (require exact keys)
-              currentRows = [];
-            }
-          } else {
-            currentRows = originalRows.filter(r => {
-              for (const cell of r) {
-                const v = extractCellValue(cell);
-                if (rx.test(String(v))) return true;
-              }
-              return false;
-            });
-          }
+        // allow semicolon-separated parts (AND-combined)
+        const parts = String(q || '').split(';').map(s => String(s || '').trim()).filter(Boolean);
+        if (!parts.length) {
+          currentRows = originalRows.slice();
+          sortAndRender();
+          try { clearBtn.disabled = true; } catch (e) {}
+          return;
         }
+
+        function escapeRegex(s) {
+          return String(s || '').replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+        }
+
+        function buildRegexFromWildcard(term) {
+          // term may include % as wildcard; do not auto-wrap
+          const esc = escapeRegex(term).replace(/%/g, '.*');
+          return new RegExp(`^${esc}$`, 'i');
+        }
+
+        function isNumericType(t) {
+          if (!t && t !== 0) return false;
+          const s = String(t || '').toLowerCase();
+          return /int|float|number|numeric|double/.test(s);
+        }
+
+        function evalComparators(valueNum, comps) {
+          for (const c of comps) {
+            const v = c.val;
+            switch (c.op) {
+              case '<': if (!(valueNum < v)) return false; break;
+              case '<=': if (!(valueNum <= v)) return false; break;
+              case '>': if (!(valueNum > v)) return false; break;
+              case '>=': if (!(valueNum >= v)) return false; break;
+              case '=': if (!(valueNum === v)) return false; break;
+              default: return false;
+            }
+          }
+          return true;
+        }
+
+        // Precompute column count
+        const colCount = headerKeys.length;
+
+        // For each original row, require all parts to match
+        currentRows = originalRows.filter(row => {
+          try {
+            for (const part of parts) {
+              const parsed = parseFieldQuery(part);
+              const term = parsed.term ?? '';
+              if (!term) continue; // empty part matches
+
+              // detect numeric comparators in term: sequence like <=23 or >3
+              const compRe = /([<>]=?|=)\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)/g;
+              const comps = [];
+              let m;
+              while ((m = compRe.exec(term)) !== null) {
+                comps.push({ op: m[1], val: Number(m[2]) });
+              }
+
+              if (parsed.field) {
+                const ci = headerKeys.findIndex(h => h.key === String(parsed.field));
+                if (ci < 0) return false; // field not found -> no match for this row
+                const cellVal = extractCellValue(row[ci]);
+
+                if (comps.length) {
+                  // numeric comparisons only allowed on numeric typed columns
+                  if (!isNumericType(headerKeys[ci].type)) return false;
+                  const n = Number(cellVal);
+                  if (Number.isNaN(n)) return false;
+                  if (!evalComparators(n, comps)) return false;
+                  // this part matched
+                  continue;
+                }
+
+                // string alternatives (OR split by '|')
+                const alts = term.split('|').map(s => String(s || '').trim()).filter(Boolean);
+                let anyAltMatch = false;
+                for (const alt of alts) {
+                  if (alt.includes('%')) {
+                    const rx = buildRegexFromWildcard(alt);
+                    if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+                  } else {
+                    // exact case-insensitive match
+                    if (String(cellVal ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+                  }
+                }
+                if (!anyAltMatch) return false;
+                // part matched, continue to next part
+                continue;
+              } else {
+                // global (no field): comparators not allowed
+                if (comps.length) return false;
+                const alts = term.split('|').map(s => String(s || '').trim()).filter(Boolean);
+                let anyAltMatch = false;
+                for (const alt of alts) {
+                  // try alt against any column
+                  for (let ci = 0; ci < colCount; ci++) {
+                    const cellVal = extractCellValue(row[ci]);
+                    if (alt.includes('%')) {
+                      const rx = buildRegexFromWildcard(alt);
+                      if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+                    } else {
+                      if (String(cellVal ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+                    }
+                  }
+                  if (anyAltMatch) break;
+                }
+                if (!anyAltMatch) return false;
+                continue;
+              }
+            }
+            return true;
+          } catch (e) { return false; }
+        });
+
         sortAndRender();
         try {
-          const has = String(q || '').trim().length > 0;
+          const has = parts.length > 0;
           clearBtn.disabled = !has;
         } catch (e) {}
       });

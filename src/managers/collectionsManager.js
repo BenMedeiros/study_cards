@@ -1586,29 +1586,115 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
   function entryMatchesTableSearch(entry, { query, regex = null, fields = null } = {}) {
     try {
-      const parsed = parseFieldQuery(query);
-      const term = parsed.term;
-      const rx = regex || makeTableSearchRegex(term);
-      if (!rx) return false;
+      // New matching semantics (compatible with table component):
+      // - `;` splits AND-parts
+      // - `{field:...}` restricts to a single field; inside, `|` separates OR alternatives
+      // - `%` acts as wildcard (converted to regex); no automatic wrapping
+      // - Numeric comparisons allowed inside field: <=, >=, <, >, = and can be chained
+      const q = String(query || '').trim();
+      if (!q) return false;
 
-      if (parsed.field) {
-        const f = String(parsed.field || '').trim();
-        if (!f) return false;
-        // direct property match
-        if (Object.prototype.hasOwnProperty.call(entry, f)) {
-          const vals = shallowEntryValueStrings({ [f]: entry[f] }, [f]);
-          for (const v of vals) if (rx.test(String(v))) return true;
-          return false;
-        }
-        return false;
+      function escapeRegex(s) {
+        return String(s || '').replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
       }
+
+      function buildRegexFromWildcard(term) {
+        const esc = escapeRegex(term).replace(/%/g, '.*');
+        return new RegExp(`^${esc}$`, 'i');
+      }
+
+      function isNumericType(t) {
+        if (!t && t !== 0) return false;
+        const s = String(t || '').toLowerCase();
+        return /int|float|number|numeric|double/.test(s);
+      }
+
+      function evalComparators(valueNum, comps) {
+        for (const c of comps) {
+          const v = c.val;
+          switch (c.op) {
+            case '<': if (!(valueNum < v)) return false; break;
+            case '<=': if (!(valueNum <= v)) return false; break;
+            case '>': if (!(valueNum > v)) return false; break;
+            case '>=': if (!(valueNum >= v)) return false; break;
+            case '=': if (!(valueNum === v)) return false; break;
+            default: return false;
+          }
+        }
+        return true;
+      }
+
+      const parts = q.split(';').map(s => String(s || '').trim()).filter(Boolean);
+      if (!parts.length) return false;
 
       const fieldKeys = fieldKeyListFromMetadataFields(fields);
-      const values = shallowEntryValueStrings(entry, fieldKeys);
-      for (const v of values) {
-        if (rx.test(String(v))) return true;
+
+      for (const part of parts) {
+        const parsed = parseFieldQuery(part);
+        const term = parsed.term ?? '';
+        if (!term) continue;
+
+        // detect numeric comparators in term: sequence like <=23 or >3
+        const compRe = /([<>]=?|=)\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)/g;
+        const comps = [];
+        let m;
+        while ((m = compRe.exec(term)) !== null) {
+          comps.push({ op: m[1], val: Number(m[2]) });
+        }
+
+        if (parsed.field) {
+          const f = String(parsed.field || '').trim();
+          if (!f) return false;
+          if (!Object.prototype.hasOwnProperty.call(entry, f)) return false;
+          const cellVal = entry[f];
+
+          if (comps.length) {
+            // numeric comparators only allowed when metadata indicates numeric type
+            const metaField = (Array.isArray(fields) ? fields.find(x => String((x && x.key) || '') === f) : null);
+            const metaType = metaField ? (metaField.type ?? (metaField.schema && metaField.schema.type) ?? null) : null;
+            if (!isNumericType(metaType)) return false;
+            const n = Number(cellVal);
+            if (Number.isNaN(n)) return false;
+            if (!evalComparators(n, comps)) return false;
+            continue;
+          }
+
+          const alts = term.split('|').map(s => String(s || '').trim()).filter(Boolean);
+          let anyAltMatch = false;
+          for (const alt of alts) {
+            if (alt.includes('%')) {
+              const rx = buildRegexFromWildcard(alt);
+              if (rx.test(String(cellVal ?? ''))) { anyAltMatch = true; break; }
+            } else {
+              if (String(cellVal ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+            }
+          }
+          if (!anyAltMatch) return false;
+          continue;
+        } else {
+          // global: comparators not allowed
+          if (comps.length) return false;
+          const alts = term.split('|').map(s => String(s || '').trim()).filter(Boolean);
+          let anyAltMatch = false;
+          let values = shallowEntryValueStrings(entry, fieldKeys);
+          for (const alt of alts) {
+            for (const v of values) {
+              if (alt.includes('%')) {
+                const rx = buildRegexFromWildcard(alt);
+                if (rx.test(String(v ?? ''))) { anyAltMatch = true; break; }
+              } else {
+                if (String(v ?? '').trim().toLowerCase() === alt.toLowerCase()) { anyAltMatch = true; break; }
+              }
+            }
+            if (anyAltMatch) break;
+          }
+          // (no fallback) only consider metadata-specified fields for global matches
+          if (!anyAltMatch) return false;
+          continue;
+        }
       }
-      return false;
+
+      return true;
     } catch (e) {
       return false;
     }
@@ -1620,15 +1706,12 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const q = String(query || '').trim();
     const label = `collections.filterEntriesAndIndicesByTableSearch (${arr.length}) q=${q.length}`;
     return timed(label, () => {
-      const parsed = parseFieldQuery(q);
-      const rx = makeTableSearchRegex(parsed.term);
-      if (!rx) return { entries: arr.slice(), indices: idx.slice() };
-
+      if (!q) return { entries: arr.slice(), indices: idx.slice() };
       const outEntries = [];
       const outIdx = [];
       for (let i = 0; i < arr.length; i++) {
         const e = arr[i];
-        if (entryMatchesTableSearch(e, { query: q, regex: rx, fields })) {
+        if (entryMatchesTableSearch(e, { query: q, fields })) {
           outEntries.push(e);
           outIdx.push(idx[i]);
         }

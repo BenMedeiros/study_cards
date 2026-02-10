@@ -627,7 +627,11 @@ export function renderData({ store }) {
   }
 
   // Build table headers from fields (preserve schema `key` and `label` separately)
-  const headers = [{ key: 'status', label: '' }, ...fields.map(f => ({ key: f.key, label: f.label || f.key })), { key: 'examples', label: 'Examples' }];
+  const headers = [{ key: 'status', label: '' }, ...fields.map(f => ({
+    key: f.key,
+    label: f.label || f.key,
+    type: f.type ?? (f.schema && f.schema.type) ?? null,
+  })), { key: 'examples', label: 'Examples' }];
 
   function renderTable() {
     const visibleIdxs = getVisibleOriginalIndices();
