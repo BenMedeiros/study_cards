@@ -1,10 +1,9 @@
-import { renderLanding } from './apps/landingView.js';
+import { renderHome } from './apps/homeView.js';
 import { renderFlashcards } from './apps/flashcardsView.js';
 import { renderQaCards } from './apps/qaCardsView.js';
 import { renderCollectionsManager } from './apps/collectionsView.js';
 import { parseHashRoute } from './utils/helpers.js';
 import { renderData } from './apps/dataView.js';
-import { renderPlaceholderTool } from './apps/placeholderView.js';
 import { renderKanjiStudyCard } from './apps/kanjiStudyCardView.js';
 import { renderGrammarStudyCard } from './apps/grammarStudyCardView.js';
 import { renderEntityExplorer } from './apps/entityExplorerView.js';
@@ -878,7 +877,7 @@ export function createAppShell({ store, onNavigate }) {
       main.innerHTML = '';
 
       if (route.pathname === '/') {
-        main.append(timed('view.renderLanding', () => renderLanding({ store, onNavigate })));
+        main.append(timed('view.renderHome', () => renderHome({ store, onNavigate })));
         return;
       }
 
@@ -933,7 +932,16 @@ export function createAppShell({ store, onNavigate }) {
         return;
       }
 
-      main.append(renderPlaceholderTool({ title: 'Not Found', hint: `No route for ${route.pathname}` }));
+      // Inline fallback for missing routes (previously used placeholderView)
+      const nf = document.createElement('div');
+      nf.className = 'placeholder-root';
+      const nh = document.createElement('h2');
+      nh.textContent = 'Not Found';
+      const np = document.createElement('div');
+      np.className = 'hint';
+      np.textContent = `No route for ${route.pathname}`;
+      nf.append(nh, np);
+      main.append(nf);
     });
   }
 

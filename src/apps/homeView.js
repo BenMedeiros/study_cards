@@ -43,7 +43,7 @@ function makeLink({ label, goTo, sublabel, meta }) {
   });
 }
 
-export function renderLanding({ store, onNavigate }) {
+export function renderHome({ store, onNavigate }) {
   const root = document.createElement('div');
   root.id = 'home-root';
 
@@ -76,10 +76,6 @@ export function renderLanding({ store, onNavigate }) {
     return tb - ta;
   });
   const recentCollections = allStats.slice(0, 6);
-
-  
-
-
 
   // old stats grid removed — replaced by Japanese-focused windows below
 

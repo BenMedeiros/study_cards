@@ -5,6 +5,11 @@ const SHELL_LS_KEY = 'study_cards:v1';
 
 // Legacy decompression removed — app assumes new per-session store shape.
 
+// Convention: per-app UI state is stored under the namespaced blob at
+// `study_cards:v1` -> `apps` using the app/view's module name as the key.
+// Example: the entity explorer view persists its settings under
+// `apps.entityExplorer` (see src/apps/entityExplorerView.js).
+
 function loadLocalKey(key) {
   try {
     const raw = localStorage.getItem(key);

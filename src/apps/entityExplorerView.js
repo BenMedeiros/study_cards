@@ -4,6 +4,40 @@ import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createTable } from '../components/table.js';
 
+// Persist UI selections for this view under the global namespaced blob
+// stored at localStorage key `study_cards:v1` -> `apps` -> `entityExplorer`.
+function readEntityExplorerAppState() {
+  try {
+    const raw = localStorage.getItem('study_cards:v1');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && parsed.apps && parsed.apps.entityExplorer ? parsed.apps.entityExplorer : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeEntityExplorerAppState(state = {}) {
+  try {
+    const raw = localStorage.getItem('study_cards:v1');
+    let obj = raw ? JSON.parse(raw) : {};
+    if (!obj || typeof obj !== 'object') obj = {};
+    obj.apps = obj.apps || {};
+    obj.apps.entityExplorer = obj.apps.entityExplorer || {};
+    for (const k of Object.keys(state || {})) {
+      const v = state[k];
+      if (v === null) {
+        try { delete obj.apps.entityExplorer[k]; } catch (e) {}
+      } else {
+        obj.apps.entityExplorer[k] = v;
+      }
+    }
+    localStorage.setItem('study_cards:v1', JSON.stringify(obj));
+  } catch {
+    // ignore localStorage errors
+  }
+}
+
 function safeJson(v) {
   try { return JSON.stringify(v, null, 2); } catch { return String(v); }
 }
@@ -118,11 +152,21 @@ export function renderEntityExplorer({ store }) {
   }
 
   // UI: manager dropdown + optional DB / store groups
+  const _savedAppState = readEntityExplorerAppState() || {};
+  const initialManager = String(_savedAppState.manager || 'idb');
+
   const managerDropdown = createDropdown({
     items: managerItems,
-    value: 'idb',
+    value: initialManager,
     onChange: (next) => {
       const sel = String(next || 'idb');
+      // persist manager selection (apps.entityExplorer)
+      if (sel === 'ls') {
+        // clear idb-specific fields to avoid clutter
+        writeEntityExplorerAppState({ manager: sel, db: null, selection: null });
+      } else {
+        writeEntityExplorerAppState({ manager: sel });
+      }
       loadAndRenderManager(sel);
       if (sel === 'idb') {
         if (!dbGroup.parentElement) left.append(dbGroup);
@@ -179,9 +223,17 @@ export function renderEntityExplorer({ store }) {
   root.append(headerTools, content);
 
   // initial state
-  left.append(dbGroup, storeGroup);
-  loadAndRenderManager('idb');
-  rebuildDbDropdown();
+  const _initState = _savedAppState || {};
+  const _initManager = String(_initState.manager || 'idb');
+  if (_initManager === 'idb') {
+    left.append(dbGroup, storeGroup);
+    loadAndRenderManager('idb');
+    rebuildDbDropdown();
+  } else {
+    loadAndRenderManager('ls');
+    try { if (dbGroup.parentElement) dbGroup.parentElement.removeChild(dbGroup); } catch (e) {}
+    try { if (storeGroup.parentElement) storeGroup.parentElement.removeChild(storeGroup); } catch (e) {}
+  }
 
   async function rebuildDbDropdown() {
     dbDropdownSlot.innerHTML = '';
@@ -190,18 +242,22 @@ export function renderEntityExplorer({ store }) {
       const dbs = await listDatabases();
       if (!dbs || !dbs.length) return;
       const items = dbs.map(n => ({ value: n, label: n }));
+      const savedDb = (_savedAppState && _savedAppState.db) ? String(_savedAppState.db) : null;
+      const initialDb = (savedDb && items.some(i => i.value === savedDb)) ? savedDb : items[0].value;
       const dd = createDropdown({
         items,
-        value: items[0].value,
+        value: initialDb,
         onChange: (next) => {
-          const dbName = String(next || items[0].value);
+          const dbName = String(next || initialDb);
+          // persist selected DB
+          writeEntityExplorerAppState({ db: dbName, manager: 'idb' });
           rebuildStoreDropdown(dbName);
         },
         className: '',
         closeOverlaysOnOpen: true,
       });
       dbDropdownSlot.append(dd);
-      rebuildStoreDropdown(items[0].value);
+      rebuildStoreDropdown(initialDb);
     } catch (e) {
       dbDropdownSlot.append(el('div', { className: 'hint', text: 'Failed to list DBs' }));
     }
@@ -225,17 +281,28 @@ export function renderEntityExplorer({ store }) {
         return;
       }
       const items = stores.map(s => ({ value: s, label: s }));
+      // choose saved store if it matches this DB
+      let savedStore = null;
+      try {
+        const sel = _savedAppState && _savedAppState.selection ? String(_savedAppState.selection) : '';
+        if (sel && sel.startsWith('idb:')) savedStore = sel.slice(4);
+        if (!_savedAppState && _savedAppState.store) savedStore = String(_savedAppState.store);
+      } catch (e) { savedStore = null; }
+      const initialStore = (savedStore && items.some(i => i.value === savedStore)) ? savedStore : items[0].value;
       const dd = createDropdown({
         items,
-        value: items[0].value,
+        value: initialStore,
         onChange: async (next) => {
-          await loadAndRenderIdbStore(dbName, String(next || items[0].value));
+          const storeName = String(next || initialStore);
+          // persist selected store and manager/db
+          writeEntityExplorerAppState({ manager: 'idb', db: dbName, selection: `idb:${storeName}` });
+          await loadAndRenderIdbStore(dbName, storeName);
         },
         className: '',
         closeOverlaysOnOpen: true,
       });
       storeDropdownSlot.append(dd);
-      await loadAndRenderIdbStore(dbName, items[0].value);
+      await loadAndRenderIdbStore(dbName, initialStore);
     } finally {
       try { db.close(); } catch (e) {}
     }
