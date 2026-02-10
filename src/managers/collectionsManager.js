@@ -1358,6 +1358,14 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     try {
       uiState.shell = uiState.shell || {};
       uiState.shell.activeCollectionId = state.activeCollectionId;
+      // Also persist active collection path and base entries count for shell display
+      try {
+        const activeColl = state.collections.find(c => c.key === state.activeCollectionId) || null;
+        uiState.shell.activeCollectionPath = activeColl?.key || null;
+        uiState.shell.activeCollectionEntriesCount = Array.isArray(activeColl?.entries) ? activeColl.entries.length : 0;
+      } catch (e) {
+        // ignore
+      }
       if (location.hash) {
         uiState.shell.lastRoute = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
       }
@@ -1997,6 +2005,47 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     return getActiveCollectionView(opts).view;
   }
 
+  // Return entries for a collection augmented with consolidated example info.
+  // Ensures the top-folder sentence↔entry index is built so `entry.sentences`
+  // are available, then returns shallow copies of entries with convenience
+  // properties: `__examplesCount` and `__examplesSample` (array).
+  async function getCollectionEntriesWithExamples(collectionOrKey, opts = { sample: 2 }) {
+    const sampleN = Math.max(0, Math.round(Number(opts?.sample || 2) || 0));
+    let coll = null;
+    try {
+      if (!collectionOrKey) return [];
+      if (typeof collectionOrKey === 'string') {
+        coll = state.collections.find(c => c.key === collectionOrKey) || null;
+        if (!coll) {
+          // attempt to load it
+          try { coll = await loadCollection(collectionOrKey); } catch (e) { coll = null; }
+        }
+      } else if (collectionOrKey && typeof collectionOrKey === 'object') {
+        coll = collectionOrKey;
+      }
+      if (!coll || !coll.key) return [];
+
+      const top = topFolderOfKey(coll.key) || '';
+      if (top) {
+        try { await ensureWordSentenceIndexBuiltForTop(top); } catch (e) { /* ignore */ }
+      }
+
+      // Rebuild folder index to ensure sentences were attached to entries.
+      try { buildFolderEntryIndex(top); } catch (e) { /* ignore */ }
+
+      const baseEntries = Array.isArray(coll.entries) ? coll.entries : [];
+      const out = [];
+      for (const e of baseEntries) {
+        const sentences = Array.isArray(e.sentences) ? e.sentences : [];
+        const sample = sampleN > 0 ? sentences.slice(0, sampleN).map(s => ({ ja: s?.ja ?? null, en: s?.en ?? null })) : [];
+        out.push({ ...e, __examplesCount: sentences.length, __examplesSample: sample });
+      }
+      return out;
+    } catch (err) {
+      return [];
+    }
+  }
+
   // ============================================================================
   // Collection Actions (state modification operations)
   // ============================================================================
@@ -2124,6 +2173,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     expandEntriesByAdjectiveForm,
     expandEntriesAndIndicesByAdjectiveForms,
     getAdjectiveExpansionDeltas,
+    getCollectionEntriesWithExamples,
 
     // Collection actions (state modifications)
     shuffleCollection,

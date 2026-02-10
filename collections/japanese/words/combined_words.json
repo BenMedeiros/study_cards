@@ -6,7 +6,7 @@
       "meaning": "about; approximately; extent/degree (approximation/extent marker)",
       "lexicalClass": "regular",
       "tags": [
-        "fractional_numeral"
+        "fractional_numeral", "foo"
       ],
       "type": "adverb",
       "orthography": "kanji"

@@ -374,6 +374,12 @@ export function createAppShell({ store, onNavigate }) {
     try { fRight.textContent = 'Captions: on'; } catch (e) {}
   }
 
+  // Cache footer elements/values to avoid rebuilding DOM on each store update
+  let footerPathPrev = null;
+  let footerCountPrev = null;
+  let footerPathEl = null;
+  let footerCountEl = null;
+
   footer.append(fLeft, fCenter, fRight);
   el.append(footer);
 
@@ -1091,6 +1097,41 @@ export function createAppShell({ store, onNavigate }) {
       }
     } catch (err) {}
     renderHeader();
+
+    // Update footer-right with active collection path and base entries count
+    try {
+      const s = (store && store.shell && typeof store.shell.getState === 'function') ? store.shell.getState() : {};
+      const path = s && typeof s.activeCollectionPath === 'string' ? s.activeCollectionPath : (cached.activeCollection?.key || '');
+      const count = Number.isFinite(Number(s?.activeCollectionEntriesCount)) ? Number(s.activeCollectionEntriesCount) : (Array.isArray(cached.activeCollection?.entries) ? cached.activeCollection.entries.length : null);
+
+      // Minimal DOM updates to avoid forced reflow/layout thrash.
+      if (typeof footerPathPrev === 'undefined') {
+        footerPathPrev = null;
+        footerCountPrev = null;
+        footerPathEl = null;
+        footerCountEl = null;
+      }
+
+      if (path !== footerPathPrev) {
+        footerPathPrev = path;
+        if (!footerPathEl) {
+          footerPathEl = document.createElement('span');
+          footerPathEl.className = 'shell-footer-collection-path';
+          fRight.appendChild(footerPathEl);
+        }
+        footerPathEl.textContent = path || '';
+      }
+
+      if (count !== footerCountPrev) {
+        footerCountPrev = count;
+        if (!footerCountEl) {
+          footerCountEl = document.createElement('span');
+          footerCountEl.className = 'shell-footer-collection-count';
+          fRight.appendChild(footerCountEl);
+        }
+        footerCountEl.textContent = (count !== null && count !== undefined && !Number.isNaN(Number(count))) ? ` ${count} entries` : '';
+      }
+    } catch (e) {}
   });
 
   return { el, renderHeader, renderRoute, getCurrentRoute };

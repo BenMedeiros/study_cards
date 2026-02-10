@@ -153,30 +153,79 @@ export function renderHome({ store, onNavigate }) {
   }
 
   const sectionLabel = el('div', { className: 'section-label-row', children: [el('h3', { className: 'section-label', text: 'Japanese — Kanji study' })] });
-  const grid = el('div', { className: 'grid', id: 'japanese-home-grid' });
-  // Show windowed collection lists for Japanese collections (kanji study)
-  const items24 = getWindowItems(24 * 60 * 60 * 1000);
-  const ids24 = new Set(items24.map(i => i.collectionId));
 
-  const items48Raw = getWindowItems(48 * 60 * 60 * 1000);
-  const items48 = items48Raw.filter(i => !ids24.has(i.collectionId));
-  const ids48 = new Set(items48.map(i => i.collectionId));
+  // Combine the time-window cards into a single "Total Study Time" card
+  // Merge all windowed items into a single deduplicated list for a single card
+  const windows = [
+    getWindowItems(24 * 60 * 60 * 1000),
+    getWindowItems(48 * 60 * 60 * 1000),
+    getWindowItems(72 * 60 * 60 * 1000),
+    getWindowItems(7 * 24 * 60 * 60 * 1000),
+  ];
 
-  const items72Raw = getWindowItems(72 * 60 * 60 * 1000);
-  const items72 = items72Raw.filter(i => !ids24.has(i.collectionId) && !ids48.has(i.collectionId));
-  const ids72 = new Set(items72.map(i => i.collectionId));
+  const unionMap = new Map();
+  for (const arr of windows) {
+    for (const it of arr) {
+      const prev = unionMap.get(it.collectionId) || { ...it };
+      // sum totals and pick latest end
+      prev.totalMs = (prev.totalMs || 0) + (it.totalMs || 0);
+      if (!prev.lastEndIso || (it.lastEndIso && new Date(it.lastEndIso).getTime() > new Date(prev.lastEndIso).getTime())) {
+        prev.lastEndIso = it.lastEndIso;
+        prev.lastDurationMs = it.lastDurationMs || 0;
+        prev.lastAppId = it.lastAppId || null;
+      }
+      unionMap.set(it.collectionId, prev);
+    }
+  }
 
-  const items7dRaw = getWindowItems(7 * 24 * 60 * 60 * 1000);
-  const items7d = items7dRaw.filter(i => !ids24.has(i.collectionId) && !ids48.has(i.collectionId) && !ids72.has(i.collectionId));
+  const mergedItems = Array.from(unionMap.values()).sort((a, b) => {
+    const ta = a.lastEndIso ? new Date(a.lastEndIso).getTime() : 0;
+    const tb = b.lastEndIso ? new Date(b.lastEndIso).getTime() : 0;
+    return tb - ta;
+  });
 
-  grid.append(
-    renderWindowCard('Last 24h', items24, total24h, '', '24h'),
-    renderWindowCard('Last 48h', items48, total48h, 'excludes Last 24h', '48h'),
-    renderWindowCard('Last 72h', items72, total72h, 'excludes Last 48h and Last 24h', '72h'),
-    renderWindowCard('Last 7d', items7d, total7d, 'excludes Last 72h, 48h and 24h', '7d'),
-  );
+  const totalMsAll = mergedItems.reduce((s, it) => s + (it.totalMs || 0), 0);
 
-  root.append(sectionLabel, grid);
+  const totalCard = renderWindowCard('Total Study Time', mergedItems, totalMsAll, undefined, 'total');
+  totalCard.classList.add('home-window-total');
+
+  // New card: Saved Filters grouped by collection
+  function renderSavedFiltersCard() {
+    const collList = store.collections.getCollections?.() || [];
+    const children = [];
+    if (!collList.length) {
+      children.push(el('p', { className: 'hint', text: 'No collections available.' }));
+    } else {
+      for (const coll of collList) {
+        if (!coll || !coll.key) continue;
+        let state = {};
+        try {
+          if (typeof store.collections.loadCollectionState === 'function') state = store.collections.loadCollectionState(coll.key) || {};
+        } catch (e) {
+          state = {};
+        }
+        const list = Array.isArray(state?.savedTableSearches) ? state.savedTableSearches : (Array.isArray(coll?.savedTableSearches) ? coll.savedTableSearches : []);
+        if (!list || !list.length) continue;
+        const group = el('div', { className: 'saved-filters-group' });
+        group.append(el('div', { className: 'saved-filters-collection-title', text: coll.metadata?.name || coll.key }));
+        const wrap = el('div', { className: 'home-links' });
+        for (const q of list) {
+          const qStr = String(q || '').trim();
+          if (!qStr) continue;
+          const goTo = `${linkToAppAndCollection('data', coll.key)}&heldTableSearch=${encodeURIComponent(qStr)}`;
+          wrap.append(makeLink({ label: qStr, goTo, sublabel: coll.metadata?.name || coll.key }));
+        }
+        group.append(wrap);
+        children.push(group);
+      }
+      if (!children.length) children.push(el('p', { className: 'hint', text: 'No saved filters found.' }));
+    }
+    return card({ title: 'Saved Filters', children });
+  }
+
+  const savedFiltersCard = renderSavedFiltersCard();
+
+  root.append(sectionLabel, totalCard, savedFiltersCard);
 
   root.addEventListener('click', (e) => {
     const t = e.target;

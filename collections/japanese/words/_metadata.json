@@ -77,6 +77,13 @@
         "both": "Both kanji and kana are commonly used (context-dependent).",
         "katakana": "Primarily written in katakana (片仮名), often loanwords or mimetics."
       }
+    },
+    {
+      "key": "tags",
+      "label": "Tags",
+      "jp_label": "タグ",
+      "description": "Optional machine-friendly tags for filtering/grouping. Use short snake_case strings. Examples: fractional_numeral, jlpt_n3, grammar_marker, formal, casual, written, spoken, counter_related.",
+      "type": "string[]"
     }
   ],
   "conditionalFields": [

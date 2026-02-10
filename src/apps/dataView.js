@@ -4,6 +4,7 @@ import { el } from '../components/ui.js';
 import { createViewHeaderTools, createStudyFilterToggle } from '../components/viewHeaderTools.js';
 import { createDropdown } from '../components/dropdown.js';
 import { confirmDialog } from '../components/confirmDialog.js';
+import { parseHashRoute, buildHashRoute } from '../utils/helpers.js';
 
 export function renderData({ store }) {
   const root = document.createElement('div');
@@ -363,6 +364,24 @@ export function renderData({ store }) {
     const held = String(saved?.heldTableSearch || '').trim();
     heldTableSearch = held;
 
+    // If a heldTableSearch is provided via the route query, prefer and apply it.
+    try {
+      const { query } = parseHashRoute(location.hash);
+      const fromQuery = String(query.get('heldTableSearch') || '').trim();
+      if (fromQuery) {
+        heldTableSearch = fromQuery;
+        try { persistHeldTableSearch({ query: heldTableSearch }); } catch (e) {}
+        // remove the heldTableSearch param from the URL so it doesn't persist across navigation
+        try {
+          const fullRoute = parseHashRoute(location.hash);
+          fullRoute.query.delete('heldTableSearch');
+          const newHash = buildHashRoute({ pathname: fullRoute.pathname, query: fullRoute.query });
+          const newUrl = window.location.pathname + window.location.search + (newHash.startsWith('#') ? newHash : `#${newHash}`);
+          history.replaceState(null, '', newUrl);
+        } catch (e) {}
+      }
+    } catch (e) {}
+
     savedTableSearches = normalizeSavedSearchList(
       saved?.savedTableSearches ?? saved?.saved_table_searches ?? saved?.savedTableSearch ?? saved?.savedFiltersTableSearch ?? []
     );
@@ -521,9 +540,30 @@ export function renderData({ store }) {
   // pruneStudyIndicesToFilters removed — studyIndices/studyStart no longer used.
 
   const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
-  const baseEntries = Array.isArray(active.entries) ? active.entries : [];
+  let baseEntries = Array.isArray(active.entries) ? active.entries.slice() : [];
   let allEntriesView = store.collections.expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
   let rowToOriginalIndex = [];
+
+  // Background: request entries augmented with example info so UI can show counts/samples.
+  Promise.resolve().then(async () => {
+    try {
+      if (!active?.key) return;
+      if (store?.collections && typeof store.collections.getCollectionEntriesWithExamples === 'function') {
+        const augmented = await store.collections.getCollectionEntriesWithExamples(active.key, { sample: 2 });
+        if (Array.isArray(augmented) && augmented.length) {
+          baseEntries = augmented.slice();
+          allEntriesView = store.collections.expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
+          try { renderExpansionControls(); } catch (e) {}
+          try { renderTable(); } catch (e) {}
+          try { markStudyRows(); } catch (e) {}
+          try { updateStudyLabel(); } catch (e) {}
+          try { updateControlStates(); } catch (e) {}
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+  });
 
   function refreshEntriesView() {
     allEntriesView = store.collections.expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
@@ -587,7 +627,7 @@ export function renderData({ store }) {
   }
 
   // Build table headers from fields (preserve schema `key` and `label` separately)
-  const headers = [{ key: 'status', label: '' }, ...fields.map(f => ({ key: f.key, label: f.label || f.key }))];
+  const headers = [{ key: 'status', label: '' }, ...fields.map(f => ({ key: f.key, label: f.label || f.key })), { key: 'examples', label: 'Examples' }];
 
   function renderTable() {
     const visibleIdxs = getVisibleOriginalIndices();
@@ -596,7 +636,8 @@ export function renderData({ store }) {
     const visibleEntries = visibleIdxs.map(i => entriesView[i]);
 
     const adapter = getProgressAdapter();
-
+    const currentActive = (store && store.collections && typeof store.collections.getActiveCollection === 'function') ? store.collections.getActiveCollection() : null;
+    const showExamples = !!(currentActive && typeof currentActive.key === 'string' && String(currentActive.key).startsWith('japanese/words'));
     const rows = visibleEntries.map((entry, i) => {
       const originalIndex = visibleIdxs[i];
       const key = adapter.getKey(entry);
@@ -618,7 +659,19 @@ export function renderData({ store }) {
         icon.title = '';
       }
 
-      const row = [icon, ...fields.map(f => entry[f.key] ?? '')];
+      const examplesCount = showExamples ? Number(entry.__examplesCount ?? (Array.isArray(entry.sentences) ? entry.sentences.length : 0)) || 0 : 0;
+      const examplesEl = document.createElement('span');
+      examplesEl.className = 'examples-cell';
+      if (examplesCount) {
+        examplesEl.textContent = String(examplesCount);
+        const sample = Array.isArray(entry.__examplesSample) ? entry.__examplesSample : (Array.isArray(entry.sentences) ? entry.sentences.slice(0,2).map(s => ({ ja: s?.ja ?? null, en: s?.en ?? null })) : []);
+        const tip = (Array.isArray(sample) ? sample.map(s => `${s.ja ?? ''}${s.en ? ' — ' + s.en : ''}`).join('\n') : '');
+        if (tip) examplesEl.title = tip;
+      } else {
+        examplesEl.textContent = '';
+      }
+
+      const row = [icon, ...fields.map(f => entry[f.key] ?? ''), examplesEl];
       // Stable identifier for this row so we can resolve the source entry
       // even after the table component filters/sorts.
       try { row.__id = String(originalIndex); } catch (e) {}

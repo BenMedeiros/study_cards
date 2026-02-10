@@ -428,6 +428,84 @@ export function renderKanjiStudyCard({ store }) {
   let currentSentenceIndex = 0;
   let lastSentenceEntry = null;
 
+  // Create persistent children for the sentence/example card so we can
+  // update text and visibility without recreating nodes or listeners.
+  const exampleHeader = document.createElement('div');
+  exampleHeader.className = 'kanji-example-header';
+
+  const exampleLabel = document.createElement('div');
+  exampleLabel.className = 'muted kanji-example-label';
+  exampleLabel.textContent = 'Sentence';
+
+  const controls = document.createElement('div');
+  controls.className = 'example-carousel-controls';
+  controls.style.display = 'flex';
+
+  const prevExampleBtn = document.createElement('button');
+  prevExampleBtn.className = 'icon-button';
+  prevExampleBtn.title = 'Previous sentence';
+  prevExampleBtn.textContent = '◀';
+  prevExampleBtn.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    const sentences = entries[index]?.sentences || [];
+    if (!sentences.length) return;
+    currentSentenceIndex = (currentSentenceIndex - 1 + sentences.length) % sentences.length;
+    render();
+  });
+
+  const nextExampleBtn = document.createElement('button');
+  nextExampleBtn.className = 'icon-button';
+  nextExampleBtn.title = 'Next sentence';
+  nextExampleBtn.textContent = '▶';
+  nextExampleBtn.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    const sentences = entries[index]?.sentences || [];
+    if (!sentences.length) return;
+    currentSentenceIndex = (currentSentenceIndex + 1) % sentences.length;
+    render();
+  });
+
+  const counterEl = document.createElement('div');
+  counterEl.className = 'muted kanji-example-label';
+  counterEl.style.margin = '0 8px';
+  counterEl.textContent = '';
+
+  // speaker button container: we recreate the small speaker button into
+  // this container when the current sentence changes so the binding is
+  // correct while keeping the surrounding markup stable.
+  const speakerBtnContainer = document.createElement('div');
+
+  controls.append(prevExampleBtn, counterEl, nextExampleBtn);
+  exampleHeader.append(exampleLabel, controls, speakerBtnContainer);
+
+  const exampleText = document.createElement('div');
+  exampleText.className = 'kanji-example-text';
+
+  const enLabel = document.createElement('div');
+  enLabel.className = 'muted kanji-example-label';
+  enLabel.style.marginTop = '1rem';
+  enLabel.textContent = 'English';
+  enLabel.style.display = 'none';
+
+  const enDiv = document.createElement('div');
+  enDiv.className = 'kanji-example-text';
+  enDiv.style.fontSize = '1rem';
+  enDiv.style.display = 'none';
+
+  const notesLabel = document.createElement('div');
+  notesLabel.className = 'muted kanji-example-label';
+  notesLabel.style.marginTop = '1rem';
+  notesLabel.textContent = 'Notes';
+  notesLabel.style.display = 'none';
+
+  const notesList = document.createElement('ul');
+  notesList.className = 'kanji-example-notes';
+  notesList.style.display = 'none';
+
+  // assemble persistent structure
+  sentenceCard.append(exampleHeader, exampleText, enLabel, enDiv, notesLabel, notesList);
+  sentenceCard.style.display = 'none';
+
   // render a single card body
   function renderCard(body, entry) {
     body.innerHTML = '';
@@ -705,109 +783,68 @@ export function renderKanjiStudyCard({ store }) {
         currentSentenceIndex = 0;
         lastSentenceEntry = entry;
       }
-      sentenceCard.innerHTML = '';
+
       const sentences = entry.sentences || [];
       const idx = ((Number(currentSentenceIndex) || 0) % sentences.length + sentences.length) % sentences.length;
       const ex = sentences[idx] || {};
       const jaText = ex.ja || '';
       const enText = ex.en || '';
       const notes = Array.isArray(ex.notes) ? ex.notes : [];
-      
+
       // Only show card if Japanese text exists
       if (!jaText) {
         sentenceCard.style.display = 'none';
-        return;
+      } else {
+        // keep sentenceCard mounted but update children
+        sentenceCard.style.display = '';
+
+        // speaker button: recreate into container so its closure binds current text
+        try { speakerBtnContainer.innerHTML = ''; } catch (e) { /* noop */ }
+        try { speakerBtnContainer.appendChild(createSpeakerButton({ text: jaText, fieldKey: 'reading' })); } catch (e) {}
+
+        // controls: show/hide depending on sentence count
+        if (sentences.length > 1) {
+          prevExampleBtn.style.display = '';
+          nextExampleBtn.style.display = '';
+          counterEl.style.display = '';
+          counterEl.textContent = `${idx + 1} / ${sentences.length}`;
+        } else {
+          prevExampleBtn.style.display = 'none';
+          nextExampleBtn.style.display = 'none';
+          counterEl.style.display = 'none';
+          counterEl.textContent = '';
+        }
+
+        // Japanese text (always visible)
+        exampleText.textContent = jaText;
+
+        // English translation (shown only when revealed)
+        if (enText && viewMode === 'full') {
+          enLabel.style.display = '';
+          enDiv.style.display = '';
+          enDiv.textContent = enText;
+        } else {
+          enLabel.style.display = 'none';
+          enDiv.style.display = 'none';
+          enDiv.textContent = '';
+        }
+
+        // Notes (shown only when revealed)
+        if (notes.length > 0 && viewMode === 'full') {
+          notesLabel.style.display = '';
+          notesList.style.display = '';
+          notesList.innerHTML = '';
+          for (const note of notes) {
+            const li = document.createElement('li');
+            li.textContent = note;
+            notesList.appendChild(li);
+          }
+        } else {
+          notesLabel.style.display = 'none';
+          notesList.style.display = 'none';
+          notesList.innerHTML = '';
+        }
       }
-      
-      // Label row with speaker button
-      const exampleHeader = document.createElement('div');
-      exampleHeader.className = 'kanji-example-header';
-
-      const exampleLabel = document.createElement('div');
-      exampleLabel.className = 'muted kanji-example-label';
-      exampleLabel.textContent = 'Sentence';
-
-      // create speaker button bound to current sentence text
-      const speakerBtn = createSpeakerButton({ 
-        text: jaText,
-        fieldKey: 'reading'
-      });
-
-      // Carousel controls (prev / index / next) when multiple sentences
-      const controls = document.createElement('div');
-      controls.className = 'example-carousel-controls';
-      controls.style.display = 'flex';
-      if (sentences.length > 1) {
-        const prevBtn = document.createElement('button');
-        prevBtn.className = 'icon-button';
-        prevBtn.title = 'Previous sentence';
-        prevBtn.textContent = '◀';
-        prevBtn.addEventListener('click', (ev) => {
-          ev.preventDefault();
-          currentSentenceIndex = (idx - 1 + sentences.length) % sentences.length;
-          render();
-        });
-
-        const nextBtn = document.createElement('button');
-        nextBtn.className = 'icon-button';
-        nextBtn.title = 'Next sentence';
-        nextBtn.textContent = '▶';
-        nextBtn.addEventListener('click', (ev) => {
-          ev.preventDefault();
-          currentSentenceIndex = (idx + 1) % sentences.length;
-          render();
-        });
-
-        const counter = document.createElement('div');
-        counter.className = 'muted kanji-example-label';
-        counter.style.margin = '0 8px';
-        counter.textContent = `${idx + 1} / ${sentences.length}`;
-
-        controls.append(prevBtn, counter, nextBtn);
-      }
-
-      exampleHeader.append(exampleLabel, controls, speakerBtn);
-      
-      // Japanese text (always visible)
-      const exampleText = document.createElement('div');
-      exampleText.className = 'kanji-example-text';
-      exampleText.textContent = jaText;
-      
-      sentenceCard.append(exampleHeader, exampleText);
-      
-      // English translation (shown only when revealed)
-      if (enText && viewMode === 'full') {
-        const enLabel = document.createElement('div');
-        enLabel.className = 'muted kanji-example-label';
-        enLabel.style.marginTop = '1rem';
-        enLabel.textContent = 'English';
-        
-        const enDiv = document.createElement('div');
-        enDiv.className = 'kanji-example-text';
-        enDiv.style.fontSize = '1rem';
-        enDiv.textContent = enText;
-        
-        sentenceCard.append(enLabel, enDiv);
-      }
-      
-      // Notes (shown only when revealed)
-      if (notes.length > 0 && viewMode === 'full') {
-        const notesLabel = document.createElement('div');
-        notesLabel.className = 'muted kanji-example-label';
-        notesLabel.style.marginTop = '1rem';
-        notesLabel.textContent = 'Notes';
-        
-        const notesList = document.createElement('ul');
-        notesList.className = 'kanji-example-notes';
-        notes.forEach(note => {
-          const li = document.createElement('li');
-          li.textContent = note;
-          notesList.appendChild(li);
-        });
-        
-        sentenceCard.append(notesLabel, notesList);
-      }
-      sentenceCard.style.display = 'block';
     } else {
       sentenceCard.style.display = 'none';
     }
