@@ -8,7 +8,7 @@ import { renderKanjiStudyCard } from './apps/kanjiStudyCardView.js';
 import { renderGrammarStudyCard } from './apps/grammarStudyCardView.js';
 import { renderEntityExplorer } from './apps/entityExplorerView.js';
 import { createCollectionBrowserDropdown } from './components/collectionBrowser.js';
-import { openRightClickMenu } from './components/rightClickMenu.js';
+import { openRightClickMenu, registerRightClickContext } from './components/rightClickMenu.js';
 import { speak } from './utils/speech.js';
 import { createDropdown } from './components/dropdown.js';
 import * as idb from './utils/idb.js';
@@ -17,6 +17,10 @@ import { isTimingEnabled, setTimingEnabled, timed } from './utils/timing.js';
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
   el.id = 'shell-root';
+
+  // ensure the brand context-class is registered so CSS and selectors
+  // remain discoverable via the explicit class name
+  try { registerRightClickContext('brand-context-menu'); } catch (e) {}
 
   function getVoiceState() {
     return (store?.shell && typeof store.shell.getVoiceSettings === 'function') ? (store.shell.getVoiceSettings() || {}) : {};
@@ -445,7 +449,7 @@ export function createAppShell({ store, onNavigate }) {
     }
 
     // If renderHeader runs while a menu is open, ensure overlays are closed.
-    try { document.querySelectorAll('.context-menu, .brand-context-menu').forEach((el) => { try { el.style.display = 'none'; } catch (e) {} }); } catch (e) {}
+    try { document.querySelectorAll('.context-menu, .brand-context-menu, .table-context-menu').forEach((el) => { try { el.style.display = 'none'; } catch (e) {} }); } catch (e) {}
     closeBrandMenu();
 
     function openBrandMenu(x, y) {
@@ -481,7 +485,7 @@ export function createAppShell({ store, onNavigate }) {
         items.push({ label: `${captionsVisible ? '☑' : '☐'} Show Footer Captions`, onClick: () => { setCaptionsVisible(!captionsVisible); } });
       } catch (e) {}
 
-      try { brandMenuHandle = openRightClickMenu({ x, y, items }); } catch (e) { brandMenuHandle = null; }
+      try { brandMenuHandle = openRightClickMenu({ x, y, items, context: 'brand-context-menu' }); } catch (e) { brandMenuHandle = null; }
     }
 
     brand.addEventListener('contextmenu', (e) => {

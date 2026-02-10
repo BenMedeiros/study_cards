@@ -2055,7 +2055,8 @@ select:hover {
 
 /* Standardized right-click / context menu used across the app */
 .context-menu,
-.brand-context-menu {
+.brand-context-menu,
+.table-context-menu {
   position: fixed; /* left/top set inline by caller */
   z-index: 1400;
   min-width: 12rem;

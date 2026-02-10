@@ -1,7 +1,10 @@
 let _tableGlobalResizeHookInstalled = false;
 
 import { timed } from '../utils/timing.js';
-import { openRightClickMenu } from './rightClickMenu.js';
+import { openRightClickMenu, registerRightClickContext } from './rightClickMenu.js';
+
+// register the table context class so CSS and code searches can find it
+try { registerRightClickContext('table-context-menu'); } catch (e) {}
 
 function _installGlobalTableResizeHook() {
   if (_tableGlobalResizeHookInstalled) return;
@@ -368,7 +371,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
               } catch (e) {}
             } });
           }
-          openRightClickMenu({ x: ev.clientX, y: ev.clientY, items });
+          openRightClickMenu({ x: ev.clientX, y: ev.clientY, items, context: 'table-context-menu' });
         } catch (e) {}
       });
     }

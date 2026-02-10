@@ -1,10 +1,47 @@
 // Lightweight standardized right-click menu used across the app.
 // Uses the shared `.context-menu` style.
-export function openRightClickMenu({ x = 0, y = 0, items = [] } = {}) {
+
+// Keep a small registry of allowed context-menu subtypes so callers
+// must opt-in to adding subtype classes (helps keep CSS maintenance
+// explicit and prevents accidental class proliferation).
+const _allowedRcmContexts = new Set(['brand', 'table']);
+const _allowedRcmClassNames = new Set(['brand-context-menu', 'table-context-menu']);
+
+export function registerRightClickContext(name) {
+  try {
+    if (!name || typeof name !== 'string') return false;
+    const n = String(name).trim();
+    // if caller passed a full class name like "brand-context-menu"
+    if (/-context-menu$/i.test(n)) {
+      _allowedRcmClassNames.add(n);
+      const short = n.replace(/-context-menu$/i, '');
+      if (short) _allowedRcmContexts.add(short);
+      return true;
+    }
+    // otherwise accept a short context name and derive the class name
+    if (!/^[a-z0-9_-]+$/i.test(n)) return false;
+    _allowedRcmContexts.add(n);
+    _allowedRcmClassNames.add(`${n}-context-menu`);
+    return true;
+  } catch (e) { return false; }
+}
+
+export function getAllowedRightClickClassNames() {
+  return Array.from(_allowedRcmClassNames);
+}
+
+export function getAllowedRightClickContexts() {
+  return Array.from(_allowedRcmContexts);
+}
+
+export function openRightClickMenu({ x = 0, y = 0, items = [], context = '' } = {}) {
   // signal other overlays to close before opening
   try { document.dispatchEvent(new CustomEvent('ui:closeOverlays')); } catch (e) {}
   // hide any stray menus that don't listen to the close event
-  try { document.querySelectorAll('.context-menu, .brand-context-menu').forEach((el) => { try { el.style.display = 'none'; } catch (e) {} }); } catch (e) {}
+    try {
+      const hideSelector = ['.context-menu'].concat(getAllowedRightClickClassNames().map((c) => `.${c}`)).join(', ');
+      document.querySelectorAll(hideSelector).forEach((el) => { try { el.style.display = 'none'; } catch (e) {} });
+    } catch (e) {}
 
   // reuse an existing context menu element when possible to keep the DOM tidy
   let menu = document.querySelector('.context-menu');
@@ -14,9 +51,34 @@ export function openRightClickMenu({ x = 0, y = 0, items = [] } = {}) {
     try { menu.innerHTML = ''; } catch (e) {}
     try { menu.style.display = ''; } catch (e) {}
     try { menu.style.left = `${Math.round(x)}px`; menu.style.top = `${Math.round(y)}px`; } catch (e) {}
+    // update context-specific class when reusing the element
+    try {
+      const prev = menu.dataset._rcmOwner || '';
+      if (prev && prev !== context) {
+        try { menu.classList.remove(prev); } catch (e) {}
+      }
+      if (context) {
+        const className = /-context-menu$/i.test(context) ? context : `${context}-context-menu`;
+        if (_allowedRcmClassNames.has(className) || _allowedRcmContexts.has(context)) {
+          try { menu.classList.add(className); } catch (e) {}
+          menu.dataset._rcmOwner = className;
+        } else {
+          try { delete menu.dataset._rcmOwner; } catch (e) {}
+        }
+      } else {
+        try { delete menu.dataset._rcmOwner; } catch (e) {}
+      }
+    } catch (e) {}
   } else {
     menu = document.createElement('div');
     menu.className = 'context-menu';
+    if (context) {
+      const className = /-context-menu$/i.test(context) ? context : `${context}-context-menu`;
+      if (_allowedRcmClassNames.has(className) || _allowedRcmContexts.has(context)) {
+        try { menu.classList.add(className); } catch (e) {}
+        try { menu.dataset._rcmOwner = className; } catch (e) {}
+      }
+    }
     // left/top are applied inline so the menu can be placed near the pointer
     menu.style.left = `${Math.round(x)}px`;
     menu.style.top = `${Math.round(y)}px`;
