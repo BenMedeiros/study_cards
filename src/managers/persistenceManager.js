@@ -221,13 +221,16 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
           if (!r || typeof r !== 'object') continue;
           const s = r;
           // store entries may include startIso, endIso, appId, collectionId, durationMs
-          sessions.push({
+          const sess = {
             appId: String(s.appId || ''),
             collectionId: String(s.collectionId || ''),
             startIso: String(s.startIso || ''),
             endIso: String(s.endIso || ''),
             durationMs: Math.round(Number(s.durationMs) || 0),
-          });
+          };
+          if (s.heldTableSearch) sess.heldTableSearch = String(s.heldTableSearch);
+          if (s.studyFilter) sess.studyFilter = String(s.studyFilter);
+          sessions.push(sess);
         }
         sessions.sort((a, b) => String(a.startIso || '').localeCompare(String(b.startIso || '')));
 
@@ -312,6 +315,9 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
         appId: String(s.appId || ''),
         collectionId: String(s.collectionId || ''),
         durationMs: Math.round(Number(s.durationMs) || 0),
+        // optional fields (filters) — preserve if provided
+        ...(s.heldTableSearch ? { heldTableSearch: String(s.heldTableSearch) } : {}),
+        ...(s.studyFilter ? { studyFilter: String(s.studyFilter) } : {}),
       };
       await idb.idbPut('study_time_sessions', rec).catch((e) => {
         idbBroken = true;

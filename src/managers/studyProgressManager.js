@@ -292,6 +292,14 @@ export function createStudyProgressManager({ uiState, persistence, emitter, kanj
     const end = String(endIso || '').trim() || new Date().toISOString();
     const session = { appId: a, collectionId: c, startIso: start, endIso: end, durationMs: d };
 
+    // Accept optional filter info if provided and persist it with the session
+    try {
+      const held = String(arguments[0]?.heldTableSearch || '').trim();
+      const sf = String(arguments[0]?.studyFilter || '').trim();
+      if (held) session.heldTableSearch = held;
+      if (sf) session.studyFilter = sf;
+    } catch (e) {}
+
     rec.sessions.push(session);
     const MAX_SESSIONS = 2000;
     if (rec.sessions.length > MAX_SESSIONS) rec.sessions.splice(0, rec.sessions.length - MAX_SESSIONS);

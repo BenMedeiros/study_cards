@@ -379,6 +379,8 @@ export function createAppShell({ store, onNavigate }) {
   let footerCountPrev = null;
   let footerPathEl = null;
   let footerCountEl = null;
+  let footerFilterPrev = null;
+  let footerFilterEl = null;
 
   footer.append(fLeft, fCenter, fRight);
   el.append(footer);
@@ -425,6 +427,13 @@ export function createAppShell({ store, onNavigate }) {
     voiceState: getVoiceState(),
   };
 
+  // Initialize global emit-logging flag from persisted shell state so
+  // the UI checkbox reflects and controls the runtime flag consistently.
+  try {
+    const shellStateInit = (store && store.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
+    if (typeof window !== 'undefined') window.__LOG_EMITS__ = !!shellStateInit.logEmits;
+  } catch (e) {}
+
   // Study time tracking (app x collection)
   let activeStudySession = null;
   let activeRoutePathname = null;
@@ -449,13 +458,28 @@ export function createAppShell({ store, onNavigate }) {
       const durationMs = Math.max(0, endWall - activeStudySession.startWallMs);
       // Ignore ultra-short time slices to reduce noise.
       if (durationMs >= 1000) {
-        store.studyTime.recordAppCollectionStudySession({
-          appId: activeStudySession.appId,
-          collectionId: activeStudySession.collectionId,
-          startIso: activeStudySession.startIso,
-          endIso: new Date(endWall).toISOString(),
-          durationMs,
-        });
+        try {
+          // Fetch any per-collection UI state (held filter / studyFilter)
+          let held = '';
+          let sf = '';
+          try {
+            if (store && store.collections && typeof store.collections.loadCollectionState === 'function') {
+              const st = store.collections.loadCollectionState(activeStudySession.collectionId) || {};
+              held = String(st?.heldTableSearch || '').trim();
+              sf = String(st?.studyFilter || '').trim();
+            }
+          } catch (e) {}
+
+          store.studyTime.recordAppCollectionStudySession({
+            appId: activeStudySession.appId,
+            collectionId: activeStudySession.collectionId,
+            startIso: activeStudySession.startIso,
+            endIso: new Date(endWall).toISOString(),
+            durationMs,
+            heldTableSearch: held || undefined,
+            studyFilter: sf || undefined,
+          });
+        } catch (e) {}
       }
     } catch (e) {
       // ignore
@@ -556,6 +580,20 @@ export function createAppShell({ store, onNavigate }) {
       try {
         const enabled = isTimingEnabled();
         items.push({ label: `${enabled ? '☑' : '☐'} Timing Logs`, onClick: () => { const next = setTimingEnabled(!isTimingEnabled()); try { console.info(`[Timing] ${next ? 'enabled' : 'disabled'}`); } catch (e) {} } });
+      } catch (e) {}
+
+      // Emit logging toggle
+      try {
+        const shellStateEmit = (store && store.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
+        const emitsEnabled = !!shellStateEmit.logEmits || !!(typeof window !== 'undefined' && window.__LOG_EMITS__);
+        items.push({ label: `${emitsEnabled ? '☑' : '☐'} Log Emits`, onClick: () => {
+          try {
+            const next = !(!!(store && store.shell && typeof store.shell.getState === 'function' && (store.shell.getState() || {}).logEmits));
+            try { window.__LOG_EMITS__ = !!next; } catch (e) {}
+            try { if (store && store.shell && typeof store.shell.setState === 'function') store.shell.setState({ logEmits: !!next }, { immediate: true, notify: true }); } catch (e) {}
+            try { console.info(`[Emitter] emits logging ${next ? 'enabled' : 'disabled'}`); } catch (e) {}
+          } catch (e) {}
+        } });
       } catch (e) {}
 
       // Caption visibility toggle (non-persistent) with checkbox-style label
@@ -1062,6 +1100,11 @@ export function createAppShell({ store, onNavigate }) {
   store.subscribe(() => {
     // Refresh cached values then re-render header
     try {
+      // Ensure runtime emit-logging matches persisted shell state when persistence finishes loading.
+      try {
+        const shellStateSync = (store && store.shell && typeof store.shell.getState === 'function') ? store.shell.getState() : {};
+        if (typeof window !== 'undefined') window.__LOG_EMITS__ = !!shellStateSync.logEmits;
+      } catch (e) {}
       const prevActiveId = cached.activeId;
       cached.collections = Array.isArray(store?.collections?.getCollections?.()) ? store.collections.getCollections() : cached.collections;
       cached.activeId = typeof store?.collections?.getActiveCollectionId === 'function' ? store.collections.getActiveCollectionId() : cached.activeId;
@@ -1131,6 +1174,30 @@ export function createAppShell({ store, onNavigate }) {
         }
         footerCountEl.textContent = (count !== null && count !== undefined && !Number.isNaN(Number(count))) ? ` ${count} entries` : '';
       }
+
+      // Show current held filter (if any) for active collection
+      try {
+        const collId = cached.activeId || cached.activeCollection?.key || null;
+        let filterLabel = '';
+        if (collId && store && store.collections && typeof store.collections.loadCollectionState === 'function') {
+          const st = store.collections.loadCollectionState(collId) || {};
+          const held = String(st?.heldTableSearch || '').trim();
+          const sf = String(st?.studyFilter || '').trim();
+          // prefer held table search if present, otherwise human-readable studyFilter
+          const f = held || (sf ? sf : '');
+          if (f) filterLabel = `filter: ${f}`;
+        }
+
+        if (filterLabel !== footerFilterPrev) {
+          footerFilterPrev = filterLabel;
+          if (!footerFilterEl) {
+            footerFilterEl = document.createElement('span');
+            footerFilterEl.className = 'shell-footer-collection-filter';
+            fRight.appendChild(footerFilterEl);
+          }
+          footerFilterEl.textContent = filterLabel ? ` • ${filterLabel}` : '';
+        }
+      } catch (e) {}
     } catch (e) {}
   });
 
