@@ -62,12 +62,12 @@ export function openStudyDb({ dbName = 'study_cards', version = 4 } = {}) {
         }
       }
 
-      if (!db.objectStoreNames.contains('kanji_progress')) {
-        db.createObjectStore('kanji_progress', { keyPath: 'id' });
-      }
-      if (!db.objectStoreNames.contains('grammar_progress')) {
-        db.createObjectStore('grammar_progress', { keyPath: 'id' });
-      }
+      // Do not create legacy per-store progress object stores here
+      // (`kanji_progress`, `grammar_progress`). Those were used by older
+      // app versions. Creating them on fresh DB opens would make the
+      // migration detection always true and leave legacy stores in new
+      // databases. Migration logic below will detect and migrate these
+      // stores only when they already exist in the previous DB schema.
       if (!db.objectStoreNames.contains('study_time_sessions')) {
         // keyPath startIso asserted unique by app
         db.createObjectStore('study_time_sessions', { keyPath: 'startIso' });
