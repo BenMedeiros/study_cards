@@ -44,6 +44,10 @@ export function openRightClickMenu({ x = 0, y = 0, items = [], context = '' } = 
     } catch (e) {}
 
   // reuse an existing context menu element when possible to keep the DOM tidy
+  // prefer mounting menus inside the app shell when available so menus
+  // are scoped to the app container rather than the global document.
+  const _menuHost = (typeof document !== 'undefined' && document.getElementById) ? (document.getElementById('shell-root') || document.body) : document.body;
+
   let menu = document.querySelector('.context-menu');
   let created = false;
   if (menu) {
@@ -69,6 +73,12 @@ export function openRightClickMenu({ x = 0, y = 0, items = [], context = '' } = 
         try { delete menu.dataset._rcmOwner; } catch (e) {}
       }
     } catch (e) {}
+    // Ensure the reused menu element is hosted inside the preferred container
+    try {
+      if (menu.parentNode !== _menuHost) {
+        _menuHost.append(menu);
+      }
+    } catch (e) {}
   } else {
     menu = document.createElement('div');
     menu.className = 'context-menu';
@@ -82,6 +92,8 @@ export function openRightClickMenu({ x = 0, y = 0, items = [], context = '' } = 
     // left/top are applied inline so the menu can be placed near the pointer
     menu.style.left = `${Math.round(x)}px`;
     menu.style.top = `${Math.round(y)}px`;
+    // append into the preferred host (shell root when present)
+    try { _menuHost.append(menu); } catch (e) { try { document.body.append(menu); } catch (e) {} }
     created = true;
   }
 
@@ -99,8 +111,7 @@ export function openRightClickMenu({ x = 0, y = 0, items = [], context = '' } = 
   }
 
   for (const it of items) menu.append(buildItem(it));
-
-  if (created) document.body.append(menu);
+  // already appended into the preferred host when created
 
     // position fix if off-screen (keep using inline left/top updates)
   try {

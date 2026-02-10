@@ -9,6 +9,10 @@
   --muted: #9ca3af;
   --accent: #60a5fa;
   --border: rgba(255, 255, 255, 0.08);
+  /* height of the thin shell footer (used to offset floating controls) */
+  --shell-footer-height: 28px;
+  /* approximate reserved height for the view footer controls (can be overridden) */
+  --view-footer-height: 96px;
   --border-1: 1px solid var(--border);
 }
 
@@ -49,9 +53,39 @@ a:hover {
 }
 
 #app {
-  min-height: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+/* Ensure the shell fills the viewport and scrolling happens inside the
+   main content area rather than the body/page. */
+html, body, #app {
+  height: 100%;
+}
+
+/* Prevent the page from scrolling; `#shell-main` will be the scrollable area. */
+body {
+  overflow: hidden;
+}
+
+/* Shell root layout so footer sits below main and main can grow */
+#shell-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#shell-main {
+  flex: 1 1 auto;
+  min-height: 0; /* allow children to scroll inside */
+  /* Compute a maximum height for the main scroll area so its scrollbar
+     ends above the floating view controls and thin shell footer.
+     Header height is measured at runtime and populated into
+     `--shell-header-height`. Fall back to 0 if absent. */
+  max-height: calc(100vh - var(--shell-header-height, 0px) - var(--shell-footer-height) - var(--view-footer-height));
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ============================================
@@ -88,10 +122,13 @@ a:hover {
 }
 
 .view-footer-controls {
+  /* Float above the thin shell footer instead of covering it. Use full
+     width (100%) to avoid horizontal overflow introduced by 100vw. The
+     bottom offset matches the shell footer height so controls sit above it. */
   position: fixed;
   left: 0;
-  bottom: 0;
-  width: 100vw;
+  bottom: var(--shell-footer-height);
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -184,6 +221,52 @@ body.using-keyboard .view-footer-controls .btn .caption {
   background: rgba(17, 24, 39, 0.9);
   backdrop-filter: blur(8px);
   border-bottom: var(--border-1);
+}
+
+/* Thin footer below the main content for small buttons/stats */
+.shell-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  height: 28px;
+  min-height: 28px;
+  background: rgba(17,24,39,0.6);
+  border-top: var(--border-1);
+  color: var(--muted);
+  font-size: 0.8rem;
+  /* Keep the shell footer fixed to the viewport bottom so main scrolls internally */
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 20;
+}
+
+/* Quick hide classes toggled from the brand menu */
+body.hide-shell-footer .shell-footer {
+  display: none !important;
+}
+
+body.hide-view-footer-controls .view-footer-controls {
+  display: none !important;
+}
+
+body.hide-view-header-tools .view-header-tools {
+  display: none !important;
+}
+
+.shell-footer-left,
+.shell-footer-center,
+.shell-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shell-footer-center {
+  margin: 0 auto;
 }
 
 .header-inner {

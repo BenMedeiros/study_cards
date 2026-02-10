@@ -38,6 +38,21 @@ export function createAppShell({ store, onNavigate }) {
   try {
     const s = (store && store.shell && typeof store.shell.getState === 'function') ? store.shell.getState() : null;
     if (s && typeof s === 'object' && typeof s.showFooterCaptions === 'boolean') captionsVisible = !!s.showFooterCaptions;
+    // Apply persisted visibility toggles (if present) so stored preferences
+    // such as hiding footers or header tools are respected on startup.
+    try {
+      if (s && typeof s === 'object') {
+        if (typeof s.hideShellFooter !== 'undefined') {
+          document.body.classList.toggle('hide-shell-footer', !!s.hideShellFooter);
+        }
+        if (typeof s.hideViewFooterControls !== 'undefined') {
+          document.body.classList.toggle('hide-view-footer-controls', !!s.hideViewFooterControls);
+        }
+        if (typeof s.hideViewHeaderTools !== 'undefined') {
+          document.body.classList.toggle('hide-view-header-tools', !!s.hideViewHeaderTools);
+        }
+      }
+    } catch (e) {}
   } catch (e) {}
 
   function setCaptionsVisible(val, opts = {}) {
@@ -337,6 +352,63 @@ export function createAppShell({ store, onNavigate }) {
   el.append(header);
   el.append(main);
 
+  // Thin shell footer for quick buttons / small stats
+  const footer = document.createElement('div');
+  footer.className = 'shell-footer';
+  footer.id = 'shell-footer';
+
+  const fLeft = document.createElement('div');
+  fLeft.className = 'shell-footer-left';
+  fLeft.id = 'shell-footer-left';
+  fLeft.textContent = '';
+
+  const fCenter = document.createElement('div');
+  fCenter.className = 'shell-footer-center';
+  fCenter.id = 'shell-footer-center';
+
+  const fRight = document.createElement('div');
+  fRight.className = 'shell-footer-right';
+  fRight.id = 'shell-footer-right';
+  // caption placeholder (controlled via brand menu toggle)
+  if (captionsVisible) {
+    try { fRight.textContent = 'Captions: on'; } catch (e) {}
+  }
+
+  footer.append(fLeft, fCenter, fRight);
+  el.append(footer);
+
+  // Keep CSS variables in sync with measured header/footer heights so
+  // the main scroll area can be sized to end above floating controls.
+  function updateShellLayoutVars() {
+    try {
+      const headerH = header ? Math.round(header.getBoundingClientRect().height) : 0;
+      const shellFooterH = footer ? Math.round(footer.getBoundingClientRect().height) : 0;
+      const viewFooterEl = document.querySelector('.view-footer-controls');
+      const viewFooterH = viewFooterEl ? Math.round(viewFooterEl.getBoundingClientRect().height) : Math.round(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--view-footer-height')) || 0);
+
+      document.documentElement.style.setProperty('--shell-header-height', `${headerH}px`);
+      document.documentElement.style.setProperty('--shell-footer-height', `${shellFooterH}px`);
+      document.documentElement.style.setProperty('--view-footer-height', `${viewFooterH}px`);
+    } catch (e) {
+      // ignore measurement errors
+    }
+  }
+
+  // Initial sync + react to resizes and DOM changes
+  setTimeout(updateShellLayoutVars, 0);
+  window.addEventListener('resize', updateShellLayoutVars);
+  try {
+    const mo = new MutationObserver(() => updateShellLayoutVars());
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    if (window.ResizeObserver) {
+      const ro = new ResizeObserver(() => updateShellLayoutVars());
+      try { ro.observe(header); } catch (e) {}
+      const existing = document.querySelector('.view-footer-controls');
+      if (existing) try { ro.observe(existing); } catch (e) {}
+    }
+  } catch (e) {}
+
   // Local cache of store-derived values to avoid synchronous store reads
   // during header render. This keeps renderHeader fast and only updates
   // when the store emits changes.
@@ -483,6 +555,38 @@ export function createAppShell({ store, onNavigate }) {
       // Caption visibility toggle (non-persistent) with checkbox-style label
       try {
         items.push({ label: `${captionsVisible ? '☑' : '☐'} Show Footer Captions`, onClick: () => { setCaptionsVisible(!captionsVisible); } });
+      } catch (e) {}
+
+      // Visibility toggles for debugging/compact layouts (persist when possible)
+      try {
+        const shellState = (store && store.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
+        const hideShellFooter = typeof shellState.hideShellFooter !== 'undefined' ? !!shellState.hideShellFooter : !!document.body.classList.contains('hide-shell-footer');
+        items.push({ label: `${hideShellFooter ? '☑' : '☐'} Hide Shell Footer`, onClick: () => {
+          const next = !hideShellFooter;
+          try { document.body.classList.toggle('hide-shell-footer', next); } catch (e) {}
+          try { if (store && store.shell && typeof store.shell.setState === 'function') store.shell.setState({ hideShellFooter: next }, { immediate: true, notify: true }); } catch (e) {}
+        } });
+      } catch (e) {}
+
+      try {
+        const shellState2 = (store && store.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
+        const hideViewHeader = typeof shellState2.hideViewHeaderTools !== 'undefined' ? !!shellState2.hideViewHeaderTools : !!document.body.classList.contains('hide-view-header-tools');
+        items.push({ label: `${hideViewHeader ? '☑' : '☐'} Hide View Header Tools`, onClick: () => {
+          const next = !hideViewHeader;
+          try { document.body.classList.toggle('hide-view-header-tools', next); } catch (e) {}
+          try { if (store && store.shell && typeof store.shell.setState === 'function') store.shell.setState({ hideViewHeaderTools: next }, { immediate: true, notify: true }); } catch (e) {}
+        } });
+      } catch (e) {}
+
+      try {
+        const shellState3 = (store && store.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
+        const hideViewFooter = typeof shellState3.hideViewFooterControls !== 'undefined' ? !!shellState3.hideViewFooterControls : !!document.body.classList.contains('hide-view-footer-controls');
+        items.push({ label: `${hideViewFooter ? '☑' : '☐'} Hide View Footer Controls`, onClick: () => {
+          const next = !hideViewFooter;
+          try { document.body.classList.toggle('hide-view-footer-controls', next); } catch (e) {}
+          try { if (store && store.shell && typeof store.shell.setState === 'function') store.shell.setState({ hideViewFooterControls: next }, { immediate: true, notify: true }); } catch (e) {}
+          try { if (typeof updateShellLayoutVars === 'function') updateShellLayoutVars(); } catch (e) {}
+        } });
       } catch (e) {}
 
       try { brandMenuHandle = openRightClickMenu({ x, y, items, context: 'brand-context-menu' }); } catch (e) { brandMenuHandle = null; }
@@ -957,6 +1061,28 @@ export function createAppShell({ store, onNavigate }) {
       cached.activeId = typeof store?.collections?.getActiveCollectionId === 'function' ? store.collections.getActiveCollectionId() : cached.activeId;
       cached.activeCollection = typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : cached.activeCollection;
       cached.voiceState = getVoiceState();
+
+      // Re-apply persisted shell UI prefs (these may be loaded asynchronously
+      // by the persistence manager). Do not re-persist here — only apply
+      // visual state based on what's in the store.
+      try {
+        const s = (store && store.shell && typeof store.shell.getState === 'function') ? store.shell.getState() : null;
+        if (s && typeof s === 'object') {
+          if (typeof s.showFooterCaptions === 'boolean') {
+            try {
+              if (s.showFooterCaptions) document.body.classList.add('using-keyboard');
+              else document.body.classList.remove('using-keyboard');
+            } catch (e) {}
+            captionsVisible = !!s.showFooterCaptions;
+          }
+
+          try {
+            if (typeof s.hideShellFooter !== 'undefined') document.body.classList.toggle('hide-shell-footer', !!s.hideShellFooter);
+            if (typeof s.hideViewFooterControls !== 'undefined') document.body.classList.toggle('hide-view-footer-controls', !!s.hideViewFooterControls);
+            if (typeof s.hideViewHeaderTools !== 'undefined') document.body.classList.toggle('hide-view-header-tools', !!s.hideViewHeaderTools);
+          } catch (e) {}
+        }
+      } catch (e) {}
 
       // If the active collection changed while staying in the same view,
       // split the study session so time is attributed to the correct collection.
