@@ -202,113 +202,6 @@
       "orthography": "kanji"
     },
     {
-      "kanji": "程",
-      "reading": "ほど",
-      "meaning": "about; approximately; extent/degree (approximation/extent marker)",
-      "lexicalClass": "regular",
-      "tags": [
-        "fractional_numeral"
-      ],
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "全部",
-      "reading": "ぜんぶ",
-      "meaning": "all; entirely",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "全然",
-      "reading": "ぜんぜん",
-      "meaning": "(not) at all",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "絶対",
-      "reading": "ぜったい",
-      "meaning": "absolutely; definitely",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "必ず",
-      "reading": "かならず",
-      "meaning": "surely; without fail",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "特に",
-      "reading": "とくに",
-      "meaning": "especially; particularly",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "例えば",
-      "reading": "たとえば",
-      "meaning": "for example",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "最近",
-      "reading": "さいきん",
-      "meaning": "recently; lately",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "最初に",
-      "reading": "さいしょに",
-      "meaning": "first; in the beginning",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "最後に",
-      "reading": "さいごに",
-      "meaning": "finally; at the end",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "早く",
-      "reading": "はやく",
-      "meaning": "quickly; early",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "本当に",
-      "reading": "ほんとうに",
-      "meaning": "really; truly",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
-      "kanji": "急に",
-      "reading": "きゅうに",
-      "meaning": "suddenly",
-      "lexicalClass": "regular",
-      "type": "adverb",
-      "orthography": "kanji"
-    },
-    {
       "kanji": "一体",
       "reading": "いったい",
       "meaning": "on earth; in the world (used in questions for emphasis)",
@@ -336,9 +229,9 @@
       "kanji": "未だ",
       "reading": "まだ",
       "meaning": "still; not yet",
-      "orthography": "both",
       "lexicalClass": "regular",
       "type": "adverb",
+      "orthography": "both",
       "tags": [
         "origin:Japanese",
         "pokemon-name-root"
@@ -353,17 +246,6 @@
       "type": "adverb",
       "tags": [
         "origin:Japanese"
-      ]
-    },
-    {
-      "kanji": "未だ",
-      "reading": "まだ",
-      "meaning": "still; not yet",
-      "orthography": "both",
-      "type": "adverb",
-      "tags": [
-        "origin:Japanese",
-        "pokemon-name-root"
       ]
     },
     {
@@ -450,58 +332,6 @@
       "reading": "ペラペラ",
       "meaning": "fluently (languages); chattering; flimsy/thin (onomatopoeia)",
       "lexicalClass": "onomatopoeia",
-      "type": "adverb",
-      "orthography": "katakana",
-      "tags": [
-        "origin:Japanese"
-      ]
-    },
-    {
-      "kanji": "ビリビリ",
-      "reading": "ビリビリ",
-      "meaning": "tingle; electric shock feeling (onomatopoeia)",
-      "type": "adverb",
-      "orthography": "katakana",
-      "tags": [
-        "origin:Japanese",
-        "pokemon-name-root"
-      ]
-    },
-    {
-      "kanji": "ベトベト",
-      "reading": "ベトベト",
-      "meaning": "sticky (onomatopoeia)",
-      "type": "adverb",
-      "orthography": "katakana",
-      "tags": [
-        "origin:Japanese",
-        "pokemon-name-root"
-      ]
-    },
-    {
-      "kanji": "きらきら",
-      "reading": "キラキラ",
-      "meaning": "sparkling; glittering (onomatopoeia)",
-      "type": "adverb",
-      "orthography": "katakana",
-      "tags": [
-        "origin:Japanese"
-      ]
-    },
-    {
-      "kanji": "どきどき",
-      "reading": "ドキドキ",
-      "meaning": "heart pounding; nervous excitement (onomatopoeia)",
-      "type": "adverb",
-      "orthography": "katakana",
-      "tags": [
-        "origin:Japanese"
-      ]
-    },
-    {
-      "kanji": "ぺらぺら",
-      "reading": "ペラペラ",
-      "meaning": "fluently (languages); chattering; flimsy/thin (onomatopoeia)",
       "type": "adverb",
       "orthography": "katakana",
       "tags": [
@@ -622,7 +452,7 @@
     {
       "kanji": "気",
       "reading": "き",
-      "meaning": "spirit; energy; mood; air",
+      "meaning": "spirit; mind; energy; mood; air; feeling",
       "type": "compound-morpheme"
     },
     {
@@ -1268,8 +1098,9 @@
       "kanji": "読む",
       "reading": "よむ",
       "meaning": "to read",
+      "lexicalClass": "regular",
       "type": "godan-verb",
-      "lexicalClass": "regular"
+      "ending": "mu"
     },
     {
       "kanji": "送る",
@@ -2016,16 +1847,15 @@
     {
       "kanji": "聞く",
       "reading": "きく",
-      "meaning": "to hear; to ask",
-      "ending": "ku",
+      "meaning": "to hear; to listen; to ask",
+      "lexicalClass": "regular",
       "type": "godan-verb",
-      "lexicalClass": "regular"
+      "ending": "ku"
     },
     {
       "kanji": "書く",
       "reading": "かく",
       "meaning": "to write",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2033,7 +1863,6 @@
       "kanji": "空く",
       "reading": "あく",
       "meaning": "to become empty; to be vacant",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2041,7 +1870,6 @@
       "kanji": "開く",
       "reading": "あく",
       "meaning": "to open; to become open (intransitive)",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2049,23 +1877,6 @@
       "kanji": "行く",
       "reading": "いく",
       "meaning": "to go",
-      "ending": "ku",
-      "type": "godan-verb",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "書く",
-      "reading": "かく",
-      "meaning": "to write",
-      "ending": "ku",
-      "type": "godan-verb",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "聞く",
-      "reading": "きく",
-      "meaning": "to listen; to ask",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2073,15 +1884,6 @@
       "kanji": "歩く",
       "reading": "あるく",
       "meaning": "to walk",
-      "ending": "ku",
-      "type": "godan-verb",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "開く",
-      "reading": "あく",
-      "meaning": "to open (intransitive)",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2089,7 +1891,6 @@
       "kanji": "開く",
       "reading": "ひらく",
       "meaning": "to open; to hold (an event)",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2097,7 +1898,6 @@
       "kanji": "置く",
       "reading": "おく",
       "meaning": "to put; to place",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2105,7 +1905,6 @@
       "kanji": "着く",
       "reading": "つく",
       "meaning": "to arrive",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2113,7 +1912,6 @@
       "kanji": "付く",
       "reading": "つく",
       "meaning": "to be attached; to stick",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2121,7 +1919,6 @@
       "kanji": "続く",
       "reading": "つづく",
       "meaning": "to continue",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2129,7 +1926,6 @@
       "kanji": "働く",
       "reading": "はたらく",
       "meaning": "to work",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2137,7 +1933,6 @@
       "kanji": "届く",
       "reading": "とどく",
       "meaning": "to reach; to be delivered",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2145,7 +1940,6 @@
       "kanji": "泣く",
       "reading": "なく",
       "meaning": "to cry",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2153,7 +1947,6 @@
       "kanji": "焼く",
       "reading": "やく",
       "meaning": "to bake; to grill; to burn",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2161,7 +1954,6 @@
       "kanji": "叩く",
       "reading": "たたく",
       "meaning": "to hit; to strike",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2169,7 +1961,6 @@
       "kanji": "解く",
       "reading": "とく",
       "meaning": "to solve; to untie",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2177,7 +1968,6 @@
       "kanji": "効く",
       "reading": "きく",
       "meaning": "to be effective",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2185,7 +1975,6 @@
       "kanji": "磨く",
       "reading": "みがく",
       "meaning": "to polish; to brush",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2193,7 +1982,6 @@
       "kanji": "咲く",
       "reading": "さく",
       "meaning": "to bloom",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2201,7 +1989,6 @@
       "kanji": "抱く",
       "reading": "だく",
       "meaning": "to hug; to hold",
-      "ending": "ku",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2209,7 +1996,6 @@
       "kanji": "飲む",
       "reading": "のむ",
       "meaning": "to drink",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2217,7 +2003,6 @@
       "kanji": "休む",
       "reading": "やすむ",
       "meaning": "to rest; to be absent",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2225,31 +2010,6 @@
       "kanji": "生む",
       "reading": "うむ",
       "meaning": "to give birth; to produce",
-      "ending": "mu",
-      "type": "godan-verb",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "飲む",
-      "reading": "のむ",
-      "meaning": "to drink",
-      "ending": "mu",
-      "type": "godan-verb",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "読む",
-      "reading": "よむ",
-      "meaning": "to read",
-      "ending": "mu",
-      "type": "godan-verb",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "休む",
-      "reading": "やすむ",
-      "meaning": "to rest; to be absent",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2257,7 +2017,6 @@
       "kanji": "住む",
       "reading": "すむ",
       "meaning": "to live; to reside",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2265,7 +2024,6 @@
       "kanji": "頼む",
       "reading": "たのむ",
       "meaning": "to request; to ask",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2273,7 +2031,6 @@
       "kanji": "包む",
       "reading": "つつむ",
       "meaning": "to wrap; to cover",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2281,7 +2038,6 @@
       "kanji": "掴む",
       "reading": "つかむ",
       "meaning": "to grasp; to seize",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2289,7 +2045,6 @@
       "kanji": "組む",
       "reading": "くむ",
       "meaning": "to assemble; to pair; to cross arms",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2297,7 +2052,6 @@
       "kanji": "踏む",
       "reading": "ふむ",
       "meaning": "to step on",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2305,7 +2059,6 @@
       "kanji": "悩む",
       "reading": "なやむ",
       "meaning": "to worry; to be troubled",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2313,7 +2066,6 @@
       "kanji": "悔やむ",
       "reading": "くやむ",
       "meaning": "to regret",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2321,7 +2073,6 @@
       "kanji": "悼む",
       "reading": "いたむ",
       "meaning": "to mourn",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2329,7 +2080,6 @@
       "kanji": "噤む",
       "reading": "つぐむ",
       "meaning": "to shut one’s mouth",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2337,23 +2087,21 @@
       "kanji": "悔む",
       "reading": "くやむ",
       "meaning": "to repent; to regret",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
     {
       "kanji": "望む",
       "reading": "のぞむ",
-      "meaning": "to look out over; to face",
-      "ending": "mu",
+      "meaning": "to hope; to desire; to look out over; to face",
+      "lexicalClass": "regular",
       "type": "godan-verb",
-      "lexicalClass": "regular"
+      "ending": "mu"
     },
     {
       "kanji": "富む",
       "reading": "とむ",
       "meaning": "to be rich in; to abound in",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2361,7 +2109,6 @@
       "kanji": "歪む",
       "reading": "ゆがむ",
       "meaning": "to warp; to become distorted",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2369,7 +2116,6 @@
       "kanji": "滲む",
       "reading": "にじむ",
       "meaning": "to blur; to smudge; to ooze",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2377,7 +2123,6 @@
       "kanji": "縮む",
       "reading": "ちぢむ",
       "meaning": "to shrink",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2385,7 +2130,6 @@
       "kanji": "悄む",
       "reading": "しょげむ",
       "meaning": "to be dejected; to lose heart",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2393,15 +2137,6 @@
       "kanji": "止む",
       "reading": "やむ",
       "meaning": "to stop (rain, sound)",
-      "ending": "mu",
-      "type": "godan-verb",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "望む",
-      "reading": "のぞむ",
-      "meaning": "to hope; to desire; to face",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2409,7 +2144,6 @@
       "kanji": "積む",
       "reading": "つむ",
       "meaning": "to pile up; to load",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2417,7 +2151,6 @@
       "kanji": "編む",
       "reading": "あむ",
       "meaning": "to knit; to braid",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2425,7 +2158,6 @@
       "kanji": "痛む",
       "reading": "いたむ",
       "meaning": "to hurt; to feel pain",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2433,7 +2165,6 @@
       "kanji": "恨む",
       "reading": "うらむ",
       "meaning": "to resent; to hold a grudge",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2441,7 +2172,6 @@
       "kanji": "睨む",
       "reading": "にらむ",
       "meaning": "to glare at",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2449,7 +2179,6 @@
       "kanji": "慎む",
       "reading": "つつしむ",
       "meaning": "to be careful; to refrain",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2457,7 +2186,6 @@
       "kanji": "傷む",
       "reading": "いたむ",
       "meaning": "to spoil; to go bad (food)",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -2465,7 +2193,6 @@
       "kanji": "営む",
       "reading": "いとなむ",
       "meaning": "to run (a business); to operate",
-      "ending": "mu",
       "type": "godan-verb",
       "lexicalClass": "regular"
     },
@@ -3727,64 +3454,64 @@
       "kanji": "促",
       "reading": "ソク",
       "meaning": "urge; prompt; hasten",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "進",
       "reading": "シン",
       "meaning": "advance; progress",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "長",
       "reading": "チョウ",
       "meaning": "long; leader; head",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "社",
       "reading": "シャ",
       "meaning": "company; shrine",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "部",
       "reading": "ブ",
       "meaning": "section; department; part",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "成",
       "reading": "セイ",
       "meaning": "become; form; achieve",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "清",
       "reading": "セイ",
       "meaning": "pure; clean; clear",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "潔",
       "reading": "ケツ",
       "meaning": "clean; pure; righteous",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "濁",
       "reading": "ダク",
       "meaning": "muddy; turbid; voiced (phonetics)",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "半",
@@ -3793,8 +3520,8 @@
       "tags": [
         "fractional_numeral"
       ],
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "分",
@@ -3803,127 +3530,120 @@
       "tags": [
         "fractional_numeral"
       ],
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "平",
       "reading": "ヘイ",
       "meaning": "flat; calm; ordinary",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "日",
       "reading": "ニチ",
       "meaning": "day; sun",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "和",
       "reading": "ワ",
       "meaning": "harmony; peace; Japan/Japanese style",
-      "type": "kanji",
-      "orthography": "katakana"
-    },
-    {
-      "kanji": "気",
-      "reading": "キ",
-      "meaning": "spirit; mind; air; feeling",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "仮",
       "reading": "カ",
       "meaning": "temporary; provisional; assumption",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "定",
       "reading": "テイ",
       "meaning": "decide; set; fixed",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "片",
       "reading": "ヘン",
       "meaning": "one-sided; fragment; piece",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "方",
       "reading": "ホウ",
       "meaning": "direction; side; method; person (polite)",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "付",
       "reading": "フ",
       "meaning": "attach; add; append",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "漢",
       "reading": "カン",
       "meaning": "Han/Chinese; Sino-",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "読",
       "reading": "ドク",
       "meaning": "read",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "書",
       "reading": "ショ",
       "meaning": "write; book",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "訓",
       "reading": "クン",
       "meaning": "instruction; training; kun-reading",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "練",
       "reading": "レン",
       "meaning": "practice; train; refine",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "送",
       "reading": "ソウ",
       "meaning": "send; see off",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "料",
       "reading": "リョウ",
       "meaning": "fee; materials; charge",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "見",
       "reading": "ケン",
       "meaning": "see; look; view",
-      "type": "kanji",
-      "orthography": "katakana"
+      "type": "compound-morpheme",
+      "orthography": "kanji"
     },
     {
       "kanji": "綺麗",
@@ -4441,14 +4161,6 @@
       "kanji": "事",
       "reading": "こと",
       "meaning": "thing; matter; (nominalizer) the act/fact of ...",
-      "lexicalClass": "regular",
-      "type": "noun",
-      "orthography": "hiragana"
-    },
-    {
-      "kanji": "林檎",
-      "reading": "りんご",
-      "meaning": "apple",
       "lexicalClass": "regular",
       "type": "noun",
       "orthography": "hiragana"
@@ -5790,13 +5502,6 @@
       ]
     },
     {
-      "kanji": "友達",
-      "reading": "ともだち",
-      "meaning": "friend",
-      "orthography": "kanji",
-      "type": "noun"
-    },
-    {
       "kanji": "家族",
       "reading": "かぞく",
       "meaning": "family",
@@ -6388,9 +6093,9 @@
     {
       "kanji": "花",
       "reading": "はな",
-      "meaning": "flower",
+      "meaning": "flower; blossom",
+      "type": "standalone-noun",
       "orthography": "kanji",
-      "type": "noun",
       "tags": [
         "pokemon-name-root"
       ]
@@ -6398,9 +6103,9 @@
     {
       "kanji": "草",
       "reading": "くさ",
-      "meaning": "grass; weeds",
+      "meaning": "grass; weeds; vegetation",
+      "type": "standalone-noun",
       "orthography": "kanji",
-      "type": "noun",
       "tags": [
         "pokemon-type",
         "pokemon-name-root"
@@ -6444,9 +6149,9 @@
     {
       "kanji": "虫",
       "reading": "むし",
-      "meaning": "insect; bug",
+      "meaning": "insect; bug; worm",
+      "type": "standalone-noun",
       "orthography": "kanji",
-      "type": "noun",
       "tags": [
         "pokemon-type"
       ]
@@ -6504,8 +6209,8 @@
       "kanji": "水",
       "reading": "みず",
       "meaning": "water",
+      "type": "standalone-noun",
       "orthography": "kanji",
-      "type": "noun",
       "tags": [
         "pokemon-type"
       ]
@@ -6789,12 +6494,12 @@
     {
       "kanji": "漢字",
       "reading": "かんじ",
-      "meaning": "kanji",
+      "meaning": "kanji; Chinese characters",
+      "type": "noun",
       "orthography": "kanji",
       "tags": [
         "linguistic_terms"
-      ],
-      "type": "noun"
+      ]
     },
     {
       "kanji": "文法",
@@ -7050,9 +6755,9 @@
     {
       "kanji": "電気",
       "reading": "でんき",
-      "meaning": "electricity; light",
-      "orthography": "kanji",
+      "meaning": "electricity; light; electric power",
       "type": "noun",
+      "orthography": "kanji",
       "tags": [
         "pokemon-type"
       ]
@@ -7276,8 +6981,8 @@
       "kanji": "成長",
       "reading": "せいちょう",
       "meaning": "growth; development",
-      "orthography": "kanji",
-      "type": "noun"
+      "type": "noun",
+      "orthography": "kanji"
     },
     {
       "kanji": "変化",
@@ -7930,8 +7635,8 @@
       "kanji": "半分",
       "reading": "はんぶん",
       "meaning": "half; one half",
-      "orthography": "kanji",
-      "type": "noun"
+      "type": "noun",
+      "orthography": "kanji"
     },
     {
       "kanji": "拗音",
@@ -8007,16 +7712,6 @@
       "kanji": "平仮名",
       "reading": "ひらがな",
       "meaning": "hiragana script",
-      "orthography": "kanji",
-      "tags": [
-        "linguistic_terms"
-      ],
-      "type": "noun"
-    },
-    {
-      "kanji": "漢字",
-      "reading": "かんじ",
-      "meaning": "kanji; Chinese characters",
       "orthography": "kanji",
       "tags": [
         "linguistic_terms"
@@ -8195,20 +7890,6 @@
       "type": "noun"
     },
     {
-      "kanji": "成長",
-      "reading": "せいちょう",
-      "meaning": "growth",
-      "orthography": "kanji",
-      "type": "noun"
-    },
-    {
-      "kanji": "半分",
-      "reading": "はんぶん",
-      "meaning": "half",
-      "orthography": "kanji",
-      "type": "noun"
-    },
-    {
       "kanji": "平日",
       "reading": "へいじつ",
       "meaning": "weekday",
@@ -8240,13 +7921,6 @@
       "kanji": "漢方",
       "reading": "かんぽう",
       "meaning": "Chinese medicine; traditional medicine",
-      "orthography": "kanji",
-      "type": "noun"
-    },
-    {
-      "kanji": "読書",
-      "reading": "どくしょ",
-      "meaning": "reading (books)",
       "orthography": "kanji",
       "type": "noun"
     },
@@ -8514,7 +8188,7 @@
     {
       "kanji": "ゴースト",
       "reading": "ゴースト",
-      "meaning": "ghost (type/name label)",
+      "meaning": "ghost",
       "type": "noun",
       "orthography": "katakana",
       "tags": [
@@ -8526,7 +8200,7 @@
     {
       "kanji": "ドラゴン",
       "reading": "ドラゴン",
-      "meaning": "dragon (type/name label)",
+      "meaning": "dragon",
       "type": "noun",
       "orthography": "katakana",
       "tags": [
@@ -8741,18 +8415,6 @@
       "orthography": "katakana",
       "tags": [
         "origin:English",
-        "pokemon-name-root"
-      ]
-    },
-    {
-      "kanji": "ゴースト",
-      "reading": "ゴースト",
-      "meaning": "ghost",
-      "type": "noun",
-      "orthography": "katakana",
-      "tags": [
-        "origin:English",
-        "pokemon-type",
         "pokemon-name-root"
       ]
     },
@@ -8973,18 +8635,6 @@
       "orthography": "katakana",
       "tags": [
         "origin:Other",
-        "pokemon-name-root"
-      ]
-    },
-    {
-      "kanji": "ドラゴン",
-      "reading": "ドラゴン",
-      "meaning": "dragon",
-      "type": "noun",
-      "orthography": "katakana",
-      "tags": [
-        "origin:English",
-        "pokemon-type",
         "pokemon-name-root"
       ]
     },
@@ -11406,15 +11056,6 @@
       "properNounType": "place"
     },
     {
-      "kanji": "東京駅",
-      "reading": "とうきょうえき",
-      "meaning": "Tokyo Station",
-      "lexicalClass": "regular",
-      "orthography": "kanji",
-      "type": "proper-noun",
-      "properNounType": "place"
-    },
-    {
       "kanji": "新宿駅",
       "reading": "しんじゅくえき",
       "meaning": "Shinjuku Station",
@@ -11487,24 +11128,6 @@
       "properNounType": "place"
     },
     {
-      "kanji": "京都",
-      "reading": "きょうと",
-      "meaning": "Kyoto",
-      "lexicalClass": "regular",
-      "orthography": "kanji",
-      "type": "proper-noun",
-      "properNounType": "place"
-    },
-    {
-      "kanji": "東京駅",
-      "reading": "とうきょうえき",
-      "meaning": "Tokyo Station",
-      "lexicalClass": "regular",
-      "orthography": "kanji",
-      "type": "proper-noun",
-      "properNounType": "place"
-    },
-    {
       "kanji": "ニューヨーク",
       "reading": "ニューヨーク",
       "meaning": "New York",
@@ -11532,25 +11155,6 @@
       "kanji": "種",
       "reading": "たね",
       "meaning": "seed; kind; variety",
-      "type": "standalone-noun",
-      "tags": [
-        "pokemon-name-root"
-      ]
-    },
-    {
-      "kanji": "草",
-      "reading": "くさ",
-      "meaning": "grass; weeds; vegetation",
-      "type": "standalone-noun",
-      "tags": [
-        "pokemon-type",
-        "pokemon-name-root"
-      ]
-    },
-    {
-      "kanji": "花",
-      "reading": "はな",
-      "meaning": "flower; blossom",
       "type": "standalone-noun",
       "tags": [
         "pokemon-name-root"
@@ -11603,15 +11207,6 @@
       ]
     },
     {
-      "kanji": "水",
-      "reading": "みず",
-      "meaning": "water",
-      "type": "standalone-noun",
-      "tags": [
-        "pokemon-type"
-      ]
-    },
-    {
       "kanji": "亀",
       "reading": "かめ",
       "meaning": "turtle; tortoise",
@@ -11636,24 +11231,6 @@
       "type": "standalone-noun",
       "tags": [
         "pokemon-name-root"
-      ]
-    },
-    {
-      "kanji": "虫",
-      "reading": "むし",
-      "meaning": "insect; bug; worm",
-      "type": "standalone-noun",
-      "tags": [
-        "pokemon-type"
-      ]
-    },
-    {
-      "kanji": "電気",
-      "reading": "でんき",
-      "meaning": "electricity; electric power",
-      "type": "standalone-noun",
-      "tags": [
-        "pokemon-type"
       ]
     },
     {
@@ -11920,17 +11497,6 @@
       ]
     },
     {
-      "kanji": "岩",
-      "reading": "いわ",
-      "meaning": "rock",
-      "type": "standalone-noun",
-      "orthography": "kanji",
-      "tags": [
-        "pokemon-type",
-        "pokemon-name-root"
-      ]
-    },
-    {
       "kanji": "鬼",
       "reading": "おに",
       "meaning": "oni; demon ogre",
@@ -12057,28 +11623,6 @@
       "type": "standalone-noun",
       "orthography": "kanji",
       "tags": [
-        "pokemon-name-root"
-      ]
-    },
-    {
-      "kanji": "竜",
-      "reading": "りゅう",
-      "meaning": "dragon",
-      "type": "standalone-noun",
-      "orthography": "kanji",
-      "tags": [
-        "anime_ui",
-        "pokemon-name-root"
-      ]
-    },
-    {
-      "kanji": "力",
-      "reading": "ちから",
-      "meaning": "power; strength",
-      "type": "standalone-noun",
-      "orthography": "kanji",
-      "tags": [
-        "anime_ui",
         "pokemon-name-root"
       ]
     },
