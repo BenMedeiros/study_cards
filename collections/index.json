@@ -2,7 +2,6 @@
   "folderMetadata": {
     "japanese/examples": "japanese/examples/_metadata.json",
     "japanese/grammar": "japanese/grammar/_metadata.json",
-    "japanese/words": "japanese/words/_metadata.json",
     "linguistics": "linguistics/_metadata.json"
   },
   "collections": [
@@ -194,8 +193,8 @@
     },
     {
       "path": "japanese/words/combined_words.json",
-      "name": "combined_words",
-      "description": null,
+      "name": "All Japanese Words",
+      "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
       "entries": 1408
     },
     {
