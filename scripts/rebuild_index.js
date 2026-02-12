@@ -59,6 +59,13 @@ async function rebuildIndex() {
   const entries = [];
   for (const posixRel of collectionsFiles) {
     const full = path.join(collectionsDir, posixRel.split('/').join(path.sep));
+    let modifiedAt = null;
+    try {
+      const st = await fs.stat(full);
+      modifiedAt = st.mtime.toISOString();
+    } catch (err) {
+      // ignore stat errors
+    }
     const parts = posixRel.split('/');
     const parent = parts.slice(0, -1).join('/') || '.';
     const baseNameNoExt = path.basename(posixRel, '.json');
@@ -82,7 +89,7 @@ async function rebuildIndex() {
     } catch (e) {
       // ignore parse/read errors and fall back to filename
     }
-    entries.push({ path: posixRel, parent, baseNameNoExt, metaName, description, entryCount, parsedJson, full });
+    entries.push({ path: posixRel, parent, baseNameNoExt, metaName, description, entryCount, parsedJson, full, modifiedAt });
   }
 
   // Warn if a folder contains JSON collection files but does not have a _metadata.json
@@ -134,7 +141,8 @@ async function rebuildIndex() {
       path: e.path,
       name: displayName,
       description: e.description || null,
-      entries: (typeof e.entryCount === 'number') ? e.entryCount : null
+      entries: (typeof e.entryCount === 'number') ? e.entryCount : null,
+      modifiedAt: e.modifiedAt || null
     });
   }
 

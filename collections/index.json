@@ -9,271 +9,316 @@
       "path": "greek/greek_alphabet.json",
       "name": "Greek Alphabet",
       "description": "Greek letters with standard alphabetical order, lowercase/uppercase forms, classical names, letter type classification, and pronunciation guides split into Classical vs Modern (IPA + simple helpers).",
-      "entries": 24
+      "entries": 24,
+      "modifiedAt": "2026-02-09T16:18:39.690Z"
     },
     {
       "path": "greek/greek_mythology.json",
       "name": "Greek Mythology",
       "description": "Consolidated Greek mythology entries (Olympians, Titans, Primordials, Chthonic).",
-      "entries": 43
+      "entries": 43,
+      "modifiedAt": "2026-02-07T19:07:16.306Z"
     },
     {
       "path": "japanese/examples/counter_culture_set_01.json",
       "name": "Counter + Culture Set 01",
       "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
-      "entries": null
+      "entries": null,
+      "modifiedAt": "2026-02-07T02:51:05.227Z"
     },
     {
       "path": "japanese/examples/gu_verb_examples.json",
       "name": "Verb Variety Set 01",
       "description": "Sentences using godan -ぐ verbs with varied conjugations and proper nouns.",
-      "entries": null
+      "entries": null,
+      "modifiedAt": "2026-02-07T02:51:05.244Z"
     },
     {
       "path": "japanese/examples/new_example_pattern.json",
       "name": "Full Examples (repaired v1)",
       "description": "Old examples reviewed and conformed to japanese.examples schema",
-      "entries": null
+      "entries": null,
+      "modifiedAt": "2026-02-07T02:51:05.248Z"
     },
     {
       "path": "japanese/examples/new_style_Xmo.json",
       "name": "new_style_Xmo",
       "description": null,
-      "entries": null
+      "entries": null,
+      "modifiedAt": "2026-02-07T02:51:05.250Z"
     },
     {
       "path": "japanese/examples/new_style_Xtemodemo.json",
       "name": "new_style_Xtemodemo",
       "description": null,
-      "entries": null
+      "entries": null,
+      "modifiedAt": "2026-02-07T02:51:05.252Z"
     },
     {
       "path": "japanese/grammar/01_core_particles.json",
       "name": "01_core_particles",
       "description": null,
-      "entries": 21
+      "entries": 21,
+      "modifiedAt": "2026-02-07T02:51:05.268Z"
     },
     {
       "path": "japanese/grammar/02_discourse_connectors.json",
       "name": "02_discourse_connectors",
       "description": null,
-      "entries": 19
+      "entries": 19,
+      "modifiedAt": "2026-02-07T02:51:05.272Z"
     },
     {
       "path": "japanese/grammar/03_aspect_result_state.json",
       "name": "03_aspect_result_state",
       "description": null,
-      "entries": 22
+      "entries": 22,
+      "modifiedAt": "2026-02-07T02:51:05.274Z"
     },
     {
       "path": "japanese/grammar/04_modality_intent_obligation.json",
       "name": "04_modality_intent_obligation",
       "description": null,
-      "entries": 24
+      "entries": 24,
+      "modifiedAt": "2026-02-07T02:51:05.280Z"
     },
     {
       "path": "japanese/grammar/05_conditionals_hypotheticals.json",
       "name": "05_conditionals_hypotheticals",
       "description": null,
-      "entries": 18
+      "entries": 18,
+      "modifiedAt": "2026-02-07T02:51:50.852Z"
     },
     {
       "path": "japanese/grammar/06_cause_reason_explanation.json",
       "name": "06_cause_reason_explanation",
       "description": null,
-      "entries": 17
+      "entries": 17,
+      "modifiedAt": "2026-02-07T02:51:05.284Z"
     },
     {
       "path": "japanese/grammar/07_contrast_concession.json",
       "name": "07_contrast_concession",
       "description": null,
-      "entries": 15
+      "entries": 15,
+      "modifiedAt": "2026-02-07T02:51:50.852Z"
     },
     {
       "path": "japanese/grammar/08_purpose_means_method.json",
       "name": "08_purpose_means_method",
       "description": null,
-      "entries": 15
+      "entries": 15,
+      "modifiedAt": "2026-02-07T02:51:05.293Z"
     },
     {
       "path": "japanese/grammar/09_comparison_degree_limit.json",
       "name": "09_comparison_degree_limit",
       "description": null,
-      "entries": 15
+      "entries": 15,
+      "modifiedAt": "2026-02-07T02:51:05.295Z"
     },
     {
       "path": "japanese/grammar/10_focus_emphasis_quantifiers.json",
       "name": "10_focus_emphasis_quantifiers",
       "description": null,
-      "entries": 16
+      "entries": 16,
+      "modifiedAt": "2026-02-07T02:51:05.301Z"
     },
     {
       "path": "japanese/grammar/11_evidentiality_guess_hearsay.json",
       "name": "11_evidentiality_guess_hearsay",
       "description": null,
-      "entries": 19
+      "entries": 19,
+      "modifiedAt": "2026-02-07T02:51:05.305Z"
     },
     {
       "path": "japanese/grammar/12_change_process_result.json",
       "name": "12_change_process_result",
       "description": null,
-      "entries": 16
+      "entries": 16,
+      "modifiedAt": "2026-02-07T02:51:05.309Z"
     },
     {
       "path": "japanese/grammar/13_nominalization_packaging.json",
       "name": "13_nominalization_packaging",
       "description": null,
-      "entries": 19
+      "entries": 19,
+      "modifiedAt": "2026-02-07T02:51:05.309Z"
     },
     {
       "path": "japanese/grammar/14_giving_receiving.json",
       "name": "14_giving_receiving",
       "description": null,
-      "entries": 12
+      "entries": 12,
+      "modifiedAt": "2026-02-07T02:51:05.309Z"
     },
     {
       "path": "japanese/grammar/15_honorific_humble_politeness.json",
       "name": "15_honorific_humble_politeness",
       "description": null,
-      "entries": 13
+      "entries": 13,
+      "modifiedAt": "2026-02-07T02:51:05.321Z"
     },
     {
       "path": "japanese/grammar/16_voice_passive_causative_potential.json",
       "name": "16_voice_passive_causative_potential",
       "description": null,
-      "entries": 10
+      "entries": 10,
+      "modifiedAt": "2026-02-07T02:51:05.321Z"
     },
     {
       "path": "japanese/grammar/17_time_sequence.json",
       "name": "17_time_sequence",
       "description": null,
-      "entries": 15
+      "entries": 15,
+      "modifiedAt": "2026-02-07T02:51:05.321Z"
     },
     {
       "path": "japanese/grammar/18_formal_reading_frames.json",
       "name": "18_formal_reading_frames",
       "description": null,
-      "entries": 23
+      "entries": 23,
+      "modifiedAt": "2026-02-07T02:51:05.333Z"
     },
     {
       "path": "japanese/i-adj.json",
       "name": "adj forms (i/na unified where possible)",
       "description": "Core adjective morphology and high-frequency derivational suffixes. Uses [adj] when a form applies productively to both i-adj and na-adj (with class-specific stem handling as needed). When forms differ, i/na variants are adjacent. Negative copula results (じゃない / ではない) are treated as i-adj because they enter the i-adj inflection pipeline. Some entries include second-order productive morphology (e.g., verb-conditionals applied to derivational verbs like すぎる); these are included when the derived form is productive and high-frequency.",
-      "entries": 43
+      "entries": 43,
+      "modifiedAt": "2026-02-08T00:39:25.637Z"
     },
     {
       "path": "japanese/paragraphs/paragraph_1.json",
       "name": "paragraph_1",
       "description": null,
-      "entries": null
+      "entries": null,
+      "modifiedAt": "2026-02-07T02:51:05.339Z"
     },
     {
       "path": "japanese/sentences/_scripts/fragments_payload.json",
       "name": "fragments_payload",
       "description": null,
-      "entries": null
+      "entries": null,
+      "modifiedAt": "2026-02-07T02:51:05.401Z"
     },
     {
       "path": "japanese/sentences/sentences_1.json",
       "name": "sentences_1",
       "description": null,
-      "entries": null
+      "entries": null,
+      "modifiedAt": "2026-02-07T02:51:05.353Z"
     },
     {
       "path": "japanese/sentences/sentences_2.json",
       "name": "sentences_2",
       "description": null,
-      "entries": null
+      "entries": null,
+      "modifiedAt": "2026-02-07T02:51:05.361Z"
     },
     {
       "path": "japanese/sentences/sentences_3.json",
       "name": "sentences_3",
       "description": null,
-      "entries": null
+      "entries": null,
+      "modifiedAt": "2026-02-07T02:51:05.361Z"
     },
     {
       "path": "japanese/words/combined_words.json",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
-      "entries": 1362
+      "entries": 1395,
+      "modifiedAt": "2026-02-12T00:46:17.808Z"
     },
     {
       "path": "languageHistory/languageHistory.json",
       "name": "Language History",
       "description": "Combined language history entries",
-      "entries": 12
+      "entries": 12,
+      "modifiedAt": "2026-02-07T19:29:27.019Z"
     },
     {
       "path": "linguistics/foundational.json",
       "name": "Foundational & Methodological",
       "description": "General-purpose linguistic, methodological, and academic terms used across subfields.",
-      "entries": 6
+      "entries": 6,
+      "modifiedAt": "2026-02-07T02:51:05.544Z"
     },
     {
       "path": "linguistics/lexical_semantics.json",
       "name": "Lexical Semantics & Lexicon (lexical_semantics)",
       "description": "Word meaning, sense structure, and lexical relations.",
-      "entries": 12
+      "entries": 12,
+      "modifiedAt": "2026-02-07T02:51:05.551Z"
     },
     {
       "path": "linguistics/lexical.json",
       "name": "Lexical Semantics & Lexicon (lexical)",
       "description": "Word meaning, sense structure, and lexical relations.",
-      "entries": 18
+      "entries": 18,
+      "modifiedAt": "2026-02-07T02:51:05.544Z"
     },
     {
       "path": "linguistics/orthography_diacritics.json",
       "name": "Orthography, Diacritics & Writing Systems (orthography_diacritics)",
       "description": "Terms related to writing systems, diacritics, and orthographic conventions, including Ancient and Modern Greek.",
-      "entries": 10
+      "entries": 10,
+      "modifiedAt": "2026-02-07T02:51:05.555Z"
     },
     {
       "path": "linguistics/orthography_greek.json",
       "name": "Orthography, Diacritics & Writing Systems (orthography_greek)",
       "description": "Terms related to writing systems, diacritics, and orthographic conventions, including Ancient and Modern Greek.",
-      "entries": 8
+      "entries": 8,
+      "modifiedAt": "2026-02-07T02:51:05.559Z"
     },
     {
       "path": "linguistics/phonology_prosody.json",
       "name": "Phonology & Prosody",
       "description": "Sound structure and prosodic systems such as stress and pitch accent.",
-      "entries": 6
+      "entries": 6,
+      "modifiedAt": "2026-02-07T02:51:05.562Z"
     },
     {
       "path": "linguistics/pragmatics.json",
       "name": "Pragmatics & Context",
       "description": "Contextual meaning, inference, and language use.",
-      "entries": 7
+      "entries": 7,
+      "modifiedAt": "2026-02-07T02:51:05.566Z"
     },
     {
       "path": "linguistics/semantics.json",
       "name": "Semantics",
       "description": "Core meaning relations and meaning change.",
-      "entries": 7
+      "entries": 7,
+      "modifiedAt": "2026-02-07T02:51:05.568Z"
     },
     {
       "path": "linguistics/syntax.json",
       "name": "Syntax",
       "description": "Clause/phrase structure and relations such as embedding and subordination.",
-      "entries": 11
+      "entries": 11,
+      "modifiedAt": "2026-02-07T02:51:05.568Z"
     },
     {
       "path": "numbers/numbers.json",
       "name": "Letters to Numbers",
       "description": "A=1, B=2, ... (v0 seed)",
-      "entries": 26
+      "entries": 26,
+      "modifiedAt": "2026-02-07T19:28:13.613Z"
     },
     {
       "path": "pokemon/pokemon.json",
       "name": "Pokémon Starters (Kanto)",
       "description": "First-generation Kanto starter Pokémon and first 151 Pokémon. Type kanji use the official Japanese main-series game terminology; verified against Bulbapedia and Pokémon Database.",
-      "entries": 151
+      "entries": 151,
+      "modifiedAt": "2026-02-11T02:29:23.698Z"
     },
     {
       "path": "programming/programming.json",
       "name": "Programming",
       "description": "Consolidated programming collections: languages, SQL engines, web technologies.",
-      "entries": 21
+      "entries": 21,
+      "modifiedAt": "2026-02-07T19:18:40.007Z"
     }
   ]
 }
