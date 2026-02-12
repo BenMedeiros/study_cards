@@ -111,24 +111,7 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
       }
 
       if (kind === 'sets-folder') {
-        // Ensure sets are loaded for this folder before entering the virtual listing.
-        try {
-          const baseFolder = dirname(value);
-          if (store?.collections && typeof store.collections.loadCollectionSetsForFolder === 'function') {
-            await store.collections.loadCollectionSetsForFolder(baseFolder);
-          }
-
-          // Eagerly prefetch the entire base folder in the background.
-          if (store?.collections && typeof store.collections.prefetchCollectionsInFolder === 'function') {
-            store.collections.prefetchCollectionsInFolder(baseFolder);
-          }
-        } catch (err) {
-          // ignore load error; menu will show empty
-        }
-        container.dataset.kbDesired = 'up';
-        setCurrentDir(value);
-        renderMenu();
-        return;
+        throw new Error('Deprecated feature detected: collection sets are no longer supported.');
       }
 
       if (kind === 'file') {
@@ -164,28 +147,9 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     }
 
     for (const file of listing.files) {
-      // Special-case: show per-folder collection sets as a virtual folder.
+      // Deprecated feature: collection sets are no longer supported.
       if (file.key && isCollectionSetsFileKey(file.key)) {
-        const baseFolder = dirname(file.key);
-        const vdir = baseFolder ? `${baseFolder}/__collectionSets` : '__collectionSets';
-
-        let folderLabel = 'Collection Sets';
-        if (store?.collections && typeof store.collections.getCachedCollectionSetsForFolder === 'function') {
-          const cs = store.collections.getCachedCollectionSetsForFolder(baseFolder);
-          if (cs) folderLabel = safeFolderLabelFromCollectionSets(cs);
-          // If it isn't cached yet (undefined), load in the background and re-render.
-          if (typeof cs === 'undefined' && typeof store.collections.loadCollectionSetsForFolder === 'function' && container.classList.contains('open')) {
-            Promise.resolve()
-              .then(() => store.collections.loadCollectionSetsForFolder(baseFolder))
-              .then(() => {
-                if (container.classList.contains('open')) renderMenu();
-              })
-              .catch(() => {});
-          }
-        }
-
-        addOption({ label: `${folderLabel}/`, kind: 'sets-folder', value: vdir });
-        continue;
+        throw new Error('Deprecated feature detected: collection sets are no longer supported.');
       }
       const label = file.label || titleFromFilename(basename(file.key));
       addOption({ label, kind: 'file', value: file.key });
@@ -246,18 +210,9 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     container.classList.add('open');
     document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
 
-    // If we're currently inside the virtual Collection Sets dir, ensure its data
-    // is loaded and then re-render (so reopen after refresh isn't empty).
-    if (isCollectionSetsVirtualDir(currentDir) && store?.collections && typeof store.collections.loadCollectionSetsForFolder === 'function') {
-      const baseFolder = dirname(currentDir);
-      Promise.resolve()
-        .then(() => store.collections.loadCollectionSetsForFolder(baseFolder))
-        .then(() => {
-          if (container.classList.contains('open')) renderMenu();
-        })
-        .catch(() => {
-          // ignore
-        });
+    // Deprecated: virtual Collection Sets directory handling removed.
+    if (isCollectionSetsVirtualDir(currentDir)) {
+      throw new Error('Deprecated feature detected: collection sets are no longer supported.');
     }
 
     // focus the menu so it receives key events first and they don't leak to the app

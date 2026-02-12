@@ -2,7 +2,7 @@ import { basename, dirname, normalizeFolderPath, titleFromFilename, parseFieldQu
 import { buildHashRoute, parseHashRoute } from '../utils/helpers.js';
 import { timed } from '../utils/timing.js';
 
-export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, grammarProgressManager = null }) {
+export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, grammarProgressManager = null, collectionDB = null }) {
   // Folder metadata helpers/storage used for lazy loads
   let folderMetadataMap = null;
   const metadataCache = {};
@@ -401,64 +401,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   }
 
   async function loadCollectionSetsForFolder(baseFolder) {
-    const folder = normalizeFolderPath(baseFolder);
-    if (collectionSetsCache.has(folder)) return collectionSetsCache.get(folder);
-    if (pendingCollectionSetsLoads.has(folder)) return pendingCollectionSetsLoads.get(folder);
-
-    const p = timed(`collections.loadCollectionSetsForFolder ${folder || '(root)'}`, async () => {
-      if (!hasCollectionSetsFile(folder)) {
-        collectionSetsCache.set(folder, null);
-        return null;
-      }
-      const rel = folder ? `${folder}/${COLLECTION_SETS_FILE}` : COLLECTION_SETS_FILE;
-      const url = `./collections/${rel}`;
-      let res;
-      try {
-        res = await fetch(url);
-      } catch (err) {
-        throw new Error(`Failed to fetch collection sets ${rel}: ${err.message}`);
-      }
-      if (!res.ok) {
-        collectionSetsCache.set(folder, null);
-        return null;
-      }
-
-      let data;
-      try {
-        const txt = await res.text();
-        if (!txt) throw new Error('empty response');
-        data = JSON.parse(txt);
-      } catch (err) {
-        throw new Error(`Invalid JSON in collection sets ${rel}: ${err.message}`);
-      }
-
-      const sets = Array.isArray(data?.sets) ? data.sets : [];
-      const normalized = {
-        name: data?.name || null,
-        version: typeof data?.version === 'number' ? data.version : null,
-        description: data?.description || null,
-        sets: sets
-          .filter(s => s && typeof s === 'object')
-          .map(s => ({
-            id: String(s.id || '').trim(),
-            label: s.label || null,
-            description: s.description || null,
-            kanjiFilter: Array.isArray(s.kanjiFilter) ? s.kanjiFilter.slice() : null,
-            kanji: Array.isArray(s.kanji) ? s.kanji.slice() : []
-          }))
-          .filter(s => s.id.length > 0)
-      };
-
-      collectionSetsCache.set(folder, normalized);
-      return normalized;
-    });
-
-    pendingCollectionSetsLoads.set(folder, p);
-    try {
-      return await p;
-    } finally {
-      pendingCollectionSetsLoads.delete(folder);
-    }
+    // Deprecated: collection sets are removed. Fail fast to keep codebase strict.
+    throw new Error('Deprecated feature: collection sets (_collectionSets.json / __collectionSets) are no longer supported.');
   }
 
   async function ensureCollectionsLoadedInFolder(baseFolder, opts = { excludeCollectionSets: true }) {
@@ -470,7 +414,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       .filter(k => (prefix ? k.startsWith(prefix) : true))
       .filter(k => {
         if (!excludeCollectionSets) return true;
-        return basename(k) !== COLLECTION_SETS_FILE;
+        return basename(k) !== COLLECTION_SETS_FILE && !k.split('/').includes(COLLECTION_SETS_DIRNAME);
       });
 
     const loads = [];
@@ -570,10 +514,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   async function resolveVirtualSetRecord(record, baseFolder, setObj) {
     const folder = normalizeFolderPath(baseFolder);
     return timed(`collections.resolveVirtualSetRecord ${folder || '(root)'}`, async () => {
-      await ensureCollectionsLoadedInFolder(folder, { excludeCollectionSets: true });
-
-      folderEntryIndexCache.delete(folder);
-      const index = buildFolderEntryIndex(folder);
+      // Virtual sets are deprecated. Throw to enforce strict codebase.
+      throw new Error('Deprecated feature: virtual collection sets are no longer supported.');
 
     const resolved = [];
     if (Array.isArray(setObj?.kanjiFilter) && setObj.kanjiFilter.length) {
@@ -731,8 +673,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   }
 
   function getCachedCollectionSetsForFolder(baseFolder) {
-    const folder = normalizeFolderPath(baseFolder);
-    return collectionSetsCache.has(folder) ? collectionSetsCache.get(folder) : undefined;
+    // Deprecated: collection sets removed. Fail fast when queried.
+    throw new Error('Deprecated feature: collection sets (_collectionSets.json / __collectionSets) are no longer supported.');
   }
 
   function normalizeIndexRelativePath(p) {
@@ -947,21 +889,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
   function listCollectionDir(dirPath) {
     const folder = normalizeFolderPath(dirPath);
-
     if (isCollectionSetsDirPath(folder)) {
-      const baseFolder = dirname(folder);
-      const parentDir = baseFolder;
-      const cs = collectionSetsCache.get(baseFolder) || null;
-      const files = Array.isArray(cs?.sets)
-        ? cs.sets
-            .map(s => ({
-              filename: s.id,
-              key: `${collectionSetsDirPath(baseFolder)}/${s.id}`,
-              label: s.label || titleFromFilename(s.id)
-            }))
-            .sort((a, b) => a.label.localeCompare(b.label))
-        : [];
-      return { dir: folder, parentDir, folders: [], files };
+      throw new Error('Deprecated feature: collection sets directory requested.');
     }
 
     const node = findTreeNode(folder);
@@ -988,66 +917,85 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
   async function loadSeedCollections() {
     return timed('collections.loadSeedCollections', async () => {
-      const indexRes = await fetch('./collections/index.json');
-      if (!indexRes.ok) throw new Error(`Failed to load collections index (status ${indexRes.status})`);
-      let index;
-      try {
-        const indexText = await indexRes.text();
-        if (!indexText) throw new Error('collections/index.json is empty');
-        index = JSON.parse(indexText);
-      } catch (err) {
-        throw new Error(`Failed to parse collections/index.json: ${err.message}`);
+      if (!collectionDB || typeof collectionDB.initialize !== 'function') {
+        // fallback to original behavior
+        const indexRes = await fetch('./collections/index.json');
+        if (!indexRes.ok) throw new Error(`Failed to load collections index (status ${indexRes.status})`);
+        let index;
+        try {
+          const indexText = await indexRes.text();
+          if (!indexText) throw new Error('collections/index.json is empty');
+          index = JSON.parse(indexText);
+        } catch (err) {
+          throw new Error(`Failed to parse collections/index.json: ${err.message}`);
+        }
+        const rawCollections = Array.isArray(index?.collections) ? index.collections : [];
+        const paths = rawCollections.map(c => (typeof c === 'string' ? c : (c.path || ''))).filter(Boolean);
+
+        // Strict mode: fail if deprecated collection-sets files are present in the index
+        for (const p of paths) {
+          if (!p) continue;
+          if (basename(p) === COLLECTION_SETS_FILE || p.split('/').includes(COLLECTION_SETS_DIRNAME)) {
+            throw new Error(`Deprecated collection sets detected in index: ${p}`);
+          }
+        }
+        folderMetadataMap = buildFolderMetadataMap(index?.folderMetadata);
+        state.collectionTree = buildCollectionTreeFromPaths(paths);
+        state._availableCollectionPaths = paths.slice();
+        availableCollectionsMap = new Map();
+        for (const raw of rawCollections) {
+          if (typeof raw === 'string') {
+            availableCollectionsMap.set(raw, { path: raw, name: null, description: null, entries: null });
+          } else if (raw && typeof raw.path === 'string') {
+            availableCollectionsMap.set(raw.path, {
+              path: raw.path,
+              name: raw.name || null,
+              description: raw.description || null,
+              entries: (typeof raw.entries === 'number') ? raw.entries : null
+            });
+          }
+        }
+        emit();
+        Promise.resolve().then(() => {
+          try { prefetchCollectionsInFolder(''); } catch {}
+        });
+        return paths;
       }
 
-      const rawCollections = Array.isArray(index?.collections) ? index.collections : [];
-      const paths = rawCollections.map(c => (typeof c === 'string' ? c : (c.path || ''))).filter(Boolean);
+      // Use collectionDB to load index + folder metadata
+      const initRes = await collectionDB.initialize();
+      const paths = Array.isArray(initRes?.paths) ? initRes.paths : [];
 
-      folderMetadataMap = buildFolderMetadataMap(index?.folderMetadata);
+      // Strict mode: fail if deprecated collection-sets files are present in the index
+      for (const p of paths) {
+        if (!p) continue;
+        if (basename(p) === COLLECTION_SETS_FILE || p.split('/').includes(COLLECTION_SETS_DIRNAME)) {
+          throw new Error(`Deprecated collection sets detected in index: ${p}`);
+        }
+      }
+      folderMetadataMap = initRes?.folderMetadataMap || null;
+
+      // Build tree and available paths
       state.collectionTree = buildCollectionTreeFromPaths(paths);
       state._availableCollectionPaths = paths.slice();
 
       availableCollectionsMap = new Map();
-      for (const raw of rawCollections) {
-        if (typeof raw === 'string') {
-          availableCollectionsMap.set(raw, { path: raw, name: null, description: null, entries: null });
-        } else if (raw && typeof raw.path === 'string') {
-          availableCollectionsMap.set(raw.path, {
-            path: raw.path,
-            name: raw.name || null,
-            description: raw.description || null,
-            entries: (typeof raw.entries === 'number') ? raw.entries : null
-          });
-        }
-      }
-
-      emit();
-      // Prefetch all collections in background to avoid lazy-loading surprises.
-      // Run async/non-blocking so UI startup isn't delayed.
       try {
-        Promise.resolve().then(() => {
-          try {
-            prefetchCollectionsInFolder('');
-            // Also prefetch per-folder collection sets (/_collectionSets.json)
-            // so UI won't lazily fetch them later when browsing folders.
-            try {
-              const tops = new Set((state._availableCollectionPaths || []).map(p => {
-                const parts = String(p || '').split('/').filter(Boolean);
-                return parts.length ? parts[0] : '';
-              }).filter(Boolean));
-              for (const t of tops) {
-                // fire-and-forget
-                loadCollectionSetsForFolder(t).catch(() => null);
-              }
-            } catch (e) {
-              // ignore
-            }
-          } catch (e) {
-            // ignore
-          }
-        });
+        const list = await collectionDB.listAvailableCollections();
+        for (const r of list) {
+          if (!r || !r.key) continue;
+          availableCollectionsMap.set(r.key, { path: r.key, name: r.name || null, description: r.description || null, entries: (typeof r.entries === 'number') ? r.entries : null });
+        }
       } catch (e) {
         // ignore
       }
+
+      emit();
+      // Prefetch collections in background (non-blocking)
+      Promise.resolve().then(() => {
+        try { prefetchCollectionsInFolder(''); } catch {}
+        // collection-sets support removed; no background set prefetching
+      });
 
       return paths;
     });
@@ -1070,76 +1018,39 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const p = timed(`collections.loadCollection ${key}`, async () => {
       const virtual = parseCollectionSetVirtualKey(key);
       if (virtual) {
-        const { baseFolder, setId } = virtual;
-        const cs = await loadCollectionSetsForFolder(baseFolder);
-        if (!cs || !Array.isArray(cs.sets)) {
-          throw new Error(`Collection sets not available for folder: ${baseFolder || '(root)'}`);
-        }
-        const set = cs.sets.find(s => s.id === setId);
-        if (!set) {
-          throw new Error(`Collection set not found: ${setId}`);
-        }
-
-        let entries = [];
-        if (Array.isArray(set.kanjiFilter) && set.kanjiFilter.length) {
-          entries = [];
-        } else {
-          entries = (Array.isArray(set.kanji) ? set.kanji : []).map(v => {
-            const term = String(v || '').trim();
-            return { kanji: term, text: term };
-          }).filter(e => e.kanji);
-        }
-
-        const record = {
-          key,
-          entries,
-          metadata: {
-            name: set.label || titleFromFilename(set.id),
-            description: set.description || cs.description || null,
-            fields: [ { key: 'kanji', label: 'Kanji' } ],
-            category: (baseFolder || '').split('/')[0] || baseFolder || ''
-          }
-        };
-
-        state.collections.push(record);
-        state.collections.sort((a, b) => {
-          const ai0 = state._availableCollectionPaths.indexOf(a.key);
-          const bi0 = state._availableCollectionPaths.indexOf(b.key);
-          const ai = ai0 === -1 ? Number.MAX_SAFE_INTEGER : ai0;
-          const bi = bi0 === -1 ? Number.MAX_SAFE_INTEGER : bi0;
-          return ai - bi;
-        });
-
-        Promise.resolve()
-          .then(() => resolveVirtualSetRecord(record, baseFolder, set))
-          .catch((err) => console.warn('[Collections] Failed to resolve virtual set entries:', err?.message || err));
-
-        if (opts?.notify !== false) emit();
-        return record;
+        throw new Error(`Deprecated collection set virtual key used: ${key}`);
       }
 
       if (!state._availableCollectionPaths.includes(key)) {
         throw new Error(`Collection not found in index: ${key}`);
       }
 
-      const url = `./collections/${key}`;
-      let res;
-      try {
-        res = await fetch(url);
-      } catch (err) {
-        throw new Error(`Failed to fetch collection ${key}: ${err.message}`);
-      }
-      if (!res.ok) {
-        throw new Error(`Failed to load collection ${key} (status ${res.status})`);
-      }
-
       let data;
-      try {
-        const txt = await res.text();
-        if (!txt) throw new Error('empty response');
-        data = JSON.parse(txt);
-      } catch (err) {
-        throw new Error(`Invalid JSON in collection ${key}: ${err.message}`);
+      if (collectionDB && typeof collectionDB.getCollection === 'function') {
+        try {
+          data = await collectionDB.getCollection(key);
+        } catch (err) {
+          throw err;
+        }
+      } else {
+        const url = `./collections/${key}`;
+        let res;
+        try {
+          res = await fetch(url);
+        } catch (err) {
+          throw new Error(`Failed to fetch collection ${key}: ${err.message}`);
+        }
+        if (!res.ok) {
+          throw new Error(`Failed to load collection ${key} (status ${res.status})`);
+        }
+
+        try {
+          const txt = await res.text();
+          if (!txt) throw new Error('empty response');
+          data = JSON.parse(txt);
+        } catch (err) {
+          throw new Error(`Invalid JSON in collection ${key}: ${err.message}`);
+        }
       }
 
       if (Array.isArray(data)) {
@@ -2225,8 +2136,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     setActiveCollectionId,
     syncCollectionFromURL,
     listCollectionDir,
-    loadCollectionSetsForFolder,
-    getCachedCollectionSetsForFolder,
     loadCollection,
     prefetchCollectionsInFolder,
     loadCollectionState,

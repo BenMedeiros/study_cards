@@ -23,7 +23,7 @@ export function isIndexedDBAvailable() {
   }
 }
 
-export function openStudyDb({ dbName = 'study_cards', version = 4 } = {}) {
+export function openStudyDb({ dbName = 'study_cards', version = 5 } = {}) {
   if (dbPromise) return dbPromise;
 
   dbPromise = new Promise((resolve, reject) => {
@@ -44,6 +44,14 @@ export function openStudyDb({ dbName = 'study_cards', version = 4 } = {}) {
 
       if (!db.objectStoreNames.contains('collection_settings')) {
         db.createObjectStore('collection_settings', { keyPath: 'id' });
+      }
+
+      // Stores for collectionDatabaseManager
+      if (!db.objectStoreNames.contains('system_collections')) {
+        db.createObjectStore('system_collections', { keyPath: 'key' });
+      }
+      if (!db.objectStoreNames.contains('system_collections_index')) {
+        db.createObjectStore('system_collections_index', { keyPath: 'key' });
       }
 
       // Ensure study_progress store exists and has indexes for efficient queries

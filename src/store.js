@@ -3,6 +3,7 @@ import { createPersistenceManager } from './managers/persistenceManager.js';
 import { createUIStateManager } from './managers/uiStateManager.js';
 import { createStudyProgressManager } from './managers/studyProgressManager.js';
 import { createCollectionsManager } from './managers/collectionsManager.js';
+import createCollectionDatabaseManager from './managers/collectionDatabaseManager.js';
 
 export function createStore() {
   // In-memory UI state cache. Persisted by persistenceManager.
@@ -34,7 +35,8 @@ export function createStore() {
   const grammarProgress = studyProgress;
   const studyTime = studyProgress;
   const ui = createUIStateManager({ uiState, persistence, emitter });
-  const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, grammarProgressManager: grammarProgress });
+  const collectionDB = createCollectionDatabaseManager({ log: true });
+  const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, grammarProgressManager: grammarProgress, collectionDB });
 
   function subscribe(fn) {
     return emitter.subscribe(fn);
@@ -60,8 +62,12 @@ export function createStore() {
         restored = null;
       }
 
-      if (restored && (state._availableCollectionPaths.includes(restored) || collections.isCollectionSetVirtualKey(restored))) {
-        await collections.setActiveCollectionId(restored);
+      if (restored) {
+        if (state._availableCollectionPaths.includes(restored)) {
+          await collections.setActiveCollectionId(restored);
+        } else {
+          throw new Error(`Deprecated or unknown collection id restored from uiState.shell.activeCollectionId: ${restored}`);
+        }
         if (!state.activeCollectionId && Array.isArray(paths) && paths.length > 0) {
           await collections.setActiveCollectionId(paths[0]);
         }
@@ -89,8 +95,7 @@ export function createStore() {
       setActiveCollectionId: collections.setActiveCollectionId,
       syncCollectionFromURL: collections.syncCollectionFromURL,
       listCollectionDir: collections.listCollectionDir,
-      loadCollectionSetsForFolder: collections.loadCollectionSetsForFolder,
-      getCachedCollectionSetsForFolder: collections.getCachedCollectionSetsForFolder,
+      // Deprecated APIs removed: collection sets are no longer supported.
       loadCollection: collections.loadCollection,
       prefetchCollectionsInFolder: collections.prefetchCollectionsInFolder,
       loadCollectionState: collections.loadCollectionState,
