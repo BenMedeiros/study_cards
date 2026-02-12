@@ -1,6 +1,7 @@
 import { idbGet, idbPut, idbGetAll } from '../utils/idb.js';
 import { timed } from '../utils/timing.js';
 import { normalizeFolderPath } from '../utils/helpers.js';
+import { getGlobalSettingsManager } from './settingsManager.js';
 
 function normalizeIndexRelativePath(p) {
   let s = String(p || '').trim();
@@ -10,15 +11,41 @@ function normalizeIndexRelativePath(p) {
   return s;
 }
 
-function makeLogger(enabled) {
-  return function(...args) {
-    if (!enabled) return;
-    try { console.debug('[CollectionDB]', ...args); } catch { /* ignore */ }
-  };
+function _safeDebug(...args) {
+  try { console.debug('[CollectionDB]', ...args); } catch { /* ignore */ }
 }
 
 export function createCollectionDatabaseManager({ log = false } = {}) {
-  const logger = makeLogger(!!log);
+  let logEnabled = !!log;
+  let logReturningCached = false;
+
+  try {
+    const settings = getGlobalSettingsManager && typeof getGlobalSettingsManager === 'function' ? getGlobalSettingsManager() : null;
+    if (settings && typeof settings.registerConsumer === 'function') {
+      if (typeof settings.isReady === 'function' && settings.isReady()) {
+        try { logEnabled = !!settings.get('managers.collectionDatabaseManager.log.enabled', { consumerId: 'collectionDB' }); } catch {}
+        try { logReturningCached = !!settings.get('managers.collectionDatabaseManager.log.cachedCollections', { consumerId: 'collectionDB' }); } catch {}
+      }
+
+      try {
+        settings.registerConsumer({
+          consumerId: 'collectionDB',
+          settings: ['managers.collectionDatabaseManager.log.enabled', 'managers.collectionDatabaseManager.log.cachedCollections'],
+          onChange: ({ settingId, prev, next }) => {
+            try {
+              if (settingId === 'managers.collectionDatabaseManager.log.enabled') logEnabled = !!next;
+              if (settingId === 'managers.collectionDatabaseManager.log.cachedCollections') logReturningCached = !!next;
+            } catch (e) {}
+          }
+        });
+      } catch (e) {
+        // ignore registration errors
+      }
+    }
+  } catch (e) {}
+
+  const logger = function(...args) { if (!logEnabled) return; _safeDebug(...args); };
+  const loggerReturningCached = function(...args) { if (!logReturningCached) return; _safeDebug(...args); };
 
   // In-memory cache of index entries keyed by path
   let availableIndexMap = new Map();
@@ -104,7 +131,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
 
       const cached = await idbGet('system_collections', key).catch(() => null);
       if (!force && cached && idxModified && cached.modifiedAt === idxModified && cached.blob) {
-        logger('getCollection: returning cached', key);
+        loggerReturningCached('getCollection: returning cached', key);
         return cached.blob;
       }
 

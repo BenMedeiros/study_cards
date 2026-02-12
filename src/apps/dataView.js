@@ -696,7 +696,7 @@ export function renderData({ store }) {
       }
     } catch (e) {}
 
-    const tbl = createTable({ headers, rows, id: 'data-table', sortable: true, searchable: true, initialSortKey, initialSortDir });
+    const tbl = createTable({ store, headers, rows, id: 'data-table', sortable: true, searchable: true, initialSortKey, initialSortDir });
     tableMount.innerHTML = '';
     tableMount.append(tbl);
 

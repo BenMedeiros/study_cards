@@ -60,6 +60,16 @@ const CATALOG = Object.freeze((() => {
     'shell.logEmits': { scope: 'shell', key: 'logEmits', type: { kind: 'boolean' }, default: false },
     'shell.logSettings': { scope: 'shell', key: 'logSettings', type: { kind: 'boolean' }, default: false },
 
+    // Manager-specific log toggles for collectionDatabaseManager
+    'managers.collectionDatabaseManager.log.enabled': { scope: 'shell', key: 'managers.collectionDatabaseManager.log.enabled', type: { kind: 'boolean' }, default: false },
+    'managers.collectionDatabaseManager.log.cachedCollections': { scope: 'shell', key: 'managers.collectionDatabaseManager.log.cachedCollections', type: { kind: 'boolean' }, default: false },
+
+    // Whether table search inputs auto-normalize via cleanSearchQuery() (e.g. spaces -> '&').
+    // Preferred setting id (kept under shell scope for persistence).
+    'utils.tableSearch.log.autoCleanQuery': { scope: 'shell', key: 'tableSearchAutoCleanQuery', type: { kind: 'boolean' }, default: true },
+    // Back-compat alias (will be removed once all callsites migrate).
+    'shell.tableSearchAutoCleanQuery': { scope: 'shell', key: 'tableSearchAutoCleanQuery', type: { kind: 'boolean' }, default: true },
+
     'shell.hideShellFooter': { scope: 'shell', key: 'hideShellFooter', type: { kind: 'boolean' }, default: false },
     'shell.hideViewHeaderTools': { scope: 'shell', key: 'hideViewHeaderTools', type: { kind: 'boolean' }, default: false },
     'shell.hideViewFooterControls': { scope: 'shell', key: 'hideViewFooterControls', type: { kind: 'boolean' }, default: false },
@@ -109,7 +119,27 @@ export function createSettingsManager({ getShellState, setShellState, getAppStat
   const audit = new Map();
 
   function setReady(val) {
+    const wasReady = !!ready;
     ready = !!val;
+
+    // If transitioning to ready, notify all registered consumers of current values
+    if (!wasReady && ready) {
+      for (const [consumerId, c] of consumers.entries()) {
+        try {
+          const cb = c && typeof c.onChange === 'function' ? c.onChange : null;
+          const settingsSet = c && c.settings ? Array.from(c.settings) : [];
+          if (!cb || !settingsSet.length) continue;
+          for (const sid of settingsSet) {
+            try {
+              const def = CATALOG[sid];
+              if (!def) continue;
+              const next = _resolveValue(def);
+              try { cb({ settingId: def.id, prev: null, next, sourceConsumerId: 'settings.manager', timestamp: _now() }); } catch (e) {}
+            } catch (e) { /* ignore per-setting errors */ }
+          }
+        } catch (e) { /* ignore consumer errors */ }
+      }
+    }
   }
 
   function isReady() {
@@ -196,6 +226,20 @@ export function createSettingsManager({ getShellState, setShellState, getAppStat
       let set = settingConsumers.get(s);
       if (!set) { set = new Set(); settingConsumers.set(s, set); }
       set.add(cid);
+    }
+
+    // If manager is already ready, immediately notify this consumer of current values
+    if (ready && typeof onChange === 'function' && setIds.size) {
+      try {
+        for (const sid of setIds) {
+          try {
+            const def = CATALOG[sid];
+            if (!def) continue;
+            const next = _resolveValue(def);
+            try { onChange({ settingId: def.id, prev: null, next, sourceConsumerId: 'settings.manager', timestamp: _now() }); } catch (e) {}
+          } catch (e) { /* ignore per-setting errors */ }
+        }
+      } catch (e) { /* ignore */ }
     }
 
     return () => {
@@ -322,4 +366,15 @@ export function createSettingsManager({ getShellState, setShellState, getAppStat
     getConsumersFor,
     getSettingsFor,
   };
+}
+
+// Optional global registry so other modules can obtain the active SettingsManager
+let _globalSettingsManager = null;
+
+export function setGlobalSettingsManager(mgr) {
+  _globalSettingsManager = mgr;
+}
+
+export function getGlobalSettingsManager() {
+  return _globalSettingsManager;
 }

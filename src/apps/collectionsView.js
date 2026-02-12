@@ -121,6 +121,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   ];
 
   const table = createTable({
+    store,
     headers,
     rows,
     id: 'collections-table',

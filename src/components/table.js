@@ -46,7 +46,7 @@ function _installGlobalTableResizeHook() {
  * @param {string} [options.collection] - Optional collection name the table was populated from
  * @returns {HTMLTableElement}
  */
-export function createTable({ headers, rows, className = '', id, collection, sortable = false, searchable = false, rowActions = [], initialSortKey = null, initialSortDir = 'asc' } = {}) {
+export function createTable({ store = null, headers, rows, className = '', id, collection, sortable = false, searchable = false, rowActions = [], initialSortKey = null, initialSortDir = 'asc' } = {}) {
   const __tableLabel = (() => {
     const parts = [];
     if (id) parts.push(String(id));
@@ -481,19 +481,45 @@ export function createTable({ headers, rows, className = '', id, collection, sor
     // This only affects the currently-rendered rows in this table component.
     // Views can additionally listen for explicit "apply" events (Enter/Clear) to
     // persist a domain-level filter and re-render from their source data.
+    function isAutoCleanEnabled() {
+      try {
+        const sm = store?.settings;
+        if (!(sm && typeof sm.isReady === 'function' && sm.isReady() && typeof sm.get === 'function')) return true;
+        const consumerId = id ? `table.${String(id)}` : 'table';
+        return !!sm.get('utils.tableSearch.log.autoCleanQuery', { consumerId });
+      } catch (e) {
+        return true;
+      }
+    }
+
     function applyFilter(q) {
       const total = Array.isArray(originalRows) ? originalRows.length : 0;
       const label = `table.applyFilter (${total})`;
       return timed(label, () => {
-        const query = String(q || '').trim();
-        if (!query) {
+        const rawQuery = String(q || '').trim();
+        if (!rawQuery) {
           currentRows = originalRows.slice();
           sortAndRender();
           try { clearBtn.disabled = true; } catch (e) {}
           return;
         }
 
-        const compiled = compileTableSearchQuery(query);
+        // While typing, optionally evaluate against a cleaned query so the
+        // ephemeral filter behaves the same as the "submit" behavior (Enter)
+        // without mutating the user's input value.
+        const autoClean = isAutoCleanEnabled();
+        let evalQuery = rawQuery;
+        if (autoClean) {
+          try { evalQuery = String(cleanSearchQuery(rawQuery) || '').trim(); } catch (e) { evalQuery = rawQuery; }
+        }
+        if (!evalQuery) {
+          currentRows = originalRows.slice();
+          sortAndRender();
+          try { clearBtn.disabled = !(rawQuery.length > 0); } catch (e) {}
+          return;
+        }
+
+        const compiled = compileTableSearchQuery(evalQuery);
         const fieldsMeta = headerKeys.map(h => ({ key: h.key, type: h.type ?? null })).filter(h => h && h.key);
         const fieldIndexByKey = new Map();
         for (let i = 0; i < headerKeys.length; i++) {
@@ -525,7 +551,7 @@ export function createTable({ headers, rows, className = '', id, collection, sor
 
         sortAndRender();
         try {
-          const has = query.length > 0;
+          const has = rawQuery.length > 0;
           clearBtn.disabled = !has;
         } catch (e) {}
       });
@@ -564,9 +590,14 @@ export function createTable({ headers, rows, className = '', id, collection, sor
       if (e.key === 'Enter') {
         if (_filterTimeout) { clearTimeout(_filterTimeout); _filterTimeout = null; }
         try {
-          const cleaned = cleanSearchQuery(searchInput.value);
-          searchInput.value = cleaned;
-          applyFilter(cleaned);
+          const autoClean = isAutoCleanEnabled();
+          if (autoClean) {
+            const cleaned = cleanSearchQuery(searchInput.value);
+            searchInput.value = cleaned;
+            applyFilter(cleaned);
+          } else {
+            applyFilter(searchInput.value);
+          }
           emitSearchApplied({ via: 'enter' });
         } catch (err) {
           applyFilter(searchInput.value);

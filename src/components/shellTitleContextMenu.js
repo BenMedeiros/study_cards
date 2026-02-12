@@ -137,6 +137,35 @@ export function createShellTitleContextMenu({
       });
     } catch (e) {}
 
+    // CollectionDB manager logging toggles
+    try {
+      const collDbLogsEnabled = !!_read('managers.collectionDatabaseManager.log.enabled', false);
+      items.push({
+        label: `${collDbLogsEnabled ? '☑' : '☐'} CollectionDB Logs`,
+        onClick: () => {
+          try {
+            const cur = !!_read('managers.collectionDatabaseManager.log.enabled', false);
+            const next = !cur;
+            _write('managers.collectionDatabaseManager.log.enabled', !!next, { immediate: true });
+          } catch (e) {}
+        }
+      });
+    } catch (e) {}
+
+    try {
+      const cachedColls = !!_read('managers.collectionDatabaseManager.log.cachedCollections', false);
+      items.push({
+        label: `${cachedColls ? '☑' : '☐'} Log Cached Collections`,
+        onClick: () => {
+          try {
+            const cur = !!_read('managers.collectionDatabaseManager.log.cachedCollections', false);
+            const next = !cur;
+            _write('managers.collectionDatabaseManager.log.cachedCollections', !!next, { immediate: true });
+          } catch (e) {}
+        }
+      });
+    } catch (e) {}
+
     // Caption visibility toggle (persisted)
     try {
       const cur = !!_read('shell.showFooterCaptions', false);

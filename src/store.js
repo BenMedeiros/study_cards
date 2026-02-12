@@ -4,7 +4,7 @@ import { createUIStateManager } from './managers/uiStateManager.js';
 import { createStudyProgressManager } from './managers/studyProgressManager.js';
 import { createCollectionsManager } from './managers/collectionsManager.js';
 import createCollectionDatabaseManager from './managers/collectionDatabaseManager.js';
-import { createSettingsManager } from './managers/settingsManager.js';
+import { createSettingsManager, setGlobalSettingsManager } from './managers/settingsManager.js';
 
 export function createStore() {
   // In-memory UI state cache. Persisted by persistenceManager.
@@ -44,7 +44,10 @@ export function createStore() {
     setAppState: ui.setAppState,
   });
 
-  const collectionDB = createCollectionDatabaseManager({ log: true });
+  // Register the created SettingsManager globally so other modules may obtain it
+  try { setGlobalSettingsManager(settings); } catch (e) {}
+
+  const collectionDB = createCollectionDatabaseManager();
   const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, grammarProgressManager: grammarProgress, collectionDB, settings });
 
   function subscribe(fn) {
@@ -57,6 +60,8 @@ export function createStore() {
 
       // SettingsManager becomes usable only after persisted uiState is loaded.
       try { settings.setReady(true); } catch (e) {}
+
+      // SettingsManager becomes usable only after persisted uiState is loaded.
 
       // Ensure expected kv shapes exist.
       kanjiProgress.ensureKanjiProgressMap();

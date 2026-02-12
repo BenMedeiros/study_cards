@@ -241,7 +241,7 @@ export function renderEntityExplorer({ store }) {
           return arr;
         });
         content.innerHTML = '';
-        content.append(createTable({ headers: ['Key', 'Value'], rows, id: 'ls-table', searchable: true, sortable: true }));
+        content.append(createTable({ store, headers: ['Key', 'Value'], rows, id: 'ls-table', searchable: true, sortable: true }));
         try { updateCollapseAllBtnState(); } catch (e) {}
       }
     } catch (e) {
@@ -466,7 +466,7 @@ export function renderEntityExplorer({ store }) {
         return arr;
       }) : [];
       content.innerHTML = '';
-      content.append(createTable({ headers: ['Key', 'Value'], rows, id: `idb-${dbName}-${storeName}-table`, searchable: true, sortable: true }));
+      content.append(createTable({ store, headers: ['Key', 'Value'], rows, id: `idb-${dbName}-${storeName}-table`, searchable: true, sortable: true }));
       try { updateCollapseAllBtnState(); } catch (e) {}
     } catch (e) {
       content.innerHTML = '';
