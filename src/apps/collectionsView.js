@@ -10,7 +10,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
 
   // Build table headers (include additional collection metadata columns)
   const headers = [
-    'Name',
+    'Name', 
     'Path',
     'Entries',
     'Description',
