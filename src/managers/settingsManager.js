@@ -69,10 +69,14 @@ const CATALOG = Object.freeze((() => {
     'managers.collectionDatabaseManager.log.cachedCollections': { type: { kind: 'boolean' }, default: false },
 
     // Whether table search inputs auto-normalize via cleanSearchQuery() (e.g. spaces -> '&').
-    // Preferred setting id.
+    // Functional: whether table search inputs are auto-normalized via
+    // `cleanSearchQuery()` (e.g. spaces -> '&'). Default: true.
+    'utils.tableSearch.autoCleanQuery': { type: { kind: 'boolean' }, default: true },
+    // Whether table search tokens without explicit wildcards should be
+    // automatically wrapped as "%token%" by cleanSearchQuery(). Default: on.
+    'utils.tableSearch.autoWildcard': { type: { kind: 'boolean' }, default: true },
+    // Logging: whether `cleanSearchQuery()` emits debug logs (input/output).
     'utils.tableSearch.log.autoCleanQuery': { type: { kind: 'boolean' }, default: false },
-    // Back-compat alias (will be removed once all callsites migrate).
-    'shell.tableSearchAutoCleanQuery': { type: { kind: 'boolean' }, default: false },
 
     'shell.hideShellFooter': { type: { kind: 'boolean' }, default: false },
     'shell.hideViewHeaderTools': { type: { kind: 'boolean' }, default: false },

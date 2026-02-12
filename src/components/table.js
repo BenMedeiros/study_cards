@@ -2,7 +2,7 @@ let _tableGlobalResizeHookInstalled = false;
 
 import { timed } from '../utils/timing.js';
 import { openRightClickMenu, registerRightClickContext } from './rightClickMenu.js';
-import { cleanSearchQuery } from '../utils/helpers.js';
+import { cleanSearchQuery } from '../utils/tableSearch.js';
 import { compileTableSearchQuery, matchesTableSearch } from '../utils/tableSearch.js';
 
 // register the table context class so CSS and code searches can find it
@@ -486,7 +486,7 @@ export function createTable({ store = null, headers, rows, className = '', id, c
         const sm = store?.settings;
         if (!(sm && typeof sm.isReady === 'function' && sm.isReady() && typeof sm.get === 'function')) return true;
         const consumerId = id ? `table.${String(id)}` : 'table';
-        return !!sm.get('utils.tableSearch.log.autoCleanQuery', { consumerId });
+        return !!sm.get('utils.tableSearch.autoCleanQuery', { consumerId });
       } catch (e) {
         return true;
       }

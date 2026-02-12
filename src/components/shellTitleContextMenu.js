@@ -181,6 +181,21 @@ export function createShellTitleContextMenu({
       });
     } catch (e) {}
 
+    // Table search auto-wildcard toggle
+    try {
+      const autoWildcard = !!_read('utils.tableSearch.autoWildcard', true);
+      items.push({
+        label: `${autoWildcard ? '☑' : '☐'} Table Search Auto-Wildcard`,
+        onClick: () => {
+          try {
+            const cur = !!_read('utils.tableSearch.autoWildcard', true);
+            const next = !cur;
+            _write('utils.tableSearch.autoWildcard', !!next, { immediate: true });
+          } catch (e) {}
+        }
+      });
+    } catch (e) {}
+
     // Caption visibility toggle (persisted)
     try {
       const cur = !!_read('shell.showFooterCaptions', false);

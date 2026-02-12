@@ -1,4 +1,106 @@
-import { parseFieldQuery, parseTableQuery, buildRegexFromWildcard, isNumericType, evalComparators } from './helpers.js';
+import { getGlobalSettingsManager } from '../managers/settingsManager.js';
+
+// --- Table-query parsing utilities (moved from helpers.js so table search
+// logic is colocated) ----------------------------------------------------
+export function parseFieldQuery(q) {
+  const s = String(q || '').trim();
+  if (!s) return { field: null, term: '' };
+
+  const m1 = s.match(/^\{\{\s*([^}\s]+)\s*\}\s*:\s*(.*)\}$/);
+  if (m1) {
+    const field = String(m1[1] || '').trim();
+    let term = String(m1[2] || '').trim();
+    if (term === '') term = '%';
+    return { field, term };
+  }
+
+  const compMatch = s.match(/^\{\s*([^:\s{}><=]+)\s*([<>]=?|=)\s*(.*)\}$/);
+  if (compMatch) {
+    const field = String(compMatch[1] || '').trim();
+    const op = String(compMatch[2] || '').trim();
+    let rhs = String(compMatch[3] || '').trim();
+    if (op === '=') {
+      const list = rhs === '' ? [] : rhs.split(',').map(x => String(x || '').trim()).filter(Boolean);
+      return { field, term: rhs, op: '=', list };
+    }
+    return { field, term: rhs, op };
+  }
+
+  const m2 = s.match(/^\{\s*([^:\s}]+)\s*:\s*(.*)\}$/);
+  if (m2) {
+    const field = String(m2[1] || '').trim();
+    let term = String(m2[2] || '').trim();
+    if (term === '') term = '%';
+    return { field, term };
+  }
+
+  return { field: null, term: s };
+}
+
+export function splitTopLevel(s, sep) {
+  const out = [];
+  if (typeof s !== 'string') return out;
+  let cur = '';
+  let depth = 0;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === '{' || ch === '(' || ch === '[') { depth++; cur += ch; continue; }
+    if (ch === '}' || ch === ')' || ch === ']') { depth = Math.max(0, depth - 1); cur += ch; continue; }
+    if (ch === sep && depth === 0) { out.push(cur.trim()); cur = ''; continue; }
+    cur += ch;
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+
+export function escapeRegexForWildcard(term) {
+  return String(term || '').replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
+export function buildRegexFromWildcard(term) {
+  const esc = escapeRegexForWildcard(term).replace(/%/g, '.*');
+  return new RegExp(`^${esc}$`, 'i');
+}
+
+export function isNumericType(t) {
+  if (!t && t !== 0) return false;
+  const s = String(t || '').toLowerCase();
+  return /int|float|number|numeric|double/.test(s);
+}
+
+export function evalComparators(valueNum, comps) {
+  for (const c of comps) {
+    const v = c.val;
+    switch (c.op) {
+      case '<': if (!(valueNum < v)) return false; break;
+      case '<=': if (!(valueNum <= v)) return false; break;
+      case '>': if (!(valueNum > v)) return false; break;
+      case '>=': if (!(valueNum >= v)) return false; break;
+      case '=': if (!(valueNum === v)) return false; break;
+      default: return false;
+    }
+  }
+  return true;
+}
+
+export function parseTableQuery(query) {
+  const q = String(query || '').trim();
+  if (!q) return { parts: [] };
+  const parts = String(q).split(';').map(s => String(s || '').trim()).filter(Boolean);
+  const out = [];
+
+  for (const p of parts) {
+    const parsed = parseFieldQuery(p);
+    const term = parsed.term ?? '';
+    const rawAlts = splitTopLevel(term, '|').map(a => String(a || '').trim()).filter(Boolean);
+    const alts = rawAlts.map(a => {
+      const ands = splitTopLevel(a, '&').map(x => _stripOuterParens(String(x || '').trim())).filter(Boolean);
+      return { raw: a, ands };
+    });
+    out.push({ raw: p, field: parsed.field, term, op: parsed.op ?? null, list: parsed.list ?? null, alts });
+  }
+  return { parts: out };
+}
 
 const NUM_RE_SRC = '[-+]?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?';
 const PURE_COMP_CHAIN_RE = new RegExp(`^\\s*(?:[<>]=?|=)\\s*(${NUM_RE_SRC})(?:\\s*(?:[<>]=?|=)\\s*(${NUM_RE_SRC}))*\\s*$`);
@@ -92,6 +194,137 @@ export function compileTableSearchQuery(query) {
   const q = String(query ?? '').trim();
   if (!q) return { raw: '', parsed: { parts: [] }, fieldsMeta: null };
   return { raw: q, parsed: parseTableQuery(q), fieldsMeta: null };
+}
+
+function _stripOuterParens(s) {
+  if (typeof s !== 'string') return s;
+  let str = s.trim();
+  if (str.length >= 2 && str[0] === '(' && str[str.length - 1] === ')') {
+    let depth = 0;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str[i];
+      if (ch === '(') depth++;
+      else if (ch === ')') {
+        depth--;
+        if (depth === 0 && i === str.length - 1) return str.slice(1, -1).trim();
+      }
+    }
+  }
+  return str;
+}
+
+// Normalize a user-entered table query string. Moved here from helpers.js so
+// table-specific behavior (auto-wildcard) lives with table search logic.
+export function cleanSearchQuery(q) {
+  const s = String(q || '');
+  if (!s.trim()) return '';
+  // Determine whether to auto-wrap plain tokens with wildcard markers and
+  // whether to emit debug logs; read settings when available.
+  let autoWildcard = true;
+  let logEnabled = false;
+  try {
+    const sm = (typeof getGlobalSettingsManager === 'function') ? getGlobalSettingsManager() : null;
+    if (sm && typeof sm.isReady === 'function' && sm.isReady() && typeof sm.get === 'function') {
+      try { autoWildcard = !!sm.get('utils.tableSearch.autoWildcard', { consumerId: 'tableSearch.cleanSearchQuery' }); } catch (e) {}
+      try { logEnabled = !!sm.get('utils.tableSearch.log.autoCleanQuery', { consumerId: 'tableSearch.cleanSearchQuery' }); } catch (e) {}
+    }
+  } catch (e) {}
+  if (logEnabled) console.debug('cleanSearchQuery input:', s);
+  // Split into top-level AND parts (respecting braces), then clean each part's OR-list
+  const andParts = splitTopLevel(s, ';').map(x => String(x || '').trim()).filter(Boolean);
+  const outParts = [];
+
+  for (const part of andParts) {
+    const rawOrs = splitTopLevel(part, '|').map(a => String(a || '').trim()).filter(Boolean);
+    const seenOr = new Set();
+    const cleanedOrs = [];
+
+    for (let orItem of rawOrs) {
+      if (!orItem) continue;
+      // Normalize whitespace while respecting braces
+      let norm = '';
+      let depth = 0;
+      for (let i = 0; i < orItem.length; i++) {
+        const ch = orItem[i];
+        if (ch === '{') { depth++; norm += ch; continue; }
+        if (ch === '}') { depth = Math.max(0, depth - 1); norm += ch; continue; }
+        if (depth === 0) {
+          if (/\s/.test(ch)) {
+            if (norm.endsWith(' ')) continue; // collapse runs
+            norm += ' ';
+          } else {
+            norm += ch;
+          }
+        } else {
+          norm += ch;
+        }
+      }
+
+      // If no explicit '&' but there are spaces, treat spaces as AND
+      const hasExplicitAnd = splitTopLevel(norm, '&').length > 1;
+      if (!hasExplicitAnd && /\s/.test(norm)) {
+        // replace top-level runs of spaces with ' & '
+        let rebuilt = '';
+        depth = 0;
+        for (let i = 0; i < norm.length; i++) {
+          const ch = norm[i];
+          if (ch === '{') { depth++; rebuilt += ch; continue; }
+          if (ch === '}') { depth = Math.max(0, depth - 1); rebuilt += ch; continue; }
+          if (depth === 0) {
+            if (/\s/.test(ch)) {
+              let j = i + 1;
+              while (j < norm.length && /\s/.test(norm[j])) j++;
+              rebuilt += ' & ';
+              i = j - 1;
+              continue;
+            }
+            rebuilt += ch;
+          } else {
+            rebuilt += ch;
+          }
+        }
+        norm = rebuilt.trim();
+      }
+
+      // Split top-level on '&', remove empty operands, and rejoin with single ' & '
+      const andPartsLocal = splitTopLevel(norm, '&').map(x => String(x || '').trim()).filter(Boolean)
+        .map(tok => {
+          if (!autoWildcard) return tok;
+          if (!tok) return tok;
+          const t = String(tok).trim();
+          // Preserve field-expressions and explicit wildcards or comparator-like tokens
+          if (t.startsWith('{') && t.endsWith('}')) return tok;
+          if (t.includes('%') || t.includes('*')) return tok;
+          if (/^[<>]=?/.test(t) || t.startsWith('=')) return tok;
+          return `%${t}%`;
+        });
+      if (!andPartsLocal.length) continue;
+      let finalAlt = andPartsLocal.join(' & ');
+      // Collapse any repeated ampersands (e.g. "& & &") into a single ' & ' to ensure idempotence
+      finalAlt = finalAlt.replace(/(?:\s*&\s*){2,}/g, ' & ');
+
+      const key = finalAlt.toLowerCase();
+      if (seenOr.has(key)) continue;
+      seenOr.add(key);
+      cleanedOrs.push(finalAlt);
+    }
+
+    if (cleanedOrs.length) {
+      // Parenthesize any alternative that contains '&' when there is more than one OR
+      const processed = cleanedOrs.map(item => {
+        // also collapse repeated ampersands inside the displayed item just in case
+        const collapsed = String(item || '').replace(/(?:\s*&\s*){2,}/g, ' & ');
+        if (cleanedOrs.length > 1 && collapsed.includes('&') && !/^\(.+\)$/.test(collapsed.trim())) return `(${collapsed})`;
+        return collapsed;
+      });
+      outParts.push(processed.join(' | '));
+    }
+  }
+  let result = outParts.join('; ');
+  // Final pass: collapse any accidental repeated ampersands at the top-level
+  result = result.replace(/(?:\s*&\s*){2,}/g, ' & ');
+  if (logEnabled) console.debug('cleanSearchQuery output:', result);
+  return result;
 }
 
 function matchesFieldAlt({ fieldKey, fieldValue, alt, fieldsMeta, getFieldType }) {
