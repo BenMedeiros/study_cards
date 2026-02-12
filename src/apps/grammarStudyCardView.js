@@ -10,6 +10,18 @@ export function renderGrammarStudyCard({ store }) {
   const el = document.createElement('div');
   el.id = 'grammar-study-root';
 
+  // Register as a settings consumer for persisted app settings.
+  try {
+    store?.settings?.registerConsumer?.({
+      consumerId: 'grammarStudyCardView',
+      settings: [
+        'apps.grammarStudy.defaultViewMode',
+        'apps.grammarStudy.isAutoPlaying',
+        'apps.grammarStudy.autoplaySequence',
+      ],
+    });
+  } catch (e) {}
+
   const MAX_CREDIT_PER_CARD_MS = 10_000;
   const MIN_VIEW_TO_COUNT_MS = 200;
 
@@ -145,11 +157,13 @@ export function renderGrammarStudyCard({ store }) {
     isShuffled = !!view?.isShuffled;
     orderHashInt = (typeof view?.order_hash_int === 'number') ? view.order_hash_int : null;
 
-    // Prefer app-level defaultViewMode when present; do not migrate legacy collection keys.
+    // Prefer app-level defaultViewMode when present.
     try {
-      const appState = (store?.apps && typeof store.apps.getState === 'function') ? (store.apps.getState('grammarStudy') || {}) : {};
-      if (typeof appState.defaultViewMode === 'string') {
-        viewMode = (appState.defaultViewMode === 'pattern-only' || appState.defaultViewMode === 'full') ? appState.defaultViewMode : viewMode;
+      if (store?.settings && typeof store.settings.get === 'function') {
+        const dvm = store.settings.get('apps.grammarStudy.defaultViewMode', { consumerId: 'grammarStudyCardView' });
+        if (typeof dvm === 'string') {
+          viewMode = (dvm === 'pattern-only' || dvm === 'full') ? dvm : viewMode;
+        }
       }
     } catch (e) {}
 
@@ -177,7 +191,17 @@ export function renderGrammarStudyCard({ store }) {
   let autoSpeak = false;
 
   // Autoplay state (persisted to app state)
-  const appState = (store?.apps && typeof store.apps.getState === 'function') ? (store.apps.getState('grammarStudy') || {}) : {};
+  const appState = (() => {
+    try {
+      if (store?.settings && typeof store.settings.get === 'function') {
+        return {
+          isAutoPlaying: store.settings.get('apps.grammarStudy.isAutoPlaying', { consumerId: 'grammarStudyCardView' }),
+          autoplaySequence: store.settings.get('apps.grammarStudy.autoplaySequence', { consumerId: 'grammarStudyCardView' }),
+        };
+      }
+    } catch (e) {}
+    return {};
+  })();
   let isAutoPlaying = !!appState.isAutoPlaying;
   let autoplayConfig = Array.isArray(appState.autoplaySequence) ? appState.autoplaySequence.slice() : [];
   let autoplayStepIndex = 0;
@@ -193,7 +217,10 @@ export function renderGrammarStudyCard({ store }) {
 
   function persistAutoplayState() {
     try {
-      store?.apps?.setState?.('grammarStudy', { isAutoPlaying: !!isAutoPlaying, autoplaySequence: autoplayConfig });
+      if (store?.settings && typeof store.settings.set === 'function') {
+        store.settings.set('apps.grammarStudy.isAutoPlaying', !!isAutoPlaying, { consumerId: 'grammarStudyCardView' });
+        store.settings.set('apps.grammarStudy.autoplaySequence', autoplayConfig, { consumerId: 'grammarStudyCardView' });
+      }
     } catch (e) {}
   }
 

@@ -18,6 +18,22 @@ export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
   el.id = 'shell-root';
 
+  // Register shell as a settings consumer for persisted shell settings.
+  try {
+    store?.settings?.registerConsumer?.({
+      consumerId: 'shell',
+      settings: [
+        'shell.showFooterCaptions',
+        'shell.timingEnabled',
+        'shell.hideShellFooter',
+        'shell.hideViewHeaderTools',
+        'shell.hideViewFooterControls',
+        'shell.logEmits',
+        'shell.logSettings',
+      ],
+    });
+  } catch (e) {}
+
   // ensure the brand context-class is registered so CSS and selectors
   // remain discoverable via the explicit class name
   try { registerRightClickContext('brand-context-menu'); } catch (e) {}
@@ -33,26 +49,34 @@ export function createAppShell({ store, onNavigate }) {
   }
 
   // Caption visibility is controlled explicitly via the brand toggle button.
-  // Persist this preference in the shell uiState so it survives reloads.
+  // Persist this preference in settings so it survives reloads.
   let captionsVisible = false;
   try {
-    const s = (store && store.shell && typeof store.shell.getState === 'function') ? store.shell.getState() : null;
-    if (s && typeof s === 'object' && typeof s.showFooterCaptions === 'boolean') captionsVisible = !!s.showFooterCaptions;
-    // Apply persisted visibility toggles (if present) so stored preferences
-    // such as hiding footers or header tools are respected on startup.
-    try {
-      if (s && typeof s === 'object') {
-        if (typeof s.hideShellFooter !== 'undefined') {
-          document.body.classList.toggle('hide-shell-footer', !!s.hideShellFooter);
+    const sm = store?.settings;
+    if (sm && typeof sm.isReady === 'function' && sm.isReady() && typeof sm.get === 'function') {
+      captionsVisible = !!sm.get('shell.showFooterCaptions', { consumerId: 'shell' });
+      try { document.body.classList.toggle('hide-shell-footer', !!sm.get('shell.hideShellFooter', { consumerId: 'shell' })); } catch (e) {}
+      try { document.body.classList.toggle('hide-view-footer-controls', !!sm.get('shell.hideViewFooterControls', { consumerId: 'shell' })); } catch (e) {}
+      try { document.body.classList.toggle('hide-view-header-tools', !!sm.get('shell.hideViewHeaderTools', { consumerId: 'shell' })); } catch (e) {}
+    } else {
+      const s = (store && store.shell && typeof store.shell.getState === 'function') ? store.shell.getState() : null;
+      if (s && typeof s === 'object' && typeof s.showFooterCaptions === 'boolean') captionsVisible = !!s.showFooterCaptions;
+      // Apply persisted visibility toggles (if present) so stored preferences
+      // such as hiding footers or header tools are respected on startup.
+      try {
+        if (s && typeof s === 'object') {
+          if (typeof s.hideShellFooter !== 'undefined') {
+            document.body.classList.toggle('hide-shell-footer', !!s.hideShellFooter);
+          }
+          if (typeof s.hideViewFooterControls !== 'undefined') {
+            document.body.classList.toggle('hide-view-footer-controls', !!s.hideViewFooterControls);
+          }
+          if (typeof s.hideViewHeaderTools !== 'undefined') {
+            document.body.classList.toggle('hide-view-header-tools', !!s.hideViewHeaderTools);
+          }
         }
-        if (typeof s.hideViewFooterControls !== 'undefined') {
-          document.body.classList.toggle('hide-view-footer-controls', !!s.hideViewFooterControls);
-        }
-        if (typeof s.hideViewHeaderTools !== 'undefined') {
-          document.body.classList.toggle('hide-view-header-tools', !!s.hideViewHeaderTools);
-        }
-      }
-    } catch (e) {}
+      } catch (e) {}
+    }
   } catch (e) {}
 
   function setCaptionsVisible(val, opts = {}) {
@@ -62,10 +86,10 @@ export function createAppShell({ store, onNavigate }) {
       else document.body.classList.remove('using-keyboard');
     } catch (e) {}
 
-    // Persist to shell state so preference survives reloads.
+    // Persist to settings so preference survives reloads.
     try {
-      if (store && store.shell && typeof store.shell.setState === 'function') {
-        store.shell.setState({ showFooterCaptions: captionsVisible }, { immediate: !!opts.immediate, notify: !!opts.notify });
+      if (store?.settings && typeof store.settings.set === 'function') {
+        store.settings.set('shell.showFooterCaptions', captionsVisible, { consumerId: 'shell', immediate: !!opts.immediate, notifySelf: false, silent: !(opts.notify) });
       }
     } catch (e) {}
   }
@@ -584,51 +608,78 @@ export function createAppShell({ store, onNavigate }) {
 
       // Emit logging toggle
       try {
-        const shellStateEmit = (store && store.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
-        const emitsEnabled = !!shellStateEmit.logEmits || !!(typeof window !== 'undefined' && window.__LOG_EMITS__);
+        const emitsEnabled = (store?.settings && typeof store.settings.get === 'function')
+          ? !!store.settings.get('shell.logEmits', { consumerId: 'shell' })
+          : !!(store && store.shell && typeof store.shell.getState === 'function' && (store.shell.getState() || {}).logEmits);
         items.push({ label: `${emitsEnabled ? '☑' : '☐'} Log Emits`, onClick: () => {
           try {
-            const next = !(!!(store && store.shell && typeof store.shell.getState === 'function' && (store.shell.getState() || {}).logEmits));
+            const cur = (store?.settings && typeof store.settings.get === 'function')
+              ? !!store.settings.get('shell.logEmits', { consumerId: 'shell' })
+              : !!(store && store.shell && typeof store.shell.getState === 'function' && (store.shell.getState() || {}).logEmits);
+            const next = !cur;
             try { window.__LOG_EMITS__ = !!next; } catch (e) {}
-            try { if (store && store.shell && typeof store.shell.setState === 'function') store.shell.setState({ logEmits: !!next }, { immediate: true, notify: true }); } catch (e) {}
+            try { store?.settings?.set?.('shell.logEmits', !!next, { consumerId: 'shell', immediate: true }); } catch (e) {}
             try { console.info(`[Emitter] emits logging ${next ? 'enabled' : 'disabled'}`); } catch (e) {}
           } catch (e) {}
         } });
       } catch (e) {}
 
-      // Caption visibility toggle (non-persistent) with checkbox-style label
+      // SettingsManager read/write logging toggle
       try {
-        items.push({ label: `${captionsVisible ? '☑' : '☐'} Show Footer Captions`, onClick: () => { setCaptionsVisible(!captionsVisible); } });
+        const settingsLogsEnabled = (store?.settings && typeof store.settings.get === 'function')
+          ? !!store.settings.get('shell.logSettings', { consumerId: 'shell' })
+          : !!(store && store.shell && typeof store.shell.getState === 'function' && (store.shell.getState() || {}).logSettings);
+        items.push({ label: `${settingsLogsEnabled ? '☑' : '☐'} Log Settings`, onClick: () => {
+          try {
+            const cur = (store?.settings && typeof store.settings.get === 'function')
+              ? !!store.settings.get('shell.logSettings', { consumerId: 'shell' })
+              : !!(store && store.shell && typeof store.shell.getState === 'function' && (store.shell.getState() || {}).logSettings);
+            const next = !cur;
+            try { store?.settings?.set?.('shell.logSettings', !!next, { consumerId: 'shell', immediate: true }); } catch (e) {}
+          } catch (e) {}
+        } });
+      } catch (e) {}
+
+      // Caption visibility toggle (persisted)
+      try {
+        const cur = (store?.settings && typeof store.settings.get === 'function')
+          ? !!store.settings.get('shell.showFooterCaptions', { consumerId: 'shell' })
+          : !!captionsVisible;
+        captionsVisible = cur;
+        items.push({ label: `${cur ? '☑' : '☐'} Show Footer Captions`, onClick: () => { setCaptionsVisible(!cur); } });
       } catch (e) {}
 
       // Visibility toggles for debugging/compact layouts (persist when possible)
       try {
-        const shellState = (store && store.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
-        const hideShellFooter = typeof shellState.hideShellFooter !== 'undefined' ? !!shellState.hideShellFooter : !!document.body.classList.contains('hide-shell-footer');
+        const hideShellFooter = (store?.settings && typeof store.settings.get === 'function')
+          ? !!store.settings.get('shell.hideShellFooter', { consumerId: 'shell' })
+          : !!document.body.classList.contains('hide-shell-footer');
         items.push({ label: `${hideShellFooter ? '☑' : '☐'} Hide Shell Footer`, onClick: () => {
           const next = !hideShellFooter;
           try { document.body.classList.toggle('hide-shell-footer', next); } catch (e) {}
-          try { if (store && store.shell && typeof store.shell.setState === 'function') store.shell.setState({ hideShellFooter: next }, { immediate: true, notify: true }); } catch (e) {}
+          try { store?.settings?.set?.('shell.hideShellFooter', next, { consumerId: 'shell', immediate: true }); } catch (e) {}
         } });
       } catch (e) {}
 
       try {
-        const shellState2 = (store && store.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
-        const hideViewHeader = typeof shellState2.hideViewHeaderTools !== 'undefined' ? !!shellState2.hideViewHeaderTools : !!document.body.classList.contains('hide-view-header-tools');
+        const hideViewHeader = (store?.settings && typeof store.settings.get === 'function')
+          ? !!store.settings.get('shell.hideViewHeaderTools', { consumerId: 'shell' })
+          : !!document.body.classList.contains('hide-view-header-tools');
         items.push({ label: `${hideViewHeader ? '☑' : '☐'} Hide View Header Tools`, onClick: () => {
           const next = !hideViewHeader;
           try { document.body.classList.toggle('hide-view-header-tools', next); } catch (e) {}
-          try { if (store && store.shell && typeof store.shell.setState === 'function') store.shell.setState({ hideViewHeaderTools: next }, { immediate: true, notify: true }); } catch (e) {}
+          try { store?.settings?.set?.('shell.hideViewHeaderTools', next, { consumerId: 'shell', immediate: true }); } catch (e) {}
         } });
       } catch (e) {}
 
       try {
-        const shellState3 = (store && store.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
-        const hideViewFooter = typeof shellState3.hideViewFooterControls !== 'undefined' ? !!shellState3.hideViewFooterControls : !!document.body.classList.contains('hide-view-footer-controls');
+        const hideViewFooter = (store?.settings && typeof store.settings.get === 'function')
+          ? !!store.settings.get('shell.hideViewFooterControls', { consumerId: 'shell' })
+          : !!document.body.classList.contains('hide-view-footer-controls');
         items.push({ label: `${hideViewFooter ? '☑' : '☐'} Hide View Footer Controls`, onClick: () => {
           const next = !hideViewFooter;
           try { document.body.classList.toggle('hide-view-footer-controls', next); } catch (e) {}
-          try { if (store && store.shell && typeof store.shell.setState === 'function') store.shell.setState({ hideViewFooterControls: next }, { immediate: true, notify: true }); } catch (e) {}
+          try { store?.settings?.set?.('shell.hideViewFooterControls', next, { consumerId: 'shell', immediate: true }); } catch (e) {}
           try { if (typeof updateShellLayoutVars === 'function') updateShellLayoutVars(); } catch (e) {}
         } });
       } catch (e) {}

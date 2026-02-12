@@ -4,6 +4,7 @@ import { createUIStateManager } from './managers/uiStateManager.js';
 import { createStudyProgressManager } from './managers/studyProgressManager.js';
 import { createCollectionsManager } from './managers/collectionsManager.js';
 import createCollectionDatabaseManager from './managers/collectionDatabaseManager.js';
+import { createSettingsManager } from './managers/settingsManager.js';
 
 export function createStore() {
   // In-memory UI state cache. Persisted by persistenceManager.
@@ -35,8 +36,16 @@ export function createStore() {
   const grammarProgress = studyProgress;
   const studyTime = studyProgress;
   const ui = createUIStateManager({ uiState, persistence, emitter });
+
+  const settings = createSettingsManager({
+    getShellState: ui.getShellState,
+    setShellState: ui.setShellState,
+    getAppState: ui.getAppState,
+    setAppState: ui.setAppState,
+  });
+
   const collectionDB = createCollectionDatabaseManager({ log: true });
-  const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, grammarProgressManager: grammarProgress, collectionDB });
+  const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, grammarProgressManager: grammarProgress, collectionDB, settings });
 
   function subscribe(fn) {
     return emitter.subscribe(fn);
@@ -45,6 +54,9 @@ export function createStore() {
   async function initialize() {
     try {
       await persistence.load();
+
+      // SettingsManager becomes usable only after persisted uiState is loaded.
+      try { settings.setReady(true); } catch (e) {}
 
       // Ensure expected kv shapes exist.
       kanjiProgress.ensureKanjiProgressMap();
@@ -87,6 +99,7 @@ export function createStore() {
   return {
     subscribe,
     initialize,
+    settings,
     collections: {
       getCollections: collections.getCollections,
       getAvailableCollections: collections.getAvailableCollections,
@@ -129,14 +142,85 @@ export function createStore() {
       clearLearnedForCollection: collections.clearLearnedForCollection,
     },
     shell: {
-      getLastRoute: ui.getLastRoute,
-      setLastRoute: ui.setLastRoute,
+      getLastRoute: () => {
+        try {
+          if (settings && typeof settings.isReady === 'function' && settings.isReady()) {
+            const v = settings.get('shell.lastRoute', { consumerId: 'store.shell' });
+            return (typeof v === 'string' && v.trim()) ? v : null;
+          }
+        } catch (e) {}
+        return ui.getLastRoute();
+      },
+      setLastRoute: (routeOrPath) => {
+        try {
+          // Keep existing normalization semantics.
+          let path = null;
+          if (routeOrPath && typeof routeOrPath === 'object') {
+            const pathname = typeof routeOrPath.pathname === 'string' ? routeOrPath.pathname : '/';
+            const query = routeOrPath.query;
+            const search = (query && typeof query.toString === 'function') ? query.toString() : '';
+            path = search ? `${pathname}?${search}` : pathname;
+          } else {
+            path = String(routeOrPath || '').trim();
+          }
+          if (!path) return;
+          if (!path.startsWith('/')) path = `/${path.replace(/^#+/, '')}`;
+
+          if (settings && typeof settings.set === 'function') {
+            settings.set('shell.lastRoute', path, { consumerId: 'store.shell', silent: true });
+            return;
+          }
+        } catch (e) {}
+        ui.setLastRoute(routeOrPath);
+      },
       getCollectionBrowserPath: () => (typeof state.collectionBrowserPath === 'string') ? state.collectionBrowserPath : null,
       setCollectionBrowserPath: (path) => {
         state.collectionBrowserPath = typeof path === 'string' ? path : String(path || '');
       },
-      getVoiceSettings: ui.getVoiceSettings,
-      setVoiceSettings: ui.setVoiceSettings,
+      getVoiceSettings: () => {
+        try {
+          if (settings && typeof settings.isReady === 'function' && settings.isReady()) {
+            const v = settings.get('shell.voice', { consumerId: 'store.shell' });
+            if (v && typeof v === 'object') return { ...v };
+            return null;
+          }
+        } catch (e) {}
+        return ui.getVoiceSettings();
+      },
+      setVoiceSettings: (patch) => {
+        // Preserve the prior deep-merge behavior of ui.setVoiceSettings.
+        try {
+          if (!(settings && typeof settings.set === 'function' && typeof settings.get === 'function')) {
+            ui.setVoiceSettings(patch);
+            return;
+          }
+
+          const prev = (settings.isReady && settings.isReady()) ? (settings.get('shell.voice', { consumerId: 'store.shell' }) || {}) : {};
+          const prevObj = (prev && typeof prev === 'object') ? prev : {};
+          const patchObj = (patch && typeof patch === 'object') ? patch : {};
+          const next = { ...prevObj, ...patchObj };
+
+          if (patchObj.engVoice && typeof patchObj.engVoice === 'object') {
+            const prevEng = (prevObj.engVoice && typeof prevObj.engVoice === 'object') ? prevObj.engVoice : {};
+            next.engVoice = { ...prevEng, ...patchObj.engVoice };
+          }
+          if (patchObj.jpVoice && typeof patchObj.jpVoice === 'object') {
+            const prevJp = (prevObj.jpVoice && typeof prevObj.jpVoice === 'object') ? prevObj.jpVoice : {};
+            next.jpVoice = { ...prevJp, ...patchObj.jpVoice };
+          }
+
+          for (const key of ['engVoice', 'jpVoice']) {
+            const obj = next[key];
+            if (!obj || typeof obj !== 'object') continue;
+            if (obj.voiceURI === '') obj.voiceURI = null;
+            if (obj.voiceName === '') obj.voiceName = null;
+          }
+
+          settings.set('shell.voice', next, { consumerId: 'store.shell' });
+        } catch (e) {
+          try { ui.setVoiceSettings(patch); } catch (e2) {}
+        }
+      },
       getState: ui.getShellState,
       setState: ui.setShellState,
     },

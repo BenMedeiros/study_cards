@@ -1,26 +1,7 @@
-import { nowMs, parseHashRoute, lsGetJson, lsSetJson } from './helpers.js';
-
-const LS_LEGACY_KEY = 'study_cards_timing';
-const SHELL_NS_KEY = 'study_cards:v1';
+import { nowMs, parseHashRoute } from './helpers.js';
 
 // Keep a simple nesting stack so logs show call structure.
 const _stack = [];
-
-function _readLocalStorageFlag() {
-  try {
-    // Prefer the namespaced shell blob.
-    const shell = lsGetJson(SHELL_NS_KEY, null);
-    if (shell && typeof shell === 'object' && typeof shell.timingEnabled === 'boolean') return shell.timingEnabled;
-
-    // Fallback to legacy single-value flag if present.
-    const v = localStorage.getItem(LS_LEGACY_KEY);
-    if (v === '1' || v === 'true' || v === 'on' || v === 'yes') return true;
-    if (v === '0' || v === 'false' || v === 'off' || v === 'no') return false;
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 function _readHashFlag() {
   try {
@@ -46,12 +27,12 @@ export function isTimingEnabled() {
     // ignore
   }
 
-  // If a store is exposed on window, read a persisted shell value first.
+  // If a store is exposed on window, read the persisted setting.
   try {
-    const s = (typeof window !== 'undefined' && window.__STORE__ && window.__STORE__.shell && typeof window.__STORE__.shell.getState === 'function')
-      ? window.__STORE__.shell.getState()
-      : null;
-    if (s && typeof s === 'object' && typeof s.timingEnabled === 'boolean') return s.timingEnabled;
+    const sm = (typeof window !== 'undefined' && window.__STORE__ && window.__STORE__.settings) ? window.__STORE__.settings : null;
+    if (sm && typeof sm.isReady === 'function' && sm.isReady() && typeof sm.get === 'function') {
+      return !!sm.get('shell.timingEnabled', { consumerId: 'timing' });
+    }
   } catch {
     // ignore
   }
@@ -59,34 +40,15 @@ export function isTimingEnabled() {
   const hash = _readHashFlag();
   if (hash !== null) return hash;
 
-  const ls = _readLocalStorageFlag();
-  if (ls !== null) return ls;
-
   return false;
 }
 
 export function setTimingEnabled(enabled) {
   const val = !!enabled;
   try {
-    // Prefer persisting into app store shell state when available.
-    try {
-      if (typeof window !== 'undefined' && window.__STORE__ && window.__STORE__.shell && typeof window.__STORE__.shell.setState === 'function') {
-        window.__STORE__.shell.setState({ timingEnabled: val });
-      } else {
-        // Fallback: update the namespaced shell blob directly so persistence
-        // behaviour remains consistent across reloads.
-        const shell = lsGetJson(SHELL_NS_KEY, {}) || {};
-        shell.timingEnabled = val;
-        lsSetJson(SHELL_NS_KEY, shell);
-      }
-    } catch {
-      try {
-        const shell = lsGetJson(SHELL_NS_KEY, {}) || {};
-        shell.timingEnabled = val;
-        lsSetJson(SHELL_NS_KEY, shell);
-      } catch {
-        // ignore
-      }
+    const sm = (typeof window !== 'undefined' && window.__STORE__ && window.__STORE__.settings) ? window.__STORE__.settings : null;
+    if (sm && typeof sm.set === 'function') {
+      sm.set('shell.timingEnabled', val, { consumerId: 'timing', immediate: true });
     }
   } catch {
     // ignore

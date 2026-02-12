@@ -2,11 +2,26 @@ import { basename, dirname, normalizeFolderPath, titleFromFilename, parseFieldQu
 import { buildHashRoute, parseHashRoute } from '../utils/helpers.js';
 import { timed } from '../utils/timing.js';
 
-export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, grammarProgressManager = null, collectionDB = null }) {
+export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, grammarProgressManager = null, collectionDB = null, settings = null }) {
   // Folder metadata helpers/storage used for lazy loads
   let folderMetadataMap = null;
   const metadataCache = {};
   const pendingFolderMetadataLoads = new Map();
+
+  // Register the settings this manager owns/updates.
+  try {
+    if (settings && typeof settings.registerConsumer === 'function') {
+      settings.registerConsumer({
+        consumerId: 'collectionsManager',
+        settings: [
+          'shell.activeCollectionId',
+          'shell.activeCollectionPath',
+          'shell.activeCollectionEntriesCount',
+          'shell.lastRoute',
+        ],
+      });
+    }
+  } catch (e) {}
 
   // map of available collection path -> lightweight metadata from index.json
   let availableCollectionsMap = new Map();
@@ -1267,21 +1282,36 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
 
     try {
-      uiState.shell = uiState.shell || {};
-      uiState.shell.activeCollectionId = state.activeCollectionId;
-      // Also persist active collection path and base entries count for shell display
-      try {
-        const activeColl = state.collections.find(c => c.key === state.activeCollectionId) || null;
-        uiState.shell.activeCollectionPath = activeColl?.key || null;
-        uiState.shell.activeCollectionEntriesCount = Array.isArray(activeColl?.entries) ? activeColl.entries.length : 0;
-      } catch (e) {
-        // ignore
+      if (settings && typeof settings.set === 'function') {
+        settings.set('shell.activeCollectionId', state.activeCollectionId, { consumerId: 'collectionsManager', silent: true });
+
+        // Also persist active collection path and base entries count for shell display
+        try {
+          const activeColl = state.collections.find(c => c.key === state.activeCollectionId) || null;
+          settings.set('shell.activeCollectionPath', activeColl?.key || null, { consumerId: 'collectionsManager', silent: true });
+          settings.set('shell.activeCollectionEntriesCount', Array.isArray(activeColl?.entries) ? activeColl.entries.length : 0, { consumerId: 'collectionsManager', silent: true });
+        } catch (e) {
+          // ignore
+        }
+
+        if (location.hash) {
+          const lr = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
+          settings.set('shell.lastRoute', lr, { consumerId: 'collectionsManager', silent: true });
+        }
+      } else {
+        uiState.shell = uiState.shell || {};
+        uiState.shell.activeCollectionId = state.activeCollectionId;
+        try {
+          const activeColl = state.collections.find(c => c.key === state.activeCollectionId) || null;
+          uiState.shell.activeCollectionPath = activeColl?.key || null;
+          uiState.shell.activeCollectionEntriesCount = Array.isArray(activeColl?.entries) ? activeColl.entries.length : 0;
+        } catch (e) {}
+        if (location.hash) {
+          uiState.shell.lastRoute = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
+        }
+        persistence.markDirty({ shell: true });
+        persistence.scheduleFlush();
       }
-      if (location.hash) {
-        uiState.shell.lastRoute = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
-      }
-      persistence.markDirty({ shell: true });
-      persistence.scheduleFlush();
     } catch {
       // ignore
     }

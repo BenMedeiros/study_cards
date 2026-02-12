@@ -10,6 +10,18 @@ export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
   el.id = 'kanji-study-root';
 
+  // Register as a settings consumer for persisted app settings.
+  try {
+    store?.settings?.registerConsumer?.({
+      consumerId: 'kanjiStudyCardView',
+      settings: [
+        'apps.kanjiStudy.defaultViewMode',
+        'apps.kanjiStudy.isAutoSpeak',
+        'apps.kanjiStudy.autoplaySequence',
+      ],
+    });
+  } catch (e) {}
+
   // Study timing: credit time spent on a card (max 10s per card view).
   const MAX_CREDIT_PER_CARD_MS = 10_000;
   const MIN_VIEW_TO_COUNT_MS = 200;
@@ -173,10 +185,11 @@ export function renderKanjiStudyCard({ store }) {
         });
         // persist app-scoped index
         store.collections.saveCollectionState(key, { currentIndex: index }, { app: 'kanjiStudyCardView' });
-        // persist app-global default view mode and auto-speak under uiState.apps.kanjiStudy
+        // persist app-global default view mode and auto-speak under apps.kanjiStudy
         try {
-          if (store?.apps && typeof store.apps.setState === 'function') {
-            store.apps.setState('kanjiStudy', { defaultViewMode: defaultViewMode, isAutoSpeak: !!autoSpeakKanji });
+          if (store?.settings && typeof store.settings.set === 'function') {
+            store.settings.set('apps.kanjiStudy.defaultViewMode', defaultViewMode, { consumerId: 'kanjiStudyCardView' });
+            store.settings.set('apps.kanjiStudy.isAutoSpeak', !!autoSpeakKanji, { consumerId: 'kanjiStudyCardView' });
           }
         } catch (e) {}
       }
@@ -307,17 +320,17 @@ export function renderKanjiStudyCard({ store }) {
   });
 
   // Autoplay controls: create grouped play/gear control and hook into play loop
-  // Load app-specific autoplay config (saved under uiState.apps.kanjiStudy.autoplaySequence)
+  // Load app-specific autoplay config (saved under apps.kanjiStudy.*)
   try {
-    if (store?.apps && typeof store.apps.getState === 'function') {
-      const appState = store.apps.getState('kanjiStudy') || {};
-      if (Array.isArray(appState.autoplaySequence)) autoplayConfig = appState.autoplaySequence.slice();
-        // restore app-global default view mode if present and auto-speak preference
-      try {
-        if (typeof appState.defaultViewMode === 'string') {
-          defaultViewMode = appState.defaultViewMode;
-        }
-      } catch (e) {}
+    if (store?.settings && typeof store.settings.get === 'function') {
+      const seq = store.settings.get('apps.kanjiStudy.autoplaySequence', { consumerId: 'kanjiStudyCardView' });
+      if (Array.isArray(seq)) autoplayConfig = seq.slice();
+
+      const dvm = store.settings.get('apps.kanjiStudy.defaultViewMode', { consumerId: 'kanjiStudyCardView' });
+      if (typeof dvm === 'string') {
+        defaultViewMode = dvm;
+      }
+
       // Ensure toggle UI and viewMode reflect restored default
       try {
         viewMode = defaultViewMode;
@@ -326,14 +339,13 @@ export function renderKanjiStudyCard({ store }) {
           toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
         }
       } catch (e) {}
-        // restore auto-speak preference if present
-        try {
-          if (typeof appState.isAutoSpeak === 'boolean') {
-            autoSpeakKanji = !!appState.isAutoSpeak;
-            try { autoSpeakBtn.setAttribute('aria-pressed', String(!!autoSpeakKanji)); } catch (e) {}
-            try { autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto-speak: On' : '🔊 Auto-speak: Off'; } catch (e) {}
-          }
-        } catch (e) {}
+
+      const autoSpeak = store.settings.get('apps.kanjiStudy.isAutoSpeak', { consumerId: 'kanjiStudyCardView' });
+      if (typeof autoSpeak === 'boolean') {
+        autoSpeakKanji = !!autoSpeak;
+        try { autoSpeakBtn.setAttribute('aria-pressed', String(!!autoSpeakKanji)); } catch (e) {}
+        try { autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto-speak: On' : '🔊 Auto-speak: Off'; } catch (e) {}
+      }
     }
   } catch (e) {}
 
@@ -350,9 +362,7 @@ export function renderKanjiStudyCard({ store }) {
   if (!Array.isArray(autoplayConfig) || autoplayConfig.length === 0) {
     autoplayConfig = DEFAULT_AUTOPLAY_SEQUENCE.slice();
     try {
-      if (store?.apps && typeof store.apps.setState === 'function') {
-        store.apps.setState('kanjiStudy', { autoplaySequence: autoplayConfig });
-      }
+      store?.settings?.set?.('apps.kanjiStudy.autoplaySequence', autoplayConfig, { consumerId: 'kanjiStudyCardView' });
     } catch (e) {}
   }
 
@@ -403,9 +413,7 @@ export function renderKanjiStudyCard({ store }) {
     onSequenceChange: (seq) => {
       autoplayConfig = Array.isArray(seq) ? seq.slice() : [];
       try {
-        if (store?.apps && typeof store.apps.setState === 'function') {
-          store.apps.setState('kanjiStudy', { autoplaySequence: autoplayConfig });
-        }
+        store?.settings?.set?.('apps.kanjiStudy.autoplaySequence', autoplayConfig, { consumerId: 'kanjiStudyCardView' });
       } catch (e) {}
       saveUIState();
     }

@@ -6,37 +6,7 @@ import { createTable } from '../components/table.js';
 
 // Persist UI selections for this view under the global namespaced blob
 // stored at localStorage key `study_cards:v1` -> `apps` -> `entityExplorer`.
-function readEntityExplorerAppState() {
-  try {
-    const raw = localStorage.getItem('study_cards:v1');
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    return parsed && parsed.apps && parsed.apps.entityExplorer ? parsed.apps.entityExplorer : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeEntityExplorerAppState(state = {}) {
-  try {
-    const raw = localStorage.getItem('study_cards:v1');
-    let obj = raw ? JSON.parse(raw) : {};
-    if (!obj || typeof obj !== 'object') obj = {};
-    obj.apps = obj.apps || {};
-    obj.apps.entityExplorer = obj.apps.entityExplorer || {};
-    for (const k of Object.keys(state || {})) {
-      const v = state[k];
-      if (v === null) {
-        try { delete obj.apps.entityExplorer[k]; } catch (e) {}
-      } else {
-        obj.apps.entityExplorer[k] = v;
-      }
-    }
-    localStorage.setItem('study_cards:v1', JSON.stringify(obj));
-  } catch {
-    // ignore localStorage errors
-  }
-}
+// Writes go through SettingsManager (store.settings).
 
 function safeJson(v) {
   try { return JSON.stringify(v, null, 2); } catch { return String(v); }
@@ -185,6 +155,18 @@ export function renderEntityExplorer({ store }) {
   const root = document.createElement('div');
   root.id = 'entity-explorer-root';
 
+  // Register as a settings consumer.
+  try {
+    store?.settings?.registerConsumer?.({
+      consumerId: 'entityExplorerView',
+      settings: [
+        'apps.entityExplorer.manager',
+        'apps.entityExplorer.db',
+        'apps.entityExplorer.selection',
+      ],
+    });
+  } catch (e) {}
+
   const headerTools = createViewHeaderTools();
   const content = document.createElement('div');
   content.className = 'entity-explorer-content';
@@ -270,7 +252,18 @@ export function renderEntityExplorer({ store }) {
   }
 
   // UI: manager dropdown + optional DB / store groups
-  const _savedAppState = readEntityExplorerAppState() || {};
+  const _savedAppState = (() => {
+    try {
+      if (store?.settings && typeof store.settings.get === 'function') {
+        return {
+          manager: store.settings.get('apps.entityExplorer.manager', { consumerId: 'entityExplorerView' }),
+          db: store.settings.get('apps.entityExplorer.db', { consumerId: 'entityExplorerView' }),
+          selection: store.settings.get('apps.entityExplorer.selection', { consumerId: 'entityExplorerView' }),
+        };
+      }
+    } catch (e) {}
+    return {};
+  })();
   const initialManager = String(_savedAppState.manager || 'idb');
 
   const managerDropdown = createDropdown({
@@ -279,12 +272,15 @@ export function renderEntityExplorer({ store }) {
     onChange: (next) => {
       const sel = String(next || 'idb');
       // persist manager selection (apps.entityExplorer)
-      if (sel === 'ls') {
-        // clear idb-specific fields to avoid clutter
-        writeEntityExplorerAppState({ manager: sel, db: null, selection: null });
-      } else {
-        writeEntityExplorerAppState({ manager: sel });
-      }
+      try {
+        if (store?.settings && typeof store.settings.set === 'function') {
+          store.settings.set('apps.entityExplorer.manager', sel, { consumerId: 'entityExplorerView', immediate: true });
+          if (sel === 'ls') {
+            store.settings.set('apps.entityExplorer.db', null, { consumerId: 'entityExplorerView', immediate: true });
+            store.settings.set('apps.entityExplorer.selection', null, { consumerId: 'entityExplorerView', immediate: true });
+          }
+        }
+      } catch (e) {}
       loadAndRenderManager(sel);
       if (sel === 'idb') {
         if (!dbGroup.parentElement) left.append(dbGroup);
@@ -379,7 +375,10 @@ export function renderEntityExplorer({ store }) {
         onChange: (next) => {
           const dbName = String(next || initialDb);
           // persist selected DB
-          writeEntityExplorerAppState({ db: dbName, manager: 'idb' });
+          try {
+            store?.settings?.set?.('apps.entityExplorer.manager', 'idb', { consumerId: 'entityExplorerView', immediate: true });
+            store?.settings?.set?.('apps.entityExplorer.db', dbName, { consumerId: 'entityExplorerView', immediate: true });
+          } catch (e) {}
           rebuildStoreDropdown(dbName);
         },
         className: '',
@@ -424,7 +423,11 @@ export function renderEntityExplorer({ store }) {
         onChange: async (next) => {
           const storeName = String(next || initialStore);
           // persist selected store and manager/db
-          writeEntityExplorerAppState({ manager: 'idb', db: dbName, selection: `idb:${storeName}` });
+          try {
+            store?.settings?.set?.('apps.entityExplorer.manager', 'idb', { consumerId: 'entityExplorerView', immediate: true });
+            store?.settings?.set?.('apps.entityExplorer.db', dbName, { consumerId: 'entityExplorerView', immediate: true });
+            store?.settings?.set?.('apps.entityExplorer.selection', `idb:${storeName}`, { consumerId: 'entityExplorerView', immediate: true });
+          } catch (e) {}
           await loadAndRenderIdbStore(dbName, storeName);
         },
         className: '',
