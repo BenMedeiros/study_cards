@@ -99,10 +99,9 @@
       "meaning": "about; approximately; extent/degree (approximation/extent marker)",
       "lexicalClass": "regular",
       "tags": [
-        "fractional_numeral",
-        "foo"
+        "fractional_numeral"
       ],
-      "type": "adverb",
+      "type": "noun",
       "orthography": "kanji"
     },
     {
@@ -110,7 +109,7 @@
       "reading": "ぜんぶ",
       "meaning": "all; entirely",
       "lexicalClass": "regular",
-      "type": "adverb",
+      "type": "noun",
       "orthography": "kanji"
     },
     {
@@ -158,7 +157,7 @@
       "reading": "さいきん",
       "meaning": "recently; lately",
       "lexicalClass": "regular",
-      "type": "adverb",
+      "type": "noun",
       "orthography": "kanji"
     },
     {
@@ -214,7 +213,7 @@
       "reading": "おおく",
       "meaning": "many; much; in large numbers",
       "lexicalClass": "regular",
-      "type": "adverb",
+      "type": "noun",
       "orthography": "kanji"
     },
     {
@@ -222,7 +221,7 @@
       "reading": "まいげつ",
       "meaning": "every month",
       "lexicalClass": "regular",
-      "type": "adverb",
+      "type": "noun",
       "orthography": "kanji"
     },
     {
@@ -11655,6 +11654,237 @@
       "tags": [
         "pokemon-name-root"
       ]
+    },
+    {
+      "kanji": "あ",
+      "reading": "あ",
+      "meaning": "Ah; oh",
+      "type": "expression",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "ああ",
+      "reading": "ああ",
+      "meaning": "ah; yes",
+      "type": "adverb",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "アフリカ",
+      "reading": "アフリカ",
+      "meaning": "Africa",
+      "type": "noun",
+      "orthography": "katakana"
+    },
+    {
+      "kanji": "挨拶",
+      "reading": "あいさつ",
+      "meaning": "greeting; to greet",
+      "type": "noun",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "アジア",
+      "reading": "アジア",
+      "meaning": "Asia",
+      "type": "noun",
+      "orthography": "katakana"
+    },
+    {
+      "kanji": "赤ちゃん",
+      "reading": "あかちゃん",
+      "meaning": "baby; infant",
+      "type": "noun",
+      "orthography": "both"
+    },
+    {
+      "kanji": "赤ん坊",
+      "reading": "あかんぼう",
+      "meaning": "baby; infant",
+      "type": "noun",
+      "orthography": "both"
+    },
+    {
+      "kanji": "アクセサリー",
+      "reading": "アクセサリー",
+      "meaning": "accessory",
+      "type": "noun",
+      "orthography": "katakana"
+    },
+    {
+      "kanji": "アメリカ",
+      "reading": "アメリカ",
+      "meaning": "America",
+      "type": "noun",
+      "orthography": "katakana"
+    },
+    {
+      "kanji": "アナウンサー",
+      "reading": "アナウンサー",
+      "meaning": "announcer",
+      "type": "noun",
+      "orthography": "katakana"
+    },
+    {
+      "kanji": "あんな",
+      "reading": "あんな",
+      "meaning": "such (that kind)",
+      "type": "descriptive-phrase",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "安心",
+      "reading": "あんしん",
+      "meaning": "peace of mind",
+      "type": "na-adjective",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "アルバイト",
+      "reading": "アルバイト",
+      "meaning": "part-time job",
+      "type": "noun",
+      "orthography": "katakana"
+    },
+    {
+      "kanji": "アルコール",
+      "reading": "アルコール",
+      "meaning": "alcohol",
+      "type": "noun",
+      "orthography": "katakana"
+    },
+    {
+      "kanji": "遊び",
+      "reading": "あそび",
+      "meaning": "play; playing",
+      "type": "noun",
+      "orthography": "both"
+    },
+    {
+      "kanji": "集まる",
+      "reading": "あつまる",
+      "meaning": "to gather; to collect (intrans.)",
+      "type": "godan-verb",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "謝る",
+      "reading": "あやまる",
+      "meaning": "to apologize",
+      "type": "godan-verb",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "倍",
+      "reading": "ばい",
+      "meaning": "double",
+      "type": "noun",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "番組",
+      "reading": "ばんぐみ",
+      "meaning": "(program) TV program",
+      "type": "noun",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "ベル",
+      "reading": "ベル",
+      "meaning": "bell",
+      "type": "noun",
+      "orthography": "katakana"
+    },
+    {
+      "kanji": "びっくり",
+      "reading": "びっくり",
+      "meaning": "to be surprised; surprise (onomatopoeic/adverb)",
+      "type": "adverb",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "僕",
+      "reading": "ぼく",
+      "meaning": "I (used by males)",
+      "type": "noun",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "貿易",
+      "reading": "ぼうえき",
+      "meaning": "trade",
+      "type": "noun",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "ぶどう",
+      "reading": "ぶどう",
+      "meaning": "grapes",
+      "type": "noun",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "文学",
+      "reading": "ぶんがく",
+      "meaning": "literature",
+      "type": "noun",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "ちゃん",
+      "reading": "ちゃん",
+      "meaning": "familiar suffix (affectionate)",
+      "type": "expression",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "チェック",
+      "reading": "チェック",
+      "meaning": "check; to check",
+      "type": "noun",
+      "orthography": "katakana"
+    },
+    {
+      "kanji": "血",
+      "reading": "ち",
+      "meaning": "blood",
+      "type": "noun",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "地理",
+      "reading": "ちり",
+      "meaning": "geography",
+      "type": "noun",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "中学校",
+      "reading": "ちゅうがっこう",
+      "meaning": "junior high school; middle school",
+      "type": "noun",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "注射",
+      "reading": "ちゅうしゃ",
+      "meaning": "injection",
+      "type": "noun",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "駐車場",
+      "reading": "ちゅうしゃじょう",
+      "meaning": "parking lot",
+      "type": "noun",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "大分",
+      "reading": "だいぶ",
+      "meaning": "considerably; greatly",
+      "type": "adverb",
+      "orthography": "kanji"
     }
   ]
 }
