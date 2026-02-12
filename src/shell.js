@@ -71,24 +71,6 @@ export function createAppShell({ store, onNavigate }) {
       try { document.body.classList.toggle('hide-shell-footer', !!sm.get('shell.hideShellFooter', { consumerId: 'shell' })); } catch (e) {}
       try { document.body.classList.toggle('hide-view-footer-controls', !!sm.get('shell.hideViewFooterControls', { consumerId: 'shell' })); } catch (e) {}
       try { document.body.classList.toggle('hide-view-header-tools', !!sm.get('shell.hideViewHeaderTools', { consumerId: 'shell' })); } catch (e) {}
-    } else {
-      const s = (store && store.shell && typeof store.shell.getState === 'function') ? store.shell.getState() : null;
-      if (s && typeof s === 'object' && typeof s.showFooterCaptions === 'boolean') captionsVisible = !!s.showFooterCaptions;
-      // Apply persisted visibility toggles (if present) so stored preferences
-      // such as hiding footers or header tools are respected on startup.
-      try {
-        if (s && typeof s === 'object') {
-          if (typeof s.hideShellFooter !== 'undefined') {
-            document.body.classList.toggle('hide-shell-footer', !!s.hideShellFooter);
-          }
-          if (typeof s.hideViewFooterControls !== 'undefined') {
-            document.body.classList.toggle('hide-view-footer-controls', !!s.hideViewFooterControls);
-          }
-          if (typeof s.hideViewHeaderTools !== 'undefined') {
-            document.body.classList.toggle('hide-view-header-tools', !!s.hideViewHeaderTools);
-          }
-        }
-      } catch (e) {}
     }
   } catch (e) {}
 
@@ -467,8 +449,8 @@ export function createAppShell({ store, onNavigate }) {
   // Initialize global emit-logging flag from persisted shell state so
   // the UI checkbox reflects and controls the runtime flag consistently.
   try {
-    const shellStateInit = (store && store.shell && typeof store.shell.getState === 'function') ? (store.shell.getState() || {}) : {};
-    if (typeof window !== 'undefined') window.__LOG_EMITS__ = !!shellStateInit.logEmits;
+    const shellLogEmits = (store && store.settings && typeof store.settings.get === 'function') ? !!store.settings.get('shell.logEmits', { consumerId: 'shell' }) : false;
+    if (typeof window !== 'undefined') window.__LOG_EMITS__ = !!shellLogEmits;
   } catch (e) {}
 
   // Study time tracking (app x collection)
@@ -1047,8 +1029,8 @@ export function createAppShell({ store, onNavigate }) {
     try {
       // Ensure runtime emit-logging matches persisted shell state when persistence finishes loading.
       try {
-        const shellStateSync = (store && store.shell && typeof store.shell.getState === 'function') ? store.shell.getState() : {};
-        if (typeof window !== 'undefined') window.__LOG_EMITS__ = !!shellStateSync.logEmits;
+        const shellLogEmits = (store && store.settings && typeof store.settings.get === 'function') ? !!store.settings.get('shell.logEmits', { consumerId: 'shell' }) : false;
+        if (typeof window !== 'undefined') window.__LOG_EMITS__ = !!shellLogEmits;
       } catch (e) {}
       const prevActiveId = cached.activeId;
       cached.collections = Array.isArray(store?.collections?.getCollections?.()) ? store.collections.getCollections() : cached.collections;
@@ -1060,21 +1042,17 @@ export function createAppShell({ store, onNavigate }) {
       // by the persistence manager). Do not re-persist here — only apply
       // visual state based on what's in the store.
       try {
-        const s = (store && store.shell && typeof store.shell.getState === 'function') ? store.shell.getState() : null;
-        if (s && typeof s === 'object') {
-          if (typeof s.showFooterCaptions === 'boolean') {
-            try {
-              if (s.showFooterCaptions) document.body.classList.add('using-keyboard');
-              else document.body.classList.remove('using-keyboard');
-            } catch (e) {}
-            captionsVisible = !!s.showFooterCaptions;
-          }
-
+        if (store && store.settings && typeof store.settings.get === 'function') {
           try {
-            if (typeof s.hideShellFooter !== 'undefined') document.body.classList.toggle('hide-shell-footer', !!s.hideShellFooter);
-            if (typeof s.hideViewFooterControls !== 'undefined') document.body.classList.toggle('hide-view-footer-controls', !!s.hideViewFooterControls);
-            if (typeof s.hideViewHeaderTools !== 'undefined') document.body.classList.toggle('hide-view-header-tools', !!s.hideViewHeaderTools);
+            const sc = !!store.settings.get('shell.showFooterCaptions', { consumerId: 'shell' });
+            if (sc) document.body.classList.add('using-keyboard');
+            else document.body.classList.remove('using-keyboard');
+            captionsVisible = sc;
           } catch (e) {}
+
+          try { document.body.classList.toggle('hide-shell-footer', !!store.settings.get('shell.hideShellFooter', { consumerId: 'shell' })); } catch (e) {}
+          try { document.body.classList.toggle('hide-view-footer-controls', !!store.settings.get('shell.hideViewFooterControls', { consumerId: 'shell' })); } catch (e) {}
+          try { document.body.classList.toggle('hide-view-header-tools', !!store.settings.get('shell.hideViewHeaderTools', { consumerId: 'shell' })); } catch (e) {}
         }
       } catch (e) {}
 
@@ -1088,9 +1066,9 @@ export function createAppShell({ store, onNavigate }) {
 
     // Update footer-right with active collection path and base entries count
     try {
-      const s = (store && store.shell && typeof store.shell.getState === 'function') ? store.shell.getState() : {};
-      const path = s && typeof s.activeCollectionPath === 'string' ? s.activeCollectionPath : (cached.activeCollection?.key || '');
-      const count = Number.isFinite(Number(s?.activeCollectionEntriesCount)) ? Number(s.activeCollectionEntriesCount) : (Array.isArray(cached.activeCollection?.entries) ? cached.activeCollection.entries.length : null);
+      const path = (store && store.settings && typeof store.settings.get === 'function') ? (store.settings.get('shell.activeCollectionPath', { consumerId: 'shell' }) || (cached.activeCollection?.key || '')) : (cached.activeCollection?.key || '');
+      const countRaw = (store && store.settings && typeof store.settings.get === 'function') ? store.settings.get('shell.activeCollectionEntriesCount', { consumerId: 'shell' }) : null;
+      const count = Number.isFinite(Number(countRaw)) ? Number(countRaw) : (Array.isArray(cached.activeCollection?.entries) ? cached.activeCollection.entries.length : null);
 
       // Minimal DOM updates to avoid forced reflow/layout thrash.
       if (typeof footerPathPrev === 'undefined') {

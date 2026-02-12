@@ -1282,7 +1282,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       // ignore
     }
 
-    try {
+    
       if (settings && typeof settings.set === 'function') {
         settings.set('shell.activeCollectionId', state.activeCollectionId, { consumerId: 'collectionsManager', silent: true });
 
@@ -1300,22 +1300,10 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
           settings.set('shell.lastRoute', lr, { consumerId: 'collectionsManager', silent: true });
         }
       } else {
-        uiState.shell = uiState.shell || {};
-        uiState.shell.activeCollectionId = state.activeCollectionId;
-        try {
-          const activeColl = state.collections.find(c => c.key === state.activeCollectionId) || null;
-          uiState.shell.activeCollectionPath = activeColl?.key || null;
-          uiState.shell.activeCollectionEntriesCount = Array.isArray(activeColl?.entries) ? activeColl.entries.length : 0;
-        } catch (e) {}
-        if (location.hash) {
-          uiState.shell.lastRoute = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
-        }
-        persistence.markDirty({ shell: true });
-        persistence.scheduleFlush();
+        // SettingsManager should be provided; do not fall back to uiState.shell.
+        // If absent, silently ignore per user's preference (no migration/fallback).
       }
-    } catch {
-      // ignore
-    }
+    
 
     if (!same) emit();
   }

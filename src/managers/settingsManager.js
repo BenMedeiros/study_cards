@@ -38,9 +38,13 @@ function _validateTypeRequired(def) {
 function _normalizeDef(id, def) {
   const out = { ...def, id: String(id) };
   _validateTypeRequired(out);
-  if (out.scope !== 'shell' && out.scope !== 'app') throw new Error(`Setting ${out.id} has invalid scope`);
-  if (out.scope === 'app' && !out.appId) throw new Error(`Setting ${out.id} missing appId`);
-  if (!out.key) throw new Error(`Setting ${out.id} missing key`);
+
+  // Simplified model: persisted state uses the full setting id as the key.
+  // Remove scope/appId complexity — callers only declare the id, type and default.
+  out.key = out.key || out.id;
+  // Clean up any legacy fields to avoid accidental use elsewhere.
+  if ('scope' in out) delete out.scope;
+  if ('appId' in out) delete out.appId;
   if (!('default' in out)) throw new Error(`Setting ${out.id} missing default`);
   return out;
 }
@@ -49,48 +53,48 @@ function _normalizeDef(id, def) {
 const CATALOG = Object.freeze((() => {
   const defs = {
     // shell.*
-    'shell.activeCollectionId': { scope: 'shell', key: 'activeCollectionId', type: { kind: 'string', nullable: true }, default: null },
-    'shell.activeCollectionPath': { scope: 'shell', key: 'activeCollectionPath', type: { kind: 'string', nullable: true }, default: null },
-    'shell.activeCollectionEntriesCount': { scope: 'shell', key: 'activeCollectionEntriesCount', type: { kind: 'number' }, default: 0 },
+    'shell.activeCollectionId': { type: { kind: 'string', nullable: true }, default: null },
+    'shell.activeCollectionPath': { type: { kind: 'string', nullable: true }, default: null },
+    'shell.activeCollectionEntriesCount': { type: { kind: 'number' }, default: 0 },
 
-    'shell.lastRoute': { scope: 'shell', key: 'lastRoute', type: { kind: 'string', nullable: true }, default: null },
+    'shell.lastRoute': { type: { kind: 'string', nullable: true }, default: null },
 
-    'shell.showFooterCaptions': { scope: 'shell', key: 'showFooterCaptions', type: { kind: 'boolean' }, default: false },
-    'shell.timingEnabled': { scope: 'shell', key: 'timingEnabled', type: { kind: 'boolean' }, default: false },
-    'shell.logEmits': { scope: 'shell', key: 'logEmits', type: { kind: 'boolean' }, default: false },
-    'shell.logSettings': { scope: 'shell', key: 'logSettings', type: { kind: 'boolean' }, default: false },
+    'shell.showFooterCaptions': { type: { kind: 'boolean' }, default: false },
+    'shell.timingEnabled': { type: { kind: 'boolean' }, default: false },
+    'shell.logEmits': { type: { kind: 'boolean' }, default: false },
+    'shell.logSettings': { type: { kind: 'boolean' }, default: false },
 
     // Manager-specific log toggles for collectionDatabaseManager
-    'managers.collectionDatabaseManager.log.enabled': { scope: 'shell', key: 'managers.collectionDatabaseManager.log.enabled', type: { kind: 'boolean' }, default: false },
-    'managers.collectionDatabaseManager.log.cachedCollections': { scope: 'shell', key: 'managers.collectionDatabaseManager.log.cachedCollections', type: { kind: 'boolean' }, default: false },
+    'managers.collectionDatabaseManager.log.enabled': { type: { kind: 'boolean' }, default: false },
+    'managers.collectionDatabaseManager.log.cachedCollections': { type: { kind: 'boolean' }, default: false },
 
     // Whether table search inputs auto-normalize via cleanSearchQuery() (e.g. spaces -> '&').
-    // Preferred setting id (kept under shell scope for persistence).
-    'utils.tableSearch.log.autoCleanQuery': { scope: 'shell', key: 'tableSearchAutoCleanQuery', type: { kind: 'boolean' }, default: true },
+    // Preferred setting id.
+    'utils.tableSearch.log.autoCleanQuery': { type: { kind: 'boolean' }, default: false },
     // Back-compat alias (will be removed once all callsites migrate).
-    'shell.tableSearchAutoCleanQuery': { scope: 'shell', key: 'tableSearchAutoCleanQuery', type: { kind: 'boolean' }, default: true },
+    'shell.tableSearchAutoCleanQuery': { type: { kind: 'boolean' }, default: false },
 
-    'shell.hideShellFooter': { scope: 'shell', key: 'hideShellFooter', type: { kind: 'boolean' }, default: false },
-    'shell.hideViewHeaderTools': { scope: 'shell', key: 'hideViewHeaderTools', type: { kind: 'boolean' }, default: false },
-    'shell.hideViewFooterControls': { scope: 'shell', key: 'hideViewFooterControls', type: { kind: 'boolean' }, default: false },
+    'shell.hideShellFooter': { type: { kind: 'boolean' }, default: false },
+    'shell.hideViewHeaderTools': { type: { kind: 'boolean' }, default: false },
+    'shell.hideViewFooterControls': { type: { kind: 'boolean' }, default: false },
 
-    'shell.collectionContexts': { scope: 'shell', key: 'collectionContexts', type: { kind: 'json' }, default: {} },
-    'shell.voice': { scope: 'shell', key: 'voice', type: { kind: 'json', nullable: true }, default: null },
+    'shell.collectionContexts': { type: { kind: 'json' }, default: {} },
+    'shell.voice': { type: { kind: 'json', nullable: true }, default: null },
 
     // apps.kanjiStudy.*
-    'apps.kanjiStudy.defaultViewMode': { scope: 'app', appId: 'kanjiStudy', key: 'defaultViewMode', type: { kind: 'enum', values: ['kanji-only', 'full'] }, default: 'kanji-only' },
-    'apps.kanjiStudy.isAutoSpeak': { scope: 'app', appId: 'kanjiStudy', key: 'isAutoSpeak', type: { kind: 'boolean' }, default: false },
-    'apps.kanjiStudy.autoplaySequence': { scope: 'app', appId: 'kanjiStudy', key: 'autoplaySequence', type: { kind: 'json' }, default: [] },
+    'apps.kanjiStudy.defaultViewMode': { type: { kind: 'enum', values: ['kanji-only', 'full'] }, default: 'kanji-only' },
+    'apps.kanjiStudy.isAutoSpeak': { type: { kind: 'boolean' }, default: false },
+    'apps.kanjiStudy.autoplaySequence': { type: { kind: 'json' }, default: [] },
 
     // apps.grammarStudy.*
-    'apps.grammarStudy.defaultViewMode': { scope: 'app', appId: 'grammarStudy', key: 'defaultViewMode', type: { kind: 'enum', values: ['pattern-only', 'full'] }, default: 'pattern-only' },
-    'apps.grammarStudy.isAutoPlaying': { scope: 'app', appId: 'grammarStudy', key: 'isAutoPlaying', type: { kind: 'boolean' }, default: false },
-    'apps.grammarStudy.autoplaySequence': { scope: 'app', appId: 'grammarStudy', key: 'autoplaySequence', type: { kind: 'json' }, default: [] },
+    'apps.grammarStudy.defaultViewMode': { type: { kind: 'enum', values: ['pattern-only', 'full'] }, default: 'pattern-only' },
+    'apps.grammarStudy.isAutoPlaying': { type: { kind: 'boolean' }, default: false },
+    'apps.grammarStudy.autoplaySequence': { type: { kind: 'json' }, default: [] },
 
     // apps.entityExplorer.*
-    'apps.entityExplorer.manager': { scope: 'app', appId: 'entityExplorer', key: 'manager', type: { kind: 'enum', values: ['idb', 'ls'] }, default: 'idb' },
-    'apps.entityExplorer.db': { scope: 'app', appId: 'entityExplorer', key: 'db', type: { kind: 'string', nullable: true }, default: null },
-    'apps.entityExplorer.selection': { scope: 'app', appId: 'entityExplorer', key: 'selection', type: { kind: 'string', nullable: true }, default: null },
+    'apps.entityExplorer.manager': { type: { kind: 'enum', values: ['idb', 'ls'] }, default: 'idb' },
+    'apps.entityExplorer.db': { type: { kind: 'string', nullable: true }, default: null },
+    'apps.entityExplorer.selection': { type: { kind: 'string', nullable: true }, default: null },
   };
 
   const out = {};
@@ -175,12 +179,15 @@ export function createSettingsManager({ getShellState, setShellState, getAppStat
   }
 
   function _readRaw(def) {
-    if (def.scope === 'shell') {
-      const st = getShellState() || {};
-      return st[def.key];
-    }
-    const st = getAppState(def.appId) || {};
-    return st[def.key];
+    // Persisted exclusively in localStorage under `study_cards:settings`.
+    const ls = (typeof localStorage !== 'undefined') ? localStorage : null;
+    if (!ls) throw new Error('localStorage is not available for SettingsManager');
+
+    const raw = ls.getItem('study_cards:settings');
+    if (!raw) return undefined;
+    const obj = JSON.parse(raw);
+    if (!obj || typeof obj !== 'object') return undefined;
+    return Object.prototype.hasOwnProperty.call(obj, def.id) ? obj[def.id] : undefined;
   }
 
   function _resolveValue(def) {
@@ -192,8 +199,10 @@ export function createSettingsManager({ getShellState, setShellState, getAppStat
 
   function _isLogEnabled() {
     try {
-      const st = getShellState() || {};
-      return typeof st.logSettings === 'boolean' ? st.logSettings : false;
+      const def = CATALOG['shell.logSettings'];
+      if (!def) return false;
+      const raw = _readRaw(def);
+      return typeof raw === 'boolean' ? raw : false;
     } catch {
       return false;
     }
@@ -294,12 +303,18 @@ export function createSettingsManager({ getShellState, setShellState, getAppStat
 
     if (Object.is(prev, next)) return next;
 
-    // Persist to underlying store
-    if (def.scope === 'shell') {
-      setShellState({ [def.key]: next }, { immediate: !!immediate, silent: !!silent });
-    } else {
-      setAppState(def.appId, { [def.key]: next }, { immediate: !!immediate, silent: !!silent });
+    // Persist exclusively to localStorage under `study_cards:settings`.
+    const ls = (typeof localStorage !== 'undefined') ? localStorage : null;
+    if (!ls) throw new Error('localStorage is not available for SettingsManager');
+
+    const raw = ls.getItem('study_cards:settings');
+    let obj = {};
+    if (raw) {
+      obj = JSON.parse(raw) || {};
+      if (typeof obj !== 'object' || obj === null) obj = {};
     }
+    obj[def.id] = next;
+    ls.setItem('study_cards:settings', JSON.stringify(obj));
 
     const rec = _auditGetRecord(def.id);
     rec.writes += 1;

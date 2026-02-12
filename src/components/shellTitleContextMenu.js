@@ -166,6 +166,21 @@ export function createShellTitleContextMenu({
       });
     } catch (e) {}
 
+    // Table search auto-clean toggle
+    try {
+      const autoClean = !!_read('utils.tableSearch.log.autoCleanQuery', true);
+      items.push({
+        label: `${autoClean ? '☑' : '☐'} Auto-clean Table Search`,
+        onClick: () => {
+          try {
+            const cur = !!_read('utils.tableSearch.log.autoCleanQuery', true);
+            const next = !cur;
+            _write('utils.tableSearch.log.autoCleanQuery', !!next, { immediate: true });
+          } catch (e) {}
+        }
+      });
+    } catch (e) {}
+
     // Caption visibility toggle (persisted)
     try {
       const cur = !!_read('shell.showFooterCaptions', false);

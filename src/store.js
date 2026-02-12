@@ -46,6 +46,8 @@ export function createStore() {
 
   // Register the created SettingsManager globally so other modules may obtain it
   try { setGlobalSettingsManager(settings); } catch (e) {}
+  // Make SettingsManager available immediately (reads from localStorage directly)
+  try { settings.setReady(true); } catch (e) {}
 
   const collectionDB = createCollectionDatabaseManager();
   const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, grammarProgressManager: grammarProgress, collectionDB, settings });
@@ -57,11 +59,7 @@ export function createStore() {
   async function initialize() {
     try {
       await persistence.load();
-
-      // SettingsManager becomes usable only after persisted uiState is loaded.
-      try { settings.setReady(true); } catch (e) {}
-
-      // SettingsManager becomes usable only after persisted uiState is loaded.
+      // SettingsManager already marked ready at creation (uses localStorage).
 
       // Ensure expected kv shapes exist.
       kanjiProgress.ensureKanjiProgressMap();
