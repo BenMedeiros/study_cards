@@ -9,10 +9,10 @@ import { renderGrammarStudyCard } from './apps/grammarStudyCardView.js';
 import { renderEntityExplorer } from './apps/entityExplorerView.js';
 import { createCollectionBrowserDropdown } from './components/collectionBrowser.js';
 import { openRightClickMenu, registerRightClickContext } from './components/rightClickMenu.js';
+import { createShellTitleContextMenu } from './components/shellTitleContextMenu.js';
 import { speak } from './utils/speech.js';
 import { createDropdown } from './components/dropdown.js';
-import * as idb from './utils/idb.js';
-import { isTimingEnabled, setTimingEnabled, timed } from './utils/timing.js';
+import { timed } from './utils/timing.js';
 
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
@@ -34,9 +34,22 @@ export function createAppShell({ store, onNavigate }) {
     });
   } catch (e) {}
 
-  // ensure the brand context-class is registered so CSS and selectors
-  // remain discoverable via the explicit class name
-  try { registerRightClickContext('brand-context-menu'); } catch (e) {}
+  const shellTitleContextMenu = createShellTitleContextMenu({
+    store,
+    settings: store?.settings,
+    settingIds: [
+      'shell.showFooterCaptions',
+      'shell.hideShellFooter',
+      'shell.hideViewHeaderTools',
+      'shell.hideViewFooterControls',
+      'shell.logEmits',
+      'shell.logSettings',
+    ],
+    updateShellLayoutVars: () => {
+      try { updateShellLayoutVars(); } catch (e) {}
+    },
+    context: 'brand-context-menu',
+  });
 
   function getVoiceState() {
     return (store?.shell && typeof store.shell.getVoiceSettings === 'function') ? (store.shell.getVoiceSettings() || {}) : {};
@@ -547,6 +560,9 @@ export function createAppShell({ store, onNavigate }) {
   function renderHeader() {
     headerInner.innerHTML = '';
 
+    // If renderHeader runs while a menu is open, ensure overlays are closed.
+    try { shellTitleContextMenu?.close?.(); } catch (e) {}
+
     const brand = document.createElement('div');
     brand.className = 'brand';
     brand.id = 'hdr-brand';
@@ -565,132 +581,10 @@ export function createAppShell({ store, onNavigate }) {
 
     // (Captions toggle moved to the brand context menu.)
 
-    // Right-click on brand opens a small command menu for dev actions
-    // Use the shared `openRightClickMenu` so the shell and table reuse the same DOM/menu.
-    let brandMenuHandle = null;
-
-    function closeBrandMenu() {
-      try { if (brandMenuHandle && typeof brandMenuHandle.close === 'function') brandMenuHandle.close(); } catch (e) {}
-      brandMenuHandle = null;
-    }
-
-    // If renderHeader runs while a menu is open, ensure overlays are closed.
-    try { document.querySelectorAll('.context-menu, .brand-context-menu, .table-context-menu').forEach((el) => { try { el.style.display = 'none'; } catch (e) {} }); } catch (e) {}
-    closeBrandMenu();
-
-    function openBrandMenu(x, y) {
-      document.dispatchEvent(new CustomEvent('ui:closeOverlays'));
-      closeBrandMenu();
-
-      const items = [];
-      items.push({ label: 'Log Persisted Data (IDB)', onClick: () => {
-        try {
-          console.group('Persisted Data (IndexedDB)');
-          idb.idbDumpAll().then((dump) => {
-            const kvRecs = dump?.kv || [];
-            const collRecs = dump?.collections || [];
-            console.log('idb.kv (all records):');
-            for (const r of Array.isArray(kvRecs) ? kvRecs : []) {
-              const key = r?.key ?? '(no key)';
-              const val = r?.value ?? r;
-              console.log(key, val);
-            }
-            console.log('idb.collections (array):', collRecs);
-            console.groupEnd();
-          }).catch((err) => { console.error('IDB read error', err); console.groupEnd(); });
-        } catch (err) { console.error('Log Persisted Data failed', err); }
-      } });
-
-      try {
-        const enabled = isTimingEnabled();
-        items.push({ label: `${enabled ? '☑' : '☐'} Timing Logs`, onClick: () => { const next = setTimingEnabled(!isTimingEnabled()); try { console.info(`[Timing] ${next ? 'enabled' : 'disabled'}`); } catch (e) {} } });
-      } catch (e) {}
-
-      // Emit logging toggle
-      try {
-        const emitsEnabled = (store?.settings && typeof store.settings.get === 'function')
-          ? !!store.settings.get('shell.logEmits', { consumerId: 'shell' })
-          : !!(store && store.shell && typeof store.shell.getState === 'function' && (store.shell.getState() || {}).logEmits);
-        items.push({ label: `${emitsEnabled ? '☑' : '☐'} Log Emits`, onClick: () => {
-          try {
-            const cur = (store?.settings && typeof store.settings.get === 'function')
-              ? !!store.settings.get('shell.logEmits', { consumerId: 'shell' })
-              : !!(store && store.shell && typeof store.shell.getState === 'function' && (store.shell.getState() || {}).logEmits);
-            const next = !cur;
-            try { window.__LOG_EMITS__ = !!next; } catch (e) {}
-            try { store?.settings?.set?.('shell.logEmits', !!next, { consumerId: 'shell', immediate: true }); } catch (e) {}
-            try { console.info(`[Emitter] emits logging ${next ? 'enabled' : 'disabled'}`); } catch (e) {}
-          } catch (e) {}
-        } });
-      } catch (e) {}
-
-      // SettingsManager read/write logging toggle
-      try {
-        const settingsLogsEnabled = (store?.settings && typeof store.settings.get === 'function')
-          ? !!store.settings.get('shell.logSettings', { consumerId: 'shell' })
-          : !!(store && store.shell && typeof store.shell.getState === 'function' && (store.shell.getState() || {}).logSettings);
-        items.push({ label: `${settingsLogsEnabled ? '☑' : '☐'} Log Settings`, onClick: () => {
-          try {
-            const cur = (store?.settings && typeof store.settings.get === 'function')
-              ? !!store.settings.get('shell.logSettings', { consumerId: 'shell' })
-              : !!(store && store.shell && typeof store.shell.getState === 'function' && (store.shell.getState() || {}).logSettings);
-            const next = !cur;
-            try { store?.settings?.set?.('shell.logSettings', !!next, { consumerId: 'shell', immediate: true }); } catch (e) {}
-          } catch (e) {}
-        } });
-      } catch (e) {}
-
-      // Caption visibility toggle (persisted)
-      try {
-        const cur = (store?.settings && typeof store.settings.get === 'function')
-          ? !!store.settings.get('shell.showFooterCaptions', { consumerId: 'shell' })
-          : !!captionsVisible;
-        captionsVisible = cur;
-        items.push({ label: `${cur ? '☑' : '☐'} Show Footer Captions`, onClick: () => { setCaptionsVisible(!cur); } });
-      } catch (e) {}
-
-      // Visibility toggles for debugging/compact layouts (persist when possible)
-      try {
-        const hideShellFooter = (store?.settings && typeof store.settings.get === 'function')
-          ? !!store.settings.get('shell.hideShellFooter', { consumerId: 'shell' })
-          : !!document.body.classList.contains('hide-shell-footer');
-        items.push({ label: `${hideShellFooter ? '☑' : '☐'} Hide Shell Footer`, onClick: () => {
-          const next = !hideShellFooter;
-          try { document.body.classList.toggle('hide-shell-footer', next); } catch (e) {}
-          try { store?.settings?.set?.('shell.hideShellFooter', next, { consumerId: 'shell', immediate: true }); } catch (e) {}
-        } });
-      } catch (e) {}
-
-      try {
-        const hideViewHeader = (store?.settings && typeof store.settings.get === 'function')
-          ? !!store.settings.get('shell.hideViewHeaderTools', { consumerId: 'shell' })
-          : !!document.body.classList.contains('hide-view-header-tools');
-        items.push({ label: `${hideViewHeader ? '☑' : '☐'} Hide View Header Tools`, onClick: () => {
-          const next = !hideViewHeader;
-          try { document.body.classList.toggle('hide-view-header-tools', next); } catch (e) {}
-          try { store?.settings?.set?.('shell.hideViewHeaderTools', next, { consumerId: 'shell', immediate: true }); } catch (e) {}
-        } });
-      } catch (e) {}
-
-      try {
-        const hideViewFooter = (store?.settings && typeof store.settings.get === 'function')
-          ? !!store.settings.get('shell.hideViewFooterControls', { consumerId: 'shell' })
-          : !!document.body.classList.contains('hide-view-footer-controls');
-        items.push({ label: `${hideViewFooter ? '☑' : '☐'} Hide View Footer Controls`, onClick: () => {
-          const next = !hideViewFooter;
-          try { document.body.classList.toggle('hide-view-footer-controls', next); } catch (e) {}
-          try { store?.settings?.set?.('shell.hideViewFooterControls', next, { consumerId: 'shell', immediate: true }); } catch (e) {}
-          try { if (typeof updateShellLayoutVars === 'function') updateShellLayoutVars(); } catch (e) {}
-        } });
-      } catch (e) {}
-
-      try { brandMenuHandle = openRightClickMenu({ x, y, items, context: 'brand-context-menu' }); } catch (e) { brandMenuHandle = null; }
-    }
-
     brand.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      openBrandMenu(e.clientX, e.clientY);
+      try { shellTitleContextMenu?.openAt?.(e.clientX, e.clientY); } catch (e) {}
     });
 
     const right = document.createElement('div');
