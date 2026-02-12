@@ -63,10 +63,76 @@ function readLocalStorageValue(key) {
 }
 
 function renderJsonViewer(value) {
+  const text = safeJson(value);
+  // collapse very large JSON blobs to keep the UI snappy
+  const MAX_CHARS = 1000;
+  const MAX_LINES = 40;
+  const lines = (typeof text === 'string') ? text.split('\n').length : 0;
+  const isBig = (typeof text === 'string' && text.length > MAX_CHARS) || lines > MAX_LINES;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'json-view-wrapper';
+  wrapper.style.position = 'relative';
+
+  const content = document.createElement('div');
+  content.className = 'json-content mono';
+
   const pre = document.createElement('pre');
   pre.className = 'json-view mono';
-  pre.textContent = safeJson(value);
-  return pre;
+  pre.textContent = text;
+
+  const previewLen = 200;
+  const previewText = typeof text === 'string' ? (text.slice(0, previewLen).replace(/\n/g, ' ') + (text.length > previewLen ? '…' : '')) : String(text);
+  const placeholder = document.createElement('div');
+  placeholder.className = 'json-collapsed-placeholder';
+  placeholder.textContent = previewText;
+
+  // create toggle button (top-right)
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'json-toggle';
+  toggle.style.position = 'absolute';
+  toggle.style.top = '4px';
+  toggle.style.right = '4px';
+  toggle.style.padding = '0.15rem 0.4rem';
+  toggle.style.fontSize = '0.8rem';
+  toggle.style.cursor = 'pointer';
+
+  let expanded = !isBig; // default: expanded for small, collapsed for big
+
+  function renderCurrent() {
+    content.innerHTML = '';
+    if (expanded) {
+      content.appendChild(pre);
+      toggle.textContent = '−';
+      toggle.title = 'Collapse JSON';
+      toggle.setAttribute('aria-label', 'Collapse JSON');
+      wrapper.dataset.expanded = 'true';
+      toggle.setAttribute('aria-pressed', 'true');
+    } else {
+      content.appendChild(placeholder);
+      toggle.textContent = '+';
+      toggle.title = 'Expand JSON';
+      toggle.setAttribute('aria-label', 'Expand JSON');
+      wrapper.dataset.expanded = 'false';
+      toggle.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  toggle.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    expanded = !expanded;
+    renderCurrent();
+    // notify parent views that a toggle state changed so they can update controls
+    try { wrapper.dispatchEvent(new CustomEvent('json-toggle', { bubbles: true })); } catch (e) {}
+  });
+
+  // initial render
+  renderCurrent();
+
+  wrapper.appendChild(content);
+  wrapper.appendChild(toggle);
+  return wrapper;
 }
 
 // Helpers for listing/opening arbitrary DBs and reading stores
@@ -123,6 +189,56 @@ export function renderEntityExplorer({ store }) {
   const content = document.createElement('div');
   content.className = 'entity-explorer-content';
 
+  // Collapse-all control (added to header tools)
+  const collapseAllBtn = document.createElement('button');
+  collapseAllBtn.type = 'button';
+  collapseAllBtn.className = 'btn small';
+  collapseAllBtn.textContent = 'Collapse all';
+  collapseAllBtn.title = 'Collapse all JSON viewers';
+  collapseAllBtn.disabled = true;
+
+  function updateCollapseAllBtnState() {
+    // enabled only if there exists at least one expanded json-view-wrapper
+    const anyExpanded = Boolean(document.querySelector('#entity-explorer-root .json-view-wrapper[data-expanded="true"]'));
+    collapseAllBtn.disabled = !anyExpanded;
+  }
+
+  collapseAllBtn.addEventListener('click', () => {
+    const wrappers = Array.from(document.querySelectorAll('#entity-explorer-root .json-view-wrapper'));
+    wrappers.forEach(w => {
+      const btn = w.querySelector('.json-toggle');
+      if (!btn) return;
+      // if currently expanded, click to collapse
+      if (w.dataset.expanded === 'true') btn.click();
+    });
+    updateCollapseAllBtnState();
+  });
+
+  // Wrap toggle control for JSON views
+  const jsonWrapGroup = document.createElement('div');
+  jsonWrapGroup.className = 'data-expansion-group';
+  const jsonWrapBtn = document.createElement('button');
+  jsonWrapBtn.type = 'button';
+  jsonWrapBtn.className = 'btn small';
+  // default action label (will be updated to reflect current state)
+  jsonWrapBtn.textContent = 'Wrap';
+  jsonWrapBtn.title = 'Toggle JSON wrap';
+  const jsonWrapCaption = document.createElement('div');
+  jsonWrapCaption.className = 'data-expansion-caption';
+  jsonWrapCaption.textContent = 'JSON';
+  jsonWrapGroup.append(jsonWrapBtn, jsonWrapCaption);
+
+  function updateJsonWrapBtn() {
+    const wrapped = Boolean(root.classList && root.classList.contains('json-wrap'));
+    jsonWrapBtn.textContent = wrapped ? 'Unwrap' : 'Wrap';
+    jsonWrapBtn.setAttribute('aria-pressed', wrapped ? 'true' : 'false');
+  }
+
+  jsonWrapBtn.addEventListener('click', () => {
+    const wrapped = root.classList.toggle('json-wrap');
+    updateJsonWrapBtn();
+  });
+
   const managerItems = [
     { value: 'idb', label: 'IndexedDB' },
     { value: 'ls', label: 'localStorage' },
@@ -144,10 +260,12 @@ export function renderEntityExplorer({ store }) {
         });
         content.innerHTML = '';
         content.append(createTable({ headers: ['Key', 'Value'], rows, id: 'ls-table', searchable: true, sortable: true }));
+        try { updateCollapseAllBtnState(); } catch (e) {}
       }
     } catch (e) {
       content.innerHTML = '';
       content.append(renderJsonViewer({ error: String(e?.message || e) }));
+      try { updateCollapseAllBtnState(); } catch (e) {}
     }
   }
 
@@ -219,8 +337,19 @@ export function renderEntityExplorer({ store }) {
   const spacer = document.createElement('div');
   spacer.className = 'qa-header-spacer';
   headerTools.append(left, spacer);
+  // append JSON wrap group then collapse-all to the right side of header tools
+  headerTools.append(jsonWrapGroup);
+  headerTools.append(collapseAllBtn);
+
+  // set initial label for wrap button
+  updateJsonWrapBtn();
 
   root.append(headerTools, content);
+
+  // update collapse-all button when individual json viewers change
+  root.addEventListener('json-toggle', () => {
+    try { updateCollapseAllBtnState(); } catch (e) {}
+  });
 
   // initial state
   const _initState = _savedAppState || {};
@@ -335,9 +464,11 @@ export function renderEntityExplorer({ store }) {
       }) : [];
       content.innerHTML = '';
       content.append(createTable({ headers: ['Key', 'Value'], rows, id: `idb-${dbName}-${storeName}-table`, searchable: true, sortable: true }));
+      try { updateCollapseAllBtnState(); } catch (e) {}
     } catch (e) {
       content.innerHTML = '';
       content.append(renderJsonViewer({ error: String(e?.message || e) }));
+      try { updateCollapseAllBtnState(); } catch (e) {}
     }
   }
 
