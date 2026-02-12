@@ -2,7 +2,8 @@ let _tableGlobalResizeHookInstalled = false;
 
 import { timed } from '../utils/timing.js';
 import { openRightClickMenu, registerRightClickContext } from './rightClickMenu.js';
-import { parseFieldQuery, splitTopLevel, buildRegexFromWildcard, isNumericType, evalComparators, cleanSearchQuery } from '../utils/helpers.js';
+import { cleanSearchQuery } from '../utils/helpers.js';
+import { compileTableSearchQuery, matchesTableSearch } from '../utils/tableSearch.js';
 
 // register the table context class so CSS and code searches can find it
 try { registerRightClickContext('table-context-menu'); } catch (e) {}
@@ -484,196 +485,47 @@ export function createTable({ headers, rows, className = '', id, collection, sor
       const total = Array.isArray(originalRows) ? originalRows.length : 0;
       const label = `table.applyFilter (${total})`;
       return timed(label, () => {
-        // allow semicolon-separated parts (AND-combined)
-        const parts = String(q || '').split(';').map(s => String(s || '').trim()).filter(Boolean);
-        if (!parts.length) {
+        const query = String(q || '').trim();
+        if (!query) {
           currentRows = originalRows.slice();
           sortAndRender();
           try { clearBtn.disabled = true; } catch (e) {}
           return;
         }
 
-        // uses shared helpers from src/utils/helpers.js
+        const compiled = compileTableSearchQuery(query);
+        const fieldsMeta = headerKeys.map(h => ({ key: h.key, type: h.type ?? null })).filter(h => h && h.key);
+        const fieldIndexByKey = new Map();
+        for (let i = 0; i < headerKeys.length; i++) {
+          const k = headerKeys[i]?.key;
+          if (k) fieldIndexByKey.set(String(k), i);
+        }
 
-        // Precompute column count
-        const colCount = headerKeys.length;
-
-        // For each original row, require all parts to match
-        currentRows = originalRows.filter(row => {
+        currentRows = originalRows.filter((row) => {
           try {
-            for (const part of parts) {
-              const parsed = parseFieldQuery(part);
-              const term = parsed.term ?? '';
-              if (!term) continue; // empty part matches
-
-              // detect numeric comparators in term: sequence like <=23 or >3
-              const compRe = /([<>]=?|=)\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)/g;
-              const comps = [];
-              let m;
-              while ((m = compRe.exec(term)) !== null) {
-                comps.push({ op: m[1], val: Number(m[2]) });
-              }
-
-              if (parsed.field) {
-                const ci = headerKeys.findIndex(h => h.key === String(parsed.field));
-                if (ci < 0) return false; // field not found -> no match for this row
-                const cellVal = extractCellValue(row[ci]);
-
-                if (comps.length) {
-                  // numeric comparisons only allowed on numeric typed columns
-                  if (!isNumericType(headerKeys[ci].type)) return false;
-                  const n = Number(cellVal);
-                  if (Number.isNaN(n)) return false;
-                  if (!evalComparators(n, comps)) return false;
-                  // this part matched
-                  continue;
-                }
-
-                // string alternatives (OR split by '|')
-                const alts = splitTopLevel(term, '|').filter(Boolean);
-                let anyAltMatch = false;
-                for (const alt of alts) {
-                  // support AND within an alternative: a & b => both must match
-                  const andParts = splitTopLevel(alt, '&').map(x => String(x || '').trim()).filter(Boolean);
-                  let altMatch = false;
-                  if (andParts.length > 1) {
-                    // require all AND parts to match for this column
-                    let allMatch = true;
-                    for (const partAnd of andParts) {
-                      if (partAnd.startsWith('{')) {
-                        const sub = parseFieldQuery(partAnd);
-                        if (!(sub.field && (String(sub.field) === String(headerKeys[ci]?.key)))) { allMatch = false; break; }
-                        const subTerm = sub.term ?? '';
-                        if (subTerm.includes('%')) {
-                          const rx = buildRegexFromWildcard(subTerm);
-                          if (!rx.test(String(cellVal ?? ''))) { allMatch = false; break; }
-                        } else {
-                          if (!(String(cellVal ?? '').trim().toLowerCase() === String(subTerm).toLowerCase())) { allMatch = false; break; }
-                        }
-                      } else {
-                        const token = partAnd;
-                        if (token.includes('%')) {
-                          const rx = buildRegexFromWildcard(token);
-                          if (!rx.test(String(cellVal ?? ''))) { allMatch = false; break; }
-                        } else {
-                          if (!(String(cellVal ?? '').trim().toLowerCase() === token.toLowerCase())) { allMatch = false; break; }
-                        }
-                      }
-                    }
-                    if (allMatch) altMatch = true;
-                  } else {
-                    const a = andParts[0] ?? '';
-                    if (a.startsWith('{')) {
-                      const sub = parseFieldQuery(a);
-                      if (sub.field && (String(sub.field) === String(headerKeys[ci]?.key))) {
-                        const subTerm = sub.term ?? '';
-                        if (subTerm.includes('%')) {
-                          const rx = buildRegexFromWildcard(subTerm);
-                          if (rx.test(String(cellVal ?? ''))) { altMatch = true; }
-                        } else {
-                          if (String(cellVal ?? '').trim().toLowerCase() === String(subTerm).toLowerCase()) { altMatch = true; }
-                        }
-                      }
-                    } else {
-                      if (a.includes('%')) {
-                        const rx = buildRegexFromWildcard(a);
-                        if (rx.test(String(cellVal ?? ''))) { altMatch = true; }
-                      } else {
-                        if (String(cellVal ?? '').trim().toLowerCase() === a.toLowerCase()) { altMatch = true; }
-                      }
-                    }
-                  }
-                  if (altMatch) { anyAltMatch = true; break; }
-                }
-                if (!anyAltMatch) return false;
-                // part matched, continue to next part
-                continue;
-              } else {
-                // global (no field): comparators not allowed
-                if (comps.length) return false;
-                const alts = splitTopLevel(term, '|').filter(Boolean);
-                let anyAltMatch = false;
-                for (const alt of alts) {
-                  // support AND within an alternative: a & b => both must match
-                  const andParts = splitTopLevel(alt, '&').map(x => String(x || '').trim()).filter(Boolean);
-                  let altMatched = false;
-                  if (andParts.length > 1) {
-                    // require all AND parts to match somewhere in the row
-                    let allMatch = true;
-                    for (const partAnd of andParts) {
-                      const p = String(partAnd || '').trim();
-                      if (!p) { allMatch = false; break; }
-                      if (p.startsWith('{')) {
-                        const sub = parseFieldQuery(p);
-                        if (!sub.field) { allMatch = false; break; }
-                        const ci = headerKeys.findIndex(h => h.key === String(sub.field));
-                        if (ci < 0) { allMatch = false; break; }
-                        const cellVal = extractCellValue(row[ci]);
-                        const subTerm = sub.term ?? '';
-                        if (subTerm.includes('%')) {
-                          const rx = buildRegexFromWildcard(subTerm);
-                          if (!rx.test(String(cellVal ?? ''))) { allMatch = false; break; }
-                        } else {
-                          if (!(String(cellVal ?? '').trim().toLowerCase() === subTerm.toLowerCase())) { allMatch = false; break; }
-                        }
-                      } else {
-                        // global token must match at least one column
-                        let anyCell = false;
-                        for (let ci = 0; ci < colCount; ci++) {
-                          const cellVal = extractCellValue(row[ci]);
-                          if (p.includes('%')) {
-                            const rx = buildRegexFromWildcard(p);
-                            if (rx.test(String(cellVal ?? ''))) { anyCell = true; break; }
-                          } else {
-                            if (String(cellVal ?? '').trim().toLowerCase() === p.toLowerCase()) { anyCell = true; break; }
-                          }
-                        }
-                        if (!anyCell) { allMatch = false; break; }
-                      }
-                    }
-                    if (allMatch) altMatched = true;
-                  } else {
-                    const a = andParts[0] ?? '';
-                    if (a.startsWith('{')) {
-                      const sub = parseFieldQuery(a);
-                      if (sub.field) {
-                        const ci = headerKeys.findIndex(h => h.key === String(sub.field));
-                        if (ci >= 0) {
-                          const cellVal = extractCellValue(row[ci]);
-                          const subTerm = sub.term ?? '';
-                          if (subTerm.includes('%')) {
-                            const rx = buildRegexFromWildcard(subTerm);
-                            if (rx.test(String(cellVal ?? ''))) { altMatched = true; }
-                          } else {
-                            if (String(cellVal ?? '').trim().toLowerCase() === subTerm.toLowerCase()) { altMatched = true; }
-                          }
-                        }
-                      }
-                    } else {
-                      for (let ci = 0; ci < colCount; ci++) {
-                        const cellVal = extractCellValue(row[ci]);
-                        if (a.includes('%')) {
-                          const rx = buildRegexFromWildcard(a);
-                          if (rx.test(String(cellVal ?? ''))) { altMatched = true; break; }
-                        } else {
-                          if (String(cellVal ?? '').trim().toLowerCase() === a.toLowerCase()) { altMatched = true; break; }
-                        }
-                      }
-                    }
-                  }
-                  if (altMatched) { anyAltMatch = true; break; }
-                }
-                if (!anyAltMatch) return false;
-                continue;
-              }
-            }
-            return true;
-          } catch (e) { return false; }
+            const accessor = {
+              hasField: (k) => fieldIndexByKey.has(String(k)),
+              getValue: (k) => {
+                const idx = fieldIndexByKey.get(String(k));
+                if (idx == null || idx < 0) return undefined;
+                return extractCellValue(row[idx]);
+              },
+              getFieldType: (k) => {
+                const idx = fieldIndexByKey.get(String(k));
+                const t = (idx != null && idx >= 0) ? headerKeys[idx]?.type : null;
+                return t ?? null;
+              },
+              getAllValues: () => row.slice(0, headerKeys.length).map(c => extractCellValue(c)),
+            };
+            return matchesTableSearch(accessor, compiled, { fields: fieldsMeta });
+          } catch {
+            return false;
+          }
         });
 
         sortAndRender();
         try {
-          const has = parts.length > 0;
+          const has = query.length > 0;
           clearBtn.disabled = !has;
         } catch (e) {}
       });

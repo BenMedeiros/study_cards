@@ -1,6 +1,7 @@
-import { basename, dirname, normalizeFolderPath, titleFromFilename, parseFieldQuery, splitTopLevel, buildRegexFromWildcard, isNumericType, evalComparators, parseTableQuery } from '../utils/helpers.js';
+import { basename, dirname, normalizeFolderPath, titleFromFilename } from '../utils/helpers.js';
 import { buildHashRoute, parseHashRoute } from '../utils/helpers.js';
 import { timed } from '../utils/timing.js';
+import { compileTableSearchQuery, matchesTableSearch, filterRecordsAndIndicesByTableSearch } from '../utils/tableSearch.js';
 
 export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, grammarProgressManager = null, collectionDB = null, settings = null }) {
   // Folder metadata helpers/storage used for lazy loads
@@ -1453,185 +1454,12 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   // Table Search / Filtering Utilities
   // ============================================================================
 
-  function makeTableSearchRegex(query) {
-    const s = String(query || '');
-    if (!s.trim()) return null;
-    let pat = s;
-    if (!pat.includes('%')) pat = `%${pat}%`;
-    pat = pat.replace(/([.+?^${}()|[\]\\])/g, '\\$1');
-    pat = pat.replace(/%/g, '.*');
+  function entryMatchesTableSearch(entry, { query, fields = null } = {}) {
     try {
-      return new RegExp(pat, 'i');
-    } catch {
-      return null;
-    }
-  }
-
-  // (use shared parseFieldQuery from helpers.js)
-
-  function fieldKeyListFromMetadataFields(fields) {
-    if (!Array.isArray(fields)) return [];
-    return fields
-      .map(f => (f && typeof f === 'object' ? f.key : f))
-      .map(k => String(k || '').trim())
-      .filter(Boolean);
-  }
-
-  function shallowEntryValueStrings(entry, fieldKeys) {
-    if (!entry || typeof entry !== 'object') return [];
-    const out = [];
-
-    const pushVal = (v) => {
-      if (v == null) return;
-      if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
-        out.push(String(v));
-        return;
-      }
-      if (Array.isArray(v)) {
-        for (const item of v) {
-          if (item != null && (typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean')) {
-            out.push(String(item));
-          }
-        }
-      }
-    };
-
-    if (Array.isArray(fieldKeys) && fieldKeys.length) {
-      for (const k of fieldKeys) pushVal(entry[k]);
-      return out;
-    }
-
-    for (const v of Object.values(entry)) pushVal(v);
-    return out;
-  }
-
-  function entryMatchesTableSearch(entry, { query, regex = null, fields = null } = {}) {
-    try {
-      // New matching semantics (compatible with table component):
-      // - `;` splits AND-parts
-      // - `{field:...}` restricts to a single field; inside, `|` separates OR alternatives
-      // - `%` acts as wildcard (converted to regex); no automatic wrapping
-      // - Numeric comparisons allowed inside field: <=, >=, <, >, = and can be chained
       const q = String(query || '').trim();
       if (!q) return false;
-
-      // uses shared helpers from helpers.js: buildRegexFromWildcard, splitTopLevel, isNumericType, evalComparators
-
-      // Use parseTableQuery to get structured parts (handles | and & with grouping)
-      const parsedQ = parseTableQuery(q);
-      if (!parsedQ.parts || !parsedQ.parts.length) return false;
-
-      const fieldKeys = fieldKeyListFromMetadataFields(fields);
-
-      for (const partObj of parsedQ.parts) {
-        const field = partObj.field || null;
-        const op = partObj.op || null;
-        const list = partObj.list || null;
-
-        if (field) {
-          const f = String(field || '').trim();
-          if (!f) return false;
-          if (!Object.prototype.hasOwnProperty.call(entry, f)) return false;
-          const cellVal = entry[f];
-
-          // comparator / equals-list handled when op present
-          if (op) {
-            if (op === '=') {
-              if (Array.isArray(list) && list.length) {
-                const found = list.some(item => String(cellVal ?? '').trim().toLowerCase() === String(item || '').toLowerCase());
-                if (!found) return false;
-                continue;
-              } else {
-                // fallback to direct match of term
-              }
-            } else {
-              // numeric comparator
-              const metaField = (Array.isArray(fields) ? fields.find(x => String((x && x.key) || '') === f) : null);
-              const metaType = metaField ? (metaField.type ?? (metaField.schema && metaField.schema.type) ?? null) : null;
-              if (!isNumericType(metaType)) return false;
-              const n = Number(cellVal);
-              const rn = Number(partObj.term);
-              if (Number.isNaN(n) || Number.isNaN(rn)) return false;
-              if (!evalComparators(n, [{ op, val: rn }])) return false;
-              continue;
-            }
-          }
-
-          // string alternatives with AND/OR
-          let anyAltMatch = false;
-          for (const alt of (partObj.alts || [])) {
-            // alt.ands must all match against this field
-            let allMatch = true;
-            for (const andTerm of (alt.ands || [])) {
-              const t = String(andTerm || '').trim();
-              if (!t) { allMatch = false; break; }
-              if (t.startsWith('{') && t.endsWith('}')) {
-                const sub = parseFieldQuery(t);
-                if (!(sub.field && String(sub.field) === f)) { allMatch = false; break; }
-                const subTerm = sub.term ?? '';
-                if (subTerm.includes('%')) {
-                  const rx = buildRegexFromWildcard(subTerm);
-                  if (!rx.test(String(cellVal ?? ''))) { allMatch = false; break; }
-                } else {
-                  if (!(String(cellVal ?? '').trim().toLowerCase() === String(subTerm).toLowerCase())) { allMatch = false; break; }
-                }
-              } else {
-                if (t.includes('%')) {
-                  const rx = buildRegexFromWildcard(t);
-                  if (!rx.test(String(cellVal ?? ''))) { allMatch = false; break; }
-                } else {
-                  if (!(String(cellVal ?? '').trim().toLowerCase() === t.toLowerCase())) { allMatch = false; break; }
-                }
-              }
-            }
-            if (allMatch) { anyAltMatch = true; break; }
-          }
-          if (!anyAltMatch) return false;
-          continue;
-        } else {
-          // global: each alt must match somewhere (AND parts must all match somewhere)
-          let anyAltMatch = false;
-          const values = shallowEntryValueStrings(entry, fieldKeys);
-          for (const alt of (partObj.alts || [])) {
-            let allMatch = true;
-            for (const andTerm of (alt.ands || [])) {
-              const t = String(andTerm || '').trim();
-              if (!t) { allMatch = false; break; }
-              if (t.startsWith('{') && t.endsWith('}')) {
-                const sub = parseFieldQuery(t);
-                if (!sub.field) { allMatch = false; break; }
-                const f = String(sub.field || '').trim();
-                if (!Object.prototype.hasOwnProperty.call(entry, f)) { allMatch = false; break; }
-                const cellVal = entry[f];
-                const subTerm = sub.term ?? '';
-                if (subTerm.includes('%')) {
-                  const rx = buildRegexFromWildcard(subTerm);
-                  if (!rx.test(String(cellVal ?? ''))) { allMatch = false; break; }
-                } else {
-                  if (!(String(cellVal ?? '').trim().toLowerCase() === String(subTerm).toLowerCase())) { allMatch = false; break; }
-                }
-              } else {
-                // token must match at least one value
-                let anyCell = false;
-                for (const v of values) {
-                  if (t.includes('%')) {
-                    const rx = buildRegexFromWildcard(t);
-                    if (rx.test(String(v ?? ''))) { anyCell = true; break; }
-                  } else {
-                    if (String(v ?? '').trim().toLowerCase() === t.toLowerCase()) { anyCell = true; break; }
-                  }
-                }
-                if (!anyCell) { allMatch = false; break; }
-              }
-            }
-            if (allMatch) { anyAltMatch = true; break; }
-          }
-          if (!anyAltMatch) return false;
-          continue;
-        }
-      }
-
-      return true;
+      const compiled = compileTableSearchQuery(q);
+      return matchesTableSearch(entry, compiled, { fields });
     } catch (e) {
       return false;
     }
@@ -1644,16 +1472,9 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const label = `collections.filterEntriesAndIndicesByTableSearch (${arr.length}) q=${q.length}`;
     return timed(label, () => {
       if (!q) return { entries: arr.slice(), indices: idx.slice() };
-      const outEntries = [];
-      const outIdx = [];
-      for (let i = 0; i < arr.length; i++) {
-        const e = arr[i];
-        if (entryMatchesTableSearch(e, { query: q, fields })) {
-          outEntries.push(e);
-          outIdx.push(idx[i]);
-        }
-      }
-      return { entries: outEntries, indices: outIdx };
+      const compiled = compileTableSearchQuery(q);
+      const filtered = filterRecordsAndIndicesByTableSearch(arr, idx, compiled, { fields });
+      return { entries: filtered.records, indices: filtered.indices };
     });
   }
 
