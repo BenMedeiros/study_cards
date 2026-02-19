@@ -2515,8 +2515,13 @@
     {
       "kanji": "老い",
       "reading": "おい",
-      "meaning": "old age (literary adj form)",
-      "type": "i-adjective"
+      "meaning": "old age",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "written"
+      ]
     },
     {
       "kanji": "優しい",
@@ -2744,10 +2749,15 @@
       "type": "i-adjective"
     },
     {
-      "kanji": "滑らかい",
-      "reading": "なめらかい",
-      "meaning": "smooth",
-      "type": "i-adjective"
+      "kanji": "滑らか",
+      "reading": "なめらか",
+      "meaning": "smooth; fluent",
+      "type": "na-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "jlpt_n3"
+      ]
     },
     {
       "kanji": "暖かい",
@@ -2804,10 +2814,16 @@
       "type": "i-adjective"
     },
     {
-      "kanji": "清らかい",
-      "reading": "きよらかい",
-      "meaning": "pure (poetic)",
-      "type": "i-adjective"
+      "kanji": "清らか",
+      "reading": "きよらか",
+      "meaning": "pure; clean (poetic)",
+      "type": "na-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "written",
+        "literary"
+      ]
     },
     {
       "kanji": "騒がしい",
