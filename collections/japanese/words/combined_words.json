@@ -11885,6 +11885,1292 @@
       "meaning": "considerably; greatly",
       "type": "adverb",
       "orthography": "kanji"
+    },
+    {
+      "kanji": "犬",
+      "reading": "いぬ",
+      "meaning": "dog",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "猫",
+      "reading": "ねこ",
+      "meaning": "cat",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "鳥",
+      "reading": "とり",
+      "meaning": "bird",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "魚",
+      "reading": "さかな",
+      "meaning": "fish",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "馬",
+      "reading": "うま",
+      "meaning": "horse",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "牛",
+      "reading": "うし",
+      "meaning": "cow",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "豚",
+      "reading": "ぶた",
+      "meaning": "pig",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "羊",
+      "reading": "ひつじ",
+      "meaning": "sheep",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "山羊",
+      "reading": "やぎ",
+      "meaning": "goat",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "鶏",
+      "reading": "にわとり",
+      "meaning": "chicken",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "兎",
+      "reading": "うさぎ",
+      "meaning": "rabbit",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "亀",
+      "reading": "かめ",
+      "meaning": "turtle",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "蛙",
+      "reading": "かえる",
+      "meaning": "frog",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "猿",
+      "reading": "さる",
+      "meaning": "monkey",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "熊",
+      "reading": "くま",
+      "meaning": "bear",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "虎",
+      "reading": "とら",
+      "meaning": "tiger",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "獅子",
+      "reading": "しし",
+      "meaning": "lion",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "象",
+      "reading": "ぞう",
+      "meaning": "elephant",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "鹿",
+      "reading": "しか",
+      "meaning": "deer",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "狼",
+      "reading": "おおかみ",
+      "meaning": "wolf",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "狐",
+      "reading": "きつね",
+      "meaning": "fox",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "鼠",
+      "reading": "ねずみ",
+      "meaning": "mouse; rat",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "猟犬",
+      "reading": "りょうけん",
+      "meaning": "hunting dog",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "animal_related"
+      ]
+    },
+    {
+      "kanji": "豹",
+      "reading": "ひょう",
+      "meaning": "leopard",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "駱駝",
+      "reading": "らくだ",
+      "meaning": "camel",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "猩々",
+      "reading": "オランウータン",
+      "meaning": "orangutan",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "ゴリラ",
+      "reading": "ゴリラ",
+      "meaning": "gorilla",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "パンダ",
+      "reading": "パンダ",
+      "meaning": "panda",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "コアラ",
+      "reading": "コアラ",
+      "meaning": "koala",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "カンガルー",
+      "reading": "カンガルー",
+      "meaning": "kangaroo",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "イルカ",
+      "reading": "イルカ",
+      "meaning": "dolphin",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "鯨",
+      "reading": "くじら",
+      "meaning": "whale",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "鮫",
+      "reading": "さめ",
+      "meaning": "shark",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "蛸",
+      "reading": "たこ",
+      "meaning": "octopus",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "海老",
+      "reading": "えび",
+      "meaning": "shrimp",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "蟹",
+      "reading": "かに",
+      "meaning": "crab",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "蛇",
+      "reading": "へび",
+      "meaning": "snake",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "蜥蜴",
+      "reading": "とかげ",
+      "meaning": "lizard",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "蜂",
+      "reading": "はち",
+      "meaning": "bee",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "蟻",
+      "reading": "あり",
+      "meaning": "ant",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "蝶",
+      "reading": "ちょう",
+      "meaning": "butterfly",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "蝿",
+      "reading": "はえ",
+      "meaning": "fly (insect)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "蚊",
+      "reading": "か",
+      "meaning": "mosquito",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "梟",
+      "reading": "ふくろう",
+      "meaning": "owl",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "鷹",
+      "reading": "たか",
+      "meaning": "hawk",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "鳩",
+      "reading": "はと",
+      "meaning": "pigeon; dove",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "孔雀",
+      "reading": "くじゃく",
+      "meaning": "peacock",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "ペンギン",
+      "reading": "ペンギン",
+      "meaning": "penguin",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "common_animal"
+      ]
+    },
+    {
+      "kanji": "ライオン",
+      "reading": "ライオン",
+      "meaning": "lion",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "common_animal",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "トラ",
+      "reading": "トラ",
+      "meaning": "tiger",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "common_animal",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "牛乳",
+      "reading": "ぎゅうにゅう",
+      "meaning": "milk",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "卵",
+      "reading": "たまご",
+      "meaning": "eggs",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "バター",
+      "reading": "バター",
+      "meaning": "butter",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "チーズ",
+      "reading": "チーズ",
+      "meaning": "cheese",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "ヨーグルト",
+      "reading": "ヨーグルト",
+      "meaning": "yogurt",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "生クリーム",
+      "reading": "なまクリーム",
+      "meaning": "heavy cream",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "豆腐",
+      "reading": "とうふ",
+      "meaning": "tofu",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "納豆",
+      "reading": "なっとう",
+      "meaning": "natto",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "ハム",
+      "reading": "ハム",
+      "meaning": "ham",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "ベーコン",
+      "reading": "ベーコン",
+      "meaning": "bacon",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "ソーセージ",
+      "reading": "ソーセージ",
+      "meaning": "sausage",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "鶏肉",
+      "reading": "とりにく",
+      "meaning": "chicken meat",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "牛肉",
+      "reading": "ぎゅうにく",
+      "meaning": "beef",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "豚肉",
+      "reading": "ぶたにく",
+      "meaning": "pork",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "レタス",
+      "reading": "レタス",
+      "meaning": "lettuce",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "キャベツ",
+      "reading": "キャベツ",
+      "meaning": "cabbage",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "人参",
+      "reading": "にんじん",
+      "meaning": "carrot",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "玉葱",
+      "reading": "たまねぎ",
+      "meaning": "onion",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "トマト",
+      "reading": "トマト",
+      "meaning": "tomato",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "胡瓜",
+      "reading": "きゅうり",
+      "meaning": "cucumber",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "林檎",
+      "reading": "りんご",
+      "meaning": "apple",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "葡萄",
+      "reading": "ぶどう",
+      "meaning": "grapes",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "苺",
+      "reading": "いちご",
+      "meaning": "strawberries",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "オレンジ",
+      "reading": "オレンジ",
+      "meaning": "orange",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "レモン",
+      "reading": "レモン",
+      "meaning": "lemon",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "ジュース",
+      "reading": "ジュース",
+      "meaning": "juice",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "drink",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "水",
+      "reading": "みず",
+      "meaning": "water",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "drink",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "炭酸水",
+      "reading": "たんさんすい",
+      "meaning": "sparkling water",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "drink",
+        "refrigerator_common"
+      ]
+    },
+    {
+      "kanji": "ケチャップ",
+      "reading": "ケチャップ",
+      "meaning": "ketchup",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "condiment",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "マヨネーズ",
+      "reading": "マヨネーズ",
+      "meaning": "mayonnaise",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "condiment",
+        "refrigerator_common",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "赤",
+      "reading": "あか",
+      "meaning": "red",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "青",
+      "reading": "あお",
+      "meaning": "blue",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "黄色",
+      "reading": "きいろ",
+      "meaning": "yellow",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "緑",
+      "reading": "みどり",
+      "meaning": "green",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "白",
+      "reading": "しろ",
+      "meaning": "white",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "黒",
+      "reading": "くろ",
+      "meaning": "black",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "灰色",
+      "reading": "はいいろ",
+      "meaning": "gray",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "茶色",
+      "reading": "ちゃいろ",
+      "meaning": "brown",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "橙色",
+      "reading": "だいだいいろ",
+      "meaning": "orange (color)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "紫",
+      "reading": "むらさき",
+      "meaning": "purple",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "桃色",
+      "reading": "ももいろ",
+      "meaning": "pink",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "金色",
+      "reading": "きんいろ",
+      "meaning": "gold color",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "銀色",
+      "reading": "ぎんいろ",
+      "meaning": "silver color",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "color",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "透明",
+      "reading": "とうめい",
+      "meaning": "transparent",
+      "type": "na-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "texture",
+        "visual_property"
+      ]
+    },
+    {
+      "kanji": "半透明",
+      "reading": "はんとうめい",
+      "meaning": "translucent",
+      "type": "na-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "texture",
+        "visual_property"
+      ]
+    },
+    {
+      "kanji": "光沢",
+      "reading": "こうたく",
+      "meaning": "gloss; shine",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "texture",
+        "surface_property"
+      ]
+    },
+    {
+      "kanji": "艶々",
+      "reading": "つやつや",
+      "meaning": "glossy; shiny",
+      "type": "adverb",
+      "lexicalClass": "onomatopoeia",
+      "orthography": "hiragana",
+      "tags": [
+        "texture",
+        "mimetic"
+      ]
+    },
+    {
+      "kanji": "ざらざら",
+      "reading": "ざらざら",
+      "meaning": "rough; gritty",
+      "type": "adverb",
+      "lexicalClass": "onomatopoeia",
+      "orthography": "hiragana",
+      "tags": [
+        "texture",
+        "mimetic"
+      ]
+    },
+    {
+      "kanji": "滑らか",
+      "reading": "なめらか",
+      "meaning": "smooth",
+      "type": "na-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "texture",
+        "surface_property"
+      ]
+    },
+    {
+      "kanji": "柔らかい",
+      "reading": "やわらかい",
+      "meaning": "soft",
+      "type": "i-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "texture",
+        "touch_property"
+      ]
+    },
+    {
+      "kanji": "硬い",
+      "reading": "かたい",
+      "meaning": "hard (solid/firm)",
+      "type": "i-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "texture",
+        "touch_property"
+      ]
+    },
+    {
+      "kanji": "ふわふわ",
+      "reading": "ふわふわ",
+      "meaning": "fluffy; soft and airy",
+      "type": "adverb",
+      "lexicalClass": "onomatopoeia",
+      "orthography": "hiragana",
+      "tags": [
+        "texture",
+        "mimetic"
+      ]
+    },
+    {
+      "kanji": "べたべた",
+      "reading": "べたべた",
+      "meaning": "sticky",
+      "type": "adverb",
+      "lexicalClass": "onomatopoeia",
+      "orthography": "hiragana",
+      "tags": [
+        "texture",
+        "mimetic"
+      ]
+    },
+    {
+      "kanji": "さらさら",
+      "reading": "さらさら",
+      "meaning": "smooth; dry and silky",
+      "type": "adverb",
+      "lexicalClass": "onomatopoeia",
+      "orthography": "hiragana",
+      "tags": [
+        "texture",
+        "mimetic"
+      ]
+    },
+    {
+      "kanji": "しわしわ",
+      "reading": "しわしわ",
+      "meaning": "wrinkled",
+      "type": "adverb",
+      "lexicalClass": "onomatopoeia",
+      "orthography": "hiragana",
+      "tags": [
+        "texture",
+        "mimetic"
+      ]
+    },
+    {
+      "kanji": "縞模様",
+      "reading": "しまもよう",
+      "meaning": "striped pattern",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "pattern",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "水玉模様",
+      "reading": "みずたまもよう",
+      "meaning": "polka-dot pattern",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "pattern",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "チェック柄",
+      "reading": "チェックがら",
+      "meaning": "checkered pattern",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "pattern",
+        "loanword"
+      ]
+    },
+    {
+      "kanji": "花柄",
+      "reading": "はながら",
+      "meaning": "floral pattern",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "pattern",
+        "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "無地",
+      "reading": "むじ",
+      "meaning": "plain; solid color (no pattern)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "pattern",
+        "common_descriptor"
+      ]
     }
   ]
 }

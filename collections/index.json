@@ -226,8 +226,8 @@
       "path": "japanese/words/combined_words.json",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
-      "entries": 1395,
-      "modifiedAt": "2026-02-12T00:46:17.808Z"
+      "entries": 1505,
+      "modifiedAt": "2026-02-19T17:55:52.288Z"
     },
     {
       "path": "languageHistory/languageHistory.json",
