@@ -1,18 +1,19 @@
 import { createTable } from '../components/table.js';
 import { card } from '../components/ui.js';
 import { el } from '../components/ui.js';
-import { createViewHeaderTools, createStudyFilterToggle } from '../components/viewHeaderTools.js';
+import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createDropdown } from '../components/dropdown.js';
 import { confirmDialog } from '../components/confirmDialog.js';
 import { parseHashRoute, buildHashRoute } from '../utils/helpers.js';
+import { compileTableSearchQuery, matchesTableSearch } from '../utils/tableSearch.js';
 
 export function renderData({ store }) {
   const root = document.createElement('div');
   root.id = 'data-root';
   const active = store.collections.getActiveCollection();
 
-  let skipLearned = false;
-  let focusOnly = false;
+  const STUDY_STATE_ORDER = ['null', 'focus', 'learned'];
+  let studyFilterStates = STUDY_STATE_ORDER.slice();
 
   // Persisted per-collection table search query (always applied)
   let heldTableSearch = '';
@@ -50,6 +51,13 @@ export function renderData({ store }) {
   const NA_ADJ_FORM_ITEMS = [
     { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
     ...NA_ADJ_BASE_FORM_ITEMS,
+  ];
+
+  const STUDY_FILTER_ITEMS = [
+    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
+    { value: 'null', label: 'null', left: 'state', right: 'null' },
+    { value: 'focus', label: 'focus', left: 'state', right: 'focus' },
+    { value: 'learned', label: 'learned', left: 'state', right: 'learned' },
   ];
 
   function normalizeFormList(v) {
@@ -126,6 +134,65 @@ export function renderData({ store }) {
     return ordered;
   }
 
+  function orderStudyStates(values) {
+    const set = new Set((Array.isArray(values) ? values : []).map(v => String(v || '').trim().toLowerCase()).filter(Boolean));
+    return STUDY_STATE_ORDER.filter(v => set.has(v));
+  }
+
+  function normalizeStudyFilterStates(value) {
+    const arr = Array.isArray(value)
+      ? value
+      : String(value || '').split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
+
+    const out = [];
+    const seen = new Set();
+    const add = (v) => {
+      const s = String(v || '').trim().toLowerCase();
+      if (!s || seen.has(s)) return;
+      if (s !== 'null' && s !== 'focus' && s !== 'learned') {
+        throw new Error(`Invalid studyFilter state: ${s}. Allowed states: null, focus, learned`);
+      }
+      seen.add(s);
+      out.push(s);
+    };
+
+    for (const tokenRaw of arr) {
+      const t = String(tokenRaw || '').trim().toLowerCase();
+      if (!t) continue;
+      add(t);
+    }
+
+    return orderStudyStates(out);
+  }
+
+  function formatStudyFilterButtonLabel(selectedValues) {
+    const ordered = orderStudyStates(selectedValues);
+    if (!ordered.length) return 'none';
+    if (ordered.length === STUDY_STATE_ORDER.length) return 'all';
+    if (ordered.length >= 2) return `${ordered.length} selected`;
+    return ordered[0];
+  }
+
+  function parseStudyFilter(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return { states: STUDY_STATE_ORDER.slice() };
+    const states = normalizeStudyFilterStates(raw);
+    return { states: states.length ? states : STUDY_STATE_ORDER.slice() };
+  }
+
+  function serializeStudyFilter({ states = [] } = {}) {
+    return orderStudyStates(states).join(',');
+  }
+
+  function getEntryStudyState(entry, adapter) {
+    const a = adapter || getProgressAdapter();
+    const key = a.getKey(entry);
+    if (!key) return 'null';
+    if (a.isLearned(key)) return 'learned';
+    if (a.isFocus(key)) return 'focus';
+    return 'null';
+  }
+
   function normalizeType(v) {
     return String(v || '').trim().toLowerCase();
   }
@@ -157,24 +224,6 @@ export function renderData({ store }) {
     }
   }
 
-  function parseStudyFilter(value) {
-    const raw = String(value || '').trim();
-    if (!raw) return { skipLearned: false, focusOnly: false };
-    const parts = raw.split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
-    const set = new Set(parts);
-    return {
-      skipLearned: set.has('skipLearned') || set.has('skip_learned') || set.has('skip-learned'),
-      focusOnly: set.has('focusOnly') || set.has('focus_only') || set.has('focus') || set.has('morePractice') || set.has('more_practice'),
-    };
-  }
-
-  function serializeStudyFilter({ skipLearned, focusOnly }) {
-    const parts = [];
-    if (skipLearned) parts.push('skipLearned');
-    if (focusOnly) parts.push('focusOnly');
-    return parts.join(',');
-  }
-
   function getClearLearnedStats() {
     const adapter = getProgressAdapter();
     const keys = new Set();
@@ -196,8 +245,8 @@ export function renderData({ store }) {
     const detailParts = [];
     if (coll?.key) detailParts.push(`Collection: ${coll.key}`);
     if (heldTableSearch) detailParts.push(`Held search: ${heldTableSearch}`);
-    const filterState = skipLearned ? 'skipLearned' : (focusOnly ? 'focusOnly' : 'off');
-    if (filterState !== 'off') detailParts.push(`Study filter: ${filterState}`);
+    const filterState = serializeStudyFilter({ states: studyFilterStates });
+    if (filterState) detailParts.push(`Study filter: ${filterState}`);
 
     return {
       kind: adapter?.kind || 'kanji',
@@ -262,25 +311,40 @@ export function renderData({ store }) {
     }
   });
 
-  // three-state study filter toggle (off / skipLearned / focusOnly)
-  const studyFilterToggle = createStudyFilterToggle({ state: 'off', onChange: (s) => {
-    // update local state booleans based on new three-state value
-    skipLearned = (s === 'skipLearned');
-    focusOnly = (s === 'focusOnly');
-    persistFilters();
-    updateFilterButtons();
-    renderTable();
-    updateStudyLabel();
-    markStudyRows();
-  } });
-  // append the study filter toggle after the header-controlled buttons
+  // append the study filter selector after the header-controlled buttons
   const studyFilterGroup = document.createElement('div');
-  studyFilterGroup.className = 'data-expansion-group';
+  studyFilterGroup.className = 'data-expansion-group study-filter-group';
+  studyFilterGroup.id = 'study-filter-group';
+  studyFilterGroup.setAttribute('data-control', 'study-filter');
+  studyFilterGroup.setAttribute('aria-label', 'Study filter selector group');
+  const studyFilterControlMount = document.createElement('div');
+  studyFilterControlMount.className = 'study-filter-control';
   const studyFilterCaption = document.createElement('div');
   studyFilterCaption.className = 'data-expansion-caption';
   studyFilterCaption.textContent = 'col.study-filter';
-  studyFilterGroup.append(studyFilterToggle.el, studyFilterCaption);
+  studyFilterGroup.append(studyFilterControlMount, studyFilterCaption);
   controls.append(studyFilterGroup);
+
+  function renderStudyFilterControl() {
+    studyFilterControlMount.innerHTML = '';
+    const dd = createDropdown({
+      items: STUDY_FILTER_ITEMS,
+      multi: true,
+      values: orderStudyStates(studyFilterStates),
+      commitOnClose: true,
+      getButtonLabel: ({ selectedValues }) => formatStudyFilterButtonLabel(selectedValues),
+      onChange: (vals) => {
+        studyFilterStates = orderStudyStates(normalizeStudyFilterStates(vals));
+        persistFilters();
+        renderTable();
+        updateStudyLabel();
+        markStudyRows();
+        updateControlStates();
+      },
+      className: 'data-expansion-dropdown',
+    });
+    studyFilterControlMount.append(dd);
+  }
 
   // Adjective expansion dropdowns (persisted per-collection)
   const expansionWrap = document.createElement('div');
@@ -353,12 +417,14 @@ export function renderData({ store }) {
     const saved = readCollState();
     if (typeof saved?.studyFilter === 'string') {
       const parsed = parseStudyFilter(saved.studyFilter);
-      skipLearned = !!parsed.skipLearned;
-      focusOnly = !!parsed.focusOnly;
+      studyFilterStates = orderStudyStates(parsed.states);
     } else {
       // Legacy booleans
-      skipLearned = !!saved?.skipLearned;
-      focusOnly = !!saved?.focusOnly;
+      const skipLearned = !!saved?.skipLearned;
+      const focusOnly = !!saved?.focusOnly;
+      if (focusOnly) studyFilterStates = ['focus'];
+      else if (skipLearned) studyFilterStates = ['null', 'focus'];
+      else studyFilterStates = STUDY_STATE_ORDER.slice();
     }
 
     const held = String(saved?.heldTableSearch || '').trim();
@@ -409,6 +475,7 @@ export function renderData({ store }) {
     // ignore
   }
 
+  renderStudyFilterControl();
   renderExpansionControls();
 
   // Helpers to read/save per-collection state
@@ -449,6 +516,24 @@ export function renderData({ store }) {
         getKey: (entry) => getEntryGrammarKey(entry),
         isLearned: (key) => !!(key && typeof store?.grammarProgress?.isGrammarLearned === 'function' && store.grammarProgress.isGrammarLearned(key)),
         isFocus: (key) => !!(key && typeof store?.grammarProgress?.isGrammarFocus === 'function' && store.grammarProgress.isGrammarFocus(key)),
+        getProgressRecord: (key) => {
+          try {
+            if (!key) return null;
+            if (typeof store?.grammarProgress?.getGrammarProgressRecord !== 'function') return null;
+            return store.grammarProgress.getGrammarProgressRecord(key) || null;
+          } catch (e) {
+            return null;
+          }
+        },
+        getStudyMetrics: (key) => {
+          const rec = (key && typeof store?.grammarProgress?.getGrammarProgressRecord === 'function')
+            ? (store.grammarProgress.getGrammarProgressRecord(key) || {})
+            : {};
+          const timesSeen = Math.max(0, Math.round(Number(rec?.timesSeen) || 0));
+          const timeMs = Math.max(0, Math.round(Number(rec?.timeMs) || 0));
+          const seen = !!rec?.seen || timesSeen > 0 || timeMs > 0;
+          return { seen, timesSeen, timeMs };
+        },
         clearLearned: () => {
           try {
             if (typeof store?.grammarProgress?.clearLearnedGrammar === 'function') store.grammarProgress.clearLearnedGrammar();
@@ -462,6 +547,24 @@ export function renderData({ store }) {
       getKey: (entry) => getEntryKanjiValue(entry),
       isLearned: (key) => !!(key && typeof store?.kanjiProgress?.isKanjiLearned === 'function' && store.kanjiProgress.isKanjiLearned(key)),
       isFocus: (key) => !!(key && typeof store?.kanjiProgress?.isKanjiFocus === 'function' && store.kanjiProgress.isKanjiFocus(key)),
+      getProgressRecord: (key) => {
+        try {
+          if (!key) return null;
+          if (typeof store?.kanjiProgress?.getKanjiProgressRecord !== 'function') return null;
+          return store.kanjiProgress.getKanjiProgressRecord(key) || null;
+        } catch (e) {
+          return null;
+        }
+      },
+      getStudyMetrics: (key) => {
+        const rec = (key && typeof store?.kanjiProgress?.getKanjiProgressRecord === 'function')
+          ? (store.kanjiProgress.getKanjiProgressRecord(key) || {})
+          : {};
+        const timesSeen = Math.max(0, Math.round(Number(rec?.timesSeenInKanjiStudyCard) || 0));
+        const timeMs = Math.max(0, Math.round(Number(rec?.timeMsStudiedInKanjiStudyCard) || 0));
+        const seen = !!rec?.seen || timesSeen > 0 || timeMs > 0;
+        return { seen, timesSeen, timeMs };
+      },
       clearLearned: () => {
         try {
           const coll = store?.collections?.getActiveCollection?.();
@@ -475,15 +578,13 @@ export function renderData({ store }) {
 
   function passesFilters(entry) {
     const adapter = getProgressAdapter();
-    const key = adapter.getKey(entry);
-    if (key) {
-      if (skipLearned && adapter.isLearned(key)) return false;
-      if (focusOnly && !adapter.isFocus(key)) return false;
-    }
+    const allowed = new Set(orderStudyStates(studyFilterStates));
+    const state = getEntryStudyState(entry, adapter);
+    if (!allowed.has(state)) return false;
 
     if (heldTableSearch) {
       try {
-        if (!store.collections.entryMatchesTableSearch(entry, { query: heldTableSearch, fields })) return false;
+        if (!entryMatchesHeldTableSearch(entry, { query: heldTableSearch, adapter })) return false;
       } catch (e) {
         // ignore
       }
@@ -491,15 +592,79 @@ export function renderData({ store }) {
     return true;
   }
 
+  function buildTableSearchAccessorForEntry(entry, adapter) {
+    const a = adapter || getProgressAdapter();
+    const key = a.getKey(entry);
+    const state = getEntryStudyState(entry, a);
+    const metrics = (typeof a.getStudyMetrics === 'function')
+      ? a.getStudyMetrics(key)
+      : { seen: false, timesSeen: 0, timeMs: 0 };
+    const examplesCount = Number(entry?.__examplesCount ?? (Array.isArray(entry?.sentences) ? entry.sentences.length : 0)) || 0;
+
+    const dynamicFieldValues = {
+      status: state,
+      studySeen: !!metrics.seen,
+      studyTimesSeen: Math.max(0, Math.round(Number(metrics.timesSeen) || 0)),
+      studyTimeMs: Math.max(0, Math.round(Number(metrics.timeMs) || 0)),
+      examples: examplesCount,
+    };
+
+    const metadataKeys = (Array.isArray(fields) ? fields : []).map(f => String(f?.key || '').trim()).filter(Boolean);
+    const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', 'examples'];
+
+    return {
+      hasField: (k) => {
+        const keyName = String(k || '').trim();
+        if (!keyName) return false;
+        if (Object.prototype.hasOwnProperty.call(dynamicFieldValues, keyName)) return true;
+        return Object.prototype.hasOwnProperty.call(entry || {}, keyName);
+      },
+      getValue: (k) => {
+        const keyName = String(k || '').trim();
+        if (!keyName) return undefined;
+        if (Object.prototype.hasOwnProperty.call(dynamicFieldValues, keyName)) return dynamicFieldValues[keyName];
+        return entry ? entry[keyName] : undefined;
+      },
+      getFieldType: (k) => {
+        const keyName = String(k || '').trim();
+        if (keyName === 'studySeen') return 'boolean';
+        if (keyName === 'studyTimesSeen' || keyName === 'studyTimeMs' || keyName === 'examples') return 'number';
+        const def = (Array.isArray(fields) ? fields : []).find(f => String(f?.key || '').trim() === keyName);
+        return def?.type ?? (def?.schema && def.schema.type) ?? null;
+      },
+      getAllValues: () => {
+        const out = [];
+        for (const mk of metadataKeys) out.push(entry ? entry[mk] : undefined);
+        for (const dk of dynamicKeys) out.push(dynamicFieldValues[dk]);
+        return out;
+      },
+    };
+  }
+
+  function entryMatchesHeldTableSearch(entry, { query = '', adapter = null } = {}) {
+    const q = String(query || '').trim();
+    if (!q) return true;
+    const compiled = compileTableSearchQuery(q);
+    const fieldsMeta = [
+      { key: 'status', type: null },
+      ...(Array.isArray(fields) ? fields.map(f => ({ key: f.key, type: f.type ?? (f.schema && f.schema.type) ?? null })) : []),
+      { key: 'examples', type: 'number' },
+      { key: 'studySeen', type: 'boolean' },
+      { key: 'studyTimesSeen', type: 'number' },
+      { key: 'studyTimeMs', type: 'number' },
+    ];
+    const accessor = buildTableSearchAccessorForEntry(entry, adapter || getProgressAdapter());
+    return matchesTableSearch(accessor, compiled, { fields: fieldsMeta });
+  }
+
   function updateFilterButtons() {
-    const state = skipLearned ? 'skipLearned' : (focusOnly ? 'focusOnly' : 'off');
-    if (studyFilterToggle && typeof studyFilterToggle.setState === 'function') studyFilterToggle.setState(state);
+    renderStudyFilterControl();
   }
 
   function persistFilters() {
     const coll = store.collections.getActiveCollection();
     if (!coll) return;
-    store.collections.setStudyFilter(coll.key, { skipLearned: !!skipLearned, focusOnly: !!focusOnly });
+    store.collections.setStudyFilter(coll.key, { states: orderStudyStates(studyFilterStates) });
   }
 
   function persistHeldTableSearch({ query }) {
@@ -617,21 +782,25 @@ export function renderData({ store }) {
       updateControlStates();
       return;
     }
-    const saved = readCollState();
     const n = Array.isArray(coll.entries) ? coll.entries.length : 0;
     if (n === 0) { updateControlStates(); return; }
-    // Show simplified study label: All or Filtered
-    const raw = (saved && typeof saved.studyFilter === 'string') ? String(saved.studyFilter).trim() : '';
     // header tools no longer show study label; control state will reflect available actions
     updateControlStates();
   }
 
   // Build table headers from fields (preserve schema `key` and `label` separately)
-  const headers = [{ key: 'status', label: '' }, ...fields.map(f => ({
+  const headers = [
+    { key: 'status', label: '' },
+    ...fields.map(f => ({
     key: f.key,
     label: f.label || f.key,
     type: f.type ?? (f.schema && f.schema.type) ?? null,
-  })), { key: 'examples', label: 'Examples' }];
+  })),
+    { key: 'examples', label: 'Examples' },
+    { key: 'studySeen', label: 'Seen', type: 'boolean' },
+    { key: 'studyTimesSeen', label: 'Times Seen', type: 'number' },
+    { key: 'studyTimeMs', label: 'Time (ms)', type: 'number' },
+  ];
 
   function renderTable() {
     const visibleIdxs = getVisibleOriginalIndices();
@@ -647,6 +816,9 @@ export function renderData({ store }) {
       const key = adapter.getKey(entry);
       const learned = adapter.isLearned(key);
       const focus = adapter.isFocus(key);
+      const metrics = (typeof adapter.getStudyMetrics === 'function')
+        ? adapter.getStudyMetrics(key)
+        : { seen: false, timesSeen: 0, timeMs: 0 };
 
       const icon = document.createElement('span');
       icon.className = 'kanji-status-icon';
@@ -675,7 +847,15 @@ export function renderData({ store }) {
         examplesEl.textContent = '';
       }
 
-      const row = [icon, ...fields.map(f => entry[f.key] ?? ''), examplesEl];
+      const seenCell = document.createElement('span');
+      seenCell.className = 'study-seen-cell';
+      seenCell.dataset.searchValue = metrics.seen ? 'true' : 'false';
+      seenCell.textContent = metrics.seen ? '✓' : '';
+      seenCell.title = metrics.seen ? 'true' : 'false';
+      const timesSeenCell = metrics.timesSeen > 0 ? metrics.timesSeen : '';
+      const timeMsCell = metrics.timeMs > 0 ? metrics.timeMs : '';
+
+      const row = [icon, ...fields.map(f => entry[f.key] ?? ''), examplesEl, seenCell, timesSeenCell, timeMsCell];
       // Stable identifier for this row so we can resolve the source entry
       // even after the table component filters/sorts.
       try { row.__id = String(originalIndex); } catch (e) {}
@@ -696,7 +876,18 @@ export function renderData({ store }) {
       }
     } catch (e) {}
 
-    const tbl = createTable({ store, headers, rows, id: 'data-table', sortable: true, searchable: true, initialSortKey, initialSortDir });
+    const tbl = createTable({
+      store,
+      headers,
+      rows,
+      id: 'data-table',
+      collection: active?.key || null,
+      sourceMetadata: active?.metadata || null,
+      sortable: true,
+      searchable: true,
+      initialSortKey,
+      initialSortDir,
+    });
     tableMount.innerHTML = '';
     tableMount.append(tbl);
 
@@ -964,19 +1155,17 @@ export function renderData({ store }) {
             for (const entry of (Array.isArray(baseEntries) ? baseEntries : [])) {
               if (!entry || typeof entry !== 'object') continue;
 
-              // Apply study filter toggles (these are part of the held view state)
+              // Apply study state filter (these are part of the held view state)
               try {
-                const key = adapter.getKey(entry);
-                if (key) {
-                  if (skipLearned && adapter.isLearned(key)) continue;
-                  if (focusOnly && !adapter.isFocus(key)) continue;
-                }
+                const allowed = new Set(orderStudyStates(studyFilterStates));
+                const state = getEntryStudyState(entry, adapter);
+                if (!allowed.has(state)) continue;
               } catch (e) {}
 
               // Apply held table search to base entries
               if (held) {
                 try {
-                  if (!store.collections.entryMatchesTableSearch(entry, { query: held, fields })) continue;
+                  if (!entryMatchesHeldTableSearch(entry, { query: held, adapter })) continue;
                 } catch (e) {}
               }
 
@@ -1070,11 +1259,13 @@ export function renderData({ store }) {
           const saved = readCollState();
           if (typeof saved?.studyFilter === 'string') {
             const parsed = parseStudyFilter(saved.studyFilter);
-            skipLearned = !!parsed.skipLearned;
-            focusOnly = !!parsed.focusOnly;
+            studyFilterStates = orderStudyStates(parsed.states);
           } else {
-            skipLearned = !!saved?.skipLearned;
-            focusOnly = !!saved?.focusOnly;
+            const skipLearned = !!saved?.skipLearned;
+            const focusOnly = !!saved?.focusOnly;
+            if (focusOnly) studyFilterStates = ['focus'];
+            else if (skipLearned) studyFilterStates = ['null', 'focus'];
+            else studyFilterStates = STUDY_STATE_ORDER.slice();
           }
 
           const held = String(saved?.heldTableSearch || '').trim();

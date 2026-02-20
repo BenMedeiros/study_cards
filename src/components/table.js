@@ -46,7 +46,7 @@ function _installGlobalTableResizeHook() {
  * @param {string} [options.collection] - Optional collection name the table was populated from
  * @returns {HTMLTableElement}
  */
-export function createTable({ store = null, headers, rows, className = '', id, collection, sortable = false, searchable = false, rowActions = [], initialSortKey = null, initialSortDir = 'asc' } = {}) {
+export function createTable({ store = null, headers, rows, className = '', id, collection, sourceMetadata = null, sortable = false, searchable = false, rowActions = [], initialSortKey = null, initialSortDir = 'asc' } = {}) {
   const __tableLabel = (() => {
     const parts = [];
     if (id) parts.push(String(id));
@@ -111,6 +111,41 @@ export function createTable({ store = null, headers, rows, className = '', id, c
     return parts[0] + parts.slice(1).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('');
   }
 
+  function safeClone(value) {
+    try {
+      return JSON.parse(JSON.stringify(value));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function normalizeSourceMetadataForExport(meta) {
+    const out = safeClone(meta);
+    if (!out || typeof out !== 'object') return out;
+
+    const hasSchema = Array.isArray(out.schema);
+    const hasFields = Array.isArray(out.fields);
+
+    // Prefer schema as the canonical key in exports.
+    if (!hasSchema && hasFields) {
+      out.schema = out.fields;
+      delete out.fields;
+      return out;
+    }
+
+    // If both exist and are equivalent, keep only schema.
+    if (hasSchema && hasFields) {
+      try {
+        const same = JSON.stringify(out.schema) === JSON.stringify(out.fields);
+        if (same) delete out.fields;
+      } catch (e) {
+        // ignore comparison issues; keep both if uncertain
+      }
+    }
+
+    return out;
+  }
+
   for (const header of headers) {
     const th = document.createElement('th');
     let label = '';
@@ -151,7 +186,11 @@ export function createTable({ store = null, headers, rows, className = '', id, c
 
   // Helper to extract comparable text/number from a cell value
   function extractCellValue(cell) {
-    if (cell instanceof HTMLElement) return (cell.textContent || '').trim();
+    if (cell instanceof HTMLElement) {
+      const sv = String(cell?.dataset?.searchValue ?? '').trim();
+      if (sv) return sv;
+      return (cell.textContent || '').trim();
+    }
     if (typeof cell === 'number') return cell;
     if (typeof cell === 'string') return cell.trim();
     return String(cell ?? '').trim();
@@ -461,8 +500,14 @@ export function createTable({ store = null, headers, rows, className = '', id, c
     copyBtn.className = 'table-copy-json btn small';
     copyBtn.textContent = 'Copy JSON';
     copyBtn.title = 'Copy current (filtered) rows as JSON';
+    const copyFullBtn = document.createElement('button');
+    copyFullBtn.type = 'button';
+    copyFullBtn.className = 'table-copy-full-json btn small';
+    copyFullBtn.textContent = 'Copy Full JSON';
+    copyFullBtn.title = 'Copy table metadata + columns + current (filtered) rows as JSON';
     searchWrap.append(searchInput, clearBtn);
     searchWrap.append(copyBtn);
+    searchWrap.append(copyFullBtn);
     wrapper.append(searchWrap);
     updateStickyOffsets();
 
@@ -641,6 +686,73 @@ export function createTable({ store = null, headers, rows, className = '', id, c
         const prev = copyBtn.textContent;
         copyBtn.textContent = 'Copied';
         setTimeout(() => { copyBtn.textContent = prev; }, 1200);
+      } catch (e) {
+        try { alert('Copy failed'); } catch (er) {}
+      }
+    });
+
+    copyFullBtn.addEventListener('click', async () => {
+      try {
+        const srcRows = Array.isArray(displayRows) ? displayRows : currentRows;
+        const records = srcRows.map(r => {
+          const obj = {};
+          for (let i = 0; i < headerKeys.length; i++) {
+            const key = headerKeys[i]?.key || String(i);
+            const v = extractCellValue(r[i]);
+            obj[key || `col${i}`] = v;
+          }
+          return obj;
+        });
+
+        const columns = headerKeys.map((h, i) => ({
+          index: i,
+          key: h?.key || `col${i}`,
+          label: h?.label || '',
+          type: h?.type ?? null,
+        }));
+
+        const full = {
+          metadata: {
+            id: id || null,
+            wrapperId: wrapper.id || null,
+            collection: collection || null,
+            query: String(searchInput.value || '').trim(),
+            sort: (sortCol == null)
+              ? null
+              : {
+                columnIndex: sortCol,
+                field: headerKeys[sortCol]?.key || null,
+                direction: sortDir,
+              },
+            counts: {
+              visibleRows: records.length,
+              totalRows: Array.isArray(originalRows) ? originalRows.length : records.length,
+            },
+            copiedAtIso: new Date().toISOString(),
+          },
+          source: {
+            collectionKey: collection || null,
+            metadata: normalizeSourceMetadataForExport(sourceMetadata),
+          },
+          columns,
+          records,
+        };
+
+        const txt = JSON.stringify(full, null, 2);
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          await navigator.clipboard.writeText(txt);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = txt;
+          document.body.append(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+
+        const prev = copyFullBtn.textContent;
+        copyFullBtn.textContent = 'Copied';
+        setTimeout(() => { copyFullBtn.textContent = prev; }, 1200);
       } catch (e) {
         try { alert('Copy failed'); } catch (er) {}
       }

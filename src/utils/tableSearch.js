@@ -160,11 +160,24 @@ function equalsI(a, b) {
   return String(a ?? '').trim().toLowerCase() === String(b ?? '').trim().toLowerCase();
 }
 
+function parseBooleanLike(v) {
+  const s = String(v ?? '').trim().toLowerCase();
+  if (!s) return null;
+  if (s === 'true' || s === '1' || s === 'yes' || s === 'y' || s === 'on' || s === 't' || s === '✓') return true;
+  if (s === 'false' || s === '0' || s === 'no' || s === 'n' || s === 'off' || s === 'f' || s === '✗' || s === 'x') return false;
+  return null;
+}
+
 function valueMatchesToken(value, token) {
   const t = String(token ?? '').trim();
   if (!t) return false;
   const vals = shallowScalarStrings(value);
   if (!vals.length) return false;
+
+  const tokenBool = parseBooleanLike(t);
+  if (tokenBool !== null) {
+    return vals.some(v => parseBooleanLike(v) === tokenBool);
+  }
 
   if (t.includes('%')) {
     const rx = buildRegexFromWildcard(t);
