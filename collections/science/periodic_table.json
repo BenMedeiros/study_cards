@@ -1,0 +1,375 @@
+{
+    "metadata": {
+        "name": "Periodic Table – First Elements",
+        "description": "Atomic number, symbol, and core properties for the first elements of the periodic table.",
+        "version": 4,
+        "category": "chemistry",
+        "schema": [
+            {
+                "key": "atomicNumber",
+                "label": "Atomic Number",
+                "jp_label": "原子番号",
+                "description": "Number of protons in the nucleus. Defines the element.",
+                "type": "number"
+            },
+            {
+                "key": "symbol",
+                "label": "Symbol",
+                "jp_label": "元素記号",
+                "description": "Standard one- or two-letter chemical symbol (e.g., H, He, Li).",
+                "type": "string"
+            },
+            {
+                "key": "name",
+                "label": "Element Name",
+                "jp_label": "元素名",
+                "description": "Official English name of the element.",
+                "type": "string"
+            },
+            {
+                "key": "atomicMass",
+                "label": "Atomic Mass",
+                "jp_label": "原子量",
+                "description": "Standard atomic weight (average mass of naturally occurring isotopes).",
+                "type": "number"
+            },
+            {
+                "key": "group",
+                "label": "Group",
+                "jp_label": "族",
+                "description": "Vertical column number in the periodic table (1–18).",
+                "type": "number"
+            },
+            {
+                "key": "period",
+                "label": "Period",
+                "jp_label": "周期",
+                "description": "Horizontal row number in the periodic table.",
+                "type": "number"
+            },
+            {
+                "key": "category",
+                "label": "Category",
+                "jp_label": "分類",
+                "type": "enum",
+                "description": "Chemical family classification of the element.",
+                "values": {
+                    "nonmetal": "Typical nonmetal element.",
+                    "noble-gas": "Group 18 inert gases.",
+                    "alkali-metal": "Group 1 reactive metals.",
+                    "alkaline-earth-metal": "Group 2 reactive metals.",
+                    "metalloid": "Elements with mixed metal/nonmetal properties.",
+                    "halogen": "Group 17 reactive nonmetals.",
+                    "transition-metal": "d-block metals (groups 3–12).",
+                    "post-transition-metal": "Metals after transition metals in the p-block.",
+                    "lanthanide": "4f-series rare earth elements.",
+                    "actinide": "5f-series radioactive elements."
+                }
+            },
+            {
+                "key": "stateAtSTP",
+                "label": "State at STP",
+                "jp_label": "標準状態",
+                "type": "enum",
+                "description": "Physical state at standard temperature and pressure (0°C, 1 atm).",
+                "values": {
+                    "solid": "Solid at standard conditions.",
+                    "liquid": "Liquid at standard conditions.",
+                    "gas": "Gas at standard conditions."
+                }
+            },
+            {
+                "key": "commonUses",
+                "label": "Common Uses",
+                "jp_label": "用途",
+                "description": "Typical real-world applications of the element.",
+                "type": "string[]"
+            },
+            {
+                "key": "nameOrigin",
+                "label": "Name Origin",
+                "jp_label": "語源",
+                "description": "Origin or meaning behind the element’s name.",
+                "type": "string"
+            },
+            {
+                "key": "discovered",
+                "label": "Discovered",
+                "jp_label": "発見年",
+                "description": "Year the element was discovered or first recognized.",
+                "type": "number"
+            },
+            {
+                "key": "discoveredBy",
+                "label": "Discovered By",
+                "jp_label": "発見者",
+                "description": "Person or people credited with the discovery.",
+                "type": "string[]"
+            },
+            {
+                "key": "notes",
+                "label": "Notes",
+                "jp_label": "メモ",
+                "description": "Optional study notes, mnemonics, or important facts.",
+                "type": "string[]"
+            }
+        ]
+    },
+    "entries": [
+        {
+            "atomicNumber": 1,
+            "symbol": "H",
+            "name": "Hydrogen",
+            "atomicMass": 1.008,
+            "group": 1,
+            "period": 1,
+            "category": "nonmetal",
+            "stateAtSTP": "gas",
+            "commonUses": [
+                "Rocket fuel",
+                "Ammonia production",
+                "Fuel cells"
+            ],
+            "nameOrigin": "From Greek 'hydro' (water) and 'genes' (forming), meaning 'water-former'.",
+            "discovered": 1766,
+            "discoveredBy": [
+                "Henry Cavendish"
+            ],
+            "notes": [
+                "Lightest element",
+                "Most abundant element in the universe",
+                "Forms water with oxygen"
+            ]
+        },
+        {
+            "atomicNumber": 2,
+            "symbol": "He",
+            "name": "Helium",
+            "atomicMass": 4.0026,
+            "group": 18,
+            "period": 1,
+            "category": "noble-gas",
+            "stateAtSTP": "gas",
+            "commonUses": [
+                "Balloons and airships",
+                "Cryogenic cooling",
+                "Pressurizing rocket fuel tanks"
+            ],
+            "nameOrigin": "From Greek 'Helios', meaning 'Sun', because it was first detected in the solar spectrum.",
+            "discovered": 1868,
+            "discoveredBy": [
+                "Pierre Janssen",
+                "Norman Lockyer"
+            ],
+            "notes": [
+                "Second lightest element",
+                "Chemically inert noble gas",
+                "Very low boiling point"
+            ]
+        },
+        {
+            "atomicNumber": 3,
+            "symbol": "Li",
+            "name": "Lithium",
+            "atomicMass": 6.94,
+            "group": 1,
+            "period": 2,
+            "category": "alkali-metal",
+            "stateAtSTP": "solid",
+            "commonUses": [
+                "Rechargeable batteries",
+                "Lightweight alloys",
+                "Psychiatric medication"
+            ],
+            "nameOrigin": "From Greek 'lithos', meaning 'stone', because it was discovered in minerals.",
+            "discovered": 1817,
+            "discoveredBy": [
+                "Johan August Arfwedson"
+            ],
+            "notes": [
+                "Lightest metal",
+                "Highly reactive with water",
+                "Stored under oil to prevent reaction"
+            ]
+        },
+        {
+            "atomicNumber": 4,
+            "symbol": "Be",
+            "name": "Beryllium",
+            "atomicMass": 9.0122,
+            "group": 2,
+            "period": 2,
+            "category": "alkaline-earth-metal",
+            "stateAtSTP": "solid",
+            "commonUses": [
+                "Aerospace materials",
+                "X-ray windows",
+                "Precision instruments"
+            ],
+            "nameOrigin": "From Greek 'beryllos', a mineral name.",
+            "discovered": 1798,
+            "discoveredBy": [
+                "Louis Nicolas Vauquelin"
+            ],
+            "notes": [
+                "Light and stiff metal",
+                "Toxic dust",
+                "Used in high-performance alloys"
+            ]
+        },
+        {
+            "atomicNumber": 5,
+            "symbol": "B",
+            "name": "Boron",
+            "atomicMass": 10.81,
+            "group": 13,
+            "period": 2,
+            "category": "metalloid",
+            "stateAtSTP": "solid",
+            "commonUses": [
+                "Borax detergents",
+                "Glassmaking",
+                "Semiconductors"
+            ],
+            "nameOrigin": "From Arabic/Persian 'buraq', referring to borax.",
+            "discovered": 1808,
+            "discoveredBy": [
+                "Joseph Louis Gay-Lussac",
+                "Louis Jacques Thénard",
+                "Humphry Davy"
+            ],
+            "notes": [
+                "Metalloid",
+                "Important for plant growth",
+                "Used in borosilicate glass"
+            ]
+        },
+        {
+            "atomicNumber": 6,
+            "symbol": "C",
+            "name": "Carbon",
+            "atomicMass": 12.011,
+            "group": 14,
+            "period": 2,
+            "category": "nonmetal",
+            "stateAtSTP": "solid",
+            "commonUses": [
+                "Steel production",
+                "Fuels",
+                "Organic chemistry"
+            ],
+            "nameOrigin": "From Latin 'carbo', meaning 'charcoal'.",
+            "discovered": 0,
+            "discoveredBy": [
+                "Known since antiquity"
+            ],
+            "notes": [
+                "Basis of life",
+                "Forms diamond and graphite",
+                "Can form long chains"
+            ]
+        },
+        {
+            "atomicNumber": 7,
+            "symbol": "N",
+            "name": "Nitrogen",
+            "atomicMass": 14.007,
+            "group": 15,
+            "period": 2,
+            "category": "nonmetal",
+            "stateAtSTP": "gas",
+            "commonUses": [
+                "Fertilizers",
+                "Inert atmospheres",
+                "Liquid nitrogen cooling"
+            ],
+            "nameOrigin": "From Greek 'nitron' and 'genes', meaning 'niter-forming'.",
+            "discovered": 1772,
+            "discoveredBy": [
+                "Daniel Rutherford"
+            ],
+            "notes": [
+                "Makes up ~78% of Earth's atmosphere",
+                "Relatively inert as N₂",
+                "Essential for proteins and DNA"
+            ]
+        },
+        {
+            "atomicNumber": 8,
+            "symbol": "O",
+            "name": "Oxygen",
+            "atomicMass": 15.999,
+            "group": 16,
+            "period": 2,
+            "category": "nonmetal",
+            "stateAtSTP": "gas",
+            "commonUses": [
+                "Medical breathing",
+                "Steelmaking",
+                "Combustion processes"
+            ],
+            "nameOrigin": "From Greek 'oxys' (acid) and 'genes' (forming).",
+            "discovered": 1774,
+            "discoveredBy": [
+                "Joseph Priestley",
+                "Carl Wilhelm Scheele"
+            ],
+            "notes": [
+                "Supports combustion",
+                "Essential for respiration",
+                "Highly reactive"
+            ]
+        },
+        {
+            "atomicNumber": 9,
+            "symbol": "F",
+            "name": "Fluorine",
+            "atomicMass": 18.998,
+            "group": 17,
+            "period": 2,
+            "category": "halogen",
+            "stateAtSTP": "gas",
+            "commonUses": [
+                "Toothpaste fluoride",
+                "Teflon production",
+                "Uranium processing"
+            ],
+            "nameOrigin": "From Latin 'fluere', meaning 'to flow'.",
+            "discovered": 1886,
+            "discoveredBy": [
+                "Henri Moissan"
+            ],
+            "notes": [
+                "Most electronegative element",
+                "Extremely reactive",
+                "Pale yellow gas"
+            ]
+        },
+        {
+            "atomicNumber": 10,
+            "symbol": "Ne",
+            "name": "Neon",
+            "atomicMass": 20.180,
+            "group": 18,
+            "period": 2,
+            "category": "noble-gas",
+            "stateAtSTP": "gas",
+            "commonUses": [
+                "Neon signs",
+                "High-voltage indicators",
+                "Cryogenic refrigeration"
+            ],
+            "nameOrigin": "From Greek 'neos', meaning 'new'.",
+            "discovered": 1898,
+            "discoveredBy": [
+                "William Ramsay",
+                "Morris Travers"
+            ],
+            "notes": [
+                "Inert noble gas",
+                "Glows red-orange in discharge tubes",
+                "Rare in Earth's atmosphere"
+            ]
+        }
+    ]
+}

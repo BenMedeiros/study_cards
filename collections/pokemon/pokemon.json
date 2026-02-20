@@ -1,10 +1,10 @@
 {
   "metadata": {
     "name": "Pokémon Starters (Kanto)",
-    "description": "First-generation Kanto starter Pokémon and first 151 Pokémon. Type kanji use the official Japanese main-series game terminology; verified against Bulbapedia and Pokémon Database.",
-    "version": 2,
+    "description": "First-generation Kanto starter Pokémon and first 151 Pokémon. Pokémon `type` values use the official Japanese main-series game type labels (e.g., ノーマル, ほのお, みず, でんき, くさ, どく, ひこう, etc.). Name root fields capture both surface segmentation and etymology for Japanese and English names.",
+    "version": 3,
     "category": "pokemon",
-    "source": "Official Japanese main-series game text (Game Freak / Nintendo); verified against Bulbapedia and Pokémon Database",
+    "source": "Official Japanese main-series game text (Game Freak / Nintendo) for type labels; Pokémon name etymologies compiled from reputable reference lists (e.g., Dogasu/Bulbagarden) and cross-checked against major databases.",
     "schema": [
       {
         "key": "englishName",
@@ -28,14 +28,49 @@
         "key": "type",
         "label": "Type",
         "jp_label": "タイプ",
-        "type": "string[]"
+        "type": "enum[]",
+        "description": "Official Japanese Pokémon type labels used in the main-series games.",
+        "values": {
+          "ノーマル": "Normal type",
+          "ほのお": "Fire type",
+          "みず": "Water type",
+          "でんき": "Electric type",
+          "くさ": "Grass type",
+          "こおり": "Ice type",
+          "かくとう": "Fighting type",
+          "どく": "Poison type",
+          "じめん": "Ground type",
+          "ひこう": "Flying type",
+          "エスパー": "Psychic type",
+          "むし": "Bug type",
+          "いわ": "Rock type",
+          "ゴースト": "Ghost type",
+          "ドラゴン": "Dragon type",
+          "あく": "Dark type",
+          "はがね": "Steel type",
+          "フェアリー": "Fairy type"
+        }
       },
       {
-        "key": "japaneseNameRoots",
-        "label": "Japanese Name Roots",
-        "jp_label": "名前ルーツ",
+        "key": "englishNameRoots",
+        "label": "English Name Roots",
+        "jp_label": "英語名ルーツ",
         "type": "string[]",
-        "description": "Canonical roots (single kanji or katakana tokens) that compose the Japanese name; used for filtering/grouping. Use katakana when the root derives from a loanword (e.g. リザード)."
+        "description": "Etymological roots that compose the English name (e.g., Bulbasaur = bulb + dinosaur; Alakazam line = abracadabra phrase lineage). Use lowercase tokens unless a proper noun is essential."
+      },
+      {
+        "key": "japaneseNameMorphemes",
+        "label": "Japanese Name Morphemes",
+        "jp_label": "日本語名の構成",
+        "type": "string[]",
+        "description": "Surface segmentation of the Japanese name into pronounceable chunks as it appears (katakana/hiragana), used for filtering/grouping (e.g., フシギダネ = フシギ + ダネ; ヒトカゲ = ヒト + カゲ; バタフリー = バタ + フリー)."
+      },
+      {
+        "key": "japaneseNameEtymologyRoots",
+        "label": "Japanese Name Etymology Roots",
+        "jp_label": "日本語名の由来ルーツ",
+        "type": "string[]",
+        "description": "Etymological sources for the Japanese name (kanji concepts, loanwords, puns, onomatopoeia). Use kanji tokens for conceptual roots when appropriate (不思議, 種), katakana for loanwords (リザード, ドリル), and note famous puns as tokens where helpful (e.g., 不思議だね)."
       }
     ]
   },
@@ -45,12 +80,21 @@
       "japaneseName": "フシギダネ",
       "pokedexNumber": 1,
       "type": [
-        "草",
-        "毒"
+        "くさ",
+        "どく"
       ],
-      "japaneseNameRoots": [
+      "englishNameRoots": [
+        "bulb",
+        "dinosaur"
+      ],
+      "japaneseNameMorphemes": [
+        "フシギ",
+        "ダネ"
+      ],
+      "japaneseNameEtymologyRoots": [
         "不思議",
-        "種"
+        "種",
+        "不思議だね"
       ]
     },
     {
@@ -58,10 +102,18 @@
       "japaneseName": "フシギソウ",
       "pokedexNumber": 2,
       "type": [
-        "草",
-        "毒"
+        "くさ",
+        "どく"
       ],
-      "japaneseNameRoots": [
+      "englishNameRoots": [
+        "ivy",
+        "dinosaur"
+      ],
+      "japaneseNameMorphemes": [
+        "フシギ",
+        "ソウ"
+      ],
+      "japaneseNameEtymologyRoots": [
         "不思議",
         "草"
       ]
@@ -71,10 +123,18 @@
       "japaneseName": "フシギバナ",
       "pokedexNumber": 3,
       "type": [
-        "草",
-        "毒"
+        "くさ",
+        "どく"
       ],
-      "japaneseNameRoots": [
+      "englishNameRoots": [
+        "Venus",
+        "dinosaur"
+      ],
+      "japaneseNameMorphemes": [
+        "フシギ",
+        "バナ"
+      ],
+      "japaneseNameEtymologyRoots": [
         "不思議",
         "花"
       ]
@@ -84,11 +144,21 @@
       "japaneseName": "ヒトカゲ",
       "pokedexNumber": 4,
       "type": [
-        "炎"
+        "ほのお"
       ],
-      "japaneseNameRoots": [
+      "englishNameRoots": [
+        "char",
+        "salamander"
+      ],
+      "japaneseNameMorphemes": [
+        "ヒト",
+        "カゲ"
+      ],
+      "japaneseNameEtymologyRoots": [
         "火",
-        "蜥蜴"
+        "蜥蜴",
+        "火蜥蜴",
+        "人影"
       ]
     },
     {
@@ -96,9 +166,17 @@
       "japaneseName": "リザード",
       "pokedexNumber": 5,
       "type": [
-        "炎"
+        "ほのお"
       ],
-      "japaneseNameRoots": [
+      "englishNameRoots": [
+        "char",
+        "chameleon"
+      ],
+      "japaneseNameMorphemes": [
+        "リザード"
+      ],
+      "japaneseNameEtymologyRoots": [
+        "lizard",
         "リザード"
       ]
     },
@@ -107,11 +185,21 @@
       "japaneseName": "リザードン",
       "pokedexNumber": 6,
       "type": [
-        "炎",
-        "飛行"
+        "ほのお",
+        "ひこう"
       ],
-      "japaneseNameRoots": [
-        "リザード"
+      "englishNameRoots": [
+        "char",
+        "lizard"
+      ],
+      "japaneseNameMorphemes": [
+        "リザード",
+        "ン"
+      ],
+      "japaneseNameEtymologyRoots": [
+        "lizard",
+        "リザード",
+        "ドン"
       ]
     },
     {
@@ -119,9 +207,17 @@
       "japaneseName": "ゼニガメ",
       "pokedexNumber": 7,
       "type": [
-        "水"
+        "みず"
       ],
-      "japaneseNameRoots": [
+      "englishNameRoots": [
+        "squirt",
+        "turtle"
+      ],
+      "japaneseNameMorphemes": [
+        "ゼニ",
+        "ガメ"
+      ],
+      "japaneseNameEtymologyRoots": [
         "銭",
         "亀"
       ]
@@ -131,11 +227,22 @@
       "japaneseName": "カメール",
       "pokedexNumber": 8,
       "type": [
-        "水"
+        "みず"
       ],
-      "japaneseNameRoots": [
+      "englishNameRoots": [
+        "war",
+        "turtle"
+      ],
+      "japaneseNameMorphemes": [
+        "カメ",
+        "ール"
+      ],
+      "japaneseNameEtymologyRoots": [
         "亀",
-        "甲羅"
+        "メール",
+        "mail",
+        "テール",
+        "tail"
       ]
     },
     {
@@ -143,11 +250,22 @@
       "japaneseName": "カメックス",
       "pokedexNumber": 9,
       "type": [
-        "水"
+        "みず"
       ],
-      "japaneseNameRoots": [
+      "englishNameRoots": [
+        "blast",
+        "tortoise"
+      ],
+      "japaneseNameMorphemes": [
+        "カメ",
+        "ックス"
+      ],
+      "japaneseNameEtymologyRoots": [
         "亀",
-        "砲"
+        "マックス",
+        "max",
+        "デラックス",
+        "deluxe"
       ]
     },
     {

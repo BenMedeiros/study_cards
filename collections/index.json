@@ -227,7 +227,7 @@
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
       "entries": 1505,
-      "modifiedAt": "2026-02-19T17:55:52.288Z"
+      "modifiedAt": "2026-02-19T18:04:02.349Z"
     },
     {
       "path": "languageHistory/languageHistory.json",
@@ -309,9 +309,9 @@
     {
       "path": "pokemon/pokemon.json",
       "name": "Pokémon Starters (Kanto)",
-      "description": "First-generation Kanto starter Pokémon and first 151 Pokémon. Type kanji use the official Japanese main-series game terminology; verified against Bulbapedia and Pokémon Database.",
+      "description": "First-generation Kanto starter Pokémon and first 151 Pokémon. Pokémon `type` values use the official Japanese main-series game type labels (e.g., ノーマル, ほのお, みず, でんき, くさ, どく, ひこう, etc.). Name root fields capture both surface segmentation and etymology for Japanese and English names.",
       "entries": 151,
-      "modifiedAt": "2026-02-11T02:29:23.698Z"
+      "modifiedAt": "2026-02-19T19:48:40.933Z"
     },
     {
       "path": "programming/programming.json",
@@ -319,6 +319,13 @@
       "description": "Consolidated programming collections: languages, SQL engines, web technologies.",
       "entries": 21,
       "modifiedAt": "2026-02-07T19:18:40.007Z"
+    },
+    {
+      "path": "science/periodic_table.json",
+      "name": "Periodic Table – First Elements",
+      "description": "Atomic number, symbol, and core properties for the first elements of the periodic table.",
+      "entries": 10,
+      "modifiedAt": "2026-02-19T20:17:30.496Z"
     }
   ]
 }
