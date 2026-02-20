@@ -1308,10 +1308,10 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     if (!same) emit();
   }
 
-  function syncCollectionFromURL(route) {
-    const collectionId = route.query.get('collection');
+  async function syncCollectionFromURL(route) {
+    const collectionId = route?.query?.get('collection');
     if (collectionId && collectionId !== state.activeCollectionId) {
-      setActiveCollectionId(collectionId);
+      await setActiveCollectionId(collectionId);
     }
   }
 
@@ -1442,18 +1442,112 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   // Table Search / Filtering Utilities
   // ============================================================================
 
-  function entryMatchesTableSearch(entry, { query, fields = null } = {}) {
+  function buildEntrySearchAccessor(entry, { fields = null, collection = null } = {}) {
+    const coll = (collection && typeof collection === 'object') ? collection : null;
+    const adapter = progressAdapterForCollection(coll);
+    const key = adapter?.getKey ? adapter.getKey(entry) : String(getEntryStudyKey(entry) || '').trim();
+    const learned = !!(key && adapter?.isLearned && adapter.isLearned(key));
+    const focus = !!(key && adapter?.isFocus && adapter.isFocus(key));
+    const status = learned ? 'learned' : (focus ? 'focus' : 'null');
+
+    let timesSeen = 0;
+    let timeMs = 0;
+    let seen = false;
+    try {
+      if (adapter?.kind === 'grammar') {
+        const rec = (key && typeof grammarProgressManager?.getGrammarProgressRecord === 'function')
+          ? (grammarProgressManager.getGrammarProgressRecord(key) || {})
+          : {};
+        timesSeen = Math.max(0, Math.round(Number(rec?.timesSeen) || 0));
+        timeMs = Math.max(0, Math.round(Number(rec?.timeMs) || 0));
+        seen = !!rec?.seen || timesSeen > 0 || timeMs > 0;
+      } else {
+        const rec = (key && typeof progressManager?.getKanjiProgressRecord === 'function')
+          ? (progressManager.getKanjiProgressRecord(key) || {})
+          : {};
+        timesSeen = Math.max(0, Math.round(Number(rec?.timesSeenInKanjiStudyCard) || 0));
+        timeMs = Math.max(0, Math.round(Number(rec?.timeMsStudiedInKanjiStudyCard) || 0));
+        seen = !!rec?.seen || timesSeen > 0 || timeMs > 0;
+      }
+    } catch {
+      // ignore
+    }
+
+    const examplesCount = Number(entry?.__examplesCount ?? (Array.isArray(entry?.sentences) ? entry.sentences.length : 0)) || 0;
+    const dynamic = {
+      status,
+      studySeen: !!seen,
+      studyTimesSeen: timesSeen,
+      studyTimeMs: timeMs,
+      examples: examplesCount,
+    };
+
+    const metaFields = Array.isArray(fields)
+      ? fields.map(f => (typeof f === 'string' ? { key: String(f), type: null } : { key: String(f?.key || ''), type: f?.type ?? (f?.schema && f.schema.type) ?? null })).filter(f => f.key)
+      : [];
+    const typeMap = new Map(metaFields.map(f => [String(f.key), f.type ?? null]));
+    const metaKeys = metaFields.map(f => String(f.key));
+    const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', 'examples'];
+
+    return {
+      hasField: (k) => {
+        const kk = String(k || '').trim();
+        if (!kk) return false;
+        if (Object.prototype.hasOwnProperty.call(dynamic, kk)) return true;
+        return !!(entry && Object.prototype.hasOwnProperty.call(entry, kk));
+      },
+      getValue: (k) => {
+        const kk = String(k || '').trim();
+        if (!kk) return undefined;
+        if (Object.prototype.hasOwnProperty.call(dynamic, kk)) return dynamic[kk];
+        return entry ? entry[kk] : undefined;
+      },
+      getFieldType: (k) => {
+        const kk = String(k || '').trim();
+        if (kk === 'studySeen') return 'boolean';
+        if (kk === 'studyTimesSeen' || kk === 'studyTimeMs' || kk === 'examples') return 'number';
+        return typeMap.has(kk) ? typeMap.get(kk) : null;
+      },
+      getAllValues: () => {
+        const out = [];
+        if (metaKeys.length) {
+          for (const mk of metaKeys) out.push(entry ? entry[mk] : undefined);
+        } else {
+          for (const v of Object.values(entry || {})) out.push(v);
+        }
+        for (const dk of dynamicKeys) out.push(dynamic[dk]);
+        return out;
+      },
+    };
+  }
+
+  function tableSearchFieldsMeta(fields = null) {
+    const base = Array.isArray(fields)
+      ? fields.map(f => (typeof f === 'string' ? { key: String(f), type: null } : { key: String(f?.key || ''), type: f?.type ?? (f?.schema && f.schema.type) ?? null })).filter(f => f.key)
+      : [];
+    return [
+      ...base,
+      { key: 'status', type: null },
+      { key: 'examples', type: 'number' },
+      { key: 'studySeen', type: 'boolean' },
+      { key: 'studyTimesSeen', type: 'number' },
+      { key: 'studyTimeMs', type: 'number' },
+    ];
+  }
+
+  function entryMatchesTableSearch(entry, { query, fields = null, collection = null } = {}) {
     try {
       const q = String(query || '').trim();
       if (!q) return false;
       const compiled = compileTableSearchQuery(q);
-      return matchesTableSearch(entry, compiled, { fields });
+      const accessor = buildEntrySearchAccessor(entry, { fields, collection });
+      return matchesTableSearch(accessor, compiled, { fields: tableSearchFieldsMeta(fields) });
     } catch (e) {
       return false;
     }
   }
 
-  function filterEntriesAndIndicesByTableSearch(entries, indices, { query, fields = null } = {}) {
+  function filterEntriesAndIndicesByTableSearch(entries, indices, { query, fields = null, collection = null } = {}) {
     const arr = Array.isArray(entries) ? entries : [];
     const idx = Array.isArray(indices) ? indices : arr.map((_, i) => i);
     const q = String(query || '').trim();
@@ -1461,8 +1555,23 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     return timed(label, () => {
       if (!q) return { entries: arr.slice(), indices: idx.slice() };
       const compiled = compileTableSearchQuery(q);
-      const filtered = filterRecordsAndIndicesByTableSearch(arr, idx, compiled, { fields });
-      return { entries: filtered.records, indices: filtered.indices };
+      if (!collection) {
+        const filtered = filterRecordsAndIndicesByTableSearch(arr, idx, compiled, { fields });
+        return { entries: filtered.records, indices: filtered.indices };
+      }
+
+      const outEntries = [];
+      const outIdx = [];
+      const fieldsMeta = tableSearchFieldsMeta(fields);
+      for (let i = 0; i < arr.length; i++) {
+        const rec = arr[i];
+        const accessor = buildEntrySearchAccessor(rec, { fields, collection });
+        if (matchesTableSearch(accessor, compiled, { fields: fieldsMeta })) {
+          outEntries.push(rec);
+          outIdx.push(idx[i]);
+        }
+      }
+      return { entries: outEntries, indices: outIdx };
     });
   }
 
@@ -1835,7 +1944,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       const held = String(stateObj?.heldTableSearch || '').trim();
       if (held) {
         const fields = Array.isArray(coll?.metadata?.fields) ? coll.metadata.fields : null;
-        const filtered = filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields });
+        const filtered = filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields, collection: coll });
         nextEntries = filtered.entries;
         nextIndices = filtered.indices;
       }
