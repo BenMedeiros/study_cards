@@ -27,7 +27,7 @@ const shell = createAppShell({ store, onNavigate: navigateTo });
 root.append(shell.el);
 
 // Initialize store FIRST, then set up router
-timed('store.initialize', () => store.initialize()).then(() => {
+timed('store.initialize', () => store.initialize()).then(async () => {
   // Now that persisted UI state is loaded, decide initial route.
   // If URL already has a hash, that wins. Otherwise restore last visited route.
   if (!location.hash) {
@@ -37,14 +37,14 @@ timed('store.initialize', () => store.initialize()).then(() => {
 
   // Now that collections are loaded, sync from URL and set up router
   const initialRoute = shell.getCurrentRoute();
-  store.collections.syncCollectionFromURL(initialRoute);
+  await store.collections.syncCollectionFromURL(initialRoute);
   
   installHashRouter({
-    onRoute: (route) => {
+    onRoute: async (route) => {
       if (store?.shell && typeof store.shell.setLastRoute === 'function') {
         store.shell.setLastRoute(route);
       }
-      store.collections.syncCollectionFromURL(route);
+      await store.collections.syncCollectionFromURL(route);
       shell.renderRoute(route);
     },
   });

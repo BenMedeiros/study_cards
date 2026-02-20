@@ -69,24 +69,34 @@ export function createStore() {
       const paths = await collections.loadSeedCollections();
       state.collections = [];
 
-      // Restore active collection from persisted shell state.
+      // Restore active collection from persisted settings first, then legacy uiState.
       let restored = null;
       try {
-        restored = uiState?.shell?.activeCollectionId || null;
+        if (settings && typeof settings.get === 'function' && typeof settings.isReady === 'function' && settings.isReady()) {
+          const fromId = settings.get('shell.activeCollectionId', { consumerId: 'store.initialize' });
+          const fromPath = settings.get('shell.activeCollectionPath', { consumerId: 'store.initialize' });
+          restored = (typeof fromId === 'string' && fromId.trim())
+            ? fromId.trim()
+            : ((typeof fromPath === 'string' && fromPath.trim()) ? fromPath.trim() : null);
+        }
       } catch {
         restored = null;
       }
+      if (!restored) {
+        try {
+          restored = uiState?.shell?.activeCollectionId || null;
+        } catch {
+          restored = null;
+        }
+      }
 
-      if (restored) {
-        if (state._availableCollectionPaths.includes(restored)) {
-          await collections.setActiveCollectionId(restored);
-        } else {
-          throw new Error(`Deprecated or unknown collection id restored from uiState.shell.activeCollectionId: ${restored}`);
-        }
-        if (!state.activeCollectionId && Array.isArray(paths) && paths.length > 0) {
-          await collections.setActiveCollectionId(paths[0]);
-        }
-      } else if (!state.activeCollectionId && Array.isArray(paths) && paths.length > 0) {
+      if (restored && state._availableCollectionPaths.includes(restored)) {
+        await collections.setActiveCollectionId(restored);
+      } else if (restored) {
+        try { console.warn(`[Store] Ignoring unknown persisted active collection: ${restored}`); } catch (e) {}
+      }
+
+      if (!state.activeCollectionId && Array.isArray(paths) && paths.length > 0) {
         await collections.setActiveCollectionId(paths[0]);
       }
     } catch (err) {
