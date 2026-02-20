@@ -1,7 +1,7 @@
 {
     "metadata": {
-        "name": "Periodic Table – First Elements",
-        "description": "Atomic number, symbol, and core properties for the first elements of the periodic table.",
+        "name": "Periodic Table – First 70 Elements",
+        "description": "Atomic number, symbol, and core properties for the first 70 elements of the periodic table.",
         "version": 4,
         "category": "chemistry",
         "schema": [
@@ -96,7 +96,7 @@
                 "key": "discovered",
                 "label": "Discovered",
                 "jp_label": "発見年",
-                "description": "Year the element was discovered or first recognized.",
+                "description": "Year the element was discovered or first recognized. 0 - antiquity.",
                 "type": "number"
             },
             {
@@ -112,6 +112,21 @@
                 "jp_label": "メモ",
                 "description": "Optional study notes, mnemonics, or important facts.",
                 "type": "string[]"
+            }
+            ,
+            {
+                "key": "electronConfiguration",
+                "label": "Electron Configuration",
+                "jp_label": "電子配置",
+                "description": "Electron configuration in noble-gas shorthand (e.g., [He] 2s2 2p2). Use standard spectroscopic notation.",
+                "type": "string"
+            },
+            {
+                "key": "isIrregularElectronConfig",
+                "label": "Irregular Electron Configuration",
+                "jp_label": "例外配置",
+                "description": "True if the ground-state electron configuration is a well-known exception to the simple Aufbau filling order (commonly in d/f blocks, e.g., Cr, Cu).",
+                "type": "boolean"
             }
         ]
     },
@@ -140,6 +155,9 @@
                 "Most abundant element in the universe",
                 "Forms water with oxygen"
             ]
+            ,
+            "electronConfiguration": "1s1",
+            "isIrregularElectronConfig": false
         },
         {
             "atomicNumber": 2,
@@ -166,6 +184,9 @@
                 "Chemically inert noble gas",
                 "Very low boiling point"
             ]
+            ,
+            "electronConfiguration": "1s2",
+            "isIrregularElectronConfig": false
         },
         {
             "atomicNumber": 3,
@@ -191,6 +212,9 @@
                 "Highly reactive with water",
                 "Stored under oil to prevent reaction"
             ]
+            ,
+            "electronConfiguration": "[He] 2s1",
+            "isIrregularElectronConfig": false
         },
         {
             "atomicNumber": 4,
@@ -216,6 +240,9 @@
                 "Toxic dust",
                 "Used in high-performance alloys"
             ]
+            ,
+            "electronConfiguration": "[He] 2s2",
+            "isIrregularElectronConfig": false
         },
         {
             "atomicNumber": 5,
@@ -243,6 +270,9 @@
                 "Important for plant growth",
                 "Used in borosilicate glass"
             ]
+            ,
+            "electronConfiguration": "[He] 2s2 2p1",
+            "isIrregularElectronConfig": false
         },
         {
             "atomicNumber": 6,
@@ -268,6 +298,9 @@
                 "Forms diamond and graphite",
                 "Can form long chains"
             ]
+            ,
+            "electronConfiguration": "[He] 2s2 2p2",
+            "isIrregularElectronConfig": false
         },
         {
             "atomicNumber": 7,
@@ -293,6 +326,9 @@
                 "Relatively inert as N₂",
                 "Essential for proteins and DNA"
             ]
+            ,
+            "electronConfiguration": "[He] 2s2 2p3",
+            "isIrregularElectronConfig": false
         },
         {
             "atomicNumber": 8,
@@ -319,6 +355,9 @@
                 "Essential for respiration",
                 "Highly reactive"
             ]
+            ,
+            "electronConfiguration": "[He] 2s2 2p4",
+            "isIrregularElectronConfig": false
         },
         {
             "atomicNumber": 9,
@@ -344,6 +383,9 @@
                 "Extremely reactive",
                 "Pale yellow gas"
             ]
+            ,
+            "electronConfiguration": "[He] 2s2 2p5",
+            "isIrregularElectronConfig": false
         },
         {
             "atomicNumber": 10,
@@ -369,6 +411,1509 @@
                 "Inert noble gas",
                 "Glows red-orange in discharge tubes",
                 "Rare in Earth's atmosphere"
+            ]
+            ,
+            "electronConfiguration": "[He] 2s2 2p6",
+            "isIrregularElectronConfig": false
+        },
+        {
+            "atomicNumber": 11,
+            "symbol": "Na",
+            "name": "Sodium",
+            "atomicMass": 22.990,
+            "group": 1,
+            "period": 3,
+            "category": "alkali-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ne] 3s1",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Table salt (as compounds)",
+                "Street lighting",
+                "Chemical synthesis"
+            ],
+            "nameOrigin": "From English 'soda'; symbol Na from Latin 'natrium'.",
+            "discovered": 1807,
+            "discoveredBy": ["Humphry Davy"],
+            "notes": [
+                "Highly reactive alkali metal",
+                "Must be stored under oil",
+                "Essential biological ion (Na+)"
+            ]
+        },
+        {
+            "atomicNumber": 12,
+            "symbol": "Mg",
+            "name": "Magnesium",
+            "atomicMass": 24.305,
+            "group": 2,
+            "period": 3,
+            "category": "alkaline-earth-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ne] 3s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Lightweight alloys",
+                "Fireworks and flares",
+                "Biological enzymes"
+            ],
+            "nameOrigin": "Named after Magnesia region in Greece.",
+            "discovered": 1808,
+            "discoveredBy": ["Humphry Davy"],
+            "notes": [
+                "Light structural metal",
+                "Burns with bright white flame",
+                "Central atom in chlorophyll"
+            ]
+        },
+        {
+            "atomicNumber": 13,
+            "symbol": "Al",
+            "name": "Aluminum",
+            "atomicMass": 26.982,
+            "group": 13,
+            "period": 3,
+            "category": "post-transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ne] 3s2 3p1",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Aircraft structures",
+                "Packaging foil",
+                "Construction materials"
+            ],
+            "nameOrigin": "From Latin 'alumen' meaning alum.",
+            "discovered": 1825,
+            "discoveredBy": ["Hans Christian Ørsted"],
+            "notes": [
+                "Lightweight and corrosion resistant",
+                "Forms protective oxide layer",
+                "Most abundant metal in Earth's crust"
+            ]
+        },
+        {
+            "atomicNumber": 14,
+            "symbol": "Si",
+            "name": "Silicon",
+            "atomicMass": 28.085,
+            "group": 14,
+            "period": 3,
+            "category": "metalloid",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ne] 3s2 3p2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Semiconductors",
+                "Solar cells",
+                "Glass and ceramics (as silica)"
+            ],
+            "nameOrigin": "From Latin 'silex' meaning flint.",
+            "discovered": 1824,
+            "discoveredBy": ["Jöns Jacob Berzelius"],
+            "notes": [
+                "Key semiconductor material",
+                "Second most abundant element in Earth's crust",
+                "Forms strong covalent networks"
+            ]
+        },
+        {
+            "atomicNumber": 15,
+            "symbol": "P",
+            "name": "Phosphorus",
+            "atomicMass": 30.974,
+            "group": 15,
+            "period": 3,
+            "category": "nonmetal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ne] 3s2 3p3",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Fertilizers",
+                "Matches",
+                "Biological molecules (DNA, ATP)"
+            ],
+            "nameOrigin": "From Greek 'phosphoros' meaning 'light-bearer'.",
+            "discovered": 1669,
+            "discoveredBy": ["Hennig Brand"],
+            "notes": [
+                "Exists in several allotropes",
+                "White phosphorus glows in air",
+                "Essential for life"
+            ]
+        },
+        {
+            "atomicNumber": 16,
+            "symbol": "S",
+            "name": "Sulfur",
+            "atomicMass": 32.06,
+            "group": 16,
+            "period": 3,
+            "category": "nonmetal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ne] 3s2 3p4",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Sulfuric acid production",
+                "Vulcanization of rubber",
+                "Fungicides"
+            ],
+            "nameOrigin": "From Latin 'sulfur' or 'sulphur'.",
+            "discovered": 0,
+            "discoveredBy": ["Known since antiquity"],
+            "notes": [
+                "Bright yellow solid",
+                "Common in volcanic regions",
+                "Important industrial chemical"
+            ]
+        },
+        {
+            "atomicNumber": 17,
+            "symbol": "Cl",
+            "name": "Chlorine",
+            "atomicMass": 35.45,
+            "group": 17,
+            "period": 3,
+            "category": "halogen",
+            "stateAtSTP": "gas",
+            "electronConfiguration": "[Ne] 3s2 3p5",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Water disinfection",
+                "PVC production",
+                "Bleaching agents"
+            ],
+            "nameOrigin": "From Greek 'chloros' meaning pale green.",
+            "discovered": 1774,
+            "discoveredBy": ["Carl Wilhelm Scheele"],
+            "notes": [
+                "Greenish-yellow gas",
+                "Strong oxidizer",
+                "Toxic in high concentrations"
+            ]
+        },
+        {
+            "atomicNumber": 18,
+            "symbol": "Ar",
+            "name": "Argon",
+            "atomicMass": 39.948,
+            "group": 18,
+            "period": 3,
+            "category": "noble-gas",
+            "stateAtSTP": "gas",
+            "electronConfiguration": "[Ne] 3s2 3p6",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Inert shielding gas for welding",
+                "Light bulbs",
+                "Scientific instruments"
+            ],
+            "nameOrigin": "From Greek 'argos' meaning inactive or lazy.",
+            "discovered": 1894,
+            "discoveredBy": ["Lord Rayleigh", "William Ramsay"],
+            "notes": [
+                "Chemically inert",
+                "Third most abundant gas in air",
+                "Used where non-reactive atmosphere needed"
+            ]
+        },
+        {
+            "atomicNumber": 19,
+            "symbol": "K",
+            "name": "Potassium",
+            "atomicMass": 39.098,
+            "group": 1,
+            "period": 4,
+            "category": "alkali-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 4s1",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Fertilizers",
+                "Biological electrolyte",
+                "Chemical reagents"
+            ],
+            "nameOrigin": "From English 'potash'; symbol K from Latin 'kalium'.",
+            "discovered": 1807,
+            "discoveredBy": ["Humphry Davy"],
+            "notes": [
+                "Very reactive with water",
+                "Soft metal",
+                "Essential for nerve function"
+            ]
+        },
+        {
+            "atomicNumber": 20,
+            "symbol": "Ca",
+            "name": "Calcium",
+            "atomicMass": 40.078,
+            "group": 2,
+            "period": 4,
+            "category": "alkaline-earth-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 4s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Cement and plaster",
+                "Dietary supplements",
+                "Metallurgical reducing agent"
+            ],
+            "nameOrigin": "From Latin 'calx' meaning lime.",
+            "discovered": 1808,
+            "discoveredBy": ["Humphry Davy"],
+            "notes": [
+                "Important in bones and teeth",
+                "Reactive metal",
+                "Common in minerals like limestone"
+            ]
+        },
+        {
+            "atomicNumber": 21,
+            "symbol": "Sc",
+            "name": "Scandium",
+            "atomicMass": 44.956,
+            "group": 3,
+            "period": 4,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d1 4s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "High-intensity lamps",
+                "Aerospace alloys",
+                "Sports equipment alloys"
+            ],
+            "nameOrigin": "From Latin 'Scandia', meaning Scandinavia.",
+            "discovered": 1879,
+            "discoveredBy": ["Lars Fredrik Nilson"],
+            "notes": [
+                "Relatively rare transition metal",
+                "Used to strengthen aluminum alloys",
+                "Often found with rare earth elements"
+            ]
+        },
+        {
+            "atomicNumber": 22,
+            "symbol": "Ti",
+            "name": "Titanium",
+            "atomicMass": 47.867,
+            "group": 4,
+            "period": 4,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d2 4s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Aerospace components",
+                "Medical implants",
+                "Corrosion-resistant equipment"
+            ],
+            "nameOrigin": "Named after the Titans of Greek mythology.",
+            "discovered": 1791,
+            "discoveredBy": ["William Gregor"],
+            "notes": [
+                "Strong with low density",
+                "Excellent corrosion resistance",
+                "Biocompatible metal"
+            ]
+        },
+        {
+            "atomicNumber": 23,
+            "symbol": "V",
+            "name": "Vanadium",
+            "atomicMass": 50.942,
+            "group": 5,
+            "period": 4,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d3 4s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Steel alloys",
+                "Catalysts",
+                "Vanadium redox flow batteries"
+            ],
+            "nameOrigin": "Named after Vanadis, a Norse goddess.",
+            "discovered": 1801,
+            "discoveredBy": ["Andres Manuel del Rio"],
+            "notes": [
+                "Improves steel strength",
+                "Multiple oxidation states",
+                "Important industrial catalyst component"
+            ]
+        },
+        {
+            "atomicNumber": 24,
+            "symbol": "Cr",
+            "name": "Chromium",
+            "atomicMass": 51.996,
+            "group": 6,
+            "period": 4,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d5 4s1",
+            "isIrregularElectronConfig": true,
+            "commonUses": [
+                "Stainless steel",
+                "Chrome plating",
+                "Pigments"
+            ],
+            "nameOrigin": "From Greek 'chroma', meaning color.",
+            "discovered": 1797,
+            "discoveredBy": ["Louis Nicolas Vauquelin"],
+            "notes": [
+                "Known for colorful compounds",
+                "Forms protective oxide coatings",
+                "Important in corrosion-resistant alloys"
+            ]
+        },
+        {
+            "atomicNumber": 25,
+            "symbol": "Mn",
+            "name": "Manganese",
+            "atomicMass": 54.938,
+            "group": 7,
+            "period": 4,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d5 4s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Steel production",
+                "Dry-cell batteries",
+                "Alloying agent"
+            ],
+            "nameOrigin": "From Latin 'magnes', referring to magnetic minerals.",
+            "discovered": 1774,
+            "discoveredBy": ["Johan Gottlieb Gahn"],
+            "notes": [
+                "Hard, brittle transition metal",
+                "Essential trace nutrient",
+                "Common in industrial alloys"
+            ]
+        },
+        {
+            "atomicNumber": 26,
+            "symbol": "Fe",
+            "name": "Iron",
+            "atomicMass": 55.845,
+            "group": 8,
+            "period": 4,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d6 4s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Steel manufacturing",
+                "Construction",
+                "Machinery and tools"
+            ],
+            "nameOrigin": "From Old English 'iren'; symbol Fe from Latin 'ferrum'.",
+            "discovered": 0,
+            "discoveredBy": ["Known since antiquity"],
+            "notes": [
+                "Core component of steel",
+                "Can be magnetized",
+                "Essential in hemoglobin"
+            ]
+        },
+        {
+            "atomicNumber": 27,
+            "symbol": "Co",
+            "name": "Cobalt",
+            "atomicMass": 58.933,
+            "group": 9,
+            "period": 4,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d7 4s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Rechargeable batteries",
+                "Superalloys",
+                "Blue pigments"
+            ],
+            "nameOrigin": "From German 'kobold', meaning goblin.",
+            "discovered": 1735,
+            "discoveredBy": ["Georg Brandt"],
+            "notes": [
+                "Hard ferromagnetic metal",
+                "Used in high-temperature alloys",
+                "Important in lithium-ion battery cathodes"
+            ]
+        },
+        {
+            "atomicNumber": 28,
+            "symbol": "Ni",
+            "name": "Nickel",
+            "atomicMass": 58.693,
+            "group": 10,
+            "period": 4,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d8 4s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Stainless steel",
+                "Coins",
+                "Battery electrodes"
+            ],
+            "nameOrigin": "From German 'Kupfernickel' (devil's copper).",
+            "discovered": 1751,
+            "discoveredBy": ["Axel Fredrik Cronstedt"],
+            "notes": [
+                "Corrosion-resistant metal",
+                "Common alloying element",
+                "Can be ferromagnetic"
+            ]
+        },
+        {
+            "atomicNumber": 29,
+            "symbol": "Cu",
+            "name": "Copper",
+            "atomicMass": 63.546,
+            "group": 11,
+            "period": 4,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d10 4s1",
+            "isIrregularElectronConfig": true,
+            "commonUses": [
+                "Electrical wiring",
+                "Plumbing",
+                "Alloys such as brass and bronze"
+            ],
+            "nameOrigin": "From Latin 'cuprum', from Cyprus.",
+            "discovered": 0,
+            "discoveredBy": ["Known since antiquity"],
+            "notes": [
+                "Excellent electrical conductor",
+                "Reddish ductile metal",
+                "Forms protective green patina"
+            ]
+        },
+        {
+            "atomicNumber": 30,
+            "symbol": "Zn",
+            "name": "Zinc",
+            "atomicMass": 65.38,
+            "group": 12,
+            "period": 4,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d10 4s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Galvanizing steel",
+                "Brass production",
+                "Batteries"
+            ],
+            "nameOrigin": "Possibly from German 'Zink'.",
+            "discovered": 1746,
+            "discoveredBy": ["Andreas Sigismund Marggraf"],
+            "notes": [
+                "Protects iron from corrosion",
+                "Essential trace nutrient",
+                "Commonly used in die-casting alloys"
+            ]
+        },
+        {
+            "atomicNumber": 31,
+            "symbol": "Ga",
+            "name": "Gallium",
+            "atomicMass": 69.723,
+            "group": 13,
+            "period": 4,
+            "category": "post-transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d10 4s2 4p1",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Semiconductors",
+                "LEDs",
+                "Low-melting alloys"
+            ],
+            "nameOrigin": "From Latin 'Gallia', meaning France.",
+            "discovered": 1875,
+            "discoveredBy": ["Paul-Emile Lecoq de Boisbaudran"],
+            "notes": [
+                "Melts near room temperature",
+                "Used in gallium arsenide electronics",
+                "Expands on solidification"
+            ]
+        },
+        {
+            "atomicNumber": 32,
+            "symbol": "Ge",
+            "name": "Germanium",
+            "atomicMass": 72.630,
+            "group": 14,
+            "period": 4,
+            "category": "metalloid",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d10 4s2 4p2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Fiber-optic systems",
+                "Semiconductors",
+                "Infrared optics"
+            ],
+            "nameOrigin": "Named after Germany (Latin 'Germania').",
+            "discovered": 1886,
+            "discoveredBy": ["Clemens Winkler"],
+            "notes": [
+                "Predicted by Mendeleev as eka-silicon",
+                "Important early transistor material",
+                "Brittle gray-white metalloid"
+            ]
+        },
+        {
+            "atomicNumber": 33,
+            "symbol": "As",
+            "name": "Arsenic",
+            "atomicMass": 74.922,
+            "group": 15,
+            "period": 4,
+            "category": "metalloid",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d10 4s2 4p3",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Semiconductor compounds",
+                "Wood preservatives (historically)",
+                "Specialty alloys"
+            ],
+            "nameOrigin": "From Greek 'arsenikon', referring to yellow arsenic compounds.",
+            "discovered": 0,
+            "discoveredBy": ["Known since antiquity"],
+            "notes": [
+                "Toxic element",
+                "Occurs in multiple allotropes",
+                "Used in gallium arsenide (GaAs)"
+            ]
+        },
+        {
+            "atomicNumber": 34,
+            "symbol": "Se",
+            "name": "Selenium",
+            "atomicMass": 78.971,
+            "group": 16,
+            "period": 4,
+            "category": "nonmetal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Ar] 3d10 4s2 4p4",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Glass decolorization",
+                "Photovoltaic applications",
+                "Nutritional supplements (trace)"
+            ],
+            "nameOrigin": "From Greek 'selene', meaning Moon.",
+            "discovered": 1817,
+            "discoveredBy": ["Jons Jacob Berzelius"],
+            "notes": [
+                "Essential trace nutrient",
+                "Can be toxic at high doses",
+                "Shows photoconductive behavior"
+            ]
+        },
+        {
+            "atomicNumber": 35,
+            "symbol": "Br",
+            "name": "Bromine",
+            "atomicMass": 79.904,
+            "group": 17,
+            "period": 4,
+            "category": "halogen",
+            "stateAtSTP": "liquid",
+            "electronConfiguration": "[Ar] 3d10 4s2 4p5",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Flame retardants",
+                "Water treatment",
+                "Photographic chemicals (historically)"
+            ],
+            "nameOrigin": "From Greek 'bromos', meaning stench.",
+            "discovered": 1826,
+            "discoveredBy": ["Antoine Jerome Balard"],
+            "notes": [
+                "Only nonmetal liquid at STP",
+                "Red-brown volatile liquid",
+                "Highly reactive and corrosive"
+            ]
+        },
+        {
+            "atomicNumber": 36,
+            "symbol": "Kr",
+            "name": "Krypton",
+            "atomicMass": 83.798,
+            "group": 18,
+            "period": 4,
+            "category": "noble-gas",
+            "stateAtSTP": "gas",
+            "electronConfiguration": "[Ar] 3d10 4s2 4p6",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Lighting",
+                "Insulating gas in windows",
+                "Laser applications"
+            ],
+            "nameOrigin": "From Greek 'kryptos', meaning hidden.",
+            "discovered": 1898,
+            "discoveredBy": ["William Ramsay", "Morris Travers"],
+            "notes": [
+                "Inert noble gas",
+                "Rare in atmosphere",
+                "Emits whitish light in discharge tubes"
+            ]
+        },
+        {
+            "atomicNumber": 37,
+            "symbol": "Rb",
+            "name": "Rubidium",
+            "atomicMass": 85.468,
+            "group": 1,
+            "period": 5,
+            "category": "alkali-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 5s1",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Atomic clocks",
+                "Research in Bose-Einstein condensates",
+                "Photoelectric cells"
+            ],
+            "nameOrigin": "From Latin 'rubidus', meaning deepest red.",
+            "discovered": 1861,
+            "discoveredBy": ["Robert Bunsen", "Gustav Kirchhoff"],
+            "notes": [
+                "Very reactive alkali metal",
+                "Soft, silvery-white element",
+                "Burns in air"
+            ]
+        },
+        {
+            "atomicNumber": 38,
+            "symbol": "Sr",
+            "name": "Strontium",
+            "atomicMass": 87.62,
+            "group": 2,
+            "period": 5,
+            "category": "alkaline-earth-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 5s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Red fireworks",
+                "Ceramic magnets",
+                "Medical imaging isotopes"
+            ],
+            "nameOrigin": "Named after Strontian, a village in Scotland.",
+            "discovered": 1790,
+            "discoveredBy": ["Adair Crawford", "William Cruickshank"],
+            "notes": [
+                "Reacts with water and air",
+                "Produces crimson flame",
+                "Found in minerals like celestite"
+            ]
+        },
+        {
+            "atomicNumber": 39,
+            "symbol": "Y",
+            "name": "Yttrium",
+            "atomicMass": 88.906,
+            "group": 3,
+            "period": 5,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d1 5s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "LED phosphors",
+                "Laser materials",
+                "High-temperature superconductors"
+            ],
+            "nameOrigin": "Named after Ytterby, Sweden.",
+            "discovered": 1794,
+            "discoveredBy": ["Johan Gadolin"],
+            "notes": [
+                "Often grouped with rare earth elements",
+                "Used in yttria-stabilized zirconia",
+                "Improves alloy strength"
+            ]
+        },
+        {
+            "atomicNumber": 40,
+            "symbol": "Zr",
+            "name": "Zirconium",
+            "atomicMass": 91.224,
+            "group": 4,
+            "period": 5,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d2 5s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Nuclear reactor cladding",
+                "Corrosion-resistant equipment",
+                "Ceramics"
+            ],
+            "nameOrigin": "From Persian 'zargun', meaning gold-colored.",
+            "discovered": 1789,
+            "discoveredBy": ["Martin Heinrich Klaproth"],
+            "notes": [
+                "Highly corrosion resistant",
+                "Low neutron absorption cross-section",
+                "Commonly obtained from zircon minerals"
+            ]
+        },
+        {
+            "atomicNumber": 41,
+            "symbol": "Nb",
+            "name": "Niobium",
+            "atomicMass": 92.906,
+            "group": 5,
+            "period": 5,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d4 5s1",
+            "isIrregularElectronConfig": true,
+            "commonUses": [
+                "Superconducting magnets",
+                "High-strength steel alloys",
+                "Aerospace components"
+            ],
+            "nameOrigin": "Named after Niobe from Greek mythology.",
+            "discovered": 1801,
+            "discoveredBy": ["Charles Hatchett"],
+            "notes": [
+                "Often found with tantalum ores",
+                "Improves toughness of steel",
+                "Used in MRI superconducting coils"
+            ]
+        },
+        {
+            "atomicNumber": 42,
+            "symbol": "Mo",
+            "name": "Molybdenum",
+            "atomicMass": 95.95,
+            "group": 6,
+            "period": 5,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d5 5s1",
+            "isIrregularElectronConfig": true,
+            "commonUses": [
+                "Alloy steels",
+                "Catalysts",
+                "High-temperature furnace parts"
+            ],
+            "nameOrigin": "From Greek 'molybdos', meaning lead.",
+            "discovered": 1778,
+            "discoveredBy": ["Carl Wilhelm Scheele"],
+            "notes": [
+                "Very high melting point",
+                "Strengthens steel at high temperature",
+                "Key catalyst in petroleum refining"
+            ]
+        },
+        {
+            "atomicNumber": 43,
+            "symbol": "Tc",
+            "name": "Technetium",
+            "atomicMass": 98.0,
+            "group": 7,
+            "period": 5,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d5 5s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Medical imaging (Tc-99m)",
+                "Scientific tracers",
+                "Corrosion inhibition research"
+            ],
+            "nameOrigin": "From Greek 'technetos', meaning artificial.",
+            "discovered": 1937,
+            "discoveredBy": ["Carlo Perrier", "Emilio Segrè"],
+            "notes": [
+                "First artificially produced element",
+                "All isotopes are radioactive",
+                "Tc-99m is widely used in diagnostics"
+            ]
+        },
+        {
+            "atomicNumber": 44,
+            "symbol": "Ru",
+            "name": "Ruthenium",
+            "atomicMass": 101.07,
+            "group": 8,
+            "period": 5,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d7 5s1",
+            "isIrregularElectronConfig": true,
+            "commonUses": [
+                "Electrical contacts",
+                "Chemical catalysts",
+                "Hardening platinum and palladium alloys"
+            ],
+            "nameOrigin": "From 'Ruthenia', a Latin term for Russia.",
+            "discovered": 1844,
+            "discoveredBy": ["Karl Ernst Claus"],
+            "notes": [
+                "Platinum-group metal",
+                "Resistant to corrosion",
+                "Used in chip resistor films"
+            ]
+        },
+        {
+            "atomicNumber": 45,
+            "symbol": "Rh",
+            "name": "Rhodium",
+            "atomicMass": 102.91,
+            "group": 9,
+            "period": 5,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d8 5s1",
+            "isIrregularElectronConfig": true,
+            "commonUses": [
+                "Catalytic converters",
+                "Reflective coatings",
+                "Corrosion-resistant alloys"
+            ],
+            "nameOrigin": "From Greek 'rhodon', meaning rose.",
+            "discovered": 1803,
+            "discoveredBy": ["William Hyde Wollaston"],
+            "notes": [
+                "Rare and valuable metal",
+                "Highly reflective surface",
+                "Important automotive catalyst"
+            ]
+        },
+        {
+            "atomicNumber": 46,
+            "symbol": "Pd",
+            "name": "Palladium",
+            "atomicMass": 106.42,
+            "group": 10,
+            "period": 5,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d10",
+            "isIrregularElectronConfig": true,
+            "commonUses": [
+                "Catalytic converters",
+                "Electronics",
+                "Hydrogen storage and purification"
+            ],
+            "nameOrigin": "Named after asteroid Pallas.",
+            "discovered": 1803,
+            "discoveredBy": ["William Hyde Wollaston"],
+            "notes": [
+                "Platinum-group metal",
+                "Absorbs large amounts of hydrogen",
+                "Widely used catalyst"
+            ]
+        },
+        {
+            "atomicNumber": 47,
+            "symbol": "Ag",
+            "name": "Silver",
+            "atomicMass": 107.87,
+            "group": 11,
+            "period": 5,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d10 5s1",
+            "isIrregularElectronConfig": true,
+            "commonUses": [
+                "Jewelry and coins",
+                "Electrical contacts",
+                "Photovoltaics"
+            ],
+            "nameOrigin": "From Old English 'seolfor'; symbol from Latin 'argentum'.",
+            "discovered": 0,
+            "discoveredBy": ["Known since antiquity"],
+            "notes": [
+                "Best electrical conductor of all metals",
+                "Ductile and malleable",
+                "Can tarnish in sulfur-containing air"
+            ]
+        },
+        {
+            "atomicNumber": 48,
+            "symbol": "Cd",
+            "name": "Cadmium",
+            "atomicMass": 112.41,
+            "group": 12,
+            "period": 5,
+            "category": "transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d10 5s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Rechargeable batteries (historically Ni-Cd)",
+                "Pigments",
+                "Corrosion-resistant plating"
+            ],
+            "nameOrigin": "From Latin 'cadmia', from Greek 'kadmeia'.",
+            "discovered": 1817,
+            "discoveredBy": ["Friedrich Stromeyer"],
+            "notes": [
+                "Soft bluish-white metal",
+                "Toxic heavy metal",
+                "Often obtained as a zinc refining by-product"
+            ]
+        },
+        {
+            "atomicNumber": 49,
+            "symbol": "In",
+            "name": "Indium",
+            "atomicMass": 114.82,
+            "group": 13,
+            "period": 5,
+            "category": "post-transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d10 5s2 5p1",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Indium tin oxide (touchscreens)",
+                "Low-melting solders",
+                "Semiconductor compounds"
+            ],
+            "nameOrigin": "From indigo spectral line color.",
+            "discovered": 1863,
+            "discoveredBy": ["Ferdinand Reich", "Hieronymus Theodor Richter"],
+            "notes": [
+                "Very soft metal",
+                "Used in transparent conductive coatings",
+                "Relatively rare in Earth's crust"
+            ]
+        },
+        {
+            "atomicNumber": 50,
+            "symbol": "Sn",
+            "name": "Tin",
+            "atomicMass": 118.71,
+            "group": 14,
+            "period": 5,
+            "category": "post-transition-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d10 5s2 5p2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Solder",
+                "Tin plating",
+                "Bronze and other alloys"
+            ],
+            "nameOrigin": "From Old English 'tin'; symbol from Latin 'stannum'.",
+            "discovered": 0,
+            "discoveredBy": ["Known since antiquity"],
+            "notes": [
+                "Resists corrosion in air",
+                "Used to coat steel cans",
+                "Can undergo 'tin pest' at low temperatures"
+            ]
+        },
+        {
+            "atomicNumber": 51,
+            "symbol": "Sb",
+            "name": "Antimony",
+            "atomicMass": 121.76,
+            "group": 15,
+            "period": 5,
+            "category": "metalloid",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d10 5s2 5p3",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Flame retardants",
+                "Lead-acid batteries",
+                "Semiconductor materials"
+            ],
+            "nameOrigin": "From Latin 'antimonium'.",
+            "discovered": 0,
+            "discoveredBy": ["Known since antiquity"],
+            "notes": [
+                "Brittle metalloid",
+                "Used to harden lead alloys",
+                "Compounds can be toxic"
+            ]
+        },
+        {
+            "atomicNumber": 52,
+            "symbol": "Te",
+            "name": "Tellurium",
+            "atomicMass": 127.60,
+            "group": 16,
+            "period": 5,
+            "category": "metalloid",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d10 5s2 5p4",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Solar panels (CdTe)",
+                "Thermoelectric devices",
+                "Alloy additives"
+            ],
+            "nameOrigin": "From Latin 'tellus', meaning Earth.",
+            "discovered": 1782,
+            "discoveredBy": ["Franz-Joseph Muller von Reichenstein"],
+            "notes": [
+                "Rare metalloid",
+                "Improves machinability of metals",
+                "Important in thin-film photovoltaics"
+            ]
+        },
+        {
+            "atomicNumber": 53,
+            "symbol": "I",
+            "name": "Iodine",
+            "atomicMass": 126.90,
+            "group": 17,
+            "period": 5,
+            "category": "halogen",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Kr] 4d10 5s2 5p5",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Antiseptics",
+                "Thyroid medicine",
+                "Iodized salt"
+            ],
+            "nameOrigin": "From Greek 'ioeides', meaning violet-colored.",
+            "discovered": 1811,
+            "discoveredBy": ["Bernard Courtois"],
+            "notes": [
+                "Sublimes to violet vapor",
+                "Essential trace nutrient",
+                "Least reactive common halogen"
+            ]
+        },
+        {
+            "atomicNumber": 54,
+            "symbol": "Xe",
+            "name": "Xenon",
+            "atomicMass": 131.29,
+            "group": 18,
+            "period": 5,
+            "category": "noble-gas",
+            "stateAtSTP": "gas",
+            "electronConfiguration": "[Kr] 4d10 5s2 5p6",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "High-intensity lamps",
+                "Ion propulsion systems",
+                "Medical anesthesia research"
+            ],
+            "nameOrigin": "From Greek 'xenos', meaning stranger.",
+            "discovered": 1898,
+            "discoveredBy": ["William Ramsay", "Morris Travers"],
+            "notes": [
+                "Heavy noble gas",
+                "Can form compounds with fluorine",
+                "Used in flash lamps"
+            ]
+        },
+        {
+            "atomicNumber": 55,
+            "symbol": "Cs",
+            "name": "Cesium",
+            "atomicMass": 132.91,
+            "group": 1,
+            "period": 6,
+            "category": "alkali-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 6s1",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Atomic clocks",
+                "Photoelectric cells",
+                "Drilling fluids (as compounds)"
+            ],
+            "nameOrigin": "From Latin 'caesius', meaning sky-blue.",
+            "discovered": 1860,
+            "discoveredBy": ["Robert Bunsen", "Gustav Kirchhoff"],
+            "notes": [
+                "Very reactive alkali metal",
+                "Has very low melting point",
+                "Defines the SI second in Cs-133 clocks"
+            ]
+        },
+        {
+            "atomicNumber": 56,
+            "symbol": "Ba",
+            "name": "Barium",
+            "atomicMass": 137.33,
+            "group": 2,
+            "period": 6,
+            "category": "alkaline-earth-metal",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "X-ray contrast agents (as barium sulfate)",
+                "Drilling mud",
+                "Green fireworks"
+            ],
+            "nameOrigin": "From Greek 'barys', meaning heavy.",
+            "discovered": 1808,
+            "discoveredBy": ["Humphry Davy"],
+            "notes": [
+                "Reactive alkaline-earth metal",
+                "Compounds often dense",
+                "Elemental barium is not found free in nature"
+            ]
+        },
+        {
+            "atomicNumber": 57,
+            "symbol": "La",
+            "name": "Lanthanum",
+            "atomicMass": 138.91,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 5d1 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Camera and telescope lenses",
+                "Catalyst supports",
+                "Nickel-metal hydride batteries"
+            ],
+            "nameOrigin": "From Greek 'lanthanein', meaning to lie hidden.",
+            "discovered": 1839,
+            "discoveredBy": ["Carl Gustav Mosander"],
+            "notes": [
+                "Often considered first lanthanide",
+                "Soft, reactive rare-earth metal",
+                "Improves optical glass properties"
+            ]
+        },
+        {
+            "atomicNumber": 58,
+            "symbol": "Ce",
+            "name": "Cerium",
+            "atomicMass": 140.12,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f1 5d1 6s2",
+            "isIrregularElectronConfig": true,
+            "commonUses": [
+                "Catalytic converters",
+                "Glass polishing powders",
+                "Lighter flints"
+            ],
+            "nameOrigin": "Named after the dwarf planet Ceres.",
+            "discovered": 1803,
+            "discoveredBy": ["Jons Jacob Berzelius", "Wilhelm Hisinger", "Martin Heinrich Klaproth"],
+            "notes": [
+                "Most abundant lanthanide",
+                "Used in cerium oxide catalysts",
+                "Readily oxidizes in air"
+            ]
+        },
+        {
+            "atomicNumber": 59,
+            "symbol": "Pr",
+            "name": "Praseodymium",
+            "atomicMass": 140.91,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f3 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Permanent magnets",
+                "Aircraft engine alloys",
+                "Coloring glass and ceramics"
+            ],
+            "nameOrigin": "From Greek words meaning green twin.",
+            "discovered": 1885,
+            "discoveredBy": ["Carl Auer von Welsbach"],
+            "notes": [
+                "Soft silvery rare-earth metal",
+                "Used with neodymium in strong magnets",
+                "Forms green-colored compounds"
+            ]
+        },
+        {
+            "atomicNumber": 60,
+            "symbol": "Nd",
+            "name": "Neodymium",
+            "atomicMass": 144.24,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f4 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "High-strength permanent magnets",
+                "Lasers",
+                "Glass coloring"
+            ],
+            "nameOrigin": "From Greek words meaning new twin.",
+            "discovered": 1885,
+            "discoveredBy": ["Carl Auer von Welsbach"],
+            "notes": [
+                "Key element in Nd-Fe-B magnets",
+                "Important for electric motors",
+                "Oxidizes slowly in air"
+            ]
+        },
+        {
+            "atomicNumber": 61,
+            "symbol": "Pm",
+            "name": "Promethium",
+            "atomicMass": 145.0,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f5 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Nuclear batteries (historical)",
+                "Luminous paint (historical)",
+                "Research applications"
+            ],
+            "nameOrigin": "Named after Prometheus from Greek mythology.",
+            "discovered": 1945,
+            "discoveredBy": ["Jacob A. Marinsky", "Lawrence E. Glendenin", "Charles D. Coryell"],
+            "notes": [
+                "All isotopes are radioactive",
+                "Very rare in nature",
+                "Produced mainly in nuclear reactors"
+            ]
+        },
+        {
+            "atomicNumber": 62,
+            "symbol": "Sm",
+            "name": "Samarium",
+            "atomicMass": 150.36,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f6 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Samarium-cobalt magnets",
+                "Nuclear reactor control materials",
+                "Catalysts"
+            ],
+            "nameOrigin": "Named after the mineral samarskite.",
+            "discovered": 1879,
+            "discoveredBy": ["Paul-Emile Lecoq de Boisbaudran"],
+            "notes": [
+                "Rare-earth metal",
+                "SmCo magnets tolerate high temperatures",
+                "Compounds used in specialty glass"
+            ]
+        },
+        {
+            "atomicNumber": 63,
+            "symbol": "Eu",
+            "name": "Europium",
+            "atomicMass": 151.96,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f7 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Red and blue phosphors",
+                "Euro banknote anti-counterfeit features",
+                "Nuclear control applications"
+            ],
+            "nameOrigin": "Named after Europe.",
+            "discovered": 1901,
+            "discoveredBy": ["Eugene-Anatole Demarcay"],
+            "notes": [
+                "Most reactive lanthanide",
+                "Important in display and lighting phosphors",
+                "Oxidizes rapidly in air"
+            ]
+        },
+        {
+            "atomicNumber": 64,
+            "symbol": "Gd",
+            "name": "Gadolinium",
+            "atomicMass": 157.25,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f7 5d1 6s2",
+            "isIrregularElectronConfig": true,
+            "commonUses": [
+                "MRI contrast agents (as compounds)",
+                "Neutron capture materials",
+                "Magnetocaloric research"
+            ],
+            "nameOrigin": "Named after Johan Gadolin.",
+            "discovered": 1880,
+            "discoveredBy": ["Jean Charles Galissard de Marignac"],
+            "notes": [
+                "Has high neutron absorption",
+                "Used in medical imaging compounds",
+                "Shows strong magnetic properties"
+            ]
+        },
+        {
+            "atomicNumber": 65,
+            "symbol": "Tb",
+            "name": "Terbium",
+            "atomicMass": 158.93,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f9 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Green phosphors",
+                "Terfenol-D magnetostrictive alloys",
+                "Solid-state devices"
+            ],
+            "nameOrigin": "Named after Ytterby, Sweden.",
+            "discovered": 1843,
+            "discoveredBy": ["Carl Gustav Mosander"],
+            "notes": [
+                "Soft silvery rare-earth metal",
+                "Used in energy-efficient lighting phosphors",
+                "Forms many trivalent compounds"
+            ]
+        },
+        {
+            "atomicNumber": 66,
+            "symbol": "Dy",
+            "name": "Dysprosium",
+            "atomicMass": 162.50,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f10 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "High-performance permanent magnets",
+                "Nuclear reactor control rods",
+                "Laser materials"
+            ],
+            "nameOrigin": "From Greek 'dysprositos', meaning hard to get.",
+            "discovered": 1886,
+            "discoveredBy": ["Paul-Emile Lecoq de Boisbaudran"],
+            "notes": [
+                "Improves high-temperature magnet performance",
+                "High magnetic susceptibility",
+                "Rare-earth element with limited supply"
+            ]
+        },
+        {
+            "atomicNumber": 67,
+            "symbol": "Ho",
+            "name": "Holmium",
+            "atomicMass": 164.93,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f11 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Laser systems",
+                "Magnetic flux concentrators",
+                "Specialty glass colorants"
+            ],
+            "nameOrigin": "From 'Holmia', Latin name for Stockholm.",
+            "discovered": 1878,
+            "discoveredBy": ["Marc Delafontaine", "Jacques-Louis Soret"],
+            "notes": [
+                "Has very high magnetic moment",
+                "Used in some medical and industrial lasers",
+                "Relatively soft rare-earth metal"
+            ]
+        },
+        {
+            "atomicNumber": 68,
+            "symbol": "Er",
+            "name": "Erbium",
+            "atomicMass": 167.26,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f12 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Fiber-optic amplifiers",
+                "Laser sources",
+                "Pink glass colorants"
+            ],
+            "nameOrigin": "Named after Ytterby, Sweden.",
+            "discovered": 1843,
+            "discoveredBy": ["Carl Gustav Mosander"],
+            "notes": [
+                "Important in telecom optical fibers",
+                "Gives pink color to some glasses",
+                "Moderately stable in air"
+            ]
+        },
+        {
+            "atomicNumber": 69,
+            "symbol": "Tm",
+            "name": "Thulium",
+            "atomicMass": 168.93,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f13 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Portable X-ray sources",
+                "Lasers",
+                "Research materials"
+            ],
+            "nameOrigin": "From Thule, an ancient name for northern lands.",
+            "discovered": 1879,
+            "discoveredBy": ["Per Teodor Cleve"],
+            "notes": [
+                "One of the least abundant lanthanides",
+                "Soft gray metal",
+                "Tm-170 used as a radiation source"
+            ]
+        },
+        {
+            "atomicNumber": 70,
+            "symbol": "Yb",
+            "name": "Ytterbium",
+            "atomicMass": 173.05,
+            "group": 3,
+            "period": 6,
+            "category": "lanthanide",
+            "stateAtSTP": "solid",
+            "electronConfiguration": "[Xe] 4f14 6s2",
+            "isIrregularElectronConfig": false,
+            "commonUses": [
+                "Fiber lasers",
+                "Atomic clocks research",
+                "Alloy additives"
+            ],
+            "nameOrigin": "Named after Ytterby, Sweden.",
+            "discovered": 1878,
+            "discoveredBy": ["Jean Charles Galissard de Marignac"],
+            "notes": [
+                "Relatively volatile lanthanide",
+                "Used in high-power laser systems",
+                "Can improve grain refinement in alloys"
             ]
         }
     ]
