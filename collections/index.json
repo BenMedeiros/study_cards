@@ -322,10 +322,10 @@
     },
     {
       "path": "science/periodic_table.json",
-      "name": "Periodic Table – First Elements",
-      "description": "Atomic number, symbol, and core properties for the first elements of the periodic table.",
-      "entries": 10,
-      "modifiedAt": "2026-02-19T20:17:30.496Z"
+      "name": "Periodic Table – First 70 Elements",
+      "description": "Atomic number, symbol, and core properties for the first 70 elements of the periodic table.",
+      "entries": 70,
+      "modifiedAt": "2026-02-20T14:31:35.815Z"
     }
   ]
 }
