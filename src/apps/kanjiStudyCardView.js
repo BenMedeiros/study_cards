@@ -137,7 +137,11 @@ export function renderKanjiStudyCard({ store }) {
   // No legacy UI load: visual defaults used; autoplay/defaults remain runtime-only
 
   // Footer controls: describe actions and let footer build UI + register shortcuts
-  let prevBtn, revealBtn, soundBtn, nextBtn, learnedBtn, practiceBtn;
+  function getFooterButton(key) {
+    if (!footerControls) return null;
+    if (typeof footerControls.getButton === 'function') return footerControls.getButton(key);
+    return (footerControls.buttons && footerControls.buttons[key]) || null;
+  }
 
   const footerDesc = [
     { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', action: () => showPrev() },
@@ -186,13 +190,6 @@ export function renderKanjiStudyCard({ store }) {
   ];
 
   const footerControls = createViewFooterControls(footerDesc, { appId: 'kanjiStudy' });
-  // map returned button elements for local use
-  prevBtn = footerControls.buttons.prev;
-  revealBtn = footerControls.buttons.reveal;
-  soundBtn = footerControls.buttons.sound;
-  nextBtn = footerControls.buttons.next;
-  learnedBtn = footerControls.buttons.learned;
-  practiceBtn = footerControls.buttons.practice;
   // Unified speak helper: prefer reading/word/kana, fall back to kanji/character/text
   function speakEntry(entry) {
     if (!entry) return;
@@ -506,6 +503,9 @@ export function renderKanjiStudyCard({ store }) {
   function speakCurrent() { if (entries[index]) speakEntry(entries[index]); }
 
   function updateMarkButtons() {
+    const learnedBtn = getFooterButton('learned');
+    const practiceBtn = getFooterButton('practice');
+    if (!learnedBtn || !practiceBtn) return;
     const entry = entries[index];
     const v = store.collections.getEntryStudyKey(entry);
     const collectionKey = getCurrentCollectionKey();
@@ -522,6 +522,8 @@ export function renderKanjiStudyCard({ store }) {
   
 
   function updateRevealButton() {
+    const revealBtn = getFooterButton('reveal');
+    if (!revealBtn) return;
     // Keep the caption span so shortcut hint remains visible when keyboard is active
     if (revealBtn && typeof revealBtn.setState === 'function') {
       if (viewMode === 'full') revealBtn.setState('full');

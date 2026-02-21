@@ -1,3 +1,153 @@
+import { getGlobalSettingsManager } from '../managers/settingsManager.js';
+import { openViewFooterSettingsDialog } from './viewFooterSettingsDialog.js';
+
+const FOOTER_CONFIGS_SETTING_ID = 'apps.viewFooter.configs';
+
+function deepClone(value) {
+  try { return JSON.parse(JSON.stringify(value)); } catch (e) { return value; }
+}
+
+function isDescriptor(item) {
+  return !!(item && typeof item === 'object' && !(item instanceof Element));
+}
+
+function normalizeConfigEntry(raw, baseKeys = []) {
+  const src = (raw && typeof raw === 'object') ? raw : {};
+  const order = Array.isArray(src.order) ? src.order.map(v => String(v || '').trim()).filter(Boolean) : [];
+  const seen = new Set();
+  const normalizedOrder = [];
+  for (const key of order) {
+    if (!key || seen.has(key) || !baseKeys.includes(key)) continue;
+    seen.add(key);
+    normalizedOrder.push(key);
+  }
+  for (const key of baseKeys) {
+    if (!seen.has(key)) normalizedOrder.push(key);
+  }
+  return {
+    id: String(src.id || 'default'),
+    name: String(src.name || 'Default'),
+    order: normalizedOrder,
+    controls: (src.controls && typeof src.controls === 'object') ? deepClone(src.controls) : {},
+  };
+}
+
+function normalizeAppFooterPrefs(raw, baseKeys = []) {
+  const src = (raw && typeof raw === 'object') ? raw : {};
+  const configs = Array.isArray(src.configs) ? src.configs : [];
+  const byId = new Map();
+  for (const c of configs) {
+    const n = normalizeConfigEntry(c, baseKeys);
+    const id = String(n.id || '').trim();
+    if (!id) continue;
+    n.id = id;
+    byId.set(id, n);
+  }
+  if (!byId.has('default')) {
+    byId.set('default', { id: 'default', name: 'Default', order: baseKeys.slice(), controls: {} });
+  }
+  const activeConfigId = byId.has(src.activeConfigId) ? src.activeConfigId : 'default';
+  return {
+    activeConfigId,
+    configs: Array.from(byId.values()),
+  };
+}
+
+function getConfigById(appPrefs, configId) {
+  if (!appPrefs || !Array.isArray(appPrefs.configs)) return null;
+  return appPrefs.configs.find(c => c.id === configId) || null;
+}
+
+function applyStateOverrides(state, overrideState) {
+  if (!overrideState || typeof overrideState !== 'object') return state;
+  const out = { ...state };
+  if (typeof overrideState.icon === 'string') out.icon = overrideState.icon;
+  if (typeof overrideState.text === 'string') out.text = overrideState.text;
+  if (typeof overrideState.shortcut === 'string') out.shortcut = overrideState.shortcut;
+  if (typeof overrideState.caption === 'string') out.caption = overrideState.caption;
+  else if (typeof overrideState.shortcut === 'string') {
+    const s = String(overrideState.shortcut || '');
+    if (s === ' ') out.caption = 'Space';
+    else if (s === 'ArrowLeft') out.caption = '←';
+    else if (s === 'ArrowRight') out.caption = '→';
+    else if (s === 'ArrowUp') out.caption = '↑';
+    else if (s === 'ArrowDown') out.caption = '↓';
+    else if (/^[a-z]$/i.test(s)) out.caption = s.toUpperCase();
+    else out.caption = s;
+  }
+  return out;
+}
+
+function applyFooterConfig(items = [], appPrefs = null) {
+  const activeConfig = getConfigById(appPrefs, appPrefs?.activeConfigId) || getConfigById(appPrefs, 'default');
+  if (!activeConfig) return items.slice();
+
+  const controlsByKey = new Map();
+  const others = [];
+
+  for (const item of items) {
+    if (!isDescriptor(item) || !item.key) {
+      others.push(item);
+      continue;
+    }
+    const key = String(item.key || '').trim();
+    if (!key) {
+      others.push(item);
+      continue;
+    }
+
+    const override = (activeConfig.controls && activeConfig.controls[key] && typeof activeConfig.controls[key] === 'object')
+      ? activeConfig.controls[key]
+      : {};
+    if (override.hidden) continue;
+
+    const next = { ...item };
+    if (Array.isArray(next.states) && next.states.length) {
+      const stateOverrides = (override.states && typeof override.states === 'object') ? override.states : {};
+      next.states = next.states.map(st => {
+        if (!st || !st.name) return st;
+        return applyStateOverrides({ ...st }, stateOverrides[st.name]);
+      });
+    } else {
+      if (typeof override.icon === 'string') next.icon = override.icon;
+      if (typeof override.text === 'string') next.text = override.text;
+      if (typeof override.shortcut === 'string') next.shortcut = override.shortcut;
+      if (typeof override.caption === 'string') next.caption = override.caption;
+      else if (typeof override.shortcut === 'string') {
+        const s = String(override.shortcut || '');
+        if (s === ' ') next.caption = 'Space';
+        else if (s === 'ArrowLeft') next.caption = '←';
+        else if (s === 'ArrowRight') next.caption = '→';
+        else if (s === 'ArrowUp') next.caption = '↑';
+        else if (s === 'ArrowDown') next.caption = '↓';
+        else if (/^[a-z]$/i.test(s)) next.caption = s.toUpperCase();
+        else next.caption = s;
+      }
+    }
+    controlsByKey.set(key, next);
+  }
+
+  const out = [];
+  const seen = new Set();
+  const order = Array.isArray(activeConfig.order) ? activeConfig.order : [];
+  for (const key of order) {
+    if (!controlsByKey.has(key) || seen.has(key)) continue;
+    seen.add(key);
+    out.push(controlsByKey.get(key));
+  }
+
+  for (const item of items) {
+    if (!isDescriptor(item) || !item.key) continue;
+    const key = String(item.key || '').trim();
+    if (!key || seen.has(key) || !controlsByKey.has(key)) continue;
+    seen.add(key);
+    out.push(controlsByKey.get(key));
+  }
+
+  for (const other of others) out.push(other);
+  return out;
+}
+
 // Creates a footer control bar and appends provided button elements.
 // Buttons/controls are created by the caller and passed in so
 // the caller retains control over event handlers and shortcut hints.
@@ -7,7 +157,19 @@ function createViewFooterControls(items = [], opts = {}) {
   const footerControls = document.createElement('div');
   footerControls.className = 'view-footer-controls';
 
+  const controlsRow = document.createElement('div');
+  controlsRow.className = 'view-footer-controls-row';
+  footerControls.appendChild(controlsRow);
+
   const buttons = {};
+  let shortcuts = {};
+  const settingsManager = opts.settingsManager || getGlobalSettingsManager?.() || null;
+  const appId = (opts && typeof opts.appId === 'string') ? opts.appId : `viewFooterControls${Math.random().toString(36).slice(2, 8)}`;
+
+  const baseControlItems = items.filter(it => isDescriptor(it) && it.key).map(it => ({ ...it }));
+  const baseKeys = baseControlItems.map(it => String(it.key || '').trim()).filter(Boolean);
+  let allFooterPrefs = {};
+  let appPrefs = normalizeAppFooterPrefs(null, baseKeys);
 
   // helper to create a simple button element from descriptor
   function makeButton(desc) {
@@ -90,50 +252,85 @@ function createViewFooterControls(items = [], opts = {}) {
     return b;
   }
 
-  // Build DOM
-  // Collect possible shortcut keys for stateful buttons
-  const statefulKeySets = [];
+  function clearButtonsMap() {
+    for (const k of Object.keys(buttons)) delete buttons[k];
+  }
 
-  for (const it of items) {
-    if (it instanceof Element) {
-      footerControls.appendChild(it);
-    } else if (it && typeof it === 'object') {
+  function buildButtons(renderItems = []) {
+    controlsRow.innerHTML = '';
+    clearButtonsMap();
+
+    const statefulKeySets = [];
+    const nextShortcuts = Object.assign({}, opts.shortcuts || {});
+
+    for (const it of renderItems) {
+      if (it instanceof Element) {
+        controlsRow.appendChild(it);
+        continue;
+      }
+      if (!it || typeof it !== 'object') continue;
       let el;
       if (Array.isArray(it.states) && it.states.length) {
         el = makeStateButton(it);
-        // collect state's shortcuts
         const keys = new Set();
         for (const s of it.states) if (s && s.shortcut) keys.add(s.shortcut);
         statefulKeySets.push({ el, keys });
       } else {
         el = makeButton(it);
       }
-      footerControls.appendChild(el);
+      controlsRow.appendChild(el);
       if (it.key) buttons[it.key] = el;
-    }
-  }
 
-  // Build shortcuts map either from opts.shortcuts or from item.shortcut
-  const shortcuts = Object.assign({}, opts.shortcuts || {});
-  for (const it of items) {
-    if (it && typeof it === 'object' && it.shortcut && !(Array.isArray(it.states) && it.states.length)) {
-      shortcuts[it.shortcut] = shortcuts[it.shortcut] || (it.key ? buttons[it.key] : null) || it.action;
-    }
-  }
-
-  // For stateful buttons, register wrapper functions for each potential key
-  for (const ks of statefulKeySets) {
-    for (const key of ks.keys) {
-      // Only set if not already set by opts.shortcuts or non-state item
-      if (!shortcuts[key]) {
-        shortcuts[key] = (e) => {
-          try { ks.el.handleShortcut(key, e); } catch (err) {}
-        };
+      if (it.shortcut && !(Array.isArray(it.states) && it.states.length)) {
+        nextShortcuts[it.shortcut] = nextShortcuts[it.shortcut] || (it.key ? buttons[it.key] : null) || it.action;
       }
     }
+
+    for (const ks of statefulKeySets) {
+      for (const key of ks.keys) {
+        if (!nextShortcuts[key]) {
+          nextShortcuts[key] = (e) => {
+            try { ks.el.handleShortcut(key, e); } catch (err) {}
+          };
+        }
+      }
+    }
+
+    shortcuts = nextShortcuts;
   }
 
-  const appId = (opts && typeof opts.appId === 'string') ? opts.appId : `viewFooterControls${Math.random().toString(36).slice(2,8)}`;
+  function readPrefs() {
+    if (!settingsManager || typeof settingsManager.get !== 'function' || typeof settingsManager.set !== 'function' || typeof settingsManager.registerConsumer !== 'function') {
+      appPrefs = normalizeAppFooterPrefs(null, baseKeys);
+      return;
+    }
+    try {
+      allFooterPrefs = settingsManager.get(FOOTER_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
+      appPrefs = normalizeAppFooterPrefs(allFooterPrefs[appId], baseKeys);
+    } catch (e) {
+      allFooterPrefs = {};
+      appPrefs = normalizeAppFooterPrefs(null, baseKeys);
+    }
+  }
+
+  function persistPrefs(nextAppPrefs) {
+    if (!settingsManager || typeof settingsManager.set !== 'function') return;
+    try {
+      const current = settingsManager.get(FOOTER_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
+      const merged = { ...(current || {}), [appId]: deepClone(nextAppPrefs) };
+      settingsManager.set(FOOTER_CONFIGS_SETTING_ID, merged, { consumerId: `footer.${appId}` });
+    } catch (e) {
+      // ignore persistence failures
+    }
+  }
+
+  function rebuildFromConfig() {
+    const renderItems = applyFooterConfig(items, appPrefs);
+    buildButtons(renderItems);
+  }
+
+  readPrefs();
+  rebuildFromConfig();
 
   function handler(e) {
     if (!shortcuts) return false;
@@ -156,9 +353,60 @@ function createViewFooterControls(items = [], opts = {}) {
     try { document.dispatchEvent(new CustomEvent('app:unregisterKeyHandler', { detail: { id: appId } })); } catch (e) {}
   }
 
+  let settingsDialogHandle = null;
+  let unregSettings = null;
+
+  if (opts.enableSettings !== false && baseControlItems.length) {
+    const settingsBtn = document.createElement('button');
+    settingsBtn.type = 'button';
+    settingsBtn.className = 'view-footer-settings-btn btn small';
+    settingsBtn.textContent = '⚙';
+    settingsBtn.title = 'Footer settings';
+    settingsBtn.setAttribute('aria-label', 'Footer settings');
+    settingsBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try { settingsDialogHandle?.close?.(); } catch (err) {}
+      settingsDialogHandle = openViewFooterSettingsDialog({
+        appId,
+        baseControls: baseControlItems,
+        appPrefs,
+        onChange: (nextPrefs) => {
+          appPrefs = normalizeAppFooterPrefs(nextPrefs, baseKeys);
+          persistPrefs(appPrefs);
+          rebuildFromConfig();
+        }
+      });
+    });
+    footerControls.appendChild(settingsBtn);
+  }
+
+  if (settingsManager && typeof settingsManager.registerConsumer === 'function') {
+    try {
+      unregSettings = settingsManager.registerConsumer({
+        consumerId: `footer.${appId}`,
+        settings: [FOOTER_CONFIGS_SETTING_ID],
+        onChange: ({ settingId, next }) => {
+          if (settingId !== FOOTER_CONFIGS_SETTING_ID) return;
+          try {
+            const all = (next && typeof next === 'object') ? next : {};
+            appPrefs = normalizeAppFooterPrefs(all[appId], baseKeys);
+            rebuildFromConfig();
+          } catch (e) {
+            // ignore
+          }
+        },
+      });
+    } catch (e) {
+      unregSettings = null;
+    }
+  }
+
   const mo = new MutationObserver(() => {
     if (!document.body.contains(footerControls)) {
       unregister();
+      try { settingsDialogHandle?.close?.(); } catch (e) {}
+      try { if (typeof unregSettings === 'function') unregSettings(); } catch (e) {}
       try { mo.disconnect(); } catch (e) {}
     }
   });
@@ -168,7 +416,12 @@ function createViewFooterControls(items = [], opts = {}) {
 
   footerControls.__unregister = unregister;
 
-  return { el: footerControls, buttons };
+  return {
+    el: footerControls,
+    buttons,
+    getButton: (key) => buttons[key] || null,
+    rebuild: () => rebuildFromConfig(),
+  };
 }
 
 // Expose globally for existing apps that call this without imports

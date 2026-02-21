@@ -95,7 +95,11 @@ export function renderFlashcards({ store }) {
   }
 
   // Footer controls (shared component) — mirrors kanjiStudyCard actions except reveal/hide
-  let learnedBtn, practiceBtn;
+  function getFooterButton(key) {
+    if (!footerControls) return null;
+    if (typeof footerControls.getButton === 'function') return footerControls.getButton(key);
+    return (footerControls.buttons && footerControls.buttons[key]) || null;
+  }
 
   function showPrev() { goToIndex(index - 1); }
   function showNext() { goToIndex(index + 1); }
@@ -111,6 +115,8 @@ export function renderFlashcards({ store }) {
   }
 
   function updateMarkButtons() {
+    const learnedBtn = getFooterButton('learned');
+    const practiceBtn = getFooterButton('practice');
     if (!learnedBtn || !practiceBtn) return;
     const entry = entries[index];
     const v = getPrimaryValue(entry);
@@ -158,8 +164,6 @@ export function renderFlashcards({ store }) {
   ];
 
   const footerControls = createViewFooterControls(footerDesc, { appId: 'flashcards' });
-  learnedBtn = footerControls.buttons.learned;
-  practiceBtn = footerControls.buttons.practice;
 
   function render() {
     // active may have changed via store updates
