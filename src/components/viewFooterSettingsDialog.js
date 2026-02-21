@@ -620,6 +620,8 @@ export function openViewFooterSettingsDialog({
         });
         // keep collapse button in the DOM for consistent layout, but hide it visually
         try { collapseBtn.style.visibility = 'hidden'; } catch (e) {}
+        // start empty placeholder rows collapsed
+        row.classList.add('collapsed');
         rowTop.append(collapseBtn, emptyLabel, moveUp, moveDown, removeBtn);
         // no fields for placeholders
         row.append(rowTop);
@@ -790,8 +792,8 @@ export function openViewFooterSettingsDialog({
         updateExpandCollapseBtnText();
       });
 
-      // Initialize row collapsed state (expanded by default)
-      row.classList.remove('collapsed');
+      // Initialize row collapsed state (collapsed by default)
+      row.classList.add('collapsed');
 
       moveUp.addEventListener('click', () => {
         moveControl(cfg, key, -1);

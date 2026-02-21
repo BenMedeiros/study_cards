@@ -217,6 +217,7 @@ body {
   z-index: 1321;
   min-width: 90vw;
   max-width: 90vw;
+  min-height: 75vh;
   max-height: 75vh;
   overflow: auto;
   background: var(--panel);
