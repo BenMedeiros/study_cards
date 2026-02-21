@@ -294,7 +294,7 @@ body {
 
 .view-footer-editor-top {
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto 1fr auto auto auto auto;
   gap: 0.55rem;
   align-items: center;
 }
