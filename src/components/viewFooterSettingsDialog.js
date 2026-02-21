@@ -93,8 +93,10 @@ function normalizeOrder(order, baseKeys) {
   const source = Array.isArray(order) ? order : [];
   for (const key of source) {
     const k = String(key || '').trim();
-    if (!k || seen.has(k) || !baseKeys.includes(k)) continue;
-    seen.add(k);
+    // allow placeholder token '__empty' to be included in the order
+    const isPlaceholder = (k === '__empty');
+    if (!k || (!isPlaceholder && seen.has(k)) || (!isPlaceholder && !baseKeys.includes(k))) continue;
+    if (!isPlaceholder) seen.add(k);
     out.push(k);
   }
   for (const k of baseKeys) {
@@ -524,11 +526,16 @@ export function openViewFooterSettingsDialog({
   const nameInput = el('input', { className: 'view-footer-config-name', attrs: { type: 'text', maxlength: '64' } });
   const resetBtn = el('button', { className: 'btn small', text: 'Reset Footer to Default' });
   resetBtn.type = 'button';
+  const addEmptyBtn = el('button', { className: 'btn small', text: 'Add Empty' });
+  addEmptyBtn.type = 'button';
   const saveBtn = el('button', { className: 'btn small', text: 'Save Changes' });
   saveBtn.type = 'button';
   saveBtn.disabled = true;
 
-  rightTop.append(nameLabel, nameInput, resetBtn, saveBtn);
+  const expandCollapseAllBtn = el('button', { className: 'btn small', text: 'Collapse All' });
+  expandCollapseAllBtn.type = 'button';
+
+  rightTop.append(nameLabel, nameInput, expandCollapseAllBtn, addEmptyBtn, resetBtn, saveBtn);
 
   const controlsTitle = el('div', { className: 'hint', text: 'Controls' });
   const controlsList = el('div', { className: 'view-footer-controls-editor-list' });
@@ -574,12 +581,18 @@ export function openViewFooterSettingsDialog({
     delBtn.disabled = cfg.id === 'default';
 
     controlsList.innerHTML = '';
-    for (const key of cfg.order) {
+    for (let i = 0; i < cfg.order.length; i++) {
+      const key = cfg.order[i];
       const base = getBaseControl(key);
-      if (!base) continue;
+      if (!base && key !== '__empty') continue;
       const override = getControlOverride(cfg, key);
       const row = el('div', { className: 'view-footer-control-row' });
       const rowTop = el('div', { className: 'view-footer-control-row-top' });
+
+      // per-row collapse toggle
+      const collapseBtn = el('button', { className: 'btn small view-footer-collapse-btn', text: '▴' });
+      collapseBtn.type = 'button';
+      collapseBtn.title = 'Toggle details';
 
       const visibility = el('input', { attrs: { type: 'checkbox' } });
       visibility.checked = !override.hidden;
@@ -594,7 +607,56 @@ export function openViewFooterSettingsDialog({
       const resetControlBtn = el('button', { className: 'btn small', text: 'Reset' });
       resetControlBtn.type = 'button';
 
-      rowTop.append(visibilityLabel, keyBadge, moveUp, moveDown, resetControlBtn);
+      // If this is an empty placeholder slot, render simplified UI
+      if (key === '__empty') {
+        const emptyLabel = el('div', { className: 'view-footer-control-key', text: 'Empty Slot' });
+        const removeBtn = el('button', { className: 'btn small danger', text: 'Remove' });
+        removeBtn.type = 'button';
+        removeBtn.addEventListener('click', () => {
+          // remove this placeholder at index i
+          cfg.order.splice(i, 1);
+          markDirty();
+          renderEditor();
+        });
+        // keep collapse button in the DOM for consistent layout, but hide it visually
+        try { collapseBtn.style.visibility = 'hidden'; } catch (e) {}
+        rowTop.append(collapseBtn, emptyLabel, moveUp, moveDown, removeBtn);
+        // no fields for placeholders
+        row.append(rowTop);
+        controlsList.appendChild(row);
+        // ensure collapse button state
+        collapseBtn.addEventListener('click', () => {
+          row.classList.toggle('collapsed');
+          updateExpandCollapseBtnText();
+        });
+        // support moving this specific empty-slot by index (there may be multiple placeholders)
+        moveUp.addEventListener('click', () => {
+          if (!cfg || !Array.isArray(cfg.order)) return;
+          if (i <= 0) return;
+          const arr = cfg.order.slice();
+          const tmp = arr[i - 1];
+          arr[i - 1] = arr[i];
+          arr[i] = tmp;
+          cfg.order = arr;
+          markDirty();
+          renderEditor();
+        });
+
+        moveDown.addEventListener('click', () => {
+          if (!cfg || !Array.isArray(cfg.order)) return;
+          if (i >= cfg.order.length - 1) return;
+          const arr = cfg.order.slice();
+          const tmp = arr[i + 1];
+          arr[i + 1] = arr[i];
+          arr[i] = tmp;
+          cfg.order = arr;
+          markDirty();
+          renderEditor();
+        });
+        continue;
+      }
+
+      rowTop.append(collapseBtn, visibilityLabel, keyBadge, moveUp, moveDown, resetControlBtn);
 
       const fields = el('div', { className: 'view-footer-control-fields' });
 
@@ -722,6 +784,15 @@ export function openViewFooterSettingsDialog({
         markDirty();
       });
 
+      // collapse toggle behavior for this row
+      collapseBtn.addEventListener('click', () => {
+        row.classList.toggle('collapsed');
+        updateExpandCollapseBtnText();
+      });
+
+      // Initialize row collapsed state (expanded by default)
+      row.classList.remove('collapsed');
+
       moveUp.addEventListener('click', () => {
         moveControl(cfg, key, -1);
         renderEditor();
@@ -741,6 +812,19 @@ export function openViewFooterSettingsDialog({
       row.append(rowTop, fields);
       controlsList.appendChild(row);
     }
+    // after rendering all rows, update expand/collapse text
+    updateExpandCollapseBtnText();
+  }
+
+  function updateExpandCollapseBtnText() {
+    const rows = Array.from(controlsList.querySelectorAll('.view-footer-control-row'));
+    if (!rows.length) {
+      expandCollapseAllBtn.textContent = 'Expand All';
+      return;
+    }
+    const anyCollapsed = rows.some(r => r.classList.contains('collapsed'));
+    // If any are collapsed, action will expand all -> show 'Expand All'
+    expandCollapseAllBtn.textContent = anyCollapsed ? 'Expand All' : 'Collapse All';
   }
 
   function renderAll() {
@@ -783,6 +867,28 @@ export function openViewFooterSettingsDialog({
     if (!cfg) return;
     resetFooterToDefault(cfg);
     renderEditor();
+  });
+
+  addEmptyBtn.addEventListener('click', () => {
+    const cfg = selectedConfig();
+    if (!cfg) return;
+    cfg.order = cfg.order.concat(['__empty']);
+    markDirty();
+    renderEditor();
+  });
+
+  expandCollapseAllBtn.addEventListener('click', () => {
+    const rows = Array.from(controlsList.querySelectorAll('.view-footer-control-row'));
+    if (!rows.length) return;
+    const anyCollapsed = rows.some(r => r.classList.contains('collapsed'));
+    if (anyCollapsed) {
+      // expand all
+      rows.forEach(r => r.classList.remove('collapsed'));
+    } else {
+      // collapse all
+      rows.forEach(r => r.classList.add('collapsed'));
+    }
+    updateExpandCollapseBtnText();
   });
 
   saveBtn.addEventListener('click', () => {
@@ -853,7 +959,7 @@ export function openViewFooterSettingsDialog({
 
   dialog.style.position = 'fixed';
   dialog.style.left = '50%';
-  dialog.style.top = '50%';
+  dialog.style.top = '45%';
   dialog.style.transform = 'translate(-50%, -50%)';
 
   renderAll();

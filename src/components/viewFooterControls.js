@@ -17,9 +17,13 @@ function normalizeConfigEntry(raw, baseKeys = []) {
   const seen = new Set();
   const normalizedOrder = [];
   for (const key of order) {
-    if (!key || seen.has(key) || !baseKeys.includes(key)) continue;
-    seen.add(key);
-    normalizedOrder.push(key);
+    const k = String(key || '').trim();
+    // allow special placeholder token '__empty' in order
+    const isPlaceholder = (k === '__empty');
+    if (!k || (!isPlaceholder && seen.has(k)) || (!isPlaceholder && !baseKeys.includes(k))) continue;
+    if (!isPlaceholder) seen.add(k);
+    // preserve placeholder token as-is; allow multiple placeholders
+    normalizedOrder.push(k);
   }
   for (const key of baseKeys) {
     if (!seen.has(key)) normalizedOrder.push(key);
@@ -131,9 +135,16 @@ function applyFooterConfig(items = [], appPrefs = null) {
   const seen = new Set();
   const order = Array.isArray(activeConfig.order) ? activeConfig.order : [];
   for (const key of order) {
-    if (!controlsByKey.has(key) || seen.has(key)) continue;
-    seen.add(key);
-    out.push(controlsByKey.get(key));
+    const k = String(key || '').trim();
+    if (!k) continue;
+    if (k === '__empty') {
+      // insert a placeholder slot
+      out.push({ placeholder: true });
+      continue;
+    }
+    if (!controlsByKey.has(k) || seen.has(k)) continue;
+    seen.add(k);
+    out.push(controlsByKey.get(k));
   }
 
   for (const item of items) {
@@ -262,13 +273,25 @@ function createViewFooterControls(items = [], opts = {}) {
 
     const statefulKeySets = [];
     const nextShortcuts = Object.assign({}, opts.shortcuts || {});
+    let visibleCount = 0;
 
     for (const it of renderItems) {
       if (it instanceof Element) {
         controlsRow.appendChild(it);
+        visibleCount++;
         continue;
       }
       if (!it || typeof it !== 'object') continue;
+      // placeholder slots
+      if (it.placeholder) {
+        const ph = document.createElement('button');
+        ph.type = 'button';
+        ph.className = 'btn view-footer-placeholder';
+        ph.disabled = true;
+        ph.setAttribute('aria-hidden', 'true');
+        controlsRow.appendChild(ph);
+        continue;
+      }
       let el;
       if (Array.isArray(it.states) && it.states.length) {
         el = makeStateButton(it);
@@ -279,6 +302,7 @@ function createViewFooterControls(items = [], opts = {}) {
         el = makeButton(it);
       }
       controlsRow.appendChild(el);
+      visibleCount++;
       if (it.key) buttons[it.key] = el;
 
       if (it.shortcut && !(Array.isArray(it.states) && it.states.length)) {
@@ -297,6 +321,8 @@ function createViewFooterControls(items = [], opts = {}) {
     }
 
     shortcuts = nextShortcuts;
+    // annotate how many rows should be used on mobile (CSS reads this)
+    try { footerControls.setAttribute('data-mobile-rows', (visibleCount <= 3 ? 'one' : 'two')); } catch (e) {}
   }
 
   function readPrefs() {
@@ -357,6 +383,9 @@ function createViewFooterControls(items = [], opts = {}) {
   let unregSettings = null;
 
   if (opts.enableSettings !== false && baseControlItems.length) {
+    // settings button should sit in its own block row above the controls
+    const settingsRow = document.createElement('div');
+    settingsRow.className = 'view-footer-settings-row';
     const settingsBtn = document.createElement('button');
     settingsBtn.type = 'button';
     settingsBtn.className = 'view-footer-settings-btn btn small';
@@ -378,7 +407,9 @@ function createViewFooterControls(items = [], opts = {}) {
         }
       });
     });
-    footerControls.appendChild(settingsBtn);
+    settingsRow.appendChild(settingsBtn);
+    // insert settings row before the controls row so it appears above
+    footerControls.insertBefore(settingsRow, controlsRow);
   }
 
   if (settingsManager && typeof settingsManager.registerConsumer === 'function') {

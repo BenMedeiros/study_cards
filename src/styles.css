@@ -60,7 +60,9 @@ a:hover {
 
 /* Ensure the shell fills the viewport and scrolling happens inside the
    main content area rather than the body/page. */
-html, body, #app {
+html,
+body,
+#app {
   height: 100%;
 }
 
@@ -87,13 +89,14 @@ body {
    ============================================ */
 
 .view-footer-controls .btn {
-  /* compact vertical button layout for footer controls */
-  display: flex;
+  /* fixed-size vertical button layout for footer controls */
+  box-sizing: border-box;
+  display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.15rem;
-  padding: 0.5rem 1.4rem;
+  padding: 0.45rem 0.8rem;
   font-size: 1.05rem;
   border-radius: 0.75rem;
   background: rgba(96, 165, 250, 0.10);
@@ -101,8 +104,9 @@ body {
   color: var(--text);
   font-weight: 600;
   transition: background 0.15s, border-color 0.15s;
-  flex: 1;
-  max-width: 7rem;
+  min-width: 84px;
+  flex: 0 0 auto;
+  overflow: hidden;
 }
 
 .view-footer-controls .btn .icon {
@@ -124,32 +128,24 @@ body {
   bottom: var(--shell-footer-height);
   width: 100%;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
   background: rgba(17, 24, 39, 0.97);
   border-top: var(--border-1);
   box-shadow: 0 -2px 16px 0 rgba(96, 165, 250, 0.08);
-  padding: 1rem 0.5rem;
+  padding: 0.6rem 0.5rem 0.9rem;
   z-index: 100;
 }
 
 .view-footer-controls-row {
   width: 100%;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.75rem;
   padding-right: 2.6rem;
-}
-
-.view-footer-settings-btn {
-  position: absolute;
-  top: 0.45rem;
-  right: 0.45rem;
-  min-width: 2rem;
-  padding: 0.25rem 0.45rem;
-  line-height: 1;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .view-footer-controls .btn:hover {
@@ -175,15 +171,33 @@ body {
     padding-right: 0;
   }
 
-  .view-footer-controls .btn {
-    width: 100%;
-    max-width: none;
-    flex: none;
-  }
-
   .view-footer-controls .btn .icon {
     font-size: 1.05rem;
   }
+}
+
+.view-footer-settings-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  padding: 0 0.6rem;
+}
+
+.view-footer-controls .btn .text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.view-footer-placeholder {
+  visibility: hidden;
+  /* leave space but invisible */
+  background: transparent;
+  border: none;
+  pointer-events: none;
 }
 
 .view-footer-settings-backdrop {
@@ -201,9 +215,9 @@ body {
 
 .view-footer-settings-dialog {
   z-index: 1321;
-  min-width: min(62rem, 95vw);
-  max-width: min(68rem, 95vw);
-  max-height: min(84vh, 56rem);
+  min-width: 90vw;
+  max-width: 90vw;
+  max-height: 75vh;
   overflow: auto;
   background: var(--panel);
   color: var(--text);
@@ -310,7 +324,7 @@ body {
 
 .view-footer-control-row-top {
   display: grid;
-  grid-template-columns: auto 1fr auto auto auto;
+  grid-template-columns: auto 1fr auto auto auto auto;
   align-items: center;
   gap: 0.4rem;
 }
@@ -332,9 +346,19 @@ body {
 .view-footer-control-fields {
   margin-top: 0.45rem;
   display: grid;
-  grid-template-columns: auto 5rem auto 1fr auto 4.5rem;
+  grid-template-columns: auto 5rem auto 10rem auto 4.5rem 1fr;
   gap: 0.4rem;
   align-items: center;
+}
+
+/* Hide control fields when row is collapsed */
+.view-footer-control-row.collapsed .view-footer-control-fields {
+  display: none;
+}
+
+.view-footer-collapse-btn {
+  min-width: 2.2rem;
+  margin-right: 0.25rem;
 }
 
 .view-footer-state-list {
@@ -354,10 +378,6 @@ body {
 .view-footer-state-name {
   color: var(--muted);
   font-size: 0.82rem;
-}
-
-.view-footer-hotkey-btn {
-  min-width: 6.5rem;
 }
 
 .view-footer-hotkey-backdrop {
@@ -493,7 +513,7 @@ body.using-keyboard .view-footer-controls .btn .caption {
   padding: 0.25rem 0.75rem;
   height: 28px;
   min-height: 28px;
-  background: rgba(17,24,39,1);
+  background: rgba(17, 24, 39, 1);
   border-top: var(--border-1);
   color: var(--muted);
   font-size: 0.8rem;
@@ -539,10 +559,12 @@ body.hide-view-header-tools .view-header-tools {
     color: var(--text);
     font-weight: 500;
   }
+
   45% {
     color: #ffffff;
     font-weight: 600;
   }
+
   100% {
     color: var(--text);
     font-weight: 500;
@@ -575,7 +597,9 @@ body.hide-view-header-tools .view-header-tools {
 
 /* Prevent text selection on interactive header/brand and table headers
    so right-click and keyboard interactions don't show text highlights. */
-.brand, .brand .brand-title, .brand .brand-subtitle {
+.brand,
+.brand .brand-title,
+.brand .brand-subtitle {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -583,7 +607,8 @@ body.hide-view-header-tools .view-header-tools {
 }
 
 /* Table headers are interactive (sortable/contextmenu) — disable selection */
-.table thead th, .table thead th * {
+.table thead th,
+.table thead th * {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1035,11 +1060,11 @@ input[type="number"].button::-webkit-inner-spin-button {
   padding: 0.5rem 0.75rem;
   border: var(--border-1);
   border-radius: 0.75rem;
-  background: rgba(96,165,250,0.04);
+  background: rgba(96, 165, 250, 0.04);
 }
 
 .home-link:hover {
-  background: rgba(96,165,250,0.08);
+  background: rgba(96, 165, 250, 0.08);
 }
 
 .home-link-row {
@@ -1063,11 +1088,11 @@ input[type="number"].button::-webkit-inner-spin-button {
   border-radius: 999px;
   text-decoration: none;
   color: var(--text);
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .pill:hover {
-  background: rgba(96,165,250,0.08);
+  background: rgba(96, 165, 250, 0.08);
 }
 
 .grid {
@@ -1148,7 +1173,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   flex-wrap: nowrap;
 }
 
-.view-header-tools > * {
+.view-header-tools>* {
   flex-shrink: 0;
 }
 
@@ -2413,14 +2438,15 @@ select:hover {
 .context-menu,
 .brand-context-menu,
 .table-context-menu {
-  position: fixed; /* left/top set inline by caller */
+  position: fixed;
+  /* left/top set inline by caller */
   z-index: 1400;
   min-width: 12rem;
   background: var(--panel);
   border: var(--border-1);
   border-radius: 0.5rem;
   padding: 0.25rem;
-  box-shadow: 0 8px 24px rgba(2,6,23,0.6);
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.6);
 }
 
 .context-menu-item,
@@ -2444,7 +2470,7 @@ select:hover {
 
 .context-menu-item:hover,
 .brand-context-item:hover {
-  background: rgba(96,165,250,0.08);
+  background: rgba(96, 165, 250, 0.08);
 }
 
 .context-menu-item[disabled],
@@ -2476,7 +2502,7 @@ select:hover {
   color: var(--text);
   padding: 0.45rem 0.6rem;
   border-radius: 0.45rem;
-  background: rgba(2,6,23,0.25);
+  background: rgba(2, 6, 23, 0.25);
 }
 
 #entity-explorer-root .json-view-wrapper .json-collapsed-placeholder {
@@ -2517,6 +2543,7 @@ select:hover {
     font-size: 0.75rem;
     padding: 0.12rem 0.35rem;
   }
+
   #entity-explorer-root .json-view-wrapper .json-content {
     max-height: 12rem;
   }
