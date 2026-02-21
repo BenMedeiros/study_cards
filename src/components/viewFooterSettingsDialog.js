@@ -60,6 +60,7 @@ function ensureDefaultConfig(config) {
     name: asString(c.name || 'Default') || 'Default',
     order: Array.isArray(c.order) ? c.order.map(v => String(v || '').trim()).filter(Boolean) : [],
     controls: (c.controls && typeof c.controls === 'object') ? deepClone(c.controls) : {},
+    hotkeysDisabled: !!c.hotkeysDisabled,
   };
 }
 
@@ -79,7 +80,7 @@ function normalizeAppPrefs(raw, baseControls) {
   }
 
   if (!byId.has('default')) {
-    byId.set('default', { id: 'default', name: 'Default', order: baseKeys.slice(), controls: {} });
+    byId.set('default', { id: 'default', name: 'Default', order: baseKeys.slice(), controls: {}, hotkeysDisabled: false });
   }
 
   const configs = Array.from(byId.values());
@@ -558,6 +559,8 @@ export function openViewFooterSettingsDialog({
   resetBtn.type = 'button';
   const addEmptyBtn = el('button', { className: 'btn small', text: 'Add Empty' });
   addEmptyBtn.type = 'button';
+  const disableHotkeysBtn = el('button', { className: 'btn small', text: 'Disable Hotkeys' });
+  disableHotkeysBtn.type = 'button';
   const saveBtn = el('button', { className: 'btn small', text: 'Save' });
   saveBtn.type = 'button';
   saveBtn.disabled = true;
@@ -565,11 +568,13 @@ export function openViewFooterSettingsDialog({
   const expandCollapseAllBtn = el('button', { className: 'btn small', text: 'Collapse All' });
   expandCollapseAllBtn.type = 'button';
 
-  rightTop.append(nameLabel, nameInput, expandCollapseAllBtn, addEmptyBtn, resetBtn, saveBtn);
+  rightTop.append(nameLabel, nameInput, expandCollapseAllBtn, resetBtn, saveBtn);
 
   const controlsTitle = el('div', { className: 'hint', text: 'Controls' });
   const controlsList = el('div', { className: 'view-footer-controls-editor-list' });
-  right.append(rightTop, controlsTitle, controlsList);
+  // place action buttons directly in the controls wrapper (no extra actions wrapper)
+  const controlsWrapper = el('div', { className: 'view-footer-editor-controls', children: [controlsTitle, addEmptyBtn, disableHotkeysBtn] });
+  right.append(rightTop, controlsWrapper, controlsList);
 
   const shell = el('div', { className: 'view-footer-settings-shell', children: [left, right] });
   dialog.append(closeBtn, title, subtitle, shell);
@@ -737,6 +742,7 @@ export function openViewFooterSettingsDialog({
         });
 
         hotkeyBtn.addEventListener('click', async () => {
+          try { if (cfg.hotkeysDisabled) return; } catch (e) {}
           const taken = getAssignedShortcutMap(cfg, { skipKey: key, skipState: null });
           const currentShortcut = resolveShortcut(base, getControlOverride(cfg, key));
           const result = await openHotkeyCaptureDialog({
@@ -760,11 +766,16 @@ export function openViewFooterSettingsDialog({
           renderEditor();
         });
 
-        fields.append(
-          el('div', { className: 'hint', text: 'Icon' }), iconInput,
-          el('div', { className: 'hint', text: 'Name' }), textInput,
-          el('div', { className: 'hint', text: 'Hotkey' }), hotkeyBtn,
-        );
+        const iconHint = el('div', { className: 'hint', text: 'Icon' });
+        const nameHint = el('div', { className: 'hint', text: 'Name' });
+        const hotkeyHint = el('div', { className: 'hint', text: 'Hotkey' });
+        try {
+          if (cfg.hotkeysDisabled) {
+            hotkeyHint.style.visibility = 'hidden';
+            hotkeyBtn.style.visibility = 'hidden';
+          }
+        } catch (e) {}
+        fields.append(iconHint, iconInput, nameHint, textInput, hotkeyHint, hotkeyBtn);
       } else {
         const stateWrap = el('div', { className: 'view-footer-state-list' });
         for (const st of base.states) {
@@ -794,7 +805,9 @@ export function openViewFooterSettingsDialog({
           stIcon.addEventListener('input', writeState);
           stText.addEventListener('input', writeState);
 
+          try { if (cfg.hotkeysDisabled) stHotkeyBtn.style.visibility = 'hidden'; } catch (e) {}
           stHotkeyBtn.addEventListener('click', async () => {
+            try { if (cfg.hotkeysDisabled) return; } catch (e) {}
             const taken = getAssignedShortcutMap(cfg, { skipKey: key, skipState: st.name });
             const currentShortcut = resolveStateShortcut(st, (getControlOverride(cfg, key).states || {})[st.name]);
             const result = await openHotkeyCaptureDialog({
@@ -891,6 +904,7 @@ export function openViewFooterSettingsDialog({
   function renderAll() {
     renderConfigList();
     renderEditor();
+    try { updateDisableHotkeysText(); } catch (e) {}
     markDirty();
   }
 
@@ -903,6 +917,21 @@ export function openViewFooterSettingsDialog({
     duplicateSelectedConfig();
     renderAll();
   });
+
+  disableHotkeysBtn.addEventListener('click', () => {
+    const cfg = selectedConfig();
+    if (!cfg) return;
+    cfg.hotkeysDisabled = !cfg.hotkeysDisabled;
+    try { disableHotkeysBtn.textContent = cfg.hotkeysDisabled ? 'Enable Hotkeys' : 'Disable Hotkeys'; } catch (e) {}
+    markDirty();
+    renderEditor();
+  });
+
+  function updateDisableHotkeysText() {
+    const cfg = selectedConfig();
+    if (!cfg) return;
+    try { disableHotkeysBtn.textContent = cfg.hotkeysDisabled ? 'Enable Hotkeys' : 'Disable Hotkeys'; } catch (e) {}
+  }
 
   delBtn.addEventListener('click', async () => {
     const cfg = selectedConfig();

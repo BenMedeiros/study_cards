@@ -292,11 +292,17 @@ body {
   flex-wrap: wrap;
 }
 
-.view-footer-editor-top {
+.view-footer-editor-top, .view-footer-editor-controls {
   display: grid;
+  gap: 0.5rem;
+}
+
+.view-footer-editor-top {
   grid-template-columns: auto 1fr auto auto auto auto;
-  gap: 0.55rem;
-  align-items: center;
+}
+
+.view-footer-editor-controls {
+  grid-template-columns: auto auto auto 1fr;
 }
 
 .view-footer-config-name,

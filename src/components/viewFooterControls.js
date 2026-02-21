@@ -33,6 +33,7 @@ function normalizeConfigEntry(raw, baseKeys = []) {
     name: String(src.name || 'Default'),
     order: normalizedOrder,
     controls: (src.controls && typeof src.controls === 'object') ? deepClone(src.controls) : {},
+    hotkeysDisabled: !!src.hotkeysDisabled,
   };
 }
 
@@ -62,22 +63,27 @@ function getConfigById(appPrefs, configId) {
   return appPrefs.configs.find(c => c.id === configId) || null;
 }
 
-function applyStateOverrides(state, overrideState) {
+function applyStateOverrides(state, overrideState, disableHotkeys = false) {
   if (!overrideState || typeof overrideState !== 'object') return state;
   const out = { ...state };
   if (typeof overrideState.icon === 'string') out.icon = overrideState.icon;
   if (typeof overrideState.text === 'string') out.text = overrideState.text;
-  if (typeof overrideState.shortcut === 'string') out.shortcut = overrideState.shortcut;
-  if (typeof overrideState.caption === 'string') out.caption = overrideState.caption;
-  else if (typeof overrideState.shortcut === 'string') {
-    const s = String(overrideState.shortcut || '');
-    if (s === ' ') out.caption = 'Space';
-    else if (s === 'ArrowLeft') out.caption = '←';
-    else if (s === 'ArrowRight') out.caption = '→';
-    else if (s === 'ArrowUp') out.caption = '↑';
-    else if (s === 'ArrowDown') out.caption = '↓';
-    else if (/^[a-z]$/i.test(s)) out.caption = s.toUpperCase();
-    else out.caption = s;
+  if (!disableHotkeys) {
+    if (typeof overrideState.shortcut === 'string') out.shortcut = overrideState.shortcut;
+    if (typeof overrideState.caption === 'string') out.caption = overrideState.caption;
+    else if (typeof overrideState.shortcut === 'string') {
+      const s = String(overrideState.shortcut || '');
+      if (s === ' ') out.caption = 'Space';
+      else if (s === 'ArrowLeft') out.caption = '←';
+      else if (s === 'ArrowRight') out.caption = '→';
+      else if (s === 'ArrowUp') out.caption = '↑';
+      else if (s === 'ArrowDown') out.caption = '↓';
+      else if (/^[a-z]$/i.test(s)) out.caption = s.toUpperCase();
+      else out.caption = s;
+    }
+  } else {
+    delete out.shortcut;
+    delete out.caption;
   }
   return out;
 }
@@ -85,6 +91,8 @@ function applyStateOverrides(state, overrideState) {
 function applyFooterConfig(items = [], appPrefs = null) {
   const activeConfig = getConfigById(appPrefs, appPrefs?.activeConfigId) || getConfigById(appPrefs, 'default');
   if (!activeConfig) return items.slice();
+
+  const disableHotkeys = !!activeConfig.hotkeysDisabled;
 
   const controlsByKey = new Map();
   const others = [];
@@ -106,26 +114,35 @@ function applyFooterConfig(items = [], appPrefs = null) {
     if (override.hidden) continue;
 
     const next = { ...item };
+    if (disableHotkeys) {
+      delete next.shortcut;
+      delete next.caption;
+    }
     if (Array.isArray(next.states) && next.states.length) {
       const stateOverrides = (override.states && typeof override.states === 'object') ? override.states : {};
       next.states = next.states.map(st => {
         if (!st || !st.name) return st;
-        return applyStateOverrides({ ...st }, stateOverrides[st.name]);
+        return applyStateOverrides({ ...st }, stateOverrides[st.name], disableHotkeys);
       });
     } else {
       if (typeof override.icon === 'string') next.icon = override.icon;
       if (typeof override.text === 'string') next.text = override.text;
-      if (typeof override.shortcut === 'string') next.shortcut = override.shortcut;
-      if (typeof override.caption === 'string') next.caption = override.caption;
-      else if (typeof override.shortcut === 'string') {
-        const s = String(override.shortcut || '');
-        if (s === ' ') next.caption = 'Space';
-        else if (s === 'ArrowLeft') next.caption = '←';
-        else if (s === 'ArrowRight') next.caption = '→';
-        else if (s === 'ArrowUp') next.caption = '↑';
-        else if (s === 'ArrowDown') next.caption = '↓';
-        else if (/^[a-z]$/i.test(s)) next.caption = s.toUpperCase();
-        else next.caption = s;
+      if (!disableHotkeys) {
+        if (typeof override.shortcut === 'string') next.shortcut = override.shortcut;
+        if (typeof override.caption === 'string') next.caption = override.caption;
+        else if (typeof override.shortcut === 'string') {
+          const s = String(override.shortcut || '');
+          if (s === ' ') next.caption = 'Space';
+          else if (s === 'ArrowLeft') next.caption = '←';
+          else if (s === 'ArrowRight') next.caption = '→';
+          else if (s === 'ArrowUp') next.caption = '↑';
+          else if (s === 'ArrowDown') next.caption = '↓';
+          else if (/^[a-z]$/i.test(s)) next.caption = s.toUpperCase();
+          else next.caption = s;
+        }
+      } else {
+        delete next.shortcut;
+        delete next.caption;
       }
     }
     controlsByKey.set(key, next);
