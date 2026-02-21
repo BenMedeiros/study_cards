@@ -441,8 +441,8 @@ body {
   }
 
   .view-footer-editor-top {
-    grid-template-columns: 1fr;
-    align-items: stretch;
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .view-footer-control-fields {
