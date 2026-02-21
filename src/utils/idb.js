@@ -37,11 +37,6 @@ export function openStudyDb({ dbName = 'study_cards', version = 5 } = {}) {
       const db = ev.target.result;
       const tx = ev.target.transaction;
 
-      // Remove legacy 'kv' store if present (we no longer use a generic kv store)
-      if (db.objectStoreNames.contains('kv')) {
-        try { db.deleteObjectStore('kv'); } catch (e) { /* ignore */ }
-      }
-
       if (!db.objectStoreNames.contains('collection_settings')) {
         db.createObjectStore('collection_settings', { keyPath: 'id' });
       }
@@ -70,59 +65,9 @@ export function openStudyDb({ dbName = 'study_cards', version = 5 } = {}) {
         }
       }
 
-      // Do not create legacy per-store progress object stores here
-      // (`kanji_progress`, `grammar_progress`). Those were used by older
-      // app versions. Creating them on fresh DB opens would make the
-      // migration detection always true and leave legacy stores in new
-      // databases. Migration logic below will detect and migrate these
-      // stores only when they already exist in the previous DB schema.
       if (!db.objectStoreNames.contains('study_time_sessions')) {
         // keyPath startIso asserted unique by app
         db.createObjectStore('study_time_sessions', { keyPath: 'startIso' });
-      }
-
-      // Migrate legacy per-store progress into study_progress if present. Use the
-      // upgrade transaction's stores for atomic migration when possible.
-      try {
-        const hasOldKanji = db.objectStoreNames.contains('kanji_progress');
-        const hasOldGrammar = db.objectStoreNames.contains('grammar_progress');
-        if ((hasOldKanji || hasOldGrammar) && tx) {
-          const newStore = tx.objectStore('study_progress');
-
-          if (hasOldKanji) {
-            const old = tx.objectStore('kanji_progress');
-            const cursorReq = old.openCursor();
-            cursorReq.onsuccess = (e) => {
-              const cur = e.target.result;
-              if (!cur) return;
-              const row = cur.value || {};
-              const entryId = String(row.id || '');
-              if (entryId) {
-                const rec = { id: `japanese.words|${entryId}`, collection: 'japanese.words', entryKey: entryId, value: row.value ?? row };
-                newStore.put(rec);
-              }
-              cur.continue();
-            };
-          }
-
-          if (hasOldGrammar) {
-            const oldG = tx.objectStore('grammar_progress');
-            const cursorReqG = oldG.openCursor();
-            cursorReqG.onsuccess = (e) => {
-              const cur = e.target.result;
-              if (!cur) return;
-              const row = cur.value || {};
-              const entryId = String(row.id || '');
-              if (entryId) {
-                const rec = { id: `grammar|${entryId}`, collection: 'grammar', entryKey: entryId, value: row.value ?? row };
-                newStore.put(rec);
-              }
-              cur.continue();
-            };
-          }
-        }
-      } catch (e) {
-        // ignore migration errors here; app will handle reading legacy stores if needed
       }
     };
 
@@ -156,15 +101,6 @@ export async function idbPut(storeName, record) {
 
   // No special-case compression of study_time here; study_time sessions
   // will be stored in `study_time_sessions` object store.
-
-  // Ensure every stored kv value has a schema_version (default 1)
-  try {
-    if (String(storeName) === 'kv') {
-      if (toPut && typeof toPut === 'object' && toPut.value && typeof toPut.value === 'object') {
-        if (typeof toPut.value.schema_version !== 'number') toPut.value.schema_version = 1;
-      }
-    }
-  } catch (e) {}
 
   store.put(toPut);
   await waitForTransaction(tx);
@@ -267,11 +203,8 @@ export async function idbGetByIndex(storeName, indexName, key) {
 }
 
 export async function idbDumpAll() {
-  const kv = await idbGetAll('kv').catch(() => null);
   const collections = await idbGetAll('collection_settings').catch(() => null);
   const study = await idbGetAll('study_progress').catch(() => null);
-  const kanji = await idbGetAll('kanji_progress').catch(() => null);
-  const grammar = await idbGetAll('grammar_progress').catch(() => null);
   const sessions = await idbGetAll('study_time_sessions').catch(() => null);
-  return { kv, collections, study_progress: study, kanji_progress: kanji, grammar_progress: grammar, study_time_sessions: sessions };
+  return { collections, study_progress: study, study_time_sessions: sessions };
 }

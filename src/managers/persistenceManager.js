@@ -29,7 +29,7 @@ function saveLocalKey(key, obj) {
   }
 }
 
-export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 'kanji_progress', grammarProgressKey = 'grammar_progress', studyTimeKey = 'study_time' }) {
+export function createPersistenceManager({ uiState, emitter, studyProgressKey = 'study_progress', studyTimeKey = 'study_time' }) {
   let persistenceReady = false;
   let idbAvailable = false;
   let idbBroken = false;
@@ -113,23 +113,18 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
             }
           }
           for (const k of kvKeys) {
-            if (k === kanjiProgressKey) {
-              // Write individual kanji progress rows into the generic study_progress store.
-              const kp = uiState.kv?.[kanjiProgressKey] || {};
-              if (kp && typeof kp === 'object') {
-                for (const kid of Object.keys(kp)) {
-                  const entryId = String(kid);
-                  const rec = { id: `japanese.words|${entryId}`, collection: 'japanese.words', entryKey: entryId, value: kp[kid] };
-                  puts.push(idb.idbPut('study_progress', rec));
-                }
-              }
-            } else if (k === grammarProgressKey) {
-              // Write individual grammar progress rows into the generic study_progress store.
-              const gp = uiState.kv?.[grammarProgressKey] || {};
-              if (gp && typeof gp === 'object') {
-                for (const gid of Object.keys(gp)) {
-                  const entryId = String(gid);
-                  const rec = { id: `grammar|${entryId}`, collection: 'grammar', entryKey: entryId, value: gp[gid] };
+            if (k === studyProgressKey) {
+              // Write individual progress rows into the generic study_progress store.
+              const map = uiState.kv?.[studyProgressKey] || {};
+              if (map && typeof map === 'object') {
+                for (const rid of Object.keys(map)) {
+                  const id = String(rid || '').trim();
+                  if (!id) continue;
+                  const i = id.indexOf('|');
+                  if (i <= 0 || i >= id.length - 1) continue;
+                  const collection = id.slice(0, i);
+                  const entryKey = id.slice(i + 1);
+                  const rec = { id, collection, entryKey, value: map[rid] };
                   puts.push(idb.idbPut('study_progress', rec));
                 }
               }
@@ -171,50 +166,21 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
     if (idbAvailable && !idbBroken) {
       try {
         const blobLocal = loadLocalKey(SHELL_LS_KEY) || {};
-        // Backwards-compat: if an old `apps` key exists, prefer it for apps
-        // unless the namespaced blob already contains apps.
-        const legacyApps = loadLocalKey('apps');
         const shellRec = (blobLocal && blobLocal.shell && typeof blobLocal.shell === 'object') ? { value: blobLocal.shell } : null;
-        const appsRec = (blobLocal && blobLocal.apps && typeof blobLocal.apps === 'object') ? { value: blobLocal.apps } : (legacyApps ? { value: legacyApps } : null);
-        // Prefer new consolidated `study_progress` store; fall back to legacy stores if missing.
+        const appsRec = (blobLocal && blobLocal.apps && typeof blobLocal.apps === 'object') ? { value: blobLocal.apps } : null;
         const studyProgressRows = await idb.idbGetAll('study_progress').catch(() => null);
-        let kanjiProgressRows = null;
-        let grammarProgressRows = null;
+        let studyProgressMap = {};
         if (Array.isArray(studyProgressRows) && studyProgressRows.length > 0) {
-          // Extract per-collection maps from study_progress rows.
-          kanjiProgressRows = [];
-          grammarProgressRows = [];
           for (const r of studyProgressRows) {
             if (!r || typeof r !== 'object') continue;
-            const coll = String(r.collection || '');
-            if (coll === 'japanese.words') {
-              kanjiProgressRows.push({ id: String(r.entryKey || r.id || ''), value: r.value });
-            } else if (coll === 'grammar') {
-              grammarProgressRows.push({ id: String(r.entryKey || r.id || ''), value: r.value });
-            }
+            const id = String(r.id || '').trim();
+            if (!id) continue;
+            const value = (r.value && typeof r.value === 'object') ? r.value : (r.value ?? {});
+            studyProgressMap[id] = value;
           }
-        } else {
-          // fallback to legacy per-store reads
-          kanjiProgressRows = await idb.idbGetAll('kanji_progress').catch(() => []);
-          grammarProgressRows = await idb.idbGetAll('grammar_progress').catch(() => []);
         }
         const studyTimeRows = await idb.idbGetAll('study_time_sessions');
         const collRecs = await idb.idbGetAll('collection_settings');
-
-        const kanjiMap = {};
-        for (const r of (Array.isArray(kanjiProgressRows) ? kanjiProgressRows : [])) {
-          if (!r || typeof r !== 'object') continue;
-          const id = r.id;
-          if (!id) continue;
-          kanjiMap[id] = (r.value && typeof r.value === 'object') ? r.value : r.value;
-        }
-        const grammarMap = {};
-        for (const r of (Array.isArray(grammarProgressRows) ? grammarProgressRows : [])) {
-          if (!r || typeof r !== 'object') continue;
-          const id = r.id;
-          if (!id) continue;
-          grammarMap[id] = (r.value && typeof r.value === 'object') ? r.value : r.value;
-        }
         // Build study_time sessions array from per-session rows (sorted by startIso ascending)
         const sessions = [];
         for (const r of (Array.isArray(studyTimeRows) ? studyTimeRows : [])) {
@@ -239,8 +205,7 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
           apps: (appsRec && appsRec.value && typeof appsRec.value === 'object') ? appsRec.value : {},
           collections: {},
           kv: {
-            [kanjiProgressKey]: kanjiMap,
-            [grammarProgressKey]: grammarMap,
+            [studyProgressKey]: studyProgressMap,
             [studyTimeKey]: { version: 1, sessions },
           },
         };
@@ -279,7 +244,7 @@ export function createPersistenceManager({ uiState, emitter, kanjiProgressKey = 
       loaded = { shell: {}, apps: {}, collections: {}, kv: {} };
     }
 
-    const kvLoaded = (loaded.kv && typeof loaded.kv === 'object') ? { ...loaded.kv } : { [kanjiProgressKey]: {} };
+    const kvLoaded = (loaded.kv && typeof loaded.kv === 'object') ? { ...loaded.kv } : { [studyProgressKey]: {} };
     const kvNormalized = kvLoaded;
 
     uiState.shell = (loaded.shell && typeof loaded.shell === 'object') ? loaded.shell : {};

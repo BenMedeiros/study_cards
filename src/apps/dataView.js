@@ -295,11 +295,13 @@ export function renderData({ store }) {
         const adapter = getProgressAdapter();
         if (adapter?.kind === 'grammar') {
           if (typeof store?.grammarProgress?.clearLearnedGrammarForKeys === 'function') {
-            store.grammarProgress.clearLearnedGrammarForKeys(keys);
+            const coll = store?.collections?.getActiveCollection?.();
+            store.grammarProgress.clearLearnedGrammarForKeys(keys, { collectionKey: coll?.key });
           }
         } else {
           if (typeof store?.kanjiProgress?.clearLearnedKanjiForValues === 'function') {
-            store.kanjiProgress.clearLearnedKanjiForValues(keys);
+            const coll = store?.collections?.getActiveCollection?.();
+            store.kanjiProgress.clearLearnedKanjiForValues(keys, { collectionKey: coll?.key });
           }
         }
       } catch (e) {}
@@ -514,20 +516,20 @@ export function renderData({ store }) {
       return {
         kind: 'grammar',
         getKey: (entry) => getEntryGrammarKey(entry),
-        isLearned: (key) => !!(key && typeof store?.grammarProgress?.isGrammarLearned === 'function' && store.grammarProgress.isGrammarLearned(key)),
-        isFocus: (key) => !!(key && typeof store?.grammarProgress?.isGrammarFocus === 'function' && store.grammarProgress.isGrammarFocus(key)),
+        isLearned: (key) => !!(key && typeof store?.grammarProgress?.isGrammarLearned === 'function' && store.grammarProgress.isGrammarLearned(key, { collectionKey: coll?.key })),
+        isFocus: (key) => !!(key && typeof store?.grammarProgress?.isGrammarFocus === 'function' && store.grammarProgress.isGrammarFocus(key, { collectionKey: coll?.key })),
         getProgressRecord: (key) => {
           try {
             if (!key) return null;
             if (typeof store?.grammarProgress?.getGrammarProgressRecord !== 'function') return null;
-            return store.grammarProgress.getGrammarProgressRecord(key) || null;
+            return store.grammarProgress.getGrammarProgressRecord(key, { collectionKey: coll?.key }) || null;
           } catch (e) {
             return null;
           }
         },
         getStudyMetrics: (key) => {
           const rec = (key && typeof store?.grammarProgress?.getGrammarProgressRecord === 'function')
-            ? (store.grammarProgress.getGrammarProgressRecord(key) || {})
+            ? (store.grammarProgress.getGrammarProgressRecord(key, { collectionKey: coll?.key }) || {})
             : {};
           const timesSeen = Math.max(0, Math.round(Number(rec?.timesSeen) || 0));
           const timeMs = Math.max(0, Math.round(Number(rec?.timeMs) || 0));
@@ -545,23 +547,23 @@ export function renderData({ store }) {
     return {
       kind: 'kanji',
       getKey: (entry) => getEntryKanjiValue(entry),
-      isLearned: (key) => !!(key && typeof store?.kanjiProgress?.isKanjiLearned === 'function' && store.kanjiProgress.isKanjiLearned(key)),
-      isFocus: (key) => !!(key && typeof store?.kanjiProgress?.isKanjiFocus === 'function' && store.kanjiProgress.isKanjiFocus(key)),
+      isLearned: (key) => !!(key && typeof store?.kanjiProgress?.isKanjiLearned === 'function' && store.kanjiProgress.isKanjiLearned(key, { collectionKey: coll?.key })),
+      isFocus: (key) => !!(key && typeof store?.kanjiProgress?.isKanjiFocus === 'function' && store.kanjiProgress.isKanjiFocus(key, { collectionKey: coll?.key })),
       getProgressRecord: (key) => {
         try {
           if (!key) return null;
           if (typeof store?.kanjiProgress?.getKanjiProgressRecord !== 'function') return null;
-          return store.kanjiProgress.getKanjiProgressRecord(key) || null;
+          return store.kanjiProgress.getKanjiProgressRecord(key, { collectionKey: coll?.key }) || null;
         } catch (e) {
           return null;
         }
       },
       getStudyMetrics: (key) => {
         const rec = (key && typeof store?.kanjiProgress?.getKanjiProgressRecord === 'function')
-          ? (store.kanjiProgress.getKanjiProgressRecord(key) || {})
+          ? (store.kanjiProgress.getKanjiProgressRecord(key, { collectionKey: coll?.key }) || {})
           : {};
-        const timesSeen = Math.max(0, Math.round(Number(rec?.timesSeenInKanjiStudyCard) || 0));
-        const timeMs = Math.max(0, Math.round(Number(rec?.timeMsStudiedInKanjiStudyCard) || 0));
+        const timesSeen = Math.max(0, Math.round(Number(rec?.timesSeen) || 0));
+        const timeMs = Math.max(0, Math.round(Number(rec?.timeMs) || 0));
         const seen = !!rec?.seen || timesSeen > 0 || timeMs > 0;
         return { seen, timesSeen, timeMs };
       },

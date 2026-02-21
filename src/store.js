@@ -13,8 +13,7 @@ export function createStore() {
     apps: {},
     collections: {},
     kv: {
-      kanji_progress: {},
-      grammar_progress: {},
+      study_progress: {},
       study_time: null,
     },
   };
@@ -29,9 +28,9 @@ export function createStore() {
   };
 
   const emitter = createEmitter();
-  const persistence = createPersistenceManager({ uiState, emitter, kanjiProgressKey: 'kanji_progress', grammarProgressKey: 'grammar_progress', studyTimeKey: 'study_time' });
+  const persistence = createPersistenceManager({ uiState, emitter, studyProgressKey: 'study_progress', studyTimeKey: 'study_time' });
 
-  const studyProgress = createStudyProgressManager({ uiState, persistence, emitter, kanjiProgressKey: 'kanji_progress', grammarProgressKey: 'grammar_progress', studyTimeKey: 'study_time' });
+  const studyProgress = createStudyProgressManager({ uiState, persistence, emitter, studyProgressKey: 'study_progress', studyTimeKey: 'study_time' });
   const kanjiProgress = studyProgress;
   const grammarProgress = studyProgress;
   const studyTime = studyProgress;
@@ -62,14 +61,13 @@ export function createStore() {
       // SettingsManager already marked ready at creation (uses localStorage).
 
       // Ensure expected kv shapes exist.
-      kanjiProgress.ensureKanjiProgressMap();
-      grammarProgress.ensureGrammarProgressMap();
+      studyProgress.ensureStudyProgressMap();
       studyTime.ensureStudyTimeRecord();
 
       const paths = await collections.loadSeedCollections();
       state.collections = [];
 
-      // Restore active collection from persisted settings first, then legacy uiState.
+      // Restore active collection from persisted settings.
       let restored = null;
       try {
         if (settings && typeof settings.get === 'function' && typeof settings.isReady === 'function' && settings.isReady()) {
@@ -81,13 +79,6 @@ export function createStore() {
         }
       } catch {
         restored = null;
-      }
-      if (!restored) {
-        try {
-          restored = uiState?.shell?.activeCollectionId || null;
-        } catch {
-          restored = null;
-        }
       }
 
       if (restored && state._availableCollectionPaths.includes(restored)) {
@@ -249,8 +240,10 @@ export function createStore() {
       clearLearnedKanji: kanjiProgress.clearLearnedKanji,
       clearLearnedKanjiForValues: kanjiProgress.clearLearnedKanjiForValues,
       getKanjiProgressRecord: kanjiProgress.getKanjiProgressRecord,
-      recordKanjiSeenInKanjiStudyCard: kanjiProgress.recordKanjiSeenInKanjiStudyCard,
-      addTimeMsStudiedInKanjiStudyCard: kanjiProgress.addTimeMsStudiedInKanjiStudyCard,
+      recordSeen: kanjiProgress.recordSeen,
+      addStudyTimeMs: kanjiProgress.addStudyTimeMs,
+      createCardProgressTracker: kanjiProgress.createCardProgressTracker,
+      getActiveCardProgressStatus: kanjiProgress.getActiveCardProgressStatus,
       getFocusKanjiValues: kanjiProgress.getFocusKanjiValues,
     },
 
@@ -261,8 +254,10 @@ export function createStore() {
       toggleGrammarFocus: grammarProgress.toggleGrammarFocus,
       clearLearnedGrammar: grammarProgress.clearLearnedGrammar,
       getGrammarProgressRecord: grammarProgress.getGrammarProgressRecord,
-      recordGrammarSeenInGrammarStudyCard: grammarProgress.recordGrammarSeenInGrammarStudyCard,
-      addTimeMsStudiedInGrammarStudyCard: grammarProgress.addTimeMsStudiedInGrammarStudyCard,
+      recordSeen: grammarProgress.recordSeenForGrammar,
+      addStudyTimeMs: grammarProgress.addStudyTimeMsForGrammar,
+      createCardProgressTracker: grammarProgress.createCardProgressTracker,
+      getActiveCardProgressStatus: grammarProgress.getActiveCardProgressStatus,
     },
     studyTime: {
       recordAppCollectionStudySession: studyTime.recordAppCollectionStudySession,

@@ -142,18 +142,7 @@ export function titleFromFilename(filename) {
     .trim();
 }
 
-/* Namespaced localStorage helpers and migration ------------------------------------------------- */
-
-function _parseBoolish(v) {
-  try {
-    const s = String(v).trim().toLowerCase();
-    if (s === '' || s === '1' || s === 'true' || s === 'on' || s === 'yes') return true;
-    if (s === '0' || s === 'false' || s === 'off' || s === 'no') return false;
-  } catch {
-    // ignore
-  }
-  return null;
-}
+/* Namespaced localStorage helpers ------------------------------------------------- */
 
 export function lsGetJson(key, fallback = null) {
   try {
@@ -167,96 +156,6 @@ export function lsGetJson(key, fallback = null) {
 
 export function lsSetJson(key, value) {
   try { localStorage.setItem(String(key), JSON.stringify(value)); } catch (e) {}
-}
-
-// Migrate legacy localStorage keys into the single `shell` JSON blob used by
-// the app persistence layer. This runs at startup before persistence.load()
-// so migrated values become part of the persisted UI state.
-export function migrateLegacyLocalSettings() {
-  try {
-    // Build or load the namespaced blob. We'll populate `.shell` and `.apps`.
-    const blobRaw = localStorage.getItem('study_cards:v1');
-    let blob = {};
-    if (blobRaw) {
-      try { blob = JSON.parse(blobRaw) || {}; } catch { blob = {}; }
-    }
-
-    // Merge legacy `shell` and `apps` keys if present.
-    try {
-      const legacyShellRaw = localStorage.getItem('shell');
-      if (legacyShellRaw) {
-        try {
-          const parsed = JSON.parse(legacyShellRaw);
-          if (parsed && typeof parsed === 'object') blob.shell = { ...(blob.shell || {}), ...parsed };
-        } catch {
-          // ignore parse
-        }
-      }
-    } catch {}
-
-    try {
-      const legacyAppsRaw = localStorage.getItem('apps');
-      if (legacyAppsRaw) {
-        try {
-          const parsed = JSON.parse(legacyAppsRaw);
-          if (parsed && typeof parsed === 'object') blob.apps = { ...(blob.apps || {}), ...parsed };
-        } catch {
-          // ignore parse
-        }
-      }
-    } catch {}
-
-    // Map of legacy keys -> [targetKeyInShell, parserFn]
-    const map = {
-      'study_cards_timing': ['timingEnabled', _parseBoolish],
-      'show_footer_controls': ['showFooterCaptions', _parseBoolish],
-      'showFooterControls': ['showFooterCaptions', _parseBoolish],
-      'show_footer_captions': ['showFooterCaptions', _parseBoolish],
-      'showFooterCaptions': ['showFooterCaptions', _parseBoolish],
-    };
-
-    const toRemove = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (!k) continue;
-      if (!Object.prototype.hasOwnProperty.call(map, k)) continue;
-      const [target, parser] = map[k];
-
-      // Ensure shell object exists under blob
-      blob.shell = blob.shell || {};
-      if (Object.prototype.hasOwnProperty.call(blob.shell, target)) {
-        toRemove.push(k);
-        continue;
-      }
-
-      try {
-        const raw = localStorage.getItem(k);
-        const parsed = (typeof parser === 'function') ? parser(raw) : raw;
-        if (parsed !== null) {
-          blob.shell[target] = parsed;
-        }
-        toRemove.push(k);
-      } catch {
-        // ignore per-key errors
-      }
-    }
-
-    // Write back merged namespaced blob
-    if (Object.keys(blob).length) {
-      try { localStorage.setItem('study_cards:v1', JSON.stringify(blob)); } catch (e) {}
-    }
-
-    // Remove legacy `shell` and `apps` keys if present
-    try { localStorage.removeItem('shell'); } catch (e) {}
-    try { localStorage.removeItem('apps'); } catch (e) {}
-
-    // Remove migrated legacy keys
-    for (const k of toRemove) {
-      try { localStorage.removeItem(k); } catch (e) {}
-    }
-  } catch {
-    // ignore migration errors
-  }
 }
 
 

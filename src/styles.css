@@ -263,6 +263,25 @@ body.hide-view-header-tools .view-header-tools {
   margin: 0 auto;
 }
 
+.shell-footer-center.study-progress-flash {
+  animation: studyProgressFooterFlash 0.42s ease-in-out 1;
+}
+
+@keyframes studyProgressFooterFlash {
+  0% {
+    color: var(--text);
+    font-weight: 500;
+  }
+  45% {
+    color: #ffffff;
+    font-weight: 600;
+  }
+  100% {
+    color: var(--text);
+    font-weight: 500;
+  }
+}
+
 .header-inner {
   display: flex;
   align-items: center;

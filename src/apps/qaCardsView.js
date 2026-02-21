@@ -30,12 +30,41 @@ export function renderQaCards({ store }) {
   let userAnswer = '';
   let isCorrect = false;
   let completed = false;
+  function getEntryTimingKey(entry) {
+    const k = String(store?.collections?.getEntryStudyKey?.(entry) || '').trim();
+    if (k) return k;
+    return String(entry?.pattern || '').trim();
+  }
+
+  const progressTracker = store?.kanjiProgress?.createCardProgressTracker?.({
+    appId: 'qaCardsView',
+    getCollectionKey: () => String(active?.key || '').trim(),
+    getEntryKey: () => {
+      if (completed) return '';
+      const entry = entries && entries.length ? entries[index] : null;
+      return getEntryTimingKey(entry);
+    },
+  });
 
   function ensureQAFieldsAreValid() {
-    const keys = new Set((Array.isArray(fields) ? fields : []).map(f => String(f?.key ?? '').trim()).filter(Boolean));
-    if (!keys.size) return;
-    if (!keys.has(String(questionField || '').trim())) questionField = String(fields[0]?.key ?? 'question');
-    if (!keys.has(String(answerField || '').trim())) answerField = String(fields[1]?.key ?? fields[0]?.key ?? 'answer');
+    const keys = (Array.isArray(fields) ? fields : [])
+      .map(f => String(f?.key ?? '').trim())
+      .filter(Boolean);
+
+    if (keys.length === 0) {
+      questionField = 'question';
+      answerField = 'answer';
+      return;
+    }
+
+    if (!keys.includes(questionField)) {
+      questionField = keys[0];
+    }
+
+    if (!keys.includes(answerField)) {
+      const firstDifferent = keys.find(k => k !== questionField);
+      answerField = firstDifferent || keys[0];
+    }
   }
 
   function rebuildEntriesFromCollectionState() {
@@ -160,6 +189,7 @@ export function renderQaCards({ store }) {
     shuffleBtn.addEventListener('click', () => {
       try {
         if (store?.collections && typeof store.collections.shuffleCollection === 'function') {
+          try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
           store.collections.shuffleCollection(active?.key);
           rebuildEntriesFromCollectionState();
           index = 0;
@@ -191,6 +221,7 @@ export function renderQaCards({ store }) {
     clearShuffleBtn.addEventListener('click', () => {
       try {
         if (store?.collections && typeof store.collections.clearCollectionShuffle === 'function') {
+          try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
           store.collections.clearCollectionShuffle(active?.key);
           rebuildEntriesFromCollectionState();
           index = Math.min(index, Math.max(0, entries.length - 1));
@@ -485,6 +516,7 @@ export function renderQaCards({ store }) {
 
     const handleContinue = () => {
       if (index < total - 1) {
+        try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
         feedbackMode = false;
         userAnswer = '';
         index += 1;
@@ -493,6 +525,7 @@ export function renderQaCards({ store }) {
         render();
       } else {
         // Last card - show completion
+        try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
         completed = true;
         try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
         render();
@@ -533,6 +566,7 @@ export function renderQaCards({ store }) {
         const restartBtn = document.getElementById('restart-btn');
         if (restartBtn) {
           restartBtn.addEventListener('click', () => {
+            try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
             index = 0;
             try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
             feedbackMode = false;
@@ -547,6 +581,7 @@ export function renderQaCards({ store }) {
           if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar' || e.key === 'Space') {
             e.preventDefault();
             wrapper.removeEventListener('keydown', keyHandlerRestart);
+            try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
             index = 0;
             try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
             feedbackMode = false;
@@ -568,6 +603,7 @@ export function renderQaCards({ store }) {
     }
 
     wrapper.append(cornerCaption, body);
+    try { progressTracker?.syncToCurrent?.(); } catch (e) {}
   }
 
   rebuildEntriesFromCollectionState();
@@ -579,6 +615,15 @@ export function renderQaCards({ store }) {
   }
 
   render();
+
+  // Cleanup on unmount
+  const observer = new MutationObserver(() => {
+    if (!document.body.contains(el)) {
+      try { progressTracker?.teardown?.(); } catch (e) {}
+      observer.disconnect();
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 
   el.append(headerTools, wrapper);
   return el;

@@ -5,11 +5,11 @@ import { renderCollectionsManager } from './apps/collectionsView.js';
 import { parseHashRoute } from './utils/helpers.js';
 import { renderData } from './apps/dataView.js';
 import { renderKanjiStudyCard } from './apps/kanjiStudyCardView.js';
-import { renderGrammarStudyCard } from './apps/grammarStudyCardView.js';
 import { renderEntityExplorer } from './apps/entityExplorerView.js';
 import { createCollectionBrowserDropdown } from './components/collectionBrowser.js';
 import { openRightClickMenu, registerRightClickContext } from './components/rightClickMenu.js';
 import { createShellTitleContextMenu } from './components/shellTitleContextMenu.js';
+import { createShellFooter } from './components/shellFooter.js';
 import { speak } from './utils/speech.js';
 import { createDropdown } from './components/dropdown.js';
 import { timed } from './utils/timing.js';
@@ -371,37 +371,8 @@ export function createAppShell({ store, onNavigate }) {
   el.append(header);
   el.append(main);
 
-  // Thin shell footer for quick buttons / small stats
-  const footer = document.createElement('div');
-  footer.className = 'shell-footer';
-  footer.id = 'shell-footer';
-
-  const fLeft = document.createElement('div');
-  fLeft.className = 'shell-footer-left';
-  fLeft.id = 'shell-footer-left';
-  fLeft.textContent = '';
-
-  const fCenter = document.createElement('div');
-  fCenter.className = 'shell-footer-center';
-  fCenter.id = 'shell-footer-center';
-
-  const fRight = document.createElement('div');
-  fRight.className = 'shell-footer-right';
-  fRight.id = 'shell-footer-right';
-  // caption placeholder (controlled via brand menu toggle)
-  if (captionsVisible) {
-    try { fRight.textContent = 'Captions: on'; } catch (e) {}
-  }
-
-  // Cache footer elements/values to avoid rebuilding DOM on each store update
-  let footerPathPrev = null;
-  let footerCountPrev = null;
-  let footerPathEl = null;
-  let footerCountEl = null;
-  let footerFilterPrev = null;
-  let footerFilterEl = null;
-
-  footer.append(fLeft, fCenter, fRight);
+  const shellFooter = createShellFooter({ store, captionsVisible });
+  const footer = shellFooter.el;
   el.append(footer);
 
   // Keep CSS variables in sync with measured header/footer heights so
@@ -445,6 +416,10 @@ export function createAppShell({ store, onNavigate }) {
     activeCollection: typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : null,
     voiceState: getVoiceState(),
   };
+
+  try {
+    shellFooter.renderFromStore({ activeCollection: cached.activeCollection, activeId: cached.activeId });
+  } catch (e) {}
 
   // Initialize global emit-logging flag from persisted shell state so
   // the UI checkbox reflects and controls the runtime flag consistently.
@@ -918,7 +893,6 @@ export function createAppShell({ store, onNavigate }) {
       { href: '#/qa-cards', label: 'QA Cards' },
       // only include Kanji when active collection category is japanese
       ...(activeCategory.toLowerCase() === 'japanese' ? [{ href: '#/kanji', label: 'Kanji Study' }] : []),
-      ...(String(activeCategory || '').toLowerCase().startsWith('japanese.grammar') ? [{ href: '#/grammar', label: 'Grammar Study' }] : []),
       { href: '#/data', label: 'Data' },
       { href: '#/collections', label: 'Collections' },
       { href: '#/explorer', label: 'Explorer' },
@@ -983,19 +957,6 @@ export function createAppShell({ store, onNavigate }) {
         main.append(timed('view.renderKanjiStudyCard', () => renderKanjiStudyCard({ store })));
         return;
       }
-
-
-      if (route.pathname === '/grammar') {
-        const active = store.collections.getActiveCollection();
-        const category = String(active?.metadata?.category || '');
-        if (!category.toLowerCase().startsWith('japanese.grammar')) {
-          onNavigate('/');
-          return;
-        }
-        main.append(timed('view.renderGrammarStudyCard', () => renderGrammarStudyCard({ store })));
-        return;
-      }
-
       if (route.pathname === '/explorer') {
         main.append(timed('view.renderEntityExplorer', () => renderEntityExplorer({ store })));
         return;
@@ -1063,64 +1024,8 @@ export function createAppShell({ store, onNavigate }) {
       }
     } catch (err) {}
     renderHeader();
-
-    // Update footer-right with active collection path and base entries count
     try {
-      const path = (store && store.settings && typeof store.settings.get === 'function') ? (store.settings.get('shell.activeCollectionPath', { consumerId: 'shell' }) || (cached.activeCollection?.key || '')) : (cached.activeCollection?.key || '');
-      const countRaw = (store && store.settings && typeof store.settings.get === 'function') ? store.settings.get('shell.activeCollectionEntriesCount', { consumerId: 'shell' }) : null;
-      const count = Number.isFinite(Number(countRaw)) ? Number(countRaw) : (Array.isArray(cached.activeCollection?.entries) ? cached.activeCollection.entries.length : null);
-
-      // Minimal DOM updates to avoid forced reflow/layout thrash.
-      if (typeof footerPathPrev === 'undefined') {
-        footerPathPrev = null;
-        footerCountPrev = null;
-        footerPathEl = null;
-        footerCountEl = null;
-      }
-
-      if (path !== footerPathPrev) {
-        footerPathPrev = path;
-        if (!footerPathEl) {
-          footerPathEl = document.createElement('span');
-          footerPathEl.className = 'shell-footer-collection-path';
-          fRight.appendChild(footerPathEl);
-        }
-        footerPathEl.textContent = path || '';
-      }
-
-      if (count !== footerCountPrev) {
-        footerCountPrev = count;
-        if (!footerCountEl) {
-          footerCountEl = document.createElement('span');
-          footerCountEl.className = 'shell-footer-collection-count';
-          fRight.appendChild(footerCountEl);
-        }
-        footerCountEl.textContent = (count !== null && count !== undefined && !Number.isNaN(Number(count))) ? ` ${count} entries` : '';
-      }
-
-      // Show current held filter (if any) for active collection
-      try {
-        const collId = cached.activeId || cached.activeCollection?.key || null;
-        let filterLabel = '';
-        if (collId && store && store.collections && typeof store.collections.loadCollectionState === 'function') {
-          const st = store.collections.loadCollectionState(collId) || {};
-          const held = String(st?.heldTableSearch || '').trim();
-          const sf = String(st?.studyFilter || '').trim();
-          // prefer held table search if present, otherwise human-readable studyFilter
-          const f = held || (sf ? sf : '');
-          if (f) filterLabel = `filter: ${f}`;
-        }
-
-        if (filterLabel !== footerFilterPrev) {
-          footerFilterPrev = filterLabel;
-          if (!footerFilterEl) {
-            footerFilterEl = document.createElement('span');
-            footerFilterEl.className = 'shell-footer-collection-filter';
-            fRight.appendChild(footerFilterEl);
-          }
-          footerFilterEl.textContent = filterLabel ? ` • ${filterLabel}` : '';
-        }
-      } catch (e) {}
+      shellFooter.renderFromStore({ activeCollection: cached.activeCollection, activeId: cached.activeId });
     } catch (e) {}
   });
 

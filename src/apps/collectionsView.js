@@ -90,7 +90,6 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
             try {
               if (typeof store.collections.deleteCollectionStateKeys === 'function') {
                 store.collections.deleteCollectionStateKeys(id, ['currentIndex'], { app: 'kanjiStudyCardView' });
-                store.collections.deleteCollectionStateKeys(id, ['currentIndex'], { app: 'grammarStudyCardView' });
                 store.collections.deleteCollectionStateKeys(id, ['currentIndex'], { app: 'qaCardsView' });
                 store.collections.deleteCollectionStateKeys(id, ['currentIndex'], { app: 'flashcardsView' });
               }

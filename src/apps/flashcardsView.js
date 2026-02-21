@@ -62,6 +62,16 @@ export function renderFlashcards({ store }) {
   let index = 0;
   let uiStateRestored = false;
   let shownAt = nowMs();
+  const progressTracker = store?.kanjiProgress?.createCardProgressTracker?.({
+    appId: 'flashcardsView',
+    getCollectionKey: () => String(active?.key || '').trim(),
+    getEntryKey: () => {
+      const entry = entries && entries.length ? entries[index] : null;
+      const primary = getPrimaryValue(entry);
+      const pattern = String(entry?.pattern || '').trim();
+      return primary || pattern || '';
+    },
+  });
 
   refreshFromStore();
 
@@ -93,6 +103,7 @@ export function renderFlashcards({ store }) {
 
   function goToIndex(newIndex) {
     if (newIndex < 0 || newIndex >= entries.length) return;
+    try { progressTracker?.flush?.(); } catch (e) {}
     index = newIndex;
     shownAt = nowMs();
     try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'flashcardsView' }); } catch (e) {}
@@ -103,8 +114,9 @@ export function renderFlashcards({ store }) {
     if (!learnedBtn || !practiceBtn) return;
     const entry = entries[index];
     const v = getPrimaryValue(entry);
-    const isLearned = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiLearned === 'function' && v) ? store.kanjiProgress.isKanjiLearned(v) : false;
-    const isFocus = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiFocus === 'function' && v) ? store.kanjiProgress.isKanjiFocus(v) : false;
+    const collectionKey = String(active?.key || '').trim();
+    const isLearned = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiLearned === 'function' && v) ? store.kanjiProgress.isKanjiLearned(v, { collectionKey }) : false;
+    const isFocus = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiFocus === 'function' && v) ? store.kanjiProgress.isKanjiFocus(v, { collectionKey }) : false;
 
     learnedBtn.classList.toggle('state-learned', isLearned);
     practiceBtn.classList.toggle('state-focus', isFocus);
@@ -121,7 +133,7 @@ export function renderFlashcards({ store }) {
       const v = getPrimaryValue(entry);
       if (!v) return;
       if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiLearned === 'function') {
-        store.kanjiProgress.toggleKanjiLearned(v);
+        store.kanjiProgress.toggleKanjiLearned(v, { collectionKey: String(active?.key || '').trim() });
         updateMarkButtons();
         // If current card became filtered out (skipLearned/focusOnly), refresh view & clamp
         refreshFromStore();
@@ -134,7 +146,7 @@ export function renderFlashcards({ store }) {
       const v = getPrimaryValue(entry);
       if (!v) return;
       if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiFocus === 'function') {
-        store.kanjiProgress.toggleKanjiFocus(v);
+        store.kanjiProgress.toggleKanjiFocus(v, { collectionKey: String(active?.key || '').trim() });
         updateMarkButtons();
         // If current card became filtered out (skipLearned/focusOnly), refresh view & clamp
         refreshFromStore();
@@ -181,6 +193,7 @@ export function renderFlashcards({ store }) {
 
     // Update learned/focus button state
     updateMarkButtons();
+    try { progressTracker?.syncToCurrent?.(); } catch (e) {}
   }
 
   render();
@@ -194,6 +207,7 @@ export function renderFlashcards({ store }) {
         try {
           const key = store?.collections?.getActiveCollection?.()?.key || null;
           if (key !== lastKey) {
+            try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
             lastKey = key;
             // New active collection: allow restoration from saved per-app state
             uiStateRestored = false;
@@ -212,6 +226,7 @@ export function renderFlashcards({ store }) {
   // Cleanup on unmount
   const observer = new MutationObserver(() => {
     if (!document.body.contains(el)) {
+      try { progressTracker?.teardown?.(); } catch (e) {}
       try { if (typeof unsub === 'function') unsub(); } catch (e) {}
       observer.disconnect();
     }

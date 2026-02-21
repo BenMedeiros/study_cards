@@ -90,11 +90,6 @@ const CATALOG = Object.freeze((() => {
     'apps.kanjiStudy.isAutoSpeak': { type: { kind: 'boolean' }, default: false },
     'apps.kanjiStudy.autoplaySequence': { type: { kind: 'json' }, default: [] },
 
-    // apps.grammarStudy.*
-    'apps.grammarStudy.defaultViewMode': { type: { kind: 'enum', values: ['pattern-only', 'full'] }, default: 'pattern-only' },
-    'apps.grammarStudy.isAutoPlaying': { type: { kind: 'boolean' }, default: false },
-    'apps.grammarStudy.autoplaySequence': { type: { kind: 'json' }, default: [] },
-
     // apps.entityExplorer.*
     'apps.entityExplorer.manager': { type: { kind: 'enum', values: ['idb', 'ls'] }, default: 'idb' },
     'apps.entityExplorer.db': { type: { kind: 'string', nullable: true }, default: null },

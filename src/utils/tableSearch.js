@@ -58,7 +58,9 @@ export function escapeRegexForWildcard(term) {
 }
 
 export function buildRegexFromWildcard(term) {
-  const esc = escapeRegexForWildcard(term).replace(/%/g, '.*');
+  // Use a wildcard that matches across newlines. '.' does not match newlines
+  // by default, so replace '%' with '[\s\S]*' to allow multiline matches.
+  const esc = escapeRegexForWildcard(term).replace(/%/g, '[\\s\\S]*');
   return new RegExp(`^${esc}$`, 'i');
 }
 
