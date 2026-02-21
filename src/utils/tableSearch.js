@@ -342,6 +342,134 @@ export function cleanSearchQuery(q) {
   return result;
 }
 
+function _toCodePoints(v) {
+  return Array.from(String(v ?? ''));
+}
+
+function _sortCountEntries(entries) {
+  return Array.from(entries || []).sort((a, b) => {
+    const diff = Number(b?.[1] || 0) - Number(a?.[1] || 0);
+    if (diff !== 0) return diff;
+    return String(a?.[0] ?? '').localeCompare(String(b?.[0] ?? ''), undefined, { sensitivity: 'base' });
+  });
+}
+
+function _sanitizeAddToSearchCoreTerm(v) {
+  const raw = String(v ?? '');
+  if (!raw) return '';
+  if (/[{}|;&%]/.test(raw)) return '';
+  if (raw !== raw.trim()) return '';
+  const cleaned = raw.trim();
+  if (!cleaned) return '';
+  return cleaned;
+}
+
+function _countBy(values, getKeys) {
+  const counts = new Map();
+  const arr = Array.isArray(values) ? values : [];
+  for (const raw of arr) {
+    const keysRaw = (typeof getKeys === 'function') ? getKeys(raw) : [];
+    const keys = Array.isArray(keysRaw) ? keysRaw : [];
+    if (!keys.length) continue;
+    const seen = new Set();
+    for (const keyRaw of keys) {
+      const key = String(keyRaw ?? '');
+      if (!key) continue;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+  }
+  return counts;
+}
+
+const ADD_TO_SEARCH_ANALYSIS_DEFS = Object.freeze([
+  {
+    id: 'groupby',
+    label: 'AddToSearch-groupby',
+    getKeys: (value) => {
+      const s = String(value ?? '').trim();
+      return s ? [s] : [];
+    },
+    toQueryTerm: (key) => _sanitizeAddToSearchCoreTerm(key),
+  },
+  {
+    id: 'endsWithChar',
+    label: 'AddToSearch-endsWithChar',
+    getKeys: (value) => {
+      const chars = _toCodePoints(String(value ?? '').trim());
+      if (!chars.length) return [];
+      return [chars[chars.length - 1]];
+    },
+    toQueryTerm: (key) => {
+      const core = _sanitizeAddToSearchCoreTerm(key);
+      return core ? `%${core}` : '';
+    },
+  },
+  {
+    id: 'startsWithChar',
+    label: 'AddToSearch-startsWithChar',
+    getKeys: (value) => {
+      const chars = _toCodePoints(String(value ?? '').trim());
+      if (!chars.length) return [];
+      return [chars[0]];
+    },
+    toQueryTerm: (key) => {
+      const core = _sanitizeAddToSearchCoreTerm(key);
+      return core ? `${core}%` : '';
+    },
+  },
+  {
+    id: 'containsChar2',
+    label: 'AddToSearch-containsChar2',
+    getKeys: (value) => {
+      const chars = _toCodePoints(String(value ?? '').trim());
+      if (chars.length < 2) return [];
+      const grams = new Set();
+      for (let i = 0; i < chars.length - 1; i++) {
+        grams.add(`${chars[i]}${chars[i + 1]}`);
+      }
+      return Array.from(grams);
+    },
+    toQueryTerm: (key) => {
+      const core = _sanitizeAddToSearchCoreTerm(key);
+      return core ? `%${core}%` : '';
+    },
+  },
+]);
+
+export function buildAddToSearchColumnAnalyses(values, { minCountExclusive = 2, topN = 4 } = {}) {
+  const minCount = Number.isFinite(Number(minCountExclusive)) ? Number(minCountExclusive) : 2;
+  const limit = Number.isFinite(Number(topN)) ? Math.max(0, Number(topN)) : 4;
+  if (!limit) return [];
+
+  const analyses = [];
+  for (const def of ADD_TO_SEARCH_ANALYSIS_DEFS) {
+    const counts = _countBy(values, def.getKeys);
+    const ranked = _sortCountEntries(counts).filter(([, count]) => Number(count || 0) > minCount);
+    const top = ranked.slice(0, limit);
+    if (!top.length) continue;
+
+    const suggestions = [];
+    for (const [value, count] of top) {
+      const queryTerm = (typeof def.toQueryTerm === 'function') ? String(def.toQueryTerm(value) || '') : '';
+      if (!queryTerm) continue;
+      suggestions.push({
+        value: String(value ?? ''),
+        count: Number(count || 0),
+        queryTerm,
+      });
+    }
+    if (!suggestions.length) continue;
+    analyses.push({
+      id: String(def.id || ''),
+      label: String(def.label || ''),
+      suggestions,
+    });
+  }
+  return analyses;
+}
+
 function matchesFieldAlt({ fieldKey, fieldValue, alt, fieldsMeta, getFieldType }) {
   const andTerms = Array.isArray(alt?.ands) ? alt.ands : [];
   if (!andTerms.length) return false;

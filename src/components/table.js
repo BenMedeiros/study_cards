@@ -2,8 +2,7 @@ let _tableGlobalResizeHookInstalled = false;
 
 import { timed } from '../utils/timing.js';
 import { openRightClickMenu, registerRightClickContext } from './rightClickMenu.js';
-import { cleanSearchQuery } from '../utils/tableSearch.js';
-import { compileTableSearchQuery, matchesTableSearch } from '../utils/tableSearch.js';
+import { cleanSearchQuery, compileTableSearchQuery, matchesTableSearch, buildAddToSearchColumnAnalyses } from '../utils/tableSearch.js';
 
 // register the table context class so CSS and code searches can find it
 try { registerRightClickContext('table-context-menu'); } catch (e) {}
@@ -194,6 +193,59 @@ export function createTable({ store = null, headers, rows, className = '', id, c
     if (typeof cell === 'number') return cell;
     if (typeof cell === 'string') return cell.trim();
     return String(cell ?? '').trim();
+  }
+
+  function appendTokenToSearchInput(token) {
+    try {
+      if (!searchInputEl) return;
+      const existing = String(searchInputEl.value || '');
+      const t = String(token || '').trim();
+      if (!t) return;
+      const needsSep = existing.length > 0 && !(/[\s|]$/.test(existing));
+      const sep = needsSep ? ' | ' : '';
+      searchInputEl.value = existing + sep + t;
+      searchInputEl.focus();
+      try { searchInputEl.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+    } catch (e) {}
+  }
+
+  function buildAddToSearchItems({ field, columnIndex }) {
+    if (!field) return [];
+    if (!searchInputEl) return [];
+    if (!Array.isArray(currentRows) || !currentRows.length) return [];
+    if (typeof columnIndex !== 'number' || columnIndex < 0) return [];
+
+    try {
+      const columnValues = [];
+      for (const r of currentRows) {
+        try { columnValues.push(extractCellValue(r[columnIndex])); } catch (e) {}
+      }
+
+      const analyses = buildAddToSearchColumnAnalyses(columnValues, {
+        minCountExclusive: 2,
+        topN: 4,
+      });
+
+      const out = [];
+      for (const analysis of analyses) {
+        const suggestions = Array.isArray(analysis?.suggestions) ? analysis.suggestions : [];
+        for (const suggestion of suggestions) {
+          const displayVal = String(suggestion?.value ?? '').trim();
+          if (!displayVal) continue;
+          const queryTerm = String(suggestion?.queryTerm || '').trim();
+          if (!queryTerm) continue;
+          const cnt = Math.max(0, Math.round(Number(suggestion?.count) || 0));
+          const label = `${String(analysis?.label || 'AddToSearch')} {${displayVal}} | ${cnt}`;
+          out.push({
+            label,
+            onClick: () => appendTokenToSearchInput(`{${field}:${queryTerm}}`)
+          });
+        }
+      }
+      return out;
+    } catch (e) {
+      return [];
+    }
   }
 
   // Keep original rows and a current filtered/sorted set
@@ -400,59 +452,12 @@ export function createTable({ store = null, headers, rows, className = '', id, c
           items.push({ label: 'Sort descending', onClick: () => { sortCol = i; sortDir = 'desc'; sortAndRender(); } });
           items.push({ label: 'Clear sort', onClick: () => { sortCol = null; sortAndRender(); } });
           if (field) {
-            // generic placeholder add-to-search (keeps existing behavior)
+            // Generic token insertion (keeps existing behavior).
             items.push({ label: 'Add to search', onClick: () => {
-              try {
-                if (!searchInputEl) return;
-                const existing = String(searchInputEl.value || '');
-                const token = `{${field}:}`;
-                const needsSep = existing.length > 0 && !(/[\s|]$/.test(existing));
-                const sep = needsSep ? ' | ' : '';
-                searchInputEl.value = existing + sep + token;
-                searchInputEl.focus();
-                try { searchInputEl.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
-              } catch (e) {}
+              appendTokenToSearchInput(`{${field}:}`);
             } });
 
-            // Add per-column stats (value -> count) and top-5 quick-add entries
-            try {
-              if (searchInputEl) {
-                const ci = headerKeys.findIndex(h => h.key === String(field));
-                if (ci >= 0 && Array.isArray(currentRows) && currentRows.length) {
-                  const counts = new Map();
-                  for (const r of currentRows) {
-                    try {
-                      const v = extractCellValue(r[ci]);
-                      const k = String(v ?? '');
-                      counts.set(k, (counts.get(k) || 0) + 1);
-                    } catch (e) {}
-                  }
-                  const entries = Array.from(counts.entries()).sort((a, b) => {
-                    const diff = b[1] - a[1];
-                    if (diff !== 0) return diff;
-                    return String(a[0] ?? '').localeCompare(String(b[0] ?? ''), undefined, { sensitivity: 'base' });
-                  });
-                  const top = entries.slice(0, 5);
-                  for (const [val, cnt] of top) {
-                    const displayVal = (val === '') ? '(empty)' : val;
-                    const safeVal = (val === '') ? '' : String(val).replace(/}/g, '').replace(/\|/g, ' ').trim();
-                    const label = `Add to Search {${displayVal}} | ${cnt}`;
-                    items.push({ label, onClick: () => {
-                      try {
-                        if (!searchInputEl) return;
-                        const existing = String(searchInputEl.value || '');
-                        const token = `{${field}:${safeVal}}`;
-                        const needsSep = existing.length > 0 && !(/[\s|]$/.test(existing));
-                        const sep = needsSep ? ' | ' : '';
-                        searchInputEl.value = existing + sep + token;
-                        searchInputEl.focus();
-                        try { searchInputEl.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
-                      } catch (e) {}
-                    } });
-                  }
-                }
-              }
-            } catch (e) {}
+            items.push(...buildAddToSearchItems({ field, columnIndex: i }));
           }
           openRightClickMenu({ x: ev.clientX, y: ev.clientY, items, context: 'table-context-menu' });
         } catch (e) {}
