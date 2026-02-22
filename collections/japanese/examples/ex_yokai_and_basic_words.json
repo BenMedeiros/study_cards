@@ -1,0 +1,363 @@
+{
+  "metadata": {
+    "name": "Conversation Example Sentences Export",
+    "description": "All Japanese-English example sentences produced in this conversation, normalized into learner chunk format.",
+    "version": 1
+  },
+  "sentences": [
+    {
+      "ja": "子どもは鬼をこわがっています。",
+      "en": "Children are afraid of demons.",
+      "grammarNotes": [
+        "Vている here expresses a continuing state (being afraid), not an ongoing action."
+      ],
+      "chunks": [
+        {
+          "ja": "子どもは鬼を",
+          "gloss": "children (are afraid of) demons",
+          "refs": ["子ども","鬼"]
+        },
+        {
+          "ja": "こわがっています",
+          "gloss": "are afraid",
+          "refs": ["こわがる"]
+        }
+      ]
+    },
+    {
+      "ja": "太郎は家の長男です。",
+      "en": "Tarō is the eldest son in the family.",
+      "chunks": [
+        {
+          "ja": "太郎は",
+          "gloss": "Tarō",
+          "refs": ["太郎"]
+        },
+        {
+          "ja": "家の長男です",
+          "gloss": "is the eldest son of the family",
+          "refs": ["家","長男"]
+        }
+      ]
+    },
+    {
+      "ja": "昔話には鬼がよく出てきます。",
+      "en": "Demons often appear in old folk tales.",
+      "grammarNotes": [
+        "Vてくる often indicates something appearing/coming into existence from a narrative perspective."
+      ],
+      "chunks": [
+        {
+          "ja": "昔話には",
+          "gloss": "in old folk tales",
+          "refs": ["昔話"]
+        },
+        {
+          "ja": "鬼がよく",
+          "gloss": "demons often",
+          "refs": ["鬼","よく"]
+        },
+        {
+          "ja": "出てきます",
+          "gloss": "appear",
+          "refs": ["出てくる"]
+        }
+      ]
+    },
+    {
+      "ja": "太郎は元気な子どもです。",
+      "en": "Tarō is an energetic child.",
+      "chunks": [
+        {
+          "ja": "太郎は",
+          "gloss": "Tarō",
+          "refs": ["太郎"]
+        },
+        {
+          "ja": "元気な子どもです",
+          "gloss": "is an energetic child",
+          "refs": ["元気","子ども"]
+        }
+      ]
+    },
+    {
+      "ja": "びっくりして目玉が大きくなった。",
+      "en": "My eyes widened in surprise.",
+      "grammarNotes": [
+        "Vて links cause/reason to the following clause (because I was surprised...).",
+        "Vくなる expresses a change of state."
+      ],
+      "chunks": [
+        {
+          "ja": "びっくりして",
+          "gloss": "being surprised",
+          "refs": ["びっくりする"]
+        },
+        {
+          "ja": "目玉が大きくなった",
+          "gloss": "eyes became big",
+          "refs": ["目玉","大きい","なる"]
+        }
+      ]
+    },
+    {
+      "ja": "うちの親父は料理が好きです。",
+      "en": "My dad likes cooking.",
+      "chunks": [
+        {
+          "ja": "うちの親父は",
+          "gloss": "my dad",
+          "refs": ["うち","親父"]
+        },
+        {
+          "ja": "料理が好きです",
+          "gloss": "likes cooking",
+          "refs": ["料理","好き"]
+        }
+      ],
+      "notes": [
+        "親父 is colloquial and masculine; tone depends on context."
+      ]
+    },
+    {
+      "ja": "彼は家の長男です。",
+      "en": "He is the eldest son in the family.",
+      "chunks": [
+        {
+          "ja": "彼は",
+          "gloss": "he",
+          "refs": ["彼"]
+        },
+        {
+          "ja": "家の長男です",
+          "gloss": "is the eldest son of the family",
+          "refs": ["家","長男"]
+        }
+      ]
+    },
+    {
+      "ja": "長男なので、家をつぐ予定です。",
+      "en": "Because he is the eldest son, he plans to inherit the family.",
+      "grammarNotes": [
+        "なので gives a softer explanatory reason than だから."
+      ],
+      "chunks": [
+        {
+          "ja": "長男なので",
+          "gloss": "because (he is) the eldest son",
+          "refs": ["長男","なので"]
+        },
+        {
+          "ja": "家をつぐ予定です",
+          "gloss": "plans to inherit the family",
+          "refs": ["家をつぐ","予定"]
+        }
+      ]
+    },
+    {
+      "ja": "長男は東京で働いています。",
+      "en": "The eldest son works in Tokyo.",
+      "grammarNotes": [
+        "Vている indicates a continuing state (employment)."
+      ],
+      "chunks": [
+        {
+          "ja": "長男は東京で",
+          "gloss": "the eldest son in Tokyo",
+          "refs": ["長男","東京"]
+        },
+        {
+          "ja": "働いています",
+          "gloss": "is working",
+          "refs": ["働く"]
+        }
+      ]
+    },
+    {
+      "ja": "河の近くで遊ばないでください。",
+      "en": "Please don't play near the river.",
+      "grammarNotes": [
+        "Vないでください is a polite request not to do something."
+      ],
+      "chunks": [
+        {
+          "ja": "河の近くで",
+          "gloss": "near the river",
+          "refs": ["河","近く"]
+        },
+        {
+          "ja": "遊ばないでください",
+          "gloss": "please do not play",
+          "refs": ["遊ぶ"]
+        }
+      ]
+    },
+    {
+      "ja": "昔の童の話を読みました。",
+      "en": "I read an old story about children.",
+      "chunks": [
+        {
+          "ja": "昔の童の話を",
+          "gloss": "an old story about children",
+          "refs": ["昔","童","話"]
+        },
+        {
+          "ja": "読みました",
+          "gloss": "read",
+          "refs": ["読む"]
+        }
+      ]
+    },
+    {
+      "ja": "河童は川に住むと言われています。",
+      "en": "Kappa are said to live in rivers.",
+      "grammarNotes": [
+        "と言われている expresses hearsay or commonly accepted belief."
+      ],
+      "chunks": [
+        {
+          "ja": "河童は川に住むと",
+          "gloss": "that kappa live in rivers",
+          "refs": ["河童","川","住む"]
+        },
+        {
+          "ja": "言われています",
+          "gloss": "are said (to)",
+          "refs": ["言われている"]
+        }
+      ]
+    },
+    {
+      "ja": "子どもに川へ近づかないように、河童の話をしました。",
+      "en": "We told kappa stories so children wouldn’t go near the river.",
+      "grammarNotes": [
+        "Vないように expresses purpose/prevention ('so that not')."
+      ],
+      "chunks": [
+        {
+          "ja": "子どもに川へ近づかないように",
+          "gloss": "so that children do not go near the river",
+          "refs": ["子ども","川","近づく","ように"]
+        },
+        {
+          "ja": "河童の話をしました",
+          "gloss": "told stories about kappa",
+          "refs": ["河童","話","する"]
+        }
+      ]
+    },
+    {
+      "ja": "昔から河童の伝説が日本にあります。",
+      "en": "Kappa legends have existed in Japan since long ago.",
+      "grammarNotes": [
+        "昔から indicates continuation from the past until now."
+      ],
+      "chunks": [
+        {
+          "ja": "昔から",
+          "gloss": "since long ago",
+          "refs": ["昔から"]
+        },
+        {
+          "ja": "河童の伝説が日本にあります",
+          "gloss": "kappa legends exist in Japan",
+          "refs": ["河童","伝説","日本","ある"]
+        }
+      ]
+    },
+    {
+      "ja": "森で狐を見ました。",
+      "en": "I saw a fox in the forest.",
+      "chunks": [
+        {
+          "ja": "森で狐を",
+          "gloss": "a fox in the forest",
+          "refs": ["森","狐"]
+        },
+        {
+          "ja": "見ました",
+          "gloss": "saw",
+          "refs": ["見る"]
+        }
+      ]
+    },
+    {
+      "ja": "妖狐は人に化けると言われています。",
+      "en": "Fox spirits are said to transform into humans.",
+      "grammarNotes": [
+        "Vると言われている indicates commonly reported belief."
+      ],
+      "chunks": [
+        {
+          "ja": "妖狐は人に化けると",
+          "gloss": "that fox spirits transform into people",
+          "refs": ["妖狐","人","化ける"]
+        },
+        {
+          "ja": "言われています",
+          "gloss": "are said (to)",
+          "refs": ["言われている"]
+        }
+      ]
+    },
+    {
+      "ja": "昔の話には狐の霊がよく出てきます。",
+      "en": "Fox spirits often appear in old stories.",
+      "chunks": [
+        {
+          "ja": "昔の話には",
+          "gloss": "in old stories",
+          "refs": ["昔","話"]
+        },
+        {
+          "ja": "狐の霊がよく",
+          "gloss": "fox spirits often",
+          "refs": ["狐の霊","よく"]
+        },
+        {
+          "ja": "出てきます",
+          "gloss": "appear",
+          "refs": ["出てくる"]
+        }
+      ]
+    },
+    {
+      "ja": "村の人は狐の霊を信じていました。",
+      "en": "The villagers believed in fox spirits.",
+      "grammarNotes": [
+        "Vていた marks a past continuing state."
+      ],
+      "chunks": [
+        {
+          "ja": "村の人は",
+          "gloss": "the villagers",
+          "refs": ["村","人"]
+        },
+        {
+          "ja": "狐の霊を信じていました",
+          "gloss": "believed in fox spirits",
+          "refs": ["狐の霊","信じる"]
+        }
+      ]
+    },
+    {
+      "ja": "狐の霊が人に化けるという伝説があります。",
+      "en": "There is a legend that fox spirits transform into humans.",
+      "grammarNotes": [
+        "という + noun labels or defines content ('the legend that...')."
+      ],
+      "chunks": [
+        {
+          "ja": "狐の霊が人に化けるという",
+          "gloss": "that fox spirits transform into people",
+          "refs": ["狐の霊","人","化ける","という"]
+        },
+        {
+          "ja": "伝説があります",
+          "gloss": "there is a legend",
+          "refs": ["伝説","ある"]
+        }
+      ]
+    }
+  ]
+}

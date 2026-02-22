@@ -27,6 +27,13 @@
       "modifiedAt": "2026-02-07T02:51:05.227Z"
     },
     {
+      "path": "japanese/examples/ex_yokai_and_basic_words.json",
+      "name": "Conversation Example Sentences Export",
+      "description": "All Japanese-English example sentences produced in this conversation, normalized into learner chunk format.",
+      "entries": null,
+      "modifiedAt": "2026-02-22T18:12:41.332Z"
+    },
+    {
       "path": "japanese/examples/gu_verb_examples.json",
       "name": "Verb Variety Set 01",
       "description": "Sentences using godan -ぐ verbs with varied conjugations and proper nouns.",
@@ -228,6 +235,13 @@
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
       "entries": 1505,
       "modifiedAt": "2026-02-19T18:04:02.349Z"
+    },
+    {
+      "path": "japanese/words/yokai_and_basic_words.json",
+      "name": "Yokai and Basic Words",
+      "description": "A small set of yokai names, family terms, common verbs/phrases and basic particles — formatted like the main words file.",
+      "entries": 41,
+      "modifiedAt": "2026-02-22T18:04:09.999Z"
     },
     {
       "path": "languageHistory/languageHistory.json",

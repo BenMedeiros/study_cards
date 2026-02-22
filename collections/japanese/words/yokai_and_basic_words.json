@@ -1,0 +1,432 @@
+{
+  "metadata": {
+    "name": "Yokai and Basic Words",
+    "description": "A small set of yokai names, family terms, common verbs/phrases and basic particles — formatted like the main words file.",
+    "version": 1,
+    "category": "japanese",
+    "source": "user-provided list",
+     "schema": [
+      {
+        "key": "kanji",
+        "label": "Kanji",
+        "jp_label": "漢字",
+        "description": "Canonical dictionary/headword kanji form if one exists, EVEN IF it is rare or not commonly used in daily writing. This field represents the linguistically recognized kanji spelling, not the most common display form. If no established kanji exists, use the standard kana/katakana headword instead. Use `orthography` to indicate what people typically write in real-world usage. Examples: 林檎 (usually written りんご), 今日, 勉強, ありがとう (no standard kanji), ドキドキ (no kanji).",
+        "type": "string"
+      },
+      {
+        "key": "reading",
+        "label": "Reading",
+        "jp_label": "読み",
+        "description": "The pronunciation, written in kana (usually hiragana; katakana ok for katakana words). Examples: あくま, ありがとう, どきどき / ドキドキ.",
+        "type": "string"
+      },
+      {
+        "key": "meaning",
+        "label": "Meaning",
+        "jp_label": "意味",
+        "description": "English gloss/translation. Keep it short; add nuance in example notes when needed.",
+        "type": "string"
+      },
+      {
+        "key": "type",
+        "label": "Type",
+        "jp_label": "種類",
+        "type": "enum",
+        "description": "Grammatical classification: how it behaves in sentences. Use `lexicalClass` to capture families like onomatopoeia or greetings that can cross POS. Rules of thumb: if it is one lexical word, pick noun/verb/adj/adverb/etc. If it is multi-word or a fixed chunk, pick expression/phrase/sentence types.",
+        "values": {
+          "noun": "Standalone noun (名詞). Can take particles like が/を/に. Example: 本, 勉強.",
+          "proper-noun": "Proper noun (固有名詞): specific names of people/places/organizations (e.g., 太郎, 東京, 日本, アメリカ, ユニクロ). Use for names you generally don’t want treated as normal vocab.",
+          "standalone-noun": "A single kanji that can stand alone as a noun WITHOUT okurigana (rare; only when truly used alone).",
+          "compound-morpheme": "Bound morpheme used mainly inside compounds; not typically a standalone word (e.g., 〜学, 〜性).",
+          "verb-stem": "Kanji/root that appears as part of a verb requiring okurigana; not a full dictionary-form verb by itself (e.g., 受け in 受ける).",
+          "numeral": "Number words / numeric forms (一, 二, ３, etc.). Use `counter` for counter words like 〜枚, 〜人.",
+          "ichidan-verb": "一段動詞 dictionary form (e.g., 食べる, 見る).",
+          "godan-verb": "五段動詞 dictionary form (e.g., 書く, 泳ぐ).",
+          "irregular-verb": "Irregular verbs (する, 来る) and irregular verb entries.",
+          "i-adjective": "い-adjective (い形容詞) (e.g., 高い, 忙しい).",
+          "na-adjective": "な-adjective (な形容詞) (e.g., 便利, きれい).",
+          "particle": "Particle / function word (e.g., は, が, を, に, で, から, まで).",
+          "adverb": "Adverb (副詞) or adverb-like word used to modify verbs/clauses (e.g., すぐ, ゆっくり). Many mimetics belong here (ドキドキ(と)する, キラキラ(と)光る) — mark those with lexicalClass='onomatopoeia'.",
+          "conjunction": "Connective/conjunction (接続詞) linking clauses/sentences (e.g., でも, そして).",
+          "counter": "Counter word used with numerals (e.g., 〜人, 〜枚, 〜つ).",
+          "expression": "Fixed conventional phrase (often multi-word) that is used as a unit (e.g., おつかれさま, しょうがない). Not a full sentence unless it clearly contains its own predicate.",
+          "descriptive-phrase": "Descriptive multi-word phrase used as a modifier or chunk (often not fully idiomatic).",
+          "sentence": "Full sentence with its own predicate (usually ends with a verb/です/ます etc.).",
+          "phrase-sentence": "Clause-like chunk that forms a complete predicate unit (shorter than a full sentence record, but still predicate-bearing)."
+        }
+      },
+      {
+        "key": "lexicalClass",
+        "label": "Lexical Class",
+        "jp_label": "語彙クラス",
+        "type": "enum",
+        "description": "Lexical family / usage domain (word 'kind'), independent of grammar `type`. Use this to capture important categories that cross parts of speech: onomatopoeia/mimetics, manga SFX, greetings, interjections, and set phrases. Defaults to 'regular' when none apply.",
+        "values": {
+          "regular": "Normal lexical item with no special family tag.",
+          "onomatopoeia": "Sound-symbolic mimetic (擬音語・擬態語): often repeated patterns and used with と or する (e.g., ドキドキ, キラキラ, ワクワク, ベタベタ). Usually type='adverb' (or sometimes noun/na-adjective in specific uses).",
+          "sfx": "Sound-effect token (especially manga/quotes): often standalone with ！/… and not a normal dictionary word (e.g., ドン！, ゴー！, ピッ).",
+          "set-phrase": "Fixed conventional chunk (定型表現) learned as a unit; may not map cleanly to a single POS (e.g., しょうがない).",
+          "greeting": "Greeting/aisatsu (挨拶): used in social exchange (e.g., こんにちは, おつかれさま).",
+          "interjection": "Spontaneous utterance (感動詞): あっ, えっ, へえ, ええと."
+        }
+      },
+      {
+        "key": "orthography",
+        "label": "Orthography",
+        "jp_label": "表記",
+        "type": "enum",
+        "description": "Indicates the script usually used to write the word. Helpful for words like 'いちご' (usually kana) or loanwords that are katakana-only.",
+        "values": {
+          "kanji": "Primarily written in kanji (漢字), okurigana as needed.",
+          "hiragana": "Primarily written in kana (平仮名 or 片仮名), rarely uses its possible kanji form",
+          "both": "Both kanji and kana are commonly used (context-dependent).",
+          "katakana": "Primarily written in katakana (片仮名), often loanwords or mimetics."
+        }
+      },
+      {
+        "key": "tags",
+        "label": "Tags",
+        "jp_label": "タグ",
+        "description": "Optional machine-friendly tags for filtering/grouping. Use short snake_case strings. Examples: fractional_numeral, jlpt_n3, grammar_marker, formal, casual, written, spoken, counter_related.",
+        "type": "string[]"
+      }
+    ]
+  },
+  "entries": [
+    {
+      "kanji": "鬼太郎",
+      "reading": "きたろう",
+      "meaning": "Kitaro (name of the yokai protagonist)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["name","yokai"]
+    },
+    {
+      "kanji": "ゲゲゲの鬼太郎",
+      "reading": "ゲゲゲのきたろう",
+      "meaning": "GeGeGe no Kitaro (title of a manga/anime)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": ["title","yokai"]
+    },
+    {
+      "kanji": "目玉おやじ",
+      "reading": "めだまおやじ",
+      "meaning": "Medama Oyaji (Eyeball-Old-Man, character)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": ["character","yokai"]
+    },
+    {
+      "kanji": "妖怪",
+      "reading": "ようかい",
+      "meaning": "yokai; supernatural monster/ghost",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "河童",
+      "reading": "かっぱ",
+      "meaning": "kappa (water yokai)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["yokai"]
+    },
+    {
+      "kanji": "天狗",
+      "reading": "てんぐ",
+      "meaning": "tengu (mountain/demon-like yokai)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["yokai"]
+    },
+    {
+      "kanji": "一反木綿",
+      "reading": "いったんもめん",
+      "meaning": "Ittan-momen (a cloth-like yokai)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["yokai"]
+    },
+    {
+      "kanji": "塗り壁",
+      "reading": "ぬりかべ",
+      "meaning": "Nurukabe (wall-like yokai)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["yokai"]
+    },
+    {
+      "kanji": "鬼",
+      "reading": "おに",
+      "meaning": "demon; ogre",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "太郎",
+      "reading": "たろう",
+      "meaning": "Taro (male given name)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "目玉",
+      "reading": "めだま",
+      "meaning": "eyeball",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "親父",
+      "reading": "おやじ",
+      "meaning": "old man; (colloquial) father",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "長男",
+      "reading": "ちょうなん",
+      "meaning": "eldest son",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "長",
+      "reading": "ちょう",
+      "meaning": "chief; head; long (bound morpheme)",
+      "type": "compound-morpheme",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "男",
+      "reading": "おとこ",
+      "meaning": "man; male",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "長女",
+      "reading": "ちょうじょ",
+      "meaning": "eldest daughter",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "次男",
+      "reading": "じなん",
+      "meaning": "second son",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "三男",
+      "reading": "さんなん",
+      "meaning": "third son",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "子供",
+      "reading": "こども",
+      "meaning": "child; children",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both"
+    },
+    {
+      "kanji": "怖がる",
+      "reading": "こわがる",
+      "meaning": "to be afraid (of); to show fear",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "昔話",
+      "reading": "むかしばなし",
+      "meaning": "folktale; old story",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "出てくる",
+      "reading": "でてくる",
+      "meaning": "to appear; to come out",
+      "type": "phrase-sentence",
+      "lexicalClass": "regular",
+      "orthography": "both"
+    },
+    {
+      "kanji": "家",
+      "reading": "いえ",
+      "meaning": "house; home",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "元気",
+      "reading": "げんき",
+      "meaning": "healthy; well; energetic",
+      "type": "na-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "びっくり",
+      "reading": "びっくり",
+      "meaning": "surprise; be surprised (onomatopoeia)",
+      "type": "adverb",
+      "lexicalClass": "onomatopoeia",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "大きい",
+      "reading": "おおきい",
+      "meaning": "big; large",
+      "type": "i-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "内",
+      "reading": "うち",
+      "meaning": "home; my house; inside",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "料理",
+      "reading": "りょうり",
+      "meaning": "cooking; cuisine",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "好き",
+      "reading": "すき",
+      "meaning": "fond of; to like",
+      "type": "na-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "彼",
+      "reading": "かれ",
+      "meaning": "he; boyfriend",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "予定",
+      "reading": "よてい",
+      "meaning": "plan; schedule",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "家をつぐ",
+      "reading": "いえをつぐ",
+      "meaning": "to succeed/inherit the household",
+      "type": "phrase-sentence",
+      "lexicalClass": "regular",
+      "orthography": "both"
+    },
+    {
+      "kanji": "東京",
+      "reading": "とうきょう",
+      "meaning": "Tokyo (capital city)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "働く",
+      "reading": "はたらく",
+      "meaning": "to work",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "です",
+      "reading": "です",
+      "meaning": "copula; polite ending (is/are)",
+      "type": "irregular-verb",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "は",
+      "reading": "は",
+      "meaning": "topic particle",
+      "type": "particle",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "が",
+      "reading": "が",
+      "meaning": "subject particle",
+      "type": "particle",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "を",
+      "reading": "を",
+      "meaning": "object particle",
+      "type": "particle",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "に",
+      "reading": "に",
+      "meaning": "direction/time/location particle",
+      "type": "particle",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "で",
+      "reading": "で",
+      "meaning": "location/method particle",
+      "type": "particle",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "なので",
+      "reading": "なので",
+      "meaning": "because; so (conjunctive)",
+      "type": "conjunction",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    }
+  ]
+}
