@@ -237,6 +237,13 @@
       "modifiedAt": "2026-02-19T18:04:02.349Z"
     },
     {
+      "path": "japanese/words/one_piece_comic.json",
+      "name": "Book Back Cover Words",
+      "description": "Japanese words appearing in the image and words introduced during explanation in this conversation.",
+      "entries": 18,
+      "modifiedAt": "2026-02-22T19:03:55.374Z"
+    },
+    {
       "path": "japanese/words/yokai_and_basic_words.json",
       "name": "Yokai and Basic Words",
       "description": "A small set of yokai names, family terms, common verbs/phrases and basic particles — formatted like the main words file.",
