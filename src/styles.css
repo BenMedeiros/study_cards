@@ -78,11 +78,6 @@ body {
   min-height: 100vh;
 }
 
-#shell-main {
-  flex: 1 1 auto;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-}
 
 /* ============================================
    Views / Components
@@ -120,10 +115,7 @@ body {
 }
 
 .view-footer-controls {
-  /* Float above the thin shell footer instead of covering it. Use full
-     width (100%) to avoid horizontal overflow introduced by 100vw. The
-     bottom offset matches the shell footer height so controls sit above it. */
-  position: fixed;
+  position: absolute; 
   left: 0;
   bottom: var(--shell-footer-height);
   width: 100%;
@@ -1000,6 +992,18 @@ input[type="number"].button::-webkit-inner-spin-button {
 
   #collections-card {
     max-height: 45rem;
+  }
+}
+
+
+#kanji-study-root {
+    max-height: 60%;
+    overflow-y: auto;
+}
+
+@media (max-width: 700px) {
+  #kanji-study-root {
+    max-height: 70%;
   }
 }
 

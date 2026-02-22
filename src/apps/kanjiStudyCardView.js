@@ -96,6 +96,9 @@ export function renderKanjiStudyCard({ store }) {
 
   // Root UI pieces
   const headerTools = createViewHeaderTools();
+  // Track whether we mounted header/footer into the shell main container
+  let __mountedHeaderInShell = false;
+  let __mountedFooterInShell = false;
 
   function wrapHeaderTool(controlEl, captionText) {
     const group = document.createElement('div');
@@ -833,8 +836,21 @@ export function renderKanjiStudyCard({ store }) {
   footer.textContent = '← / →: navigate  •  ↑: full  •  ↓: kanji only';
 
   card.appendChild(wrapper);
-  el.append(headerTools, card, sentenceCard);
-  el.append(footerControls.el);
+
+  // Always append the card and sentence card into the view root
+  el.append(card, sentenceCard);
+
+  // Build a DocumentFragment containing header -> view root -> footer so
+  // when the shell appends the fragment its children become siblings in
+  // the correct order under `#shell-main`.
+  const frag = document.createDocumentFragment();
+  frag.appendChild(headerTools);
+  frag.appendChild(el);
+  frag.appendChild(footerControls.el);
+  // mark mounted flags; the fragment will be appended by the shell into
+  // `#shell-main` synchronously when this function returns.
+  __mountedHeaderInShell = true;
+  __mountedFooterInShell = true;
 
   // Tools behaviour
   shuffleBtn.addEventListener('click', shuffleEntries);
@@ -861,11 +877,22 @@ export function renderKanjiStudyCard({ store }) {
       try {
         document.dispatchEvent(new CustomEvent('app:unregisterMediaHandler', { detail: { id: MEDIA_HANDLER_ID } }));
       } catch (e) {}
+      // cleanup header/footer moved into shell
+      try {
+        if (__mountedHeaderInShell && headerTools && headerTools.parentNode) headerTools.parentNode.removeChild(headerTools);
+      } catch (e) {}
+      try {
+        if (__mountedFooterInShell && footerControls && footerControls.el && footerControls.el.parentNode) footerControls.el.parentNode.removeChild(footerControls.el);
+      } catch (e) {}
+      try {
+        // explicitly unregister footer key handler if provided
+        if (footerControls && typeof footerControls.__unregister === 'function') footerControls.__unregister();
+      } catch (e) {}
       observer.disconnect();
     }
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
-  // expose element so the shell can mount it
-  return el;
+  // expose fragment so the shell can mount header -> view -> footer in order
+  return frag;
 }
