@@ -1,4 +1,5 @@
 import { el, safeId } from './ui.js';
+import { openViewFooterCustomButtonDialog } from './viewFooterCustomButtonDialog.js';
 
 function deepClone(value) {
   try { return JSON.parse(JSON.stringify(value)); } catch (e) { return value; }
@@ -6,6 +7,48 @@ function deepClone(value) {
 
 function asString(v) {
   return (v == null) ? '' : String(v);
+}
+
+function isCustomToken(key) {
+  return typeof key === 'string' && key.startsWith('__custom:');
+}
+
+function customTokenFromId(id) {
+  return `__custom:${asString(id).trim()}`;
+}
+
+function customIdFromToken(token) {
+  if (!isCustomToken(token)) return '';
+  return asString(token).slice('__custom:'.length).trim();
+}
+
+function normalizeCustomButtons(raw = []) {
+  const out = [];
+  const seen = new Set();
+  for (const item of (Array.isArray(raw) ? raw : [])) {
+    if (!item || typeof item !== 'object') continue;
+    const id = asString(item.id).trim();
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    const actions = [];
+    for (const step of (Array.isArray(item.actions) ? item.actions : [])) {
+      if (!step || typeof step !== 'object') continue;
+      const actionId = asString(step.actionId).trim();
+      if (!actionId) continue;
+      const delayNum = Number(step.delayMs);
+      const delayMs = Number.isFinite(delayNum) ? Math.max(0, Math.round(delayNum)) : 0;
+      actions.push({ actionId, delayMs });
+    }
+    out.push({
+      id,
+      icon: asString(item.icon),
+      text: asString(item.text) || 'Custom',
+      caption: asString(item.caption),
+      shortcut: asString(item.shortcut),
+      actions,
+    });
+  }
+  return out;
 }
 
 function isControlDescriptor(item) {
@@ -35,6 +78,8 @@ function normalizeBaseControls(baseControls = []) {
       icon: asString(raw.icon),
       caption: asString(raw.caption),
       shortcut: asString(raw.shortcut),
+      actionKey: asString(raw.actionKey),
+      fnName: asString(raw.fnName),
       states: Array.isArray(raw.states)
         ? raw.states
           .filter(s => s && s.name)
@@ -44,6 +89,8 @@ function normalizeBaseControls(baseControls = []) {
             icon: asString(s.icon),
             caption: asString(s.caption),
             shortcut: asString(s.shortcut),
+            actionKey: asString(s.actionKey),
+            fnName: asString(s.fnName),
           }))
         : [],
     };
@@ -60,6 +107,7 @@ function ensureDefaultConfig(config) {
     name: asString(c.name || 'Default') || 'Default',
     order: Array.isArray(c.order) ? c.order.map(v => String(v || '').trim()).filter(Boolean) : [],
     controls: (c.controls && typeof c.controls === 'object') ? deepClone(c.controls) : {},
+    customButtons: normalizeCustomButtons(c.customButtons),
     hotkeysDisabled: !!c.hotkeysDisabled,
   };
 }
@@ -75,12 +123,12 @@ function normalizeAppPrefs(raw, baseControls) {
     const id = String(n.id || '').trim();
     if (!id) continue;
     n.id = id;
-    n.order = normalizeOrder(n.order, baseKeys);
+    n.order = normalizeOrder(n.order, baseKeys, n.customButtons);
     byId.set(n.id, n);
   }
 
   if (!byId.has('default')) {
-    byId.set('default', { id: 'default', name: 'Default', order: baseKeys.slice(), controls: {}, hotkeysDisabled: false });
+    byId.set('default', { id: 'default', name: 'Default', order: baseKeys.slice(), controls: {}, customButtons: [], hotkeysDisabled: false });
   }
 
   const configs = Array.from(byId.values());
@@ -88,7 +136,8 @@ function normalizeAppPrefs(raw, baseControls) {
   return { activeConfigId, configs };
 }
 
-function normalizeOrder(order, baseKeys) {
+function normalizeOrder(order, baseKeys, customButtons = []) {
+  const customTokens = new Set((Array.isArray(customButtons) ? customButtons : []).map(btn => customTokenFromId(btn.id)));
   const seen = new Set();
   const out = [];
   const source = Array.isArray(order) ? order : [];
@@ -96,9 +145,15 @@ function normalizeOrder(order, baseKeys) {
     const k = String(key || '').trim();
     // allow placeholder token '__empty' to be included in the order
     const isPlaceholder = (k === '__empty');
-    if (!k || (!isPlaceholder && seen.has(k)) || (!isPlaceholder && !baseKeys.includes(k))) continue;
+    if (!k || (!isPlaceholder && seen.has(k)) || (!isPlaceholder && !baseKeys.includes(k) && !customTokens.has(k))) continue;
     if (!isPlaceholder) seen.add(k);
     out.push(k);
+  }
+  for (const token of customTokens) {
+    if (!seen.has(token)) {
+      seen.add(token);
+      out.push(token);
+    }
   }
   for (const k of baseKeys) {
     if (!seen.has(k)) out.push(k);
@@ -318,6 +373,7 @@ function openDeleteConfigConfirmDialog({ configName = '' } = {}) {
 export function openViewFooterSettingsDialog({
   appId = 'viewFooter',
   baseControls = [],
+  availableActions = [],
   appPrefs = null,
   onChange = null,
 } = {}) {
@@ -328,6 +384,34 @@ export function openViewFooterSettingsDialog({
   let selectedConfigId = prefs.activeConfigId;
   let isDirty = false;
   let expandedRows = new Set();
+  const availableActionList = Array.isArray(availableActions) ? availableActions.slice() : [];
+  const availableActionById = new Map(availableActionList.map(a => [asString(a.id).trim(), a]));
+
+  function buildStateActionDisplay(base, st) {
+    const actionId = asString(st.actionKey || `${base.key}:${st.name}`).trim();
+    const mapped = availableActionById.get(actionId) || null;
+    return {
+      actionId,
+      title: asString(st.name || st.text || actionId),
+      fnName: asString(st.fnName || mapped?.fnName || actionId),
+      icon: asString(st.icon || mapped?.icon || ''),
+      text: asString(st.text || mapped?.text || ''),
+      shortcut: asString(st.shortcut || mapped?.shortcut || ''),
+    };
+  }
+
+  function buildControlActionDisplay(base) {
+    const actionId = asString(base.actionKey || base.key).trim();
+    const mapped = availableActionById.get(actionId) || null;
+    return {
+      actionId,
+      title: asString(base.text || base.key),
+      fnName: asString(base.fnName || mapped?.fnName || actionId),
+      icon: asString(base.icon || mapped?.icon || ''),
+      text: asString(base.text || mapped?.text || ''),
+      shortcut: asString(base.shortcut || mapped?.shortcut || ''),
+    };
+  }
 
   function emitSave(nextPrefs = prefs) {
     try {
@@ -343,7 +427,32 @@ export function openViewFooterSettingsDialog({
 
   function ensureSelectedOrder(config) {
     if (!config) return;
-    config.order = normalizeOrder(config.order, baseKeys);
+    config.order = normalizeOrder(config.order, baseKeys, config.customButtons || []);
+  }
+
+  function getCustomButton(config, token) {
+    if (!config || !isCustomToken(token)) return null;
+    const id = customIdFromToken(token);
+    if (!id) return null;
+    const list = Array.isArray(config.customButtons) ? config.customButtons : [];
+    return list.find(btn => btn && btn.id === id) || null;
+  }
+
+  function upsertCustomButton(config, nextButton) {
+    if (!config || !nextButton || typeof nextButton !== 'object') return;
+    if (!Array.isArray(config.customButtons)) config.customButtons = [];
+    const id = asString(nextButton.id).trim();
+    if (!id) return;
+    const idx = config.customButtons.findIndex(btn => btn && btn.id === id);
+    if (idx < 0) config.customButtons.push(nextButton);
+    else config.customButtons[idx] = nextButton;
+  }
+
+  function removeCustomButton(config, token) {
+    if (!config || !Array.isArray(config.customButtons)) return;
+    const id = customIdFromToken(token);
+    if (!id) return;
+    config.customButtons = config.customButtons.filter(btn => btn && btn.id !== id);
   }
 
   function setControlOverride(config, key, next) {
@@ -377,6 +486,7 @@ export function openViewFooterSettingsDialog({
       name: `Config ${prefs.configs.length + 1}`,
       order: baseKeys.slice(),
       controls: {},
+      customButtons: [],
     };
     prefs.configs.push(next);
     prefs.activeConfigId = id;
@@ -410,6 +520,7 @@ export function openViewFooterSettingsDialog({
   function resetFooterToDefault(config) {
     if (!config) return;
     config.controls = {};
+    config.customButtons = [];
     config.order = baseKeys.slice();
     markDirty();
   }
@@ -456,11 +567,60 @@ export function openViewFooterSettingsDialog({
     return asString(ov.shortcut || baseState.shortcut || '');
   }
 
+  async function openCustomButtonEditor(config, existing = null) {
+    if (!config) return;
+    const initialButton = existing ? deepClone(existing) : null;
+    const nextButton = await openViewFooterCustomButtonDialog({
+      availableActions: availableActionList,
+      initialButton,
+      captureHotkey: async ({ currentShortcut = '', skipToken = '' } = {}) => {
+        if (config.hotkeysDisabled) return null;
+        const taken = getAssignedShortcutMap(config, { skipKey: skipToken || null, skipState: null });
+        return openHotkeyCaptureDialog({
+          currentShortcut,
+          isTaken: (nextShortcut) => {
+            const hit = taken.get(String(nextShortcut || '').toUpperCase());
+            return hit ? `That key is already used by ${hit}.` : '';
+          },
+        });
+      },
+    });
+    if (!nextButton) return;
+
+    const id = asString(nextButton.id || '').trim() || `custom-${Date.now().toString(36).slice(-6)}`;
+    const normalized = {
+      id,
+      icon: asString(nextButton.icon),
+      text: asString(nextButton.text || 'Custom'),
+      caption: asString(nextButton.caption),
+      shortcut: asString(nextButton.shortcut),
+      actions: Array.isArray(nextButton.actions) ? nextButton.actions.map(a => ({ actionId: asString(a.actionId).trim(), delayMs: Math.max(0, Math.round(Number(a.delayMs) || 0)) })).filter(a => a.actionId) : [],
+    };
+
+    upsertCustomButton(config, normalized);
+    const token = customTokenFromId(id);
+    if (!Array.isArray(config.order)) config.order = [];
+    if (!config.order.includes(token)) config.order.push(token);
+    markDirty();
+    renderEditor();
+  }
+
   function getAssignedShortcutMap(config, { skipKey = null, skipState = null } = {}) {
     const map = new Map();
     if (!config) return map;
 
     for (const key of config.order || []) {
+      if (isCustomToken(key)) {
+        const custom = getCustomButton(config, key);
+        if (!custom) continue;
+        const override = getControlOverride(config, key);
+        if (override.hidden) continue;
+        if (key === skipKey && !skipState) continue;
+        const shortcut = asString(custom.shortcut);
+        if (shortcut) map.set(shortcut.toUpperCase(), `${key}`);
+        continue;
+      }
+
       const base = getBaseControl(key);
       if (!base) continue;
       const override = getControlOverride(config, key);
@@ -487,6 +647,15 @@ export function openViewFooterSettingsDialog({
   }
 
   function isControlDefault(config, key) {
+    if (isCustomToken(key)) {
+      const ov = getControlOverride(config, key);
+      if (!ov || typeof ov !== 'object') return true;
+      const keys = Object.keys(ov);
+      if (keys.length === 0) return true;
+      if (keys.length === 1 && keys[0] === 'hidden' && !ov.hidden) return true;
+      return false;
+    }
+
     const ov = getControlOverride(config, key);
     if (!ov || typeof ov !== 'object') return true;
     // keys other than states
@@ -505,6 +674,7 @@ export function openViewFooterSettingsDialog({
     if (!config) return true;
     // no control overrides
     if (config.controls && typeof config.controls === 'object' && Object.keys(config.controls).length > 0) return false;
+    if (Array.isArray(config.customButtons) && config.customButtons.length > 0) return false;
     // order must exactly match base keys
     const order = Array.isArray(config.order) ? config.order : [];
     if (order.length !== baseKeys.length) return false;
@@ -559,6 +729,8 @@ export function openViewFooterSettingsDialog({
   resetBtn.type = 'button';
   const addEmptyBtn = el('button', { className: 'btn small', text: 'Add Empty' });
   addEmptyBtn.type = 'button';
+  const addCustomBtn = el('button', { className: 'btn small', text: 'Custom Button' });
+  addCustomBtn.type = 'button';
   const disableHotkeysBtn = el('button', { className: 'btn small', text: 'Disable Hotkeys' });
   disableHotkeysBtn.type = 'button';
   const saveBtn = el('button', { className: 'btn small', text: 'Save' });
@@ -573,7 +745,7 @@ export function openViewFooterSettingsDialog({
   const controlsTitle = el('div', { className: 'hint', text: 'Controls' });
   const controlsList = el('div', { className: 'view-footer-controls-editor-list' });
   // place action buttons directly in the controls wrapper (no extra actions wrapper)
-  const controlsWrapper = el('div', { className: 'view-footer-editor-controls', children: [controlsTitle, addEmptyBtn, disableHotkeysBtn] });
+  const controlsWrapper = el('div', { className: 'view-footer-editor-controls', children: [controlsTitle, addEmptyBtn, addCustomBtn, disableHotkeysBtn] });
   right.append(rightTop, controlsWrapper, controlsList);
 
   const shell = el('div', { className: 'view-footer-settings-shell', children: [left, right] });
@@ -619,7 +791,9 @@ export function openViewFooterSettingsDialog({
     for (let i = 0; i < cfg.order.length; i++) {
       const key = cfg.order[i];
       const base = getBaseControl(key);
-      if (!base && key !== '__empty') continue;
+      const isCustom = isCustomToken(key);
+      const customBtn = isCustom ? getCustomButton(cfg, key) : null;
+      if (!base && key !== '__empty' && !customBtn) continue;
       const override = getControlOverride(cfg, key);
       const row = el('div', { className: 'view-footer-control-row' });
       const rowId = (key === '__empty') ? `__empty:${i}` : key;
@@ -639,13 +813,14 @@ export function openViewFooterSettingsDialog({
       const visibilityLabel = el('label', { className: 'view-footer-visible-label', text: 'Show' });
       visibilityLabel.prepend(visibility);
 
-      const keyBadge = el('div', { className: 'view-footer-control-key', text: key });
+      const keyBadge = el('div', { className: 'view-footer-control-key', text: isCustom ? `custom:${customIdFromToken(key)}` : key });
       const moveUp = el('button', { className: 'btn small', text: '↑' });
       moveUp.type = 'button';
       const moveDown = el('button', { className: 'btn small', text: '↓' });
       moveDown.type = 'button';
       const resetControlBtn = el('button', { className: 'btn small', text: 'Reset' });
       resetControlBtn.type = 'button';
+      if(isCustom) resetControlBtn.style.display = 'none';
       try { resetControlBtn.disabled = isControlDefault(cfg, key); } catch (e) {}
 
       // If this is an empty placeholder slot, render simplified UI
@@ -709,42 +884,66 @@ export function openViewFooterSettingsDialog({
       }
 
       rowTop.append(collapseBtn, visibilityLabel, keyBadge, moveUp, moveDown, resetControlBtn);
+      let removeCustomBtn = null;
+      if (isCustom && customBtn) {
+        removeCustomBtn = el('button', { className: 'btn small danger', text: 'Remove' });
+        removeCustomBtn.type = 'button';
+        rowTop.appendChild(removeCustomBtn);
+      }
 
       const fields = el('div', { className: 'view-footer-control-fields' });
 
-      if (!base.states.length) {
-        const iconInput = el('input', { className: 'view-footer-control-icon', attrs: { type: 'text', maxlength: '8', placeholder: base.icon || '' } });
-        const textInput = el('input', { className: 'view-footer-control-text', attrs: { type: 'text', maxlength: '40', placeholder: base.text || '' } });
-        const hotkeyBtn = el('button', { className: 'btn small view-footer-hotkey-btn', text: shortcutToCaption(resolveShortcut(base, override)) || 'Set hotkey' });
-        hotkeyBtn.type = 'button';
+      if (isCustom && customBtn) {
+        const actionWrap = el('div', { className: 'view-footer-action-list' });
+        const header = el('div', { className: 'view-footer-action-row view-footer-action-row-header' });
+        header.append(
+          el('div', { className: 'view-footer-action-name', text: 'Action' }),
+          el('div', { className: 'view-footer-action-name', text: 'Icon' }),
+          el('div', { className: 'view-footer-action-name', text: 'Name' }),
+          el('div', { className: 'view-footer-action-name', text: 'Hotkey' }),
+          el('div', { className: 'view-footer-action-name', text: 'Fn' }),
+        );
+        actionWrap.appendChild(header);
 
-        iconInput.value = asString(override.icon || '');
-        textInput.value = asString(override.text || '');
+        const actionCount = Array.isArray(customBtn.actions) ? customBtn.actions.length : 0;
+        const stRow = el('div', { className: 'view-footer-action-row' });
 
-        iconInput.addEventListener('input', () => {
-          const next = { ...getControlOverride(cfg, key) };
-          const v = asString(iconInput.value).trim();
-          if (!v) delete next.icon;
-          else next.icon = v;
-          setControlOverride(cfg, key, next);
+        const actionLabel = el('div', { className: 'view-footer-action-name', text: `${customBtn.text || 'Custom'} ${actionCount ? `· ${actionCount} action${actionCount === 1 ? '' : 's'}` : ''}` });
+        const stIcon = el('input', { attrs: { type: 'text', maxlength: '8', placeholder: customBtn.icon || '' } });
+        const stText = el('input', { attrs: { type: 'text', maxlength: '40', placeholder: customBtn.text || '' } });
+        const stHotkeyBtn = el('button', { className: 'btn small view-footer-hotkey-btn', text: shortcutToCaption(asString(customBtn.shortcut)) || 'Set hotkey' });
+        stHotkeyBtn.type = 'button';
+
+        const editBtn = el('button', { className: 'btn small view-footer-edit-btn', text: 'Edit' });
+        editBtn.type = 'button';
+
+        stIcon.value = asString(customBtn.icon || '');
+        stText.value = asString(customBtn.text || '');
+
+        stIcon.addEventListener('input', () => {
+          const next = deepClone(customBtn) || {};
+          const v = asString(stIcon.value).trim();
+          if (!v) delete next.icon; else next.icon = v;
+          upsertCustomButton(cfg, next);
           markDirty();
           try { resetControlBtn.disabled = isControlDefault(cfg, key); } catch (e) {}
         });
 
-        textInput.addEventListener('input', () => {
-          const next = { ...getControlOverride(cfg, key) };
-          const v = asString(textInput.value).trim();
-          if (!v) delete next.text;
-          else next.text = v;
-          setControlOverride(cfg, key, next);
+        stText.addEventListener('input', () => {
+          const next = deepClone(customBtn) || {};
+          const v = asString(stText.value).trim();
+          if (!v) delete next.text; else next.text = v;
+          upsertCustomButton(cfg, next);
           markDirty();
           try { resetControlBtn.disabled = isControlDefault(cfg, key); } catch (e) {}
+          try { actionLabel.textContent = `${next.text || 'Custom'} ${actionCount ? `· ${actionCount} action${actionCount === 1 ? '' : 's'}` : ''}`; } catch (e) {}
         });
 
-        hotkeyBtn.addEventListener('click', async () => {
+        try { if (cfg.hotkeysDisabled) stHotkeyBtn.style.visibility = 'hidden'; } catch (e) {}
+        stHotkeyBtn.addEventListener('click', async () => {
           try { if (cfg.hotkeysDisabled) return; } catch (e) {}
           const taken = getAssignedShortcutMap(cfg, { skipKey: key, skipState: null });
-          const currentShortcut = resolveShortcut(base, getControlOverride(cfg, key));
+          const currentShortcut = asString(customBtn.shortcut || '');
           const result = await openHotkeyCaptureDialog({
             currentShortcut,
             isTaken: (nextShortcut) => {
@@ -753,63 +952,90 @@ export function openViewFooterSettingsDialog({
             },
           });
           if (!result) return;
-          const next = { ...getControlOverride(cfg, key) };
-          if (result.clear) {
-            delete next.shortcut;
-            delete next.caption;
-          } else {
-            next.shortcut = result.shortcut;
-            next.caption = result.caption;
-          }
-          setControlOverride(cfg, key, next);
+          const next = deepClone(customBtn) || {};
+          next.shortcut = result.shortcut;
+          next.caption = result.caption;
+          upsertCustomButton(cfg, next);
           markDirty();
           renderEditor();
         });
 
-        const iconHint = el('div', { className: 'hint', text: 'Icon' });
-        const nameHint = el('div', { className: 'hint', text: 'Name' });
-        const hotkeyHint = el('div', { className: 'hint', text: 'Hotkey' });
+        // Edit button: opens the custom-button editor; set title summarizing actions
         try {
-          if (cfg.hotkeysDisabled) {
-            hotkeyHint.style.visibility = 'hidden';
-            hotkeyBtn.style.visibility = 'hidden';
+          if (actionCount === 0) editBtn.title = 'No actions';
+          else if (actionCount === 1) {
+            const aid = asString((customBtn.actions[0] && customBtn.actions[0].actionId) || '');
+            const mapped = availableActionById.get(aid) || null;
+            editBtn.title = asString(mapped?.fnName || aid || 'Edit actions');
+          } else {
+            const names = [];
+            for (const step of (customBtn.actions || [])) {
+              const aId = asString(step && step.actionId || '');
+              const mapped = availableActionById.get(aId) || null;
+              names.push(asString(mapped?.fnName || mapped?.text || aId));
+            }
+            editBtn.title = names.join(' → ');
           }
-        } catch (e) {}
-        fields.append(iconHint, iconInput, nameHint, textInput, hotkeyHint, hotkeyBtn);
-      } else {
-        const stateWrap = el('div', { className: 'view-footer-state-list' });
-        for (const st of base.states) {
-          const stOv = (override.states && override.states[st.name]) ? override.states[st.name] : {};
-          const stRow = el('div', { className: 'view-footer-state-row' });
-          const stTitle = el('div', { className: 'view-footer-state-name', text: st.name });
-          const stIcon = el('input', { attrs: { type: 'text', maxlength: '8', placeholder: st.icon || '' } });
-          const stText = el('input', { attrs: { type: 'text', maxlength: '40', placeholder: st.text || '' } });
-          const stHotkeyBtn = el('button', { className: 'btn small view-footer-hotkey-btn', text: shortcutToCaption(resolveStateShortcut(st, stOv)) || 'Set hotkey' });
-          stHotkeyBtn.type = 'button';
-          stIcon.value = asString(stOv.icon || '');
-          stText.value = asString(stOv.text || '');
+        } catch (e) { editBtn.title = 'Edit actions'; }
 
-          const writeState = () => {
-            let next = { ...getControlOverride(cfg, key) };
-            next = upsertStateOverride(next, st.name, (dst) => {
-              const i = asString(stIcon.value).trim();
-              const t = asString(stText.value).trim();
-              if (!i) delete dst.icon; else dst.icon = i;
-              if (!t) delete dst.text; else dst.text = t;
-            });
+        editBtn.addEventListener('click', () => {
+          openCustomButtonEditor(cfg, customBtn);
+        });
+
+        stRow.append(actionLabel, stIcon, stText, stHotkeyBtn, editBtn);
+        actionWrap.appendChild(stRow);
+        fields.appendChild(actionWrap);
+      } else {
+        const actionWrap = el('div', { className: 'view-footer-action-list' });
+        const header = el('div', { className: 'view-footer-action-row view-footer-action-row-header' });
+        header.append(
+          el('div', { className: 'view-footer-action-name', text: 'Action' }),
+          el('div', { className: 'view-footer-action-name', text: 'Icon' }),
+          el('div', { className: 'view-footer-action-name', text: 'Name' }),
+          el('div', { className: 'view-footer-action-name', text: 'Hotkey' }),
+          el('div', { className: 'view-footer-action-name', text: 'Fn' }),
+        );
+        actionWrap.appendChild(header);
+
+        const states = Array.isArray(base.states) ? base.states : [];
+        if (!states.length) {
+          const meta = buildControlActionDisplay(base);
+          const stRow = el('div', { className: 'view-footer-action-row' });
+          const stTitle = el('div', { className: 'view-footer-action-name', text: meta.title });
+          const stIcon = el('input', { attrs: { type: 'text', maxlength: '8', placeholder: meta.icon } });
+          const stText = el('input', { attrs: { type: 'text', maxlength: '40', placeholder: meta.text } });
+          const stHotkeyBtn = el('button', { className: 'btn small view-footer-hotkey-btn', text: shortcutToCaption(resolveShortcut(base, override)) || 'Set hotkey' });
+          stHotkeyBtn.type = 'button';
+          const fnLabel = el('div', { className: 'view-footer-action-fn', text: meta.fnName || '-' });
+
+          stIcon.value = asString(override.icon || '');
+          stText.value = asString(override.text || '');
+
+          stIcon.addEventListener('input', () => {
+            const next = { ...getControlOverride(cfg, key) };
+            const v = asString(stIcon.value).trim();
+            if (!v) delete next.icon;
+            else next.icon = v;
             setControlOverride(cfg, key, next);
             markDirty();
-            try { resetControlBtn.disabled = isControlDefault(cfg, key); } catch (e) {}
-          };
+            try { resetControlBtn.disabled = isCustom ? false : isControlDefault(cfg, key); } catch (e) {}
+          });
 
-          stIcon.addEventListener('input', writeState);
-          stText.addEventListener('input', writeState);
+          stText.addEventListener('input', () => {
+            const next = { ...getControlOverride(cfg, key) };
+            const v = asString(stText.value).trim();
+            if (!v) delete next.text;
+            else next.text = v;
+            setControlOverride(cfg, key, next);
+            markDirty();
+            try { resetControlBtn.disabled = isCustom ? false : isControlDefault(cfg, key); } catch (e) {}
+          });
 
           try { if (cfg.hotkeysDisabled) stHotkeyBtn.style.visibility = 'hidden'; } catch (e) {}
           stHotkeyBtn.addEventListener('click', async () => {
             try { if (cfg.hotkeysDisabled) return; } catch (e) {}
-            const taken = getAssignedShortcutMap(cfg, { skipKey: key, skipState: st.name });
-            const currentShortcut = resolveStateShortcut(st, (getControlOverride(cfg, key).states || {})[st.name]);
+            const taken = getAssignedShortcutMap(cfg, { skipKey: key, skipState: null });
+            const currentShortcut = resolveShortcut(base, getControlOverride(cfg, key));
             const result = await openHotkeyCaptureDialog({
               currentShortcut,
               isTaken: (nextShortcut) => {
@@ -818,26 +1044,76 @@ export function openViewFooterSettingsDialog({
               },
             });
             if (!result) return;
-            let next = { ...getControlOverride(cfg, key) };
-            next = upsertStateOverride(next, st.name, (dst) => {
-              if (result.clear) {
-                delete dst.shortcut;
-                delete dst.caption;
-              } else {
-                dst.shortcut = result.shortcut;
-                dst.caption = result.caption;
-              }
-            });
+            const next = { ...getControlOverride(cfg, key) };
+            next.shortcut = result.shortcut;
+            next.caption = result.caption;
             setControlOverride(cfg, key, next);
             markDirty();
-            try { resetControlBtn.disabled = isControlDefault(cfg, key); } catch (e) {}
             renderEditor();
           });
 
-          stRow.append(stTitle, stIcon, stText, stHotkeyBtn);
-          stateWrap.appendChild(stRow);
+          stRow.append(stTitle, stIcon, stText, stHotkeyBtn, fnLabel);
+          actionWrap.appendChild(stRow);
+        } else {
+          for (const st of states) {
+            const stOv = (override.states && override.states[st.name]) ? override.states[st.name] : {};
+            const meta = buildStateActionDisplay(base, st);
+            const stRow = el('div', { className: 'view-footer-action-row' });
+            const stTitle = el('div', { className: 'view-footer-action-name', text: meta.title });
+            const stIcon = el('input', { attrs: { type: 'text', maxlength: '8', placeholder: meta.icon } });
+            const stText = el('input', { attrs: { type: 'text', maxlength: '40', placeholder: meta.text } });
+            const stHotkeyBtn = el('button', { className: 'btn small view-footer-hotkey-btn', text: shortcutToCaption(resolveStateShortcut(st, stOv)) || 'Set hotkey' });
+            stHotkeyBtn.type = 'button';
+            const fnLabel = el('div', { className: 'view-footer-action-fn', text: meta.fnName || '-' });
+            stIcon.value = asString(stOv.icon || '');
+            stText.value = asString(stOv.text || '');
+
+            const writeState = () => {
+              let next = { ...getControlOverride(cfg, key) };
+              next = upsertStateOverride(next, st.name, (dst) => {
+                const i = asString(stIcon.value).trim();
+                const t = asString(stText.value).trim();
+                if (!i) delete dst.icon; else dst.icon = i;
+                if (!t) delete dst.text; else dst.text = t;
+              });
+              setControlOverride(cfg, key, next);
+              markDirty();
+              try { resetControlBtn.disabled = isCustom ? false : isControlDefault(cfg, key); } catch (e) {}
+            };
+
+            stIcon.addEventListener('input', writeState);
+            stText.addEventListener('input', writeState);
+
+            try { if (cfg.hotkeysDisabled) stHotkeyBtn.style.visibility = 'hidden'; } catch (e) {}
+            stHotkeyBtn.addEventListener('click', async () => {
+              try { if (cfg.hotkeysDisabled) return; } catch (e) {}
+              const taken = getAssignedShortcutMap(cfg, { skipKey: key, skipState: st.name });
+              const currentShortcut = resolveStateShortcut(st, (getControlOverride(cfg, key).states || {})[st.name]);
+              const result = await openHotkeyCaptureDialog({
+                currentShortcut,
+                isTaken: (nextShortcut) => {
+                  const hit = taken.get(String(nextShortcut || '').toUpperCase());
+                  return hit ? `That key is already used by ${hit}.` : '';
+                },
+              });
+              if (!result) return;
+              let next = { ...getControlOverride(cfg, key) };
+              next = upsertStateOverride(next, st.name, (dst) => {
+                dst.shortcut = result.shortcut;
+                dst.caption = result.caption;
+              });
+              setControlOverride(cfg, key, next);
+              markDirty();
+              try { resetControlBtn.disabled = isCustom ? false : isControlDefault(cfg, key); } catch (e) {}
+              renderEditor();
+            });
+
+            stRow.append(stTitle, stIcon, stText, stHotkeyBtn, fnLabel);
+            actionWrap.appendChild(stRow);
+          }
         }
-        fields.appendChild(stateWrap);
+
+        fields.appendChild(actionWrap);
       }
 
       visibility.addEventListener('change', () => {
@@ -846,7 +1122,7 @@ export function openViewFooterSettingsDialog({
         else next.hidden = true;
         setControlOverride(cfg, key, next);
         markDirty();
-        try { resetControlBtn.disabled = isControlDefault(cfg, key); } catch (e) {}
+        try { resetControlBtn.disabled = isCustom ? false : isControlDefault(cfg, key); } catch (e) {}
       });
 
       // collapse toggle behavior for this row
@@ -882,6 +1158,16 @@ export function openViewFooterSettingsDialog({
         markDirty();
         renderEditor();
       });
+
+      if (removeCustomBtn) {
+        removeCustomBtn.addEventListener('click', () => {
+          removeCustomButton(cfg, key);
+          cfg.order = (cfg.order || []).filter(k => k !== key);
+          resetControlToDefault(cfg, key);
+          markDirty();
+          renderEditor();
+        });
+      }
 
       row.append(rowTop, fields);
       controlsList.appendChild(row);
@@ -965,6 +1251,12 @@ export function openViewFooterSettingsDialog({
     cfg.order = cfg.order.concat(['__empty']);
     markDirty();
     renderEditor();
+  });
+
+  addCustomBtn.addEventListener('click', async () => {
+    const cfg = selectedConfig();
+    if (!cfg) return;
+    await openCustomButtonEditor(cfg, null);
   });
 
   expandCollapseAllBtn.addEventListener('click', () => {

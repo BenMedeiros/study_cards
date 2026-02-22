@@ -132,9 +132,9 @@ export function renderFlashcards({ store }) {
   }
 
   const footerDesc = [
-    { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', action: () => showPrev() },
-    { key: 'sound', icon: '🔊', text: 'Sound', caption: 'Space', shortcut: ' ', action: () => speakCurrent() },
-    { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', ariaPressed: false, action: () => {
+    { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', actionKey: 'prev', fnName: 'showPrev', action: () => showPrev() },
+    { key: 'sound', icon: '🔊', text: 'Sound', caption: 'Space', shortcut: ' ', actionKey: 'sound', fnName: 'speakCurrent', action: () => speakCurrent() },
+    { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', actionKey: 'learned', fnName: 'toggleKanjiLearned', ariaPressed: false, action: () => {
       const entry = entries[index];
       const v = getPrimaryValue(entry);
       if (!v) return;
@@ -147,7 +147,7 @@ export function renderFlashcards({ store }) {
         render();
       }
     } },
-    { key: 'practice', icon: '🎯', text: 'Practice', caption: 'X', shortcut: 'x', ariaPressed: false, action: () => {
+    { key: 'practice', icon: '🎯', text: 'Practice', caption: 'X', shortcut: 'x', actionKey: 'practice', fnName: 'toggleKanjiFocus', ariaPressed: false, action: () => {
       const entry = entries[index];
       const v = getPrimaryValue(entry);
       if (!v) return;
@@ -160,7 +160,7 @@ export function renderFlashcards({ store }) {
         render();
       }
     } },
-    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', action: () => showNext() },
+    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', actionKey: 'next', fnName: 'showNext', action: () => showNext() },
   ];
 
   const footerControls = createViewFooterControls(footerDesc, { appId: 'flashcards' });

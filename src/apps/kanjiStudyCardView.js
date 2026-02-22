@@ -144,13 +144,13 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   const footerDesc = [
-    { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', action: () => showPrev() },
+    { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', actionKey: 'prev', fnName: 'showPrev', action: () => showPrev() },
     { key: 'reveal', states: [
-        { name: 'kanji-only', icon: '', text: 'Reveal', caption: '↑', shortcut: 'ArrowUp', action: () => toggleReveal() },
-        { name: 'full', icon: '', text: 'Hide', caption: '↓', shortcut: 'ArrowDown', action: () => showKanjiOnly() }
+        { name: 'kanji-only', icon: '', text: 'Reveal', caption: '↑', shortcut: 'ArrowUp', actionKey: 'reveal', fnName: 'toggleReveal', action: () => toggleReveal() },
+        { name: 'full', icon: '', text: 'Hide', caption: '↓', shortcut: 'ArrowDown', actionKey: 'hide', fnName: 'showKanjiOnly', action: () => showKanjiOnly() }
       ], initialState: 'kanji-only' },
-    { key: 'sound', icon: '🔊', text: 'Sound', caption: 'Space', shortcut: ' ', action: () => speakCurrent() },
-    { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', ariaPressed: false, action: () => {
+    { key: 'sound', icon: '🔊', text: 'Sound', caption: 'Space', shortcut: ' ', actionKey: 'sound', fnName: 'speakCurrent', action: () => speakCurrent() },
+    { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', actionKey: 'learned', fnName: 'toggleKanjiLearned', ariaPressed: false, action: () => {
       const entry = entries[index];
       const v = store.collections.getEntryStudyKey(entry);
       if (!v) return;
@@ -168,7 +168,7 @@ export function renderKanjiStudyCard({ store }) {
         } catch (e) {}
       }
     } },
-    { key: 'practice', icon: '🎯', text: 'Practice', caption: 'X', shortcut: 'x', ariaPressed: false, action: () => {
+    { key: 'practice', icon: '🎯', text: 'Practice', caption: 'X', shortcut: 'x', actionKey: 'practice', fnName: 'toggleKanjiFocus', ariaPressed: false, action: () => {
       const entry = entries[index];
       const v = store.collections.getEntryStudyKey(entry);
       if (!v) return;
@@ -186,7 +186,7 @@ export function renderKanjiStudyCard({ store }) {
         } catch (e) {}
       }
     } },
-    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', action: () => showNext() },
+    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', actionKey: 'next', fnName: 'showNext', action: () => showNext() },
   ];
 
   const footerControls = createViewFooterControls(footerDesc, { appId: 'kanjiStudy' });

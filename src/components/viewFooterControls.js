@@ -11,8 +11,51 @@ function isDescriptor(item) {
   return !!(item && typeof item === 'object' && !(item instanceof Element));
 }
 
+function asString(v) {
+  return (v == null) ? '' : String(v);
+}
+
+function isCustomToken(key) {
+  return typeof key === 'string' && key.startsWith('__custom:');
+}
+
+function customTokenFromId(id) {
+  return `__custom:${asString(id).trim()}`;
+}
+
+function normalizeCustomButtons(raw = []) {
+  const out = [];
+  const seen = new Set();
+  for (const item of (Array.isArray(raw) ? raw : [])) {
+    if (!item || typeof item !== 'object') continue;
+    const id = asString(item.id).trim();
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    const actions = [];
+    for (const act of (Array.isArray(item.actions) ? item.actions : [])) {
+      if (!act || typeof act !== 'object') continue;
+      const actionId = asString(act.actionId).trim();
+      if (!actionId) continue;
+      const delayMsNum = Number(act.delayMs);
+      const delayMs = Number.isFinite(delayMsNum) ? Math.max(0, Math.round(delayMsNum)) : 0;
+      actions.push({ actionId, delayMs });
+    }
+    out.push({
+      id,
+      icon: asString(item.icon),
+      text: asString(item.text) || 'Custom',
+      caption: asString(item.caption),
+      shortcut: asString(item.shortcut),
+      actions,
+    });
+  }
+  return out;
+}
+
 function normalizeConfigEntry(raw, baseKeys = []) {
   const src = (raw && typeof raw === 'object') ? raw : {};
+  const customButtons = normalizeCustomButtons(src.customButtons);
+  const customTokens = new Set(customButtons.map(btn => customTokenFromId(btn.id)));
   const order = Array.isArray(src.order) ? src.order.map(v => String(v || '').trim()).filter(Boolean) : [];
   const seen = new Set();
   const normalizedOrder = [];
@@ -20,10 +63,16 @@ function normalizeConfigEntry(raw, baseKeys = []) {
     const k = String(key || '').trim();
     // allow special placeholder token '__empty' in order
     const isPlaceholder = (k === '__empty');
-    if (!k || (!isPlaceholder && seen.has(k)) || (!isPlaceholder && !baseKeys.includes(k))) continue;
+    if (!k || (!isPlaceholder && seen.has(k)) || (!isPlaceholder && !baseKeys.includes(k) && !customTokens.has(k))) continue;
     if (!isPlaceholder) seen.add(k);
     // preserve placeholder token as-is; allow multiple placeholders
     normalizedOrder.push(k);
+  }
+  for (const token of customTokens) {
+    if (!seen.has(token)) {
+      seen.add(token);
+      normalizedOrder.push(token);
+    }
   }
   for (const key of baseKeys) {
     if (!seen.has(key)) normalizedOrder.push(key);
@@ -33,6 +82,7 @@ function normalizeConfigEntry(raw, baseKeys = []) {
     name: String(src.name || 'Default'),
     order: normalizedOrder,
     controls: (src.controls && typeof src.controls === 'object') ? deepClone(src.controls) : {},
+    customButtons,
     hotkeysDisabled: !!src.hotkeysDisabled,
   };
 }
@@ -49,7 +99,7 @@ function normalizeAppFooterPrefs(raw, baseKeys = []) {
     byId.set(id, n);
   }
   if (!byId.has('default')) {
-    byId.set('default', { id: 'default', name: 'Default', order: baseKeys.slice(), controls: {} });
+    byId.set('default', { id: 'default', name: 'Default', order: baseKeys.slice(), controls: {}, customButtons: [] });
   }
   const activeConfigId = byId.has(src.activeConfigId) ? src.activeConfigId : 'default';
   return {
@@ -88,7 +138,100 @@ function applyStateOverrides(state, overrideState, disableHotkeys = false) {
   return out;
 }
 
-function applyFooterConfig(items = [], appPrefs = null) {
+function buildActionRegistry(items = []) {
+  const map = new Map();
+  for (const item of items) {
+    if (!isDescriptor(item) || !item.key) continue;
+    const controlKey = asString(item.key).trim();
+    if (!controlKey) continue;
+
+    if (Array.isArray(item.states) && item.states.length) {
+      for (const state of item.states) {
+        if (!state || !state.name || typeof state.action !== 'function') continue;
+        const stateName = asString(state.name).trim();
+        if (!stateName) continue;
+        const actionId = asString(state.actionKey || `${controlKey}:${stateName}`).trim();
+        if (!actionId || map.has(actionId)) continue;
+        map.set(actionId, {
+          id: actionId,
+          controlKey,
+          state: stateName,
+          icon: asString(state.icon),
+          text: asString(state.text) || stateName,
+          caption: asString(state.caption),
+          shortcut: asString(state.shortcut),
+          fnName: asString(state.fnName),
+          invoke: state.action,
+        });
+      }
+      continue;
+    }
+
+    if (typeof item.action === 'function') {
+      const actionId = asString(item.actionKey || controlKey).trim();
+      if (!actionId || map.has(actionId)) continue;
+      map.set(actionId, {
+        id: actionId,
+        controlKey,
+        icon: asString(item.icon),
+        text: asString(item.text) || controlKey,
+        caption: asString(item.caption),
+        shortcut: asString(item.shortcut),
+        fnName: asString(item.fnName),
+        invoke: item.action,
+      });
+    }
+  }
+  return map;
+}
+
+function createCustomButtonDescriptor(button, actionRegistry, disableHotkeys = false) {
+  if (!button || typeof button !== 'object') return null;
+  const id = asString(button.id).trim();
+  if (!id) return null;
+  const actions = Array.isArray(button.actions) ? button.actions.slice() : [];
+
+  async function runAll(e) {
+    for (const step of actions) {
+      if (!step || typeof step !== 'object') continue;
+      const actionId = asString(step.actionId).trim();
+      if (!actionId) continue;
+      const delayMsNum = Number(step.delayMs);
+      const delayMs = Number.isFinite(delayMsNum) ? Math.max(0, Math.round(delayMsNum)) : 0;
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+      const entry = actionRegistry.get(actionId);
+      if (!entry || typeof entry.invoke !== 'function') continue;
+      try {
+        const maybePromise = entry.invoke(e);
+        if (maybePromise && typeof maybePromise.then === 'function') {
+          await maybePromise;
+        }
+      } catch (err) {
+        // ignore individual action failures in a multi-action button
+      }
+    }
+  }
+
+  const descriptor = {
+    key: customTokenFromId(id),
+    icon: asString(button.icon),
+    text: asString(button.text) || 'Custom',
+    caption: asString(button.caption),
+    shortcut: asString(button.shortcut),
+    action: (e) => { runAll(e); },
+  };
+
+  if (disableHotkeys) {
+    delete descriptor.shortcut;
+    delete descriptor.caption;
+  }
+
+  return descriptor;
+}
+
+function applyFooterConfig(items = [], appPrefs = null, actionRegistry = new Map()) {
   const activeConfig = getConfigById(appPrefs, appPrefs?.activeConfigId) || getConfigById(appPrefs, 'default');
   if (!activeConfig) return items.slice();
 
@@ -96,6 +239,17 @@ function applyFooterConfig(items = [], appPrefs = null) {
 
   const controlsByKey = new Map();
   const others = [];
+  const customButtonsByToken = new Map();
+
+  for (const customBtn of (Array.isArray(activeConfig.customButtons) ? activeConfig.customButtons : [])) {
+    const token = customTokenFromId(customBtn.id);
+    const override = (activeConfig.controls && activeConfig.controls[token] && typeof activeConfig.controls[token] === 'object')
+      ? activeConfig.controls[token]
+      : {};
+    if (override.hidden) continue;
+    const descriptor = createCustomButtonDescriptor(customBtn, actionRegistry, disableHotkeys);
+    if (descriptor) customButtonsByToken.set(token, descriptor);
+  }
 
   for (const item of items) {
     if (!isDescriptor(item) || !item.key) {
@@ -159,9 +313,22 @@ function applyFooterConfig(items = [], appPrefs = null) {
       out.push({ placeholder: true });
       continue;
     }
+    if (isCustomToken(k)) {
+      const custom = customButtonsByToken.get(k);
+      if (!custom || seen.has(k)) continue;
+      seen.add(k);
+      out.push(custom);
+      continue;
+    }
     if (!controlsByKey.has(k) || seen.has(k)) continue;
     seen.add(k);
     out.push(controlsByKey.get(k));
+  }
+
+  for (const [token, custom] of customButtonsByToken.entries()) {
+    if (seen.has(token)) continue;
+    seen.add(token);
+    out.push(custom);
   }
 
   for (const item of items) {
@@ -195,6 +362,17 @@ function createViewFooterControls(items = [], opts = {}) {
   const appId = (opts && typeof opts.appId === 'string') ? opts.appId : `viewFooterControls${Math.random().toString(36).slice(2, 8)}`;
 
   const baseControlItems = items.filter(it => isDescriptor(it) && it.key).map(it => ({ ...it }));
+  const actionRegistry = buildActionRegistry(items);
+  const availableActions = Array.from(actionRegistry.values()).map(a => ({
+    id: a.id,
+    controlKey: a.controlKey,
+    state: a.state || '',
+    icon: a.icon,
+    text: a.text,
+    caption: a.caption,
+    shortcut: a.shortcut,
+    fnName: a.fnName,
+  }));
   const baseKeys = baseControlItems.map(it => String(it.key || '').trim()).filter(Boolean);
   let allFooterPrefs = {};
   let appPrefs = normalizeAppFooterPrefs(null, baseKeys);
@@ -368,7 +546,7 @@ function createViewFooterControls(items = [], opts = {}) {
   }
 
   function rebuildFromConfig() {
-    const renderItems = applyFooterConfig(items, appPrefs);
+    const renderItems = applyFooterConfig(items, appPrefs, actionRegistry);
     buildButtons(renderItems);
   }
 
@@ -416,6 +594,7 @@ function createViewFooterControls(items = [], opts = {}) {
       settingsDialogHandle = openViewFooterSettingsDialog({
         appId,
         baseControls: baseControlItems,
+        availableActions,
         appPrefs,
         onChange: (nextPrefs) => {
           appPrefs = normalizeAppFooterPrefs(nextPrefs, baseKeys);
