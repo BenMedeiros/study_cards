@@ -424,21 +424,7 @@ body {
   max-width: min(60rem, 94vw);
 }
 
-.view-footer-custom-top-grid {
-  margin-top: 0.55rem;
-  display: grid;
-  grid-template-columns: auto 4.8rem auto 1fr auto 8rem;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.view-footer-custom-top-grid input {
-  background: rgba(0, 0, 0, 0.12);
-  border: var(--border-1);
-  color: var(--text);
-  border-radius: 0.4rem;
-  padding: 0.28rem 0.45rem;
-}
+/* .view-footer-custom-top-grid and its inputs removed — top grid UI deleted */
 
 .view-footer-custom-selected-list,
 .view-footer-custom-available-list {
@@ -446,7 +432,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  max-height: 12rem;
+  max-height: 15rem;
   overflow: auto;
 }
 
@@ -544,14 +530,6 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .view-footer-custom-top-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .view-footer-custom-selected-row,
-  .view-footer-custom-available-row {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Small caption under buttons for keyboard shortcuts. Hidden unless keyboard in use. */

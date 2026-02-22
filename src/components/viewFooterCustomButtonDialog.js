@@ -66,24 +66,6 @@ export function openViewFooterCustomButtonDialog({
     dialog.tabIndex = -1;
 
     const title = el('div', { className: 'view-footer-hotkey-title', text: initialButton ? 'Edit Custom Button' : 'New Custom Button' });
-    const topGrid = el('div', { className: 'view-footer-custom-top-grid' });
-
-    const iconInput = el('input', { attrs: { type: 'text', maxlength: '8', placeholder: 'Icon' } });
-    const textInput = el('input', { attrs: { type: 'text', maxlength: '40', placeholder: 'Name' } });
-    const hotkeyBtn = el('button', { className: 'btn small', text: state.caption || 'Set hotkey' });
-    hotkeyBtn.type = 'button';
-
-    iconInput.value = state.icon;
-    textInput.value = state.text;
-
-    topGrid.append(
-      el('div', { className: 'hint', text: 'Icon' }),
-      iconInput,
-      el('div', { className: 'hint', text: 'Name' }),
-      textInput,
-      el('div', { className: 'hint', text: 'Hotkey' }),
-      hotkeyBtn,
-    );
 
     const selectedTitle = el('div', { className: 'hint', text: 'Button Actions' });
     const selectedList = el('div', { className: 'view-footer-custom-selected-list' });
@@ -98,7 +80,7 @@ export function openViewFooterCustomButtonDialog({
     saveBtn.type = 'button';
 
     actions.append(cancelBtn, saveBtn);
-    dialog.append(title, topGrid, selectedTitle, selectedList, availableTitle, availableListEl, actions);
+    dialog.append(title, selectedTitle, selectedList, availableTitle, availableListEl, actions);
 
     const mount = document.getElementById('shell-root') || document.getElementById('app') || document.body;
     const prevFocus = document.activeElement;
@@ -191,22 +173,7 @@ export function openViewFooterCustomButtonDialog({
       }
     }
 
-    iconInput.addEventListener('input', () => {
-      state.icon = asString(iconInput.value);
-    });
-
-    textInput.addEventListener('input', () => {
-      state.text = asString(textInput.value);
-    });
-
-    hotkeyBtn.addEventListener('click', async () => {
-      if (typeof captureHotkey !== 'function') return;
-      const result = await captureHotkey({ currentShortcut: state.shortcut, skipToken: `__custom:${state.id}` });
-      if (!result) return;
-      state.shortcut = asString(result.shortcut);
-      state.caption = asString(result.caption);
-      hotkeyBtn.textContent = state.caption || 'Set hotkey';
-    });
+    // Icon/name/hotkey inputs removed; shortcut/caption preserved from initial state if present.
 
     let closed = false;
     function close(result = null) {
