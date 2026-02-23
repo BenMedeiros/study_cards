@@ -5,6 +5,8 @@ import { createSpeakerButton } from '../components/ui.js';
 
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createViewFooterControls } from '../components/viewFooterControls.js';
+import { createKanjiMainCard, createKanjiExampleCard } from '../cards/index.js';
+import { createDropdown } from '../components/dropdown.js';
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
@@ -79,8 +81,19 @@ export function renderKanjiStudyCard({ store }) {
           isShuffled: !!isShuffled,
           order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
         });
-        // persist app-scoped index
-        store.collections.saveCollectionState(key, { currentIndex: index }, { app: 'kanjiStudyCardView' });
+        // persist app-scoped index and dropdown selections under `kanjiStudyCardView`
+        try {
+          store.collections.saveCollectionState(key, {
+            kanjiStudyCardView: {
+              currentIndex: index,
+              cardFields: Array.isArray(kanjiFieldSelection) ? kanjiFieldSelection.slice() : [],
+              exampleFields: Array.isArray(exampleFieldSelection) ? exampleFieldSelection.slice() : [],
+            }
+          });
+        } catch (e) {
+          // fallback: save index in app-scoped bucket as before
+          try { store.collections.saveCollectionState(key, { currentIndex: index }, { app: 'kanjiStudyCardView' }); } catch (e2) {}
+        }
         // persist app-global default view mode and auto-speak under apps.kanjiStudy
         try {
           if (store?.settings && typeof store.settings.set === 'function') {
@@ -136,6 +149,111 @@ export function renderKanjiStudyCard({ store }) {
   const autoSpeakGroup = wrapHeaderTool(autoSpeakBtn, 'app.auto-speak');
 
   headerTools.append(shuffleGroup, detailsGroup, autoSpeakGroup);
+
+  // --- Header dropdowns to control card field visibility ---
+  // Load per-collection saved dropdown state (if any)
+  let kanjiFieldSelection = ['kanji', 'reading', 'meaning', 'type'];
+  let exampleFieldSelection = ['showExample', 'english'];
+  try {
+    const res = store?.collections?.getActiveCollectionView ? store.collections.getActiveCollectionView({ windowSize: 0 }) : null;
+    const collState = res?.collState || {};
+    const appState = collState?.kanjiStudyCardView || {};
+    if (Array.isArray(appState.cardFields)) kanjiFieldSelection = appState.cardFields.slice();
+    if (Array.isArray(appState.exampleFields)) exampleFieldSelection = appState.exampleFields.slice();
+  } catch (e) {}
+
+  // Kanji main card: show/hide fields
+  const kanjiFieldItems = [
+    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
+    { value: 'kanji', left: 'Kanji', right: 'Visible' },
+    { value: 'reading', left: 'Reading', right: 'Visible' },
+    { value: 'meaning', left: 'Meaning', right: 'Visible' },
+    { value: 'type', left: 'Type', right: 'Visible' },
+  ];
+
+  const kanjiFieldDd = createDropdown({
+    items: kanjiFieldItems,
+    multi: true,
+    values: Array.isArray(kanjiFieldSelection) ? kanjiFieldSelection.slice() : ['kanji', 'reading', 'meaning', 'type'],
+    commitOnClose: true,
+    getButtonLabel: ({ selectedValues }) => {
+      if (!selectedValues || !selectedValues.length) return 'Fields: None';
+      if (selectedValues.length === kanjiFieldItems.length - 1) return 'Fields: All';
+      return `Fields: ${selectedValues.join(', ')}`;
+    },
+    onChange: (vals) => {
+      const set = new Set(Array.isArray(vals) ? vals : []);
+      // selected means visible
+      ['kanji', 'reading', 'meaning', 'type'].forEach(f => {
+        try { mainCardApi.setFieldVisible(f, set.has(f)); } catch (e) {}
+      });
+      try { kanjiFieldSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
+      try { saveUIState(); } catch (e) {}
+    },
+    className: 'data-expansion-dropdown',
+  });
+
+  const kanjiFieldGroup = wrapHeaderTool(kanjiFieldDd, 'card.fields');
+  headerTools.append(kanjiFieldGroup);
+
+  // Example card dropdown: show/hide entire examples card, and mute/unmute English
+  const exampleFieldItems = [
+    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
+    { value: 'showExample', left: 'Example', right: 'Display' },
+    { value: 'english', left: 'English', right: 'Visible' },
+  ];
+
+  const exampleFieldDd = createDropdown({
+    items: exampleFieldItems,
+    multi: true,
+    values: Array.isArray(exampleFieldSelection) ? exampleFieldSelection.slice() : ['showExample', 'english'],
+    commitOnClose: true,
+    getButtonLabel: ({ selectedValues }) => {
+      if (!selectedValues || !selectedValues.length) return 'Example: None';
+      return `Example: ${selectedValues.join(', ')}`;
+    },
+    onChange: (vals) => {
+      const set = new Set(Array.isArray(vals) ? vals : []);
+      try { exampleCardApi.setVisible(set.has('showExample')); } catch (e) {}
+      try { exampleCardApi.setEnglishVisible(set.has('english')); } catch (e) {}
+      try { exampleFieldSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
+      try { saveUIState(); } catch (e) {}
+    },
+    className: 'data-expansion-dropdown',
+  });
+  const exampleFieldGroup = wrapHeaderTool(exampleFieldDd, 'card.example');
+  headerTools.append(exampleFieldGroup);
+
+  // Helper to sync dropdown UI (button label + selected classes) from an array of selected values
+  function syncDropdownUI(dropdownEl, items, selectedValues, opts = {}) {
+    try {
+      const btn = dropdownEl.querySelector('.custom-dropdown-button');
+      const set = new Set(Array.isArray(selectedValues) ? selectedValues.map(String) : []);
+      // update option selected classes
+      dropdownEl.querySelectorAll('.custom-dropdown-option').forEach(opt => {
+        const v = String(opt.dataset.value || '');
+        if (!v) return;
+        opt.classList.toggle('selected', set.has(v));
+      });
+      // compute button label
+      if (!btn) return;
+      if (!set.size) {
+        btn.textContent = opts.emptyLabel || '';
+        return;
+      }
+      if (opts.type === 'fields') {
+        if (set.size === (items.length - 1)) { // excluding toggle row
+          btn.textContent = 'Fields: All';
+        } else {
+          btn.textContent = `Fields: ${Array.from(set).join(', ')}`;
+        }
+      } else if (opts.type === 'example') {
+        btn.textContent = `Example: ${Array.from(set).join(', ')}`;
+      } else {
+        btn.textContent = Array.from(set).join(', ');
+      }
+    } catch (e) {}
+  }
 
   // No legacy UI load: visual defaults used; autoplay/defaults remain runtime-only
 
@@ -317,98 +435,35 @@ export function renderKanjiStudyCard({ store }) {
   // place autoplay controls at start of headerTools, grouped visually
   headerTools.insertBefore(autoplayControlsEl, shuffleGroup);
 
-  const wrapper = document.createElement('div');
-  wrapper.className = 'kanji-card-wrapper';
-  wrapper.tabIndex = 0; // so it can receive keyboard focus
+  // Create main card and example card via factories (decoupled components)
+  const mainCardApi = createKanjiMainCard({ entry: null, indexText: '' });
+  const exampleCardApi = createKanjiExampleCard({ entry: null, sentences: [], handlers: {
+    onSpeak: (text) => {
+      if (!text) return;
+      const lang = getLanguageCode('reading');
+      try { speak(text, lang); } catch (e) {}
+    },
+    onNext: (ci) => { /* optional hook from example card */ },
+    onPrev: (ci) => { /* optional hook from example card */ }
+  }});
 
-  // Outer card container to get .card styling (border, background, padding)
-  const card = document.createElement('div');
-  card.className = 'card kanji-card';
+  // expose the same variable names used elsewhere so render() logic needs minimal changes
+  const card = mainCardApi.el; // root .card kanji-card
+  const wrapper = card.querySelector('.kanji-card-wrapper');
+  const sentenceCard = exampleCardApi.el;
 
-  // Sentence card (created once, shown/hidden as needed)
-  const sentenceCard = document.createElement('div');
-  sentenceCard.className = 'card kanji-example-card';
-  // carousel state for sentences on the current entry
-  let currentSentenceIndex = 0;
-  let lastSentenceEntry = null;
-
-  // Create persistent children for the sentence/example card so we can
-  // update text and visibility without recreating nodes or listeners.
-  const exampleHeader = document.createElement('div');
-  exampleHeader.className = 'kanji-example-header';
-
-  const exampleLabel = document.createElement('div');
-  exampleLabel.className = 'muted kanji-example-label';
-  exampleLabel.textContent = 'Sentence';
-
-  const controls = document.createElement('div');
-  controls.className = 'example-carousel-controls';
-  controls.style.display = 'flex';
-
-  const prevExampleBtn = document.createElement('button');
-  prevExampleBtn.className = 'icon-button';
-  prevExampleBtn.title = 'Previous sentence';
-  prevExampleBtn.textContent = '◀';
-  prevExampleBtn.addEventListener('click', (ev) => {
-    ev.preventDefault();
-    const sentences = entries[index]?.sentences || [];
-    if (!sentences.length) return;
-    currentSentenceIndex = (currentSentenceIndex - 1 + sentences.length) % sentences.length;
-    render();
-  });
-
-  const nextExampleBtn = document.createElement('button');
-  nextExampleBtn.className = 'icon-button';
-  nextExampleBtn.title = 'Next sentence';
-  nextExampleBtn.textContent = '▶';
-  nextExampleBtn.addEventListener('click', (ev) => {
-    ev.preventDefault();
-    const sentences = entries[index]?.sentences || [];
-    if (!sentences.length) return;
-    currentSentenceIndex = (currentSentenceIndex + 1) % sentences.length;
-    render();
-  });
-
-  const counterEl = document.createElement('div');
-  counterEl.className = 'muted kanji-example-label';
-  counterEl.style.margin = '0 8px';
-  counterEl.textContent = '';
-
-  // speaker button container: we recreate the small speaker button into
-  // this container when the current sentence changes so the binding is
-  // correct while keeping the surrounding markup stable.
-  const speakerBtnContainer = document.createElement('div');
-
-  controls.append(prevExampleBtn, counterEl, nextExampleBtn);
-  exampleHeader.append(exampleLabel, controls, speakerBtnContainer);
-
-  const exampleText = document.createElement('div');
-  exampleText.className = 'kanji-example-text';
-
-  const enLabel = document.createElement('div');
-  enLabel.className = 'muted kanji-example-label';
-  enLabel.style.marginTop = '1rem';
-  enLabel.textContent = 'English';
-  enLabel.style.display = 'none';
-
-  const enDiv = document.createElement('div');
-  enDiv.className = 'kanji-example-text';
-  enDiv.style.fontSize = '1rem';
-  enDiv.style.display = 'none';
-
-  const notesLabel = document.createElement('div');
-  notesLabel.className = 'muted kanji-example-label';
-  notesLabel.style.marginTop = '1rem';
-  notesLabel.textContent = 'Notes';
-  notesLabel.style.display = 'none';
-
-  const notesList = document.createElement('ul');
-  notesList.className = 'kanji-example-notes';
-  notesList.style.display = 'none';
-
-  // assemble persistent structure
-  sentenceCard.append(exampleHeader, exampleText, enLabel, enDiv, notesLabel, notesList);
-  sentenceCard.style.display = 'none';
+  // Apply initial visibility/mute defaults to cards to match dropdown defaults
+  try {
+    const map = { kanji: false, reading: false, meaning: false, type: false };
+    for (const k of Object.keys(map)) map[k] = Array.isArray(kanjiFieldSelection) ? kanjiFieldSelection.includes(k) : false;
+    // map currently will set true for included (visible)
+    mainCardApi.setFieldsVisible(map);
+  } catch (e) {}
+  try {
+    const initExample = new Set(Array.isArray(exampleFieldSelection) ? exampleFieldSelection : []);
+    exampleCardApi.setVisible(initExample.has('showExample'));
+    exampleCardApi.setEnglishVisible(initExample.has('english'));
+  } catch (e) {}
 
   // render a single card body
   function renderCard(body, entry) {
@@ -430,19 +485,19 @@ export function renderKanjiStudyCard({ store }) {
     kanjiMain.style.fontSize = `${fontSize}rem`;
     kanjiWrap.append(kanjiMain);
 
-    // top-left type (styled and toggled like bottom-right meaning)
+    // top-left type
     const topLeft = document.createElement('div');
-    topLeft.className = 'kanji-top-left muted';
+    topLeft.className = 'kanji-top-left';
     topLeft.textContent = getFieldValue(entry, ['type']) || '';
 
     // bottom-left reading
     const bottomLeft = document.createElement('div');
-    bottomLeft.className = 'kanji-bottom-left muted';
+    bottomLeft.className = 'kanji-bottom-left';
     bottomLeft.textContent = getFieldValue(entry, ['reading', 'kana', 'onyomi', 'kunyomi']) || '';
 
     // bottom-right meaning
     const bottomRight = document.createElement('div');
-    bottomRight.className = 'kanji-bottom-right muted';
+    bottomRight.className = 'kanji-bottom-right';
     bottomRight.textContent = getFieldValue(entry, ['meaning', 'definition', 'gloss']) || '';
 
     body.append(topLeft, kanjiWrap, bottomLeft, bottomRight);
@@ -469,6 +524,23 @@ export function renderKanjiStudyCard({ store }) {
       if (typeof savedIndex === 'number') {
         index = savedIndex;
       }
+      try {
+        const appState = collState.kanjiStudyCardView || {};
+        if (Array.isArray(appState.cardFields)) {
+          kanjiFieldSelection = appState.cardFields.slice();
+          const map = { kanji: false, reading: false, meaning: false, type: false };
+          for (const k of Object.keys(map)) map[k] = kanjiFieldSelection.includes(k);
+          try { mainCardApi.setFieldsVisible(map); } catch (e) {}
+          try { syncDropdownUI(kanjiFieldDd, kanjiFieldItems, kanjiFieldSelection, { type: 'fields', emptyLabel: 'Fields: None' }); } catch(e) {}
+        }
+        if (Array.isArray(appState.exampleFields)) {
+          exampleFieldSelection = appState.exampleFields.slice();
+          const initExample = new Set(Array.isArray(exampleFieldSelection) ? exampleFieldSelection : []);
+          try { exampleCardApi.setVisible(initExample.has('showExample')); } catch (e) {}
+          try { exampleCardApi.setEnglishVisible(initExample.has('english')); } catch (e) {}
+          try { syncDropdownUI(exampleFieldDd, exampleFieldItems, exampleFieldSelection, { type: 'example', emptyLabel: 'Example: None' }); } catch(e) {}
+        }
+      } catch (e) {}
       uiStateRestored = true;
     }
     const prevIndex = index;
@@ -663,100 +735,36 @@ export function renderKanjiStudyCard({ store }) {
     // (e.g., store updates, filter changes, virtual set resolution)
     try { progressTracker?.syncToCurrent?.(); } catch (e) {}
 
-    wrapper.innerHTML = '';
-
     const entry = entries[index];
     const total = entries.length;
 
-    const cornerCaption = document.createElement('div');
-    cornerCaption.className = 'card-corner-caption';
-    cornerCaption.textContent = total ? `${index + 1} / ${total}` : 'Empty';
-
-    const body = document.createElement('div');
-    body.id = 'kanji-body';
-
+    // update view mode class on the wrapper (maintains previous behavior)
     if (viewMode === 'kanji-only') wrapper.classList.add('kanji-only');
     else wrapper.classList.remove('kanji-only');
 
+    // update main card content and corner caption
+    const caption = total ? `${index + 1} / ${total}` : 'Empty';
+    try { mainCardApi.setIndexText(caption); } catch (e) {}
+
     if (!entry) {
-      body.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
+      // show empty hint inside the card body
+      const bodyEl = mainCardApi.el.querySelector('.kanji-body');
+      if (bodyEl) bodyEl.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
+      try { mainCardApi.setEntry(null); } catch (e) {}
     } else {
-      renderCard(body, entry);
+      try { mainCardApi.setEntry(entry); } catch (e) {}
     }
 
-    wrapper.append(cornerCaption, body);
-
-    // Show/hide sentence card based on entry.sentences (array)
+    // Update example/sentence card via its API. show/hide depending on available sentences
     if (entry && Array.isArray(entry.sentences) && entry.sentences.length) {
-      // reset carousel index when switching to a new entry
-      if (lastSentenceEntry !== entry) {
-        currentSentenceIndex = 0;
-        lastSentenceEntry = entry;
-      }
-
-      const sentences = entry.sentences || [];
-      const idx = ((Number(currentSentenceIndex) || 0) % sentences.length + sentences.length) % sentences.length;
-      const ex = sentences[idx] || {};
-      const jaText = ex.ja || '';
-      const enText = ex.en || '';
-      const notes = Array.isArray(ex.notes) ? ex.notes : [];
-
-      // Only show card if Japanese text exists
-      if (!jaText) {
-        sentenceCard.style.display = 'none';
-      } else {
-        // keep sentenceCard mounted but update children
-        sentenceCard.style.display = '';
-
-        // speaker button: recreate into container so its closure binds current text
-        try { speakerBtnContainer.innerHTML = ''; } catch (e) { /* noop */ }
-        try { speakerBtnContainer.appendChild(createSpeakerButton({ text: jaText, fieldKey: 'reading' })); } catch (e) {}
-
-        // controls: show/hide depending on sentence count
-        if (sentences.length > 1) {
-          prevExampleBtn.style.display = '';
-          nextExampleBtn.style.display = '';
-          counterEl.style.display = '';
-          counterEl.textContent = `${idx + 1} / ${sentences.length}`;
-        } else {
-          prevExampleBtn.style.display = 'none';
-          nextExampleBtn.style.display = 'none';
-          counterEl.style.display = 'none';
-          counterEl.textContent = '';
-        }
-
-        // Japanese text (always visible)
-        exampleText.textContent = jaText;
-
-        // English translation (shown only when revealed)
-        if (enText && viewMode === 'full') {
-          enLabel.style.display = '';
-          enDiv.style.display = '';
-          enDiv.textContent = enText;
-        } else {
-          enLabel.style.display = 'none';
-          enDiv.style.display = 'none';
-          enDiv.textContent = '';
-        }
-
-        // Notes (shown only when revealed)
-        if (notes.length > 0 && viewMode === 'full') {
-          notesLabel.style.display = '';
-          notesList.style.display = '';
-          notesList.innerHTML = '';
-          for (const note of notes) {
-            const li = document.createElement('li');
-            li.textContent = note;
-            notesList.appendChild(li);
-          }
-        } else {
-          notesLabel.style.display = 'none';
-          notesList.style.display = 'none';
-          notesList.innerHTML = '';
-        }
-      }
+      exampleCardApi.setSentences(entry.sentences || []);
+      const jpText = exampleCardApi.el.querySelector('.kanji-example-jp')?.textContent || '';
+      // Respect the user's dropdown selection: only display if JP text exists and the exampleFieldSelection includes 'showExample'
+      const wantShow = Array.isArray(exampleFieldSelection) ? exampleFieldSelection.includes('showExample') : true;
+      exampleCardApi.el.style.display = (jpText && wantShow) ? '' : 'none';
     } else {
-      sentenceCard.style.display = 'none';
+      exampleCardApi.setSentences([]);
+      exampleCardApi.el.style.display = 'none';
     }
     
     // Update reveal button text based on current viewMode
@@ -835,7 +843,7 @@ export function renderKanjiStudyCard({ store }) {
   footer.id = 'kanji-controls';
   footer.textContent = '← / →: navigate  •  ↑: full  •  ↓: kanji only';
 
-  card.appendChild(wrapper);
+  // mainCardApi.el already contains its internal wrapper
 
   // Always append the card and sentence card into the view root
   el.append(card, sentenceCard);
@@ -888,6 +896,8 @@ export function renderKanjiStudyCard({ store }) {
         // explicitly unregister footer key handler if provided
         if (footerControls && typeof footerControls.__unregister === 'function') footerControls.__unregister();
       } catch (e) {}
+      try { if (mainCardApi && typeof mainCardApi.destroy === 'function') mainCardApi.destroy(); } catch (e) {}
+      try { if (exampleCardApi && typeof exampleCardApi.destroy === 'function') exampleCardApi.destroy(); } catch (e) {}
       observer.disconnect();
     }
   });
