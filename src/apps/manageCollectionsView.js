@@ -337,6 +337,11 @@ export function renderManageCollections({ store, onNavigate }) {
   parseBtn.className = 'btn';
   parseBtn.textContent = 'Parse & Diff';
 
+  const importHelpBtn = document.createElement('button');
+  importHelpBtn.type = 'button';
+  importHelpBtn.className = 'btn';
+  importHelpBtn.textContent = 'Import Help';
+
   const clearBtn = document.createElement('button');
   clearBtn.type = 'button';
   clearBtn.className = 'btn';
@@ -357,7 +362,7 @@ export function renderManageCollections({ store, onNavigate }) {
 
   const actionsRow = document.createElement('div');
   actionsRow.className = 'mc-actions-row';
-  actionsRow.append(parseBtn, clearBtn, saveDiffBtn, saveSnapshotBtn);
+  actionsRow.append(parseBtn, importHelpBtn, clearBtn, saveDiffBtn, saveSnapshotBtn);
 
   const statusEl = document.createElement('div');
   statusEl.className = 'mc-status';
@@ -697,6 +702,7 @@ export function renderManageCollections({ store, onNavigate }) {
                 el('div', { className: 'mc-diff-col', children: [el('div', { className: 'mc-diff-col-title', text: 'After' }), preJson(after, '18rem')] }),
               ]
             }),
+
           (!isNew && changedFields.length)
             ? el('div', { className: 'mc-fields', children: [
               el('div', { className: 'mc-fields-title', text: 'Changed fields' }),
@@ -948,6 +954,15 @@ export function renderManageCollections({ store, onNavigate }) {
     setStatus('Copied meta+schema+examples.');
   });
 
+  importHelpBtn.addEventListener('click', async () => {
+    try {
+      const mod = await import('../components/helpDialogs/manageCollectionsImportHelpDialog.js');
+      if (mod && typeof mod.showManageCollectionsImportHelpDialog === 'function') await mod.showManageCollectionsImportHelpDialog();
+    } catch (e) {
+      setStatus(`Failed to open help: ${e?.message || e}`);
+    }
+  });
+
   clearBtn.addEventListener('click', () => {
     importArea.value = '';
     labelInput.value = '';
@@ -992,7 +1007,54 @@ export function renderManageCollections({ store, onNavigate }) {
     }
 
     try {
-      const res = await store.collectionDB.previewInputChanges(collectionKey, parsed, { treatFullAsReplace: false });
+      // Normalize input to be explicit about schema vs entries.
+      // Rules:
+      // - Schema update is only allowed if the input is { schema: [...] } or { metadata: { schema: [...] } }
+      // - A bare array is interpreted as an entries array.
+      // - A single object without schema/metadata is interpreted as a single entry (wrapped in entries array).
+      // - Keys accepted as entry arrays/objects: entries, entry, sentences, paragraphs, items, cards
+      let inputForPreview = parsed;
+      try {
+        const isArr = Array.isArray(parsed);
+        const isObj = parsed && typeof parsed === 'object' && !isArr;
+        const hasTopSchema = isObj && Array.isArray(parsed.schema);
+        const hasMetaSchema = isObj && parsed.metadata && Array.isArray(parsed.metadata.schema);
+        const entryKeys = ['entries', 'entry', 'sentences', 'paragraphs', 'items', 'cards'];
+        const hasEntryKey = isObj && entryKeys.some(k => k in parsed);
+
+        if (hasTopSchema || hasMetaSchema) {
+          // explicit schema update — pass through as-is
+          inputForPreview = parsed;
+        } else if (isArr) {
+          // bare array -> treat as entries
+          const arrayKey = detectArrayKey(currentCollection || {}) || 'entries';
+          inputForPreview = { [arrayKey]: parsed };
+        } else if (isObj) {
+          if (hasEntryKey) {
+            // ensure entry key values are arrays (wrap single-object into array)
+            const copy = { ...parsed };
+            for (const k of entryKeys) {
+              if (k in copy) {
+                if (Array.isArray(copy[k])) {
+                  // ok
+                } else if (copy[k] && typeof copy[k] === 'object') {
+                  copy[k] = [copy[k]];
+                }
+                break;
+              }
+            }
+            inputForPreview = copy;
+          } else {
+            // simple object -> treat as single entry
+            const arrayKey = detectArrayKey(currentCollection || {}) || 'entries';
+            inputForPreview = { [arrayKey]: [parsed] };
+          }
+        }
+      } catch (e) {
+        inputForPreview = parsed;
+      }
+
+      const res = await store.collectionDB.previewInputChanges(collectionKey, inputForPreview, { treatFullAsReplace: false });
       previewResult = res;
       setWarnings(res?.warnings || []);
 

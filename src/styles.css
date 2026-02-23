@@ -1473,6 +1473,8 @@ input[type="number"].button::-webkit-inner-spin-button {
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.98);
   transition: opacity 120ms ease, transform 120ms cubic-bezier(.2, .9, .3, 1);
+  overflow-x: auto;
+  max-height: 90vh;
 }
 
 .confirm-dialog.open {
@@ -1507,6 +1509,30 @@ input[type="number"].button::-webkit-inner-spin-button {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
+}
+
+/* Make JSON inside confirm dialogs use the same mono styling as the
+   Entity Explorer so previews/examples look consistent. */
+.confirm-body .json-content,
+.confirm-dialog .json-content,
+.confirm-body .json-view,
+.confirm-dialog .json-view,
+.confirm-body .mono,
+.confirm-dialog .mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.confirm-body pre,
+.confirm-dialog pre {
+  margin: 0;
+  background: transparent;
+  padding: 0.25rem 0.4rem;
+  border-radius: 0.25rem;
 }
 
 .btn.danger {
