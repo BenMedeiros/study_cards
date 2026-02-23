@@ -223,26 +223,31 @@ export function createTable({ store = null, headers, rows, className = '', id, c
 
       const analyses = buildAddToSearchColumnAnalyses(columnValues, {
         minCountExclusive: 2,
-        topN: 4,
+        topN: 7,
       });
-
-      const out = [];
+      // Group suggestions by analysis label and return parent items with `submenu`
+      const groups = [];
       for (const analysis of analyses) {
         const suggestions = Array.isArray(analysis?.suggestions) ? analysis.suggestions : [];
+        if (!suggestions.length) continue;
+        const children = [];
         for (const suggestion of suggestions) {
           const displayVal = String(suggestion?.value ?? '').trim();
           if (!displayVal) continue;
           const queryTerm = String(suggestion?.queryTerm || '').trim();
           if (!queryTerm) continue;
           const cnt = Math.max(0, Math.round(Number(suggestion?.count) || 0));
-          const label = `${String(analysis?.label || 'AddToSearch')} {${displayVal}} | ${cnt}`;
-          out.push({
+          const label = `{${displayVal}} | ${cnt}`;
+          children.push({
             label,
             onClick: () => appendTokenToSearchInput(`{${field}:${queryTerm}}`)
           });
         }
+        if (children.length) {
+          groups.push({ label: String(analysis?.label || 'AddToSearch'), submenu: children });
+        }
       }
-      return out;
+      return groups;
     } catch (e) {
       return [];
     }

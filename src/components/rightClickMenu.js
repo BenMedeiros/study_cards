@@ -50,6 +50,8 @@ export function openRightClickMenu({ x = 0, y = 0, items = [], context = '' } = 
 
   let menu = document.querySelector('.context-menu');
   let created = false;
+  // track the currently-visible submenu element (if any)
+  let _currentOpenSubmenu = null;
   if (menu) {
     // reuse
     try { menu.innerHTML = ''; } catch (e) {}
@@ -103,10 +105,81 @@ export function openRightClickMenu({ x = 0, y = 0, items = [], context = '' } = 
     btn.className = 'context-menu-item';
     btn.textContent = it.label || '';
     if (it.disabled) btn.disabled = true;
-    btn.addEventListener('click', (e) => {
-      try { if (typeof it.onClick === 'function') it.onClick(e); } catch (e) {}
-      close();
-    });
+    // If item has a submenu, show an affordance and handle hover to open it
+    if (Array.isArray(it.submenu) && it.submenu.length) {
+      btn.classList.add('has-submenu');
+      const arrow = document.createElement('span');
+      arrow.className = 'context-menu-item-arrow';
+      arrow.textContent = '▸';
+      btn.append(arrow);
+
+      let submenuEl = null;
+      let closeTimeout = null;
+
+      function createSubmenu() {
+        if (submenuEl) return submenuEl;
+        submenuEl = document.createElement('div');
+        submenuEl.className = 'context-menu context-menu-submenu';
+        submenuEl.style.position = 'fixed';
+        submenuEl.style.zIndex = '9999';
+        for (const child of it.submenu) {
+          const childBtn = buildItem(child);
+          submenuEl.append(childBtn);
+        }
+        // append to same host as parent menu
+        try { menu.append(submenuEl); } catch (e) { document.body.append(submenuEl); }
+        // keep submenu open when hovered
+        submenuEl.addEventListener('mouseenter', () => { clearTimeout(closeTimeout); });
+        submenuEl.addEventListener('mouseleave', () => { scheduleCloseSubmenu(); });
+        return submenuEl;
+      }
+
+      function openSubmenu() {
+        clearTimeout(closeTimeout);
+        const s = createSubmenu();
+        try {
+          // Hide any existing submenu elements immediately to avoid overlap/flicker.
+          try {
+            const existing = menu.querySelectorAll('.context-menu-submenu');
+            for (const ex of existing) {
+              if (ex === s) continue;
+              try { ex.style.display = 'none'; } catch (e) { try { ex.remove(); } catch (e) {} }
+            }
+          } catch (e) {}
+
+          const r = btn.getBoundingClientRect();
+          const left = Math.min(window.innerWidth - 8, Math.round(r.right + 6));
+          const top = Math.max(4, Math.round(r.top));
+          s.style.left = `${left}px`;
+          s.style.top = `${top}px`;
+          s.style.display = '';
+          _currentOpenSubmenu = s;
+        } catch (e) {}
+      }
+
+      function scheduleCloseSubmenu(delay = 180) {
+        clearTimeout(closeTimeout);
+        closeTimeout = setTimeout(() => {
+          try { if (submenuEl) submenuEl.style.display = 'none'; } catch (e) {}
+        }, delay);
+      }
+
+      btn.addEventListener('mouseenter', () => { openSubmenu(); });
+      btn.addEventListener('mouseleave', () => { scheduleCloseSubmenu(); });
+      // also support a click handler if provided
+      const origOnClick = it.onClick;
+      if (typeof origOnClick === 'function') {
+        btn.addEventListener('click', (e) => {
+          try { origOnClick(e); } catch (e) {}
+          close();
+        });
+      }
+    } else {
+      btn.addEventListener('click', (e) => {
+        try { if (typeof it.onClick === 'function') it.onClick(e); } catch (e) {}
+        close();
+      });
+    }
     return btn;
   }
 
@@ -147,6 +220,14 @@ export function openRightClickMenu({ x = 0, y = 0, items = [], context = '' } = 
 
   function close() {
     try { menu.style.display = 'none'; } catch (e) {}
+    try {
+      // hide any submenus that may be open
+      const subs = Array.from(menu.querySelectorAll('.context-menu-submenu'));
+      for (const s of subs) {
+        try { s.style.display = 'none'; } catch (e) {}
+      }
+      _currentOpenSubmenu = null;
+    } catch (e) {}
   }
 
   return { close, menu };

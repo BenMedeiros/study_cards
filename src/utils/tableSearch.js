@@ -446,8 +446,20 @@ export function buildAddToSearchColumnAnalyses(values, { minCountExclusive = 2, 
   const analyses = [];
   for (const def of ADD_TO_SEARCH_ANALYSIS_DEFS) {
     const counts = _countBy(values, def.getKeys);
+    // Only consider keys with count > minCount (exclusive)
     const ranked = _sortCountEntries(counts).filter(([, count]) => Number(count || 0) > minCount);
-    const top = ranked.slice(0, limit);
+    if (!ranked.length) continue;
+
+    // Take top `limit` but include any additional items that tie with the last slot.
+    let top = ranked.slice(0, limit);
+    if (ranked.length > limit) {
+      const cutoffCount = top.length ? top[top.length - 1][1] : null;
+      if (cutoffCount !== null) {
+        const extra = ranked.slice(limit).filter(([, c]) => Number(c || 0) === Number(cutoffCount));
+        if (extra.length) top = top.concat(extra);
+      }
+    }
+
     if (!top.length) continue;
 
     const suggestions = [];
