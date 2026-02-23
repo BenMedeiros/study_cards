@@ -25,6 +25,7 @@ export function createAppShell({ store, onNavigate }) {
       consumerId: 'shell',
       settings: [
         'shell.showFooterCaptions',
+        'shell.compactNav',
         'shell.timingEnabled',
         'shell.hideShellFooter',
         'shell.hideViewHeaderTools',
@@ -32,6 +33,17 @@ export function createAppShell({ store, onNavigate }) {
         'shell.logEmits',
         'shell.logSettings',
       ],
+      onChange: ({ settingId, next } = {}) => {
+        try {
+          const id = String(settingId || '').trim();
+          if (!id) return;
+          // Re-render header/layout when UI-related shell settings change.
+          if (id.startsWith('shell.')) {
+            try { renderHeader(); } catch (e) {}
+            try { updateShellLayoutVars(); } catch (e) {}
+          }
+        } catch (e) {}
+      }
     });
   } catch (e) {}
 
@@ -40,6 +52,7 @@ export function createAppShell({ store, onNavigate }) {
     settings: store?.settings,
     settingIds: [
       'shell.showFooterCaptions',
+      'shell.compactNav',
       'shell.hideShellFooter',
       'shell.hideViewHeaderTools',
       'shell.hideViewFooterControls',
@@ -912,14 +925,37 @@ export function createAppShell({ store, onNavigate }) {
     ];
 
     const currentPath = getCurrentRoute().pathname;
-    for (const l of links) {
-      const a = document.createElement('a');
-      a.id = `nav-link-${String(l.label).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
-      a.href = l.href;
-      a.textContent = l.label;
-      const linkPath = l.href.replace(/^#/, '');
-      if (linkPath === currentPath) a.classList.add('active');
-      nav.append(a);
+
+    // Compact nav: use a dropdown in the header instead of the nav links
+    let compactNav = false;
+    try { compactNav = !!(store?.settings?.get && store.settings.get('shell.compactNav', { consumerId: 'shell' })); } catch (e) { compactNav = false; }
+
+    if (compactNav) {
+      try {
+        nav.style.display = 'none';
+        const existing = document.getElementById('hdr-nav-dropdown');
+        if (existing) existing.remove();
+        const ddItems = links.map(l => ({ value: l.href, label: l.label }));
+        const dd = createDropdown({ items: ddItems, value: `#${currentPath}`, onChange: (v) => { try { location.hash = String(v || '#/'); } catch (e) {} }, className: 'hdr-nav-dropdown align-right', closeOverlaysOnOpen: true });
+        dd.id = 'hdr-nav-dropdown';
+        try { const prev = right.querySelector('#hdr-nav-dropdown'); if (prev) prev.remove(); } catch (e) {}
+        try { right.appendChild(dd); } catch (e) {}
+      } catch (e) {
+        nav.style.display = '';
+      }
+    } else {
+      nav.style.display = '';
+      const existing = document.getElementById('hdr-nav-dropdown');
+      if (existing) try { existing.remove(); } catch (e) {}
+      for (const l of links) {
+        const a = document.createElement('a');
+        a.id = `nav-link-${String(l.label).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+        a.href = l.href;
+        a.textContent = l.label;
+        const linkPath = l.href.replace(/^#/, '');
+        if (linkPath === currentPath) a.classList.add('active');
+        nav.append(a);
+      }
     }
   }
 

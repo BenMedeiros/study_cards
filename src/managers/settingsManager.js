@@ -60,6 +60,7 @@ const CATALOG = Object.freeze((() => {
     'shell.lastRoute': { type: { kind: 'string', nullable: true }, default: null },
 
     'shell.showFooterCaptions': { type: { kind: 'boolean' }, default: false },
+    'shell.compactNav': { type: { kind: 'boolean' }, default: false },
     'shell.timingEnabled': { type: { kind: 'boolean' }, default: false },
     'shell.logEmits': { type: { kind: 'boolean' }, default: false },
     'shell.logSettings': { type: { kind: 'boolean' }, default: false },

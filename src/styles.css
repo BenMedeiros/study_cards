@@ -115,7 +115,7 @@ body {
 }
 
 .view-footer-controls {
-  position: absolute; 
+  position: absolute;
   left: 0;
   bottom: var(--shell-footer-height);
   width: 100%;
@@ -995,8 +995,8 @@ input[type="number"].button::-webkit-inner-spin-button {
 
 
 #kanji-study-root {
-    max-height: 60%;
-    overflow-y: auto;
+  max-height: 60%;
+  overflow-y: auto;
 }
 
 @media (max-width: 700px) {
@@ -2645,8 +2645,13 @@ select:hover {
   gap: 0.75rem;
 }
 
-#manage-collections-root .mc-card {
-  max-width: unset;
+#manage-collections-root h2 {
+  margin: 0;
+  font-size: medium;
+}
+
+#manage-collections-root p {
+  margin: 0;
 }
 
 #manage-collections-root .mc-key-input {
@@ -2674,8 +2679,8 @@ select:hover {
 }
 
 #manage-collections-root .mc-json-mount {
-    max-height: 30vh;
-    overflow: auto;
+  max-height: 30vh;
+  overflow: auto;
 
 }
 
@@ -2872,21 +2877,26 @@ select:hover {
   word-break: break-word;
 }
 
-#manage-collections-root .mc-left, #manage-collections-root .mc-right {
-    overflow-y: auto;
-    height: 62vh;
+#manage-collections-root .mc-left,
+#manage-collections-root .mc-right {
+  overflow-y: auto;
+  height: 70vh;
+  padding: 0rem 0.2rem;
 }
 
 @media (max-width: 900px) {
   #manage-collections-root .mc-layout {
     grid-template-columns: 100%;
   }
+
   #manage-collections-root .mc-key-input {
     min-width: 12rem;
   }
+
   #manage-collections-root .mc-version-select {
     min-width: 12rem;
   }
+
   #manage-collections-root .mc-json {
     max-height: 45vh;
   }

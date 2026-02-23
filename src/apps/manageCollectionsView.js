@@ -249,16 +249,11 @@ export function renderManageCollections({ store, onNavigate }) {
   jsonModeRow.className = 'mc-json-mode-row';
   jsonModeRow.id = 'mc-snapshot-buttons';
 
-  const showCurrentBtn = document.createElement('button');
-  showCurrentBtn.type = 'button';
-  showCurrentBtn.className = 'btn small';
-  showCurrentBtn.textContent = 'Show Current';
-
-  const showPreviewBtn = document.createElement('button');
-  showPreviewBtn.type = 'button';
-  showPreviewBtn.className = 'btn small';
-  showPreviewBtn.textContent = 'Show Preview';
-  showPreviewBtn.disabled = true;
+  const snapshotToggleBtn = document.createElement('button');
+  snapshotToggleBtn.type = 'button';
+  snapshotToggleBtn.className = 'btn small';
+  snapshotToggleBtn.textContent = 'Show Preview';
+  snapshotToggleBtn.disabled = true;
 
   const toggleJsonBtn = document.createElement('button');
   toggleJsonBtn.type = 'button';
@@ -277,7 +272,7 @@ export function renderManageCollections({ store, onNavigate }) {
   const JSON_PRE_ID = 'mc-snapshot-pre';
 
   // track wrap state (applies `text-wrap: auto` to the inner pre element)
-  let isJsonWrapped = false;
+  let isJsonWrapped = true;
 
   function updateJsonWrapBtn() {
     jsonWrapBtn.textContent = isJsonWrapped ? 'Unwrap' : 'Wrap';
@@ -308,7 +303,7 @@ export function renderManageCollections({ store, onNavigate }) {
   copyFullBtn.textContent = 'Copy Full JSON';
 
   // group buttons into logical clusters
-  const grp1 = document.createElement('div'); grp1.className = 'mc-json-group'; grp1.append(showCurrentBtn, showPreviewBtn);
+  const grp1 = document.createElement('div'); grp1.className = 'mc-json-group'; grp1.append(snapshotToggleBtn);
   const grp2 = document.createElement('div'); grp2.className = 'mc-json-group'; grp2.append(toggleJsonBtn, jsonWrapBtn);
   const grp3 = document.createElement('div'); grp3.className = 'mc-json-group'; grp3.append(copyFullBtn, copyMetaBtn, copySchemaBtn, copyTemplateBtn);
   jsonModeRow.append(grp1, grp2, grp3);
@@ -320,7 +315,7 @@ export function renderManageCollections({ store, onNavigate }) {
   jsonViewerMount.id = 'mc-snapshot-json';
 
   jsonWrap.append(jsonHeaderRow, jsonViewerMount);
-  left.append(card({ title: 'Snapshot', className: 'mc-card', children: [jsonWrap] }));
+  left.append(card({ id: 'mc-snapshot-card', title: 'Snapshot', className: 'mc-card', children: [el('p', { className: 'hint', text: 'Shows the current collection JSON; switch to preview to view merged changes.' }), jsonWrap] }));
 
   // Right: import + diffs + history
   const right = document.createElement('div');
@@ -378,23 +373,27 @@ export function renderManageCollections({ store, onNavigate }) {
   historyMount.className = 'mc-history';
 
   // --- persistent diff cards (always present, initially empty) ---
-  const reviewBody = el('div', { id: 'mc-diff-review-body', className: 'mc-diff-list' });
-  const reviewCard = card({ id: 'mc-diff-review', title: 'Review', subtitle: 'These are the changes that will be saved if you click “Save Diff”.', cornerCaption: '', className: 'mc-card', children: [reviewBody] });
+  
 
   const metadataBody = el('div', { id: 'mc-diff-metadata-body', className: 'mc-diff-list' });
-  const metadataCard = card({ id: 'mc-diff-metadata', title: 'Metadata', cornerCaption: '', className: 'mc-card', children: [metadataBody] });
+  const metadataHint = el('p', { className: 'hint', text: 'Metadata changes affect collection-level properties like name and description.' });
+  const metadataCard = card({ id: 'mc-diff-metadata', title: 'Metadata', cornerCaption: '', className: 'mc-card', children: [metadataHint, metadataBody] });
 
   const schemaBody = el('div', { id: 'mc-diff-schema-body', className: 'mc-diff-list' });
-  const schemaCard = card({ id: 'mc-diff-schema', title: 'Schema', cornerCaption: '', className: 'mc-card', children: [schemaBody] });
+  const schemaHint = el('p', { className: 'hint', text: 'Schema changes modify field definitions used for entry validation and UI.' });
+  const schemaCard = card({ id: 'mc-diff-schema', title: 'Schema', cornerCaption: '', className: 'mc-card', children: [schemaHint, schemaBody] });
 
   const editedBody = el('div', { id: 'mc-diff-edited-body', className: 'mc-diff-list' });
-  const editedCard = card({ id: 'mc-diff-edited', title: 'Edited Entries', cornerCaption: '', className: 'mc-card', children: [editedBody] });
+  const editedHint = el('p', { className: 'hint', text: 'Entries listed here will be updated with the shown changes.' });
+  const editedCard = card({ id: 'mc-diff-edited', title: 'Edited Entries', cornerCaption: '', className: 'mc-card', children: [editedHint, editedBody] });
 
   const newBody = el('div', { id: 'mc-diff-new-body', className: 'mc-diff-list' });
-  const newCard = card({ id: 'mc-diff-new', title: 'New Entries', cornerCaption: '', className: 'mc-card', children: [newBody] });
+  const newHint = el('p', { className: 'hint', text: 'These entries will be added to the collection.' });
+  const newCard = card({ id: 'mc-diff-new', title: 'New Entries', cornerCaption: '', className: 'mc-card', children: [newHint, newBody] });
 
   const removedBody = el('div', { id: 'mc-diff-removed-body', className: 'mc-diff-list' });
-  const removedCard = card({ id: 'mc-diff-removed', title: 'Entry Removals', cornerCaption: '', className: 'mc-card', children: [removedBody] });
+  const removedHint = el('p', { className: 'hint', text: 'These entries will be removed from the collection.' });
+  const removedCard = card({ id: 'mc-diff-removed', title: 'Entry Removals', cornerCaption: '', className: 'mc-card', children: [removedHint, removedBody] });
 
   // append persistent cards (history card will be placed on the left)
   // these cards live directly in the right column (no extra wrapper)
@@ -403,8 +402,8 @@ export function renderManageCollections({ store, onNavigate }) {
   left.append(historyMount);
 
   right.append(
-    card({ title: 'Import', subtitle: 'Paste JSON, review diffs, then save as a new revision.', className: 'mc-card', children: [importArea, labelInput, actionsRow, statusEl, warningsEl] }),
-    reviewCard,
+  card({ title: 'Import', className: 'mc-card', children: [el('p', { className: 'hint', text: 'Paste JSON here (full collection, entries array, metadata object, or schema array).' }), importArea, labelInput, actionsRow, statusEl, warningsEl] }),
+    
     metadataCard,
     schemaCard,
     editedCard,
@@ -461,8 +460,18 @@ export function renderManageCollections({ store, onNavigate }) {
 
       wrapper.appendChild(pre);
       jsonViewerMount.appendChild(wrapper);
+      try {
+        const cardEl = document.getElementById('mc-snapshot-card');
+        if (cardEl) {
+          const arrayKey = detectArrayKey(src || {});
+          const arr = Array.isArray(src?.[arrayKey]) ? src[arrayKey] : [];
+          const count = Array.isArray(arr) ? arr.length : 0;
+          const corner = cardEl.querySelector('.card-corner-caption');
+          if (corner) corner.textContent = `${count} ${count === 1 ? 'entry' : 'entries'}`;
+        }
+      } catch (e) {}
     } else jsonViewerMount.textContent = '';
-    showPreviewBtn.disabled = !(previewResult && previewResult.merged);
+      snapshotToggleBtn.disabled = !(previewResult && previewResult.merged);
   }
 
   function setJsonCollapsed(collapsed) {
@@ -495,7 +504,7 @@ export function renderManageCollections({ store, onNavigate }) {
 
   function renderDiffPanels() {
     // clear persistent bodies
-    reviewBody.innerHTML = '';
+    
     metadataBody.innerHTML = '';
     schemaBody.innerHTML = '';
     editedBody.innerHTML = '';
@@ -508,26 +517,18 @@ export function renderManageCollections({ store, onNavigate }) {
     }
 
     if (!previewResult) {
-      // no preview: show placeholders
-      setCorner(reviewCard, '');
+      // no preview: clear corner captions and leave card bodies to their static hints
       setCorner(metadataCard, '');
       setCorner(schemaCard, '');
       setCorner(editedCard, '');
       setCorner(newCard, '');
       setCorner(removedCard, '');
-      reviewBody.append(el('div', { className: 'hint', text: 'No changes to review.' }));
-      metadataBody.append(el('div', { className: 'hint', text: 'No metadata changes.' }));
-      schemaBody.append(el('div', { className: 'hint', text: 'No schema changes.' }));
-      editedBody.append(el('div', { className: 'hint', text: 'No edited entries.' }));
-      newBody.append(el('div', { className: 'hint', text: 'No new entries.' }));
-      removedBody.append(el('div', { className: 'hint', text: 'No removed entries.' }));
       return;
     }
 
     const { patch, diffs, merged } = previewResult;
     const summary = `metadata: ${diffs?.metadataChanges ?? 0} • schema: ${diffs?.schemaChanges ?? 0} • new: ${diffs?.newEntries ?? 0} • edited: ${diffs?.editedEntries ?? 0} • removed: ${diffs?.entriesRemove ?? 0}`;
-    setCorner(reviewCard, summary);
-    reviewBody.append(el('div', { text: summary }));
+    
 
     // ---- base + merged helpers ----
     const arrayKey = diffs?.arrayKey || patch?.targetArrayKey || detectArrayKey(currentCollection) || 'entries';
@@ -579,7 +580,7 @@ export function renderManageCollections({ store, onNavigate }) {
       metadataBody.append(list);
     } else {
       setCorner(metadataCard, '');
-      metadataBody.append(el('div', { className: 'hint', text: 'No metadata changes.' }));
+      metadataBody.append(el('p', { className: 'hint', text: 'These are the changes that will be saved if you click “Save Diff”.' }));
     }
 
     // ---- Schema diff ----
@@ -637,7 +638,7 @@ export function renderManageCollections({ store, onNavigate }) {
       schemaBody.append(list);
     } else {
       setCorner(schemaCard, '');
-      schemaBody.append(el('div', { className: 'hint', text: 'No schema changes.' }));
+      schemaBody.append(el('p', { className: 'hint', text: 'These are the changes that will be saved if you click “Save Diff”.' }));
     }
 
     // ---- Entries: edited vs new ----
@@ -716,7 +717,7 @@ export function renderManageCollections({ store, onNavigate }) {
       editedBody.append(list);
     } else {
       setCorner(editedCard, '');
-      editedBody.append(el('div', { className: 'hint', text: 'No edited entries.' }));
+      editedBody.append(el('p', { className: 'hint', text: 'These are the changes that will be saved if you click “Save Diff”.' }));
     }
 
     if (newItems.length) {
@@ -725,7 +726,7 @@ export function renderManageCollections({ store, onNavigate }) {
       newBody.append(list);
     } else {
       setCorner(newCard, '');
-      newBody.append(el('div', { className: 'hint', text: 'No new entries.' }));
+      newBody.append(el('p', { className: 'hint', text: 'These are the changes that will be saved if you click “Save Diff”.' }));
     }
 
     if (removeKeys.length) {
@@ -740,7 +741,7 @@ export function renderManageCollections({ store, onNavigate }) {
       removedBody.append(list);
     } else {
       setCorner(removedCard, '');
-      removedBody.append(el('div', { className: 'hint', text: 'No removed entries.' }));
+      removedBody.append(el('p', { className: 'hint', text: 'These are the changes that will be saved if you click “Save Diff”.' }));
     }
   }
 
@@ -789,8 +790,8 @@ export function renderManageCollections({ store, onNavigate }) {
             previewResult = { patch: null, diffs: null, merged: snap, warnings: [] };
             currentJsonMode = 'preview';
             renderJson('preview');
-            showPreviewBtn.disabled = false;
-            showPreviewBtn.click();
+            snapshotToggleBtn.disabled = false;
+            snapshotToggleBtn.textContent = 'Show Current';
             setStatus(`Previewing revision ${shortId(rid, 16)}`);
           } catch (e) {
             setStatus(`Failed to preview revision: ${e?.message || e}`);
@@ -823,7 +824,7 @@ export function renderManageCollections({ store, onNavigate }) {
       title: 'History',
       cornerCaption: `${revisions.length} revisions`,
       className: 'mc-card',
-      children: [table]
+      children: [el('p', { className: 'hint', text: 'List of saved revisions — preview or activate a revision from here.' }), table]
     }));
   }
 
@@ -845,7 +846,7 @@ export function renderManageCollections({ store, onNavigate }) {
     saveDiffBtn.disabled = true;
     saveSnapshotBtn.disabled = true;
     saveSnapshotBtn.style.display = 'none';
-    showPreviewBtn.disabled = true;
+    snapshotToggleBtn.disabled = true;
 
     activeRevisionId = store.collectionDB.getActiveRevisionId(collectionKey);
 
@@ -883,14 +884,19 @@ export function renderManageCollections({ store, onNavigate }) {
     }
   });
 
-  showCurrentBtn.addEventListener('click', () => {
-    currentJsonMode = 'current';
-    renderJson('current');
-  });
+  
 
-  showPreviewBtn.addEventListener('click', () => {
-    currentJsonMode = 'preview';
-    renderJson('preview');
+  snapshotToggleBtn.addEventListener('click', () => {
+    if (currentJsonMode === 'preview') {
+      currentJsonMode = 'current';
+      snapshotToggleBtn.textContent = 'Show Preview';
+      renderJson('current');
+    } else {
+      if (!previewResult?.merged) return;
+      currentJsonMode = 'preview';
+      snapshotToggleBtn.textContent = 'Show Current';
+      renderJson('preview');
+    }
   });
 
   toggleJsonBtn.addEventListener('click', () => {
@@ -950,7 +956,6 @@ export function renderManageCollections({ store, onNavigate }) {
     saveSnapshotBtn.disabled = true;
     saveSnapshotBtn.style.display = 'none';
     // clear diff card bodies
-    reviewBody.innerHTML = '';
     metadataBody.innerHTML = '';
     schemaBody.innerHTML = '';
     editedBody.innerHTML = '';
@@ -969,7 +974,6 @@ export function renderManageCollections({ store, onNavigate }) {
     saveSnapshotBtn.disabled = true;
     saveSnapshotBtn.style.display = 'none';
     // clear diff card bodies
-    reviewBody.innerHTML = '';
     metadataBody.innerHTML = '';
     schemaBody.innerHTML = '';
     editedBody.innerHTML = '';
@@ -994,7 +998,8 @@ export function renderManageCollections({ store, onNavigate }) {
 
       // Enable save
       saveDiffBtn.disabled = false;
-      showPreviewBtn.disabled = false;
+      snapshotToggleBtn.disabled = false;
+      snapshotToggleBtn.textContent = 'Show Current';
 
       // If this looks like a full snapshot and we can't load system base, allow snapshot save.
       const canSnapshot = (res?.patch?._inputKind === 'full') && !currentCollection;
@@ -1007,7 +1012,7 @@ export function renderManageCollections({ store, onNavigate }) {
       currentJsonMode = 'preview';
       renderJson('preview');
       setStatus('Diff computed. Review changes, then save.');
-      try { reviewCard.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+      try { metadataCard.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
     } catch (e) {
       setStatus(`Failed to diff: ${e?.message || e}`);
     }
@@ -1021,7 +1026,6 @@ export function renderManageCollections({ store, onNavigate }) {
       await store.collectionDB.commitPatch(collectionKey, previewResult.patch, { label });
       setStatus('Saved diff revision.');
       previewResult = null;
-      reviewBody.innerHTML = '';
       metadataBody.innerHTML = '';
       schemaBody.innerHTML = '';
       editedBody.innerHTML = '';
@@ -1044,7 +1048,6 @@ export function renderManageCollections({ store, onNavigate }) {
       await store.collectionDB.commitSnapshot(collectionKey, previewResult.merged, { label });
       setStatus('Saved snapshot revision.');
       previewResult = null;
-      reviewBody.innerHTML = '';
       metadataBody.innerHTML = '';
       schemaBody.innerHTML = '';
       editedBody.innerHTML = '';

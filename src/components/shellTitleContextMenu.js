@@ -238,6 +238,20 @@ export function createShellTitleContextMenu({
     } catch (e) {}
 
     try {
+      const compactNav = !!_read('shell.compactNav', false);
+      items.push({
+        label: `${compactNav ? '☑' : '☐'} Compact Nav (use dropdown)`,
+        onClick: () => {
+          try {
+            const cur = !!_read('shell.compactNav', false);
+            const next = !cur;
+            _write('shell.compactNav', !!next, { immediate: true });
+          } catch (e) {}
+        }
+      });
+    } catch (e) {}
+
+    try {
       const hideViewFooter = !!_read('shell.hideViewFooterControls', false);
       items.push({
         label: `${hideViewFooter ? '☑' : '☐'} Hide View Footer Controls`,
