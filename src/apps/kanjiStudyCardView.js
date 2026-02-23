@@ -18,7 +18,6 @@ export function renderKanjiStudyCard({ store }) {
       consumerId: 'kanjiStudyCardView',
       settings: [
         'apps.kanjiStudy.defaultViewMode',
-        'apps.kanjiStudy.isAutoSpeak',
         'apps.kanjiStudy.autoplaySequence',
       ],
     });
@@ -47,7 +46,7 @@ export function renderKanjiStudyCard({ store }) {
   let defaultViewMode = 'kanji-only'; // controls what is shown when changing cards
   let shownAt = nowMs();
   let isShuffled = false;
-  let autoSpeakKanji = false;
+  
   let isAutoPlaying = false;
   let autoplayConfig = null; // will be defaulted from savedUI or component defaults
   let uiStateRestored = false; // ensure saved UI (index/order) is applied only once
@@ -94,13 +93,12 @@ export function renderKanjiStudyCard({ store }) {
           // fallback: save index in app-scoped bucket as before
           try { store.collections.saveCollectionState(key, { currentIndex: index }, { app: 'kanjiStudyCardView' }); } catch (e2) {}
         }
-        // persist app-global default view mode and auto-speak under apps.kanjiStudy
-        try {
-          if (store?.settings && typeof store.settings.set === 'function') {
-            store.settings.set('apps.kanjiStudy.defaultViewMode', defaultViewMode, { consumerId: 'kanjiStudyCardView' });
-            store.settings.set('apps.kanjiStudy.isAutoSpeak', !!autoSpeakKanji, { consumerId: 'kanjiStudyCardView' });
-          }
-        } catch (e) {}
+            // persist app-global default view mode under apps.kanjiStudy
+            try {
+              if (store?.settings && typeof store.settings.set === 'function') {
+                store.settings.set('apps.kanjiStudy.defaultViewMode', defaultViewMode, { consumerId: 'kanjiStudyCardView' });
+              }
+            } catch (e) {}
       }
     } catch (e) {
       // ignore
@@ -129,26 +127,10 @@ export function renderKanjiStudyCard({ store }) {
   shuffleBtn.textContent = 'Shuffle';
   shuffleBtn.setAttribute('aria-pressed', String(!!isShuffled));
 
-  const toggleBtn = document.createElement('button');
-  toggleBtn.type = 'button';
-  toggleBtn.className = 'btn small';
-  // Details toggle: Off when showing kanji-only; On when showing full details
-  toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Details: Off' : 'Details: On';
-  toggleBtn.title = 'Toggle details';
-  toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
-
-  // New: Auto-speak Kanji toggle button
-  const autoSpeakBtn = document.createElement('button');
-  autoSpeakBtn.type = 'button';
-  autoSpeakBtn.className = 'btn small';
-  autoSpeakBtn.textContent = '🔊 Auto-speak: Off';
-  autoSpeakBtn.title = 'Toggle auto-speak';
+  
 
   const shuffleGroup = wrapHeaderTool(shuffleBtn, 'col.shuffle');
-  const detailsGroup = wrapHeaderTool(toggleBtn, 'app.card-details');
-  const autoSpeakGroup = wrapHeaderTool(autoSpeakBtn, 'app.auto-speak');
-
-  headerTools.append(shuffleGroup, detailsGroup, autoSpeakGroup);
+  headerTools.append(shuffleGroup);
 
   // --- Header dropdowns to control card field visibility ---
   // Load per-collection saved dropdown state (if any)
@@ -322,16 +304,7 @@ export function renderKanjiStudyCard({ store }) {
     const lang = getLanguageCode(fieldKey);
     speak(speakText, lang);
   }
-  // Auto-speak button behavior
-  autoSpeakBtn.setAttribute('aria-pressed', 'false');
-  autoSpeakBtn.addEventListener('click', () => {
-    autoSpeakKanji = !autoSpeakKanji;
-    autoSpeakBtn.setAttribute('aria-pressed', String(!!autoSpeakKanji));
-    autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto-speak: On' : '🔊 Auto-speak: Off';
-    // Speak current entry immediately when enabling
-    if (autoSpeakKanji && entries[index]) speakEntry(entries[index]);
-    saveUIState();
-  });
+  // Auto-speak setting removed from UI.
 
   // Autoplay controls: create grouped play/gear control and hook into play loop
   // Load app-specific autoplay config (saved under apps.kanjiStudy.*)
@@ -345,21 +318,8 @@ export function renderKanjiStudyCard({ store }) {
         defaultViewMode = dvm;
       }
 
-      // Ensure toggle UI and viewMode reflect restored default
-      try {
-        viewMode = defaultViewMode;
-        if (typeof toggleBtn !== 'undefined' && toggleBtn) {
-          toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Details: Off' : 'Details: On';
-          toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
-        }
-      } catch (e) {}
-
-      const autoSpeak = store.settings.get('apps.kanjiStudy.isAutoSpeak', { consumerId: 'kanjiStudyCardView' });
-      if (typeof autoSpeak === 'boolean') {
-        autoSpeakKanji = !!autoSpeak;
-        try { autoSpeakBtn.setAttribute('aria-pressed', String(!!autoSpeakKanji)); } catch (e) {}
-        try { autoSpeakBtn.textContent = autoSpeakKanji ? '🔊 Auto-speak: On' : '🔊 Auto-speak: Off'; } catch (e) {}
-      }
+      // Ensure viewMode reflects restored default
+      try { viewMode = defaultViewMode; } catch (e) {}
     }
   } catch (e) {}
 
@@ -559,7 +519,7 @@ export function renderKanjiStudyCard({ store }) {
     viewMode = defaultViewMode;
     // index updated
     render();
-    if (autoSpeakKanji && entries[index]) speakEntry(entries[index]);
+    // auto-speak removed from UI; preserve speak on navigation via explicit calls elsewhere
     // persist current index so it's restored when navigating back
     saveUIState();
   }
@@ -717,8 +677,6 @@ export function renderKanjiStudyCard({ store }) {
 
   function toggleDefaultViewMode() {
     defaultViewMode = defaultViewMode === 'kanji-only' ? 'full' : 'kanji-only';
-    toggleBtn.textContent = defaultViewMode === 'kanji-only' ? 'Details: Off' : 'Details: On';
-    toggleBtn.setAttribute('aria-pressed', String(defaultViewMode !== 'kanji-only'));
     viewMode = defaultViewMode;
     render();
     saveUIState();
@@ -862,7 +820,7 @@ export function renderKanjiStudyCard({ store }) {
 
   // Tools behaviour
   shuffleBtn.addEventListener('click', shuffleEntries);
-  toggleBtn.addEventListener('click', toggleDefaultViewMode);
+  // Details toggle removed from header tools
 
   // Keyboard handling for footer shortcuts is handled by the footer component
   // (it registers an app-level key handler using id 'kanjiStudy').

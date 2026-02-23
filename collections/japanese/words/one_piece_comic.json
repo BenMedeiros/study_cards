@@ -5,6 +5,8 @@
     "version": 1,
     "category": "japanese",
     "source": "image + assistant explanations",
+        "entry_key": "kanji",
+
     "schema": [
       {
         "key": "kanji",

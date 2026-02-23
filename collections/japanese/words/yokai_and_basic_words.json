@@ -5,6 +5,7 @@
     "version": 1,
     "category": "japanese",
     "source": "user-provided list",
+    "entry_key": "kanji",
      "schema": [
       {
         "key": "kanji",

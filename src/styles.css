@@ -1096,14 +1096,6 @@ input[type="number"].button::-webkit-inner-spin-button {
   right: 0rem;
 }
 
-/* Hide non-kanji text in kanji-only mode (top-left, bottom-left, bottom-right).
-   Allow elements with `.muted` to remain visible (dimmed) even when
-   kanji-only is active so the mute/unmute control can override hiding. */
-.kanji-card-wrapper.kanji-only .kanji-top-left.muted,
-.kanji-card-wrapper.kanji-only .kanji-bottom-left.muted,
-.kanji-card-wrapper.kanji-only .kanji-bottom-right.muted {
-  color: transparent !important;
-}
 
 /* Make sure icon button in top-right fits visually */
 .kanji-card .kanji-top-left .icon-button {
@@ -2648,23 +2640,5 @@ select:hover {
   word-break: break-word;
 }
 
-/* Utility muted helper (generic) */
-.muted {
-  color: var(--muted);
-}
-
-/* Ensure muted state wins for card-specific fields (use higher specificity / important)
-   so toggling a `muted` class on elements reliably dims them even when there
-   are more-specific rules elsewhere. */
-.kanji-card .kanji-main.muted,
-.kanji-card .kanji-top-left.muted,
-.kanji-card .kanji-bottom-left.muted,
-.kanji-card .kanji-bottom-right.muted {
-  color: var(--muted) !important;
-}
-
-.kanji-example-text.muted,
-.kanji-example-label.muted,
-.kanji-example-notes.muted {
-  color: var(--muted) !important;
-}
+/* Muted helper removed — visibility and dimming are controlled inline or
+   via component-specific styles. */
