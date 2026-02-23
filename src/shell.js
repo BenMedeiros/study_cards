@@ -376,6 +376,17 @@ export function createAppShell({ store, onNavigate }) {
   const footer = shellFooter.el;
   el.append(footer);
 
+  // Expose a simple footer API on store.shell so apps can send status/warnings
+  try {
+    if (store && store.shell && typeof store.shell === 'object') {
+      store.shell.setFooterLeft = (status, warnings) => {
+        try { if (typeof shellFooter.setLeftContent === 'function') shellFooter.setLeftContent({ status, warnings }); } catch (e) {}
+      };
+      store.shell.setFooterLeftStatus = (s) => { try { if (typeof shellFooter.setLeftStatus === 'function') shellFooter.setLeftStatus(s); } catch (e) {} };
+      store.shell.setFooterLeftWarnings = (w) => { try { if (typeof shellFooter.setLeftWarnings === 'function') shellFooter.setLeftWarnings(w); } catch (e) {} };
+    }
+  } catch (e) {}
+
   // Keep CSS variables in sync with measured header/footer heights so
   // the main scroll area can be sized to end above floating controls.
   function updateShellLayoutVars() {

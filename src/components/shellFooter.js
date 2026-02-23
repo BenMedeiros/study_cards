@@ -200,6 +200,41 @@ export function createShellFooter({ store, captionsVisible = false } = {}) {
     } catch (e) {}
   }
 
+  // Left area helpers: status + warnings API for other components
+  let footerLeftStatusPrev = '';
+  let footerLeftWarningsPrev = null; // array or null
+
+  function renderFooterLeft() {
+    try {
+      const parts = [];
+      if (footerLeftStatusPrev) parts.push(String(footerLeftStatusPrev));
+      if (Array.isArray(footerLeftWarningsPrev) && footerLeftWarningsPrev.length) {
+        const w = footerLeftWarningsPrev.filter(Boolean).map(String).join(' • ');
+        if (w) parts.push(w);
+      }
+      fLeft.textContent = parts.join(' \n');
+    } catch (e) {}
+  }
+
+  function setLeftStatus(text) {
+    footerLeftStatusPrev = (text == null) ? '' : String(text || '');
+    renderFooterLeft();
+  }
+
+  function setLeftWarnings(list) {
+    try {
+      if (!list) footerLeftWarningsPrev = null;
+      else if (Array.isArray(list)) footerLeftWarningsPrev = list.map(x => (x == null ? '' : String(x))).filter(Boolean);
+      else footerLeftWarningsPrev = [String(list)];
+    } catch (e) { footerLeftWarningsPrev = null; }
+    renderFooterLeft();
+  }
+
+  function setLeftContent({ status = '', warnings = null } = {}) {
+    setLeftStatus(status);
+    setLeftWarnings(warnings);
+  }
+
   function renderFromStore({ activeCollection = null, activeId = null } = {}) {
     renderFooterCenterStudyProgress();
     updateFooterRight({ activeCollection, activeId });
@@ -229,5 +264,8 @@ export function createShellFooter({ store, captionsVisible = false } = {}) {
     rightEl: fRight,
     renderFromStore,
     teardown,
+    setLeftContent,
+    setLeftStatus,
+    setLeftWarnings,
   };
 }

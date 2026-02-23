@@ -372,8 +372,7 @@ export function renderManageCollections({ store, onNavigate }) {
   warningsEl.className = 'mc-warnings';
   warningsEl.textContent = '';
 
-  const diffMount = document.createElement('div');
-  diffMount.className = 'mc-diffs';
+  // persistent diff cards will be appended directly into the right column
 
   const historyMount = document.createElement('div');
   historyMount.className = 'mc-history';
@@ -398,14 +397,19 @@ export function renderManageCollections({ store, onNavigate }) {
   const removedCard = card({ id: 'mc-diff-removed', title: 'Entry Removals', cornerCaption: '', className: 'mc-card', children: [removedBody] });
 
   // append persistent cards (history card will be placed on the left)
-  diffMount.append(reviewCard, metadataCard, schemaCard, editedCard, newCard, removedCard);
+  // these cards live directly in the right column (no extra wrapper)
 
   // place history on the left column (after historyMount is created)
   left.append(historyMount);
 
   right.append(
     card({ title: 'Import', subtitle: 'Paste JSON, review diffs, then save as a new revision.', className: 'mc-card', children: [importArea, labelInput, actionsRow, statusEl, warningsEl] }),
-    diffMount,
+    reviewCard,
+    metadataCard,
+    schemaCard,
+    editedCard,
+    newCard,
+    removedCard,
   );
 
   layout.append(left, right);
@@ -420,7 +424,9 @@ export function renderManageCollections({ store, onNavigate }) {
   let activeRevisionId = null;
 
   function setStatus(msg) {
-    statusEl.textContent = String(msg || '');
+    const txt = String(msg || '');
+    statusEl.textContent = txt;
+    try { if (store?.shell && typeof store.shell.setFooterLeftStatus === 'function') store.shell.setFooterLeftStatus(txt); } catch (e) {}
   }
 
   function setWarnings(list) {
@@ -428,10 +434,12 @@ export function renderManageCollections({ store, onNavigate }) {
     if (!arr.length) {
       warningsEl.textContent = '';
       warningsEl.style.display = 'none';
+      try { if (store?.shell && typeof store.shell.setFooterLeftWarnings === 'function') store.shell.setFooterLeftWarnings(null); } catch (e) {}
       return;
     }
     warningsEl.style.display = '';
     warningsEl.textContent = arr.map(s => `• ${String(s)}`).join('\n');
+    try { if (store?.shell && typeof store.shell.setFooterLeftWarnings === 'function') store.shell.setFooterLeftWarnings(arr); } catch (e) {}
   }
 
   function renderJson(mode = null) {
@@ -941,7 +949,13 @@ export function renderManageCollections({ store, onNavigate }) {
     saveDiffBtn.disabled = true;
     saveSnapshotBtn.disabled = true;
     saveSnapshotBtn.style.display = 'none';
-    diffMount.innerHTML = '';
+    // clear diff card bodies
+    reviewBody.innerHTML = '';
+    metadataBody.innerHTML = '';
+    schemaBody.innerHTML = '';
+    editedBody.innerHTML = '';
+    newBody.innerHTML = '';
+    removedBody.innerHTML = '';
     setStatus('');
     setWarnings([]);
     currentJsonMode = 'current';
@@ -954,7 +968,13 @@ export function renderManageCollections({ store, onNavigate }) {
     saveDiffBtn.disabled = true;
     saveSnapshotBtn.disabled = true;
     saveSnapshotBtn.style.display = 'none';
-    diffMount.innerHTML = '';
+    // clear diff card bodies
+    reviewBody.innerHTML = '';
+    metadataBody.innerHTML = '';
+    schemaBody.innerHTML = '';
+    editedBody.innerHTML = '';
+    newBody.innerHTML = '';
+    removedBody.innerHTML = '';
 
     const raw = String(importArea.value || '').trim();
     if (!raw) return;
@@ -987,7 +1007,7 @@ export function renderManageCollections({ store, onNavigate }) {
       currentJsonMode = 'preview';
       renderJson('preview');
       setStatus('Diff computed. Review changes, then save.');
-      try { diffMount.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+      try { reviewCard.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
     } catch (e) {
       setStatus(`Failed to diff: ${e?.message || e}`);
     }
@@ -1001,7 +1021,12 @@ export function renderManageCollections({ store, onNavigate }) {
       await store.collectionDB.commitPatch(collectionKey, previewResult.patch, { label });
       setStatus('Saved diff revision.');
       previewResult = null;
-      diffMount.innerHTML = '';
+      reviewBody.innerHTML = '';
+      metadataBody.innerHTML = '';
+      schemaBody.innerHTML = '';
+      editedBody.innerHTML = '';
+      newBody.innerHTML = '';
+      removedBody.innerHTML = '';
       importArea.value = '';
       labelInput.value = '';
       await loadCurrent();
@@ -1019,7 +1044,12 @@ export function renderManageCollections({ store, onNavigate }) {
       await store.collectionDB.commitSnapshot(collectionKey, previewResult.merged, { label });
       setStatus('Saved snapshot revision.');
       previewResult = null;
-      diffMount.innerHTML = '';
+      reviewBody.innerHTML = '';
+      metadataBody.innerHTML = '';
+      schemaBody.innerHTML = '';
+      editedBody.innerHTML = '';
+      newBody.innerHTML = '';
+      removedBody.innerHTML = '';
       importArea.value = '';
       labelInput.value = '';
       await loadCurrent();
