@@ -956,8 +956,6 @@ input[type="number"].button::-webkit-inner-spin-button {
 }
 
 .main {
-  width: min(68.75rem, 100%);
-  margin: 0 auto;
   padding: .5rem 1rem 2rem;
   flex: 1;
 }
@@ -2638,6 +2636,265 @@ select:hover {
 #entity-explorer-root.json-wrap .json-view {
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* Manage Collections view */
+#manage-collections-root .mc-layout {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  gap: 0.75rem;
+}
+
+#manage-collections-root .mc-card {
+  max-width: unset;
+}
+
+#manage-collections-root .mc-key-input {
+  min-width: 18rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.5rem;
+  border: var(--border-1);
+  background: var(--panel);
+  color: var(--text);
+}
+
+#manage-collections-root .mc-version-select {
+  min-width: 16rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.5rem;
+  border: var(--border-1);
+  background: var(--panel);
+  color: var(--text);
+}
+
+#manage-collections-root .mc-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-right: 0.35rem;
+}
+
+#manage-collections-root .mc-json-mount {
+    max-height: 30vh;
+    overflow: auto;
+
+}
+
+#manage-collections-root .mc-json-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#manage-collections-root .mc-json-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+#manage-collections-root .mc-json-title {
+  font-weight: 600;
+  color: var(--text);
+}
+
+#manage-collections-root .mc-json-mode-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+#manage-collections-root .mc-json {
+  margin: 0;
+  max-height: 75vh;
+  overflow: auto;
+  white-space: pre;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.5rem;
+  border: var(--border-1);
+  background: rgba(2, 6, 23, 0.25);
+}
+
+#manage-collections-root .mc-import {
+  width: 100%;
+  min-height: 12rem;
+  resize: vertical;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.6rem;
+  border: var(--border-1);
+  background: rgba(2, 6, 23, 0.18);
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+#manage-collections-root .mc-label-input {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 0.6rem;
+  border: var(--border-1);
+  background: var(--panel);
+  color: var(--text);
+}
+
+#manage-collections-root .mc-actions-row {
+  margin-top: 0.6rem;
+  display: inline-flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+#manage-collections-root .mc-status {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  white-space: pre-wrap;
+}
+
+#manage-collections-root .mc-warnings {
+  margin-top: 0.45rem;
+  color: rgba(251, 191, 36, 0.9);
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+}
+
+#manage-collections-root .mc-diffs,
+#manage-collections-root .mc-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#manage-collections-root .mc-diff-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+#manage-collections-root .mc-details {
+  border: var(--border-1);
+  border-radius: 0.6rem;
+  background: rgba(2, 6, 23, 0.18);
+  overflow: hidden;
+}
+
+#manage-collections-root .mc-details[open] {
+  background: rgba(2, 6, 23, 0.22);
+}
+
+#manage-collections-root .mc-details-summary {
+  cursor: pointer;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem 0.65rem;
+  color: var(--text);
+}
+
+#manage-collections-root .mc-details-summary::-webkit-details-marker {
+  display: none;
+}
+
+#manage-collections-root .mc-details-summary-left {
+  font-weight: 600;
+}
+
+#manage-collections-root .mc-details-summary-right {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: right;
+  max-width: 32rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#manage-collections-root .mc-diff-body {
+  padding: 0.6rem 0.65rem 0.7rem;
+  border-top: var(--border-1);
+}
+
+#manage-collections-root .mc-diff-actions {
+  display: inline-flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.55rem;
+}
+
+#manage-collections-root .mc-diff-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+#manage-collections-root .mc-single-col {
+  display: block;
+}
+
+#manage-collections-root .mc-diff-col-title {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+}
+
+#manage-collections-root .mc-pre {
+  margin: 0;
+  overflow: auto;
+  white-space: pre;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.5rem;
+  border: var(--border-1);
+  background: rgba(2, 6, 23, 0.25);
+}
+
+#manage-collections-root .mc-fields {
+  margin-top: 0.6rem;
+}
+
+#manage-collections-root .mc-fields-title {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+#manage-collections-root .mc-fields-list {
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#manage-collections-root .mc-left, #manage-collections-root .mc-right {
+    overflow-y: auto;
+    height: 62vh;
+}
+
+@media (max-width: 900px) {
+  #manage-collections-root .mc-layout {
+    grid-template-columns: 100%;
+  }
+  #manage-collections-root .mc-key-input {
+    min-width: 12rem;
+  }
+  #manage-collections-root .mc-version-select {
+    min-width: 12rem;
+  }
+  #manage-collections-root .mc-json {
+    max-height: 45vh;
+  }
+
+  #manage-collections-root .mc-diff-cols {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Muted helper removed — visibility and dimming are controlled inline or

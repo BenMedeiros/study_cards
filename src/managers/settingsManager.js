@@ -85,6 +85,10 @@ const CATALOG = Object.freeze((() => {
     'shell.collectionContexts': { type: { kind: 'json' }, default: {} },
     'shell.voice': { type: { kind: 'json', nullable: true }, default: null },
 
+    // Collection mutations (user diffs / snapshots)
+    // Map: collectionKey -> active revision id (or null/absent for system)
+    'collections.activeRevisionsByKey': { type: { kind: 'json' }, default: {} },
+
     // apps.kanjiStudy.*
     'apps.kanjiStudy.defaultViewMode': { type: { kind: 'enum', values: ['kanji-only', 'full'] }, default: 'kanji-only' },
     'apps.kanjiStudy.isAutoSpeak': { type: { kind: 'boolean' }, default: false },

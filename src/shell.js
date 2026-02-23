@@ -2,6 +2,7 @@ import { renderHome } from './apps/homeView.js';
 import { renderFlashcards } from './apps/flashcardsView.js';
 import { renderQaCards } from './apps/qaCardsView.js';
 import { renderCollectionsManager } from './apps/collectionsView.js';
+import { renderManageCollections } from './apps/manageCollectionsView.js';
 import { parseHashRoute } from './utils/helpers.js';
 import { renderData } from './apps/dataView.js';
 import { renderKanjiStudyCard } from './apps/kanjiStudyCardView.js';
@@ -895,6 +896,7 @@ export function createAppShell({ store, onNavigate }) {
       ...(activeCategory.toLowerCase() === 'japanese' ? [{ href: '#/kanji', label: 'Kanji Study' }] : []),
       { href: '#/data', label: 'Data' },
       { href: '#/collections', label: 'Collections' },
+      { href: '#/manage-collections', label: 'Manage Collections' },
       { href: '#/explorer', label: 'Explorer' },
     ];
 
@@ -969,6 +971,11 @@ export function createAppShell({ store, onNavigate }) {
 
       if (route.pathname === '/collections') {
         main.append(timed('view.renderCollectionsManager', () => renderCollectionsManager({ store, onNavigate, route })));
+        return;
+      }
+
+      if (route.pathname === '/manage-collections') {
+        main.append(timed('view.renderManageCollections', () => renderManageCollections({ store, onNavigate, route })));
         return;
       }
 

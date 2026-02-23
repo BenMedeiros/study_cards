@@ -234,21 +234,21 @@
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
       "entries": 1505,
-      "modifiedAt": "2026-02-23T02:04:42.335Z"
+      "modifiedAt": "2026-02-23T02:04:42.000Z"
     },
     {
       "path": "japanese/words/one_piece_comic.json",
       "name": "Book Back Cover Words",
       "description": "Japanese words appearing in the image and words introduced during explanation in this conversation.",
       "entries": 18,
-      "modifiedAt": "2026-02-23T02:04:37.935Z"
+      "modifiedAt": "2026-02-23T02:04:36.000Z"
     },
     {
       "path": "japanese/words/yokai_and_basic_words.json",
       "name": "Yokai and Basic Words",
       "description": "A small set of yokai names, family terms, common verbs/phrases and basic particles — formatted like the main words file.",
       "entries": 41,
-      "modifiedAt": "2026-02-23T02:04:22.613Z"
+      "modifiedAt": "2026-02-23T02:04:22.000Z"
     },
     {
       "path": "languageHistory/languageHistory.json",

@@ -104,6 +104,7 @@ export function createStore() {
     subscribe,
     initialize,
     settings,
+    collectionDB,
     collections: {
       getCollections: collections.getCollections,
       getAvailableCollections: collections.getAvailableCollections,

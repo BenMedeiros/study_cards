@@ -23,7 +23,7 @@ export function isIndexedDBAvailable() {
   }
 }
 
-export function openStudyDb({ dbName = 'study_cards', version = 5 } = {}) {
+export function openStudyDb({ dbName = 'study_cards', version = 6 } = {}) {
   if (dbPromise) return dbPromise;
 
   dbPromise = new Promise((resolve, reject) => {
@@ -47,6 +47,22 @@ export function openStudyDb({ dbName = 'study_cards', version = 5 } = {}) {
       }
       if (!db.objectStoreNames.contains('system_collections_index')) {
         db.createObjectStore('system_collections_index', { keyPath: 'key' });
+      }
+
+      // User-defined collections + diffs (collection mutations)
+      // - One store to keep both snapshot and diff records.
+      // - Primary key: `id` (opaque revision id)
+      // - Index: `by_collection` to list history for a collection.
+      if (!db.objectStoreNames.contains('user_collections')) {
+        const s = db.createObjectStore('user_collections', { keyPath: 'id' });
+        s.createIndex('by_collection', 'collectionKey', { unique: false });
+      } else {
+        try {
+          const s = tx.objectStore('user_collections');
+          if (!s.indexNames.contains('by_collection')) s.createIndex('by_collection', 'collectionKey', { unique: false });
+        } catch (e) {
+          // ignore
+        }
       }
 
       // Ensure study_progress store exists and has indexes for efficient queries
