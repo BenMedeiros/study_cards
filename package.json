@@ -6,7 +6,8 @@
     "dev": "node scripts/rebuild_index.js && npx http-server -p 3000 -c-1",
     "test": "echo \"No tests yet\"",
     "build": "node scripts/rebuild_index.js",
-    "backup": "node scripts/backup_zips.js --clean --openDistFolder"
+    "backup": "node scripts/backup_zips.js --clean --openDistFolder",
+    "applyUpdatedZips": "node scripts/apply_updated_zips.js"
   },
   "keywords": [],
   "author": "",
