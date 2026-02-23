@@ -1484,9 +1484,16 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       examples: examplesCount,
     };
 
-    const metaFields = Array.isArray(fields)
-      ? fields.map(f => (typeof f === 'string' ? { key: String(f), type: null } : { key: String(f?.key || ''), type: f?.type ?? (f?.schema && f.schema.type) ?? null })).filter(f => f.key)
-      : [];
+    // Accept explicit `fields` parameter, or fall back to the collection's
+    // metadata fields if available. This allows callers that don't pass a
+    // `fields` array to still have accurate field presence/type info.
+    let metaFields = [];
+    if (Array.isArray(fields) && fields.length) {
+      metaFields = fields.map(f => (typeof f === 'string' ? { key: String(f), type: null } : { key: String(f?.key || ''), type: f?.type ?? (f?.schema && f.schema.type) ?? null })).filter(f => f.key);
+    } else if (coll && coll.metadata && (Array.isArray(coll.metadata.fields) || Array.isArray(coll.metadata.schema))) {
+      const fm = Array.isArray(coll.metadata.fields) ? coll.metadata.fields : coll.metadata.schema;
+      metaFields = fm.map(f => (typeof f === 'string' ? { key: String(f), type: null } : { key: String(f?.key || ''), type: f?.type ?? (f?.schema && f.schema.type) ?? null })).filter(f => f.key);
+    }
     const typeMap = new Map(metaFields.map(f => [String(f.key), f.type ?? null]));
     const metaKeys = metaFields.map(f => String(f.key));
     const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', 'examples'];
@@ -1496,6 +1503,12 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         const kk = String(k || '').trim();
         if (!kk) return false;
         if (Object.prototype.hasOwnProperty.call(dynamic, kk)) return true;
+        // If caller provided an explicit fields list (metaKeys), treat those
+        // fields as present even when the concrete entry object doesn't have
+        // the property. This allows queries like `{lexicalClass:}` to match
+        // entries where the field is missing / empty when the view defines
+        // that column in its metadata.
+        if (metaKeys && metaKeys.length) return metaKeys.includes(kk);
         return !!(entry && Object.prototype.hasOwnProperty.call(entry, kk));
       },
       getValue: (k) => {
@@ -1543,7 +1556,26 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       if (!q) return false;
       const compiled = compileTableSearchQuery(q);
       const accessor = buildEntrySearchAccessor(entry, { fields, collection });
-      return matchesTableSearch(accessor, compiled, { fields: tableSearchFieldsMeta(fields) });
+      // Conditional debug logging to help diagnose empty-field matches
+      try {
+        if (q.includes('{') && q.includes(':')) {
+          console.debug('[collectionsManager] entryMatchesTableSearch query parsed:', q, compiled.parsed);
+          for (const p of (compiled.parsed?.parts || [])) {
+            if (p && p.field) {
+              try {
+                console.debug('[collectionsManager] entry field check', { field: p.field, hasField: !!accessor.hasField(p.field), value: accessor.getValue(p.field) });
+              } catch (e) {
+                console.debug('[collectionsManager] entry field check error', e && e.message);
+              }
+            }
+          }
+        }
+      } catch (e) {
+        // ignore logging failures
+      }
+      const matched = matchesTableSearch(accessor, compiled, { fields: tableSearchFieldsMeta(fields) });
+      try { if (q.includes('{') && q.includes(':')) console.debug('[collectionsManager] entryMatchesTableSearch result', { matched }); } catch (e) {}
+      return matched;
     } catch (e) {
       return false;
     }

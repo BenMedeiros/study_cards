@@ -148,10 +148,34 @@ export function openRightClickMenu({ x = 0, y = 0, items = [], context = '' } = 
           } catch (e) {}
 
           const r = btn.getBoundingClientRect();
-          const left = Math.min(window.innerWidth - 8, Math.round(r.right + 6));
-          const top = Math.max(4, Math.round(r.top));
-          s.style.left = `${left}px`;
+          // Make submenu visible but hidden for measurement
+          s.style.display = '';
+          s.style.visibility = 'hidden';
+          s.style.left = '0px';
+          s.style.top = '0px';
+          const sr = s.getBoundingClientRect();
+
+          const gap = 6;
+          // Preferred placement: to the right of the button
+          let left = Math.round(r.right + gap);
+          // If placing to the right would overflow, place to the left of the parent menu/button
+          if (left + sr.width > window.innerWidth - 8) {
+            left = Math.round(r.left - sr.width - gap);
+            // ensure we don't go off the left edge
+            if (left < 8) left = 8;
+          }
+
+          // Vertical placement: align top with the button by default
+          let top = Math.round(r.top);
+          // If submenu would overflow bottom, shift it up to fit (but don't go above a small margin)
+          if (top + sr.height > window.innerHeight - 8) {
+            top = Math.max(4, Math.round(window.innerHeight - sr.height - 8));
+          }
+          if (top < 4) top = 4;
+
+          s.style.left = `${Math.min(Math.max(8, left), Math.max(8, window.innerWidth - Math.round(sr.width) - 8))}px`;
           s.style.top = `${top}px`;
+          s.style.visibility = '';
           s.style.display = '';
           _currentOpenSubmenu = s;
         } catch (e) {}

@@ -201,9 +201,23 @@ export function createTable({ store = null, headers, rows, className = '', id, c
       const existing = String(searchInputEl.value || '');
       const t = String(token || '').trim();
       if (!t) return;
-      const needsSep = existing.length > 0 && !(/[\s|]$/.test(existing));
-      const sep = needsSep ? ' | ' : '';
-      searchInputEl.value = existing + sep + t;
+      const tokenIsFieldExpr = /^\{\s*[^:}]+\s*:/.test(t);
+      if (existing.length > 0 && tokenIsFieldExpr) {
+        // If existing ends with a '|' separator, replace it with '&' so we don't produce '| &'
+        if (/\|\s*$/.test(existing)) {
+          searchInputEl.value = existing.replace(/\|\s*$/, '& ') + t;
+        } else if (/&\s*$/.test(existing)) {
+          // already an AND separator present
+          searchInputEl.value = existing + t;
+        } else {
+          // default to AND joining
+          searchInputEl.value = existing + ' & ' + t;
+        }
+      } else {
+        const needsSep = existing.length > 0 && !(/[\s|]$/.test(existing));
+        const sep = needsSep ? ' | ' : '';
+        searchInputEl.value = existing + sep + t;
+      }
       searchInputEl.focus();
       try { searchInputEl.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
     } catch (e) {}
@@ -238,10 +252,28 @@ export function createTable({ store = null, headers, rows, className = '', id, c
           if (!queryTerm) continue;
           const cnt = Math.max(0, Math.round(Number(suggestion?.count) || 0));
           const label = `{${displayVal}} | ${cnt}`;
-          children.push({
-            label,
-            onClick: () => appendTokenToSearchInput(`{${field}:${queryTerm}}`)
-          });
+          // Build click handler that intelligently composes field tokens and
+          // preserves/ANDs any embedded field expressions (e.g., {type:proper-noun}).
+          const onClick = () => {
+            try {
+              const q = String(queryTerm || '').trim();
+              if (!q) return;
+              // Extract any embedded top-level field expressions like `{type:...}`
+              const fieldExprs = Array.from(q.match(/\{[^}]+\}/g) || []).map(s => s.trim()).filter(Boolean);
+              // Remove those from the query string and split remaining parts by '|'
+              const qSansFields = q.replace(/\{[^}]+\}/g, ' ').split('|').map(s => String(s || '').trim()).filter(Boolean);
+
+              const parts = [];
+              if (qSansFields.length) {
+                parts.push(`{${field}:${qSansFields.join(' | ')}}`);
+              }
+              for (const fe of fieldExprs) parts.push(fe);
+
+              const finalToken = parts.join(' & ');
+              if (finalToken) appendTokenToSearchInput(finalToken);
+            } catch (e) {}
+          };
+          children.push({ label, onClick });
         }
         if (children.length) {
           groups.push({ label: String(analysis?.label || 'AddToSearch'), submenu: children });

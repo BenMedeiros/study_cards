@@ -10,7 +10,7 @@ export function parseFieldQuery(q) {
   if (m1) {
     const field = String(m1[1] || '').trim();
     let term = String(m1[2] || '').trim();
-    if (term === '') term = '%';
+    if (term === '') term = '__EMPTY__';
     return { field, term };
   }
 
@@ -30,7 +30,7 @@ export function parseFieldQuery(q) {
   if (m2) {
     const field = String(m2[1] || '').trim();
     let term = String(m2[2] || '').trim();
-    if (term === '') term = '%';
+    if (term === '') term = '__EMPTY__';
     return { field, term };
   }
 
@@ -88,10 +88,17 @@ export function evalComparators(valueNum, comps) {
 export function parseTableQuery(query) {
   const q = String(query || '').trim();
   if (!q) return { parts: [] };
-  const parts = String(q).split(';').map(s => String(s || '').trim()).filter(Boolean);
-  const out = [];
+  // Split top-level into AND parts. Support both ';' and '&' as top-level AND
+  // separators so users can use either `;` or `&` between constraints.
+  const semiParts = splitTopLevel(q, ';').map(s => String(s || '').trim()).filter(Boolean);
+  const combinedParts = [];
+  for (const sp of semiParts) {
+    const andParts = splitTopLevel(sp, '&').map(s => String(s || '').trim()).filter(Boolean);
+    for (const ap of andParts) combinedParts.push(ap);
+  }
 
-  for (const p of parts) {
+  const out = [];
+  for (const p of combinedParts) {
     const parsed = parseFieldQuery(p);
     const term = parsed.term ?? '';
     const rawAlts = splitTopLevel(term, '|').map(a => String(a || '').trim()).filter(Boolean);
@@ -173,6 +180,15 @@ function parseBooleanLike(v) {
 function valueMatchesToken(value, token) {
   const t = String(token ?? '').trim();
   if (!t) return false;
+  // Special token to match empty/null values
+  if (t === '__EMPTY__') {
+    const vals = shallowScalarStrings(value);
+    if (!vals.length) return true;
+    return vals.some(v => {
+      if (v == null) return true;
+      return String(v).trim() === '';
+    });
+  }
   const vals = shallowScalarStrings(value);
   if (!vals.length) return false;
 
@@ -389,9 +405,15 @@ const ADD_TO_SEARCH_ANALYSIS_DEFS = Object.freeze([
     label: 'AddToSearch-groupby',
     getKeys: (value) => {
       const s = String(value ?? '').trim();
-      return s ? [s] : [];
+      // Represent empty / null-ish values with a sentinel so we can show a
+      // '(empty)' group and also generate a query token that matches blanks.
+      if (!s) return ['__EMPTY__'];
+      return [s];
     },
-    toQueryTerm: (key) => _sanitizeAddToSearchCoreTerm(key),
+    toQueryTerm: (key) => {
+      if (String(key || '') === '__EMPTY__') return '__EMPTY__';
+      return _sanitizeAddToSearchCoreTerm(key);
+    },
   },
   {
     id: 'endsWithChar',
@@ -436,6 +458,22 @@ const ADD_TO_SEARCH_ANALYSIS_DEFS = Object.freeze([
       return core ? `%${core}%` : '';
     },
   },
+  {
+    id: 'kanjiAll',
+    label: 'AddToSearch-kanji',
+    getKeys: (value) => {
+      const s = String(value ?? '').trim();
+      if (!s) return [];
+      // Match common CJK unified ideographs (basic + extension A + compatibility)
+      const matches = Array.from(s.matchAll(/[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/g)).map(m => m[0]);
+      // return unique codepoints per value
+      return Array.from(new Set(matches));
+    },
+    toQueryTerm: (key) => {
+      const core = _sanitizeAddToSearchCoreTerm(key);
+      return core ? `%${core}%` : '';
+    },
+  },
 ]);
 
 export function buildAddToSearchColumnAnalyses(values, { minCountExclusive = 2, topN = 4 } = {}) {
@@ -446,7 +484,30 @@ export function buildAddToSearchColumnAnalyses(values, { minCountExclusive = 2, 
   const analyses = [];
   for (const def of ADD_TO_SEARCH_ANALYSIS_DEFS) {
     const counts = _countBy(values, def.getKeys);
-    // Only consider keys with count > minCount (exclusive)
+
+    // Special-case: kanjiAll should consider any kanji present and produce a
+    // single, combined suggestion containing all kanji terms (ignore minCount).
+    if (String(def.id || '') === 'kanjiAll') {
+      const rankedAll = _sortCountEntries(counts).filter(([, count]) => Number(count || 0) > 0);
+      if (!rankedAll.length) continue;
+      // limit to top 6 unique kanji collected by frequency
+      const TOP_KANJI = 6;
+      const top = rankedAll.slice(0, TOP_KANJI);
+      const parts = top.map(([value]) => {
+        try { return String(def.toQueryTerm(value) || '').trim(); } catch (e) { return ''; }
+      }).filter(Boolean);
+      if (!parts.length) continue;
+      const combinedQuery = parts.join(' | ');
+      const combinedDisplay = top.map(([v]) => String(v ?? '')).join(' | ');
+      analyses.push({
+        id: String(def.id || ''),
+        label: String(def.label || ''),
+        suggestions: [{ value: combinedDisplay, count: top.length, queryTerm: combinedQuery }],
+      });
+      continue;
+    }
+
+    // Regular analyses: Only consider keys with count > minCount (exclusive)
     const ranked = _sortCountEntries(counts).filter(([, count]) => Number(count || 0) > minCount);
     if (!ranked.length) continue;
 
