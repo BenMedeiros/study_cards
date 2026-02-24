@@ -247,8 +247,8 @@
       "path": "japanese/words/yokai_and_basic_words.json",
       "name": "Yokai and Basic Words",
       "description": "A small set of yokai names, family terms, common verbs/phrases and basic particles — formatted like the main words file.",
-      "entries": 41,
-      "modifiedAt": "2026-02-23T02:04:22.000Z"
+      "entries": 53,
+      "modifiedAt": "2026-02-24T02:58:00.905Z"
     },
     {
       "path": "languageHistory/languageHistory.json",

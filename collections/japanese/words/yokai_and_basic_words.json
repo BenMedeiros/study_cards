@@ -6,7 +6,7 @@
     "category": "japanese",
     "source": "user-provided list",
     "entry_key": "kanji",
-     "schema": [
+    "schema": [
       {
         "key": "kanji",
         "label": "Kanji",
@@ -91,7 +91,8 @@
         "description": "Optional machine-friendly tags for filtering/grouping. Use short snake_case strings. Examples: fractional_numeral, jlpt_n3, grammar_marker, formal, casual, written, spoken, counter_related.",
         "type": "string[]"
       }
-    ]
+    ],
+    "_active_revision": "rev_1771901824281_feb4332b6e8c88cb"
   },
   "entries": [
     {
@@ -101,7 +102,10 @@
       "type": "proper-noun",
       "lexicalClass": "regular",
       "orthography": "kanji",
-      "tags": ["name","yokai"]
+      "tags": [
+        "name",
+        "yokai"
+      ]
     },
     {
       "kanji": "ゲゲゲの鬼太郎",
@@ -110,16 +114,22 @@
       "type": "proper-noun",
       "lexicalClass": "regular",
       "orthography": "both",
-      "tags": ["title","yokai"]
+      "tags": [
+        "title",
+        "yokai"
+      ]
     },
     {
       "kanji": "目玉おやじ",
       "reading": "めだまおやじ",
-      "meaning": "Medama Oyaji (Eyeball-Old-Man, character)",
+      "meaning": "Medama Oyaji (Eyeball-Old-Man)",
       "type": "proper-noun",
       "lexicalClass": "regular",
       "orthography": "both",
-      "tags": ["character","yokai"]
+      "tags": [
+        "character",
+        "yokai"
+      ]
     },
     {
       "kanji": "妖怪",
@@ -136,7 +146,9 @@
       "type": "noun",
       "lexicalClass": "regular",
       "orthography": "kanji",
-      "tags": ["yokai"]
+      "tags": [
+        "yokai"
+      ]
     },
     {
       "kanji": "天狗",
@@ -145,7 +157,9 @@
       "type": "noun",
       "lexicalClass": "regular",
       "orthography": "kanji",
-      "tags": ["yokai"]
+      "tags": [
+        "yokai"
+      ]
     },
     {
       "kanji": "一反木綿",
@@ -154,7 +168,9 @@
       "type": "noun",
       "lexicalClass": "regular",
       "orthography": "kanji",
-      "tags": ["yokai"]
+      "tags": [
+        "yokai"
+      ]
     },
     {
       "kanji": "塗り壁",
@@ -163,7 +179,9 @@
       "type": "noun",
       "lexicalClass": "regular",
       "orthography": "kanji",
-      "tags": ["yokai"]
+      "tags": [
+        "yokai"
+      ]
     },
     {
       "kanji": "鬼",
@@ -428,6 +446,144 @@
       "type": "conjunction",
       "lexicalClass": "regular",
       "orthography": "hiragana"
+    },
+    {
+      "kanji": "狐",
+      "reading": "きつね",
+      "meaning": "fox; fox spirit (kitsune)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "animal_spirit"
+      ]
+    },
+    {
+      "kanji": "狸",
+      "reading": "たぬき",
+      "meaning": "tanuki; raccoon dog yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "animal_spirit"
+      ]
+    },
+    {
+      "kanji": "雪女",
+      "reading": "ゆきおんな",
+      "meaning": "snow woman; winter spirit",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "folklore"
+      ]
+    },
+    {
+      "kanji": "座敷童子",
+      "reading": "ざしきわらし",
+      "meaning": "house child spirit; brings fortune",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "household"
+      ]
+    },
+    {
+      "kanji": "ろくろ首",
+      "reading": "ろくろくび",
+      "meaning": "long-necked woman yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "ぬらりひょん",
+      "reading": "ぬらりひょん",
+      "meaning": "mysterious elder yokai; leader-like figure",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "百目",
+      "reading": "どうもく",
+      "meaning": "hundred-eyed yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "一つ目小僧",
+      "reading": "ひとつめこぞう",
+      "meaning": "one-eyed monk boy yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "化け猫",
+      "reading": "ばけねこ",
+      "meaning": "monster cat; transformed cat spirit",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "animal_spirit"
+      ]
+    },
+    {
+      "kanji": "猫又",
+      "reading": "ねこまた",
+      "meaning": "fork-tailed cat yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "animal_spirit"
+      ]
+    },
+    {
+      "kanji": "絡新婦",
+      "reading": "じょろうぐも",
+      "meaning": "spider woman yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "のっぺらぼう",
+      "reading": "のっぺらぼう",
+      "meaning": "faceless ghost",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "yokai"
+      ]
     }
   ]
 }
