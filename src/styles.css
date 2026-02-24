@@ -2762,6 +2762,14 @@ select:hover {
   flex-wrap: wrap;
 }
 
+/* When the label input is placed inside the actions row, show it inline */
+#manage-collections-root .mc-actions-row .mc-label-input {
+  width: auto;
+  margin-top: 0;
+  min-width: 18rem;
+  flex: 1 1 auto;
+}
+
 #manage-collections-root .mc-status {
   margin-top: 0.6rem;
   color: var(--muted);
@@ -2782,9 +2790,8 @@ select:hover {
 }
 
 #manage-collections-root .mc-diff-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  max-height: 21rem;
+  overflow-y: auto;
 }
 
 #manage-collections-root .mc-details {
@@ -2802,11 +2809,25 @@ select:hover {
   cursor: pointer;
   list-style: none;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto 1fr;
   gap: 0.75rem;
   align-items: center;
   padding: 0.5rem 0.65rem;
   color: var(--text);
+}
+
+/* Save Diff error state: make button visually red when invalid entries exist */
+#manage-collections-root .btn.primary.mc-save-invalid {
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+  border-color: rgba(220, 38, 38, 0.85);
+  color: #fff;
+}
+#manage-collections-root .btn.primary.mc-save-invalid:hover {
+  filter: brightness(1.05);
+}
+#manage-collections-root .btn.primary.mc-save-invalid:disabled {
+  opacity: 0.9;
+  cursor: not-allowed;
 }
 
 #manage-collections-root .mc-details-summary::-webkit-details-marker {
@@ -2886,17 +2907,20 @@ select:hover {
   word-break: break-word;
 }
 
-#manage-collections-root .mc-left,
-#manage-collections-root .mc-right {
-  overflow-y: auto;
-  height: 75%;
-  padding: 0rem 0.2rem;
+@media (min-width: 900px) {
+
+  #manage-collections-root .mc-left,
+  #manage-collections-root .mc-right {
+    overflow-y: auto;
+    height: 38rem;
+    padding: 0rem 0.2rem;
+  }
 }
 
 @media (max-width: 900px) {
   #manage-collections-root {
     overflow-y: auto;
-    height: 100vh;
+    height: 83vh;
     /* This makes the div take up the full viewport height */
   }
 
@@ -2924,3 +2948,26 @@ select:hover {
 
 /* Muted helper removed — visibility and dimming are controlled inline or
    via component-specific styles. */
+
+/* Make the Save Diff primary button in Manage Collections visually prominent */
+#manage-collections-root .mc-actions-row .btn.primary,
+#manage-collections-root .btn.primary {
+  background-color: #28a745; /* success green */
+  border-color: #1e7e34;
+  color: #ffffff;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06) inset;
+}
+#manage-collections-root .mc-actions-row .btn.primary:hover,
+#manage-collections-root .btn.primary:hover {
+  background-color: #2fb04f;
+}
+#manage-collections-root .mc-actions-row .btn.primary:active,
+#manage-collections-root .btn.primary:active {
+  background-color: #19692c;
+  transform: translateY(1px);
+}
+#manage-collections-root .mc-actions-row .btn.primary:focus,
+#manage-collections-root .btn.primary:focus {
+  outline: 3px solid rgba(40,167,69,0.22);
+  outline-offset: 2px;
+}

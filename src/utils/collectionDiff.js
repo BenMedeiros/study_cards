@@ -206,7 +206,7 @@ export function computePatchFromInput({ baseCollection, input, treatFullAsReplac
     entryKeyField: targetEntryKeyField,
     metadata: { set: {}, unset: [] },
     schema: { upsert: [], removeKeys: [] },
-    entries: { upsert: [], removeKeys: [] },
+    entries: { upsert: [], upsertMinimal: [], removeKeys: [] },
     _inputKind: kind,
   };
 
@@ -241,10 +241,24 @@ export function computePatchFromInput({ baseCollection, input, treatFullAsReplac
       const existing = baseMap.get(k);
       if (!existing) {
         patch.entries.upsert.push(incoming);
+        // for new entries, minimal = full object (useful for export/preview)
+        patch.entries.upsertMinimal.push(safeClone(incoming) || incoming);
         continue;
       }
       const fields = diffEntry(existing, incoming);
-      if (fields.length) patch.entries.upsert.push(incoming);
+      if (fields.length) {
+        patch.entries.upsert.push(incoming);
+        // build minimal diff containing only changed fields + the entry key
+        const minimal = {};
+        for (const f of fields) {
+          try { minimal[f.key] = incoming[f.key]; } catch (e) {}
+        }
+        // ensure key present so minimal can be mapped later
+        if (targetEntryKeyField && !(targetEntryKeyField in minimal)) {
+          try { minimal[targetEntryKeyField] = incoming[targetEntryKeyField]; } catch (e) {}
+        }
+        patch.entries.upsertMinimal.push(minimal);
+      }
     }
 
     // If input is full and caller wants replacement semantics, compute removals.

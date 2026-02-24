@@ -66,6 +66,205 @@ function diffEntryFields(before, after) {
   return out;
 }
 
+// --- Input scrubbing / parsing helpers ----------------------------------
+
+// Trim leading/trailing junk until we find a likely JSON start/end.
+function scrubRawText(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  let s = raw.trim();
+  // find first useful char { or [
+  const firstBrace = Math.min(
+    ...['{','['].map(ch => { const i = s.indexOf(ch); return i === -1 ? Infinity : i; })
+  );
+  if (firstBrace === Infinity) return s;
+  s = s.slice(firstBrace);
+  // find last useful char } or ]
+  const lastBrace = Math.max(
+    s.lastIndexOf('}'),
+    s.lastIndexOf(']')
+  );
+  if (lastBrace !== -1) s = s.slice(0, lastBrace + 1);
+  return s.trim();
+}
+
+// Insert commas between adjacent object end/start like "}{" -> "},{".
+function fixAdjacentObjects(text) {
+  if (typeof text !== 'string') return text;
+  // simple heuristic: replace '}{' with '},{' and ']][' with '],[' etc.
+  return text.replace(/}\s*{/g, '},{').replace(/\]\s*\[/g, '],[');
+}
+
+// Extract balanced top-level JSON objects from text (returns array of JSON strings)
+function extractTopLevelObjects(text) {
+  const out = [];
+  if (!text || typeof text !== 'string') return out;
+  const len = text.length;
+  let i = 0;
+  while (i < len) {
+    // skip until we find { or [
+    while (i < len && text[i] !== '{' && text[i] !== '[') i++;
+    if (i >= len) break;
+    const startChar = text[i];
+    const endChar = startChar === '{' ? '}' : ']';
+    let depth = 0;
+    let j = i;
+    for (; j < len; j++) {
+      const ch = text[j];
+      if (ch === startChar) depth++;
+      else if (ch === endChar) depth--;
+      // naive string handling: skip over string literals to avoid brace counting inside strings
+      else if (ch === '"') {
+        j++;
+        while (j < len && text[j] !== '"') {
+          if (text[j] === '\\') j += 2; else j++;
+        }
+      }
+      if (depth === 0) break;
+    }
+    if (depth === 0) {
+      out.push(text.slice(i, j + 1));
+      i = j + 1;
+    } else break;
+  }
+  return out;
+}
+
+// Try to parse text into JSON using several heuristics and scrubbing steps.
+function tryParseJsonLoose(raw) {
+  if (raw == null) return null;
+  let s = String(raw);
+  // quick try
+  try { return JSON.parse(s); } catch (e) {}
+
+  // scrub outer junk
+  s = scrubRawText(s);
+  s = fixAdjacentObjects(s);
+  try { return JSON.parse(s); } catch (e) {}
+
+  // if it's a sequence of objects, extract them and wrap in array
+  const objs = extractTopLevelObjects(s).map(x => x.trim()).filter(Boolean);
+  if (objs.length === 1) {
+    try { return JSON.parse(objs[0]); } catch (e) {}
+  }
+  if (objs.length > 1) {
+    const combined = `[${objs.join(',')}]`;
+    try { return JSON.parse(combined); } catch (e) {}
+  }
+
+  // last resort: try to repair obvious trailing commas and stray characters
+  const cleaned = s.replace(/,\s*([\]}])/g, '$1');
+  try { return JSON.parse(cleaned); } catch (e) {}
+
+  return null;
+}
+
+// Validate a schema array. Returns { errors: [], warnings: [] }.
+function validateSchemaArray(schemaArr) {
+  const out = { errors: [], warnings: [] };
+  if (!Array.isArray(schemaArr)) {
+    out.errors.push('Schema must be an array of field definitions.');
+    return out;
+  }
+  const allowedTypes = new Set(['string','text','number','integer','boolean','enum','tags','tag','kanji','reading','date','select']);
+  for (let i = 0; i < schemaArr.length; i++) {
+    const f = schemaArr[i];
+    if (!f || typeof f !== 'object') {
+      out.errors.push(`Schema item at index ${i} must be an object.`);
+      continue;
+    }
+    const key = typeof f.key === 'string' ? f.key.trim() : '';
+    if (!key) out.errors.push(`Schema item at index ${i} is missing a string 'key'.`);
+    const t = f.type && typeof f.type === 'string' ? f.type.trim() : '';
+    if (t && !allowedTypes.has(t)) out.warnings.push(`Field '${key || ('#'+i)}' has unknown type '${t}'.`);
+    if (t === 'enum') {
+      const vals = f.values;
+      if (!vals || typeof vals !== 'object' || Array.isArray(vals) || Object.keys(vals).length === 0) {
+        out.errors.push(`Enum field '${key || ('#'+i)}' must provide a non-empty 'values' object.`);
+        continue;
+      }
+      for (const [vk, vv] of Object.entries(vals)) {
+        if (typeof vk !== 'string' || !vk.trim()) out.warnings.push(`Enum field '${key}' has an invalid value key.`);
+        if (typeof vv !== 'string') out.warnings.push(`Enum field '${key}' value for '${vk}' should be a string description.`);
+      }
+    }
+  }
+  return out;
+}
+
+// Validate entries against a schema array. Returns { errors: [], warnings: [] }.
+function validateEntriesAgainstSchema(entries, schemaArr, { entryKeyField = '' } = {}) {
+  const out = { entryErrors: [], entryWarnings: [], warnings: [] };
+  if (!Array.isArray(entries) || !entries.length) return out;
+  if (!Array.isArray(schemaArr) || !schemaArr.length) return out;
+
+  const schemaMap = new Map();
+  for (const f of schemaArr) {
+    if (!f || typeof f !== 'object') continue;
+    const k = typeof f.key === 'string' ? f.key.trim() : '';
+    if (!k) continue;
+    schemaMap.set(k, f);
+  }
+
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i];
+    if (!e || typeof e !== 'object') continue;
+    const id = (entryKeyField && e[entryKeyField] != null) ? String(e[entryKeyField]) : `#${i}`;
+    for (const [k, f] of schemaMap.entries()) {
+      const t = f.type && typeof f.type === 'string' ? f.type.trim() : '';
+      if (t === 'enum') {
+        const vals = f.values && typeof f.values === 'object' && !Array.isArray(f.values) ? Object.keys(f.values) : [];
+        if (!vals.length) {
+          out.warnings.push(`Schema enum field '${k}' has no defined values.`);
+          out.entryWarnings.push({ id, index: i, field: k, message: `Schema enum field '${k}' has no defined values.` });
+          continue;
+        }
+        if (k in e) {
+          const v = e[k];
+          if (v == null || (typeof v !== 'string' && typeof v !== 'number')) {
+            const msg = `Entry ${id}: field '${k}' must be one of: ${vals.join(', ')}.`;
+            out.entryErrors.push({ id, index: i, field: k, message: msg });
+          } else {
+            const vs = String(v);
+            if (!vals.includes(vs)) {
+              const msg = `Entry ${id}: invalid value '${vs}' for enum '${k}'. Allowed: ${vals.join(', ')}.`;
+              out.entryErrors.push({ id, index: i, field: k, message: msg });
+            }
+          }
+        }
+      }
+      // future: add other type checks (tags arrays, number ranges, etc.)
+    }
+  }
+
+  return out;
+}
+
+// Deep equality that ignores object key ordering. Handles primitives, arrays, and plain objects.
+function deepEqual(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return a === b;
+  if (typeof a !== typeof b) return false;
+  if (Array.isArray(a)) {
+    if (!Array.isArray(b)) return false;
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) if (!deepEqual(a[i], b[i])) return false;
+    return true;
+  }
+  if (typeof a === 'object') {
+    if (typeof b !== 'object') return false;
+    const ak = Object.keys(a).filter(k => typeof a[k] !== 'undefined').sort();
+    const bk = Object.keys(b).filter(k => typeof b[k] !== 'undefined').sort();
+    if (ak.length !== bk.length) return false;
+    for (let i = 0; i < ak.length; i++) if (ak[i] !== bk[i]) return false;
+    for (const k of ak) {
+      if (!deepEqual(a[k], b[k])) return false;
+    }
+    return true;
+  }
+  // functions, symbols, etc — fallback to strict equality
+  return a === b;
+}
+
 function pickEntrySummary(entry) {
   const e = entry && typeof entry === 'object' ? entry : {};
   const bits = [];
@@ -257,7 +456,8 @@ export function renderManageCollections({ store, onNavigate }) {
 
   const actionsRow = document.createElement('div');
   actionsRow.className = 'mc-actions-row';
-  actionsRow.append(parseBtn, importHelpBtn, clearBtn, saveDiffBtn, saveSnapshotBtn);
+  // place the label input inline with the action buttons so they read as a group
+  actionsRow.append(parseBtn, importHelpBtn, clearBtn, labelInput, saveDiffBtn, saveSnapshotBtn);
 
   const statusEl = document.createElement('div');
   statusEl.className = 'mc-status';
@@ -295,6 +495,14 @@ export function renderManageCollections({ store, onNavigate }) {
   const removedHint = el('p', { className: 'hint', text: 'These entries will be removed from the collection.' });
   const removedCard = card({ id: 'mc-diff-removed', title: 'Entry Removals', cornerCaption: '', className: 'mc-card', children: [removedHint, removedBody] });
 
+  const invalidBody = el('div', { id: 'mc-diff-invalid-body', className: 'mc-diff-list' });
+  const invalidHint = el('p', { className: 'hint', text: 'Entries with missing or invalid keys/fields — will not be applied.' });
+  const invalidCard = card({ id: 'mc-diff-invalid', title: 'Invalid Entries', cornerCaption: '', className: 'mc-card', children: [invalidHint, invalidBody] });
+
+  const unchangedBody = el('div', { id: 'mc-diff-unchanged-body', className: 'mc-diff-list' });
+  const unchangedHint = el('p', { className: 'hint', text: 'Entries submitted but with no detected changes; they will be ignored.' });
+  const unchangedCard = card({ id: 'mc-diff-unchanged', title: 'Unchanged Entries', cornerCaption: '', className: 'mc-card', children: [unchangedHint, unchangedBody] });
+
   // append persistent cards (history card will be placed on the left)
   // these cards live directly in the right column (no extra wrapper)
 
@@ -302,13 +510,15 @@ export function renderManageCollections({ store, onNavigate }) {
   left.append(historyMount);
 
   right.append(
-  card({ title: 'Import', className: 'mc-card', children: [el('p', { className: 'hint', text: 'Paste JSON here (full collection, entries array, metadata object, or schema array).' }), importArea, labelInput, actionsRow, statusEl, warningsEl] }),
+  card({ title: 'Import', className: 'mc-card', children: [el('p', { className: 'hint', text: 'Paste JSON here (full collection, entries array, metadata object, or schema array).' }), importArea, actionsRow, statusEl, warningsEl] }),
     
     metadataCard,
     schemaCard,
+    unchangedCard,
     editedCard,
     newCard,
     removedCard,
+    invalidCard,
   );
 
   layout.append(left, right);
@@ -321,6 +531,22 @@ export function renderManageCollections({ store, onNavigate }) {
   let previewResult = null; // {patch,diffs,merged,warnings}
   let revisions = [];
   let activeRevisionId = null;
+  // last parsed raw text (trimmed). Used to disable Parse when unchanged.
+  let lastParsedRaw = null;
+
+  function updateActionButtons() {
+    try {
+      const trimmed = String(importArea.value || '').trim();
+      clearBtn.disabled = trimmed === '';
+      // disable parse if empty or unchanged since last successful parse
+      const parsedMatches = (lastParsedRaw != null && trimmed === lastParsedRaw);
+      parseBtn.disabled = (trimmed === '') || parsedMatches;
+      // if the current textarea differs from the last parsed text, force Save Diff disabled
+      try {
+        if (!parsedMatches) saveDiffBtn.disabled = true;
+      } catch (e) {}
+    } catch (e) {}
+  }
 
   function setStatus(msg) {
     const txt = String(msg || '');
@@ -393,6 +619,10 @@ export function renderManageCollections({ store, onNavigate }) {
     editedBody.innerHTML = '';
     newBody.innerHTML = '';
     removedBody.innerHTML = '';
+    unchangedBody.innerHTML = '';
+    invalidBody.innerHTML = '';
+    unchangedBody.innerHTML = '';
+    unchangedBody.innerHTML = '';
 
     // helper to set corner caption for a card
     function setCorner(cardEl, text) {
@@ -463,7 +693,7 @@ export function renderManageCollections({ store, onNavigate }) {
       metadataBody.append(list);
     } else {
       setCorner(metadataCard, '');
-      metadataBody.append(el('p', { className: 'hint', text: 'These are the changes that will be saved if you click “Save Diff”.' }));
+      // leave metadataBody empty; the static hint lives in the card header
     }
 
     // ---- Schema diff ----
@@ -521,24 +751,156 @@ export function renderManageCollections({ store, onNavigate }) {
       schemaBody.append(list);
     } else {
       setCorner(schemaCard, '');
-      schemaBody.append(el('p', { className: 'hint', text: 'These are the changes that will be saved if you click “Save Diff”.' }));
+      // leave schemaBody empty; the static hint lives in the card header
     }
 
-    // ---- Entries: edited vs new ----
+    // ---- Entries: edited vs new vs unchanged ----
+    // Prepare entry validation maps (by id and by index) so we can surface per-entry schema errors
+    const entryValidation = previewResult?._entryValidation || { entryErrors: [], entryWarnings: [], warnings: [] };
+    const errorsById = new Map();
+    const errorsByIndex = new Map();
+    try {
+      for (const ev of (entryValidation.entryErrors || [])) {
+        if (!ev) continue;
+        const rawId = typeof ev.id !== 'undefined' && ev.id !== null ? String(ev.id) : '';
+        if (!rawId) continue;
+        if (rawId && rawId[0] === '#') {
+          const idx = parseInt(rawId.slice(1));
+          if (!Number.isNaN(idx)) {
+            const arr = errorsByIndex.get(idx) || [];
+            arr.push(ev.message || String(ev.message || ''));
+            errorsByIndex.set(idx, arr);
+          }
+        } else {
+          const msg = ev.message || String(ev.message || '');
+          const arr = errorsById.get(rawId) || [];
+          arr.push(msg);
+          errorsById.set(rawId, arr);
+          // also store a trimmed-key entry to improve matching robustness
+          try { const t = rawId.trim(); if (t !== rawId) errorsById.set(t, arr); } catch (e) {}
+        }
+      }
+    } catch (e) {}
     const upsert = Array.isArray(patch?.entries?.upsert) ? patch.entries.upsert : [];
+    // Prefer iterating the original parsed input entries (so unchanged items are visible).
+    // Fall back to patch upserts only when the parsed input entries are not available.
+    const inputEntriesForLoop = (Array.isArray(previewResult?._inputEntries) && previewResult._inputEntries.length)
+      ? previewResult._inputEntries
+      : (Array.isArray(upsert) ? upsert : []);
+
+    // Detect duplicate keys within the import itself. If duplicates exist, mark
+    // all entries with that key as invalid (dupkey in import).
+    const importKeyCounts = new Map();
+    const importDupKeys = new Set();
+    try {
+      if (entryKeyField) {
+        for (const it of (Array.isArray(previewResult?._inputEntries) ? previewResult._inputEntries : inputEntriesForLoop)) {
+          if (!it || typeof it !== 'object') continue;
+          const k = it[entryKeyField] != null ? String(it[entryKeyField]).trim() : '';
+          if (!k) continue;
+          importKeyCounts.set(k, (importKeyCounts.get(k) || 0) + 1);
+        }
+        for (const [k, v] of importKeyCounts.entries()) if (v > 1) importDupKeys.add(k);
+      }
+    } catch (e) {}
     const removeKeys = Array.isArray(patch?.entries?.removeKeys) ? patch.entries.removeKeys : [];
 
     const editedItems = [];
     const newItems = [];
+    const unchangedItems = [];
+    const invalidItems = [];
 
-    for (const incoming of upsert) {
-      const k = (entryKeyField && incoming && typeof incoming === 'object' && incoming[entryKeyField] != null)
-        ? String(incoming[entryKeyField]).trim()
-        : '';
-      const isNew = entryKeyField ? !baseMap.has(k) : true;
-      const before = entryKeyField ? baseMap.get(k) : null;
-      const after = entryKeyField ? (mergedMap.get(k) || incoming) : incoming;
+    for (const incoming of inputEntriesForLoop) {
+      // If this import contains duplicate keys, classify them as invalid up-front
+      try {
+        if (entryKeyField) {
+          const candidateId = (incoming && typeof incoming === 'object' && incoming[entryKeyField] != null) ? String(incoming[entryKeyField]).trim() : null;
+          if (candidateId && importDupKeys.has(candidateId)) {
+            const label = candidateId || '(no key)';
+            const body = el('div', { className: 'mc-diff-body', children: [ el('div', { className: 'mc-single-col', children: [preJson(incoming, '18rem'), el('div', { className: 'mc-validation-messages', text: 'dupkey in import' })] }) ] });
+            const node = makeDetailsItem({ summaryLeft: label, summaryRight: `invalid • dupkey in import`, children: [body] });
+            invalidItems.push({ key: label, node });
+            continue;
+          }
+        }
+      } catch (e) {}
+      // Check for per-entry validation errors first and classify as invalid if present.
+      try {
+        if (entryKeyField) {
+          const rawCandidate = (incoming && typeof incoming === 'object' && incoming[entryKeyField] != null) ? incoming[entryKeyField] : null;
+          const candidateId = rawCandidate != null ? String(rawCandidate) : null;
+          const candidateTrim = candidateId ? candidateId.trim() : candidateId;
+          let msgs = [];
+          if (candidateId && errorsById.has(candidateId)) msgs = errorsById.get(candidateId) || [];
+          if ((!msgs || !msgs.length) && candidateTrim && errorsById.has(candidateTrim)) msgs = errorsById.get(candidateTrim) || [];
+          // fallback: if no direct id match, try to find the original input entry with same key
+          if ((!msgs || !msgs.length) && previewResult?._inputEntries && Array.isArray(previewResult._inputEntries)) {
+            try {
+              const idx = previewResult._inputEntries.findIndex(x => x && typeof x === 'object' && String(x[entryKeyField] ?? '').trim() === String(candidateId ?? '').trim());
+              if (idx >= 0 && errorsByIndex.has(idx)) msgs = errorsByIndex.get(idx) || [];
+            } catch (e) {}
+          }
+          if (msgs && msgs.length) {
+            const label = candidateId || '(no key)';
+            const body = el('div', { className: 'mc-diff-body', children: [ el('div', { className: 'mc-single-col', children: [preJson(incoming, '18rem'), el('div', { className: 'mc-validation-messages', text: msgs.join('; ') })] }) ] });
+            const node = makeDetailsItem({ summaryLeft: label, summaryRight: `invalid • ${msgs.length} error(s)`, children: [body] });
+            invalidItems.push({ key: label, node });
+            continue;
+          }
+        } else {
+          // no entry key: validation used index-based ids like '#0', '#1'
+          if (Array.isArray(previewResult?._inputEntries)) {
+            const idx = previewResult._inputEntries.findIndex(x => deepEqual(x, incoming));
+            if (idx >= 0 && errorsByIndex.has(idx)) {
+              const msgs = errorsByIndex.get(idx) || [];
+              const label = `#${idx}`;
+              const body = el('div', { className: 'mc-diff-body', children: [ el('div', { className: 'mc-single-col', children: [preJson(incoming, '18rem'), el('div', { className: 'mc-validation-messages', text: msgs.join('; ') })] }) ] });
+              const node = makeDetailsItem({ summaryLeft: label, summaryRight: `invalid • ${msgs.length} error(s)`, children: [body] });
+              invalidItems.push({ key: label, node });
+              continue;
+            }
+          }
+        }
+      } catch (e) {}
+      let k = '';
+      let isNew = true;
+      let before = null;
+      let after = incoming;
+
+      if (entryKeyField) {
+        // If an entry key is expected but missing, classify as invalid.
+        if (!incoming || typeof incoming !== 'object' || incoming[entryKeyField] == null) {
+          const label = '(no key)';
+          const body = el('div', { className: 'mc-diff-body', children: [ el('div', { className: 'mc-single-col', children: [preJson(incoming, '18rem')] }) ] });
+          const node = makeDetailsItem({ summaryLeft: label, summaryRight: `invalid • missing '${entryKeyField}'`, children: [body] });
+          invalidItems.push({ key: label, node });
+          continue;
+        }
+        k = (incoming && typeof incoming === 'object' && incoming[entryKeyField] != null) ? String(incoming[entryKeyField]).trim() : '';
+        isNew = !baseMap.has(k);
+        before = baseMap.get(k) || null;
+        after = mergedMap.get(k) || incoming;
+      } else {
+        // No entry key: try to find an exact matching base entry to detect unchanged rows
+        for (const b of baseArr) {
+          if (b && typeof b === 'object' && deepEqual(b, incoming)) {
+            before = b;
+            isNew = false;
+            break;
+          }
+        }
+        // after remains the incoming; we can't reliably map to mergedMap without a key
+      }
       const changedFields = before ? diffEntryFields(before, after) : [];
+      // if there's a before and the objects are deeply equal, classify as unchanged
+      if (before && deepEqual(before, after)) {
+        const summaryBits = pickEntrySummary(after);
+        const label = k || '(no key)';
+        const body = el('div', { className: 'mc-diff-body', children: [ el('div', { className: 'mc-single-col', children: [preJson(after, '18rem')] }) ] });
+        const node = makeDetailsItem({ summaryLeft: label, summaryRight: `unchanged${summaryBits ? ' • ' + summaryBits : ''}`, children: [body] });
+        unchangedItems.push({ key: label, node });
+        continue;
+      }
       const summaryBits = pickEntrySummary(after);
       const label = k || '(no key)';
       const right = isNew
@@ -601,7 +963,7 @@ export function renderManageCollections({ store, onNavigate }) {
       editedBody.append(list);
     } else {
       setCorner(editedCard, '');
-      editedBody.append(el('p', { className: 'hint', text: 'These are the changes that will be saved if you click “Save Diff”.' }));
+      // leave editedBody empty; the static hint lives in the card header
     }
 
     if (newItems.length) {
@@ -610,7 +972,25 @@ export function renderManageCollections({ store, onNavigate }) {
       newBody.append(list);
     } else {
       setCorner(newCard, '');
-      newBody.append(el('p', { className: 'hint', text: 'These are the changes that will be saved if you click “Save Diff”.' }));
+      // leave newBody empty; the static hint lives in the card header
+    }
+
+    if (unchangedItems.length) {
+      setCorner(unchangedCard, `${unchangedItems.length}`);
+      const list = el('div', { className: 'mc-diff-list', children: unchangedItems.sort((a, b) => String(a.key).localeCompare(String(b.key))).map(x => x.node) });
+      unchangedBody.append(list);
+    } else {
+      setCorner(unchangedCard, '');
+      // leave unchangedBody empty; the static hint lives in the card header
+    }
+
+    if (invalidItems.length) {
+      setCorner(invalidCard, `${invalidItems.length}`);
+      const list = el('div', { className: 'mc-diff-list', children: invalidItems.sort((a, b) => String(a.key).localeCompare(String(b.key))).map(x => x.node) });
+      invalidBody.append(list);
+    } else {
+      setCorner(invalidCard, '');
+      // leave invalidBody empty; the static hint lives in the card header
     }
 
     if (removeKeys.length) {
@@ -625,22 +1005,59 @@ export function renderManageCollections({ store, onNavigate }) {
       removedBody.append(list);
     } else {
       setCorner(removedCard, '');
-      removedBody.append(el('p', { className: 'hint', text: 'These are the changes that will be saved if you click “Save Diff”.' }));
+      // leave removedBody empty; the static hint lives in the card header
+    }
+    // If schema changes exist, surface a warning so schema is reviewed first.
+    try {
+      const warn = Array.isArray(previewResult?.warnings) ? previewResult.warnings.slice() : [];
+      if (schemaAdded.length || schemaChanged.length || schemaRemoved.length) {
+        if ((upsert && upsert.length)) warn.unshift('Schema changes detected — review schema before entries.');
+        else warn.unshift('Schema changes detected.');
+      }
+      setWarnings(warn);
+    } catch (e) {}
+
+    // Enable/disable Save Diff depending on whether there are meaningful changes
+    try {
+      const md = Number(diffs?.metadataChanges || 0);
+      const sd = Number(diffs?.schemaChanges || 0);
+      const ne = Number(diffs?.newEntries || 0);
+      const ed = Number(diffs?.editedEntries || 0);
+      const rm = Number(diffs?.entriesRemove || 0);
+      const meaningful = (md + sd + ne + ed + rm) > 0;
+      const hasInvalid = (invalidItems && invalidItems.length) ? true : false;
+      saveDiffBtn.disabled = !meaningful || hasInvalid || !previewResult?.patch;
+      // visually indicate error state by toggling a scoped class
+      try {
+        if (hasInvalid) saveDiffBtn.classList.add('mc-save-invalid');
+        else saveDiffBtn.classList.remove('mc-save-invalid');
+      } catch (e) {}
+    } catch (e) {
+      try { saveDiffBtn.disabled = true; } catch (err) {}
     }
   }
 
   function renderHistory() {
     historyMount.innerHTML = '';
     const rows = (Array.isArray(revisions) ? revisions.slice().reverse() : []).map(r => {
-      const label = r.label || '';
-      const active = (r.id && activeRevisionId && r.id === activeRevisionId) ? 'active' : '';
+      const label = r.label || (r.kind === 'system' ? 'System base' : '');
+      const active = ((r.id && activeRevisionId && r.id === activeRevisionId) || (r.kind === 'system' && !activeRevisionId)) ? 'active' : '';
       const kind = r.kind || 'diff';
       const created = r.createdAt || '';
       const parent = r.parentId ? shortId(r.parentId, 10) : '';
       const patch = r.patch;
-      const pSummary = (patch && typeof patch === 'object')
-        ? `${(patch.metadata?.unset?.length || 0) + Object.keys(patch.metadata?.set || {}).length}m / ${(patch.schema?.removeKeys?.length || 0) + (patch.schema?.upsert?.length || 0)}s / ${(patch.entries?.upsert?.length || 0)}u / ${(patch.entries?.removeKeys?.length || 0)}r`
-        : '';
+      let pSummary = '';
+      if (r.kind === 'system' && r.blob) {
+        try {
+          const ak = detectArrayKey(r.blob || {});
+          const arr = Array.isArray(r.blob?.[ak]) ? r.blob[ak] : [];
+          pSummary = `${arr.length} ${arr.length === 1 ? 'entry' : 'entries'}`;
+        } catch (e) { pSummary = '' }
+      } else {
+        pSummary = (patch && typeof patch === 'object')
+          ? `${(patch.metadata?.unset?.length || 0) + Object.keys(patch.metadata?.set || {}).length}m / ${(patch.schema?.removeKeys?.length || 0) + (patch.schema?.upsert?.length || 0)}s / ${(patch.entries?.upsert?.length || 0)}u / ${(patch.entries?.removeKeys?.length || 0)}r`
+          : '';
+      }
       const arr = [active, kind, created, shortId(r.id, 12), label, parent, pSummary];
       try { arr.__id = r.id; } catch (e) {}
       return arr;
@@ -655,7 +1072,13 @@ export function renderManageCollections({ store, onNavigate }) {
           const rid = tr?.dataset?.rowId || rowData.__id;
           if (!rid) return;
           try {
-            store.collectionDB.setActiveRevisionId(collectionKey, rid);
+            // If user selected the system/base row, clear active revision so
+            // the system collection becomes the active base.
+            if (rid === '__system__') {
+              store.collectionDB.setActiveRevisionId(collectionKey, null);
+            } else {
+              store.collectionDB.setActiveRevisionId(collectionKey, rid);
+            }
             await loadCurrent();
           } catch (e) {
             setStatus(`Failed to activate revision: ${e?.message || e}`);
@@ -670,7 +1093,12 @@ export function renderManageCollections({ store, onNavigate }) {
           const rid = tr?.dataset?.rowId || rowData.__id;
           if (!rid) return;
           try {
-            const snap = await store.collectionDB.resolveCollectionAtRevision(collectionKey, rid);
+            let snap = null;
+            if (rid === '__system__') {
+              snap = await store.collectionDB.getSystemCollection(collectionKey).catch(() => null);
+            } else {
+              snap = await store.collectionDB.resolveCollectionAtRevision(collectionKey, rid);
+            }
             previewResult = { patch: null, diffs: null, merged: snap, warnings: [] };
             currentJsonMode = 'preview';
             renderJson('preview');
@@ -690,7 +1118,11 @@ export function renderManageCollections({ store, onNavigate }) {
           const rid = tr?.dataset?.rowId || rowData.__id;
           const rec = (Array.isArray(revisions) ? revisions.find(x => x && x.id === rid) : null);
           if (!rec) return;
-          await copyToClipboard(safeJsonStringify({ id: rec.id, kind: rec.kind, parentId: rec.parentId, label: rec.label, patch: rec.patch }, 2));
+          if (rec.kind === 'system') {
+            await copyToClipboard(safeJsonStringify({ id: rec.id, kind: rec.kind, label: rec.label, blob: rec.blob }, 2));
+          } else {
+            await copyToClipboard(safeJsonStringify({ id: rec.id, kind: rec.kind, parentId: rec.parentId, label: rec.label, patch: rec.patch }, 2));
+          }
           setStatus('Copied patch JSON.');
         }
       }
@@ -718,6 +1150,17 @@ export function renderManageCollections({ store, onNavigate }) {
     } catch (e) {
       revisions = [];
     }
+    // Try to include the system/base collection as the first history item
+    try {
+      const sys = await store.collectionDB.getSystemCollection(collectionKey).catch(() => null);
+      if (sys) {
+        const sysRec = { id: '__system__', collectionKey, kind: 'system', createdAt: '', parentId: null, label: 'System base', blob: sys, patch: null };
+        revisions = [sysRec, ...(Array.isArray(revisions) ? revisions : [])];
+      }
+    } catch (e) {
+      // ignore
+    }
+
     activeRevisionId = store.collectionDB.getActiveRevisionId(collectionKey);
     renderHistory();
   }
@@ -806,10 +1249,14 @@ export function renderManageCollections({ store, onNavigate }) {
     editedBody.innerHTML = '';
     newBody.innerHTML = '';
     removedBody.innerHTML = '';
+    unchangedBody.innerHTML = '';
+    invalidBody.innerHTML = '';
     setStatus('');
     setWarnings([]);
     currentJsonMode = 'current';
     renderJson('current');
+    lastParsedRaw = null;
+    updateActionButtons();
   });
 
   parseBtn.addEventListener('click', async () => {
@@ -818,6 +1265,8 @@ export function renderManageCollections({ store, onNavigate }) {
     saveDiffBtn.disabled = true;
     saveSnapshotBtn.disabled = true;
     saveSnapshotBtn.style.display = 'none';
+    // hold per-entry validation results here so we can attach to previewResult
+    let entryValidation = null;
     // clear diff card bodies
     metadataBody.innerHTML = '';
     schemaBody.innerHTML = '';
@@ -828,9 +1277,14 @@ export function renderManageCollections({ store, onNavigate }) {
     const raw = String(importArea.value || '').trim();
     if (!raw) return;
 
-    let parsed;
+    // Try loose parsing / scrubbing to handle messy inputs
+    let parsed = null;
     try {
-      parsed = JSON.parse(raw);
+      parsed = tryParseJsonLoose(raw);
+      if (parsed == null) {
+        setStatus('Invalid JSON: unable to parse input after cleanup.');
+        return;
+      }
     } catch (e) {
       setStatus(`Invalid JSON: ${e?.message || e}`);
       return;
@@ -884,14 +1338,67 @@ export function renderManageCollections({ store, onNavigate }) {
         inputForPreview = parsed;
       }
 
+      // If the input contains a schema update, validate it before previewing.
+      try {
+        const schemaArr = Array.isArray(inputForPreview?.schema)
+          ? inputForPreview.schema
+          : (Array.isArray(inputForPreview?.metadata?.schema) ? inputForPreview.metadata.schema : null);
+        if (schemaArr) {
+          const sv = validateSchemaArray(schemaArr);
+          if (Array.isArray(sv.errors) && sv.errors.length) {
+            setStatus(`Schema error: ${sv.errors[0]}`);
+            if (sv.warnings && sv.warnings.length) setWarnings(sv.warnings);
+            return;
+          }
+          if (Array.isArray(sv.warnings) && sv.warnings.length) setWarnings(sv.warnings);
+        }
+      } catch (e) {}
+
+      // Validate entries against the effective schema (input schema if present, otherwise base schema)
+      try {
+        const ik = detectArrayKey(inputForPreview || {}) || 'entries';
+        const inputEntries = Array.isArray(inputForPreview?.[ik]) ? inputForPreview[ik] : (Array.isArray(inputForPreview) ? inputForPreview : []);
+        const inputSchemaArr = Array.isArray(inputForPreview?.schema)
+          ? inputForPreview.schema
+          : (Array.isArray(inputForPreview?.metadata?.schema) ? inputForPreview.metadata.schema : null);
+        const baseSchemaArr = Array.isArray(currentCollection?.metadata?.schema)
+          ? currentCollection.metadata.schema
+          : (Array.isArray(currentCollection?.schema) ? currentCollection.schema : null);
+        const schemaToUse = inputSchemaArr || baseSchemaArr || null;
+        if (schemaToUse && inputEntries && inputEntries.length) {
+          // validate entries but don't abort — surface per-entry errors in the Invalid card
+          try {
+            const ev = validateEntriesAgainstSchema(inputEntries, schemaToUse, { entryKeyField: getEntryKeyField(currentCollection, ik) });
+            // attach to a local var so we can add it to previewResult after preview returns
+            entryValidation = ev;
+            if (Array.isArray(ev.warnings) && ev.warnings.length) setWarnings(ev.warnings);
+            if (Array.isArray(ev.entryErrors) && ev.entryErrors.length) setStatus(`${ev.entryErrors.length} entry validation error(s) detected.`);
+          } catch (e) {
+            // ignore validation failures
+          }
+        }
+      } catch (e) {}
+
       const res = await store.collectionDB.previewInputChanges(collectionKey, inputForPreview, { treatFullAsReplace: false });
       previewResult = res;
+      // attach any entry-level validation results computed earlier during parse
+      try {
+        previewResult._entryValidation = entryValidation || { entryErrors: [], entryWarnings: [], warnings: [] };
+      } catch (e) {}
+      // attach normalized input entries so the renderer can classify unchanged rows
+      try {
+        const ik = detectArrayKey(inputForPreview || {}) || 'entries';
+        const iarr = Array.isArray(inputForPreview?.[ik]) ? inputForPreview[ik] : (Array.isArray(inputForPreview) ? inputForPreview : []);
+        previewResult._inputArrKey = ik;
+        previewResult._inputEntries = iarr;
+      } catch (e) {}
       setWarnings(res?.warnings || []);
-
-      // Enable save
-      saveDiffBtn.disabled = false;
       snapshotToggleBtn.disabled = false;
       snapshotToggleBtn.textContent = 'Show Current';
+
+      // remember the parsed text so we can disable Parse until it changes
+      lastParsedRaw = raw;
+      updateActionButtons();
 
       // If this looks like a full snapshot and we can't load system base, allow snapshot save.
       const canSnapshot = (res?.patch?._inputKind === 'full') && !currentCollection;
@@ -923,8 +1430,12 @@ export function renderManageCollections({ store, onNavigate }) {
       editedBody.innerHTML = '';
       newBody.innerHTML = '';
       removedBody.innerHTML = '';
+      unchangedBody.innerHTML = '';
+      invalidBody.innerHTML = '';
       importArea.value = '';
       labelInput.value = '';
+      lastParsedRaw = null;
+      updateActionButtons();
       await loadCurrent();
     } catch (e) {
       setStatus(`Failed to save diff: ${e?.message || e}`);
@@ -947,12 +1458,20 @@ export function renderManageCollections({ store, onNavigate }) {
       removedBody.innerHTML = '';
       importArea.value = '';
       labelInput.value = '';
+      lastParsedRaw = null;
+      updateActionButtons();
       await loadCurrent();
     } catch (e) {
       setStatus(`Failed to save snapshot: ${e?.message || e}`);
       saveSnapshotBtn.disabled = false;
     }
   });
+
+  // keep action buttons in sync as the user types
+  importArea.addEventListener('input', () => updateActionButtons());
+
+  // initialize action button states
+  updateActionButtons();
 
   // ---- init ----
   initKeyFromActive();
