@@ -1,4 +1,3 @@
-import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createTable } from '../components/table.js';
 import { card, el } from '../components/ui.js';
 import { createDropdown } from '../components/dropdown.js';
@@ -122,115 +121,11 @@ export function renderManageCollections({ store, onNavigate }) {
   const root = document.createElement('div');
   root.id = 'manage-collections-root';
 
-  const headerTools = createViewHeaderTools();
-  headerTools.id = 'manage-collections-header-tools';
+  // Header tools removed — collection selection and version controls
+  // are handled elsewhere (collection browser / Activate action).
 
-  const keyLabel = document.createElement('div');
-  keyLabel.className = 'mc-label';
-  keyLabel.textContent = 'Collection';
-
-  // collection selector (dropdown will be populated later)
-  const keyInput = document.createElement('div');
-  keyInput.className = 'mc-key-input';
-
-  // wrap dropdown in a header caption group (like other view header tools)
-  const collGroup = document.createElement('div');
-  collGroup.className = 'data-expansion-group';
-  const collSlot = document.createElement('div');
-  collSlot.className = 'entity-explorer-source-slot';
-  collSlot.append(keyInput);
-  const collCaption = document.createElement('div');
-  collCaption.className = 'data-expansion-caption';
-  collCaption.textContent = 'Collection';
-  collGroup.append(collSlot, collCaption);
-
-  const versionSelect = document.createElement('select');
-  versionSelect.className = 'mc-version-select';
-  versionSelect.title = 'Active version (system or a saved revision)';
-
-  const setActiveBtn = document.createElement('button');
-  setActiveBtn.type = 'button';
-  setActiveBtn.className = 'btn small';
-  setActiveBtn.textContent = 'Set Active';
-
-  const copyMetaBtn = document.createElement('button');
-  copyMetaBtn.type = 'button';
-  copyMetaBtn.className = 'btn small';
-  copyMetaBtn.textContent = 'Copy Metadata';
-
-  const copySchemaBtn = document.createElement('button');
-  copySchemaBtn.type = 'button';
-  copySchemaBtn.className = 'btn small';
-  copySchemaBtn.textContent = 'Copy Schema';
-
-  const copyTemplateBtn = document.createElement('button');
-  copyTemplateBtn.type = 'button';
-  copyTemplateBtn.className = 'btn small';
-  copyTemplateBtn.textContent = 'Copy Meta+Schema+Examples';
-
-  headerTools.append(collGroup, versionSelect, setActiveBtn);
-  root.append(headerTools);
-
-  // collections dropdown placeholder will be mounted into `keyInput`
-  let collectionDropdownEl = null;
-  function rebuildCollectionsDropdown(selectValue) {
-    try {
-      keyInput.innerHTML = '';
-      let available = [];
-      try {
-        if (store?.collections?.getAvailableCollections) available = store.collections.getAvailableCollections() || [];
-      } catch (e) { available = []; }
-      if (!available || !available.length) {
-        try {
-          const cols = store?.collections?.getCollections ? store.collections.getCollections() : [];
-          if (Array.isArray(cols) && cols.length) {
-            if (typeof cols[0] === 'object') available = cols.map(c => c && (c.key || c.path) ? (c.key || c.path) : null).filter(Boolean);
-            else available = cols.slice();
-          }
-        } catch (e) { available = []; }
-      }
-
-      const items = (Array.isArray(available) ? available : []).map(x => {
-        if (x && typeof x === 'object') {
-          const v = x.key || x.path || String(x || '');
-          return { value: v, label: String(v) };
-        }
-        const v = String(x || '');
-        return { value: v, label: v };
-      });
-
-      if (!items.length) {
-        keyInput.append(el('div', { className: 'hint', text: 'No collections' }));
-        return;
-      }
-
-      const initial = (selectValue && items.some(i => i.value === selectValue)) ? selectValue : items[0].value;
-      const dd = createDropdown({
-        items,
-        value: initial,
-        onChange: async (next) => {
-          collectionKey = String(next || '').trim();
-          try {
-            const btn = dd.querySelector('.custom-dropdown-button');
-            if (btn) btn.dataset.value = collectionKey;
-          } catch (e) {}
-          try { await loadCurrent(); } catch (e) {}
-        },
-        className: '',
-        closeOverlaysOnOpen: true
-      });
-      keyInput.append(dd);
-      collectionDropdownEl = dd;
-      // set collectionKey to initial if not already set
-      if (!collectionKey) collectionKey = String(initial || '').trim();
-      try {
-        const btn = dd.querySelector('.custom-dropdown-button');
-        if (btn) btn.dataset.value = collectionKey;
-      } catch (e) {}
-    } catch (e) {
-      keyInput.append(el('div', { className: 'hint', text: 'Failed to list collections' }));
-    }
-  }
+  // Collection dropdown removed — collection selection is handled by
+  // the external collection browser. No in-view dropdown is needed.
 
   const layout = document.createElement('div');
   layout.className = 'mc-layout';
@@ -305,7 +200,7 @@ export function renderManageCollections({ store, onNavigate }) {
   // group buttons into logical clusters
   const grp1 = document.createElement('div'); grp1.className = 'mc-json-group'; grp1.append(snapshotToggleBtn);
   const grp2 = document.createElement('div'); grp2.className = 'mc-json-group'; grp2.append(toggleJsonBtn, jsonWrapBtn);
-  const grp3 = document.createElement('div'); grp3.className = 'mc-json-group'; grp3.append(copyFullBtn, copyMetaBtn, copySchemaBtn, copyTemplateBtn);
+  const grp3 = document.createElement('div'); grp3.className = 'mc-json-group'; grp3.append(copyFullBtn);
   jsonModeRow.append(grp1, grp2, grp3);
   jsonHeaderRow.append(jsonModeRow);
 
@@ -487,24 +382,7 @@ export function renderManageCollections({ store, onNavigate }) {
   }
 
   function refreshVersionSelect() {
-    versionSelect.innerHTML = '';
-    const optSystem = document.createElement('option');
-    optSystem.value = '';
-    optSystem.textContent = 'System (no diffs)';
-    versionSelect.append(optSystem);
-
-    const revs = Array.isArray(revisions) ? revisions.slice().reverse() : [];
-    for (const r of revs) {
-      const opt = document.createElement('option');
-      opt.value = r.id;
-      const label = r.label ? `${r.label} • ` : '';
-      const kind = r.kind ? `${r.kind}` : 'diff';
-      opt.textContent = `${label}${kind} • ${shortId(r.id, 12)} • ${String(r.createdAt || '').replace('T', ' ').replace(/\.\d+Z$/, 'Z')}`;
-      versionSelect.append(opt);
-    }
-
-    const active = (typeof activeRevisionId === 'string' && activeRevisionId.trim()) ? activeRevisionId.trim() : '';
-    versionSelect.value = active;
+    // Version select removed; keep no-op to avoid callers needing changes.
   }
 
   function renderDiffPanels() {
@@ -841,7 +719,6 @@ export function renderManageCollections({ store, onNavigate }) {
       revisions = [];
     }
     activeRevisionId = store.collectionDB.getActiveRevisionId(collectionKey);
-    refreshVersionSelect();
     renderHistory();
   }
 
@@ -873,22 +750,11 @@ export function renderManageCollections({ store, onNavigate }) {
     const active = store?.collections?.getActiveCollection?.();
     const k = active?.key || active?.path || '';
     collectionKey = String(k || '').trim();
-    // populate dropdown and select active
-    try { rebuildCollectionsDropdown(collectionKey); } catch (e) { /* ignore */ }
   }
 
   // ---- events ----
 
-  setActiveBtn.addEventListener('click', async () => {
-    const rid = String(versionSelect.value || '').trim();
-    try {
-      store.collectionDB.setActiveRevisionId(collectionKey, rid || null);
-      await loadCurrent();
-      setStatus(rid ? `Activated revision ${shortId(rid, 16)}` : 'Activated system version');
-    } catch (e) {
-      setStatus(`Failed to set active version: ${e?.message || e}`);
-    }
-  });
+  // Set-active control removed; use History -> Activate instead.
 
   
 
@@ -916,43 +782,7 @@ export function renderManageCollections({ store, onNavigate }) {
     await copyToClipboard(safeJsonStringify(src, 2));
     setStatus('Copied full JSON.');
   });
-
-  copyMetaBtn.addEventListener('click', async () => {
-    const src = (currentJsonMode === 'preview' && previewResult?.merged) ? previewResult.merged : currentCollection;
-    const meta = src?.metadata || {};
-    await copyToClipboard(safeJsonStringify(meta, 2));
-    setStatus('Copied metadata.');
-  });
-
-  copySchemaBtn.addEventListener('click', async () => {
-    const src = (currentJsonMode === 'preview' && previewResult?.merged) ? previewResult.merged : currentCollection;
-    const schema = src?.metadata?.schema || src?.schema || [];
-    await copyToClipboard(safeJsonStringify(schema, 2));
-    setStatus('Copied schema.');
-  });
-
-  copyTemplateBtn.addEventListener('click', async () => {
-    const src = (currentJsonMode === 'preview' && previewResult?.merged) ? previewResult.merged : currentCollection;
-    if (!src) return;
-    const arrayKey = detectArrayKey(src);
-    const arr = Array.isArray(src[arrayKey]) ? src[arrayKey] : [];
-    const ek = getEntryKeyField(src, arrayKey);
-    const meta = src.metadata && typeof src.metadata === 'object' ? { ...src.metadata } : {};
-    // Keep meta compact and include schema
-    const out = {
-      metadata: {
-        name: meta.name ?? null,
-        description: meta.description ?? null,
-        version: meta.version ?? null,
-        category: meta.category ?? null,
-        entry_key: (meta.entry_key ?? (ek || null)),
-        schema: Array.isArray(meta.schema) ? meta.schema : (Array.isArray(src.schema) ? src.schema : []),
-      },
-      [arrayKey]: arr.slice(0, 3),
-    };
-    await copyToClipboard(safeJsonStringify(out, 2));
-    setStatus('Copied meta+schema+examples.');
-  });
+  // copyMeta/copySchema/copyTemplate controls removed from header.
 
   importHelpBtn.addEventListener('click', async () => {
     try {

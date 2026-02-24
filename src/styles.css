@@ -52,30 +52,13 @@ a:hover {
   text-decoration: underline;
 }
 
-#app {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
 
-/* Ensure the shell fills the viewport and scrolling happens inside the
-   main content area rather than the body/page. */
-html,
-body,
-#app {
-  height: 100%;
-}
+
+
 
 /* Prevent the page from scrolling; `#shell-main` will be the scrollable area. */
 body {
   overflow: hidden;
-}
-
-/* Shell root layout so footer sits below main and main can grow */
-#shell-root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
 }
 
 
@@ -2906,13 +2889,20 @@ select:hover {
 #manage-collections-root .mc-left,
 #manage-collections-root .mc-right {
   overflow-y: auto;
-  height: 70vh;
+  height: 75%;
   padding: 0rem 0.2rem;
 }
 
 @media (max-width: 900px) {
+  #manage-collections-root {
+    overflow-y: auto;
+    height: 100vh;
+    /* This makes the div take up the full viewport height */
+  }
+
   #manage-collections-root .mc-layout {
-    grid-template-columns: 100%;
+    /* grid-template-columns: 100%; */
+    display: block;
   }
 
   #manage-collections-root .mc-key-input {
