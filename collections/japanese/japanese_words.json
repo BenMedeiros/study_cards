@@ -5,8 +5,8 @@
     "version": 2,
     "category": "japanese",
     "source": "Various Japanese language resources and databases",
-        "entry_key": "kanji",
-
+    "entry_key": "kanji",
+    "sentences_file": "./japanese_sentences.json",
     "schema": [
       {
         "key": "kanji",
@@ -13188,6 +13188,811 @@
       "tags": [
         "pattern",
         "common_descriptor"
+      ]
+    },
+    {
+      "kanji": "定価",
+      "reading": "ていか",
+      "meaning": "list price; fixed retail price",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "pricing",
+        "book"
+      ]
+    },
+    {
+      "kanji": "本体",
+      "reading": "ほんたい",
+      "meaning": "main body; base amount (before tax)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "pricing"
+      ]
+    },
+    {
+      "kanji": "円",
+      "reading": "えん",
+      "meaning": "yen (Japanese currency)",
+      "type": "counter",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "currency"
+      ]
+    },
+    {
+      "kanji": "税",
+      "reading": "ぜい",
+      "meaning": "tax",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "finance"
+      ]
+    },
+    {
+      "kanji": "雑誌",
+      "reading": "ざっし",
+      "meaning": "magazine",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "publishing"
+      ]
+    },
+    {
+      "kanji": "ジャンプ",
+      "reading": "ジャンプ",
+      "meaning": "Jump (publisher brand name)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "brand",
+        "publisher"
+      ]
+    },
+    {
+      "kanji": "コミックス",
+      "reading": "コミックス",
+      "meaning": "comics; manga volume",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "publishing",
+        "manga"
+      ]
+    },
+    {
+      "kanji": "ジャンプ・コミックス",
+      "reading": "ジャンプ・コミックス",
+      "meaning": "Jump Comics (manga imprint)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "imprint",
+        "publisher"
+      ]
+    },
+    {
+      "kanji": "本屋",
+      "reading": "ほんや",
+      "meaning": "bookstore; bookshop",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "place",
+        "shopping"
+      ]
+    },
+    {
+      "kanji": "書店",
+      "reading": "しょてん",
+      "meaning": "bookstore (formal term)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "formal",
+        "place"
+      ]
+    },
+    {
+      "kanji": "古本屋",
+      "reading": "ふるほんや",
+      "meaning": "used bookstore",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "place",
+        "books"
+      ]
+    },
+    {
+      "kanji": "本棚",
+      "reading": "ほんだな",
+      "meaning": "bookshelf",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "object",
+        "books"
+      ]
+    },
+    {
+      "kanji": "花屋",
+      "reading": "はなや",
+      "meaning": "flower shop",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "shop"
+      ]
+    },
+    {
+      "kanji": "魚屋",
+      "reading": "さかなや",
+      "meaning": "fish shop; fishmonger",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "shop"
+      ]
+    },
+    {
+      "kanji": "パン屋",
+      "reading": "パンや",
+      "meaning": "bakery",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "shop"
+      ]
+    },
+    {
+      "kanji": "本",
+      "reading": "ほん",
+      "meaning": "book",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "core_vocab"
+      ]
+    },
+    {
+      "kanji": "屋",
+      "reading": "や",
+      "meaning": "shop; store; seller (suffix)",
+      "type": "compound-morpheme",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "suffix"
+      ]
+    },
+    {
+      "kanji": "古本",
+      "reading": "ふるほん",
+      "meaning": "used book",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "books"
+      ]
+    },
+    {
+      "kanji": "伸びる",
+      "reading": "のびる",
+      "meaning": "to stretch; to extend; to grow",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "action",
+        "movement"
+      ]
+    },
+    {
+      "kanji": "伸びきる",
+      "reading": "のびきる",
+      "meaning": "to stretch completely; to reach full extension",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "action",
+        "completion"
+      ]
+    },
+    {
+      "kanji": "腕",
+      "reading": "うで",
+      "meaning": "arm; (figurative) skill",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "body",
+        "combat"
+      ]
+    },
+    {
+      "kanji": "隙",
+      "reading": "すき",
+      "meaning": "opening; gap; vulnerability",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "combat",
+        "strategy"
+      ]
+    },
+    {
+      "kanji": "だらけ",
+      "reading": "だらけ",
+      "meaning": "full of; covered with (usually negative nuance)",
+      "type": "expression",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "grammar_marker",
+        "suffix_like"
+      ]
+    },
+    {
+      "kanji": "ゴム",
+      "reading": "ゴム",
+      "meaning": "rubber",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "material",
+        "manga"
+      ]
+    },
+    {
+      "kanji": "ゴムゴムの",
+      "reading": "ゴムゴムの",
+      "meaning": "Gum-Gum (attack naming prefix)",
+      "type": "expression",
+      "lexicalClass": "set-phrase",
+      "orthography": "katakana",
+      "tags": [
+        "manga",
+        "attack_name"
+      ]
+    },
+    {
+      "kanji": "鎌",
+      "reading": "かま",
+      "meaning": "sickle; scythe-like blade",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "weapon",
+        "tool",
+        "manga"
+      ]
+    },
+    {
+      "kanji": "スポーン",
+      "reading": "スポーン",
+      "meaning": "whoosh/pop sound effect; something launching or shooting out",
+      "type": "expression",
+      "lexicalClass": "sfx",
+      "orthography": "katakana",
+      "tags": [
+        "sfx",
+        "manga"
+      ]
+    },
+    {
+      "kanji": "鬼太郎",
+      "reading": "きたろう",
+      "meaning": "Kitaro (name of the yokai protagonist)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "name",
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "ゲゲゲの鬼太郎",
+      "reading": "ゲゲゲのきたろう",
+      "meaning": "GeGeGe no Kitaro (title of a manga/anime)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "title",
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "目玉おやじ",
+      "reading": "めだまおやじ",
+      "meaning": "Medama Oyaji (Eyeball-Old-Man)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": [
+        "character",
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "妖怪",
+      "reading": "ようかい",
+      "meaning": "yokai; supernatural monster/ghost",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "河童",
+      "reading": "かっぱ",
+      "meaning": "kappa (water yokai)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "天狗",
+      "reading": "てんぐ",
+      "meaning": "tengu (mountain/demon-like yokai)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "一反木綿",
+      "reading": "いったんもめん",
+      "meaning": "Ittan-momen (a cloth-like yokai)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "塗り壁",
+      "reading": "ぬりかべ",
+      "meaning": "Nurukabe (wall-like yokai)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "鬼",
+      "reading": "おに",
+      "meaning": "demon; ogre",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "太郎",
+      "reading": "たろう",
+      "meaning": "Taro (male given name)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "目玉",
+      "reading": "めだま",
+      "meaning": "eyeball",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "親父",
+      "reading": "おやじ",
+      "meaning": "old man; (colloquial) father",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "長男",
+      "reading": "ちょうなん",
+      "meaning": "eldest son",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "長",
+      "reading": "ちょう",
+      "meaning": "chief; head; long (bound morpheme)",
+      "type": "compound-morpheme",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "男",
+      "reading": "おとこ",
+      "meaning": "man; male",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "長女",
+      "reading": "ちょうじょ",
+      "meaning": "eldest daughter",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "次男",
+      "reading": "じなん",
+      "meaning": "second son",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "三男",
+      "reading": "さんなん",
+      "meaning": "third son",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "子供",
+      "reading": "こども",
+      "meaning": "child; children",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both"
+    },
+    {
+      "kanji": "怖がる",
+      "reading": "こわがる",
+      "meaning": "to be afraid (of); to show fear",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "昔話",
+      "reading": "むかしばなし",
+      "meaning": "folktale; old story",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "出てくる",
+      "reading": "でてくる",
+      "meaning": "to appear; to come out",
+      "type": "phrase-sentence",
+      "lexicalClass": "regular",
+      "orthography": "both"
+    },
+    {
+      "kanji": "家",
+      "reading": "いえ",
+      "meaning": "house; home",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "元気",
+      "reading": "げんき",
+      "meaning": "healthy; well; energetic",
+      "type": "na-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "びっくり",
+      "reading": "びっくり",
+      "meaning": "surprise; be surprised (onomatopoeia)",
+      "type": "adverb",
+      "lexicalClass": "onomatopoeia",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "大きい",
+      "reading": "おおきい",
+      "meaning": "big; large",
+      "type": "i-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "内",
+      "reading": "うち",
+      "meaning": "home; my house; inside",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "料理",
+      "reading": "りょうり",
+      "meaning": "cooking; cuisine",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "好き",
+      "reading": "すき",
+      "meaning": "fond of; to like",
+      "type": "na-adjective",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "彼",
+      "reading": "かれ",
+      "meaning": "he; boyfriend",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "予定",
+      "reading": "よてい",
+      "meaning": "plan; schedule",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "家をつぐ",
+      "reading": "いえをつぐ",
+      "meaning": "to succeed/inherit the household",
+      "type": "phrase-sentence",
+      "lexicalClass": "regular",
+      "orthography": "both"
+    },
+    {
+      "kanji": "東京",
+      "reading": "とうきょう",
+      "meaning": "Tokyo (capital city)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "働く",
+      "reading": "はたらく",
+      "meaning": "to work",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "orthography": "kanji"
+    },
+    {
+      "kanji": "です",
+      "reading": "です",
+      "meaning": "copula; polite ending (is/are)",
+      "type": "irregular-verb",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "は",
+      "reading": "は",
+      "meaning": "topic particle",
+      "type": "particle",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "が",
+      "reading": "が",
+      "meaning": "subject particle",
+      "type": "particle",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "を",
+      "reading": "を",
+      "meaning": "object particle",
+      "type": "particle",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "に",
+      "reading": "に",
+      "meaning": "direction/time/location particle",
+      "type": "particle",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "で",
+      "reading": "で",
+      "meaning": "location/method particle",
+      "type": "particle",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "なので",
+      "reading": "なので",
+      "meaning": "because; so (conjunctive)",
+      "type": "conjunction",
+      "lexicalClass": "regular",
+      "orthography": "hiragana"
+    },
+    {
+      "kanji": "狐",
+      "reading": "きつね",
+      "meaning": "fox; fox spirit (kitsune)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "animal_spirit"
+      ]
+    },
+    {
+      "kanji": "狸",
+      "reading": "たぬき",
+      "meaning": "tanuki; raccoon dog yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "animal_spirit"
+      ]
+    },
+    {
+      "kanji": "雪女",
+      "reading": "ゆきおんな",
+      "meaning": "snow woman; winter spirit",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "folklore"
+      ]
+    },
+    {
+      "kanji": "座敷童子",
+      "reading": "ざしきわらし",
+      "meaning": "house child spirit; brings fortune",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "household"
+      ]
+    },
+    {
+      "kanji": "ろくろ首",
+      "reading": "ろくろくび",
+      "meaning": "long-necked woman yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "ぬらりひょん",
+      "reading": "ぬらりひょん",
+      "meaning": "mysterious elder yokai; leader-like figure",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "百目",
+      "reading": "どうもく",
+      "meaning": "hundred-eyed yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "一つ目小僧",
+      "reading": "ひとつめこぞう",
+      "meaning": "one-eyed monk boy yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "化け猫",
+      "reading": "ばけねこ",
+      "meaning": "monster cat; transformed cat spirit",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "animal_spirit"
+      ]
+    },
+    {
+      "kanji": "猫又",
+      "reading": "ねこまた",
+      "meaning": "fork-tailed cat yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai",
+        "animal_spirit"
+      ]
+    },
+    {
+      "kanji": "絡新婦",
+      "reading": "じょろうぐも",
+      "meaning": "spider woman yokai",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "yokai"
+      ]
+    },
+    {
+      "kanji": "のっぺらぼう",
+      "reading": "のっぺらぼう",
+      "meaning": "faceless ghost",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "yokai"
       ]
     }
   ]

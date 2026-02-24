@@ -812,7 +812,19 @@ export function renderData({ store }) {
 
     const adapter = getProgressAdapter();
     const currentActive = (store && store.collections && typeof store.collections.getActiveCollection === 'function') ? store.collections.getActiveCollection() : null;
-    const showExamples = !!(currentActive && typeof currentActive.key === 'string' && String(currentActive.key).startsWith('japanese/words'));
+    // Show examples column when the collection is a japanese/words collection
+    // or when any visible entry already has example sentences attached.
+    let showExamples = !!(currentActive && typeof currentActive.key === 'string' && String(currentActive.key).startsWith('japanese/words'));
+    try {
+      if (!showExamples) {
+        for (const e of visibleEntries) {
+          if (!e) continue;
+          if (Number(e.__examplesCount ?? (Array.isArray(e.sentences) ? e.sentences.length : 0)) > 0) {
+            showExamples = true; break;
+          }
+        }
+      }
+    } catch (e) {}
     const rows = visibleEntries.map((entry, i) => {
       const originalIndex = visibleIdxs[i];
       const key = adapter.getKey(entry);

@@ -1,5 +1,6 @@
 import { createTable } from '../components/table.js';
 import { card } from '../components/ui.js';
+import { validateCollection } from '../utils/validation.js';
 import { formatDurationMs, formatIsoShort } from '../utils/helpers.js';
 
 export function renderCollectionsManager({ store, onNavigate, route }) {
@@ -77,6 +78,71 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   });
 
   const rowActions = [
+    {
+      label: 'Validate',
+      title: 'Validate collection file and log issues to console',
+      className: 'btn-validate',
+      onClick: async (rowData, rowIndex, { tr }) => {
+        const id = tr?.dataset?.rowId || rowData.__id;
+        try {
+          const col = collections.find(c => (c.id === id || c.key === id || c.path === id || c.name === id));
+          if (!col) {
+            console.warn('Validate: collection not found for id', id);
+            return;
+          }
+          let collObj = col.value || col.metadata || col || null;
+          // If we have a collections manager, try to load the full collection (with entries) before validating
+          try {
+            if (store?.collections && typeof store.collections.getCollection === 'function') {
+              const key = col.path || col.key || col.id || id;
+              const full = await store.collections.getCollection(key).catch(() => null);
+              if (full && typeof full === 'object') collObj = full;
+            }
+          } catch (e) {}
+          // Log whether we have the full collection blob (entries) or only metadata
+          try {
+            const hasEntries = !!(collObj && typeof collObj === 'object' && Array.isArray(collObj.entries) && collObj.entries.length);
+            console.log('Validate: loaded full collection object?', !!collObj, 'hasEntries:', hasEntries, 'source:', (col.path || col.id || col.key));
+            if (collObj && typeof collObj === 'object') {
+              console.log('Validate: collObj keys:', Object.keys(collObj).slice(0,40));
+              if (hasEntries) console.log('Validate: entries count:', collObj.entries.length, 'sample entries:', collObj.entries.slice(0,3));
+            }
+          } catch (e) { console.warn('Validate: unable to inspect collObj', e); }
+
+          // Prefer manager-provided validateCollectionFile so the manager determines how to load the blob
+          let res = null;
+          try {
+            if (store?.collections && typeof store.collections.validateCollectionFile === 'function') {
+              const key = col.path || col.key || col.id || id;
+              res = await store.collections.validateCollectionFile(key, { force: false, verbose: true, logLimit: 20 }).catch(() => null);
+            }
+          } catch (e) { /* ignore */ }
+          // fallback: validate local object if manager helper not available or failed
+          if (!res) res = validateCollection(collObj, { verbose: true, logLimit: 20 });
+          console.group(`Collection validation: ${col.path || col.id || col.name || id}`);
+          console.log('Valid:', !!res.valid);
+          if (res.schemaValidation) {
+            if (res.schemaValidation.errors && res.schemaValidation.errors.length) console.error('Schema errors:', res.schemaValidation.errors);
+            if (res.schemaValidation.warnings && res.schemaValidation.warnings.length) console.warn('Schema warnings:', res.schemaValidation.warnings);
+          }
+          if (res.entriesValidation) {
+            if (res.entriesValidation.entryErrors && res.entriesValidation.entryErrors.length) {
+              console.error('Entry errors (sample 200):', res.entriesValidation.entryErrors.slice(0,200));
+            } else {
+              console.log('Entry errors: none');
+            }
+            if (res.entriesValidation.entryWarnings && res.entriesValidation.entryWarnings.length) {
+              console.warn('Entry warnings (sample 200):', res.entriesValidation.entryWarnings.slice(0,200));
+            }
+            if (res.entriesValidation.diagnostics) console.log('Entry diagnostics:', res.entriesValidation.diagnostics);
+            if (res.entriesValidation.duplicates && res.entriesValidation.duplicates.length) {
+              console.warn('Duplicate entry keys (sample 50):', res.entriesValidation.duplicates.slice(0,50));
+            }
+          }
+          console.groupEnd();
+        } catch (e) { console.error('Validate: unexpected error', e); }
+      }
+    },
     {
       label: 'Clear settings',
       title: 'Clear collection settings',

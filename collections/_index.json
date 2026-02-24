@@ -1,0 +1,3003 @@
+{
+  "collections": [
+    {
+      "path": "greek/greek_alphabet.json",
+      "modifiedAt": "2026-02-24T16:36:04.736Z",
+      "name": "Greek Alphabet",
+      "description": "Greek letters with standard alphabetical order, lowercase/uppercase forms, classical names, letter type classification, and pronunciation guides split into Classical vs Modern (IPA + simple helpers).",
+      "entriesCount": 24,
+      "valid": true,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "schemaSource": "inline"
+    },
+    {
+      "path": "greek/greek_mythology.json",
+      "modifiedAt": "2026-02-24T16:38:03.473Z",
+      "name": "Greek Mythology",
+      "description": "Consolidated Greek mythology entries (Olympians, Titans, Primordials, Chthonic).",
+      "entriesCount": 43,
+      "valid": true,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "schemaSource": "inline"
+    },
+    {
+      "path": "japanese/japanese_sentences.json",
+      "modifiedAt": "2026-02-24T18:02:27.441Z",
+      "name": "Counter + Culture Set 01",
+      "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
+      "entriesCount": 43,
+      "valid": true,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": [
+            "Field 'notes' has unknown type 'array<string>'.",
+            "Field 'grammarNotes' has unknown type 'array<string>'.",
+            "Field 'chunks' has unknown type 'array<sentenceChunk>'."
+          ]
+        },
+        "entries": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "schemaSource": "inline"
+    },
+    {
+      "path": "japanese/japanese_words.json",
+      "modifiedAt": "2026-02-24T18:24:45.090Z",
+      "name": "All Japanese Words",
+      "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
+      "entriesCount": 1585,
+      "valid": false,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [
+            {
+              "id": "開く",
+              "message": "Duplicate entry key '開く' appears 2 times in file"
+            },
+            {
+              "id": "働く",
+              "message": "Duplicate entry key '働く' appears 2 times in file"
+            },
+            {
+              "id": "大きい",
+              "message": "Duplicate entry key '大きい' appears 2 times in file"
+            },
+            {
+              "id": "硬い",
+              "message": "Duplicate entry key '硬い' appears 2 times in file"
+            },
+            {
+              "id": "柔らかい",
+              "message": "Duplicate entry key '柔らかい' appears 2 times in file"
+            },
+            {
+              "id": "滑らか",
+              "message": "Duplicate entry key '滑らか' appears 2 times in file"
+            },
+            {
+              "id": "伸びる",
+              "message": "Duplicate entry key '伸びる' appears 2 times in file"
+            },
+            {
+              "id": "長",
+              "message": "Duplicate entry key '長' appears 2 times in file"
+            },
+            {
+              "id": "元気",
+              "message": "Duplicate entry key '元気' appears 2 times in file"
+            },
+            {
+              "id": "安全",
+              "message": "Duplicate entry key '安全' appears 2 times in file"
+            },
+            {
+              "id": "危険",
+              "message": "Duplicate entry key '危険' appears 2 times in file"
+            },
+            {
+              "id": "子供",
+              "message": "Duplicate entry key '子供' appears 2 times in file"
+            },
+            {
+              "id": "林檎",
+              "message": "Duplicate entry key '林檎' appears 2 times in file"
+            },
+            {
+              "id": "彼",
+              "message": "Duplicate entry key '彼' appears 2 times in file"
+            },
+            {
+              "id": "予定",
+              "message": "Duplicate entry key '予定' appears 2 times in file"
+            },
+            {
+              "id": "犬",
+              "message": "Duplicate entry key '犬' appears 2 times in file"
+            },
+            {
+              "id": "猫",
+              "message": "Duplicate entry key '猫' appears 2 times in file"
+            },
+            {
+              "id": "鳥",
+              "message": "Duplicate entry key '鳥' appears 2 times in file"
+            },
+            {
+              "id": "魚",
+              "message": "Duplicate entry key '魚' appears 2 times in file"
+            },
+            {
+              "id": "牛",
+              "message": "Duplicate entry key '牛' appears 2 times in file"
+            },
+            {
+              "id": "馬",
+              "message": "Duplicate entry key '馬' appears 2 times in file"
+            },
+            {
+              "id": "羊",
+              "message": "Duplicate entry key '羊' appears 2 times in file"
+            },
+            {
+              "id": "水",
+              "message": "Duplicate entry key '水' appears 2 times in file"
+            },
+            {
+              "id": "牛乳",
+              "message": "Duplicate entry key '牛乳' appears 2 times in file"
+            },
+            {
+              "id": "家",
+              "message": "Duplicate entry key '家' appears 2 times in file"
+            },
+            {
+              "id": "本棚",
+              "message": "Duplicate entry key '本棚' appears 2 times in file"
+            },
+            {
+              "id": "本",
+              "message": "Duplicate entry key '本' appears 2 times in file"
+            },
+            {
+              "id": "雑誌",
+              "message": "Duplicate entry key '雑誌' appears 2 times in file"
+            },
+            {
+              "id": "料理",
+              "message": "Duplicate entry key '料理' appears 2 times in file"
+            },
+            {
+              "id": "男",
+              "message": "Duplicate entry key '男' appears 2 times in file"
+            },
+            {
+              "id": "カンガルー",
+              "message": "Duplicate entry key 'カンガルー' appears 2 times in file"
+            },
+            {
+              "id": "ジュース",
+              "message": "Duplicate entry key 'ジュース' appears 2 times in file"
+            },
+            {
+              "id": "バター",
+              "message": "Duplicate entry key 'バター' appears 2 times in file"
+            },
+            {
+              "id": "チーズ",
+              "message": "Duplicate entry key 'チーズ' appears 2 times in file"
+            },
+            {
+              "id": "ソーセージ",
+              "message": "Duplicate entry key 'ソーセージ' appears 2 times in file"
+            },
+            {
+              "id": "ハム",
+              "message": "Duplicate entry key 'ハム' appears 2 times in file"
+            },
+            {
+              "id": "ヨーグルト",
+              "message": "Duplicate entry key 'ヨーグルト' appears 2 times in file"
+            },
+            {
+              "id": "トマト",
+              "message": "Duplicate entry key 'トマト' appears 2 times in file"
+            },
+            {
+              "id": "レモン",
+              "message": "Duplicate entry key 'レモン' appears 2 times in file"
+            },
+            {
+              "id": "オレンジ",
+              "message": "Duplicate entry key 'オレンジ' appears 2 times in file"
+            },
+            {
+              "id": "蜥蜴",
+              "message": "Duplicate entry key '蜥蜴' appears 2 times in file"
+            },
+            {
+              "id": "亀",
+              "message": "Duplicate entry key '亀' appears 2 times in file"
+            },
+            {
+              "id": "猿",
+              "message": "Duplicate entry key '猿' appears 2 times in file"
+            },
+            {
+              "id": "鬼",
+              "message": "Duplicate entry key '鬼' appears 2 times in file"
+            },
+            {
+              "id": "狐",
+              "message": "Duplicate entry key '狐' appears 3 times in file"
+            },
+            {
+              "id": "蛇",
+              "message": "Duplicate entry key '蛇' appears 2 times in file"
+            },
+            {
+              "id": "白",
+              "message": "Duplicate entry key '白' appears 2 times in file"
+            },
+            {
+              "id": "鳩",
+              "message": "Duplicate entry key '鳩' appears 2 times in file"
+            },
+            {
+              "id": "びっくり",
+              "message": "Duplicate entry key 'びっくり' appears 2 times in file"
+            }
+          ],
+          "warnings": [],
+          "duplicates": [
+            {
+              "key": "開く",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 196,
+                  "line": 1870,
+                  "entry": {
+                    "kanji": "開く",
+                    "reading": "あく",
+                    "meaning": "to open; to become open (intransitive)",
+                    "type": "godan-verb",
+                    "lexicalClass": "regular"
+                  }
+                },
+                {
+                  "index": 199,
+                  "line": 1891,
+                  "entry": {
+                    "kanji": "開く",
+                    "reading": "ひらく",
+                    "meaning": "to open; to hold (an event)",
+                    "type": "godan-verb",
+                    "lexicalClass": "regular"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "働く",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 204,
+                  "line": 1926,
+                  "entry": {
+                    "kanji": "働く",
+                    "reading": "はたらく",
+                    "meaning": "to work",
+                    "type": "godan-verb",
+                    "lexicalClass": "regular"
+                  }
+                },
+                {
+                  "index": 1565,
+                  "line": 13796,
+                  "entry": {
+                    "kanji": "働く",
+                    "reading": "はたらく",
+                    "meaning": "to work",
+                    "type": "godan-verb",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "大きい",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 255,
+                  "line": 2277,
+                  "entry": {
+                    "kanji": "大きい",
+                    "reading": "おおきい",
+                    "meaning": "big",
+                    "type": "i-adjective"
+                  }
+                },
+                {
+                  "index": 1557,
+                  "line": 13732,
+                  "entry": {
+                    "kanji": "大きい",
+                    "reading": "おおきい",
+                    "meaning": "big; large",
+                    "type": "i-adjective",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "硬い",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 315,
+                  "line": 2645,
+                  "entry": {
+                    "kanji": "硬い",
+                    "reading": "かたい",
+                    "meaning": "hard",
+                    "type": "i-adjective"
+                  }
+                },
+                {
+                  "index": 1495,
+                  "line": 13073,
+                  "entry": {
+                    "kanji": "硬い",
+                    "reading": "かたい",
+                    "meaning": "hard (solid/firm)",
+                    "type": "i-adjective",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "texture",
+                      "touch_property"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "柔らかい",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 316,
+                  "line": 2651,
+                  "entry": {
+                    "kanji": "柔らかい",
+                    "reading": "やわらかい",
+                    "meaning": "soft",
+                    "type": "i-adjective"
+                  }
+                },
+                {
+                  "index": 1494,
+                  "line": 13061,
+                  "entry": {
+                    "kanji": "柔らかい",
+                    "reading": "やわらかい",
+                    "meaning": "soft",
+                    "type": "i-adjective",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "texture",
+                      "touch_property"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "滑らか",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 333,
+                  "line": 2753,
+                  "entry": {
+                    "kanji": "滑らか",
+                    "reading": "なめらか",
+                    "meaning": "smooth; fluent",
+                    "type": "na-adjective",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "jlpt_n3"
+                    ]
+                  }
+                },
+                {
+                  "index": 1493,
+                  "line": 13049,
+                  "entry": {
+                    "kanji": "滑らか",
+                    "reading": "なめらか",
+                    "meaning": "smooth",
+                    "type": "na-adjective",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "texture",
+                      "surface_property"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "伸びる",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 383,
+                  "line": 3101,
+                  "entry": {
+                    "kanji": "伸びる",
+                    "reading": "のびる",
+                    "meaning": "to grow; to stretch; to improve",
+                    "type": "ichidan-verb",
+                    "orthography": "kanji"
+                  }
+                },
+                {
+                  "index": 1523,
+                  "line": 13399,
+                  "entry": {
+                    "kanji": "伸びる",
+                    "reading": "のびる",
+                    "meaning": "to stretch; to extend; to grow",
+                    "type": "ichidan-verb",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "action",
+                      "movement"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "長",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 429,
+                  "line": 3484,
+                  "entry": {
+                    "kanji": "長",
+                    "reading": "チョウ",
+                    "meaning": "long; leader; head",
+                    "type": "compound-morpheme",
+                    "orthography": "kanji"
+                  }
+                },
+                {
+                  "index": 1545,
+                  "line": 13636,
+                  "entry": {
+                    "kanji": "長",
+                    "reading": "ちょう",
+                    "meaning": "chief; head; long (bound morpheme)",
+                    "type": "compound-morpheme",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "元気",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 464,
+                  "line": 3742,
+                  "entry": {
+                    "kanji": "元気",
+                    "reading": "げんき",
+                    "meaning": "healthy; energetic; fine",
+                    "type": "na-adjective",
+                    "orthography": "kanji"
+                  }
+                },
+                {
+                  "index": 1555,
+                  "line": 13716,
+                  "entry": {
+                    "kanji": "元気",
+                    "reading": "げんき",
+                    "meaning": "healthy; well; energetic",
+                    "type": "na-adjective",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "安全",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 466,
+                  "line": 3756,
+                  "entry": {
+                    "kanji": "安全",
+                    "reading": "あんぜん",
+                    "meaning": "safe; secure",
+                    "type": "na-adjective",
+                    "orthography": "kanji",
+                    "tags": [
+                      "phone_settings"
+                    ]
+                  }
+                },
+                {
+                  "index": 805,
+                  "line": 6591,
+                  "entry": {
+                    "kanji": "安全",
+                    "reading": "あんぜん",
+                    "meaning": "safety",
+                    "orthography": "kanji",
+                    "type": "noun",
+                    "tags": [
+                      "phone_settings"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "危険",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 467,
+                  "line": 3766,
+                  "entry": {
+                    "kanji": "危険",
+                    "reading": "きけん",
+                    "meaning": "dangerous; risky",
+                    "type": "na-adjective",
+                    "orthography": "kanji"
+                  }
+                },
+                {
+                  "index": 806,
+                  "line": 6601,
+                  "entry": {
+                    "kanji": "危険",
+                    "reading": "きけん",
+                    "meaning": "danger",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "子供",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 481,
+                  "line": 3865,
+                  "entry": {
+                    "kanji": "子供",
+                    "reading": "こども",
+                    "meaning": "child; children",
+                    "lexicalClass": "regular",
+                    "type": "noun",
+                    "orthography": "both"
+                  }
+                },
+                {
+                  "index": 1550,
+                  "line": 13676,
+                  "entry": {
+                    "kanji": "子供",
+                    "reading": "こども",
+                    "meaning": "child; children",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "both"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "林檎",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 522,
+                  "line": 4185,
+                  "entry": {
+                    "kanji": "林檎",
+                    "reading": "りんご",
+                    "meaning": "apple",
+                    "lexicalClass": "regular",
+                    "type": "noun",
+                    "orthography": "hiragana"
+                  }
+                },
+                {
+                  "index": 1465,
+                  "line": 12708,
+                  "entry": {
+                    "kanji": "林檎",
+                    "reading": "りんご",
+                    "meaning": "apple",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "hiragana",
+                    "tags": [
+                      "food",
+                      "refrigerator_common"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "彼",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 526,
+                  "line": 4220,
+                  "entry": {
+                    "kanji": "彼",
+                    "reading": "かれ",
+                    "meaning": "he; him; boyfriend (context-dependent)",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1561,
+                  "line": 13764,
+                  "entry": {
+                    "kanji": "彼",
+                    "reading": "かれ",
+                    "meaning": "he; boyfriend",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "予定",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 700,
+                  "line": 5831,
+                  "entry": {
+                    "kanji": "予定",
+                    "reading": "よてい",
+                    "meaning": "plan; schedule",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1562,
+                  "line": 13772,
+                  "entry": {
+                    "kanji": "予定",
+                    "reading": "よてい",
+                    "meaning": "plan; schedule",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "犬",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 742,
+                  "line": 6138,
+                  "entry": {
+                    "kanji": "犬",
+                    "reading": "いぬ",
+                    "meaning": "dog",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1395,
+                  "line": 11907,
+                  "entry": {
+                    "kanji": "犬",
+                    "reading": "いぬ",
+                    "meaning": "dog",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "猫",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 743,
+                  "line": 6145,
+                  "entry": {
+                    "kanji": "猫",
+                    "reading": "ねこ",
+                    "meaning": "cat",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1396,
+                  "line": 11918,
+                  "entry": {
+                    "kanji": "猫",
+                    "reading": "ねこ",
+                    "meaning": "cat",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "鳥",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 744,
+                  "line": 6152,
+                  "entry": {
+                    "kanji": "鳥",
+                    "reading": "とり",
+                    "meaning": "bird",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1397,
+                  "line": 11929,
+                  "entry": {
+                    "kanji": "鳥",
+                    "reading": "とり",
+                    "meaning": "bird",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "魚",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 745,
+                  "line": 6159,
+                  "entry": {
+                    "kanji": "魚",
+                    "reading": "さかな",
+                    "meaning": "fish",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1398,
+                  "line": 11940,
+                  "entry": {
+                    "kanji": "魚",
+                    "reading": "さかな",
+                    "meaning": "fish",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "牛",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 747,
+                  "line": 6176,
+                  "entry": {
+                    "kanji": "牛",
+                    "reading": "うし",
+                    "meaning": "cow; cattle",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1400,
+                  "line": 11962,
+                  "entry": {
+                    "kanji": "牛",
+                    "reading": "うし",
+                    "meaning": "cow",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "馬",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 748,
+                  "line": 6183,
+                  "entry": {
+                    "kanji": "馬",
+                    "reading": "うま",
+                    "meaning": "horse",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1399,
+                  "line": 11951,
+                  "entry": {
+                    "kanji": "馬",
+                    "reading": "うま",
+                    "meaning": "horse",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "羊",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 749,
+                  "line": 6190,
+                  "entry": {
+                    "kanji": "羊",
+                    "reading": "ひつじ",
+                    "meaning": "sheep",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1402,
+                  "line": 11984,
+                  "entry": {
+                    "kanji": "羊",
+                    "reading": "ひつじ",
+                    "meaning": "sheep",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "水",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 754,
+                  "line": 6225,
+                  "entry": {
+                    "kanji": "水",
+                    "reading": "みず",
+                    "meaning": "water",
+                    "type": "standalone-noun",
+                    "orthography": "kanji",
+                    "tags": [
+                      "pokemon-type"
+                    ]
+                  }
+                },
+                {
+                  "index": 1471,
+                  "line": 12783,
+                  "entry": {
+                    "kanji": "水",
+                    "reading": "みず",
+                    "meaning": "water",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "drink",
+                      "refrigerator_common"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "牛乳",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 755,
+                  "line": 6235,
+                  "entry": {
+                    "kanji": "牛乳",
+                    "reading": "ぎゅうにゅう",
+                    "meaning": "milk",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1445,
+                  "line": 12459,
+                  "entry": {
+                    "kanji": "牛乳",
+                    "reading": "ぎゅうにゅう",
+                    "meaning": "milk",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "food",
+                      "refrigerator_common"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "家",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 771,
+                  "line": 6347,
+                  "entry": {
+                    "kanji": "家",
+                    "reading": "いえ",
+                    "meaning": "house; home",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1554,
+                  "line": 13708,
+                  "entry": {
+                    "kanji": "家",
+                    "reading": "いえ",
+                    "meaning": "house; home",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "本棚",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 779,
+                  "line": 6403,
+                  "entry": {
+                    "kanji": "本棚",
+                    "reading": "ほんだな",
+                    "meaning": "bookshelf",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1516,
+                  "line": 13321,
+                  "entry": {
+                    "kanji": "本棚",
+                    "reading": "ほんだな",
+                    "meaning": "bookshelf",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "object",
+                      "books"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "本",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 780,
+                  "line": 6410,
+                  "entry": {
+                    "kanji": "本",
+                    "reading": "ほん",
+                    "meaning": "book",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1520,
+                  "line": 13366,
+                  "entry": {
+                    "kanji": "本",
+                    "reading": "ほん",
+                    "meaning": "book",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "core_vocab"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "雑誌",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 782,
+                  "line": 6424,
+                  "entry": {
+                    "kanji": "雑誌",
+                    "reading": "ざっし",
+                    "meaning": "magazine",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1509,
+                  "line": 13238,
+                  "entry": {
+                    "kanji": "雑誌",
+                    "reading": "ざっし",
+                    "meaning": "magazine",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "publishing"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "料理",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 835,
+                  "line": 6810,
+                  "entry": {
+                    "kanji": "料理",
+                    "reading": "りょうり",
+                    "meaning": "cooking; cuisine",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1559,
+                  "line": 13748,
+                  "entry": {
+                    "kanji": "料理",
+                    "reading": "りょうり",
+                    "meaning": "cooking; cuisine",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "男",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 996,
+                  "line": 8058,
+                  "entry": {
+                    "kanji": "男",
+                    "reading": "おとこ",
+                    "meaning": "man",
+                    "orthography": "kanji",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 1546,
+                  "line": 13644,
+                  "entry": {
+                    "kanji": "男",
+                    "reading": "おとこ",
+                    "meaning": "man; male",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "カンガルー",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1023,
+                  "line": 8328,
+                  "entry": {
+                    "kanji": "カンガルー",
+                    "reading": "カンガルー",
+                    "meaning": "kangaroo",
+                    "type": "noun",
+                    "orthography": "katakana",
+                    "tags": [
+                      "origin:English",
+                      "pokemon-name-root"
+                    ]
+                  }
+                },
+                {
+                  "index": 1424,
+                  "line": 12226,
+                  "entry": {
+                    "kanji": "カンガルー",
+                    "reading": "カンガルー",
+                    "meaning": "kangaroo",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "katakana",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "ジュース",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1095,
+                  "line": 9116,
+                  "entry": {
+                    "kanji": "ジュース",
+                    "reading": "ジュース",
+                    "meaning": "juice",
+                    "type": "noun",
+                    "orthography": "katakana",
+                    "tags": [
+                      "origin:English"
+                    ]
+                  }
+                },
+                {
+                  "index": 1470,
+                  "line": 12770,
+                  "entry": {
+                    "kanji": "ジュース",
+                    "reading": "ジュース",
+                    "meaning": "juice",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "katakana",
+                    "tags": [
+                      "drink",
+                      "refrigerator_common",
+                      "loanword"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "バター",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1097,
+                  "line": 9136,
+                  "entry": {
+                    "kanji": "バター",
+                    "reading": "バター",
+                    "meaning": "butter",
+                    "type": "noun",
+                    "orthography": "katakana",
+                    "tags": [
+                      "origin:English"
+                    ]
+                  }
+                },
+                {
+                  "index": 1447,
+                  "line": 12483,
+                  "entry": {
+                    "kanji": "バター",
+                    "reading": "バター",
+                    "meaning": "butter",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "katakana",
+                    "tags": [
+                      "food",
+                      "refrigerator_common",
+                      "loanword"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "チーズ",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1098,
+                  "line": 9146,
+                  "entry": {
+                    "kanji": "チーズ",
+                    "reading": "チーズ",
+                    "meaning": "cheese",
+                    "type": "noun",
+                    "orthography": "katakana",
+                    "tags": [
+                      "origin:English"
+                    ]
+                  }
+                },
+                {
+                  "index": 1448,
+                  "line": 12496,
+                  "entry": {
+                    "kanji": "チーズ",
+                    "reading": "チーズ",
+                    "meaning": "cheese",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "katakana",
+                    "tags": [
+                      "food",
+                      "refrigerator_common",
+                      "loanword"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "ソーセージ",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1164,
+                  "line": 9810,
+                  "entry": {
+                    "kanji": "ソーセージ",
+                    "reading": "ソーセージ",
+                    "meaning": "sausage",
+                    "type": "noun",
+                    "orthography": "katakana",
+                    "tags": [
+                      "origin:English"
+                    ]
+                  }
+                },
+                {
+                  "index": 1455,
+                  "line": 12584,
+                  "entry": {
+                    "kanji": "ソーセージ",
+                    "reading": "ソーセージ",
+                    "meaning": "sausage",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "katakana",
+                    "tags": [
+                      "food",
+                      "refrigerator_common",
+                      "loanword"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "ハム",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1165,
+                  "line": 9820,
+                  "entry": {
+                    "kanji": "ハム",
+                    "reading": "ハム",
+                    "meaning": "ham",
+                    "type": "noun",
+                    "orthography": "katakana",
+                    "tags": [
+                      "origin:English"
+                    ]
+                  }
+                },
+                {
+                  "index": 1453,
+                  "line": 12558,
+                  "entry": {
+                    "kanji": "ハム",
+                    "reading": "ハム",
+                    "meaning": "ham",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "katakana",
+                    "tags": [
+                      "food",
+                      "refrigerator_common",
+                      "loanword"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "ヨーグルト",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1166,
+                  "line": 9830,
+                  "entry": {
+                    "kanji": "ヨーグルト",
+                    "reading": "ヨーグルト",
+                    "meaning": "yogurt",
+                    "type": "noun",
+                    "orthography": "katakana",
+                    "tags": [
+                      "origin:English"
+                    ]
+                  }
+                },
+                {
+                  "index": 1449,
+                  "line": 12509,
+                  "entry": {
+                    "kanji": "ヨーグルト",
+                    "reading": "ヨーグルト",
+                    "meaning": "yogurt",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "katakana",
+                    "tags": [
+                      "food",
+                      "refrigerator_common",
+                      "loanword"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "トマト",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1171,
+                  "line": 9880,
+                  "entry": {
+                    "kanji": "トマト",
+                    "reading": "トマト",
+                    "meaning": "tomato",
+                    "type": "noun",
+                    "orthography": "katakana",
+                    "tags": [
+                      "origin:English"
+                    ]
+                  }
+                },
+                {
+                  "index": 1463,
+                  "line": 12683,
+                  "entry": {
+                    "kanji": "トマト",
+                    "reading": "トマト",
+                    "meaning": "tomato",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "katakana",
+                    "tags": [
+                      "food",
+                      "refrigerator_common",
+                      "loanword"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "レモン",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1172,
+                  "line": 9890,
+                  "entry": {
+                    "kanji": "レモン",
+                    "reading": "レモン",
+                    "meaning": "lemon",
+                    "type": "noun",
+                    "orthography": "katakana",
+                    "tags": [
+                      "origin:English"
+                    ]
+                  }
+                },
+                {
+                  "index": 1469,
+                  "line": 12757,
+                  "entry": {
+                    "kanji": "レモン",
+                    "reading": "レモン",
+                    "meaning": "lemon",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "katakana",
+                    "tags": [
+                      "food",
+                      "refrigerator_common",
+                      "loanword"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "オレンジ",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1173,
+                  "line": 9900,
+                  "entry": {
+                    "kanji": "オレンジ",
+                    "reading": "オレンジ",
+                    "meaning": "orange",
+                    "type": "noun",
+                    "orthography": "katakana",
+                    "tags": [
+                      "origin:English"
+                    ]
+                  }
+                },
+                {
+                  "index": 1468,
+                  "line": 12744,
+                  "entry": {
+                    "kanji": "オレンジ",
+                    "reading": "オレンジ",
+                    "meaning": "orange",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "katakana",
+                    "tags": [
+                      "food",
+                      "refrigerator_common",
+                      "loanword"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "蜥蜴",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1314,
+                  "line": 11198,
+                  "entry": {
+                    "kanji": "蜥蜴",
+                    "reading": "とかげ",
+                    "meaning": "lizard",
+                    "type": "standalone-noun",
+                    "tags": [
+                      "pokemon-name-root"
+                    ]
+                  }
+                },
+                {
+                  "index": 1432,
+                  "line": 12314,
+                  "entry": {
+                    "kanji": "蜥蜴",
+                    "reading": "とかげ",
+                    "meaning": "lizard",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "both",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "亀",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1317,
+                  "line": 11226,
+                  "entry": {
+                    "kanji": "亀",
+                    "reading": "かめ",
+                    "meaning": "turtle; tortoise",
+                    "type": "standalone-noun",
+                    "tags": [
+                      "pokemon-name-root"
+                    ]
+                  }
+                },
+                {
+                  "index": 1406,
+                  "line": 12028,
+                  "entry": {
+                    "kanji": "亀",
+                    "reading": "かめ",
+                    "meaning": "turtle",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "猿",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1342,
+                  "line": 11476,
+                  "entry": {
+                    "kanji": "猿",
+                    "reading": "さる",
+                    "meaning": "monkey",
+                    "type": "standalone-noun",
+                    "orthography": "kanji",
+                    "tags": [
+                      "pokemon-name-root"
+                    ]
+                  }
+                },
+                {
+                  "index": 1408,
+                  "line": 12050,
+                  "entry": {
+                    "kanji": "猿",
+                    "reading": "さる",
+                    "meaning": "monkey",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "鬼",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1346,
+                  "line": 11516,
+                  "entry": {
+                    "kanji": "鬼",
+                    "reading": "おに",
+                    "meaning": "oni; demon ogre",
+                    "type": "standalone-noun",
+                    "orthography": "kanji",
+                    "tags": [
+                      "pokemon-name-root"
+                    ]
+                  }
+                },
+                {
+                  "index": 1540,
+                  "line": 13596,
+                  "entry": {
+                    "kanji": "鬼",
+                    "reading": "おに",
+                    "meaning": "demon; ogre",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji"
+                  }
+                }
+              ]
+            },
+            {
+              "key": "狐",
+              "count": 3,
+              "occurrences": [
+                {
+                  "index": 1348,
+                  "line": 11536,
+                  "entry": {
+                    "kanji": "狐",
+                    "reading": "きつね",
+                    "meaning": "fox",
+                    "type": "standalone-noun",
+                    "orthography": "kanji",
+                    "tags": [
+                      "pokemon-name-root"
+                    ]
+                  }
+                },
+                {
+                  "index": 1415,
+                  "line": 12127,
+                  "entry": {
+                    "kanji": "狐",
+                    "reading": "きつね",
+                    "meaning": "fox",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                },
+                {
+                  "index": 1573,
+                  "line": 13860,
+                  "entry": {
+                    "kanji": "狐",
+                    "reading": "きつね",
+                    "meaning": "fox; fox spirit (kitsune)",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "yokai",
+                      "animal_spirit"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "蛇",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1351,
+                  "line": 11566,
+                  "entry": {
+                    "kanji": "蛇",
+                    "reading": "へび",
+                    "meaning": "snake",
+                    "type": "standalone-noun",
+                    "orthography": "kanji",
+                    "tags": [
+                      "pokemon-name-root"
+                    ]
+                  }
+                },
+                {
+                  "index": 1431,
+                  "line": 12303,
+                  "entry": {
+                    "kanji": "蛇",
+                    "reading": "へび",
+                    "meaning": "snake",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "白",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1356,
+                  "line": 11616,
+                  "entry": {
+                    "kanji": "白",
+                    "reading": "しろ",
+                    "meaning": "white",
+                    "type": "standalone-noun",
+                    "orthography": "kanji",
+                    "tags": [
+                      "pokemon-name-root"
+                    ]
+                  }
+                },
+                {
+                  "index": 1479,
+                  "line": 12881,
+                  "entry": {
+                    "kanji": "白",
+                    "reading": "しろ",
+                    "meaning": "white",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "color",
+                      "common_descriptor"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "鳩",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1357,
+                  "line": 11626,
+                  "entry": {
+                    "kanji": "鳩",
+                    "reading": "はと",
+                    "meaning": "pigeon; dove",
+                    "type": "standalone-noun",
+                    "orthography": "kanji",
+                    "tags": [
+                      "pokemon-name-root"
+                    ]
+                  }
+                },
+                {
+                  "index": 1440,
+                  "line": 12402,
+                  "entry": {
+                    "kanji": "鳩",
+                    "reading": "はと",
+                    "meaning": "pigeon; dove",
+                    "type": "noun",
+                    "lexicalClass": "regular",
+                    "orthography": "kanji",
+                    "tags": [
+                      "common_animal"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "びっくり",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1382,
+                  "line": 11816,
+                  "entry": {
+                    "kanji": "びっくり",
+                    "reading": "びっくり",
+                    "meaning": "to be surprised; surprise (onomatopoeic/adverb)",
+                    "type": "adverb",
+                    "orthography": "hiragana"
+                  }
+                },
+                {
+                  "index": 1556,
+                  "line": 13724,
+                  "entry": {
+                    "kanji": "びっくり",
+                    "reading": "びっくり",
+                    "meaning": "surprise; be surprised (onomatopoeia)",
+                    "type": "adverb",
+                    "lexicalClass": "onomatopoeia",
+                    "orthography": "hiragana"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "schemaSource": "inline"
+    },
+    {
+      "path": "languageHistory.json",
+      "modifiedAt": "2026-02-24T16:40:32.418Z",
+      "name": "Language History",
+      "description": "Combined language history entries",
+      "entriesCount": 12,
+      "valid": true,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "schemaSource": "inline"
+    },
+    {
+      "path": "numbers.json",
+      "modifiedAt": "2026-02-24T16:40:39.036Z",
+      "name": "Letters to Numbers",
+      "description": "A=1, B=2, ... (v0 seed)",
+      "entriesCount": 26,
+      "valid": true,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "schemaSource": "inline"
+    },
+    {
+      "path": "periodic_table.json",
+      "modifiedAt": "2026-02-24T16:40:54.917Z",
+      "name": "Periodic Table – First 70 Elements",
+      "description": "Atomic number, symbol, and core properties for the first 70 elements of the periodic table.",
+      "entriesCount": 70,
+      "valid": true,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "schemaSource": "inline"
+    },
+    {
+      "path": "pokemon.json",
+      "modifiedAt": "2026-02-24T16:41:10.427Z",
+      "name": "Pokémon Starters (Kanto)",
+      "description": "First-generation Kanto starter Pokémon and first 151 Pokémon. Pokémon `type` values use the official Japanese main-series game type labels (e.g., ノーマル, ほのお, みず, でんき, くさ, どく, ひこう, etc.). Name root fields capture both surface segmentation and etymology for Japanese and English names.",
+      "entriesCount": 151,
+      "valid": false,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [
+            {
+              "id": "10",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "11",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "12",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "12",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "13",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "13",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "14",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "14",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "15",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "15",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "16",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "16",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "17",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "17",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "18",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "18",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "19",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "20",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "21",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "21",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "22",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "22",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "23",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "24",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "25",
+              "field": "type",
+              "message": "Invalid enum value '電気' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "26",
+              "field": "type",
+              "message": "Invalid enum value '電気' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "27",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "28",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "29",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "30",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "31",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "31",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "32",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "33",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "34",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "34",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "35",
+              "field": "type",
+              "message": "Invalid enum value '妖精' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "36",
+              "field": "type",
+              "message": "Invalid enum value '妖精' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "37",
+              "field": "type",
+              "message": "Invalid enum value '炎' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "38",
+              "field": "type",
+              "message": "Invalid enum value '炎' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "39",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "39",
+              "field": "type",
+              "message": "Invalid enum value '妖精' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "40",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "40",
+              "field": "type",
+              "message": "Invalid enum value '妖精' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "41",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "41",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "42",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "42",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "43",
+              "field": "type",
+              "message": "Invalid enum value '草' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "43",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "44",
+              "field": "type",
+              "message": "Invalid enum value '草' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "44",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "45",
+              "field": "type",
+              "message": "Invalid enum value '草' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "45",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "46",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "46",
+              "field": "type",
+              "message": "Invalid enum value '草' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "47",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "47",
+              "field": "type",
+              "message": "Invalid enum value '草' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "48",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "48",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "49",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "49",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "50",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "51",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "52",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "53",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "54",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "55",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "56",
+              "field": "type",
+              "message": "Invalid enum value '格闘' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "57",
+              "field": "type",
+              "message": "Invalid enum value '格闘' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "58",
+              "field": "type",
+              "message": "Invalid enum value '炎' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "59",
+              "field": "type",
+              "message": "Invalid enum value '炎' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "60",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "61",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "62",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "62",
+              "field": "type",
+              "message": "Invalid enum value '格闘' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "63",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "64",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "65",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "66",
+              "field": "type",
+              "message": "Invalid enum value '格闘' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "67",
+              "field": "type",
+              "message": "Invalid enum value '格闘' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "68",
+              "field": "type",
+              "message": "Invalid enum value '格闘' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "69",
+              "field": "type",
+              "message": "Invalid enum value '草' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "69",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "70",
+              "field": "type",
+              "message": "Invalid enum value '草' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "70",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "71",
+              "field": "type",
+              "message": "Invalid enum value '草' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "71",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "72",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "72",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "73",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "73",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "74",
+              "field": "type",
+              "message": "Invalid enum value '岩' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "74",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "75",
+              "field": "type",
+              "message": "Invalid enum value '岩' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "75",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "76",
+              "field": "type",
+              "message": "Invalid enum value '岩' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "76",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "77",
+              "field": "type",
+              "message": "Invalid enum value '炎' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "78",
+              "field": "type",
+              "message": "Invalid enum value '炎' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "79",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "79",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "80",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "80",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "81",
+              "field": "type",
+              "message": "Invalid enum value '電気' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "81",
+              "field": "type",
+              "message": "Invalid enum value '鋼' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "82",
+              "field": "type",
+              "message": "Invalid enum value '電気' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "82",
+              "field": "type",
+              "message": "Invalid enum value '鋼' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "83",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "83",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "84",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "84",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "85",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "85",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "86",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "87",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "87",
+              "field": "type",
+              "message": "Invalid enum value '氷' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "88",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "89",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "90",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "91",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "91",
+              "field": "type",
+              "message": "Invalid enum value '氷' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "92",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "93",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "94",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "95",
+              "field": "type",
+              "message": "Invalid enum value '岩' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "95",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "96",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "97",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "98",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "99",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "100",
+              "field": "type",
+              "message": "Invalid enum value '電気' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "101",
+              "field": "type",
+              "message": "Invalid enum value '電気' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "102",
+              "field": "type",
+              "message": "Invalid enum value '草' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "102",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "103",
+              "field": "type",
+              "message": "Invalid enum value '草' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "103",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "104",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "105",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "106",
+              "field": "type",
+              "message": "Invalid enum value '格闘' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "107",
+              "field": "type",
+              "message": "Invalid enum value '格闘' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "108",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "109",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "110",
+              "field": "type",
+              "message": "Invalid enum value '毒' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "111",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "111",
+              "field": "type",
+              "message": "Invalid enum value '岩' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "112",
+              "field": "type",
+              "message": "Invalid enum value '地面' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "112",
+              "field": "type",
+              "message": "Invalid enum value '岩' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "113",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "114",
+              "field": "type",
+              "message": "Invalid enum value '草' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "115",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "116",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "117",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "118",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "119",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "120",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "121",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "121",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "122",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "122",
+              "field": "type",
+              "message": "Invalid enum value '妖精' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "123",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "123",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "124",
+              "field": "type",
+              "message": "Invalid enum value '氷' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "124",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "125",
+              "field": "type",
+              "message": "Invalid enum value '電気' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "126",
+              "field": "type",
+              "message": "Invalid enum value '炎' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "127",
+              "field": "type",
+              "message": "Invalid enum value '虫' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "128",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "129",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "130",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "130",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "131",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "131",
+              "field": "type",
+              "message": "Invalid enum value '氷' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "132",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "133",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "134",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "135",
+              "field": "type",
+              "message": "Invalid enum value '電気' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "136",
+              "field": "type",
+              "message": "Invalid enum value '炎' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "137",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "138",
+              "field": "type",
+              "message": "Invalid enum value '岩' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "138",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "139",
+              "field": "type",
+              "message": "Invalid enum value '岩' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "139",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "140",
+              "field": "type",
+              "message": "Invalid enum value '岩' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "140",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "141",
+              "field": "type",
+              "message": "Invalid enum value '岩' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "141",
+              "field": "type",
+              "message": "Invalid enum value '水' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "142",
+              "field": "type",
+              "message": "Invalid enum value '岩' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "142",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "143",
+              "field": "type",
+              "message": "Invalid enum value '通常' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "144",
+              "field": "type",
+              "message": "Invalid enum value '氷' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "144",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "145",
+              "field": "type",
+              "message": "Invalid enum value '電気' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "145",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "146",
+              "field": "type",
+              "message": "Invalid enum value '炎' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "146",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "149",
+              "field": "type",
+              "message": "Invalid enum value '飛行' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "150",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            },
+            {
+              "id": "151",
+              "field": "type",
+              "message": "Invalid enum value '超能力' for 'type'. Allowed: ノーマル, ほのお, みず, でんき, くさ, こおり, かくとう, どく, じめん, ひこう, エスパー, むし, いわ, ゴースト, ドラゴン, あく, はがね, フェアリー"
+            }
+          ],
+          "warnings": []
+        }
+      },
+      "schemaSource": "inline"
+    },
+    {
+      "path": "programming.json",
+      "modifiedAt": "2026-02-24T16:41:24.452Z",
+      "name": "Programming",
+      "description": "Consolidated programming collections: languages, SQL engines, web technologies.",
+      "entriesCount": 21,
+      "valid": true,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "schemaSource": "inline"
+    }
+  ]
+}

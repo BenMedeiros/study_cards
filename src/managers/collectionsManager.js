@@ -1085,6 +1085,52 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       }
 
       try {
+        // If collection metadata points to an external sentences file, try to load it
+        try {
+          const sf = data?.metadata?.sentences_file;
+          if (sf && typeof sf === 'string' && sf.trim()) {
+            const rel = String(sf).trim().replace(/^\.\//, '');
+            const folder = folderPath || '';
+            const top = topFolderOfKey(key) || '';
+            const candidates = [];
+            if (folder) candidates.push(`${folder}/${rel}`);
+            if (top) candidates.push(`${top}/${rel}`);
+            candidates.push(rel);
+            if (typeof console !== 'undefined' && console.log) console.log(`collections: looking for sentences_file '${sf}' candidates=${JSON.stringify(candidates)}`);
+            let loaded = null;
+            for (const cand of candidates) {
+              if (!cand) continue;
+              try {
+                // Prefer existing indexed path if present
+                const url = `./collections/${cand}`;
+                if (state._availableCollectionPaths && state._availableCollectionPaths.includes(cand)) {
+                  if (typeof console !== 'undefined' && console.debug) console.debug('collections: attempting indexed fetch for', cand);
+                } else {
+                  if (typeof console !== 'undefined' && console.debug) console.debug('collections: attempting direct fetch for', cand);
+                }
+                const r = await fetch(url).catch(() => null);
+                if (r && r.ok) {
+                  const txt = await r.text();
+                  const parsed = JSON.parse(txt);
+                  if (Array.isArray(parsed)) { loaded = parsed; if (typeof console !== 'undefined' && console.log) console.log(`collections: loaded ${parsed.length} sentences from ${cand}`); break; }
+                  if (parsed && Array.isArray(parsed.sentences)) { loaded = parsed.sentences; if (typeof console !== 'undefined' && console.log) console.log(`collections: loaded ${parsed.sentences.length} sentences from ${cand} (wrapped)`); break; }
+                }
+              } catch (e) {
+                if (typeof console !== 'undefined' && console.warn) console.warn('collections: sentences_file fetch failed for', cand, e?.message || e);
+                // ignore and try next candidate
+              }
+            }
+            if (Array.isArray(loaded) && loaded.length) {
+              data.sentences = loaded;
+            } else {
+              if (typeof console !== 'undefined' && console.log) console.log(`collections: no sentences loaded from sentences_file '${sf}'`);
+            }
+          }
+        } catch (e) {
+          if (typeof console !== 'undefined' && console.warn) console.warn('collections: error resolving sentences_file', e?.message || e);
+          // ignore sentences_file resolution errors
+        }
+
         // Support sentence collections that place sentences under `sentences`
         // or legacy `entries` (common for example files located under */examples/*).
         let sentences = Array.isArray(data.sentences) ? data.sentences : null;
@@ -1110,7 +1156,10 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
             seenSourceIds.add(sourceId);
             append.push(ex);
           }
-          if (append.length) sentencesCache.set(top, prev.concat(append));
+          if (append.length) {
+            sentencesCache.set(top, prev.concat(append));
+            if (typeof console !== 'undefined' && console.log) console.log(`collections: appended ${append.length} sentences to cache for top='${top}', total=${(prev.concat(append)).length}`);
+          }
           // Update sentencesRefIndex for quick lookup by ref key
           try {
             let refMap = sentencesRefIndex.get(top) || new Map();
@@ -1147,6 +1196,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
             }
             sentencesRefIndex.set(top, refMap);
             seenRefSentenceSourceIdsByTop.set(top, refSeenByKey);
+            if (typeof console !== 'undefined' && console.log) console.log(`collections: updated sentencesRefIndex for top='${top}' refs=${refMap.size}`);
           } catch (e) {
             // ignore
           }
@@ -1168,12 +1218,27 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
                   }
                 }
               }
+              const unmatched = new Map();
               for (const rawKey of refs) {
                 const keyStr = String(rawKey || '').trim();
                 if (!keyStr) continue;
                 const entry = data.entries.find(e => e && String(e.kanji || '').trim() === keyStr);
-                if (!entry) continue;
+                if (!entry) {
+                  unmatched.set(keyStr, (unmatched.get(keyStr) || 0) + 1);
+                  continue;
+                }
                 attachSentenceToEntry(entry, ex);
+              }
+              if (unmatched.size && typeof console !== 'undefined' && console.debug) {
+                const sample = [];
+                let i = 0;
+                for (const [k, v] of unmatched.entries()) {
+                  sample.push({ key: k, count: v });
+                  i++; if (i >= 8) break;
+                }
+                const entryKeysSample = Array.isArray(data.entries) ? data.entries.slice(0,20).map(e => String(e?.kanji || e?.reading || e?.kana || '').trim()).filter(Boolean) : [];
+                console.debug(`collections: sentences -> unmatched refs for collection ${key}: sample=${JSON.stringify(sample)} entriesSampleCount=${entryKeysSample.length}`);
+                if (entryKeysSample.length && typeof console !== 'undefined' && console.debug) console.debug('collections: sample entry keys:', entryKeysSample);
               }
             }
           }
@@ -2040,6 +2105,20 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
       // Rebuild folder index to ensure sentences were attached to entries.
       try { buildFolderEntryIndex(top); } catch (e) { /* ignore */ }
+      // Diagnostic: log how many entries have sentences attached after index build
+      try {
+        const entriesAfter = Array.isArray(coll.entries) ? coll.entries : [];
+        let have = 0;
+        const samples = [];
+        for (const e of entriesAfter) {
+          const s = Array.isArray(e.sentences) ? e.sentences.length : 0;
+          if (s) {
+            have++;
+            if (samples.length < 5) samples.push({ key: e.kanji ?? e.kana ?? e.reading ?? e.word ?? null, examples: s });
+          }
+        }
+        if (typeof console !== 'undefined' && console.log) console.log(`collections: getCollectionEntriesWithExamples for ${coll.key} after index: entries=${entriesAfter.length} haveExamples=${have} sample=${JSON.stringify(samples)}`);
+      } catch (e) { /* ignore */ }
 
       const baseEntries = Array.isArray(coll.entries) ? coll.entries : [];
       const out = [];

@@ -3,6 +3,7 @@ import { timed } from '../utils/timing.js';
 import { normalizeFolderPath } from '../utils/helpers.js';
 import { getGlobalSettingsManager } from './settingsManager.js';
 import { computePatchFromInput, applyPatchToCollection } from '../utils/collectionDiff.js';
+import { validateCollection } from '../utils/validation.js';
 
 function normalizeIndexRelativePath(p) {
   let s = String(p || '').trim();
@@ -155,7 +156,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
       logger('initialize: loading collections/index.json');
       let index = null;
       try {
-        const res = await fetch('./collections/index.json');
+        const res = await fetch('./collections/_index.json');
         if (!res.ok) throw new Error(`status ${res.status}`);
         const txt = await res.text();
         index = JSON.parse(txt);
@@ -310,7 +311,50 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
         throw new Error(`Invalid JSON in collection ${key}: ${err?.message || err}`);
       }
 
-      if (Array.isArray(data)) data = { metadata: {}, sentences: data };
+      if (Array.isArray(data)) data = { metadata: {}, entries: data };
+
+      // Ensure metadata object exists
+      if (!data.metadata || typeof data.metadata !== 'object') data.metadata = {};
+
+      // Support metadata.schema as a string pointing to a separate JSON schema file.
+      // Resolve relative paths against the collection's folder and attempt to fetch
+      // and inline the schema array. If not present, try a folder-level _metadata.json
+      // as a fallback source for schema.
+      try {
+        const schemaRef = data.metadata.schema;
+        const folder = (typeof key === 'string' && key.includes('/')) ? key.substring(0, key.lastIndexOf('/')) : '';
+
+        if (typeof schemaRef === 'string' && schemaRef.trim()) {
+          let rel = String(schemaRef).trim().replace(/^\.\//, '');
+          if (!rel.includes('/') && folder) rel = `${folder}/${rel}`;
+          const schemaUrl = `./collections/${rel}`;
+          try {
+            const sres = await fetch(schemaUrl);
+            if (sres && sres.ok) {
+              const stxt = await sres.text();
+              const parsed = JSON.parse(stxt);
+              if (Array.isArray(parsed)) data.metadata.schema = parsed;
+            }
+          } catch (e) {
+            logger('getCollection: failed to fetch schema at', schemaUrl, e?.message || e);
+          }
+        } else if (!Array.isArray(data.metadata.schema) && folder) {
+          // try folder-level _metadata.json
+          const metaUrl = `./collections/${folder}/_metadata.json`;
+          try {
+            const mres = await fetch(metaUrl);
+            if (mres && mres.ok) {
+              const mtxt = await mres.text();
+              const pm = JSON.parse(mtxt);
+              if (pm && pm.metadata && Array.isArray(pm.metadata.schema)) data.metadata.schema = pm.metadata.schema;
+            }
+          } catch (e) {
+            // ignore
+          }
+        }
+      } catch (e) {
+        // don't block collection load on schema resolution
+      }
 
       const now = (new Date()).toISOString();
       const modifiedAt = idxModified || now;
@@ -325,8 +369,17 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
       } catch (e) {
         fetchedSizeBytes = null;
       }
+      // Validate collection schema and entries where possible and mark validation date.
+      let validatedAt = null;
+      try {
+        const v = validateCollection(data, {});
+        if (v && v.valid) validatedAt = now;
+      } catch (e) {
+        // ignore validation errors
+      }
 
       const toStore = { key, blob: data, modifiedAt, fetchedAt: now };
+      if (validatedAt) toStore.validatedAt = validatedAt;
       try {
         await idbPut('system_collections', toStore);
         // update index fetchedAt and fetchedSizeBytes
@@ -525,6 +578,19 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
     getCollection,
     getSystemCollection,
     prefetch,
+
+    // validation helper: load collection blob and run centralized validation
+    validateCollectionFile: async function(collectionKey, { force = false, verbose = false, logLimit = 5 } = {}) {
+      if (!collectionKey) throw new Error('collectionKey required');
+      try {
+        const coll = await getCollection(collectionKey, { force });
+        if (!coll) return { valid: false, error: 'collection not found' };
+        const res = validateCollection(coll, { entryArrayKey: null, verbose, logLimit });
+        return res;
+      } catch (e) {
+        return { valid: false, error: e?.message || String(e) };
+      }
+    },
 
     // User collection mutation APIs
     listUserRevisions,

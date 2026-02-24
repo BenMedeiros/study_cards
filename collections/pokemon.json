@@ -4,6 +4,7 @@
     "description": "First-generation Kanto starter Pokémon and first 151 Pokémon. Pokémon `type` values use the official Japanese main-series game type labels (e.g., ノーマル, ほのお, みず, でんき, くさ, どく, ひこう, etc.). Name root fields capture both surface segmentation and etymology for Japanese and English names.",
     "version": 3,
     "category": "pokemon",
+    "entry_key": "pokedexNumber",
     "source": "Official Japanese main-series game text (Game Freak / Nintendo) for type labels; Pokémon name etymologies compiled from reputable reference lists (e.g., Dogasu/Bulbagarden) and cross-checked against major databases.",
     "schema": [
       {

@@ -4,6 +4,7 @@
         "description": "Atomic number, symbol, and core properties for the first 70 elements of the periodic table.",
         "version": 4,
         "category": "chemistry",
+        "entry_key": "atomicNumber",
         "schema": [
             {
                 "key": "atomicNumber",

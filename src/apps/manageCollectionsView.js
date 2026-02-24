@@ -1,6 +1,7 @@
 import { createTable } from '../components/table.js';
 import { card, el } from '../components/ui.js';
 import { createDropdown } from '../components/dropdown.js';
+import { validateSchemaArray, validateEntriesAgainstSchema } from '../utils/validation.js';
 
 function safeJsonStringify(v, space = 2) {
   try { return JSON.stringify(v, null, space); } catch { return String(v ?? ''); }
@@ -158,86 +159,7 @@ function tryParseJsonLoose(raw) {
   return null;
 }
 
-// Validate a schema array. Returns { errors: [], warnings: [] }.
-function validateSchemaArray(schemaArr) {
-  const out = { errors: [], warnings: [] };
-  if (!Array.isArray(schemaArr)) {
-    out.errors.push('Schema must be an array of field definitions.');
-    return out;
-  }
-  const allowedTypes = new Set(['string','text','number','integer','boolean','enum','tags','tag','kanji','reading','date','select']);
-  for (let i = 0; i < schemaArr.length; i++) {
-    const f = schemaArr[i];
-    if (!f || typeof f !== 'object') {
-      out.errors.push(`Schema item at index ${i} must be an object.`);
-      continue;
-    }
-    const key = typeof f.key === 'string' ? f.key.trim() : '';
-    if (!key) out.errors.push(`Schema item at index ${i} is missing a string 'key'.`);
-    const t = f.type && typeof f.type === 'string' ? f.type.trim() : '';
-    if (t && !allowedTypes.has(t)) out.warnings.push(`Field '${key || ('#'+i)}' has unknown type '${t}'.`);
-    if (t === 'enum') {
-      const vals = f.values;
-      if (!vals || typeof vals !== 'object' || Array.isArray(vals) || Object.keys(vals).length === 0) {
-        out.errors.push(`Enum field '${key || ('#'+i)}' must provide a non-empty 'values' object.`);
-        continue;
-      }
-      for (const [vk, vv] of Object.entries(vals)) {
-        if (typeof vk !== 'string' || !vk.trim()) out.warnings.push(`Enum field '${key}' has an invalid value key.`);
-        if (typeof vv !== 'string') out.warnings.push(`Enum field '${key}' value for '${vk}' should be a string description.`);
-      }
-    }
-  }
-  return out;
-}
-
-// Validate entries against a schema array. Returns { errors: [], warnings: [] }.
-function validateEntriesAgainstSchema(entries, schemaArr, { entryKeyField = '' } = {}) {
-  const out = { entryErrors: [], entryWarnings: [], warnings: [] };
-  if (!Array.isArray(entries) || !entries.length) return out;
-  if (!Array.isArray(schemaArr) || !schemaArr.length) return out;
-
-  const schemaMap = new Map();
-  for (const f of schemaArr) {
-    if (!f || typeof f !== 'object') continue;
-    const k = typeof f.key === 'string' ? f.key.trim() : '';
-    if (!k) continue;
-    schemaMap.set(k, f);
-  }
-
-  for (let i = 0; i < entries.length; i++) {
-    const e = entries[i];
-    if (!e || typeof e !== 'object') continue;
-    const id = (entryKeyField && e[entryKeyField] != null) ? String(e[entryKeyField]) : `#${i}`;
-    for (const [k, f] of schemaMap.entries()) {
-      const t = f.type && typeof f.type === 'string' ? f.type.trim() : '';
-      if (t === 'enum') {
-        const vals = f.values && typeof f.values === 'object' && !Array.isArray(f.values) ? Object.keys(f.values) : [];
-        if (!vals.length) {
-          out.warnings.push(`Schema enum field '${k}' has no defined values.`);
-          out.entryWarnings.push({ id, index: i, field: k, message: `Schema enum field '${k}' has no defined values.` });
-          continue;
-        }
-        if (k in e) {
-          const v = e[k];
-          if (v == null || (typeof v !== 'string' && typeof v !== 'number')) {
-            const msg = `Entry ${id}: field '${k}' must be one of: ${vals.join(', ')}.`;
-            out.entryErrors.push({ id, index: i, field: k, message: msg });
-          } else {
-            const vs = String(v);
-            if (!vals.includes(vs)) {
-              const msg = `Entry ${id}: invalid value '${vs}' for enum '${k}'. Allowed: ${vals.join(', ')}.`;
-              out.entryErrors.push({ id, index: i, field: k, message: msg });
-            }
-          }
-        }
-      }
-      // future: add other type checks (tags arrays, number ranges, etc.)
-    }
-  }
-
-  return out;
-}
+// Schema/entries validation provided by ../utils/validation.js
 
 // Deep equality that ignores object key ordering. Handles primitives, arrays, and plain objects.
 function deepEqual(a, b) {

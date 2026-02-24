@@ -4,6 +4,7 @@
     "description": "Consolidated Greek mythology entries (Olympians, Titans, Primordials, Chthonic).",
     "version": 1,
     "category": "mythology",
+    "entry_key": "englishName",
     "schema": [
       {
         "key": "englishName",

@@ -4,6 +4,7 @@
     "description": "Combined language history entries",
     "version": 2,
     "category": "languageHistory",
+    "entry_key": "stage",
     "schema": [
       {
         "key": "language",

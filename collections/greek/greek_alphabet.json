@@ -4,6 +4,7 @@
     "description": "Greek letters with standard alphabetical order, lowercase/uppercase forms, classical names, letter type classification, and pronunciation guides split into Classical vs Modern (IPA + simple helpers).",
     "version": 4,
     "category": "greek",
+    "entry_key" : "lowercase",
     "schema": [
       {
         "key": "order",

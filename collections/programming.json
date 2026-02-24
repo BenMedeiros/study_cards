@@ -4,6 +4,7 @@
     "description": "Consolidated programming collections: languages, SQL engines, web technologies.",
     "version": 1,
     "category": "programming",
+    "entry_key": "language",
     "schema": [
       { "key": "language", "label": "Language / Name", "type": "string" },
       { "key": "year", "label": "Year Created", "type": "number" },
