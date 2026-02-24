@@ -98,9 +98,9 @@ body {
 }
 
 .view-footer-controls {
-  position: absolute;
-  left: 0;
-  bottom: var(--shell-footer-height);
+  /* position: absolute; */
+  /* left: 0; */
+  /* bottom: var(--shell-footer-height); */
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -109,7 +109,7 @@ body {
   border-top: var(--border-1);
   box-shadow: 0 -2px 16px 0 rgba(96, 165, 250, 0.08);
   padding: 0.6rem 0.5rem 0.9rem;
-  z-index: 100;
+  /* z-index: 100; */
 }
 
 .view-footer-controls-row {
@@ -564,6 +564,17 @@ body.using-keyboard .view-footer-controls .btn .caption {
   border-bottom: var(--border-1);
 }
 
+#shell-root {
+  display: grid;
+      grid-template-rows: auto 1fr auto;
+    height: 100vh;
+}
+#shell-root > *, #collections-root, #data-root {
+  min-width: 0;
+  min-height: 0;
+}
+
+
 /* Thin footer below the main content for small buttons/stats */
 .shell-footer {
   display: flex;
@@ -578,11 +589,11 @@ body.using-keyboard .view-footer-controls .btn .caption {
   color: var(--muted);
   font-size: 0.8rem;
   /* Keep the shell footer fixed to the viewport bottom so main scrolls internally */
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  z-index: 20;
+  /* position: fixed; */
+  /* left: 0; */
+  /* bottom: 0; */
+  /* width: 100%; */
+  /* z-index: 20; */
 }
 
 /* Quick hide classes toggled from the brand menu */
@@ -938,10 +949,17 @@ input[type="number"].button::-webkit-inner-spin-button {
   }
 }
 
-.main {
-  padding: .5rem 1rem 2rem;
-  flex: 1;
+#shell-main {
+  padding: .5rem;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 }
+
+/* @media (max-width: 700px) {
+  #shell-main {
+    height: auto;
+  }
+} */
 
 
 .card {
@@ -952,10 +970,8 @@ input[type="number"].button::-webkit-inner-spin-button {
   position: relative;
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 11rem);
   margin-top: 1rem;
   overflow-y: auto;
-  max-height: 28rem;
 }
 
 #collections-card {
@@ -971,22 +987,22 @@ input[type="number"].button::-webkit-inner-spin-button {
     max-height: 35rem;
   }
 
-  #collections-card {
-    max-height: 45rem;
+  #collections-card, #data-card {
+    max-height: -webkit-fill-available;
   }
 }
 
 
 #kanji-study-root {
-  max-height: 60%;
+  /* max-height: 60%; */
   overflow-y: auto;
 }
 
-@media (max-width: 700px) {
+/* @media (max-width: 700px) {
   #kanji-study-root {
     max-height: 70%;
   }
-}
+} */
 
 /* Kanji study specific tweaks */
 .kanji-card {
@@ -1242,7 +1258,7 @@ input[type="number"].button::-webkit-inner-spin-button {
 }
 
 /* Shared horizontal scroll container behavior (nav + header tools). */
-:where(.nav, .view-header-tools) {
+:where(.nav, .view-header-tools, .shell-footer) {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
