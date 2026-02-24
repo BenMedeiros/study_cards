@@ -739,60 +739,24 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   async function tryLoadFolderMetadata(folderPath, folderMetadataMapParam) {
     const folder = normalizeFolderPath(folderPath);
     if (folderMetadataMapParam instanceof Map) {
-      // Exact match first
-      let rel = folderMetadataMapParam.get(folder);
-
-      // If no exact mapping, try to find a mapping that points to
-      // a metadata file located under this folder (e.g. an index that
-      // had "japanese": "words/_metadata.json" -> stored as
-      // "japanese/words/_metadata.json")
-      if (!rel) {
-        const want1 = `${folder}/_metadata.json`;
-        const want2 = `${folder}/metadata.json`;
-        for (const [, v] of folderMetadataMapParam.entries()) {
-          if (v === want1 || v === want2) {
-            rel = v;
-            break;
-          }
-        }
-      }
-
+      // If a mapping exists, attempt to resolve metadata via collectionDB.
+      // CollectionsManager must not perform network fetches itself.
+      const rel = folderMetadataMapParam.get(folder);
       if (!rel) return null;
-
-      const metadataUrl = `./collections/${rel}`;
-      try {
-        const res = await fetch(metadataUrl);
-        if (!res.ok) return null;
-        const text = await res.text();
-        if (!text) return null;
-        return JSON.parse(text);
-      } catch (err) {
-        console.warn(`Failed to load folder metadata at ${metadataUrl}: ${err.message}`);
-        return null;
+      if (collectionDB && typeof collectionDB.getCollection === 'function') {
+        try {
+          const parsed = await collectionDB.getCollection(rel).catch(() => null);
+          if (parsed && typeof parsed === 'object') return parsed;
+        } catch (e) {
+          // ignore collectionDB errors
+        }
+      } else {
+        // collectionDB not available; skip
       }
+      return null;
     }
-
-    const base = folder ? `./collections/${folder}` : './collections';
-    const candidates = [`${base}/_metadata.json`, `${base}/metadata.json`];
-
-    for (const metadataUrl of candidates) {
-      let res;
-      try {
-        res = await fetch(metadataUrl);
-      } catch {
-        continue;
-      }
-      if (!res.ok) continue;
-      try {
-        const text = await res.text();
-        if (!text) continue;
-        return JSON.parse(text);
-      } catch (err) {
-        console.warn(`Failed to parse folder metadata at ${metadataUrl}: ${err.message}`);
-        return null;
-      }
-    }
-
+    // No mapping provided; do not attempt direct network fetches here.
+    // no mapping and fetches are disabled
     return null;
   }
 
@@ -936,48 +900,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   async function loadSeedCollections() {
     return timed('collections.loadSeedCollections', async () => {
       if (!collectionDB || typeof collectionDB.initialize !== 'function') {
-        // fallback to original behavior
-        const indexRes = await fetch('./collections/index.json');
-        if (!indexRes.ok) throw new Error(`Failed to load collections index (status ${indexRes.status})`);
-        let index;
-        try {
-          const indexText = await indexRes.text();
-          if (!indexText) throw new Error('collections/index.json is empty');
-          index = JSON.parse(indexText);
-        } catch (err) {
-          throw new Error(`Failed to parse collections/index.json: ${err.message}`);
-        }
-        const rawCollections = Array.isArray(index?.collections) ? index.collections : [];
-        const paths = rawCollections.map(c => (typeof c === 'string' ? c : (c.path || ''))).filter(Boolean);
-
-        // Strict mode: fail if deprecated collection-sets files are present in the index
-        for (const p of paths) {
-          if (!p) continue;
-          if (basename(p) === COLLECTION_SETS_FILE || p.split('/').includes(COLLECTION_SETS_DIRNAME)) {
-            throw new Error(`Deprecated collection sets detected in index: ${p}`);
-          }
-        }
-        folderMetadataMap = buildFolderMetadataMap(index?.folderMetadata);
-        state.collectionTree = buildCollectionTreeFromPaths(paths);
-        state._availableCollectionPaths = paths.slice();
-        availableCollectionsMap = new Map();
-        for (const raw of rawCollections) {
-          if (typeof raw === 'string') {
-            availableCollectionsMap.set(raw, { path: raw, name: null, description: null, entries: null });
-          } else if (raw && typeof raw.path === 'string') {
-            availableCollectionsMap.set(raw.path, {
-              path: raw.path,
-              name: raw.name || null,
-              description: raw.description || null,
-              entries: (typeof raw.entries === 'number') ? raw.entries : null
-            });
-          }
-        }
-        emit();
-        Promise.resolve().then(() => {
-          try { prefetchCollectionsInFolder(''); } catch {}
-        });
-        return paths;
+        throw new Error('collectionDB is required: collections must be loaded via collectionDatabaseManager');
       }
 
       // Use collectionDB to load index + folder metadata
@@ -1044,32 +967,10 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       }
 
       let data;
-      if (collectionDB && typeof collectionDB.getCollection === 'function') {
-        try {
-          data = await collectionDB.getCollection(key);
-        } catch (err) {
-          throw err;
-        }
-      } else {
-        const url = `./collections/${key}`;
-        let res;
-        try {
-          res = await fetch(url);
-        } catch (err) {
-          throw new Error(`Failed to fetch collection ${key}: ${err.message}`);
-        }
-        if (!res.ok) {
-          throw new Error(`Failed to load collection ${key} (status ${res.status})`);
-        }
-
-        try {
-          const txt = await res.text();
-          if (!txt) throw new Error('empty response');
-          data = JSON.parse(txt);
-        } catch (err) {
-          throw new Error(`Invalid JSON in collection ${key}: ${err.message}`);
-        }
+      if (!collectionDB || typeof collectionDB.getCollection !== 'function') {
+        throw new Error('collectionDB.getCollection is required to load collections');
       }
+      data = await collectionDB.getCollection(key);
 
       if (Array.isArray(data)) {
         data = { metadata: {}, sentences: data };
@@ -1090,59 +991,53 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
           const sf = data?.metadata?.sentences_file;
           if (sf && typeof sf === 'string' && sf.trim()) {
             const rel = String(sf).trim().replace(/^\.\//, '');
-            const folder = folderPath || '';
-            const top = topFolderOfKey(key) || '';
-            const candidates = [];
-            if (folder) candidates.push(`${folder}/${rel}`);
-            if (top) candidates.push(`${top}/${rel}`);
-            candidates.push(rel);
-            if (typeof console !== 'undefined' && console.log) console.log(`collections: looking for sentences_file '${sf}' candidates=${JSON.stringify(candidates)}`);
-            let loaded = null;
-            for (const cand of candidates) {
-              if (!cand) continue;
+            if (collectionDB && typeof collectionDB.getCollection === 'function') {
               try {
-                // Prefer existing indexed path if present
-                const url = `./collections/${cand}`;
-                if (state._availableCollectionPaths && state._availableCollectionPaths.includes(cand)) {
-                  if (typeof console !== 'undefined' && console.debug) console.debug('collections: attempting indexed fetch for', cand);
-                } else {
-                  if (typeof console !== 'undefined' && console.debug) console.debug('collections: attempting direct fetch for', cand);
-                }
-                const r = await fetch(url).catch(() => null);
-                if (r && r.ok) {
-                  const txt = await r.text();
-                  const parsed = JSON.parse(txt);
-                  if (Array.isArray(parsed)) { loaded = parsed; if (typeof console !== 'undefined' && console.log) console.log(`collections: loaded ${parsed.length} sentences from ${cand}`); break; }
-                  if (parsed && Array.isArray(parsed.sentences)) { loaded = parsed.sentences; if (typeof console !== 'undefined' && console.log) console.log(`collections: loaded ${parsed.sentences.length} sentences from ${cand} (wrapped)`); break; }
+                const parsed = await collectionDB.getCollection(rel).catch(() => null);
+                let loaded = null;
+                if (Array.isArray(parsed)) loaded = parsed;
+                else if (parsed && Array.isArray(parsed.entries)) loaded = parsed.entries;
+                else if (parsed && Array.isArray(parsed.sentences)) loaded = parsed.sentences;
+                if (Array.isArray(loaded) && loaded.length) {
+                  data.sentences = loaded;
                 }
               } catch (e) {
-                if (typeof console !== 'undefined' && console.warn) console.warn('collections: sentences_file fetch failed for', cand, e?.message || e);
-                // ignore and try next candidate
+                // ignore collectionDB errors
               }
-            }
-            if (Array.isArray(loaded) && loaded.length) {
-              data.sentences = loaded;
             } else {
-              if (typeof console !== 'undefined' && console.log) console.log(`collections: no sentences loaded from sentences_file '${sf}'`);
+              // collectionDB not available: skip loading external sentences
             }
           }
         } catch (e) {
-          if (typeof console !== 'undefined' && console.warn) console.warn('collections: error resolving sentences_file', e?.message || e);
           // ignore sentences_file resolution errors
         }
 
         // Support sentence collections that place sentences under `sentences`
-        // or legacy `entries` (common for example files located under */examples/*).
+        // or under `entries` (some collections use `entries` as the top array).
+        // Detect sentence-like `entries` (e.g., have `ja` or `chunks`) and
+        // treat them as sentences rather than regular entries.
         let sentences = Array.isArray(data.sentences) ? data.sentences : null;
-        if (!sentences && Array.isArray(data.entries) && String(key || '').includes('/examples/')) {
-          sentences = data.entries.slice();
-          // Clear data.entries so these sentence files are not treated as regular collections
-          data.entries = [];
+        if (!sentences && Array.isArray(data.entries)) {
+          const sample = data.entries.find(x => x && typeof x === 'object');
+          const looksLikeSentence = sample && (typeof sample.ja === 'string' || Array.isArray(sample.chunks));
+          if (looksLikeSentence) {
+            sentences = data.entries.slice();
+            // Clear data.entries so these sentence files are not treated as regular collections
+            data.entries = [];
+          } else if (String(key || '').includes('/examples/')) {
+            // Legacy fallback: example files sometimes used `entries` for sentences
+            sentences = data.entries.slice();
+            data.entries = [];
+          }
         }
         if (sentences) {
           const top = topFolderOfKey(key) || '';
           // Track which sentences have already been indexed for this top-folder.
-          // Use sourceId = `${collectionKey}#${index}` so re-loading the same file doesn't duplicate.
+          // Use sourceId = `${sourcePrefix}#${index}` so the same external
+          // sentences file isn't appended multiple times when referenced by
+          // different collections. Prefer metadata.sentences_file when present.
+          const sf = data?.metadata?.sentences_file;
+          const sourcePrefix = (sf && typeof sf === 'string' && sf.trim()) ? String(sf).trim().replace(/^\.\//, '') : key;
           const seenSourceIds = getOrCreateSet(seenSentenceSourceIdsByTop, top);
 
           const prev = sentencesCache.get(top) || [];
@@ -1150,7 +1045,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
           for (let i = 0; i < sentences.length; i++) {
             const ex = sentences[i];
             if (!ex || typeof ex !== 'object') continue;
-            const sourceId = `${String(key)}#${i}`;
+            const sourceId = `${String(sourcePrefix)}#${i}`;
             sentenceSourceIdBySentence.set(ex, sourceId);
             if (seenSourceIds.has(sourceId)) continue;
             seenSourceIds.add(sourceId);
@@ -1158,7 +1053,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
           }
           if (append.length) {
             sentencesCache.set(top, prev.concat(append));
-            if (typeof console !== 'undefined' && console.log) console.log(`collections: appended ${append.length} sentences to cache for top='${top}', total=${(prev.concat(append)).length}`);
           }
           // Update sentencesRefIndex for quick lookup by ref key
           try {
@@ -1196,7 +1090,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
             }
             sentencesRefIndex.set(top, refMap);
             seenRefSentenceSourceIdsByTop.set(top, refSeenByKey);
-            if (typeof console !== 'undefined' && console.log) console.log(`collections: updated sentencesRefIndex for top='${top}' refs=${refMap.size}`);
           } catch (e) {
             // ignore
           }
@@ -1229,17 +1122,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
                 }
                 attachSentenceToEntry(entry, ex);
               }
-              if (unmatched.size && typeof console !== 'undefined' && console.debug) {
-                const sample = [];
-                let i = 0;
-                for (const [k, v] of unmatched.entries()) {
-                  sample.push({ key: k, count: v });
-                  i++; if (i >= 8) break;
-                }
-                const entryKeysSample = Array.isArray(data.entries) ? data.entries.slice(0,20).map(e => String(e?.kanji || e?.reading || e?.kana || '').trim()).filter(Boolean) : [];
-                console.debug(`collections: sentences -> unmatched refs for collection ${key}: sample=${JSON.stringify(sample)} entriesSampleCount=${entryKeysSample.length}`);
-                if (entryKeysSample.length && typeof console !== 'undefined' && console.debug) console.debug('collections: sample entry keys:', entryKeysSample);
-              }
+              // suppressed debug: unmatched refs sample removed
             }
           }
         }
@@ -1325,7 +1208,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         try {
           await loadCollection(nextId);
         } catch (err) {
-          console.warn(`[Collections] Failed to load collection ${nextId}: ${err.message}`);
           return;
         }
       }
@@ -1622,24 +1504,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       const compiled = compileTableSearchQuery(q);
       const accessor = buildEntrySearchAccessor(entry, { fields, collection });
       // Conditional debug logging to help diagnose empty-field matches
-      try {
-        if (q.includes('{') && q.includes(':')) {
-          console.debug('[collectionsManager] entryMatchesTableSearch query parsed:', q, compiled.parsed);
-          for (const p of (compiled.parsed?.parts || [])) {
-            if (p && p.field) {
-              try {
-                console.debug('[collectionsManager] entry field check', { field: p.field, hasField: !!accessor.hasField(p.field), value: accessor.getValue(p.field) });
-              } catch (e) {
-                console.debug('[collectionsManager] entry field check error', e && e.message);
-              }
-            }
-          }
-        }
-      } catch (e) {
-        // ignore logging failures
-      }
       const matched = matchesTableSearch(accessor, compiled, { fields: tableSearchFieldsMeta(fields) });
-      try { if (q.includes('{') && q.includes(':')) console.debug('[collectionsManager] entryMatchesTableSearch result', { matched }); } catch (e) {}
       return matched;
     } catch (e) {
       return false;
@@ -2117,7 +1982,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
             if (samples.length < 5) samples.push({ key: e.kanji ?? e.kana ?? e.reading ?? e.word ?? null, examples: s });
           }
         }
-        if (typeof console !== 'undefined' && console.log) console.log(`collections: getCollectionEntriesWithExamples for ${coll.key} after index: entries=${entriesAfter.length} haveExamples=${have} sample=${JSON.stringify(samples)}`);
+        // suppressed debug log for getCollectionEntriesWithExamples
       } catch (e) { /* ignore */ }
 
       const baseEntries = Array.isArray(coll.entries) ? coll.entries : [];

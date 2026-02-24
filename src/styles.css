@@ -67,24 +67,23 @@ body {
    ============================================ */
 
 .view-footer-controls .btn {
-  /* fixed-size vertical button layout for footer controls */
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
   display: inline-flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
   justify-content: center;
-  gap: 0.15rem;
-  padding: 0.45rem 0.8rem;
-  font-size: 1.05rem;
-  border-radius: 0.75rem;
-  background: rgba(96, 165, 250, 0.10);
-  border: var(--border-1);
-  color: var(--text);
-  font-weight: 600;
+  /* gap: 0.15rem; */
+  /* padding: 0.45rem 0.8rem; */
+  /* font-size: 1.05rem; */
+  /* border-radius: 0.75rem; */
+  /* background: rgba(96, 165, 250, 0.10); */
+  /* border: var(--border-1); */
+  /* color: var(--text); */
+  /* font-weight: 600; */
   transition: background 0.15s, border-color 0.15s;
   min-width: 84px;
-  flex: 0 0 auto;
-  overflow: hidden;
+  /* flex: 0 0 auto; */
+  /* overflow: hidden; */
 }
 
 .view-footer-controls .btn .icon {
@@ -98,27 +97,25 @@ body {
 }
 
 .view-footer-controls {
-  /* position: absolute; */
-  /* left: 0; */
-  /* bottom: var(--shell-footer-height); */
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  background: rgba(17, 24, 39, 0.97);
-  border-top: var(--border-1);
-  box-shadow: 0 -2px 16px 0 rgba(96, 165, 250, 0.08);
-  padding: 0.6rem 0.5rem 0.9rem;
-  /* z-index: 100; */
+    /* position: absolute; */
+    /* left: 0; */
+    /* bottom: var(--shell-footer-height); */
+    /* width: 100%; */
+    /* display: flex; */
+    flex-direction: column;
+    gap: 0.5rem;
+    background: rgba(17, 24, 39, 0.97);
+    border-top: var(--border-1);
+    box-shadow: 0 -2px 16px 0 rgba(96, 165, 250, 0.08);
+    /* padding: 0.6rem 0.5rem 0.9rem; */
+    /* z-index: 100; */
 }
 
 .view-footer-controls-row {
-  width: 100%;
   display: flex;
   flex-wrap: nowrap;
   justify-content: center;
   gap: 0.75rem;
-  padding-right: 2.6rem;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -154,9 +151,7 @@ body {
 .view-footer-settings-row {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
-  width: 100%;
-  padding: 0 0.6rem;
+
 }
 
 .view-footer-controls .btn .text {
@@ -566,10 +561,13 @@ body.using-keyboard .view-footer-controls .btn .caption {
 
 #shell-root {
   display: grid;
-      grid-template-rows: auto 1fr auto;
-    height: 100vh;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
 }
-#shell-root > *, #collections-root, #data-root {
+
+#shell-root>*,
+#collections-root,
+#data-root {
   min-width: 0;
   min-height: 0;
 }
@@ -987,7 +985,8 @@ input[type="number"].button::-webkit-inner-spin-button {
     max-height: 35rem;
   }
 
-  #collections-card, #data-card {
+  #collections-card,
+  #data-card {
     max-height: -webkit-fill-available;
   }
 }
@@ -2838,9 +2837,11 @@ select:hover {
   border-color: rgba(220, 38, 38, 0.85);
   color: #fff;
 }
+
 #manage-collections-root .btn.primary.mc-save-invalid:hover {
   filter: brightness(1.05);
 }
+
 #manage-collections-root .btn.primary.mc-save-invalid:disabled {
   opacity: 0.9;
   cursor: not-allowed;
@@ -2968,22 +2969,26 @@ select:hover {
 /* Make the Save Diff primary button in Manage Collections visually prominent */
 #manage-collections-root .mc-actions-row .btn.primary,
 #manage-collections-root .btn.primary {
-  background-color: #28a745; /* success green */
+  background-color: #28a745;
+  /* success green */
   border-color: #1e7e34;
   color: #ffffff;
-  box-shadow: 0 1px 0 rgba(0,0,0,0.06) inset;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06) inset;
 }
+
 #manage-collections-root .mc-actions-row .btn.primary:hover,
 #manage-collections-root .btn.primary:hover {
   background-color: #2fb04f;
 }
+
 #manage-collections-root .mc-actions-row .btn.primary:active,
 #manage-collections-root .btn.primary:active {
   background-color: #19692c;
   transform: translateY(1px);
 }
+
 #manage-collections-root .mc-actions-row .btn.primary:focus,
 #manage-collections-root .btn.primary:focus {
-  outline: 3px solid rgba(40,167,69,0.22);
+  outline: 3px solid rgba(40, 167, 69, 0.22);
   outline-offset: 2px;
 }

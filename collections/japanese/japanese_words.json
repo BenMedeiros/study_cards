@@ -6,7 +6,7 @@
     "category": "japanese",
     "source": "Various Japanese language resources and databases",
     "entry_key": "kanji",
-    "sentences_file": "./japanese_sentences.json",
+    "sentences_file": "japanese/japanese_sentences.json",
     "schema": [
       {
         "key": "kanji",

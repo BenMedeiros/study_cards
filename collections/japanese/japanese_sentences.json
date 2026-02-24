@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "name": "Counter + Culture Set 01",
+    "name": "Japanese Sentences",
     "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
     "version": 1,
     "category": "japanese",
@@ -89,7 +89,7 @@
     
 
   },
-  "sentences": [
+  "entries": [
     {
       "ja": "フーディーニは三回も冷たい水を浴びた。",
       "en": "Houdini even bathed in cold water three times.",
