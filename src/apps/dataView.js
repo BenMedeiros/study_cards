@@ -1106,7 +1106,7 @@ export function renderData({ store }) {
         // If a held query exists, initialize the table search with it.
         if (heldTableSearch) {
           searchInput.value = heldTableSearch;
-          try { searchInput.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+          try { clearBtn.disabled = !(String(searchInput.value || '').trim().length > 0); } catch (e) {}
         }
 
         updateSavedFilterButtons(searchInput.value);

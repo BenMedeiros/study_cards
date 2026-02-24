@@ -579,14 +579,21 @@ export function createTable({ store = null, headers, rows, className = '', id, c
       }
     }
 
+    let _lastAppliedEvalQuery = null;
+
     function applyFilter(q) {
       const total = Array.isArray(originalRows) ? originalRows.length : 0;
       const label = `table.applyFilter (${total})`;
       return timed(label, () => {
         const rawQuery = String(q || '').trim();
         if (!rawQuery) {
+          if (_lastAppliedEvalQuery === '') {
+            try { clearBtn.disabled = true; } catch (e) {}
+            return;
+          }
           currentRows = originalRows.slice();
           sortAndRender();
+          _lastAppliedEvalQuery = '';
           try { clearBtn.disabled = true; } catch (e) {}
           return;
         }
@@ -600,9 +607,22 @@ export function createTable({ store = null, headers, rows, className = '', id, c
           try { evalQuery = String(cleanSearchQuery(rawQuery) || '').trim(); } catch (e) { evalQuery = rawQuery; }
         }
         if (!evalQuery) {
+          if (_lastAppliedEvalQuery === '') {
+            try { clearBtn.disabled = !(rawQuery.length > 0); } catch (e) {}
+            return;
+          }
           currentRows = originalRows.slice();
           sortAndRender();
+          _lastAppliedEvalQuery = '';
           try { clearBtn.disabled = !(rawQuery.length > 0); } catch (e) {}
+          return;
+        }
+
+        if (_lastAppliedEvalQuery === evalQuery) {
+          try {
+            const has = rawQuery.length > 0;
+            clearBtn.disabled = !has;
+          } catch (e) {}
           return;
         }
 
@@ -637,6 +657,7 @@ export function createTable({ store = null, headers, rows, className = '', id, c
         });
 
         sortAndRender();
+        _lastAppliedEvalQuery = evalQuery;
         try {
           const has = rawQuery.length > 0;
           clearBtn.disabled = !has;
