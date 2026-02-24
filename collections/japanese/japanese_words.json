@@ -6,7 +6,14 @@
     "category": "japanese",
     "source": "Various Japanese language resources and databases",
     "entry_key": "kanji",
-    "sentences_file": "japanese/japanese_sentences.json",
+    "relatedCollections": [
+      {
+        "name": "sentences",
+        "path": "japanese/japanese_sentences.json",
+        "this_key": "kanji",
+        "foreign_key": "chunks[].refs[]"
+      }
+    ],
     "schema": [
       {
         "key": "kanji",

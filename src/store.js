@@ -137,6 +137,7 @@ export function createStore() {
       expandEntriesByAdjectiveForm: collections.expandEntriesByAdjectiveForm,
       expandEntriesAndIndicesByAdjectiveForms: collections.expandEntriesAndIndicesByAdjectiveForms,
       getAdjectiveExpansionDeltas: collections.getAdjectiveExpansionDeltas,
+      getCollectionEntriesWithRelated: collections.getCollectionEntriesWithRelated,
 
       // Collection actions (state modifications)
       shuffleCollection: collections.shuffleCollection,

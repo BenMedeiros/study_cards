@@ -1,32 +1,41 @@
-// Factory for creating a Kanji example card element with internal carousel controls.
+// Factory for creating a Kanji related-item card element with internal carousel controls.
 // Uses existing CSS classes defined in src/styles.css.
-export function createKanjiExampleCard({ entry = null, sentences = [], handlers = {} } = {}) {
+export function createKanjiRelatedCard({ entry = null, sentences = [], items = null, handlers = {}, config = {} } = {}) {
   const root = document.createElement('div');
-  root.className = 'card kanji-example-card';
+  root.className = 'card kanji-related-card';
+
+  const itemLabel = String(config?.itemLabel || 'Related');
+  const secondaryLabel = String(config?.secondaryLabel || 'English');
+  const primaryKeys = Array.isArray(config?.primaryKeys) && config.primaryKeys.length
+    ? config.primaryKeys.slice()
+    : ['jp', 'ja', 'japanese', 'text', 'sentence'];
+  const secondaryKeys = Array.isArray(config?.secondaryKeys) && config.secondaryKeys.length
+    ? config.secondaryKeys.slice()
+    : ['en', 'en_us', 'eng', 'english', 'translation'];
 
   const header = document.createElement('div');
-  header.className = 'kanji-example-header';
+  header.className = 'kanji-related-header';
 
   const label = document.createElement('div');
-  label.className = 'kanji-example-label';
-  label.textContent = 'Sentence';
+  label.className = 'kanji-related-label';
+  label.textContent = itemLabel;
 
   const controls = document.createElement('div');
-  controls.className = 'example-carousel-controls';
+  controls.className = 'related-carousel-controls';
   controls.style.display = 'flex';
 
   const prevBtn = document.createElement('button');
   prevBtn.className = 'icon-button';
-  prevBtn.title = 'Previous sentence';
+  prevBtn.title = `Previous ${itemLabel.toLowerCase()}`;
   prevBtn.textContent = '◀';
 
   const counter = document.createElement('div');
-  counter.className = 'kanji-example-label';
+  counter.className = 'kanji-related-label';
   counter.style.margin = '0 8px';
 
   const nextBtn = document.createElement('button');
   nextBtn.className = 'icon-button';
-  nextBtn.title = 'Next sentence';
+  nextBtn.title = `Next ${itemLabel.toLowerCase()}`;
   nextBtn.textContent = '▶';
 
   const speakWrapper = document.createElement('div');
@@ -40,32 +49,41 @@ export function createKanjiExampleCard({ entry = null, sentences = [], handlers 
   header.append(label, controls, speakWrapper);
 
   const jpText = document.createElement('div');
-  jpText.className = 'kanji-example-text kanji-example-jp';
+  jpText.className = 'kanji-related-text kanji-related-jp';
 
   const enLabel = document.createElement('div');
-  enLabel.className = 'kanji-example-label';
+  enLabel.className = 'kanji-related-label';
   enLabel.style.marginTop = '1rem';
-  enLabel.textContent = 'English';
+  enLabel.textContent = secondaryLabel;
 
   const enText = document.createElement('div');
-  enText.className = 'kanji-example-text kanji-example-en';
+  enText.className = 'kanji-related-text kanji-related-en';
   enText.style.fontSize = '1rem';
 
   const notesLabel = document.createElement('div');
-  notesLabel.className = 'kanji-example-label';
+  notesLabel.className = 'kanji-related-label';
   notesLabel.style.marginTop = '1rem';
   notesLabel.textContent = 'Notes';
 
   const notesList = document.createElement('ul');
-  notesList.className = 'kanji-example-notes';
+  notesList.className = 'kanji-related-notes';
 
   root.append(header, jpText, enLabel, enText, notesLabel, notesList);
 
   let currentIndex = 0;
-  let items = Array.isArray(sentences) ? sentences.slice() : [];
+  let listItems = Array.isArray(items) ? items.slice() : (Array.isArray(sentences) ? sentences.slice() : []);
+
+  function firstDefinedString(obj, keys = []) {
+    if (!obj || typeof obj !== 'object') return '';
+    for (const key of keys) {
+      const v = obj[key];
+      if (typeof v === 'string' && v) return v;
+    }
+    return '';
+  }
 
   function renderControls() {
-    const count = items.length;
+    const count = listItems.length;
     counter.textContent = count ? `${currentIndex + 1} / ${count}` : '';
     prevBtn.style.display = count > 1 ? '' : 'none';
     nextBtn.style.display = count > 1 ? '' : 'none';
@@ -73,28 +91,33 @@ export function createKanjiExampleCard({ entry = null, sentences = [], handlers 
   }
 
   function setSentences(list) {
-    items = Array.isArray(list) ? list.slice() : [];
+    listItems = Array.isArray(list) ? list.slice() : [];
+    currentIndex = 0;
+    render();
+  }
+
+  function setItems(list) {
+    listItems = Array.isArray(list) ? list.slice() : [];
     currentIndex = 0;
     render();
   }
 
   function render() {
     renderControls();
-    const s = items[currentIndex] || null;
+    const s = listItems[currentIndex] || null;
     // sentence object can be string or { jp, en, notes }
     let jp = '', en = '', notes = [];
     if (s) {
       if (typeof s === 'string') jp = s;
       else {
-        // Support multiple possible keys for Japanese text (ja, jp, japanese, text)
-        jp = s.jp || s.ja || s.japanese || s.text || s.sentence || '';
-        en = s.en || s.en_us || s.eng || s.english || '';
+        jp = firstDefinedString(s, primaryKeys);
+        en = firstDefinedString(s, secondaryKeys);
         notes = Array.isArray(s.notes) ? s.notes : (s.note ? [s.note] : []);
       }
     }
     // fallback to entry-level fields when available
-    if (!jp) jp = (entry && (entry.sentence || entry.jp || entry.japanese)) || '';
-    if (!en) en = (entry && (entry.english || entry.en || entry.translation)) || '';
+    if (!jp) jp = firstDefinedString(entry, ['sentence', 'jp', 'ja', 'japanese', 'text']);
+    if (!en) en = firstDefinedString(entry, ['english', 'en', 'translation']);
 
     jpText.textContent = jp;
     enText.textContent = en;
@@ -114,27 +137,27 @@ export function createKanjiExampleCard({ entry = null, sentences = [], handlers 
 
   prevBtn.addEventListener('click', (ev) => {
     ev.preventDefault();
-    if (!items.length) return;
-    currentIndex = (currentIndex - 1 + items.length) % items.length;
+    if (!listItems.length) return;
+    currentIndex = (currentIndex - 1 + listItems.length) % listItems.length;
     render();
     handlers.onPrev && handlers.onPrev(currentIndex);
   });
 
   nextBtn.addEventListener('click', (ev) => {
     ev.preventDefault();
-    if (!items.length) return;
-    currentIndex = (currentIndex + 1) % items.length;
+    if (!listItems.length) return;
+    currentIndex = (currentIndex + 1) % listItems.length;
     render();
     handlers.onNext && handlers.onNext(currentIndex);
   });
 
   speakBtn.addEventListener('click', (ev) => {
     ev.preventDefault();
-    const cur = items[currentIndex] || {};
+    const cur = listItems[currentIndex] || {};
     let text = '';
     if (typeof cur === 'string') text = cur;
     else {
-      text = cur.jp || cur.ja || cur.japanese || cur.text || cur.sentence || '';
+      text = firstDefinedString(cur, primaryKeys);
     }
     // fallback to entry-level sentence if individual item lacks JP text
     if (!text) text = (entry && (entry.sentence || entry.jp || entry.japanese || entry.text)) || '';
@@ -143,7 +166,7 @@ export function createKanjiExampleCard({ entry = null, sentences = [], handlers 
 
   function update(newEntry, newSentences) {
     if (newEntry) entry = newEntry;
-    if (Array.isArray(newSentences)) items = newSentences.slice();
+    if (Array.isArray(newSentences)) listItems = newSentences.slice();
     currentIndex = 0;
     render();
   }
@@ -164,8 +187,8 @@ export function createKanjiExampleCard({ entry = null, sentences = [], handlers 
   }
 
   // initialize
-  setSentences(sentences);
+  setItems(Array.isArray(items) ? items : sentences);
   render();
 
-  return { el: root, update, setSentences, setVisible, setEnglishVisible, destroy };
+  return { el: root, update, setSentences, setItems, setVisible, setEnglishVisible, destroy };
 }

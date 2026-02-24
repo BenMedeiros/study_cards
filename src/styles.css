@@ -1014,42 +1014,42 @@ input[type="number"].button::-webkit-inner-spin-button {
   max-width: 30rem;
 }
 
-.kanji-example-card {
+.kanji-related-card {
   padding: 1rem;
   width: min(48rem, 100%);
   margin: 1rem auto 0;
   max-width: 30rem;
 }
 
-.kanji-example-header {
+.kanji-related-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.kanji-example-label {
+.kanji-related-label {
   font-size: 0.7rem;
 }
 
-.kanji-example-text {
+.kanji-related-text {
   font-size: 1.25rem;
   line-height: 1.6;
   color: var(--text);
 }
 
-.kanji-example-notes {
+.kanji-related-notes {
   margin: 0.5rem 0 0 0;
   padding-left: 1.5rem;
   line-height: 1.6;
 }
 
-.kanji-example-notes li {
+.kanji-related-notes li {
   margin-bottom: 0.5rem;
   font-size: 0.9375rem;
   color: var(--text);
 }
 
-.kanji-example-notes li:last-child {
+.kanji-related-notes li:last-child {
   margin-bottom: 0;
 }
 
@@ -2464,7 +2464,7 @@ select:hover {
   margin-bottom: 0.6rem;
 }
 
-#grammar-study-root .grammar-card-example-jp {
+#grammar-study-root .grammar-card-related-jp {
   font-size: 1.15rem;
   padding: 0.6rem 0.75rem;
   border: var(--border-1);
@@ -2472,7 +2472,7 @@ select:hover {
   margin-bottom: 0.4rem;
 }
 
-#grammar-study-root .grammar-card-example-en {
+#grammar-study-root .grammar-card-related-en {
   opacity: 0.9;
   margin-bottom: 0.75rem;
 }

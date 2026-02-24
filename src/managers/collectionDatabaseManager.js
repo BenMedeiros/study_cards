@@ -43,6 +43,94 @@ function _safeClone(v) {
   try { return JSON.parse(JSON.stringify(v)); } catch { return null; }
 }
 
+function normalizeRelatedCollectionsConfig(v) {
+  const arr = Array.isArray(v) ? v : [];
+  const out = [];
+  const seen = new Set();
+  for (const raw of arr) {
+    if (!raw || typeof raw !== 'object') continue;
+    const name = String(raw.name || '').trim();
+    const path = String(raw.path || '').trim();
+    const thisKey = String(raw.this_key || '').trim();
+    const foreignKey = String(raw.foreign_key || '').trim();
+    if (!name || !path || !thisKey || !foreignKey) continue;
+    if (seen.has(name)) continue;
+    seen.add(name);
+    out.push({ name, path, this_key: thisKey, foreign_key: foreignKey });
+  }
+  return out;
+}
+
+function parsePathExpression(expr) {
+  const raw = String(expr || '').trim();
+  if (!raw) return [];
+  return raw
+    .split('.')
+    .map(part => String(part || '').trim())
+    .filter(Boolean)
+    .map(part => {
+      const many = part.endsWith('[]');
+      const key = many ? part.slice(0, -2) : part;
+      return { key, many };
+    })
+    .filter(t => !!t.key);
+}
+
+function extractPathValues(obj, expr) {
+  const tokens = parsePathExpression(expr);
+  if (!obj || typeof obj !== 'object') return [];
+  if (!tokens.length) return [];
+  let nodes = [obj];
+  for (const token of tokens) {
+    const next = [];
+    for (const node of nodes) {
+      if (node == null) continue;
+      const value = node[token.key];
+      if (token.many) {
+        if (Array.isArray(value)) {
+          for (const item of value) next.push(item);
+        }
+      } else {
+        next.push(value);
+      }
+    }
+    nodes = next;
+    if (!nodes.length) break;
+  }
+  return nodes;
+}
+
+function normalizeRelatedLookupValues(values) {
+  const out = [];
+  const seen = new Set();
+  for (const raw of (Array.isArray(values) ? values : [values])) {
+    if (raw == null) continue;
+    const s = String(raw).trim();
+    if (!s || seen.has(s)) continue;
+    seen.add(s);
+    out.push(s);
+  }
+  return out;
+}
+
+function resolveRelatedCollectionPath(baseCollectionKey, relPath) {
+  let p = String(relPath || '').trim();
+  if (!p) return '';
+  p = p.replace(/^\.\//, '').replace(/^collections\//, '');
+  if (p.includes('/')) return p;
+  const folder = normalizeFolderPath((typeof baseCollectionKey === 'string' && baseCollectionKey.includes('/'))
+    ? baseCollectionKey.slice(0, baseCollectionKey.lastIndexOf('/'))
+    : '');
+  return folder ? `${folder}/${p}` : p;
+}
+
+function extractCollectionRecords(blob) {
+  if (Array.isArray(blob)) return blob;
+  if (blob && Array.isArray(blob.entries)) return blob.entries;
+  if (blob && Array.isArray(blob.sentences)) return blob.sentences;
+  return [];
+}
+
 export function createCollectionDatabaseManager({ log = false } = {}) {
   let logEnabled = !!log;
   let logReturningCached = false;
@@ -77,6 +165,122 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
 
   // In-memory cache of index entries keyed by path
   let availableIndexMap = new Map();
+
+  async function _resolveCollectionBase(key, { force = false, systemOnly = false } = {}) {
+    if (!key) throw new Error('key required');
+    if (systemOnly) return getSystemCollection(key, { force });
+
+    const activeRev = _getActiveRevisionId(key);
+    if (!activeRev) {
+      try {
+        return await getSystemCollection(key, { force });
+      } catch (e) {
+        const revs = await listUserRevisions(key);
+        const latest = revs.length ? revs[revs.length - 1] : null;
+        if (latest && latest.id) {
+          return resolveCollectionAtRevision(key, latest.id, { baseBlob: null });
+        }
+        throw e;
+      }
+    }
+
+    let base = null;
+    try {
+      base = await getSystemCollection(key, { force });
+    } catch (e) {
+      base = null;
+    }
+    return resolveCollectionAtRevision(key, activeRev, { baseBlob: base });
+  }
+
+  async function _compileCollectionRelated(collection, key, { force = false } = {}) {
+    const coll = (collection && typeof collection === 'object') ? collection : null;
+    if (!coll) return coll;
+    if (!Array.isArray(coll.entries) || !coll.entries.length) return coll;
+
+    if (!coll.metadata || typeof coll.metadata !== 'object') coll.metadata = {};
+    if (!Array.isArray(coll.metadata.relatedCollections) || !coll.metadata.relatedCollections.length) {
+      try {
+        const sys = await getSystemCollection(key, { force: true });
+        const rel = Array.isArray(sys?.metadata?.relatedCollections) ? sys.metadata.relatedCollections : [];
+        if (rel.length) {
+          coll.metadata.relatedCollections = rel.map(r => ({ ...r }));
+          try {
+            console.debug('[CollectionDB] recovered relatedCollections metadata', {
+              key,
+              count: rel.length,
+              names: rel.map(r => String(r?.name || '').trim()).filter(Boolean),
+            });
+          } catch (e) {}
+        }
+      } catch (e) {}
+    }
+
+    const relations = normalizeRelatedCollectionsConfig(coll?.metadata?.relatedCollections);
+    if (!relations.length) return coll;
+
+    for (const relation of relations) {
+      const relName = relation.name;
+      const relPath = resolveRelatedCollectionPath(key, relation.path);
+      let foreign = null;
+      if (relPath) {
+        try {
+          foreign = await _resolveCollectionBase(relPath, { force: false, systemOnly: false });
+        } catch (e) {
+          foreign = null;
+        }
+      }
+
+      const foreignRecords = extractCollectionRecords(foreign);
+      const foreignIndex = new Map();
+      for (const rec of foreignRecords) {
+        if (!rec || typeof rec !== 'object') continue;
+        const values = normalizeRelatedLookupValues(extractPathValues(rec, relation.foreign_key));
+        for (const value of values) {
+          const arr = foreignIndex.get(value) || [];
+          arr.push(rec);
+          foreignIndex.set(value, arr);
+        }
+      }
+
+      for (const entry of coll.entries) {
+        if (!entry || typeof entry !== 'object') continue;
+        if (!entry.relatedCollections || typeof entry.relatedCollections !== 'object') entry.relatedCollections = {};
+        if (!entry.__related || typeof entry.__related !== 'object') entry.__related = {};
+
+        const localValues = normalizeRelatedLookupValues(extractPathValues(entry, relation.this_key));
+        const matches = [];
+        const seen = new Set();
+        for (const value of localValues) {
+          const rows = foreignIndex.get(value) || [];
+          for (const rec of rows) {
+            if (!rec || typeof rec !== 'object') continue;
+            if (seen.has(rec)) continue;
+            seen.add(rec);
+            matches.push(rec);
+          }
+        }
+
+        entry.relatedCollections[relName] = matches;
+        entry.__related[relName] = matches;
+        entry[relName] = matches;
+      }
+    }
+
+    for (const entry of coll.entries) {
+      if (!entry || typeof entry !== 'object') continue;
+      const counts = {};
+      for (const relation of relations) {
+        const relName = relation.name;
+        const arr = Array.isArray(entry?.relatedCollections?.[relName]) ? entry.relatedCollections[relName] : [];
+        counts[relName] = arr.length;
+      }
+      entry.__relatedCounts = counts;
+    }
+
+    coll.__relatedCollectionsBuilt = true;
+    return coll;
+  }
 
   function _getSettings() {
     try {
@@ -472,33 +676,10 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
 
   // getCollection: resolved collection that includes user diffs (if any active revision exists).
   async function getCollection(key, { force = false, systemOnly = false } = {}) {
-    if (!key) throw new Error('key required');
-    if (systemOnly) return getSystemCollection(key, { force });
-
-    const activeRev = _getActiveRevisionId(key);
-    if (!activeRev) {
-      // For user-only collections, fall back to latest snapshot/diff chain if present.
-      try {
-        return await getSystemCollection(key, { force });
-      } catch (e) {
-        // If system fetch fails, attempt to resolve from active revision (if set) or latest.
-        const revs = await listUserRevisions(key);
-        const latest = revs.length ? revs[revs.length - 1] : null;
-        if (latest && latest.id) {
-          return resolveCollectionAtRevision(key, latest.id, { baseBlob: null });
-        }
-        throw e;
-      }
-    }
-
-    // Resolve with system base if possible (one fetch), otherwise from snapshot chain.
-    let base = null;
-    try {
-      base = await getSystemCollection(key, { force });
-    } catch (e) {
-      base = null;
-    }
-    return resolveCollectionAtRevision(key, activeRev, { baseBlob: base });
+    const base = await _resolveCollectionBase(key, { force, systemOnly });
+    if (systemOnly) return base;
+    const cloned = _safeClone(base) || base;
+    return _compileCollectionRelated(cloned, key, { force });
   }
 
   async function prefetch(keys = []) {
@@ -512,7 +693,9 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
     const key = String(collectionKey || '').trim();
     if (!key) throw new Error('collectionKey required');
     const activeRev = _getActiveRevisionId(key);
-    const base = activeRev ? await resolveCollectionAtRevision(key, activeRev).catch(() => null) : await getCollection(key).catch(() => null);
+    const base = activeRev
+      ? await resolveCollectionAtRevision(key, activeRev).catch(() => null)
+      : await _resolveCollectionBase(key).catch(() => null);
     const baseColl = base || { metadata: { name: key, version: 1 }, entries: [] };
     return computePatchFromInput({ baseCollection: baseColl, input, treatFullAsReplace: !!treatFullAsReplace });
   }
@@ -583,7 +766,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
     validateCollectionFile: async function(collectionKey, { force = false, verbose = false, logLimit = 5 } = {}) {
       if (!collectionKey) throw new Error('collectionKey required');
       try {
-        const coll = await getCollection(collectionKey, { force });
+        const coll = await _resolveCollectionBase(collectionKey, { force, systemOnly: false });
         if (!coll) return { valid: false, error: 'collection not found' };
         const res = validateCollection(coll, { entryArrayKey: null, verbose, logLimit });
         return res;

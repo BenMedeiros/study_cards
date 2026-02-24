@@ -38,129 +38,36 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
   // Folder-level entry index cache used to resolve set terms to real entries.
   const folderEntryIndexCache = new Map();
-  // Sentences cache: baseFolder -> Array of sentence objects collected from loaded collection files' top-level `sentences` arrays
-  const sentencesCache = new Map();
-  // Sentences ref index: baseFolder -> Map(refKey -> Array of sentence objects)
-  const sentencesRefIndex = new Map();
 
-  // Dedup helpers for sentences/examples.
-  // - Per top-folder, track which sentence records were already indexed from a specific source file.
-  // - When associating sentences to entries, avoid repeated pushes across rebuilds.
-  const sentenceSourceIdBySentence = new WeakMap();
-  const seenSentenceSourceIdsByTop = new Map(); // top -> Set(sourceId)
-  const seenRefSentenceSourceIdsByTop = new Map(); // top -> Map(refKey -> Set(sourceId))
-  const entrySentenceKeys = new WeakMap(); // entry -> Set(uniqueKey)
-
-  // Word↔sentence association should be built once per top-folder, after relevant collections load.
-  // This prevents incremental "rebuild" churn during background prefetch.
-  const wordSentenceIndexFinalizedByTop = new Map(); // top -> boolean
-  const wordSentenceIndexFinalizeInFlightByTop = new Map(); // top -> Promise
-
-  function getOrCreateSet(map, k) {
-    const key = String(k ?? '');
-    const existing = map.get(key);
-    if (existing) return existing;
-    const created = new Set();
-    map.set(key, created);
-    return created;
-  }
-
-  function sentenceUniqueKey(ex) {
-    if (!ex || typeof ex !== 'object') return '';
-    const sid = sentenceSourceIdBySentence.get(ex);
-    if (sid) return String(sid);
-    // Fallback: content-ish key. This can dedupe identical sentences even across different files,
-    // but it's only used when we don't know the source.
-    const ja = (typeof ex.ja === 'string') ? ex.ja.trim() : '';
-    const en = (typeof ex.en === 'string') ? ex.en.trim() : '';
-    if (ja || en) return `${ja}\n${en}`;
-    return '';
-  }
-
-  function ensureEntrySentenceKeySet(entry) {
-    if (!entry || typeof entry !== 'object') return null;
-    let set = entrySentenceKeys.get(entry);
-    if (set) return set;
-    set = new Set();
-    try {
-      if (Array.isArray(entry.sentences)) {
-        for (const ex of entry.sentences) {
-          const k = sentenceUniqueKey(ex);
-          if (k) set.add(k);
-        }
-      }
-    } catch {
-      // ignore
+  function normalizeRelatedCollectionsConfig(v) {
+    const arr = Array.isArray(v) ? v : [];
+    const out = [];
+    const seen = new Set();
+    for (const raw of arr) {
+      if (!raw || typeof raw !== 'object') continue;
+      const name = String(raw.name || '').trim();
+      const path = String(raw.path || '').trim();
+      const thisKey = String(raw.this_key || '').trim();
+      const foreignKey = String(raw.foreign_key || '').trim();
+      if (!name || !path || !thisKey || !foreignKey) continue;
+      if (seen.has(name)) continue;
+      seen.add(name);
+      out.push({ name, path, this_key: thisKey, foreign_key: foreignKey });
     }
-    entrySentenceKeys.set(entry, set);
-    return set;
+    return out;
   }
 
-  function attachSentenceToEntry(entry, ex) {
-    if (!entry || typeof entry !== 'object') return;
-    if (!ex || typeof ex !== 'object') return;
-    if (!Array.isArray(entry.sentences)) entry.sentences = [];
-    const set = ensureEntrySentenceKeySet(entry);
-    const k = sentenceUniqueKey(ex);
-    if (set && k) {
-      if (set.has(k)) return;
-      set.add(k);
-    } else {
-      // no key, last-ditch: avoid pushing same object twice
-      if (entry.sentences.includes(ex)) return;
+  function getEntryRelatedCounts(entry, collection) {
+    const out = {};
+    const relations = normalizeRelatedCollectionsConfig(collection?.metadata?.relatedCollections);
+    for (const relation of relations) {
+      const name = relation.name;
+      const arr = Array.isArray(entry?.relatedCollections?.[name])
+        ? entry.relatedCollections[name]
+        : (Array.isArray(entry?.__related?.[name]) ? entry.__related[name] : (Array.isArray(entry?.[name]) ? entry[name] : []));
+      out[name] = arr.length;
     }
-    entry.sentences.push(ex);
-  }
-
-  function hasAnyCollectionUnder(prefix) {
-    const p = String(prefix || '').trim();
-    if (!p) return false;
-    const full = p.endsWith('/') ? p : `${p}/`;
-    return (state._availableCollectionPaths || []).some(k => typeof k === 'string' && k.startsWith(full));
-  }
-
-  async function ensureWordSentenceIndexBuiltForTop(top, { force = false } = {}) {
-    const t = String(top || '').trim();
-    if (!t) return;
-    if (!force && wordSentenceIndexFinalizedByTop.get(t) === true) return;
-    if (!force && wordSentenceIndexFinalizeInFlightByTop.has(t)) {
-      return wordSentenceIndexFinalizeInFlightByTop.get(t);
-    }
-
-    return timed(`collections.ensureWordSentenceIndexBuiltForTop ${t}`, async () => {
-      const p = (async () => {
-        // Load relevant data for the top folder.
-        // Japanese is the main case: words + sentences + examples.
-        try {
-          if (t === 'japanese') {
-            if (hasAnyCollectionUnder('japanese/words')) await ensureCollectionsLoadedInFolder('japanese/words', { excludeCollectionSets: true });
-            if (hasAnyCollectionUnder('japanese/sentences')) await ensureCollectionsLoadedInFolder('japanese/sentences', { excludeCollectionSets: true });
-            if (hasAnyCollectionUnder('japanese/examples')) await ensureCollectionsLoadedInFolder('japanese/examples', { excludeCollectionSets: true });
-          } else {
-            await ensureCollectionsLoadedInFolder(t, { excludeCollectionSets: true });
-          }
-        } catch {
-          // ignore load failures; we'll still try to associate what we have
-        }
-
-        // Rebuild the entry index for this top folder once, and attach sentences via sentencesRefIndex.
-        try {
-          folderEntryIndexCache.delete(t);
-          buildFolderEntryIndex(t);
-        } catch {
-          // ignore
-        }
-        wordSentenceIndexFinalizedByTop.set(t, true);
-        emit();
-      })();
-
-      wordSentenceIndexFinalizeInFlightByTop.set(t, p);
-      try {
-        return await p;
-      } finally {
-        wordSentenceIndexFinalizeInFlightByTop.delete(t);
-      }
-    });
+    return out;
   }
 
   const DEBUG_PREVIEW_LIMIT = 200;
@@ -199,36 +106,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
           reading: entry.reading ?? entry.kana ?? null,
           meaning: entry.meaning ?? entry.definition ?? entry.gloss ?? null,
           type: entry.type ?? null,
-          sentencesCount: Array.isArray(entry.sentences) ? entry.sentences.length : 0,
         } : null,
       });
-      i++;
-      if (i >= lim) break;
-    }
-    return out;
-  }
-
-  function debugSerializeSentence(ex) {
-    if (!ex || typeof ex !== 'object') return null;
-    return {
-      ja: ex.ja ?? null,
-      en: ex.en ?? null,
-      chunksCount: Array.isArray(ex.chunks) ? ex.chunks.length : 0,
-      notes: ex.notes ?? null,
-    };
-  }
-
-  function debugSerializeSentencesRefIndex(refMap, { limit = DEBUG_PREVIEW_LIMIT, includeSample = false } = {}) {
-    const lim = debugPreviewLimit(limit);
-    const out = [];
-    if (!(refMap instanceof Map)) return out;
-    let i = 0;
-    for (const [ref, arr] of refMap.entries()) {
-      const row = { ref: String(ref || ''), count: Array.isArray(arr) ? arr.length : 0 };
-      if (includeSample && Array.isArray(arr) && arr.length) {
-        row.sample = debugSerializeSentence(arr[0]);
-      }
-      out.push(row);
       i++;
       if (i >= lim) break;
     }
@@ -244,8 +123,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     items.push({ id: 'metadataCache', label: 'metadataCache (resolved folder metadata)' });
     items.push({ id: 'collectionSetsCache', label: 'collectionSetsCache' });
     items.push({ id: 'pendingCollectionSetsLoads', label: 'pendingCollectionSetsLoads' });
-    items.push({ id: 'sentencesCache', label: 'sentencesCache' });
-    items.push({ id: 'sentencesRefIndex', label: 'sentencesRefIndex' });
     items.push({ id: 'folderEntryIndexCache', label: 'folderEntryIndexCache' });
     return items;
   }
@@ -303,34 +180,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
     if (id === 'pendingCollectionSetsLoads') {
       return debugMapKeys(pendingCollectionSetsLoads, limit);
-    }
-
-    if (id === 'sentencesCache') {
-      const out = [];
-      for (const [top, arr] of sentencesCache.entries()) {
-        out.push({ top: String(top || ''), count: Array.isArray(arr) ? arr.length : 0 });
-        if (out.length >= limit) break;
-      }
-      return out;
-    }
-    if (id.startsWith('sentencesCache:')) {
-      const top = id.slice('sentencesCache:'.length);
-      const arr = sentencesCache.get(top) || [];
-      return (Array.isArray(arr) ? arr : []).slice(0, limit).map(debugSerializeSentence);
-    }
-
-    if (id === 'sentencesRefIndex') {
-      const out = [];
-      for (const [top, refMap] of sentencesRefIndex.entries()) {
-        out.push({ top: String(top || ''), refCount: (refMap instanceof Map) ? refMap.size : 0 });
-        if (out.length >= limit) break;
-      }
-      return out;
-    }
-    if (id.startsWith('sentencesRefIndex:')) {
-      const top = id.slice('sentencesRefIndex:'.length);
-      const refMap = sentencesRefIndex.get(top);
-      return debugSerializeSentencesRefIndex(refMap, { limit, includeSample: !!opts?.includeSample });
     }
 
     if (id === 'folderEntryIndexCache') {
@@ -457,17 +306,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       const v = entry[k];
       if (typeof v === 'string' && v.trim()) score += 1;
     }
-    if (Array.isArray(entry.sentences) && entry.sentences.length) {
-      let hasJa = false;
-      let hasEn = false;
-      for (const ex of entry.sentences) {
-        if (!hasJa && typeof ex?.ja === 'string' && ex.ja.trim()) hasJa = true;
-        if (!hasEn && typeof ex?.en === 'string' && ex.en.trim()) hasEn = true;
-        if (hasJa && hasEn) break;
-      }
-      if (hasJa) score += 1;
-      if (hasEn) score += 1;
-    }
     return score;
   }
 
@@ -507,22 +345,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
 
       folderEntryIndexCache.set(folder, index);
-
-    try {
-      const refMap = sentencesRefIndex.get(folder) || new Map();
-      for (const [ref, arr] of refMap.entries()) {
-        if (!ref || !Array.isArray(arr) || arr.length === 0) continue;
-        const entry = index.get(ref);
-        if (!entry || typeof entry !== 'object') continue;
-        for (const ex of arr) {
-          if (!ex || typeof ex !== 'object') continue;
-          attachSentenceToEntry(entry, ex);
-        }
-      }
-    } catch {
-      // ignore
-    }
-
       return index;
     });
   }
@@ -932,11 +754,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       }
 
       emit();
-      // Prefetch collections in background (non-blocking)
-      Promise.resolve().then(() => {
-        try { prefetchCollectionsInFolder(''); } catch {}
-        // collection-sets support removed; no background set prefetching
-      });
 
       return paths;
     });
@@ -971,6 +788,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         throw new Error('collectionDB.getCollection is required to load collections');
       }
       data = await collectionDB.getCollection(key);
+      console.debug(`[CollectionsManager] Loaded collection data for key: ${key}`, { raw: data });
+
 
       if (Array.isArray(data)) {
         data = { metadata: {}, sentences: data };
@@ -985,153 +804,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         data.metadata.name = titleFromFilename(basename(key));
       }
 
-      try {
-        // If collection metadata points to an external sentences file, try to load it
-        try {
-          const sf = data?.metadata?.sentences_file;
-          if (sf && typeof sf === 'string' && sf.trim()) {
-            const rel = String(sf).trim().replace(/^\.\//, '');
-            if (collectionDB && typeof collectionDB.getCollection === 'function') {
-              try {
-                const parsed = await collectionDB.getCollection(rel).catch(() => null);
-                let loaded = null;
-                if (Array.isArray(parsed)) loaded = parsed;
-                else if (parsed && Array.isArray(parsed.entries)) loaded = parsed.entries;
-                else if (parsed && Array.isArray(parsed.sentences)) loaded = parsed.sentences;
-                if (Array.isArray(loaded) && loaded.length) {
-                  data.sentences = loaded;
-                }
-              } catch (e) {
-                // ignore collectionDB errors
-              }
-            } else {
-              // collectionDB not available: skip loading external sentences
-            }
-          }
-        } catch (e) {
-          // ignore sentences_file resolution errors
-        }
-
-        // Support sentence collections that place sentences under `sentences`
-        // or under `entries` (some collections use `entries` as the top array).
-        // Detect sentence-like `entries` (e.g., have `ja` or `chunks`) and
-        // treat them as sentences rather than regular entries.
-        let sentences = Array.isArray(data.sentences) ? data.sentences : null;
-        if (!sentences && Array.isArray(data.entries)) {
-          const sample = data.entries.find(x => x && typeof x === 'object');
-          const looksLikeSentence = sample && (typeof sample.ja === 'string' || Array.isArray(sample.chunks));
-          if (looksLikeSentence) {
-            sentences = data.entries.slice();
-            // Clear data.entries so these sentence files are not treated as regular collections
-            data.entries = [];
-          } else if (String(key || '').includes('/examples/')) {
-            // Legacy fallback: example files sometimes used `entries` for sentences
-            sentences = data.entries.slice();
-            data.entries = [];
-          }
-        }
-        if (sentences) {
-          const top = topFolderOfKey(key) || '';
-          // Track which sentences have already been indexed for this top-folder.
-          // Use sourceId = `${sourcePrefix}#${index}` so the same external
-          // sentences file isn't appended multiple times when referenced by
-          // different collections. Prefer metadata.sentences_file when present.
-          const sf = data?.metadata?.sentences_file;
-          const sourcePrefix = (sf && typeof sf === 'string' && sf.trim()) ? String(sf).trim().replace(/^\.\//, '') : key;
-          const seenSourceIds = getOrCreateSet(seenSentenceSourceIdsByTop, top);
-
-          const prev = sentencesCache.get(top) || [];
-          const append = [];
-          for (let i = 0; i < sentences.length; i++) {
-            const ex = sentences[i];
-            if (!ex || typeof ex !== 'object') continue;
-            const sourceId = `${String(sourcePrefix)}#${i}`;
-            sentenceSourceIdBySentence.set(ex, sourceId);
-            if (seenSourceIds.has(sourceId)) continue;
-            seenSourceIds.add(sourceId);
-            append.push(ex);
-          }
-          if (append.length) {
-            sentencesCache.set(top, prev.concat(append));
-          }
-          // Update sentencesRefIndex for quick lookup by ref key
-          try {
-            let refMap = sentencesRefIndex.get(top) || new Map();
-            const refSeenByKey = (seenRefSentenceSourceIdsByTop.get(top) instanceof Map)
-              ? seenRefSentenceSourceIdsByTop.get(top)
-              : new Map();
-            for (const ex of sentences) {
-              if (!ex || typeof ex !== 'object') continue;
-              if (!Array.isArray(ex.chunks)) continue;
-              const sourceId = sentenceSourceIdBySentence.get(ex) || '';
-              for (const ch of ex.chunks) {
-                if (!ch || typeof ch !== 'object') continue;
-                if (!Array.isArray(ch.refs)) continue;
-                for (const r of ch.refs) {
-                  if (r == null) continue;
-                  const keyStr = String(r || '').trim();
-                  if (!keyStr) continue;
-
-                  if (sourceId) {
-                    let seenSet = refSeenByKey.get(keyStr);
-                    if (!seenSet) {
-                      seenSet = new Set();
-                      refSeenByKey.set(keyStr, seenSet);
-                    }
-                    if (seenSet.has(sourceId)) continue;
-                    seenSet.add(sourceId);
-                  }
-
-                  const arr = refMap.get(keyStr) || [];
-                  arr.push(ex);
-                  refMap.set(keyStr, arr);
-                }
-              }
-            }
-            sentencesRefIndex.set(top, refMap);
-            seenRefSentenceSourceIdsByTop.set(top, refSeenByKey);
-          } catch (e) {
-            // ignore
-          }
-
-          if (Array.isArray(data.entries) && data.entries.length) {
-            for (const ex of sentences) {
-              if (!ex || typeof ex !== 'object') continue;
-              // Collect refs from chunks in the sentence
-              const refs = [];
-              if (Array.isArray(ex.chunks)) {
-                for (const ch of ex.chunks) {
-                  if (!ch || typeof ch !== 'object') continue;
-                  if (Array.isArray(ch.refs)) {
-                    for (const r of ch.refs) {
-                      if (r == null) continue;
-                      const s = String(r || '').trim();
-                      if (s) refs.push(s);
-                    }
-                  }
-                }
-              }
-              const unmatched = new Map();
-              for (const rawKey of refs) {
-                const keyStr = String(rawKey || '').trim();
-                if (!keyStr) continue;
-                const entry = data.entries.find(e => e && String(e.kanji || '').trim() === keyStr);
-                if (!entry) {
-                  unmatched.set(keyStr, (unmatched.get(keyStr) || 0) + 1);
-                  continue;
-                }
-                attachSentenceToEntry(entry, ex);
-              }
-              // suppressed debug: unmatched refs sample removed
-            }
-          }
-        }
-      } catch {
-        // ignore
-      }
-
       const record = { ...data, key };
-      state.collections.push(record);
+      state.collections = [record];
 
       try {
         const top = topFolderOfKey(key);
@@ -1140,26 +814,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         // ignore
       }
 
-      state.collections.sort((a, b) => {
-        const ai0 = state._availableCollectionPaths.indexOf(a.key);
-        const bi0 = state._availableCollectionPaths.indexOf(b.key);
-        const ai = ai0 === -1 ? Number.MAX_SAFE_INTEGER : ai0;
-        const bi = bi0 === -1 ? Number.MAX_SAFE_INTEGER : bi0;
-        return ai - bi;
-      });
-
       if (opts.notify !== false) emit();
-
-      // Kick off a one-time association build for this top folder.
-      // Do this in the background so lazy loads don't block UI.
-      try {
-        const top = topFolderOfKey(key) || '';
-        if (top && wordSentenceIndexFinalizedByTop.get(top) !== true) {
-          Promise.resolve().then(() => ensureWordSentenceIndexBuiltForTop(top).catch(() => null));
-        }
-      } catch {
-        // ignore
-      }
       return record;
     });
 
@@ -1172,30 +827,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   }
 
   function prefetchCollectionsInFolder(baseFolder, prefetchOpts = {}) {
-    const folder = normalizeFolderPath(baseFolder);
-    const prefix = folder ? `${folder}/` : '';
-    const excludeCollectionSets = prefetchOpts.excludeCollectionSets !== false;
-    const shouldNotify = prefetchOpts.notify === true;
-    const keys = state._availableCollectionPaths
-      .filter(k => (prefix ? k.startsWith(prefix) : true))
-      .filter(k => {
-        if (!excludeCollectionSets) return true;
-        return basename(k) !== COLLECTION_SETS_FILE;
-      });
-
-    Promise.resolve().then(async () => {
-      const loads = [];
-      for (const k of keys) {
-        if (!k) continue;
-        if (state.collections.some(c => c.key === k)) continue;
-        if (pendingLoads.has(k)) continue;
-        loads.push(loadCollectionInternal(k, { notify: false }).catch(() => null));
-      }
-      if (loads.length) {
-        await Promise.all(loads);
-        if (shouldNotify) emit();
-      }
-    });
+    // Active-only architecture: do not prefetch collections.
+    return;
   }
 
   async function setActiveCollectionId(id) {
@@ -1213,17 +846,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       }
     }
 
-    // Ensure word↔sentence association for this top folder is built.
-    try {
-      const top = topFolderOfKey(nextId) || '';
-      if (top) {
-        Promise.resolve().then(() => ensureWordSentenceIndexBuiltForTop(top).catch(() => null));
-      }
-    } catch {
-      // ignore
-    }
-
     if (!same) state.activeCollectionId = nextId;
+    if (!same && !nextId) state.collections = [];
 
     try {
       syncHashCollectionParam(nextId);
@@ -1422,14 +1046,16 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       // ignore
     }
 
-    const examplesCount = Number(entry?.__examplesCount ?? (Array.isArray(entry?.sentences) ? entry.sentences.length : 0)) || 0;
+    const relatedCounts = getEntryRelatedCounts(entry, coll);
     const dynamic = {
       status,
       studySeen: !!seen,
       studyTimesSeen: timesSeen,
       studyTimeMs: timeMs,
-      examples: examplesCount,
     };
+    for (const [name, count] of Object.entries(relatedCounts)) {
+      dynamic[`${name}.count`] = Number(count) || 0;
+    }
 
     // Accept explicit `fields` parameter, or fall back to the collection's
     // metadata fields if available. This allows callers that don't pass a
@@ -1443,7 +1069,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
     const typeMap = new Map(metaFields.map(f => [String(f.key), f.type ?? null]));
     const metaKeys = metaFields.map(f => String(f.key));
-    const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', 'examples'];
+    const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', ...Object.keys(relatedCounts).map(name => `${name}.count`)];
 
     return {
       hasField: (k) => {
@@ -1467,7 +1093,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       getFieldType: (k) => {
         const kk = String(k || '').trim();
         if (kk === 'studySeen') return 'boolean';
-        if (kk === 'studyTimesSeen' || kk === 'studyTimeMs' || kk === 'examples') return 'number';
+        if (kk === 'studyTimesSeen' || kk === 'studyTimeMs') return 'number';
+        if (kk.endsWith('.count')) return 'number';
         return typeMap.has(kk) ? typeMap.get(kk) : null;
       },
       getAllValues: () => {
@@ -1483,14 +1110,16 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     };
   }
 
-  function tableSearchFieldsMeta(fields = null) {
+  function tableSearchFieldsMeta(fields = null, collection = null) {
     const base = Array.isArray(fields)
       ? fields.map(f => (typeof f === 'string' ? { key: String(f), type: null } : { key: String(f?.key || ''), type: f?.type ?? (f?.schema && f.schema.type) ?? null })).filter(f => f.key)
       : [];
+    const related = normalizeRelatedCollectionsConfig(collection?.metadata?.relatedCollections)
+      .map(rel => ({ key: `${rel.name}.count`, type: 'number' }));
     return [
       ...base,
       { key: 'status', type: null },
-      { key: 'examples', type: 'number' },
+      ...related,
       { key: 'studySeen', type: 'boolean' },
       { key: 'studyTimesSeen', type: 'number' },
       { key: 'studyTimeMs', type: 'number' },
@@ -1504,7 +1133,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       const compiled = compileTableSearchQuery(q);
       const accessor = buildEntrySearchAccessor(entry, { fields, collection });
       // Conditional debug logging to help diagnose empty-field matches
-      const matched = matchesTableSearch(accessor, compiled, { fields: tableSearchFieldsMeta(fields) });
+      const matched = matchesTableSearch(accessor, compiled, { fields: tableSearchFieldsMeta(fields, collection) });
       return matched;
     } catch (e) {
       return false;
@@ -1526,7 +1155,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
       const outEntries = [];
       const outIdx = [];
-      const fieldsMeta = tableSearchFieldsMeta(fields);
+      const fieldsMeta = tableSearchFieldsMeta(fields, collection);
       for (let i = 0; i < arr.length; i++) {
         const rec = arr[i];
         const accessor = buildEntrySearchAccessor(rec, { fields, collection });
@@ -1943,11 +1572,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     return getActiveCollectionView(opts).view;
   }
 
-  // Return entries for a collection augmented with consolidated example info.
-  // Ensures the top-folder sentence↔entry index is built so `entry.sentences`
-  // are available, then returns shallow copies of entries with convenience
-  // properties: `__examplesCount` and `__examplesSample` (array).
-  async function getCollectionEntriesWithExamples(collectionOrKey, opts = { sample: 2 }) {
+  async function getCollectionEntriesWithRelated(collectionOrKey, opts = { sample: 2 }) {
     const sampleN = Math.max(0, Math.round(Number(opts?.sample || 2) || 0));
     let coll = null;
     try {
@@ -1963,34 +1588,24 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       }
       if (!coll || !coll.key) return [];
 
-      const top = topFolderOfKey(coll.key) || '';
-      if (top) {
-        try { await ensureWordSentenceIndexBuiltForTop(top); } catch (e) { /* ignore */ }
-      }
-
-      // Rebuild folder index to ensure sentences were attached to entries.
-      try { buildFolderEntryIndex(top); } catch (e) { /* ignore */ }
-      // Diagnostic: log how many entries have sentences attached after index build
-      try {
-        const entriesAfter = Array.isArray(coll.entries) ? coll.entries : [];
-        let have = 0;
-        const samples = [];
-        for (const e of entriesAfter) {
-          const s = Array.isArray(e.sentences) ? e.sentences.length : 0;
-          if (s) {
-            have++;
-            if (samples.length < 5) samples.push({ key: e.kanji ?? e.kana ?? e.reading ?? e.word ?? null, examples: s });
-          }
-        }
-        // suppressed debug log for getCollectionEntriesWithExamples
-      } catch (e) { /* ignore */ }
-
       const baseEntries = Array.isArray(coll.entries) ? coll.entries : [];
       const out = [];
+      const relations = normalizeRelatedCollectionsConfig(coll?.metadata?.relatedCollections);
       for (const e of baseEntries) {
-        const sentences = Array.isArray(e.sentences) ? e.sentences : [];
-        const sample = sampleN > 0 ? sentences.slice(0, sampleN).map(s => ({ ja: s?.ja ?? null, en: s?.en ?? null })) : [];
-        out.push({ ...e, __examplesCount: sentences.length, __examplesSample: sample });
+        const relatedCounts = getEntryRelatedCounts(e, coll);
+        const relatedSamples = {};
+        for (const rel of relations) {
+          const arr = Array.isArray(e?.relatedCollections?.[rel.name])
+            ? e.relatedCollections[rel.name]
+            : (Array.isArray(e?.__related?.[rel.name]) ? e.__related[rel.name] : (Array.isArray(e?.[rel.name]) ? e[rel.name] : []));
+          relatedSamples[rel.name] = sampleN > 0 ? arr.slice(0, sampleN) : [];
+        }
+
+        out.push({
+          ...e,
+          __relatedCounts: relatedCounts,
+          __relatedSample: relatedSamples,
+        });
       }
       return out;
     } catch (err) {
@@ -2120,9 +1735,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     debugListRuntimeMaps,
     debugGetRuntimeMapDump,
 
-    // Platform-level association build control
-    ensureWordSentenceIndexBuiltForTop,
-
     // Collection view utilities (filtering, expansion, shuffle)
     getCollectionViewForCollection,
     getActiveCollectionView,
@@ -2133,7 +1745,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     expandEntriesByAdjectiveForm,
     expandEntriesAndIndicesByAdjectiveForms,
     getAdjectiveExpansionDeltas,
-    getCollectionEntriesWithExamples,
+    getCollectionEntriesWithRelated,
 
     // Collection actions (state modifications)
     shuffleCollection,

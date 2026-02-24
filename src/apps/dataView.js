@@ -12,6 +12,37 @@ export function renderData({ store }) {
   root.id = 'data-root';
   const active = store.collections.getActiveCollection();
 
+  function normalizeRelatedCollectionsConfig(v) {
+    const arr = Array.isArray(v) ? v : [];
+    const out = [];
+    const seen = new Set();
+    for (const raw of arr) {
+      if (!raw || typeof raw !== 'object') continue;
+      const name = String(raw.name || '').trim();
+      if (!name || seen.has(name)) continue;
+      seen.add(name);
+      out.push({ name });
+    }
+    return out;
+  }
+
+  const relatedCollectionConfigs = normalizeRelatedCollectionsConfig(active?.metadata?.relatedCollections);
+  const relatedCountColumns = relatedCollectionConfigs.map(rel => ({
+    key: `${rel.name}.count`,
+    label: `${rel.name}.count`,
+    type: 'number',
+    relationName: rel.name,
+  }));
+
+  function getRelatedCountForEntry(entry, relationName) {
+    const name = String(relationName || '').trim();
+    if (!name) return 0;
+    const byCountMap = Number(entry?.__relatedCounts?.[name]);
+    if (Number.isFinite(byCountMap)) return Math.max(0, Math.round(byCountMap));
+    if (Array.isArray(entry?.__related?.[name])) return entry.__related[name].length;
+    return 0;
+  }
+
   const STUDY_STATE_ORDER = ['null', 'focus', 'learned'];
   let studyFilterStates = STUDY_STATE_ORDER.slice();
 
@@ -601,18 +632,21 @@ export function renderData({ store }) {
     const metrics = (typeof a.getStudyMetrics === 'function')
       ? a.getStudyMetrics(key)
       : { seen: false, timesSeen: 0, timeMs: 0 };
-    const examplesCount = Number(entry?.__examplesCount ?? (Array.isArray(entry?.sentences) ? entry.sentences.length : 0)) || 0;
+    const relatedDynamic = {};
+    for (const rel of relatedCollectionConfigs) {
+      relatedDynamic[`${rel.name}.count`] = getRelatedCountForEntry(entry, rel.name);
+    }
 
     const dynamicFieldValues = {
       status: state,
       studySeen: !!metrics.seen,
       studyTimesSeen: Math.max(0, Math.round(Number(metrics.timesSeen) || 0)),
       studyTimeMs: Math.max(0, Math.round(Number(metrics.timeMs) || 0)),
-      examples: examplesCount,
+      ...relatedDynamic,
     };
 
     const metadataKeys = (Array.isArray(fields) ? fields : []).map(f => String(f?.key || '').trim()).filter(Boolean);
-    const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', 'examples'];
+    const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', ...relatedCountColumns.map(c => c.key)];
 
     return {
       hasField: (k) => {
@@ -630,7 +664,7 @@ export function renderData({ store }) {
       getFieldType: (k) => {
         const keyName = String(k || '').trim();
         if (keyName === 'studySeen') return 'boolean';
-        if (keyName === 'studyTimesSeen' || keyName === 'studyTimeMs' || keyName === 'examples') return 'number';
+        if (keyName === 'studyTimesSeen' || keyName === 'studyTimeMs' || relatedCountColumns.some(c => c.key === keyName)) return 'number';
         const def = (Array.isArray(fields) ? fields : []).find(f => String(f?.key || '').trim() === keyName);
         return def?.type ?? (def?.schema && def.schema.type) ?? null;
       },
@@ -650,7 +684,7 @@ export function renderData({ store }) {
     const fieldsMeta = [
       { key: 'status', type: null },
       ...(Array.isArray(fields) ? fields.map(f => ({ key: f.key, type: f.type ?? (f.schema && f.schema.type) ?? null })) : []),
-      { key: 'examples', type: 'number' },
+      ...relatedCountColumns.map(c => ({ key: c.key, type: 'number' })),
       { key: 'studySeen', type: 'boolean' },
       { key: 'studyTimesSeen', type: 'number' },
       { key: 'studyTimeMs', type: 'number' },
@@ -711,12 +745,12 @@ export function renderData({ store }) {
   let allEntriesView = store.collections.expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
   let rowToOriginalIndex = [];
 
-  // Background: request entries augmented with example info so UI can show counts/samples.
+  // Background: request entries augmented with related collection counts/samples.
   Promise.resolve().then(async () => {
     try {
       if (!active?.key) return;
-      if (store?.collections && typeof store.collections.getCollectionEntriesWithExamples === 'function') {
-        const augmented = await store.collections.getCollectionEntriesWithExamples(active.key, { sample: 2 });
+      if (store?.collections && typeof store.collections.getCollectionEntriesWithRelated === 'function') {
+        const augmented = await store.collections.getCollectionEntriesWithRelated(active.key, { sample: 2 });
         if (Array.isArray(augmented) && augmented.length) {
           baseEntries = augmented.slice();
           allEntriesView = store.collections.expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
@@ -798,7 +832,7 @@ export function renderData({ store }) {
     label: f.label || f.key,
     type: f.type ?? (f.schema && f.schema.type) ?? null,
   })),
-    { key: 'examples', label: 'Examples' },
+    ...relatedCountColumns.map(c => ({ key: c.key, label: c.label, type: 'number' })),
     { key: 'studySeen', label: 'Seen', type: 'boolean' },
     { key: 'studyTimesSeen', label: 'Times Seen', type: 'number' },
     { key: 'studyTimeMs', label: 'Time (ms)', type: 'number' },
@@ -811,20 +845,6 @@ export function renderData({ store }) {
     const visibleEntries = visibleIdxs.map(i => entriesView[i]);
 
     const adapter = getProgressAdapter();
-    const currentActive = (store && store.collections && typeof store.collections.getActiveCollection === 'function') ? store.collections.getActiveCollection() : null;
-    // Show examples column when the collection is a japanese/words collection
-    // or when any visible entry already has example sentences attached.
-    let showExamples = !!(currentActive && typeof currentActive.key === 'string' && String(currentActive.key).startsWith('japanese/words'));
-    try {
-      if (!showExamples) {
-        for (const e of visibleEntries) {
-          if (!e) continue;
-          if (Number(e.__examplesCount ?? (Array.isArray(e.sentences) ? e.sentences.length : 0)) > 0) {
-            showExamples = true; break;
-          }
-        }
-      }
-    } catch (e) {}
     const rows = visibleEntries.map((entry, i) => {
       const originalIndex = visibleIdxs[i];
       const key = adapter.getKey(entry);
@@ -849,17 +869,13 @@ export function renderData({ store }) {
         icon.title = '';
       }
 
-      const examplesCount = showExamples ? Number(entry.__examplesCount ?? (Array.isArray(entry.sentences) ? entry.sentences.length : 0)) || 0 : 0;
-      const examplesEl = document.createElement('span');
-      examplesEl.className = 'examples-cell';
-      if (examplesCount) {
-        examplesEl.textContent = String(examplesCount);
-        const sample = Array.isArray(entry.__examplesSample) ? entry.__examplesSample : (Array.isArray(entry.sentences) ? entry.sentences.slice(0,2).map(s => ({ ja: s?.ja ?? null, en: s?.en ?? null })) : []);
-        const tip = (Array.isArray(sample) ? sample.map(s => `${s.ja ?? ''}${s.en ? ' — ' + s.en : ''}`).join('\n') : '');
-        if (tip) examplesEl.title = tip;
-      } else {
-        examplesEl.textContent = '';
-      }
+      const relatedCountCells = relatedCollectionConfigs.map(rel => {
+        const el = document.createElement('span');
+        el.className = 'related-count-cell';
+        const count = getRelatedCountForEntry(entry, rel.name);
+        el.textContent = count > 0 ? String(count) : '';
+        return el;
+      });
 
       const seenCell = document.createElement('span');
       seenCell.className = 'study-seen-cell';
@@ -869,7 +885,7 @@ export function renderData({ store }) {
       const timesSeenCell = metrics.timesSeen > 0 ? metrics.timesSeen : '';
       const timeMsCell = metrics.timeMs > 0 ? metrics.timeMs : '';
 
-      const row = [icon, ...fields.map(f => entry[f.key] ?? ''), examplesEl, seenCell, timesSeenCell, timeMsCell];
+      const row = [icon, ...fields.map(f => entry[f.key] ?? ''), ...relatedCountCells, seenCell, timesSeenCell, timeMsCell];
       // Stable identifier for this row so we can resolve the source entry
       // even after the table component filters/sorts.
       try { row.__id = String(originalIndex); } catch (e) {}
