@@ -1,5 +1,6 @@
 // Factory for a full-detail kanji card showing labelled rows for all common fields.
 export function createKanjiFullCard({ entry = null, config = {} } = {}) {
+  try { console.debug('[Card:Full] createKanjiFullCard()', { entry, config }); } catch (e) {}
   const root = document.createElement('div');
   root.className = 'card kanji-full-card';
 
@@ -55,6 +56,7 @@ export function createKanjiFullCard({ entry = null, config = {} } = {}) {
   }
 
   function setEntry(e) {
+    try { console.debug('[Card:Full] setEntry()', e); } catch (e) {}
     const entryObj = e || {};
     const kanji = resolvePath(entryObj, 'kanji') || resolvePath(entryObj, 'character') || resolvePath(entryObj, 'text') || '';
     const reading = resolvePath(entryObj, 'reading') || resolvePath(entryObj, 'kana') || '';
@@ -83,6 +85,7 @@ export function createKanjiFullCard({ entry = null, config = {} } = {}) {
   }
 
   function setFieldsVisible(map) {
+    try { console.debug('[Card:Full] setFieldsVisible()', map); } catch (e) {}
     if (!map || typeof map !== 'object') return;
     for (const k of Object.keys(map)) setFieldVisible(k, !!map[k]);
   }

@@ -57,16 +57,25 @@ export function openViewFooterCustomButtonDialog({
       if (!raw || typeof raw !== 'object') continue;
       const id = asString(raw.id).trim();
       if (!id || actionById.has(id)) continue;
+      // Do not include state-specific actions (e.g. reveal/hide states)
+      const stateVal = asString(raw.state);
+      if (stateVal) continue;
+
       const item = {
         id,
         text: asString(raw.text) || id,
         controlKey: asString(raw.controlKey),
-        state: asString(raw.state),
         fnName: asString(raw.fnName),
         namespace: asString(raw.namespace) || inferNamespace(raw),
       };
       actionById.set(id, item);
       actionList.push(item);
+    }
+
+    // Strip any pre-existing actions that reference state-based action IDs
+    // (these were intentionally excluded from the available actions).
+    if (Array.isArray(state.actions) && state.actions.length) {
+      state.actions = state.actions.filter(s => s && actionById.has(s.actionId));
     }
 
     const backdrop = el('div', { className: 'view-footer-hotkey-backdrop' });

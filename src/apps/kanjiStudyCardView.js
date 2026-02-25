@@ -5,8 +5,7 @@ import { createSpeakerButton } from '../components/ui.js';
 
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createViewFooterControls } from '../components/viewFooterControls.js';
-import { createKanjiMainCard, createKanjiRelatedCard, createKanjiFullCard, kanjiMainCardToggleFields, kanjiExampleCardToggleFields, kanjiFullCardToggleFields } from '../cards/index.js';
-import { createDropdown } from '../components/dropdown.js';
+import { CARD_REGISTRY } from '../cards/index.js';
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
@@ -23,15 +22,13 @@ export function renderKanjiStudyCard({ store }) {
     });
   } catch (e) {}
   try {
-    const map = {};
-    ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'].forEach(k => map[k] = Array.isArray(fullFieldSelection) ? fullFieldSelection.includes(k) : false);
-    if (fullCardApi && typeof fullCardApi.setFieldsVisible === 'function') fullCardApi.setFieldsVisible(map);
-  } catch (e) {}
-  try {
     const set = new Set(Array.isArray(displayCardSelection) ? displayCardSelection : []);
-    if (mainCardApi && mainCardApi.el) mainCardApi.el.style.display = set.has('main') ? '' : 'none';
-    if (relatedCardApi && relatedCardApi.el) relatedCardApi.el.style.display = set.has('related') ? '' : 'none';
-    if (fullCardApi && fullCardApi.el) fullCardApi.el.style.display = set.has('full') ? '' : 'none';
+    for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+      try {
+        const api = cardApis[c.key];
+        if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
+      } catch (e) {}
+    }
   } catch (e) {}
 
   function getCurrentKanjiKey() {
@@ -106,12 +103,24 @@ export function renderKanjiStudyCard({ store }) {
             } catch (e) { return Array.isArray(sel) ? sel.slice() : []; }
           };
 
+          // Persist per-card field selections as an object keyed by card key.
+          const cardFieldsOut = {};
+          try {
+            for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+              try {
+                const items = Array.isArray(c.toggleFields) ? c.toggleFields.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
+                const sel = cardFieldSelections[c.key];
+                if (sel === 'all') cardFieldsOut[c.key] = 'all';
+                else if (Array.isArray(sel)) cardFieldsOut[c.key] = sel.slice();
+                else cardFieldsOut[c.key] = items.slice();
+              } catch (e) {}
+            }
+          } catch (e) {}
+
           store.collections.saveCollectionState(key, {
             kanjiStudyCardView: {
               currentIndex: index,
-              cardFields: sliceOrAll(kanjiFieldSelection, kanjiFieldItems),
-              relatedFields: sliceOrAll(relatedFieldSelection, relatedFieldItems),
-              fullFields: sliceOrAll(fullFieldSelection, fullFieldItems),
+              cardFields: cardFieldsOut,
               displayCards: sliceOrAll(displayCardSelection, displayCardItems),
             }
           });
@@ -133,8 +142,33 @@ export function renderKanjiStudyCard({ store }) {
 
   // Root UI pieces
   const headerTools = createViewHeaderTools();
-  // full-detail card instance (created early so header controls can reference it)
-  const fullCardApi = createKanjiFullCard({ entry: null });
+  // Instantiate available cards from the registry so views can be generic.
+  const cardApis = {};
+  try {
+    for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+      try {
+        // Pass a common shape; factories may ignore unknown props.
+        // Provide handlers for the related card so we don't need to recreate it later.
+        if (c.key === 'related') {
+          cardApis[c.key] = c.factory({ entry: null, indexText: '', handlers: {
+            onSpeak: (text) => {
+              if (!text) return;
+              const lang = getLanguageCode('reading');
+              try { speak(text, lang); } catch (e) {}
+            },
+            onNext: (ci) => {},
+            onPrev: (ci) => {},
+          }});
+        } else {
+          cardApis[c.key] = c.factory({ entry: null, indexText: '' });
+        }
+      } catch (e) {
+        cardApis[c.key] = null;
+      }
+    }
+  } catch (e) {}
+
+  const fullCardApi = cardApis['full'] || null;
   // Track whether we mounted header/footer into the shell main container
   let __mountedHeaderInShell = false;
   let __mountedFooterInShell = false;
@@ -144,85 +178,96 @@ export function renderKanjiStudyCard({ store }) {
   // shuffle control will be added later once handler is defined
 
   // --- Header dropdowns to control card field visibility ---
-  // Load per-collection saved dropdown state (if any)
-  let kanjiFieldSelection = ['kanji', 'reading', 'meaning', 'type'];
-  let relatedFieldSelection = ['english', 'japanese', 'notes'];
-  let fullFieldSelection = ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'];
+  // Use registry-driven per-card field selections and dropdowns.
+  let cardFieldSelections = {}; // { [cardKey]: Array<string> | 'all' }
   let displayCardSelection = ['main', 'related'];
   try {
     const res = store?.collections?.getActiveCollectionView ? store.collections.getActiveCollectionView({ windowSize: 0 }) : null;
     const collState = res?.collState || {};
     const appState = collState?.kanjiStudyCardView || {};
-    if (Array.isArray(appState.cardFields)) kanjiFieldSelection = appState.cardFields.slice();
-    else if (typeof appState.cardFields === 'string' && appState.cardFields === 'all') kanjiFieldSelection = 'all';
-    if (Array.isArray(appState.relatedFields)) relatedFieldSelection = appState.relatedFields.slice();
-    else if (typeof appState.relatedFields === 'string' && appState.relatedFields === 'all') relatedFieldSelection = 'all';
-    if (Array.isArray(appState.fullFields)) fullFieldSelection = appState.fullFields.slice();
-    else if (typeof appState.fullFields === 'string' && appState.fullFields === 'all') fullFieldSelection = 'all';
+    // Load legacy or new per-card saved state.
+    // Initialize cardFieldSelections with registry defaults (all non-action fields)
+    try {
+      for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+        const items = Array.isArray(c.toggleFields) ? c.toggleFields.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
+        cardFieldSelections[c.key] = items.slice();
+      }
+    } catch (e) {}
+
+    if (appState && appState.cardFields) {
+      // If saved as an object mapping, copy entries
+      if (typeof appState.cardFields === 'object' && !Array.isArray(appState.cardFields)) {
+        for (const k of Object.keys(appState.cardFields || {})) {
+          try { cardFieldSelections[k] = appState.cardFields[k]; } catch (e) {}
+        }
+      } else if (Array.isArray(appState.cardFields)) {
+        // legacy: array -> treat as main card selection
+        cardFieldSelections['main'] = appState.cardFields.slice();
+      } else if (typeof appState.cardFields === 'string' && appState.cardFields === 'all') {
+        for (const k of Object.keys(cardFieldSelections)) cardFieldSelections[k] = 'all';
+      }
+    }
+    // support legacy relatedFields/fullFields keys
+    if (Array.isArray(appState.relatedFields)) cardFieldSelections['related'] = appState.relatedFields.slice();
+    else if (typeof appState.relatedFields === 'string' && appState.relatedFields === 'all') cardFieldSelections['related'] = 'all';
+    if (Array.isArray(appState.fullFields)) cardFieldSelections['full'] = appState.fullFields.slice();
+    else if (typeof appState.fullFields === 'string' && appState.fullFields === 'all') cardFieldSelections['full'] = 'all';
     if (Array.isArray(appState.displayCards)) displayCardSelection = appState.displayCards.slice();
     else if (typeof appState.displayCards === 'string' && appState.displayCards === 'all') displayCardSelection = 'all';
   } catch (e) {}
 
-  // Kanji main card: show/hide fields
-  const kanjiFieldItems = Array.isArray(kanjiMainCardToggleFields) ? kanjiMainCardToggleFields.slice() : [
-    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
-    { value: 'kanji', left: 'Kanji', right: 'Visible' },
-    { value: 'reading', left: 'Reading', right: 'Visible' },
-    { value: 'meaning', left: 'Meaning', right: 'Visible' },
-    { value: 'type', left: 'Type', right: 'Visible' },
-  ];
+  // Create per-card toggle dropdowns based on CARD_REGISTRY entries.
+  const cardFieldControls = {};
+  try {
+    for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+      try {
+        const items = Array.isArray(c.toggleFields) ? c.toggleFields.slice() : [];
+        const key = `${c.key}Fields`;
+        const values = (function() {
+          const sel = cardFieldSelections[c.key];
+          if (sel === 'all') return items.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
+          if (Array.isArray(sel)) return sel.slice();
+          // default: all non-action values
+          return items.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
+        })();
 
-    const _kanjiFieldRec = headerTools.addElement({
-      type: 'dropdown', key: 'kanjiFields', items: kanjiFieldItems, multi: true,
-      values: Array.isArray(kanjiFieldSelection)
-        ? kanjiFieldSelection.slice()
-        : (kanjiFieldSelection === 'all' ? kanjiFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : ['kanji', 'reading', 'meaning', 'type']),
-      commitOnClose: true,
-      onChange: (vals) => {
-        const chosen = (typeof vals === 'string' && vals === 'all')
-          ? kanjiFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
-          : (Array.isArray(vals) ? vals.slice() : []);
-        const set = new Set(chosen);
-        ['kanji', 'reading', 'meaning', 'type'].forEach(f => { try { mainCardApi.setFieldVisible(f, set.has(f)); } catch (e) {} });
-        try { kanjiFieldSelection = chosen; } catch (e) {}
-        try { saveUIState(); } catch (e) {}
-      },
-      className: 'data-expansion-dropdown',
-      caption: 'kanjiMainCard.visibility'
-    });
-    const kanjiFieldDd = (_kanjiFieldRec && _kanjiFieldRec.control) ? _kanjiFieldRec.control : headerTools.getControl('kanjiFields');
-
-  // Related card dropdown: control english/japanese/notes visibility (card visibility handled by displayCards)
-  const relatedFieldItems = Array.isArray(kanjiExampleCardToggleFields) ? kanjiExampleCardToggleFields.slice() : [
-    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
-    { value: 'english', left: 'English', right: 'Visible' },
-    { value: 'japanese', left: 'Japanese', right: 'Visible' },
-    { value: 'notes', left: 'Notes', right: 'Visible' },
-  ];
-
-    const _relatedFieldRec = headerTools.addElement({
-      type: 'dropdown', key: 'relatedFields', items: relatedFieldItems, multi: true,
-      values: Array.isArray(relatedFieldSelection)
-        ? relatedFieldSelection.slice()
-        : (relatedFieldSelection === 'all' ? relatedFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : ['english', 'japanese', 'notes']),
-      commitOnClose: true,
-      onChange: (vals) => {
-        const chosen = (typeof vals === 'string' && vals === 'all')
-          ? relatedFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
-          : (Array.isArray(vals) ? vals.slice() : []);
-          const set = new Set(chosen);
-          try { relatedCardApi.setEnglishVisible(set.has('english')); } catch (e) {}
-          try { relatedCardApi.setJapaneseVisible(set.has('japanese')); } catch (e) {}
-          try { relatedCardApi.setNotesVisible(set.has('notes')); } catch (e) {}
-        try { relatedFieldSelection = chosen; } catch (e) {}
-        try { saveUIState(); } catch (e) {}
-      },
-      className: 'data-expansion-dropdown',
-      caption: 'kanjiExampleCard.visibility'
-    });
-    const relatedFieldDd = (_relatedFieldRec && _relatedFieldRec.control) ? _relatedFieldRec.control : headerTools.getControl('relatedFields');
-
-  
+        const rec = headerTools.addElement({
+          type: 'dropdown', key, items, multi: true,
+          values, commitOnClose: true,
+          onChange: (vals) => {
+            const chosen = (typeof vals === 'string' && vals === 'all')
+              ? items.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
+              : (Array.isArray(vals) ? vals.slice() : []);
+            // apply to card API: prefer setFieldsVisible(map), fallback to individual setters
+            const api = cardApis[c.key];
+            const set = new Set(chosen);
+            try {
+              if (api && typeof api.setFieldsVisible === 'function') {
+                const map = {};
+                for (const it of items) if (String(it?.kind || '') !== 'action') map[String(it.value || '')] = set.has(String(it.value || ''));
+                try { api.setFieldsVisible(map); } catch (e) {}
+              } else {
+                for (const it of items) {
+                  const v = String(it?.value || '');
+                  const cap = v.charAt(0).toUpperCase() + v.slice(1);
+                  const fnName = `set${cap}Visible`;
+                  try {
+                    if (api && typeof api[fnName] === 'function') api[fnName](set.has(v));
+                    else if (api && typeof api.setFieldVisible === 'function') api.setFieldVisible(v, set.has(v));
+                  } catch (e) {}
+                }
+              }
+            } catch (e) {}
+            try { cardFieldSelections[c.key] = chosen; } catch (e) {}
+            try { saveUIState(); } catch (e) {}
+          },
+          className: 'data-expansion-dropdown',
+          caption: `${c.label}.visibility`
+        });
+        cardFieldControls[c.key] = rec && rec.control ? rec.control : null;
+      } catch (e) {}
+    }
+  } catch (e) {}
 
   // No legacy UI load: visual defaults used; autoplay/defaults remain runtime-only
 
@@ -235,10 +280,7 @@ export function renderKanjiStudyCard({ store }) {
 
   const footerDesc = [
     { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', actionKey: 'prev', fnName: 'showPrev', action: () => showPrev() },
-    { key: 'reveal', states: [
-        { name: 'kanji-only', icon: '', text: 'Reveal', caption: '↑', shortcut: 'ArrowUp', actionKey: 'reveal', fnName: 'toggleReveal', action: () => toggleReveal() },
-        { name: 'full', icon: '', text: 'Hide', caption: '↓', shortcut: 'ArrowDown', actionKey: 'hide', fnName: 'showKanjiOnly', action: () => showKanjiOnly() }
-      ], initialState: 'kanji-only' },
+    // Note: removed stateful 'reveal' control (reveal/hide) as it caused issues.
     { key: 'sound', icon: '🔊', text: 'Sound', caption: 'Space', shortcut: ' ', actionKey: 'sound', fnName: 'speakCurrent', action: () => speakCurrent() },
     { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', actionKey: 'learned', fnName: 'toggleKanjiLearned', ariaPressed: false, action: () => {
       const entry = entries[index];
@@ -315,8 +357,6 @@ export function renderKanjiStudyCard({ store }) {
     { action: 'next' },
     { action: 'wait', ms: 1000 },
     { action: 'sound' },
-    { action: 'wait', ms: 1000 },
-    { action: 'reveal' },
     { action: 'wait', ms: 1000 }
   ];
 
@@ -383,60 +423,23 @@ export function renderKanjiStudyCard({ store }) {
   // place autoplay controls at start of headerTools
   headerTools.prepend(autoplayControlsEl);
 
-  // Create main card and related card via factories (decoupled components)
-  const mainCardApi = createKanjiMainCard({ entry: null, indexText: '' });
-  const relatedCardApi = createKanjiRelatedCard({ entry: null, sentences: [], handlers: {
-    onSpeak: (text) => {
-      if (!text) return;
-      const lang = getLanguageCode('reading');
-      try { speak(text, lang); } catch (e) {}
-    },
-    onNext: (ci) => { /* optional hook from related card */ },
-    onPrev: (ci) => { /* optional hook from related card */ }
-  }});
+  // Create main/related/full card APIs. Prefer registry instances where available;
+  // recreate related card with handlers so it can call back into this view.
+  const mainCardApi = cardApis['main'] || (function() {
+    try {
+      const regMain = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(c => c.key === 'main') : null);
+      if (regMain && typeof regMain.factory === 'function') return regMain.factory({ entry: null, indexText: '' });
+    } catch (e) {}
+    return null;
+  })();
+  const relatedFactory = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(c => c.key === 'related') : null);
+  let relatedCardApi = (cardApis && cardApis['related']) ? cardApis['related'] : null;
 
-  // Per-card field dropdown for the full-detail card
-  const fullFieldItems = [
-    ...(Array.isArray(kanjiFullCardToggleFields) ? kanjiFullCardToggleFields.slice() : [
-      { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
-      { value: 'kanji', left: 'Kanji', right: 'Visible' },
-      { value: 'reading', left: 'Reading', right: 'Visible' },
-      { value: 'meaning', left: 'Meaning', right: 'Visible' },
-      { value: 'type', left: 'Type', right: 'Visible' },
-      { value: 'lexical', left: 'Lexical Class', right: 'Visible' },
-      { value: 'orthography', left: 'Orthography', right: 'Visible' },
-      { value: 'tags', left: 'Tags', right: 'Visible' },
-    ])
-  ];
-
-    const _fullFieldRec = headerTools.addElement({
-    type: 'dropdown', key: 'fullFields', items: fullFieldItems, multi: true,
-    values: Array.isArray(fullFieldSelection)
-      ? fullFieldSelection.slice()
-      : (fullFieldSelection === 'all' ? fullFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags']),
-    commitOnClose: true,
-    onChange: (vals) => {
-      const chosen = (typeof vals === 'string' && vals === 'all')
-        ? fullFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
-        : (Array.isArray(vals) ? vals.slice() : []);
-      const set = new Set(chosen);
-      const map = {};
-      ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'].forEach(k => map[k] = set.has(k));
-      if (fullCardApi && typeof fullCardApi.setFieldsVisible === 'function') fullCardApi.setFieldsVisible(map);
-      try { fullFieldSelection = chosen; } catch (e) {}
-      try { saveUIState(); } catch (e) {}
-    },
-    className: 'data-expansion-dropdown',
-    caption: 'kanjiFullCard.visibility'
-  });
-  const fullFieldDd = (_fullFieldRec && _fullFieldRec.control) ? _fullFieldRec.control : headerTools.getControl('fullFields');
+  // full card dropdown is handled via the registry-driven loop above
 
   // Dropdown to choose which cards are displayed
-  const displayCardItems = [
-    { value: 'main', left: 'Main Card' },
-    { value: 'related', left: 'Related Card' },
-    { value: 'full', left: 'Full Details' }
-  ];
+  // Build display card items from the card registry so new cards appear automatically.
+  const displayCardItems = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : []).map(c => ({ value: c.key, left: c.label }));
 
   const _displayCardsRec = headerTools.addElement({
     type: 'dropdown', key: 'displayCards', items: displayCardItems, multi: true,
@@ -449,9 +452,14 @@ export function renderKanjiStudyCard({ store }) {
         ? displayCardItems.map(it => String(it?.value || ''))
         : (Array.isArray(vals) ? vals.slice() : []);
       const set = new Set(chosen);
-      if (mainCardApi && mainCardApi.el) mainCardApi.el.style.display = set.has('main') ? '' : 'none';
-      if (relatedCardApi && relatedCardApi.el) relatedCardApi.el.style.display = set.has('related') ? '' : 'none';
-      if (fullCardApi && fullCardApi.el) fullCardApi.el.style.display = set.has('full') ? '' : 'none';
+      try {
+        for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+          try {
+            const api = cardApis[c.key];
+            if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
+          } catch (e) {}
+        }
+      } catch (e) {}
       try { displayCardSelection = chosen; } catch (e) {}
       try { saveUIState(); } catch (e) {}
     },
@@ -463,26 +471,57 @@ export function renderKanjiStudyCard({ store }) {
   // expose the same variable names used elsewhere so render() logic needs minimal changes
   const card = mainCardApi.el; // root .card kanji-card
   const wrapper = card.querySelector('.kanji-card-wrapper');
-  const sentenceCard = relatedCardApi.el;
+  // collect registry-ordered elements for appending into the view root
+  const registryCardEls = [];
+  for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+    try {
+      const api = cardApis[c.key];
+      if (api && api.el) registryCardEls.push(api.el);
+    } catch (e) {}
+  }
 
   // Apply initial visibility/mute defaults to cards to match dropdown defaults
   try {
-    if (kanjiFieldSelection === 'all') kanjiFieldSelection = kanjiFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
-    if (relatedFieldSelection === 'all') relatedFieldSelection = relatedFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
-    if (fullFieldSelection === 'all') fullFieldSelection = fullFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
     if (displayCardSelection === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
+    for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+      try {
+        const items = Array.isArray(c.toggleFields) ? c.toggleFields.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
+        const sel = cardFieldSelections[c.key];
+        const values = (sel === 'all') ? items.slice() : (Array.isArray(sel) ? sel.slice() : items.slice());
+        const api = cardApis[c.key];
+        const set = new Set(values);
+        if (api && typeof api.setFieldsVisible === 'function') {
+          const map = {};
+          for (const v of items) map[v] = set.has(v);
+          try { api.setFieldsVisible(map); } catch (e) {}
+        } else {
+          for (const v of items) {
+            const cap = String(v).charAt(0).toUpperCase() + String(v).slice(1);
+            const fnName = `set${cap}Visible`;
+            try {
+              if (api && typeof api[fnName] === 'function') api[fnName](set.has(v));
+              else if (api && typeof api.setFieldVisible === 'function') api.setFieldVisible(v, set.has(v));
+            } catch (e) {}
+          }
+        }
+      } catch (e) {}
+    }
   } catch (e) {}
   try {
-    const map = { kanji: false, reading: false, meaning: false, type: false };
-    for (const k of Object.keys(map)) map[k] = Array.isArray(kanjiFieldSelection) ? kanjiFieldSelection.includes(k) : false;
-    // map currently will set true for included (visible)
-    mainCardApi.setFieldsVisible(map);
-  } catch (e) {}
-  try {
-    const initRelated = new Set(Array.isArray(relatedFieldSelection) ? relatedFieldSelection : []);
-    try { relatedCardApi.setEnglishVisible(initRelated.has('english')); } catch (e) {}
-    try { relatedCardApi.setJapaneseVisible(initRelated.has('japanese')); } catch (e) {}
-    try { relatedCardApi.setNotesVisible(initRelated.has('notes')); } catch (e) {}
+    // ensure related card toggles are applied even if no registry items matched earlier
+    const regRelated = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(c => c.key === 'related') : null);
+    if (regRelated) {
+      try {
+        const api = cardApis['related'];
+        const sel = cardFieldSelections['related'];
+        const items = Array.isArray(regRelated.toggleFields) ? regRelated.toggleFields.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
+        const values = (sel === 'all') ? items.slice() : (Array.isArray(sel) ? sel.slice() : items.slice());
+        const set = new Set(values);
+        try { if (api && typeof api.setEnglishVisible === 'function') api.setEnglishVisible(set.has('english')); } catch (e) {}
+        try { if (api && typeof api.setJapaneseVisible === 'function') api.setJapaneseVisible(set.has('japanese')); } catch (e) {}
+        try { if (api && typeof api.setNotesVisible === 'function') api.setNotesVisible(set.has('notes')); } catch (e) {}
+      } catch (e) {}
+    }
   } catch (e) {}
 
   // render a single card body
@@ -546,33 +585,64 @@ export function renderKanjiStudyCard({ store }) {
       }
       try {
         const appState = collState.kanjiStudyCardView || {};
-        if (Array.isArray(appState.cardFields)) {
-          kanjiFieldSelection = appState.cardFields.slice();
-          const map = { kanji: false, reading: false, meaning: false, type: false };
-          for (const k of Object.keys(map)) map[k] = kanjiFieldSelection.includes(k);
-          try { mainCardApi.setFieldsVisible(map); } catch (e) {}
-        }
-        if (Array.isArray(appState.relatedFields)) {
-          relatedFieldSelection = appState.relatedFields.slice();
-          const initRelated = new Set(Array.isArray(relatedFieldSelection) ? relatedFieldSelection : []);
-          // related card visibility is controlled by the `displayCards` dropdown;
-          // do not toggle top-level related card visibility here.
-          try { relatedCardApi.setEnglishVisible(initRelated.has('english')); } catch (e) {}
-          try { relatedCardApi.setJapaneseVisible(initRelated.has('japanese')); } catch (e) {}
-          try { relatedCardApi.setNotesVisible(initRelated.has('notes')); } catch (e) {}
-        }
-        if (Array.isArray(appState.fullFields)) {
-          fullFieldSelection = appState.fullFields.slice();
-          const map = {};
-          ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'].forEach(k => map[k] = fullFieldSelection.includes(k));
-          try { fullCardApi.setFieldsVisible(map); } catch (e) {}
-        }
+        // Apply saved per-card field selections (supports new object format and legacy values)
+        try {
+          if (appState.cardFields && typeof appState.cardFields === 'object' && !Array.isArray(appState.cardFields)) {
+            for (const k of Object.keys(appState.cardFields || {})) {
+              try {
+                const sel = appState.cardFields[k];
+                const reg = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(x => x.key === k) : null);
+                const items = (reg && Array.isArray(reg.toggleFields)) ? reg.toggleFields.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
+                const values = (sel === 'all') ? items.slice() : (Array.isArray(sel) ? sel.slice() : []);
+                const api = cardApis[k];
+                const set = new Set(values);
+                if (api && typeof api.setFieldsVisible === 'function') {
+                  const map = {};
+                  for (const val of items) map[val] = set.has(val);
+                  try { api.setFieldsVisible(map); } catch (e) {}
+                } else {
+                  for (const val of items) {
+                    const cap = String(val).charAt(0).toUpperCase() + String(val).slice(1);
+                    const fnName = `set${cap}Visible`;
+                    try {
+                      if (api && typeof api[fnName] === 'function') api[fnName](set.has(val));
+                      else if (api && typeof api.setFieldVisible === 'function') api.setFieldVisible(val, set.has(val));
+                    } catch (e) {}
+                  }
+                }
+                try { cardFieldSelections[k] = sel === 'all' ? 'all' : (Array.isArray(sel) ? sel.slice() : values.slice()); } catch (e) {}
+              } catch (e) {}
+            }
+          } else if (Array.isArray(appState.cardFields)) {
+            // legacy: treat as main card selection
+            try { cardFieldSelections['main'] = appState.cardFields.slice(); } catch (e) {}
+            try { if (mainCardApi && typeof mainCardApi.setFieldsVisible === 'function') {
+              const regMain = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(x => x.key === 'main') : null);
+              const items = (regMain && Array.isArray(regMain.toggleFields)) ? regMain.toggleFields.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
+              const map = {};
+              for (const val of items) map[val] = Array.isArray(appState.cardFields) ? appState.cardFields.includes(val) : false;
+              try { mainCardApi.setFieldsVisible(map); } catch (e) {}
+            } } catch (e) {}
+          } else if (typeof appState.cardFields === 'string' && appState.cardFields === 'all') {
+            for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) try { cardFieldSelections[c.key] = 'all'; } catch (e) {}
+          }
+          // legacy singular keys
+          if (Array.isArray(appState.relatedFields)) try { cardFieldSelections['related'] = appState.relatedFields.slice(); } catch (e) {}
+          if (typeof appState.relatedFields === 'string' && appState.relatedFields === 'all') try { cardFieldSelections['related'] = 'all'; } catch (e) {}
+          if (Array.isArray(appState.fullFields)) try { cardFieldSelections['full'] = appState.fullFields.slice(); } catch (e) {}
+          if (typeof appState.fullFields === 'string' && appState.fullFields === 'all') try { cardFieldSelections['full'] = 'all'; } catch (e) {}
+        } catch (e) {}
         if (Array.isArray(appState.displayCards)) {
           displayCardSelection = appState.displayCards.slice();
           const set = new Set(Array.isArray(displayCardSelection) ? displayCardSelection : []);
-          try { if (mainCardApi && mainCardApi.el) mainCardApi.el.style.display = set.has('main') ? '' : 'none'; } catch (e) {}
-          try { if (relatedCardApi && relatedCardApi.el) relatedCardApi.el.style.display = set.has('related') ? '' : 'none'; } catch (e) {}
-          try { if (fullCardApi && fullCardApi.el) fullCardApi.el.style.display = set.has('full') ? '' : 'none'; } catch (e) {}
+          try {
+            for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+              try {
+                const api = cardApis[c.key];
+                if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
+              } catch (e) {}
+            }
+          } catch (e) {}
         }
       } catch (e) {}
       uiStateRestored = true;
@@ -661,21 +731,8 @@ export function renderKanjiStudyCard({ store }) {
   
 
   function updateRevealButton() {
-    const revealBtn = getFooterButton('reveal');
-    if (!revealBtn) return;
-    // Keep the caption span so shortcut hint remains visible when keyboard is active
-    if (revealBtn && typeof revealBtn.setState === 'function') {
-      if (viewMode === 'full') revealBtn.setState('full');
-      else revealBtn.setState('kanji-only');
-    } else {
-      if (viewMode === 'full') {
-        if (typeof revealBtn.setText === 'function') revealBtn.setText('Hide');
-        if (typeof revealBtn.setCaption === 'function') revealBtn.setCaption('↓');
-      } else {
-        if (typeof revealBtn.setText === 'function') revealBtn.setText('Reveal');
-        if (typeof revealBtn.setCaption === 'function') revealBtn.setCaption('↑');
-      }
-    }
+    // Reveal/hide state removed — no-op to avoid errors from older calls.
+    return;
   }
 
   function shuffleEntries() {
@@ -733,8 +790,7 @@ export function renderKanjiStudyCard({ store }) {
       { action: 'next' },
       { action: 'wait', ms: 2000 },
       { action: 'sound' },
-      { action: 'wait', ms: 1000 },
-      { action: 'reveal' }
+      { action: 'wait', ms: 1000 }
     ];
 
     while (isAutoPlaying && !_autoplayAbort) {
@@ -753,8 +809,6 @@ export function renderKanjiStudyCard({ store }) {
           showPrev();
         } else if (step.action === 'sound') {
           speakCurrent();
-        } else if (step.action === 'reveal') {
-          revealFull();
         } else if (step.action === 'wait') {
           await sleep(Number(step.ms) || 0);
         }
@@ -819,22 +873,18 @@ export function renderKanjiStudyCard({ store }) {
       try { fullCardApi && typeof fullCardApi.setEntry === 'function' && fullCardApi.setEntry(entry); } catch (e) {}
     }
 
-    // Update related sentence card via its API. show/hide depending on available related sentences
-    const relatedSentences = Array.isArray(entry?.__related?.sentences) ? entry.__related.sentences : [];
+    // Update related sentence card via its API. the card expects `entry` only.
     try {
       const displaySet = new Set(Array.isArray(displayCardSelection) ? displayCardSelection : []);
-      if (entry && relatedSentences.length) {
-        relatedCardApi.setSentences(relatedSentences);
-        const jpText = relatedCardApi.el.querySelector('.kanji-related-jp')?.textContent || '';
-        // Only show related card if user selected it in which.cards and related sentences exist
-        relatedCardApi.el.style.display = (displaySet.has('related') && jpText) ? '' : 'none';
-      } else {
-        relatedCardApi.setSentences([]);
-        relatedCardApi.el.style.display = 'none';
+      // Pass the current entry to the related card so it can derive its sentences.
+      try { if (relatedCardApi && typeof relatedCardApi.setEntry === 'function') relatedCardApi.setEntry(entry); } catch (e) {}
+      // Toggle visibility for every registered card according to user selection.
+      for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+        try {
+          const api = cardApis[c.key];
+          if (api && api.el) api.el.style.display = displaySet.has(c.key) ? '' : 'none';
+        } catch (e) {}
       }
-      // Ensure main/full card visibility also respects the which.cards selection
-      try { if (mainCardApi && mainCardApi.el) mainCardApi.el.style.display = displaySet.has('main') ? '' : 'none'; } catch (e) {}
-      try { if (fullCardApi && fullCardApi.el) fullCardApi.el.style.display = displaySet.has('full') ? '' : 'none'; } catch (e) {}
     } catch (e) {}
     
     // Update reveal button text based on current viewMode
@@ -915,8 +965,10 @@ export function renderKanjiStudyCard({ store }) {
 
   // mainCardApi.el already contains its internal wrapper
 
-  // Always append the card and sentence card into the view root
-  el.append(card, sentenceCard, fullCardApi.el);
+  // Append every registered card element (in registry order) into the view root
+  for (const childEl of registryCardEls) {
+    try { el.appendChild(childEl); } catch (e) {}
+  }
 
   // Build a DocumentFragment containing header -> view root -> footer so
   // when the shell appends the fragment its children become siblings in

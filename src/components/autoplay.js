@@ -2,7 +2,7 @@ import { el, safeId } from './ui.js';
 
 // Autoplay controls: abstract sequencer builder.
 // The component accepts/returns a `sequence` array of actions, e.g.
-// [{ action: 'next' }, { action: 'wait', ms: 2000 }, { action: 'sound' }, { action: 'wait', ms: 1000 }, { action: 'reveal' }]
+// [{ action: 'next' }, { action: 'wait', ms: 2000 }, { action: 'sound' }, { action: 'wait', ms: 1000 }]
 // The component does NOT implement loop behavior; the app using it should handle looping.
 export function createAutoplayControls({ sequence = [], isPlaying = false, onTogglePlay, onSequenceChange }) {
   let seq = Array.isArray(sequence) ? sequence.slice() : [];
@@ -11,8 +11,6 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
     { action: 'next' },
     { action: 'wait', ms: 1000 },
     { action: 'sound' },
-    { action: 'wait', ms: 1000 },
-    { action: 'reveal' },
     { action: 'wait', ms: 1000 }
   ];
 
@@ -75,7 +73,6 @@ export function createAutoplayControls({ sequence = [], isPlaying = false, onTog
       { action: 'prev', label: 'Prev' },
       { action: 'next', label: 'Next' },
       { action: 'sound', label: 'Sound' },
-      { action: 'reveal', label: 'Reveal' },
       { action: 'wait', label: 'Wait 0.5s', ms: 500 },
       { action: 'wait', label: 'Wait 1s', ms: 1000 },
       { action: 'wait', label: 'Wait 2s', ms: 2000 },

@@ -1031,6 +1031,19 @@ input[type="number"].button::-webkit-inner-spin-button {
   font-size: 0.75rem;
 }
 
+/* Generic flat card should share the same visual styling as the kanji full card. */
+.generic-flat-card .kanji-full-row {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  border-bottom: 1px grey solid;
+  padding: .3rem 0;
+}
+
+.generic-flat-card .kanji-full-label {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
 .kanji-card {
   min-height: 15rem;
   width: min(30rem, 100%);

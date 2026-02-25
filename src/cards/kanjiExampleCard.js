@@ -1,6 +1,7 @@
 // Factory for creating a Kanji related-item card element with internal carousel controls.
 // Uses existing CSS classes defined in src/styles.css.
-export function createKanjiRelatedCard({ entry = null, sentences = [], items = null, handlers = {}, config = {} } = {}) {
+export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {} } = {}) {
+  try { console.debug('[Card:Related] createKanjiRelatedCard()', { entry }); } catch (e) {}
   const root = document.createElement('div');
   root.className = 'card kanji-related-card';
 
@@ -51,6 +52,11 @@ export function createKanjiRelatedCard({ entry = null, sentences = [], items = n
   const jpText = document.createElement('div');
   jpText.className = 'kanji-related-text kanji-related-jp';
 
+  const placeholder = document.createElement('div');
+  placeholder.className = 'hint kanji-related-empty';
+  placeholder.style.marginTop = '0.5rem';
+  placeholder.textContent = 'No related items.';
+
   const enLabel = document.createElement('div');
   enLabel.className = 'kanji-related-label';
   enLabel.style.marginTop = '1rem';
@@ -68,10 +74,21 @@ export function createKanjiRelatedCard({ entry = null, sentences = [], items = n
   const notesList = document.createElement('ul');
   notesList.className = 'kanji-related-notes';
 
-  root.append(header, jpText, enLabel, enText, notesLabel, notesList);
+  root.append(header, placeholder, jpText, enLabel, enText, notesLabel, notesList);
 
   let currentIndex = 0;
-  let listItems = Array.isArray(items) ? items.slice() : (Array.isArray(sentences) ? sentences.slice() : []);
+  // Only accept `entry` as the source of truth for related items.
+  function extractSentencesFromEntry(ent) {
+    if (!ent || typeof ent !== 'object') return [];
+    // Prefer collection-specific related data if present, then legacy containers
+    try { console.debug('[Card:Related] extractSentencesFromEntry(): keys', Object.keys(ent || {})); } catch (e) {}
+    try { if (Array.isArray(ent.relatedCollections?.sentences)) { console.debug('[Card:Related] using relatedCollections.sentences', ent.relatedCollections.sentences.length); return ent.relatedCollections.sentences.slice(); } } catch (e) {}
+    try { if (Array.isArray(ent.__related?.sentences)) { console.debug('[Card:Related] using __related.sentences', ent.__related.sentences.length); return ent.__related.sentences.slice(); } } catch (e) {}
+    try { if (Array.isArray(ent.sentences)) { console.debug('[Card:Related] using sentences', ent.sentences.length); return ent.sentences.slice(); } } catch (e) {}
+    return [];
+  }
+
+  let listItems = extractSentencesFromEntry(entry);
 
   function firstDefinedString(obj, keys = []) {
     if (!obj || typeof obj !== 'object') return '';
@@ -90,19 +107,19 @@ export function createKanjiRelatedCard({ entry = null, sentences = [], items = n
     counter.style.display = count ? '' : 'none';
   }
 
-  function setSentences(list) {
-    listItems = Array.isArray(list) ? list.slice() : [];
+  // Standard API: accept `entry` and derive sentences from entry.__related.sentences
+  function setEntry(newEntry) {
+    try { console.debug('[Card:Related] setEntry()', newEntry); } catch (e) {}
+    entry = newEntry || null;
+    listItems = extractSentencesFromEntry(entry);
+    try { console.debug('[Card:Related] setEntry => listItems.length', Array.isArray(listItems) ? listItems.length : 0, listItems && listItems[0]); } catch (e) {}
     currentIndex = 0;
     render();
   }
 
-  function setItems(list) {
-    listItems = Array.isArray(list) ? list.slice() : [];
-    currentIndex = 0;
-    render();
-  }
-
-  function render() {
+  // Internal DOM update helper (no debug) so callers can avoid emitting a separate
+  // `render` debug line when they're already logging an action like `setEntry`.
+  function updateDisplay() {
     renderControls();
     const s = listItems[currentIndex] || null;
     // sentence object can be string or { jp, en, notes }
@@ -118,21 +135,44 @@ export function createKanjiRelatedCard({ entry = null, sentences = [], items = n
     // fallback to entry-level fields when available
     if (!jp) jp = firstDefinedString(entry, ['sentence', 'jp', 'ja', 'japanese', 'text']);
     if (!en) en = firstDefinedString(entry, ['english', 'en', 'translation']);
+    const hasContent = !!(jp || en || (Array.isArray(notes) && notes.length));
 
-    jpText.textContent = jp;
-    enText.textContent = en;
-
-    // rebuild notes
-    notesList.innerHTML = '';
-    if (Array.isArray(notes) && notes.length) {
-      for (const n of notes) {
-        const li = document.createElement('li');
-        li.textContent = String(n);
-        notesList.appendChild(li);
-      }
+    if (!hasContent && (!Array.isArray(listItems) || listItems.length === 0)) {
+      // No related data and no fallback content: show only header + placeholder for consistency.
+      try { console.debug('[Card:Related] updateDisplay(): no content; listItems.length=', Array.isArray(listItems) ? listItems.length : 0); } catch (e) {}
+      try { placeholder.style.display = ''; } catch (e) {}
+      try { jpText.style.display = 'none'; } catch (e) {}
+      try { enLabel.style.display = 'none'; } catch (e) {}
+      try { enText.style.display = 'none'; } catch (e) {}
+      try { notesLabel.style.display = 'none'; } catch (e) {}
+      try { notesList.style.display = 'none'; } catch (e) {}
     } else {
-      // keep empty list (CSS will hide if desired)
+      // Show the content areas and populate them. Hide placeholder.
+      try { placeholder.style.display = 'none'; } catch (e) {}
+      try { jpText.style.display = ''; } catch (e) {}
+      try { enLabel.style.display = ''; } catch (e) {}
+      try { enText.style.display = ''; } catch (e) {}
+      try { notesLabel.style.display = ''; } catch (e) {}
+      try { notesList.style.display = ''; } catch (e) {}
+
+      jpText.textContent = jp;
+      enText.textContent = en;
+
+      // rebuild notes
+      notesList.innerHTML = '';
+      if (Array.isArray(notes) && notes.length) {
+        for (const n of notes) {
+          const li = document.createElement('li');
+          li.textContent = String(n);
+          notesList.appendChild(li);
+        }
+      }
     }
+  }
+
+  function render() {
+    try { console.debug('[Card:Related] render()', { currentIndex, listItemsLength: Array.isArray(listItems) ? listItems.length : 0, entrySample: entry ? (entry.sentence || entry.jp || entry.japanese || entry.text) : null }); } catch (e) {}
+    updateDisplay();
   }
 
   prevBtn.addEventListener('click', (ev) => {
@@ -164,9 +204,10 @@ export function createKanjiRelatedCard({ entry = null, sentences = [], items = n
     if (handlers.onSpeak) handlers.onSpeak(text, { index: currentIndex, entry });
   });
 
-  function update(newEntry, newSentences) {
+  function update(newEntry) {
+    try { console.debug('[Card:Related] update()', { newEntrySample: newEntry ? (newEntry.sentence || newEntry.jp || newEntry.japanese || newEntry.text) : null }); } catch (e) {}
     if (newEntry) entry = newEntry;
-    if (Array.isArray(newSentences)) listItems = newSentences.slice();
+    listItems = extractSentencesFromEntry(entry);
     currentIndex = 0;
     render();
   }
@@ -199,11 +240,11 @@ export function createKanjiRelatedCard({ entry = null, sentences = [], items = n
     notesList.style.visibility = v ? '' : 'hidden';
   }
 
-  // initialize
-  setItems(Array.isArray(items) ? items : sentences);
+  // initialize from `entry`
+  setEntry(entry);
   render();
 
-  return { el: root, update, setSentences, setItems, setVisible, setEnglishVisible, setJapaneseVisible, setNotesVisible, destroy };
+  return { el: root, update, setEntry, setVisible, setEnglishVisible, setJapaneseVisible, setNotesVisible, destroy };
 }
 
 // Export canonical toggleable fields for the related/example card

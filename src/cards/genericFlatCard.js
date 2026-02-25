@@ -1,0 +1,80 @@
+// Generic flat card: renders an object's top-level keys as labeled rows.
+// Styling mirrors the kanji full card (reuses .kanji-full-row/.kanji-full-label/.kanji-full-value).
+export function createGenericFlatCard({ entry = null, config = {} } = {}) {
+  try { console.debug('[Card:Generic] createGenericFlatCard()', { entry, config }); } catch (e) {}
+  const root = document.createElement('div');
+  root.className = 'card generic-flat-card';
+
+  const body = document.createElement('div');
+  body.className = 'generic-flat-body';
+
+  root.appendChild(body);
+
+  function makeRow(labelText) {
+    const row = document.createElement('div');
+    row.className = 'kanji-full-row';
+    const label = document.createElement('div');
+    label.className = 'kanji-full-label';
+    label.textContent = labelText || '';
+    const value = document.createElement('div');
+    value.className = 'kanji-full-value';
+    row.append(label, value);
+    return { row, label, value };
+  }
+
+  // Maintain rows map so setFieldsVisible can operate similarly to kanjiFullCard
+  let rows = {};
+
+  function formatValue(v) {
+    if (v == null) return '';
+    if (typeof v === 'string') return v;
+    if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+    if (Array.isArray(v)) return v.join(', ');
+    try { return JSON.stringify(v); } catch (e) { return String(v); }
+  }
+
+  function setEntry(e) {
+    try { console.debug('[Card:Generic] setEntry()', e); } catch (e) {}
+    const entryObj = e || {};
+    rows = {};
+    body.innerHTML = '';
+
+    // Preserve the object's own key order (do not sort)
+    const keys = Object.keys(entryObj || {});
+    for (const k of keys) {
+      const { row, label, value } = makeRow(k);
+      value.textContent = formatValue(entryObj[k]);
+      rows[k] = { row, label, value };
+      body.appendChild(row);
+    }
+  }
+
+  function setFieldVisible(field, visible) {
+    const v = !!visible;
+    const k = String(field || '');
+    const r = rows[k];
+    if (!r) return;
+    r.value.style.visibility = v ? '' : 'hidden';
+  }
+
+  function setFieldsVisible(map) {
+    if (!map || typeof map !== 'object') return;
+    for (const k of Object.keys(map)) setFieldVisible(k, !!map[k]);
+  }
+
+  function setVisible(visible) {
+    root.style.display = visible ? '' : 'none';
+  }
+
+  function destroy() {
+    if (root.parentNode) root.parentNode.removeChild(root);
+  }
+
+  // initialize
+  setEntry(entry);
+
+  return { el: root, setEntry, setFieldVisible, setFieldsVisible, setVisible, destroy };
+}
+
+// Export a simple set of toggleable fields (empty by default — apps can use keys)
+export const genericFlatCardToggleFields = [];

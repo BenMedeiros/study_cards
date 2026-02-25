@@ -1,6 +1,7 @@
 // Factory for creating a Kanji main card element.
 // The card uses the existing project CSS classes (from src/styles.css).
 export function createKanjiMainCard({ entry = null, indexText = '', handlers = {} } = {}) {
+  try { console.debug('[Card:Main] createKanjiMainCard()', { entry, indexText }); } catch (e) {}
   const root = document.createElement('div');
   root.className = 'card kanji-card';
 
@@ -49,6 +50,7 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   }
 
   function setEntry(e) {
+    try { console.debug('[Card:Main] setEntry()', e); } catch (e) {}
     const entryObj = e || {};
     // Common field names used in this project: kanji/character/text, reading/kana, meaning/definition
     const kanji = resolvePath(entryObj, 'kanji') || resolvePath(entryObj, 'character') || resolvePath(entryObj, 'text') || '';
@@ -96,6 +98,7 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   }
 
   function setFieldsVisible(map) {
+    try { console.debug('[Card:Main] setFieldsVisible()', map); } catch (e) {}
     if (!map || typeof map !== 'object') return;
     for (const k of Object.keys(map)) {
       setFieldVisible(k, !!map[k]);
