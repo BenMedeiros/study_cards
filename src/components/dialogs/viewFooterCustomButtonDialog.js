@@ -8,6 +8,20 @@ function deepClone(value) {
   try { return JSON.parse(JSON.stringify(value)); } catch (e) { return value; }
 }
 
+function inferNamespace(raw) {
+  if (!raw || typeof raw !== 'object') return 'unknown';
+  const id = (raw.id || '').toLowerCase();
+  const fn = (raw.fnName || '').toLowerCase();
+  const text = (raw.text || '').toLowerCase();
+
+  // heuristics
+  if (fn.includes('kanji') || id.includes('kanji') || text.includes('kanji') || fn.includes('study')) return 'app';
+  if (fn.includes('toggle') || fn.includes('learned') || fn.includes('focus') || id.includes('progress') || id.includes('kanji')) return 'collection';
+  if (fn.includes('speak') || fn.includes('sound') || id.includes('speak') || text.includes('sound')) return 'entry';
+  if (fn.startsWith('show') || id.startsWith('show') || text.startsWith('show')) return 'app';
+  return raw.namespace || 'unknown';
+}
+
 function normalizeActionSteps(raw = []) {
   const out = [];
   for (const step of (Array.isArray(raw) ? raw : [])) {
@@ -49,6 +63,7 @@ export function openViewFooterCustomButtonDialog({
         controlKey: asString(raw.controlKey),
         state: asString(raw.state),
         fnName: asString(raw.fnName),
+        namespace: asString(raw.namespace) || inferNamespace(raw),
       };
       actionById.set(id, item);
       actionList.push(item);
@@ -161,6 +176,7 @@ export function openViewFooterCustomButtonDialog({
       for (const action of actionList) {
         const row = el('div', { className: 'view-footer-custom-available-row' });
         const left = el('div', { className: 'view-footer-custom-action-label', text: `${action.text}${action.state ? ` (${action.state})` : ''}` });
+        const ns = el('div', { className: 'view-footer-action-namespace', text: action.namespace });
         const fn = el('div', { className: 'view-footer-action-fn', text: action.fnName || action.id });
         const addBtn = el('button', { className: 'btn small', text: 'Add' });
         addBtn.type = 'button';
@@ -168,7 +184,7 @@ export function openViewFooterCustomButtonDialog({
           state.actions.push({ actionId: action.id, delayMs: 0 });
           renderSelected();
         });
-        row.append(left, fn, addBtn);
+        row.append(left, ns, fn, addBtn);
         availableListEl.appendChild(row);
       }
     }

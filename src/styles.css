@@ -406,6 +406,9 @@ body {
   gap: 0.35rem;
   max-height: 15rem;
   overflow: auto;
+     border: var(--border-1);
+    padding: 0.1rem 0.5rem;
+    margin-bottom: .5rem;
 }
 
 .view-footer-custom-selected-row,
@@ -417,7 +420,9 @@ body {
 }
 
 .view-footer-custom-available-row {
-  grid-template-columns: 1fr 10rem auto;
+  grid-template-columns: 10rem 6rem 9rem;
+  grid-auto-flow: column;
+  grid-auto-columns: 4rem;
 }
 
 .view-footer-custom-action-label {
@@ -444,8 +449,10 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  min-width: min(26rem, 92vw);
-  max-width: min(30rem, 92vw);
+  /* min-width: min(26rem, 92vw);
+  max-width: min(30rem, 92vw); */
+  /* max-height: 70vh;
+  max-width: 90%; */
   background: var(--panel);
   color: var(--text);
   border: var(--border-1);
@@ -453,6 +460,7 @@ body {
   box-shadow: 0 10px 40px rgba(2, 6, 23, 0.7);
   padding: 0.8rem;
   z-index: 1331;
+  overflow-y: auto;
 }
 
 .view-footer-hotkey-title {
