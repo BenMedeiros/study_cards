@@ -102,34 +102,32 @@ export function renderQaCards({ store }) {
   }
 
   function renderHeader({ showContinue = false, onContinue = null } = {}) {
-    headerTools.innerHTML = '';
+    headerTools.clear();
 
     const selectorsWrap = document.createElement('div');
     selectorsWrap.className = 'qa-header-selectors';
 
     // Helper to build a dropdown wrapped like the data-expansion-group pattern
     function buildFieldDropdown(currentValue, onChange, captionText = null) {
-      const dd = createDropdown({
-        items: fields.map(f => ({ value: f.key, label: f.label ?? f.key })),
-        value: currentValue,
-        onChange: onChange
+      const items = fields.map(f => ({ value: f.key, label: f.label ?? f.key }));
+      const key = `qa-field-${captionText || currentValue}`;
+      headerTools.removeControl && headerTools.removeControl(key);
+      const rec = headerTools.addElement({
+        type: 'dropdown', key, items, value: currentValue, onChange,
+        className: '', caption: (typeof captionText === 'string' && captionText) ? captionText : null
       });
-      dd.style.minWidth = '120px';
-
-      const group = document.createElement('div');
-      group.className = 'data-expansion-group';
-
-      // The dropdown returned by createDropdown already has class 'custom-dropdown'
-      // append it directly so structure matches existing components.
-      group.appendChild(dd);
-
-      const caption = document.createElement('div');
-      caption.className = 'data-expansion-caption';
-      const sel = fields.find(f => f.key === currentValue);
-      caption.textContent = (typeof captionText === 'string' && captionText) ? captionText : (sel?.label ?? String(currentValue || ''));
-      group.appendChild(caption);
-
-      return { group, dropdown: dd, caption };
+      // move the created group into the local selectorsWrap so structure matches previous layout
+      if (rec && rec.group) {
+        if (rec.group.parentNode) rec.group.parentNode.removeChild(rec.group);
+        selectorsWrap.appendChild(rec.group);
+        const dd = rec.control;
+        dd.style.minWidth = '120px';
+        const sel = fields.find(f => f.key === currentValue);
+        return { group: rec.group, dropdown: dd, caption: rec.group.querySelector('.data-expansion-caption') };
+      }
+      // If headerTools.addElement didn't provide a group, throw so the error surfaces
+      // (we prefer failing early rather than silently falling back to ad-hoc DOM).
+      throw new Error(`headerTools.addElement did not return a group for dropdown key=${key}`);
     }
 
     const q = buildFieldDropdown(questionField, (value) => {
@@ -155,104 +153,72 @@ export function renderQaCards({ store }) {
       { value: 'enter', label: 'Enter' },
       { value: 'space', label: 'Space' },
     ];
-      const submitDd = createDropdown({
-      items: submitItems,
-      value: submitMethod,
-      onChange: (value) => {
-        submitMethod = value || 'enter';
-        feedbackMode = false;
-        userAnswer = '';
-        completed = false;
-        try { store.collections.saveCollectionState?.(active?.key, { qaCardsView: { submitMethod: submitMethod } }); } catch (e) {}
-        render();
-      }
-    });
-    submitDd.style.minWidth = '120px';
-    const submitGroup = document.createElement('div');
-    submitGroup.className = 'data-expansion-group';
-    submitGroup.appendChild(submitDd);
-    const submitCaption = document.createElement('div');
-    submitCaption.className = 'data-expansion-caption';
-    submitCaption.textContent = 'submit-method';
-    submitGroup.appendChild(submitCaption);
-
-    selectorsWrap.append(q.group, a.group, submitGroup);
+      // Submit method dropdown
+      headerTools.removeControl && headerTools.removeControl('qa-submit-method');
+      const submitRec = headerTools.addElement({
+        type: 'dropdown', key: 'qa-submit-method', items: submitItems, value: submitMethod,
+        onChange: (value) => {
+          submitMethod = value || 'enter';
+          feedbackMode = false; userAnswer = ''; completed = false;
+          try { store.collections.saveCollectionState?.(active?.key, { qaCardsView: { submitMethod: submitMethod } }); } catch (e) {}
+          render();
+        },
+        className: '',
+        caption: 'submit-method'
+      });
+      if (submitRec && submitRec.group) { if (submitRec.group.parentNode) submitRec.group.parentNode.removeChild(submitRec.group); selectorsWrap.append(submitRec.group); const dd = submitRec.control; dd.style.minWidth = '120px'; }
 
     const spacer = document.createElement('div');
     spacer.className = 'qa-header-spacer';
 
+
+    headerTools.append(selectorsWrap, spacer);
     // Collection-level shuffle (shared action via collectionsManager)
-    const shuffleBtn = document.createElement('button');
-    shuffleBtn.type = 'button';
-    shuffleBtn.className = 'btn small';
-    shuffleBtn.textContent = 'Shuffle';
-    shuffleBtn.addEventListener('click', () => {
-      try {
-        if (store?.collections && typeof store.collections.shuffleCollection === 'function') {
-          try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
-          store.collections.shuffleCollection(active?.key);
-          rebuildEntriesFromCollectionState();
-          index = 0;
-          try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
-          shownAt = nowMs();
-          feedbackMode = false;
-          userAnswer = '';
-          completed = false;
-          render();
+    headerTools.addElement({
+      type: 'button', key: 'shuffle', label: 'Shuffle', caption: 'col.shuffle',
+      onClick: () => {
+        try {
+          if (store?.collections && typeof store.collections.shuffleCollection === 'function') {
+            try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
+            store.collections.shuffleCollection(active?.key);
+            rebuildEntriesFromCollectionState();
+            index = 0;
+            try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
+            shownAt = nowMs();
+            feedbackMode = false;
+            userAnswer = '';
+            completed = false;
+            render();
+          }
+        } catch (e) {
+          // ignore
         }
-      } catch (e) {
-        // ignore
       }
     });
 
-    const shuffleGroup = document.createElement('div');
-    shuffleGroup.className = 'data-expansion-group';
-    const shuffleCaption = document.createElement('div');
-    shuffleCaption.className = 'data-expansion-caption';
-    shuffleCaption.textContent = 'col.shuffle';
-    shuffleGroup.append(shuffleBtn, shuffleCaption);
-
-    const clearShuffleBtn = document.createElement('button');
-    clearShuffleBtn.type = 'button';
-    clearShuffleBtn.className = 'btn small';
-    clearShuffleBtn.textContent = 'Clear Shuffle';
-    // Disabled when collection state isn't shuffled
-    try { clearShuffleBtn.disabled = !(collState && !!collState.isShuffled); } catch (e) { clearShuffleBtn.disabled = true; }
-    clearShuffleBtn.addEventListener('click', () => {
-      try {
-        if (store?.collections && typeof store.collections.clearCollectionShuffle === 'function') {
-          try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
-          store.collections.clearCollectionShuffle(active?.key);
-          rebuildEntriesFromCollectionState();
-          index = Math.min(index, Math.max(0, entries.length - 1));
-          try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
-          shownAt = nowMs();
-          feedbackMode = false;
-          userAnswer = '';
-          completed = false;
-          render();
-        }
-      } catch (e) {}
+    headerTools.addElement({
+      type: 'button', key: 'clearShuffle', label: 'Clear Shuffle', caption: 'col.clear-shuffle',
+      disabled: !(collState && !!collState.isShuffled),
+      onClick: () => {
+        try {
+          if (store?.collections && typeof store.collections.clearCollectionShuffle === 'function') {
+            try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
+            store.collections.clearCollectionShuffle(active?.key);
+            rebuildEntriesFromCollectionState();
+            index = Math.min(index, Math.max(0, entries.length - 1));
+            try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
+            shownAt = nowMs();
+            feedbackMode = false;
+            userAnswer = '';
+            completed = false;
+            render();
+          }
+        } catch (e) {}
+      }
     });
 
-    const clearShuffleGroup = document.createElement('div');
-    clearShuffleGroup.className = 'data-expansion-group';
-    const clearShuffleCaption = document.createElement('div');
-    clearShuffleCaption.className = 'data-expansion-caption';
-    clearShuffleCaption.textContent = 'col.clear-shuffle';
-    clearShuffleGroup.append(clearShuffleBtn, clearShuffleCaption);
-
-    headerTools.append(selectorsWrap, spacer, shuffleGroup, clearShuffleGroup);
-
     if (showContinue) {
-      const continueBtn = document.createElement('button');
-      continueBtn.type = 'button';
-      continueBtn.className = 'btn small';
-      continueBtn.textContent = 'Continue';
-      continueBtn.addEventListener('click', (e) => {
-        if (typeof onContinue === 'function') onContinue(e);
-      });
-      headerTools.append(continueBtn);
+      headerTools.addElement({ type: 'button', key: 'continue', label: 'Continue', onClick: (e) => { if (typeof onContinue === 'function') onContinue(e); } });
     }
   }
 

@@ -5,7 +5,7 @@ import { createSpeakerButton } from '../components/ui.js';
 
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createViewFooterControls } from '../components/viewFooterControls.js';
-import { createKanjiMainCard, createKanjiRelatedCard } from '../cards/index.js';
+import { createKanjiMainCard, createKanjiRelatedCard, createKanjiFullCard } from '../cards/index.js';
 import { createDropdown } from '../components/dropdown.js';
 
 export function renderKanjiStudyCard({ store }) {
@@ -109,30 +109,15 @@ export function renderKanjiStudyCard({ store }) {
 
   // Root UI pieces
   const headerTools = createViewHeaderTools();
+  // full-detail card instance (created early so header controls can reference it)
+  const fullCardApi = createKanjiFullCard({ entry: null });
   // Track whether we mounted header/footer into the shell main container
   let __mountedHeaderInShell = false;
   let __mountedFooterInShell = false;
 
-  function wrapHeaderTool(controlEl, captionText) {
-    const group = document.createElement('div');
-    group.className = 'data-expansion-group';
-    const caption = document.createElement('div');
-    caption.className = 'data-expansion-caption';
-    caption.textContent = String(captionText || '').trim();
-    group.append(controlEl, caption);
-    return group;
-  }
+  // header groups are created via `headerTools.addElement`
 
-  const shuffleBtn = document.createElement('button');
-  shuffleBtn.type = 'button';
-  shuffleBtn.className = 'btn small';
-  shuffleBtn.textContent = 'Shuffle';
-  shuffleBtn.setAttribute('aria-pressed', String(!!isShuffled));
-
-  
-
-  const shuffleGroup = wrapHeaderTool(shuffleBtn, 'col.shuffle');
-  headerTools.append(shuffleGroup);
+  // shuffle control will be added later once handler is defined
 
   // --- Header dropdowns to control card field visibility ---
   // Load per-collection saved dropdown state (if any)
@@ -155,30 +140,20 @@ export function renderKanjiStudyCard({ store }) {
     { value: 'type', left: 'Type', right: 'Visible' },
   ];
 
-  const kanjiFieldDd = createDropdown({
-    items: kanjiFieldItems,
-    multi: true,
-    values: Array.isArray(kanjiFieldSelection) ? kanjiFieldSelection.slice() : ['kanji', 'reading', 'meaning', 'type'],
-    commitOnClose: true,
-    getButtonLabel: ({ selectedValues }) => {
-      if (!selectedValues || !selectedValues.length) return 'Fields: None';
-      if (selectedValues.length === kanjiFieldItems.length - 1) return 'Fields: All';
-      return `Fields: ${selectedValues.join(', ')}`;
-    },
-    onChange: (vals) => {
-      const set = new Set(Array.isArray(vals) ? vals : []);
-      // selected means visible
-      ['kanji', 'reading', 'meaning', 'type'].forEach(f => {
-        try { mainCardApi.setFieldVisible(f, set.has(f)); } catch (e) {}
-      });
-      try { kanjiFieldSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
-      try { saveUIState(); } catch (e) {}
-    },
-    className: 'data-expansion-dropdown',
-  });
-
-  const kanjiFieldGroup = wrapHeaderTool(kanjiFieldDd, 'card.fields');
-  headerTools.append(kanjiFieldGroup);
+    const _kanjiFieldRec = headerTools.addElement({
+      type: 'dropdown', key: 'kanjiFields', items: kanjiFieldItems, multi: true,
+      values: Array.isArray(kanjiFieldSelection) ? kanjiFieldSelection.slice() : ['kanji', 'reading', 'meaning', 'type'],
+      commitOnClose: true,
+      onChange: (vals) => {
+        const set = new Set(Array.isArray(vals) ? vals : []);
+        ['kanji', 'reading', 'meaning', 'type'].forEach(f => { try { mainCardApi.setFieldVisible(f, set.has(f)); } catch (e) {} });
+        try { kanjiFieldSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
+        try { saveUIState(); } catch (e) {}
+      },
+      className: 'data-expansion-dropdown',
+      caption: 'card.fields'
+    });
+    const kanjiFieldDd = (_kanjiFieldRec && _kanjiFieldRec.control) ? _kanjiFieldRec.control : headerTools.getControl('kanjiFields');
 
   // Related card dropdown: show/hide entire related card, and mute/unmute English
   const relatedFieldItems = [
@@ -187,57 +162,23 @@ export function renderKanjiStudyCard({ store }) {
     { value: 'english', left: 'English', right: 'Visible' },
   ];
 
-  const relatedFieldDd = createDropdown({
-    items: relatedFieldItems,
-    multi: true,
-    values: Array.isArray(relatedFieldSelection) ? relatedFieldSelection.slice() : ['showRelated', 'english'],
-    commitOnClose: true,
-    getButtonLabel: ({ selectedValues }) => {
-      if (!selectedValues || !selectedValues.length) return 'Related: None';
-      return `Related: ${selectedValues.join(', ')}`;
-    },
-    onChange: (vals) => {
-      const set = new Set(Array.isArray(vals) ? vals : []);
-      try { relatedCardApi.setVisible(set.has('showRelated')); } catch (e) {}
-      try { relatedCardApi.setEnglishVisible(set.has('english')); } catch (e) {}
-      try { relatedFieldSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
-      try { saveUIState(); } catch (e) {}
-    },
-    className: 'data-expansion-dropdown',
-  });
-  const relatedFieldGroup = wrapHeaderTool(relatedFieldDd, 'card.related');
-  headerTools.append(relatedFieldGroup);
+    const _relatedFieldRec = headerTools.addElement({
+      type: 'dropdown', key: 'relatedFields', items: relatedFieldItems, multi: true,
+      values: Array.isArray(relatedFieldSelection) ? relatedFieldSelection.slice() : ['showRelated', 'english'],
+      commitOnClose: true,
+      onChange: (vals) => {
+        const set = new Set(Array.isArray(vals) ? vals : []);
+        try { relatedCardApi.setVisible(set.has('showRelated')); } catch (e) {}
+        try { relatedCardApi.setEnglishVisible(set.has('english')); } catch (e) {}
+        try { relatedFieldSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
+        try { saveUIState(); } catch (e) {}
+      },
+      className: 'data-expansion-dropdown',
+      caption: 'card.related'
+    });
+    const relatedFieldDd = (_relatedFieldRec && _relatedFieldRec.control) ? _relatedFieldRec.control : headerTools.getControl('relatedFields');
 
-  // Helper to sync dropdown UI (button label + selected classes) from an array of selected values
-  function syncDropdownUI(dropdownEl, items, selectedValues, opts = {}) {
-    try {
-      const btn = dropdownEl.querySelector('.custom-dropdown-button');
-      const set = new Set(Array.isArray(selectedValues) ? selectedValues.map(String) : []);
-      // update option selected classes
-      dropdownEl.querySelectorAll('.custom-dropdown-option').forEach(opt => {
-        const v = String(opt.dataset.value || '');
-        if (!v) return;
-        opt.classList.toggle('selected', set.has(v));
-      });
-      // compute button label
-      if (!btn) return;
-      if (!set.size) {
-        btn.textContent = opts.emptyLabel || '';
-        return;
-      }
-      if (opts.type === 'fields') {
-        if (set.size === (items.length - 1)) { // excluding toggle row
-          btn.textContent = 'Fields: All';
-        } else {
-          btn.textContent = `Fields: ${Array.from(set).join(', ')}`;
-        }
-      } else if (opts.type === 'related') {
-        btn.textContent = `Related: ${Array.from(set).join(', ')}`;
-      } else {
-        btn.textContent = Array.from(set).join(', ');
-      }
-    } catch (e) {}
-  }
+  
 
   // No legacy UI load: visual defaults used; autoplay/defaults remain runtime-only
 
@@ -395,7 +336,8 @@ export function renderKanjiStudyCard({ store }) {
     }
   });
   // place autoplay controls at start of headerTools, grouped visually
-  headerTools.insertBefore(autoplayControlsEl, shuffleGroup);
+  // place autoplay controls at start of headerTools
+  headerTools.prepend(autoplayControlsEl);
 
   // Create main card and related card via factories (decoupled components)
   const mainCardApi = createKanjiMainCard({ entry: null, indexText: '' });
@@ -408,6 +350,61 @@ export function renderKanjiStudyCard({ store }) {
     onNext: (ci) => { /* optional hook from related card */ },
     onPrev: (ci) => { /* optional hook from related card */ }
   }});
+
+  // Per-card field dropdown for the full-detail card
+  const fullFieldItems = [
+    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
+    { value: 'kanji', left: 'Kanji', right: 'Visible' },
+    { value: 'reading', left: 'Reading', right: 'Visible' },
+    { value: 'meaning', left: 'Meaning', right: 'Visible' },
+    { value: 'type', left: 'Type', right: 'Visible' },
+    { value: 'lexical', left: 'Lexical Class', right: 'Visible' },
+    { value: 'orthography', left: 'Orthography', right: 'Visible' },
+    { value: 'tags', left: 'Tags', right: 'Visible' },
+  ];
+
+  const _fullFieldRec = headerTools.addElement({
+    type: 'dropdown', key: 'fullFields', items: fullFieldItems, multi: true,
+    values: ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'],
+    commitOnClose: true,
+    onChange: (vals) => {
+      const set = new Set(Array.isArray(vals) ? vals : []);
+      const map = {};
+      ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'].forEach(k => map[k] = set.has(k));
+      if (fullCardApi && typeof fullCardApi.setFieldsVisible === 'function') fullCardApi.setFieldsVisible(map);
+      // persist per-collection full card field selection if desired
+      try { /* noop: keep safe for now */ } catch (e) {}
+    },
+    className: 'data-expansion-dropdown',
+    caption: 'card.full'
+  });
+  const fullFieldDd = (_fullFieldRec && _fullFieldRec.control) ? _fullFieldRec.control : headerTools.getControl('fullFields');
+
+  // Dropdown to choose which cards are displayed
+  const displayCardItems = [
+    { value: 'main', left: 'Main Card' },
+    { value: 'related', left: 'Related Card' },
+    { value: 'full', left: 'Full Details' }
+  ];
+
+  const _displayCardsRec = headerTools.addElement({
+    type: 'dropdown', key: 'displayCards', items: displayCardItems, multi: true,
+    values: ['main', 'related'],
+    commitOnClose: true,
+    onChange: (vals) => {
+      const set = new Set(Array.isArray(vals) ? vals : []);
+      if (mainCardApi && mainCardApi.el) mainCardApi.el.style.display = set.has('main') ? '' : 'none';
+      if (relatedCardApi && relatedCardApi.el) relatedCardApi.el.style.display = set.has('related') ? '' : 'none';
+      if (fullCardApi && fullCardApi.el) fullCardApi.el.style.display = set.has('full') ? '' : 'none';
+
+      if (_kanjiFieldRec && _kanjiFieldRec.group) _kanjiFieldRec.group.style.display = set.has('main') ? '' : 'none';
+      if (_relatedFieldRec && _relatedFieldRec.group) _relatedFieldRec.group.style.display = set.has('related') ? '' : 'none';
+      if (_fullFieldRec && _fullFieldRec.group) _fullFieldRec.group.style.display = set.has('full') ? '' : 'none';
+    },
+    className: 'data-expansion-dropdown',
+    caption: 'which.cards'
+  });
+
 
   // expose the same variable names used elsewhere so render() logic needs minimal changes
   const card = mainCardApi.el; // root .card kanji-card
@@ -493,14 +490,12 @@ export function renderKanjiStudyCard({ store }) {
           const map = { kanji: false, reading: false, meaning: false, type: false };
           for (const k of Object.keys(map)) map[k] = kanjiFieldSelection.includes(k);
           try { mainCardApi.setFieldsVisible(map); } catch (e) {}
-          try { syncDropdownUI(kanjiFieldDd, kanjiFieldItems, kanjiFieldSelection, { type: 'fields', emptyLabel: 'Fields: None' }); } catch(e) {}
         }
         if (Array.isArray(appState.relatedFields)) {
           relatedFieldSelection = appState.relatedFields.slice();
           const initRelated = new Set(Array.isArray(relatedFieldSelection) ? relatedFieldSelection : []);
           try { relatedCardApi.setVisible(initRelated.has('showRelated')); } catch (e) {}
           try { relatedCardApi.setEnglishVisible(initRelated.has('english')); } catch (e) {}
-          try { syncDropdownUI(relatedFieldDd, relatedFieldItems, relatedFieldSelection, { type: 'related', emptyLabel: 'Related: None' }); } catch(e) {}
         }
       } catch (e) {}
       uiStateRestored = true;
@@ -633,7 +628,7 @@ export function renderKanjiStudyCard({ store }) {
     index = 0;
     viewMode = defaultViewMode;
     isShuffled = true;
-    try { shuffleBtn.setAttribute('aria-pressed', 'true'); } catch (e) {}
+    try { const sb = headerTools.getControl && headerTools.getControl('shuffle'); if (sb) sb.setAttribute('aria-pressed', 'true'); } catch (e) {}
     render();
   }
 
@@ -712,7 +707,7 @@ export function renderKanjiStudyCard({ store }) {
       if (!isShuffled) {
     refreshEntriesFromStore();
       }
-    try { shuffleBtn.setAttribute('aria-pressed', String(!!isShuffled)); } catch (e) {}
+    try { const sb = headerTools.getControl && headerTools.getControl('shuffle'); if (sb) sb.setAttribute('aria-pressed', String(!!isShuffled)); } catch (e) {}
     // render
 
     // If the underlying entry changed due to refresh, keep timing aligned.
@@ -831,7 +826,7 @@ export function renderKanjiStudyCard({ store }) {
   // mainCardApi.el already contains its internal wrapper
 
   // Always append the card and sentence card into the view root
-  el.append(card, sentenceCard);
+  el.append(card, sentenceCard, fullCardApi.el);
 
   // Build a DocumentFragment containing header -> view root -> footer so
   // when the shell appends the fragment its children become siblings in
@@ -846,7 +841,10 @@ export function renderKanjiStudyCard({ store }) {
   __mountedFooterInShell = true;
 
   // Tools behaviour
-  shuffleBtn.addEventListener('click', shuffleEntries);
+  // wire shuffle control after handler exists
+  try {
+    headerTools.addElement({ type: 'button', key: 'shuffle', label: 'Shuffle', caption: 'col.shuffle', onClick: shuffleEntries });
+  } catch (e) {}
   // Details toggle removed from header tools
 
   // Keyboard handling for footer shortcuts is handled by the footer component

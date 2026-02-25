@@ -238,81 +238,82 @@ export function renderData({ store }) {
     };
   }
 
-  // Controls: header owns primary collection actions; pass callbacks so it can render and handle them
-  const controls = createViewHeaderTools({ createControls: true,
-    
-    onShuffle: () => {
-      const coll = store.collections.getActiveCollection();
-      if (!coll) return;
-      store.collections.shuffleCollection(coll.key);
-      updateStudyLabel();
-      markStudyRows();
-    },
-    onClearShuffle: () => {
-      const coll = store.collections.getActiveCollection();
-      if (!coll) return;
-      store.collections.clearCollectionShuffle(coll.key);
-      updateStudyLabel();
-      markStudyRows();
-    },
-    onClearLearned: async () => {
-      const stats = getClearLearnedStats();
-      const n = Math.max(0, Math.round(Number(stats?.count) || 0));
-      if (!n) return;
-
-      const unit = (stats?.kind === 'grammar') ? 'pattern' : 'item';
-      const unitPlural = `${unit}s`;
-
-      const ok = await confirmDialog({
-        title: 'Clear learned?',
-        message: `Remove Learned flags for ${n} ${n === 1 ? unit : unitPlural}?`,
-        detail: String(stats?.detail || '').trim(),
-        confirmText: 'Clear Learned',
-        cancelText: 'Cancel',
-        danger: true,
-      });
-      if (!ok) return;
-      try {
-        const keys = Array.isArray(stats?.keys) ? stats.keys : [];
-        const adapter = getProgressAdapter();
-        if (adapter?.kind === 'grammar') {
-          if (typeof store?.grammarProgress?.clearLearnedGrammarForKeys === 'function') {
-            const coll = store?.collections?.getActiveCollection?.();
-            store.grammarProgress.clearLearnedGrammarForKeys(keys, { collectionKey: coll?.key });
-          }
-        } else {
-          if (typeof store?.kanjiProgress?.clearLearnedKanjiForValues === 'function') {
-            const coll = store?.collections?.getActiveCollection?.();
-            store.kanjiProgress.clearLearnedKanjiForValues(keys, { collectionKey: coll?.key });
-          }
+  // Controls: header owns primary collection actions; declare buttons via viewHeaderTools
+  const controls = createViewHeaderTools({
+    elements: [
+      {
+        type: 'button', key: 'shuffle', label: 'Shuffle', caption: 'col.shuffle',
+        onClick: () => {
+          const coll = store.collections.getActiveCollection();
+          if (!coll) return;
+          store.collections.shuffleCollection(coll.key);
+          updateStudyLabel();
+          markStudyRows();
         }
-      } catch (e) {}
-      try {
-        updateStudyLabel();
-        markStudyRows();
-        updateControlStates();
-      } catch (e) {}
-    }
+      },
+      {
+        type: 'button', key: 'clearShuffle', label: 'Clear Shuffle', caption: 'col.clear-shuffle',
+        onClick: () => {
+          const coll = store.collections.getActiveCollection();
+          if (!coll) return;
+          store.collections.clearCollectionShuffle(coll.key);
+          updateStudyLabel();
+          markStudyRows();
+        }
+      },
+      {
+        type: 'button', key: 'clearLearned', label: 'Clear Learned', caption: 'col.clear-learned',
+        title: 'Remove Learned flags',
+        onClick: async () => {
+          const stats = getClearLearnedStats();
+          const n = Math.max(0, Math.round(Number(stats?.count) || 0));
+          if (!n) return;
+
+          const unit = (stats?.kind === 'grammar') ? 'pattern' : 'item';
+          const unitPlural = `${unit}s`;
+
+          const ok = await confirmDialog({
+            title: 'Clear learned?',
+            message: `Remove Learned flags for ${n} ${n === 1 ? unit : unitPlural}?`,
+            detail: String(stats?.detail || '').trim(),
+            confirmText: 'Clear Learned',
+            cancelText: 'Cancel',
+            danger: true,
+          });
+          if (!ok) return;
+          try {
+            const keys = Array.isArray(stats?.keys) ? stats.keys : [];
+            const adapter = getProgressAdapter();
+            if (adapter?.kind === 'grammar') {
+              if (typeof store?.grammarProgress?.clearLearnedGrammarForKeys === 'function') {
+                const coll = store?.collections?.getActiveCollection?.();
+                store.grammarProgress.clearLearnedGrammarForKeys(keys, { collectionKey: coll?.key });
+              }
+            } else {
+              if (typeof store?.kanjiProgress?.clearLearnedKanjiForValues === 'function') {
+                const coll = store?.collections?.getActiveCollection?.();
+                store.kanjiProgress.clearLearnedKanjiForValues(keys, { collectionKey: coll?.key });
+              }
+            }
+          } catch (e) {}
+          try {
+            updateStudyLabel();
+            markStudyRows();
+            updateControlStates();
+          } catch (e) {}
+        }
+      }
+    ]
   });
 
   // append the study filter selector after the header-controlled buttons
-  const studyFilterGroup = document.createElement('div');
-  studyFilterGroup.className = 'data-expansion-group study-filter-group';
-  studyFilterGroup.id = 'study-filter-group';
-  studyFilterGroup.setAttribute('data-control', 'study-filter');
-  studyFilterGroup.setAttribute('aria-label', 'Study filter selector group');
-  const studyFilterControlMount = document.createElement('div');
-  studyFilterControlMount.className = 'study-filter-control';
-  const studyFilterCaption = document.createElement('div');
-  studyFilterCaption.className = 'data-expansion-caption';
-  studyFilterCaption.textContent = 'col.study-filter';
-  studyFilterGroup.append(studyFilterControlMount, studyFilterCaption);
-  controls.append(studyFilterGroup);
+  // use headerTools API to create the dropdown so viewHeaderTools manages structure
+  // initial render will happen in renderStudyFilterControl()
 
   function renderStudyFilterControl() {
-    studyFilterControlMount.innerHTML = '';
-    const dd = createDropdown({
-      items: STUDY_FILTER_ITEMS,
+    controls.removeControl && controls.removeControl('studyFilter');
+    const rec = controls.addElement({
+      type: 'dropdown', key: 'studyFilter', items: STUDY_FILTER_ITEMS,
       multi: true,
       values: orderStudyStates(studyFilterStates),
       commitOnClose: true,
@@ -326,8 +327,9 @@ export function renderData({ store }) {
         updateControlStates();
       },
       className: 'data-expansion-dropdown',
+      caption: 'col.study-filter'
     });
-    studyFilterControlMount.append(dd);
+    // rec may contain { control, group } if needed
   }
 
   // Collection expansion dropdowns (persisted per-collection)
@@ -345,12 +347,10 @@ export function renderData({ store }) {
     const iItems = Array.isArray(expansionConfig?.iItems) ? expansionConfig.iItems : [];
     const naItems = Array.isArray(expansionConfig?.naItems) ? expansionConfig.naItems : [];
 
-    const iGroup = document.createElement('div');
-    iGroup.className = 'data-expansion-group';
-    if (!hasI) iGroup.style.display = 'none';
-    const iDd = createDropdown({
-      items: iItems,
-      multi: true,
+    // use headerTools helper to create dropdowns then move the created groups into expansionWrap
+    controls.removeControl && controls.removeControl('expansionI');
+    const iRec = controls.addElement({
+      type: 'dropdown', key: 'expansionI', items: iItems, multi: true,
       values: expansionIForms,
       commitOnClose: true,
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
@@ -359,18 +359,13 @@ export function renderData({ store }) {
         persistCollectionExpansions();
       },
       className: 'data-expansion-dropdown',
+      caption: 'i-adj'
     });
-    const iCaption = document.createElement('div');
-    iCaption.className = 'data-expansion-caption';
-    iCaption.textContent = 'i-adj';
-    iGroup.append(iDd, iCaption);
+    try { if (iRec && iRec.group) { iRec.group.style.display = hasI ? '' : 'none'; expansionWrap.append(iRec.group); } } catch (e) {}
 
-    const naGroup = document.createElement('div');
-    naGroup.className = 'data-expansion-group';
-    if (!hasNa) naGroup.style.display = 'none';
-    const naDd = createDropdown({
-      items: naItems,
-      multi: true,
+    controls.removeControl && controls.removeControl('expansionNa');
+    const naRec = controls.addElement({
+      type: 'dropdown', key: 'expansionNa', items: naItems, multi: true,
       values: expansionNaForms,
       commitOnClose: true,
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
@@ -379,13 +374,9 @@ export function renderData({ store }) {
         persistCollectionExpansions();
       },
       className: 'data-expansion-dropdown',
+      caption: 'na-adj'
     });
-    const naCaption = document.createElement('div');
-    naCaption.className = 'data-expansion-caption';
-    naCaption.textContent = 'na-adj';
-    naGroup.append(naDd, naCaption);
-
-    expansionWrap.append(iGroup, naGroup);
+    try { if (naRec && naRec.group) { naRec.group.style.display = hasNa ? '' : 'none'; expansionWrap.append(naRec.group); } } catch (e) {}
   }
 
   root.appendChild(controls);
@@ -688,11 +679,11 @@ export function renderData({ store }) {
   // primary header controls are handled by header component callbacks (see createViewHeaderTools)
 
   // Remove shuffle button for this view and prepare control state updates
-  const headerBtns = (typeof controls.getButtons === 'function') ? controls.getButtons() : null;
-  if (headerBtns && headerBtns.shuffleBtn && headerBtns.shuffleBtn.parentNode) {
-    headerBtns.shuffleBtn.parentNode.removeChild(headerBtns.shuffleBtn);
-    // also remove reference to avoid accidental use
-    delete headerBtns.shuffleBtn;
+  const headerShuffleBtn = (typeof controls.getControl === 'function') ? controls.getControl('shuffle') : null;
+  const headerClearShuffleBtn = (typeof controls.getControl === 'function') ? controls.getControl('clearShuffle') : null;
+  const headerClearLearnedBtn = (typeof controls.getControl === 'function') ? controls.getControl('clearLearned') : null;
+  if (headerShuffleBtn && headerShuffleBtn.parentNode) {
+    headerShuffleBtn.parentNode.removeChild(headerShuffleBtn);
   }
 
   function updateControlStates() {
@@ -703,10 +694,10 @@ export function renderData({ store }) {
       const n = Array.isArray(coll.entries) ? coll.entries.length : 0;
       // clearShuffle disabled if not shuffled
       const isShuffled = !!saved.isShuffled;
-      if (headerBtns && headerBtns.clearShuffleBtn) headerBtns.clearShuffleBtn.disabled = !isShuffled;
+      if (headerClearShuffleBtn) headerClearShuffleBtn.disabled = !isShuffled;
       // clearLearned disabled if no learned items in the CURRENT filtered results
       const stats = getClearLearnedStats();
-      if (headerBtns && headerBtns.clearLearnedBtn) headerBtns.clearLearnedBtn.disabled = !(stats && stats.count > 0);
+      if (headerClearLearnedBtn) headerClearLearnedBtn.disabled = !(stats && stats.count > 0);
       // no study subset controls remain; nothing to do here
     } catch (e) {
       // ignore

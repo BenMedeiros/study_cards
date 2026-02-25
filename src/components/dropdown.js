@@ -233,14 +233,50 @@ export function createDropdown({
       button.classList.remove('custom-dropdown-button-multiline');
       return;
     }
+    // Standardized multi-select label behavior:
+    // - when nothing selected -> em-dash (—)
+    // - when all selectable items selected -> 'all'
+    // - when exactly one selected -> show a short label (prefer right/rightText/label/value)
+    // - when multiple selected -> 'N selected'
+    try {
+      const set = new Set(selectedValues);
+      const selectable = normalizedItems.filter(isSelectableItem);
+      const allValues = selectable.map(it => String(it?.value ?? '')).filter(Boolean);
+      const selectedInOrder = allValues.filter(v => set.has(v));
 
-    const set = new Set(selectedValues);
-    const selectedItems = normalizedItems.filter(it => set.has(String(it?.value)));
-    if (!selectedItems.length) {
-      button.textContent = '';
+      if (!selectedInOrder.length) {
+        button.textContent = '—';
+        return;
+      }
+
+      if (selectedInOrder.length === allValues.length) {
+        button.textContent = 'all';
+        return;
+      }
+
+      if (selectedInOrder.length === 1) {
+        const v = selectedInOrder[0];
+        const byVal = new Map(selectable.map(it => [String(it?.value ?? ''), it]));
+        const item = byVal.get(v) || null;
+        if (item) {
+          const short = item?.rightText ?? item?.right ?? item?.label ?? item?.value ?? '';
+          button.textContent = String(short);
+          return;
+        }
+      }
+
+      button.textContent = `${selectedInOrder.length} selected`;
       return;
+    } catch (e) {
+      // fallback to previous behavior on error
+      const set = new Set(selectedValues);
+      const selectedItems = normalizedItems.filter(it => set.has(String(it?.value)));
+      if (!selectedItems.length) {
+        button.textContent = '';
+        return;
+      }
+      button.textContent = selectedItems.map(it => it.label).join(', ');
     }
-    button.textContent = selectedItems.map(it => it.label).join(', ');
   }
 
   function renderOptionNode({ item, isSelected }) {

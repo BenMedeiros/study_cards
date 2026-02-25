@@ -172,54 +172,49 @@ export function renderEntityExplorer({ store }) {
   content.className = 'entity-explorer-content';
 
   // Collapse-all control (added to header tools)
-  const collapseAllBtn = document.createElement('button');
-  collapseAllBtn.type = 'button';
-  collapseAllBtn.className = 'btn small';
-  collapseAllBtn.textContent = 'Collapse all';
-  collapseAllBtn.title = 'Collapse all JSON viewers';
-  collapseAllBtn.disabled = true;
-
-  function updateCollapseAllBtnState() {
-    // enabled only if there exists at least one expanded json-view-wrapper
-    const anyExpanded = Boolean(document.querySelector('#entity-explorer-root .json-view-wrapper[data-expanded="true"]'));
-    collapseAllBtn.disabled = !anyExpanded;
-  }
-
-  collapseAllBtn.addEventListener('click', () => {
-    const wrappers = Array.from(document.querySelectorAll('#entity-explorer-root .json-view-wrapper'));
-    wrappers.forEach(w => {
-      const btn = w.querySelector('.json-toggle');
-      if (!btn) return;
-      // if currently expanded, click to collapse
-      if (w.dataset.expanded === 'true') btn.click();
-    });
-    updateCollapseAllBtnState();
+  headerTools.addElement({
+    type: 'button', key: 'collapseAll', label: 'Collapse all', title: 'Collapse all JSON viewers'
   });
 
+  function updateCollapseAllBtnState() {
+    const collapseAllBtn = headerTools.getControl('collapseAll');
+    // enabled only if there exists at least one expanded json-view-wrapper
+    const anyExpanded = Boolean(document.querySelector('#entity-explorer-root .json-view-wrapper[data-expanded="true"]'));
+    if (collapseAllBtn) collapseAllBtn.disabled = !anyExpanded;
+  }
+
+  const collapseAllBtn = headerTools.getControl('collapseAll');
+  if (collapseAllBtn) {
+    collapseAllBtn.addEventListener('click', () => {
+      const wrappers = Array.from(document.querySelectorAll('#entity-explorer-root .json-view-wrapper'));
+      wrappers.forEach(w => {
+        const btn = w.querySelector('.json-toggle');
+        if (!btn) return;
+        // if currently expanded, click to collapse
+        if (w.dataset.expanded === 'true') btn.click();
+      });
+      updateCollapseAllBtnState();
+    });
+  }
+
   // Wrap toggle control for JSON views
-  const jsonWrapGroup = document.createElement('div');
-  jsonWrapGroup.className = 'data-expansion-group';
-  const jsonWrapBtn = document.createElement('button');
-  jsonWrapBtn.type = 'button';
-  jsonWrapBtn.className = 'btn small';
-  // default action label (will be updated to reflect current state)
-  jsonWrapBtn.textContent = 'Wrap';
-  jsonWrapBtn.title = 'Toggle JSON wrap';
-  const jsonWrapCaption = document.createElement('div');
-  jsonWrapCaption.className = 'data-expansion-caption';
-  jsonWrapCaption.textContent = 'JSON';
-  jsonWrapGroup.append(jsonWrapBtn, jsonWrapCaption);
+  headerTools.addElement({ type: 'button', key: 'jsonWrap', label: 'Wrap', caption: 'JSON', title: 'Toggle JSON wrap' });
 
   function updateJsonWrapBtn() {
     const wrapped = Boolean(root.classList && root.classList.contains('json-wrap'));
+    const jsonWrapBtn = headerTools.getControl('jsonWrap');
+    if (!jsonWrapBtn) return;
     jsonWrapBtn.textContent = wrapped ? 'Unwrap' : 'Wrap';
     jsonWrapBtn.setAttribute('aria-pressed', wrapped ? 'true' : 'false');
   }
 
-  jsonWrapBtn.addEventListener('click', () => {
-    const wrapped = root.classList.toggle('json-wrap');
-    updateJsonWrapBtn();
-  });
+  const jsonWrapBtn = headerTools.getControl('jsonWrap');
+  if (jsonWrapBtn) {
+    jsonWrapBtn.addEventListener('click', () => {
+      const wrapped = root.classList.toggle('json-wrap');
+      updateJsonWrapBtn();
+    });
+  }
 
   const managerItems = [
     { value: 'idb', label: 'IndexedDB' },
@@ -295,33 +290,17 @@ export function renderEntityExplorer({ store }) {
     closeOverlaysOnOpen: true,
   });
 
-  const managerGroup = document.createElement('div');
-  managerGroup.className = 'data-expansion-group';
-  managerGroup.append(managerDropdown);
-  const managerCaption = document.createElement('div');
-  managerCaption.className = 'data-expansion-caption';
-  managerCaption.textContent = 'Storage';
-  managerGroup.append(managerCaption);
+  // manager dropdown wrapped and added to headerTools
+  headerTools.addElement({ type: 'custom', key: 'manager', create: () => managerDropdown, caption: 'Storage' });
 
   const dbDropdownSlot = document.createElement('div');
   dbDropdownSlot.className = 'entity-explorer-source-slot';
-  const dbGroup = document.createElement('div');
-  dbGroup.className = 'data-expansion-group';
-  dbGroup.append(dbDropdownSlot);
-  const dbCaption = document.createElement('div');
-  dbCaption.className = 'data-expansion-caption';
-  dbCaption.textContent = 'Database';
-  dbGroup.append(dbCaption);
+  // dbGroup will be created by headerTools and the slot used as the control element
+  headerTools.addElement({ type: 'custom', key: 'dbGroup', create: () => dbDropdownSlot, caption: 'Database' });
 
   const storeDropdownSlot = document.createElement('div');
   storeDropdownSlot.className = 'entity-explorer-source-slot';
-  const storeGroup = document.createElement('div');
-  storeGroup.className = 'data-expansion-group';
-  storeGroup.append(storeDropdownSlot);
-  const storeCaption = document.createElement('div');
-  storeCaption.className = 'data-expansion-caption';
-  storeCaption.textContent = 'Store';
-  storeGroup.append(storeCaption);
+  headerTools.addElement({ type: 'custom', key: 'storeGroup', create: () => storeDropdownSlot, caption: 'Store' });
 
   const left = document.createElement('div');
   left.className = 'entity-explorer-controls-row';

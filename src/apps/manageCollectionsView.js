@@ -274,7 +274,7 @@ export function renderManageCollections({ store, onNavigate }) {
   const toggleJsonBtn = document.createElement('button');
   toggleJsonBtn.type = 'button';
   toggleJsonBtn.className = 'btn small';
-  toggleJsonBtn.textContent = 'Collapse';
+  toggleJsonBtn.textContent = 'Expand';
 
   // JSON wrap toggle (mirrors entityExplorerView behavior)
   const jsonWrapBtn = document.createElement('button');
@@ -289,6 +289,10 @@ export function renderManageCollections({ store, onNavigate }) {
 
   // track wrap state (applies `text-wrap: auto` to the inner pre element)
   let isJsonWrapped = true;
+  // track whether we've built the full JSON HTML blob yet
+  let jsonBuilt = false;
+  // track whether the JSON viewer is currently visible (expanded)
+  let jsonVisible = false;
 
   function updateJsonWrapBtn() {
     jsonWrapBtn.textContent = isJsonWrapped ? 'Unwrap' : 'Wrap';
@@ -492,41 +496,68 @@ export function renderManageCollections({ store, onNavigate }) {
   function renderJson(mode = null) {
     const m = mode || currentJsonMode;
     const src = (m === 'preview' && previewResult?.merged) ? previewResult.merged : currentCollection;
+    // do not build the full JSON blob unless the viewer is visible (expanded)
     jsonViewerMount.innerHTML = '';
-    if (src) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'json-view-wrapper mono';
-      wrapper.id = JSON_WRAPPER_ID;
-      wrapper.dataset.expanded = 'true';
-      wrapper.style.position = 'relative';
-
-      const pre = document.createElement('pre');
-      pre.className = 'json-view mono';
-      pre.id = JSON_PRE_ID;
-      if (isJsonWrapped && pre.style) pre.style.setProperty('text-wrap', 'auto');
-      pre.textContent = safeJsonStringify(src, 2);
-
-      wrapper.appendChild(pre);
-      jsonViewerMount.appendChild(wrapper);
-      try {
-        const cardEl = document.getElementById('mc-snapshot-card');
-        if (cardEl) {
-          const arrayKey = detectArrayKey(src || {});
-          const arr = Array.isArray(src?.[arrayKey]) ? src[arrayKey] : [];
-          const count = Array.isArray(arr) ? arr.length : 0;
-          const corner = cardEl.querySelector('.card-corner-caption');
-          if (corner) corner.textContent = `${count} ${count === 1 ? 'entry' : 'entries'}`;
-        }
-      } catch (e) {}
-    } else jsonViewerMount.textContent = '';
+    if (!src) {
+      jsonViewerMount.textContent = '';
       snapshotToggleBtn.disabled = !(previewResult && previewResult.merged);
+      return;
+    }
+
+    // Always update a lightweight summary / entry count (cheap) even when collapsed
+    try {
+      const cardEl = document.getElementById('mc-snapshot-card');
+      if (cardEl) {
+        const arrayKey = detectArrayKey(src || {});
+        const arr = Array.isArray(src?.[arrayKey]) ? src[arrayKey] : [];
+        const count = Array.isArray(arr) ? arr.length : 0;
+        const corner = cardEl.querySelector('.card-corner-caption');
+        if (corner) corner.textContent = `${count} ${count === 1 ? 'entry' : 'entries'}`;
+      }
+    } catch (e) {}
+
+    // If not visible, render only a lightweight placeholder (no stringify)
+    if (!jsonVisible) {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'json-view-placeholder mono';
+      placeholder.textContent = '(JSON preview collapsed — click Expand to load)';
+      jsonViewerMount.appendChild(placeholder);
+      snapshotToggleBtn.disabled = !(previewResult && previewResult.merged);
+      return;
+    }
+
+    // Visible: build the full JSON view (stringify now — lazy)
+    const wrapper = document.createElement('div');
+    wrapper.className = 'json-view-wrapper mono';
+    wrapper.id = JSON_WRAPPER_ID;
+    wrapper.dataset.expanded = 'true';
+    wrapper.style.position = 'relative';
+
+    const pre = document.createElement('pre');
+    pre.className = 'json-view mono';
+    pre.id = JSON_PRE_ID;
+    if (isJsonWrapped && pre.style) pre.style.setProperty('text-wrap', 'auto');
+    pre.textContent = safeJsonStringify(src, 2);
+
+    wrapper.appendChild(pre);
+    jsonViewerMount.appendChild(wrapper);
+    jsonBuilt = true;
+    snapshotToggleBtn.disabled = !(previewResult && previewResult.merged);
   }
 
   function setJsonCollapsed(collapsed) {
     const isCollapsed = !!collapsed;
+    jsonVisible = !isCollapsed;
     // collapse the viewer by hiding the mount
     jsonViewerMount.style.display = isCollapsed ? 'none' : '';
     toggleJsonBtn.textContent = isCollapsed ? 'Expand' : 'Collapse';
+    // If we're expanding and haven't built the JSON yet, render it now
+    try {
+      if (!isCollapsed && !jsonBuilt) {
+        // build using the current mode
+        renderJson(currentJsonMode);
+      }
+    } catch (e) {}
   }
 
   function refreshVersionSelect() {
@@ -1398,7 +1429,8 @@ export function renderManageCollections({ store, onNavigate }) {
   // ---- init ----
   initKeyFromActive();
   try { updateJsonWrapBtn(); } catch (e) {}
-  setJsonCollapsed(false);
+  // start collapsed and lazily build JSON when expanded
+  setJsonCollapsed(true);
   Promise.resolve().then(loadCurrent);
 
   return root;
