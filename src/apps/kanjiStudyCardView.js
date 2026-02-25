@@ -5,7 +5,7 @@ import { createSpeakerButton } from '../components/ui.js';
 
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createViewFooterControls } from '../components/viewFooterControls.js';
-import { createKanjiMainCard, createKanjiRelatedCard, createKanjiFullCard } from '../cards/index.js';
+import { createKanjiMainCard, createKanjiRelatedCard, createKanjiFullCard, kanjiMainCardToggleFields, kanjiExampleCardToggleFields, kanjiFullCardToggleFields } from '../cards/index.js';
 import { createDropdown } from '../components/dropdown.js';
 
 export function renderKanjiStudyCard({ store }) {
@@ -146,7 +146,7 @@ export function renderKanjiStudyCard({ store }) {
   // --- Header dropdowns to control card field visibility ---
   // Load per-collection saved dropdown state (if any)
   let kanjiFieldSelection = ['kanji', 'reading', 'meaning', 'type'];
-  let relatedFieldSelection = ['showRelated', 'english'];
+  let relatedFieldSelection = ['english', 'japanese', 'notes'];
   let fullFieldSelection = ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'];
   let displayCardSelection = ['main', 'related'];
   try {
@@ -164,7 +164,7 @@ export function renderKanjiStudyCard({ store }) {
   } catch (e) {}
 
   // Kanji main card: show/hide fields
-  const kanjiFieldItems = [
+  const kanjiFieldItems = Array.isArray(kanjiMainCardToggleFields) ? kanjiMainCardToggleFields.slice() : [
     { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
     { value: 'kanji', left: 'Kanji', right: 'Visible' },
     { value: 'reading', left: 'Reading', right: 'Visible' },
@@ -174,7 +174,9 @@ export function renderKanjiStudyCard({ store }) {
 
     const _kanjiFieldRec = headerTools.addElement({
       type: 'dropdown', key: 'kanjiFields', items: kanjiFieldItems, multi: true,
-      values: Array.isArray(kanjiFieldSelection) ? kanjiFieldSelection.slice() : ['kanji', 'reading', 'meaning', 'type'],
+      values: Array.isArray(kanjiFieldSelection)
+        ? kanjiFieldSelection.slice()
+        : (kanjiFieldSelection === 'all' ? kanjiFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : ['kanji', 'reading', 'meaning', 'type']),
       commitOnClose: true,
       onChange: (vals) => {
         const chosen = (typeof vals === 'string' && vals === 'all')
@@ -186,33 +188,37 @@ export function renderKanjiStudyCard({ store }) {
         try { saveUIState(); } catch (e) {}
       },
       className: 'data-expansion-dropdown',
-      caption: 'card.fields'
+      caption: 'kanjiMainCard.visibility'
     });
     const kanjiFieldDd = (_kanjiFieldRec && _kanjiFieldRec.control) ? _kanjiFieldRec.control : headerTools.getControl('kanjiFields');
 
-  // Related card dropdown: show/hide entire related card, and mute/unmute English
-  const relatedFieldItems = [
+  // Related card dropdown: control english/japanese/notes visibility (card visibility handled by displayCards)
+  const relatedFieldItems = Array.isArray(kanjiExampleCardToggleFields) ? kanjiExampleCardToggleFields.slice() : [
     { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
-    { value: 'showRelated', left: 'Related', right: 'Display' },
     { value: 'english', left: 'English', right: 'Visible' },
+    { value: 'japanese', left: 'Japanese', right: 'Visible' },
+    { value: 'notes', left: 'Notes', right: 'Visible' },
   ];
 
     const _relatedFieldRec = headerTools.addElement({
       type: 'dropdown', key: 'relatedFields', items: relatedFieldItems, multi: true,
-      values: Array.isArray(relatedFieldSelection) ? relatedFieldSelection.slice() : ['showRelated', 'english'],
+      values: Array.isArray(relatedFieldSelection)
+        ? relatedFieldSelection.slice()
+        : (relatedFieldSelection === 'all' ? relatedFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : ['english', 'japanese', 'notes']),
       commitOnClose: true,
       onChange: (vals) => {
         const chosen = (typeof vals === 'string' && vals === 'all')
           ? relatedFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
           : (Array.isArray(vals) ? vals.slice() : []);
-        const set = new Set(chosen);
-        try { relatedCardApi.setVisible(set.has('showRelated')); } catch (e) {}
-        try { relatedCardApi.setEnglishVisible(set.has('english')); } catch (e) {}
+          const set = new Set(chosen);
+          try { relatedCardApi.setEnglishVisible(set.has('english')); } catch (e) {}
+          try { relatedCardApi.setJapaneseVisible(set.has('japanese')); } catch (e) {}
+          try { relatedCardApi.setNotesVisible(set.has('notes')); } catch (e) {}
         try { relatedFieldSelection = chosen; } catch (e) {}
         try { saveUIState(); } catch (e) {}
       },
       className: 'data-expansion-dropdown',
-      caption: 'card.related'
+      caption: 'kanjiExampleCard.visibility'
     });
     const relatedFieldDd = (_relatedFieldRec && _relatedFieldRec.control) ? _relatedFieldRec.control : headerTools.getControl('relatedFields');
 
@@ -391,19 +397,23 @@ export function renderKanjiStudyCard({ store }) {
 
   // Per-card field dropdown for the full-detail card
   const fullFieldItems = [
-    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
-    { value: 'kanji', left: 'Kanji', right: 'Visible' },
-    { value: 'reading', left: 'Reading', right: 'Visible' },
-    { value: 'meaning', left: 'Meaning', right: 'Visible' },
-    { value: 'type', left: 'Type', right: 'Visible' },
-    { value: 'lexical', left: 'Lexical Class', right: 'Visible' },
-    { value: 'orthography', left: 'Orthography', right: 'Visible' },
-    { value: 'tags', left: 'Tags', right: 'Visible' },
+    ...(Array.isArray(kanjiFullCardToggleFields) ? kanjiFullCardToggleFields.slice() : [
+      { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
+      { value: 'kanji', left: 'Kanji', right: 'Visible' },
+      { value: 'reading', left: 'Reading', right: 'Visible' },
+      { value: 'meaning', left: 'Meaning', right: 'Visible' },
+      { value: 'type', left: 'Type', right: 'Visible' },
+      { value: 'lexical', left: 'Lexical Class', right: 'Visible' },
+      { value: 'orthography', left: 'Orthography', right: 'Visible' },
+      { value: 'tags', left: 'Tags', right: 'Visible' },
+    ])
   ];
 
     const _fullFieldRec = headerTools.addElement({
     type: 'dropdown', key: 'fullFields', items: fullFieldItems, multi: true,
-    values: Array.isArray(fullFieldSelection) ? fullFieldSelection.slice() : ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'],
+    values: Array.isArray(fullFieldSelection)
+      ? fullFieldSelection.slice()
+      : (fullFieldSelection === 'all' ? fullFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags']),
     commitOnClose: true,
     onChange: (vals) => {
       const chosen = (typeof vals === 'string' && vals === 'all')
@@ -417,7 +427,7 @@ export function renderKanjiStudyCard({ store }) {
       try { saveUIState(); } catch (e) {}
     },
     className: 'data-expansion-dropdown',
-    caption: 'card.full'
+    caption: 'kanjiFullCard.visibility'
   });
   const fullFieldDd = (_fullFieldRec && _fullFieldRec.control) ? _fullFieldRec.control : headerTools.getControl('fullFields');
 
@@ -430,7 +440,9 @@ export function renderKanjiStudyCard({ store }) {
 
   const _displayCardsRec = headerTools.addElement({
     type: 'dropdown', key: 'displayCards', items: displayCardItems, multi: true,
-    values: Array.isArray(displayCardSelection) ? displayCardSelection.slice() : ['main', 'related'],
+    values: Array.isArray(displayCardSelection)
+      ? displayCardSelection.slice()
+      : (displayCardSelection === 'all' ? displayCardItems.map(it => String(it?.value || '')) : ['main', 'related']),
     commitOnClose: true,
     onChange: (vals) => {
       const chosen = (typeof vals === 'string' && vals === 'all')
@@ -440,15 +452,11 @@ export function renderKanjiStudyCard({ store }) {
       if (mainCardApi && mainCardApi.el) mainCardApi.el.style.display = set.has('main') ? '' : 'none';
       if (relatedCardApi && relatedCardApi.el) relatedCardApi.el.style.display = set.has('related') ? '' : 'none';
       if (fullCardApi && fullCardApi.el) fullCardApi.el.style.display = set.has('full') ? '' : 'none';
-
-      if (_kanjiFieldRec && _kanjiFieldRec.group) _kanjiFieldRec.group.style.display = set.has('main') ? '' : 'none';
-      if (_relatedFieldRec && _relatedFieldRec.group) _relatedFieldRec.group.style.display = set.has('related') ? '' : 'none';
-      if (_fullFieldRec && _fullFieldRec.group) _fullFieldRec.group.style.display = set.has('full') ? '' : 'none';
       try { displayCardSelection = chosen; } catch (e) {}
       try { saveUIState(); } catch (e) {}
     },
     className: 'data-expansion-dropdown',
-    caption: 'which.cards'
+    caption: 'visible.cards'
   });
 
 
@@ -472,8 +480,9 @@ export function renderKanjiStudyCard({ store }) {
   } catch (e) {}
   try {
     const initRelated = new Set(Array.isArray(relatedFieldSelection) ? relatedFieldSelection : []);
-    relatedCardApi.setVisible(initRelated.has('showRelated'));
-    relatedCardApi.setEnglishVisible(initRelated.has('english'));
+    try { relatedCardApi.setEnglishVisible(initRelated.has('english')); } catch (e) {}
+    try { relatedCardApi.setJapaneseVisible(initRelated.has('japanese')); } catch (e) {}
+    try { relatedCardApi.setNotesVisible(initRelated.has('notes')); } catch (e) {}
   } catch (e) {}
 
   // render a single card body
@@ -546,8 +555,11 @@ export function renderKanjiStudyCard({ store }) {
         if (Array.isArray(appState.relatedFields)) {
           relatedFieldSelection = appState.relatedFields.slice();
           const initRelated = new Set(Array.isArray(relatedFieldSelection) ? relatedFieldSelection : []);
-          try { relatedCardApi.setVisible(initRelated.has('showRelated')); } catch (e) {}
+          // related card visibility is controlled by the `displayCards` dropdown;
+          // do not toggle top-level related card visibility here.
           try { relatedCardApi.setEnglishVisible(initRelated.has('english')); } catch (e) {}
+          try { relatedCardApi.setJapaneseVisible(initRelated.has('japanese')); } catch (e) {}
+          try { relatedCardApi.setNotesVisible(initRelated.has('notes')); } catch (e) {}
         }
         if (Array.isArray(appState.fullFields)) {
           fullFieldSelection = appState.fullFields.slice();
@@ -561,9 +573,6 @@ export function renderKanjiStudyCard({ store }) {
           try { if (mainCardApi && mainCardApi.el) mainCardApi.el.style.display = set.has('main') ? '' : 'none'; } catch (e) {}
           try { if (relatedCardApi && relatedCardApi.el) relatedCardApi.el.style.display = set.has('related') ? '' : 'none'; } catch (e) {}
           try { if (fullCardApi && fullCardApi.el) fullCardApi.el.style.display = set.has('full') ? '' : 'none'; } catch (e) {}
-          try { if (_kanjiFieldRec && _kanjiFieldRec.group) _kanjiFieldRec.group.style.display = set.has('main') ? '' : 'none'; } catch (e) {}
-          try { if (_relatedFieldRec && _relatedFieldRec.group) _relatedFieldRec.group.style.display = set.has('related') ? '' : 'none'; } catch (e) {}
-          try { if (_fullFieldRec && _fullFieldRec.group) _fullFieldRec.group.style.display = set.has('full') ? '' : 'none'; } catch (e) {}
         }
       } catch (e) {}
       uiStateRestored = true;
@@ -814,12 +823,11 @@ export function renderKanjiStudyCard({ store }) {
     const relatedSentences = Array.isArray(entry?.__related?.sentences) ? entry.__related.sentences : [];
     try {
       const displaySet = new Set(Array.isArray(displayCardSelection) ? displayCardSelection : []);
-      const wantShow = Array.isArray(relatedFieldSelection) ? relatedFieldSelection.includes('showRelated') : true;
       if (entry && relatedSentences.length) {
         relatedCardApi.setSentences(relatedSentences);
         const jpText = relatedCardApi.el.querySelector('.kanji-related-jp')?.textContent || '';
-        // Only show related card if user selected it in which.cards AND relatedFieldSelection allows it
-        relatedCardApi.el.style.display = (displaySet.has('related') && jpText && wantShow) ? '' : 'none';
+        // Only show related card if user selected it in which.cards and related sentences exist
+        relatedCardApi.el.style.display = (displaySet.has('related') && jpText) ? '' : 'none';
       } else {
         relatedCardApi.setSentences([]);
         relatedCardApi.el.style.display = 'none';
@@ -926,6 +934,22 @@ export function renderKanjiStudyCard({ store }) {
   // wire shuffle control after handler exists
   try {
     headerTools.addElement({ type: 'button', key: 'shuffle', label: 'Shuffle', caption: 'col.shuffle', onClick: shuffleEntries });
+  } catch (e) {}
+  // Ensure header order: play (autoplayControlsEl), shuffle, visible.cards (displayCards), then others
+  try {
+    const parent = headerTools;
+    const autoplayNode = autoplayControlsEl;
+    const shuffleCtrl = (typeof headerTools.getControl === 'function') ? headerTools.getControl('shuffle') : null;
+    const displayCtrl = (typeof headerTools.getControl === 'function') ? headerTools.getControl('displayCards') : null;
+    const shuffleGroup = shuffleCtrl && shuffleCtrl.parentNode ? shuffleCtrl.parentNode : null;
+    const displayGroup = displayCtrl && displayCtrl.parentNode ? displayCtrl.parentNode : null;
+    if (parent && autoplayNode && shuffleGroup && parent.contains(autoplayNode) && parent.contains(shuffleGroup)) {
+      parent.insertBefore(shuffleGroup, autoplayNode.nextSibling);
+    }
+    if (parent && autoplayNode && displayGroup) {
+      const after = (shuffleGroup && parent.contains(shuffleGroup)) ? shuffleGroup.nextSibling : autoplayNode.nextSibling;
+      parent.insertBefore(displayGroup, after);
+    }
   } catch (e) {}
   // Details toggle removed from header tools
 

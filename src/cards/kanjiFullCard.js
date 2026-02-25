@@ -78,7 +78,8 @@ export function createKanjiFullCard({ entry = null, config = {} } = {}) {
     const k = String(field || '').toLowerCase();
     const r = rows[k];
     if (!r) return;
-    r.row.style.visibility = v ? '' : 'hidden';
+    // Only hide/show the value element so the label remains visible.
+    r.value.style.visibility = v ? '' : 'hidden';
   }
 
   function setFieldsVisible(map) {
@@ -99,3 +100,15 @@ export function createKanjiFullCard({ entry = null, config = {} } = {}) {
 
   return { el: root, setEntry, setFieldVisible, setFieldsVisible, setVisible, destroy };
 }
+
+// Export canonical toggleable fields for the full-detail card
+export const kanjiFullCardToggleFields = [
+  { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
+  { value: 'kanji', left: 'Kanji', right: 'Visible' },
+  { value: 'reading', left: 'Reading', right: 'Visible' },
+  { value: 'meaning', left: 'Meaning', right: 'Visible' },
+  { value: 'type', left: 'Type', right: 'Visible' },
+  { value: 'lexical', left: 'Lexical Class', right: 'Visible' },
+  { value: 'orthography', left: 'Orthography', right: 'Visible' },
+  { value: 'tags', left: 'Tags', right: 'Visible' },
+];

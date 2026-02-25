@@ -118,3 +118,12 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
 
   return { el: root, setEntry, setIndexText, setFieldVisible, setFieldsVisible, destroy };
 }
+
+// Export a canonical list of toggleable fields for this card
+export const kanjiMainCardToggleFields = [
+  { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
+  { value: 'kanji', left: 'Kanji', right: 'Visible' },
+  { value: 'reading', left: 'Reading', right: 'Visible' },
+  { value: 'meaning', left: 'Meaning', right: 'Visible' },
+  { value: 'type', left: 'Type', right: 'Visible' },
+];

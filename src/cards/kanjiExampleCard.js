@@ -182,13 +182,34 @@ export function createKanjiRelatedCard({ entry = null, sentences = [], items = n
   // Control english visibility via inline style (visibility:hidden)
   function setEnglishVisible(visible) {
     const v = !!visible;
-    enLabel.style.visibility = v ? '' : 'hidden';
+    // Keep the English label visible; only hide the English text content.
     enText.style.visibility = v ? '' : 'hidden';
+  }
+
+  // Control japanese visibility (the primary JP text)
+  function setJapaneseVisible(visible) {
+    const v = !!visible;
+    jpText.style.visibility = v ? '' : 'hidden';
+  }
+
+  // Control notes visibility
+  function setNotesVisible(visible) {
+    const v = !!visible;
+    // Keep the Notes label visible; only hide the notes list content.
+    notesList.style.visibility = v ? '' : 'hidden';
   }
 
   // initialize
   setItems(Array.isArray(items) ? items : sentences);
   render();
 
-  return { el: root, update, setSentences, setItems, setVisible, setEnglishVisible, destroy };
+  return { el: root, update, setSentences, setItems, setVisible, setEnglishVisible, setJapaneseVisible, setNotesVisible, destroy };
 }
+
+// Export canonical toggleable fields for the related/example card
+export const kanjiExampleCardToggleFields = [
+  { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
+  { value: 'english', left: 'English', right: 'Visible' },
+  { value: 'japanese', left: 'Japanese', right: 'Visible' },
+  { value: 'notes', left: 'Notes', right: 'Visible' },
+];

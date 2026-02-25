@@ -1024,7 +1024,7 @@ input[type="number"].button::-webkit-inner-spin-button {
 }
 
 .kanji-card {
-  min-height: 17rem;
+  min-height: 15rem;
   width: min(30rem, 100%);
   margin: 0 auto;
 }
@@ -1344,7 +1344,10 @@ input[type="number"].button::-webkit-inner-spin-button {
   color: var(--muted);
   font-weight: 700;
   line-height: 1;
-  user-select: none;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 /* Make expansion dropdown button show multi-line selections (\n). */
