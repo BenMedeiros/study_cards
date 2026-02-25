@@ -1364,7 +1364,8 @@ export function openViewFooterSettingsDialog({
       backdrop.classList.add('show');
       dialog.classList.add('open');
     } catch (e) {}
-    try { nameInput.focus(); } catch (e) { try { dialog.focus(); } catch (e2) {} }
+    // Do NOT auto-focus the config name input to avoid bringing up mobile keyboards.
+    try { dialog.focus(); } catch (e) {}
   });
 
   document.addEventListener('keydown', onKeyDown);
