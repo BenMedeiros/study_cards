@@ -249,9 +249,9 @@ export function createDropdown({
       if (node && typeof node === 'object' && node.nodeType === 1) return node;
     }
 
-    // Default: label text, but support optional left/right columns
-    const left = item?.left;
-    const right = item?.right;
+    // Default: label text, but support optional left/right text columns
+    const left = item?.leftText ?? item?.left;
+    const right = item?.rightText ?? item?.right;
     if (left != null || right != null) {
       const row = document.createElement('div');
       row.className = 'custom-dropdown-option-row';

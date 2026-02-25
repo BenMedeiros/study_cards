@@ -5,7 +5,6 @@ import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createDropdown } from '../components/dropdown.js';
 import { confirmDialog } from '../components/confirmDialog.js';
 import { parseHashRoute, buildHashRoute } from '../utils/helpers.js';
-import { compileTableSearchQuery, matchesTableSearch } from '../utils/tableSearch.js';
 
 export function renderData({ store }) {
   const root = document.createElement('div');
@@ -52,37 +51,18 @@ export function renderData({ store }) {
   // Persisted per-collection saved table search filters (autocomplete suggestions)
   let savedTableSearches = [];
 
-  // Persisted per-collection adjective expansion (Data view header dropdowns)
+  // Persisted per-collection expansion settings (Data view header dropdowns)
   let expansionIForms = [];
   let expansionNaForms = [];
-
-  const I_ADJ_BASE_FORM_ITEMS = [
-    { value: 'plain', label: 'plain', left: 'plain', right: '~i' },
-    { value: 'negative', label: 'negative', left: 'negative', right: '~kunai' },
-    { value: 'past', label: 'past', left: 'past', right: '~katta' },
-    { value: 'pastNegative', label: 'past neg', left: 'past', right: '~kunakatta' },
-    { value: 'te', label: 'te-form', left: 'te-form', right: '~kute' },
-    { value: 'adverb', label: 'adverb', left: 'adverb', right: '~ku' },
-  ];
-
-  const NA_ADJ_BASE_FORM_ITEMS = [
-    { value: 'plain', label: 'plain', left: 'plain', right: '~da' },
-    { value: 'negative', label: 'negative', left: 'negative', right: '~janai' },
-    { value: 'past', label: 'past', left: 'past', right: '~datta' },
-    { value: 'pastNegative', label: 'past neg', left: 'past', right: '~janakatta' },
-    { value: 'te', label: 'te-form', left: 'te-form', right: '~de' },
-    { value: 'adverb', label: 'adverb', left: 'adverb', right: '~ni' },
-  ];
-
-  const I_ADJ_FORM_ITEMS = [
-    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
-    ...I_ADJ_BASE_FORM_ITEMS,
-  ];
-
-  const NA_ADJ_FORM_ITEMS = [
-    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
-    ...NA_ADJ_BASE_FORM_ITEMS,
-  ];
+  function getExpansionConfig() {
+    try {
+      if (typeof store?.collections?.getCollectionExpansionConfig !== 'function') return null;
+      const coll = store.collections.getActiveCollection();
+      return store.collections.getCollectionExpansionConfig(coll) || null;
+    } catch (e) {
+      return null;
+    }
+  }
 
   const STUDY_FILTER_ITEMS = [
     { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
@@ -152,7 +132,7 @@ export function renderData({ store }) {
     if (selectedInOrder.length === allValues.length) return 'all';
     if (selectedInOrder.length >= 2) return `${selectedInOrder.length} selected`;
 
-    const byValue = new Map(baseItems.map(it => [String(it?.value ?? ''), String(it?.right ?? it?.label ?? it?.value ?? '')]));
+    const byValue = new Map(baseItems.map(it => [String(it?.value ?? ''), String(it?.rightText ?? it?.right ?? it?.label ?? it?.value ?? '')]));
     const v = selectedInOrder[0];
     return byValue.get(v) || v;
   }
@@ -215,34 +195,6 @@ export function renderData({ store }) {
     return orderStudyStates(states).join(',');
   }
 
-  function getEntryStudyState(entry, adapter) {
-    const a = adapter || getProgressAdapter();
-    const key = a.getKey(entry);
-    if (!key) return 'null';
-    if (a.isLearned(key)) return 'learned';
-    if (a.isFocus(key)) return 'focus';
-    return 'null';
-  }
-
-  function normalizeType(v) {
-    return String(v || '').trim().toLowerCase();
-  }
-
-  function collectionHasAdjectiveKind(kind) {
-    const want = String(kind || '').trim().toLowerCase();
-    if (want !== 'i' && want !== 'na') return false;
-    const entries = Array.isArray(active?.entries) ? active.entries : [];
-    for (const e of entries) {
-      if (!e || typeof e !== 'object') continue;
-      const t = normalizeType(e.type);
-      const isI = t === 'i-adjective' || t === 'i_adj' || t === 'i-adj';
-      const isNa = t === 'na-adjective' || t === 'na_adj' || t === 'na-adj';
-      if (want === 'i' && isI) return true;
-      if (want === 'na' && isNa) return true;
-    }
-    return false;
-  }
-
   function deleteExpansionSettingIfPresent(keys) {
     try {
       const coll = store.collections.getActiveCollection();
@@ -260,9 +212,8 @@ export function renderData({ store }) {
     const keys = new Set();
 
     try {
-      const entriesView = refreshEntriesView();
+      const entriesView = getCurrentVisibleEntries();
       for (const entry of (Array.isArray(entriesView) ? entriesView : [])) {
-        if (!passesFilters(entry)) continue;
         const key = adapter.getKey(entry);
         if (!key) continue;
         if (!adapter.isLearned(key)) continue;
@@ -379,28 +330,33 @@ export function renderData({ store }) {
     studyFilterControlMount.append(dd);
   }
 
-  // Adjective expansion dropdowns (persisted per-collection)
+  // Collection expansion dropdowns (persisted per-collection)
   const expansionWrap = document.createElement('div');
   expansionWrap.className = 'data-expansion-tools';
   controls.append(expansionWrap);
 
   function renderExpansionControls() {
     expansionWrap.innerHTML = '';
-    const hasI = collectionHasAdjectiveKind('i');
-    const hasNa = collectionHasAdjectiveKind('na');
+    const expansionConfig = getExpansionConfig();
+    const hasI = !!expansionConfig?.supports?.i;
+    const hasNa = !!expansionConfig?.supports?.na;
+    const iBaseItems = Array.isArray(expansionConfig?.iBaseItems) ? expansionConfig.iBaseItems : [];
+    const naBaseItems = Array.isArray(expansionConfig?.naBaseItems) ? expansionConfig.naBaseItems : [];
+    const iItems = Array.isArray(expansionConfig?.iItems) ? expansionConfig.iItems : [];
+    const naItems = Array.isArray(expansionConfig?.naItems) ? expansionConfig.naItems : [];
 
     const iGroup = document.createElement('div');
     iGroup.className = 'data-expansion-group';
     if (!hasI) iGroup.style.display = 'none';
     const iDd = createDropdown({
-      items: I_ADJ_FORM_ITEMS,
+      items: iItems,
       multi: true,
       values: expansionIForms,
       commitOnClose: true,
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
       onChange: (vals) => {
-        expansionIForms = orderFormsByItems(normalizeFormList(vals), I_ADJ_BASE_FORM_ITEMS);
-        persistAdjectiveExpansions();
+        expansionIForms = orderFormsByItems(normalizeFormList(vals), iBaseItems);
+        persistCollectionExpansions();
       },
       className: 'data-expansion-dropdown',
     });
@@ -413,14 +369,14 @@ export function renderData({ store }) {
     naGroup.className = 'data-expansion-group';
     if (!hasNa) naGroup.style.display = 'none';
     const naDd = createDropdown({
-      items: NA_ADJ_FORM_ITEMS,
+      items: naItems,
       multi: true,
       values: expansionNaForms,
       commitOnClose: true,
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
       onChange: (vals) => {
-        expansionNaForms = orderFormsByItems(normalizeFormList(vals), NA_ADJ_BASE_FORM_ITEMS);
-        persistAdjectiveExpansions();
+        expansionNaForms = orderFormsByItems(normalizeFormList(vals), naBaseItems);
+        persistCollectionExpansions();
       },
       className: 'data-expansion-dropdown',
     });
@@ -432,8 +388,6 @@ export function renderData({ store }) {
     expansionWrap.append(iGroup, naGroup);
   }
 
-  // studyLabel element is owned by the header controls when createControls=true
-  let studyLabel = null;
   root.appendChild(controls);
   
   if (!active) {
@@ -488,10 +442,11 @@ export function renderData({ store }) {
     expansionIForms = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);
     expansionNaForms = normalizeFormList(saved?.expansion_na ?? saved?.expansion_naAdj ?? []);
 
-    // If the "true" active collection has no matching adjective types,
+    // If the active collection does not support the expansion kind,
     // hide the control and delete the persisted setting to avoid future issues.
-    const hasI = collectionHasAdjectiveKind('i');
-    const hasNa = collectionHasAdjectiveKind('na');
+    const expansionConfig = getExpansionConfig();
+    const hasI = !!expansionConfig?.supports?.i;
+    const hasNa = !!expansionConfig?.supports?.na;
     if (!hasI) {
       expansionIForms = [];
       if (saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_i')) {
@@ -517,12 +472,6 @@ export function renderData({ store }) {
     if (!coll) return null;
     if (typeof store?.collections?.loadCollectionState === 'function') return store.collections.loadCollectionState(coll.key) || {};
     return {};
-  }
-
-  function writeCollState(patch) {
-    const coll = store.collections.getActiveCollection();
-    if (!coll) return;
-    if (typeof store?.collections?.saveCollectionState === 'function') return store.collections.saveCollectionState(coll.key, patch);
   }
 
   function getEntryKanjiValue(entry) {
@@ -609,90 +558,6 @@ export function renderData({ store }) {
     };
   }
 
-  function passesFilters(entry) {
-    const adapter = getProgressAdapter();
-    const allowed = new Set(orderStudyStates(studyFilterStates));
-    const state = getEntryStudyState(entry, adapter);
-    if (!allowed.has(state)) return false;
-
-    if (heldTableSearch) {
-      try {
-        if (!entryMatchesHeldTableSearch(entry, { query: heldTableSearch, adapter })) return false;
-      } catch (e) {
-        // ignore
-      }
-    }
-    return true;
-  }
-
-  function buildTableSearchAccessorForEntry(entry, adapter) {
-    const a = adapter || getProgressAdapter();
-    const key = a.getKey(entry);
-    const state = getEntryStudyState(entry, a);
-    const metrics = (typeof a.getStudyMetrics === 'function')
-      ? a.getStudyMetrics(key)
-      : { seen: false, timesSeen: 0, timeMs: 0 };
-    const relatedDynamic = {};
-    for (const rel of relatedCollectionConfigs) {
-      relatedDynamic[`${rel.name}.count`] = getRelatedCountForEntry(entry, rel.name);
-    }
-
-    const dynamicFieldValues = {
-      status: state,
-      studySeen: !!metrics.seen,
-      studyTimesSeen: Math.max(0, Math.round(Number(metrics.timesSeen) || 0)),
-      studyTimeMs: Math.max(0, Math.round(Number(metrics.timeMs) || 0)),
-      ...relatedDynamic,
-    };
-
-    const metadataKeys = (Array.isArray(fields) ? fields : []).map(f => String(f?.key || '').trim()).filter(Boolean);
-    const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', ...relatedCountColumns.map(c => c.key)];
-
-    return {
-      hasField: (k) => {
-        const keyName = String(k || '').trim();
-        if (!keyName) return false;
-        if (Object.prototype.hasOwnProperty.call(dynamicFieldValues, keyName)) return true;
-        return Object.prototype.hasOwnProperty.call(entry || {}, keyName);
-      },
-      getValue: (k) => {
-        const keyName = String(k || '').trim();
-        if (!keyName) return undefined;
-        if (Object.prototype.hasOwnProperty.call(dynamicFieldValues, keyName)) return dynamicFieldValues[keyName];
-        return entry ? entry[keyName] : undefined;
-      },
-      getFieldType: (k) => {
-        const keyName = String(k || '').trim();
-        if (keyName === 'studySeen') return 'boolean';
-        if (keyName === 'studyTimesSeen' || keyName === 'studyTimeMs' || relatedCountColumns.some(c => c.key === keyName)) return 'number';
-        const def = (Array.isArray(fields) ? fields : []).find(f => String(f?.key || '').trim() === keyName);
-        return def?.type ?? (def?.schema && def.schema.type) ?? null;
-      },
-      getAllValues: () => {
-        const out = [];
-        for (const mk of metadataKeys) out.push(entry ? entry[mk] : undefined);
-        for (const dk of dynamicKeys) out.push(dynamicFieldValues[dk]);
-        return out;
-      },
-    };
-  }
-
-  function entryMatchesHeldTableSearch(entry, { query = '', adapter = null } = {}) {
-    const q = String(query || '').trim();
-    if (!q) return true;
-    const compiled = compileTableSearchQuery(q);
-    const fieldsMeta = [
-      { key: 'status', type: null },
-      ...(Array.isArray(fields) ? fields.map(f => ({ key: f.key, type: f.type ?? (f.schema && f.schema.type) ?? null })) : []),
-      ...relatedCountColumns.map(c => ({ key: c.key, type: 'number' })),
-      { key: 'studySeen', type: 'boolean' },
-      { key: 'studyTimesSeen', type: 'number' },
-      { key: 'studyTimeMs', type: 'number' },
-    ];
-    const accessor = buildTableSearchAccessorForEntry(entry, adapter || getProgressAdapter());
-    return matchesTableSearch(accessor, compiled, { fields: fieldsMeta });
-  }
-
   function updateFilterButtons() {
     renderStudyFilterControl();
   }
@@ -732,28 +597,79 @@ export function renderData({ store }) {
     store.collections.saveCollectionState(coll.key, { savedTableSearches: list });
   }
 
-  function persistAdjectiveExpansions() {
+  function persistCollectionExpansions() {
     const coll = store.collections.getActiveCollection();
     if (!coll) return;
-    store.collections.setAdjectiveExpansionForms(coll.key, { iForms: expansionIForms, naForms: expansionNaForms });
+    store.collections.setCollectionExpansionForms(coll.key, { iForms: expansionIForms, naForms: expansionNaForms });
   }
 
   // pruneStudyIndicesToFilters removed — studyIndices/studyStart no longer used.
 
   const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
   let baseEntries = Array.isArray(active.entries) ? active.entries.slice() : [];
-  let allEntriesView = store.collections.expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
-  let rowToOriginalIndex = [];
+  let lastRenderedEntries = [];
+
+  function getCurrentCollectionView(opts = {}) {
+    const coll = store?.collections?.getActiveCollection?.() || active;
+    const collState = readCollState() || {};
+    const sourceEntries = Array.isArray(opts?.entries) ? opts.entries : baseEntries;
+    try {
+      return store.collections.getCollectionViewForCollection(coll, collState, { windowSize: 10, entries: sourceEntries }) || { entries: [], indices: [] };
+    } catch (e) {
+      return { entries: [], indices: [], isShuffled: false, order_hash_int: null };
+    }
+  }
+
+  function getCurrentVisibleEntries() {
+    const view = getCurrentCollectionView();
+    return Array.isArray(view?.entries) ? view.entries : [];
+  }
+
+  function getUnexpandedFilteredBaseEntries() {
+    const coll = store?.collections?.getActiveCollection?.() || active;
+    const collState = readCollState() || {};
+    const collStateNoExpansion = {
+      ...collState,
+      expansion_i: [],
+      expansion_na: [],
+      expansion_iAdj: [],
+      expansion_naAdj: [],
+      expansion_i_adjective: [],
+      expansion_na_adjective: [],
+    };
+    try {
+      const view = store.collections.getCollectionViewForCollection(coll, collStateNoExpansion, { windowSize: 10, entries: baseEntries });
+      return Array.isArray(view?.entries) ? view.entries : [];
+    } catch (e) {
+      return Array.isArray(baseEntries) ? baseEntries : [];
+    }
+  }
+
+  function getExpandedEntriesWithoutFilters() {
+    const coll = store?.collections?.getActiveCollection?.() || active;
+    const collState = readCollState() || {};
+    const collStateNoFilters = {
+      ...collState,
+      studyFilter: 'null,focus,learned',
+      heldTableSearch: '',
+    };
+    try {
+      const view = store.collections.getCollectionViewForCollection(coll, collStateNoFilters, { windowSize: 10, entries: baseEntries });
+      return Array.isArray(view?.entries) ? view.entries : [];
+    } catch (e) {
+      return [];
+    }
+  }
 
   // Background: request entries augmented with related collection counts/samples.
   Promise.resolve().then(async () => {
     try {
       if (!active?.key) return;
+      if (!relatedCollectionConfigs.length) return;
       if (store?.collections && typeof store.collections.getCollectionEntriesWithRelated === 'function') {
         const augmented = await store.collections.getCollectionEntriesWithRelated(active.key, { sample: 2 });
         if (Array.isArray(augmented) && augmented.length) {
           baseEntries = augmented.slice();
-          allEntriesView = store.collections.expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
           try { renderExpansionControls(); } catch (e) {}
           try { renderTable(); } catch (e) {}
           try { markStudyRows(); } catch (e) {}
@@ -765,20 +681,6 @@ export function renderData({ store }) {
       // ignore
     }
   });
-
-  function refreshEntriesView() {
-    allEntriesView = store.collections.expandEntriesByAdjectiveForm(baseEntries, { iForms: expansionIForms, naForms: expansionNaForms });
-    return allEntriesView;
-  }
-
-  function getVisibleOriginalIndices() {
-    const out = [];
-    const entriesView = refreshEntriesView();
-    for (let i = 0; i < entriesView.length; i++) {
-      if (passesFilters(entriesView[i])) out.push(i);
-    }
-    return out;
-  }
 
   const tableMount = document.createElement('div');
   tableMount.id = 'data-table-mount';
@@ -839,14 +741,13 @@ export function renderData({ store }) {
   ];
 
   function renderTable() {
-    const visibleIdxs = getVisibleOriginalIndices();
-    rowToOriginalIndex = visibleIdxs.slice();
-    const entriesView = refreshEntriesView();
-    const visibleEntries = visibleIdxs.map(i => entriesView[i]);
+    const view = getCurrentCollectionView();
+    const visibleEntries = Array.isArray(view?.entries) ? view.entries : [];
+    const visibleIdxs = Array.isArray(view?.indices) ? view.indices : [];
+    lastRenderedEntries = visibleEntries.slice();
 
     const adapter = getProgressAdapter();
     const rows = visibleEntries.map((entry, i) => {
-      const originalIndex = visibleIdxs[i];
       const key = adapter.getKey(entry);
       const learned = adapter.isLearned(key);
       const focus = adapter.isFocus(key);
@@ -888,7 +789,7 @@ export function renderData({ store }) {
       const row = [icon, ...fields.map(f => entry[f.key] ?? ''), ...relatedCountCells, seenCell, timesSeenCell, timeMsCell];
       // Stable identifier for this row so we can resolve the source entry
       // even after the table component filters/sorts.
-      try { row.__id = String(originalIndex); } catch (e) {}
+      try { row.__id = String(i); } catch (e) {}
       return row;
     });
 
@@ -1155,8 +1056,10 @@ export function renderData({ store }) {
     try {
       const corner = root.querySelector('#data-card .card-corner-caption');
       if (corner) {
-        const total = entriesView.length;
-        const visible = visibleIdxs.length;
+        const visible = visibleEntries.length;
+        const expandedUnfiltered = getExpandedEntriesWithoutFilters();
+        const total = Array.isArray(expandedUnfiltered) ? expandedUnfiltered.length : visible;
+        const unexpandedBaseEntries = getUnexpandedFilteredBaseEntries();
         const base = (visible < total) ? `${visible}/${total} Entries` : `${total} Entries`;
 
         // Architecture note: treat collection state as the source of truth for held filters.
@@ -1174,40 +1077,11 @@ export function renderData({ store }) {
           titleParts.push(`Held filter: ${held}`);
         }
 
-        // Ask CollectionsManager for expansion deltas so UI doesn't need to re-derive them.
-        // IMPORTANT: these deltas should be based on the held-filtered base entries (pre-expansion),
-        // so the numbers reflect the currently-held Data View dataset.
+        // Ask CollectionsManager for expansion deltas on the held/study-filtered,
+        // unexpanded base entries.
         try {
-          let baseForDelta = baseEntries;
-          try {
-            const adapter = getProgressAdapter();
-            const filtered = [];
-            for (const entry of (Array.isArray(baseEntries) ? baseEntries : [])) {
-              if (!entry || typeof entry !== 'object') continue;
-
-              // Apply study state filter (these are part of the held view state)
-              try {
-                const allowed = new Set(orderStudyStates(studyFilterStates));
-                const state = getEntryStudyState(entry, adapter);
-                if (!allowed.has(state)) continue;
-              } catch (e) {}
-
-              // Apply held table search to base entries
-              if (held) {
-                try {
-                  if (!entryMatchesHeldTableSearch(entry, { query: held, adapter })) continue;
-                } catch (e) {}
-              }
-
-              filtered.push(entry);
-            }
-            baseForDelta = filtered;
-          } catch (e) {
-            baseForDelta = baseEntries;
-          }
-
-          const stats = (typeof store?.collections?.getAdjectiveExpansionDeltas === 'function')
-            ? store.collections.getAdjectiveExpansionDeltas(baseForDelta, { iForms: expansionIForms, naForms: expansionNaForms })
+          const stats = (typeof store?.collections?.getCollectionExpansionDeltas === 'function')
+            ? store.collections.getCollectionExpansionDeltas(unexpandedBaseEntries, { iForms: expansionIForms, naForms: expansionNaForms })
             : null;
           const iDelta = Math.max(0, Math.round(Number(stats?.iDelta) || 0));
           const naDelta = Math.max(0, Math.round(Number(stats?.naDelta) || 0));
@@ -1244,9 +1118,8 @@ export function renderData({ store }) {
       try {
         const rowId = tr?.dataset?.rowId;
         const parsed = (rowId != null && rowId !== '' && !Number.isNaN(Number(rowId))) ? Number(rowId) : null;
-        const originalIndex = (typeof parsed === 'number') ? parsed : rowToOriginalIndex[rowIndex];
-        const entriesView = refreshEntriesView();
-        const entry = (typeof originalIndex === 'number') ? entriesView[originalIndex] : null;
+        const entryIndex = (typeof parsed === 'number') ? parsed : rowIndex;
+        const entry = (typeof entryIndex === 'number') ? lastRenderedEntries[entryIndex] : null;
         const key = adapter.getKey(entry);
         const learned = adapter.isLearned(key);
         const focus = adapter.isFocus(key);
@@ -1311,8 +1184,9 @@ export function renderData({ store }) {
           const nextI = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);
           const nextNa = normalizeFormList(saved?.expansion_na ?? saved?.expansion_naAdj ?? []);
 
-          const hasI = collectionHasAdjectiveKind('i');
-          const hasNa = collectionHasAdjectiveKind('na');
+          const expansionConfig = getExpansionConfig();
+          const hasI = !!expansionConfig?.supports?.i;
+          const hasNa = !!expansionConfig?.supports?.na;
           const cleanedI = hasI ? nextI : [];
           const cleanedNa = hasNa ? nextNa : [];
 
@@ -1351,12 +1225,10 @@ export function renderData({ store }) {
 
   const dataCard = card({
     id: 'data-card',
-    cornerCaption: `${refreshEntriesView().length} Entries`,
+    cornerCaption: `${getCurrentVisibleEntries().length} Entries`,
     children: [tableMount]
   });
 
-  // Show the full path to the currently displayed collection file.
-  const pathLabel = active?.key ? `Path: ${active.key}` : 'Path: (unknown)';
   root.append(
     dataCard
   );

@@ -40,10 +40,10 @@
     },
     {
       "path": "japanese/japanese_sentences.json",
-      "modifiedAt": "2026-02-24T18:44:54.261Z",
+      "modifiedAt": "2026-02-24T20:52:08.837Z",
       "name": "Japanese Sentences",
       "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
-      "entriesCount": 43,
+      "entriesCount": 95,
       "valid": true,
       "validation": {
         "schema": {
@@ -63,7 +63,7 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-02-24T18:53:33.434Z",
+      "modifiedAt": "2026-02-24T19:46:47.705Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
       "entriesCount": 1585,
@@ -280,7 +280,7 @@
               "occurrences": [
                 {
                   "index": 196,
-                  "line": 1870,
+                  "line": 1877,
                   "entry": {
                     "kanji": "開く",
                     "reading": "あく",
@@ -291,7 +291,7 @@
                 },
                 {
                   "index": 199,
-                  "line": 1891,
+                  "line": 1898,
                   "entry": {
                     "kanji": "開く",
                     "reading": "ひらく",
@@ -308,7 +308,7 @@
               "occurrences": [
                 {
                   "index": 204,
-                  "line": 1926,
+                  "line": 1933,
                   "entry": {
                     "kanji": "働く",
                     "reading": "はたらく",
@@ -319,7 +319,7 @@
                 },
                 {
                   "index": 1565,
-                  "line": 13796,
+                  "line": 13803,
                   "entry": {
                     "kanji": "働く",
                     "reading": "はたらく",
@@ -337,7 +337,7 @@
               "occurrences": [
                 {
                   "index": 255,
-                  "line": 2277,
+                  "line": 2284,
                   "entry": {
                     "kanji": "大きい",
                     "reading": "おおきい",
@@ -347,7 +347,7 @@
                 },
                 {
                   "index": 1557,
-                  "line": 13732,
+                  "line": 13739,
                   "entry": {
                     "kanji": "大きい",
                     "reading": "おおきい",
@@ -365,7 +365,7 @@
               "occurrences": [
                 {
                   "index": 315,
-                  "line": 2645,
+                  "line": 2652,
                   "entry": {
                     "kanji": "硬い",
                     "reading": "かたい",
@@ -375,7 +375,7 @@
                 },
                 {
                   "index": 1495,
-                  "line": 13073,
+                  "line": 13080,
                   "entry": {
                     "kanji": "硬い",
                     "reading": "かたい",
@@ -397,7 +397,7 @@
               "occurrences": [
                 {
                   "index": 316,
-                  "line": 2651,
+                  "line": 2658,
                   "entry": {
                     "kanji": "柔らかい",
                     "reading": "やわらかい",
@@ -407,7 +407,7 @@
                 },
                 {
                   "index": 1494,
-                  "line": 13061,
+                  "line": 13068,
                   "entry": {
                     "kanji": "柔らかい",
                     "reading": "やわらかい",
@@ -429,7 +429,7 @@
               "occurrences": [
                 {
                   "index": 333,
-                  "line": 2753,
+                  "line": 2760,
                   "entry": {
                     "kanji": "滑らか",
                     "reading": "なめらか",
@@ -444,7 +444,7 @@
                 },
                 {
                   "index": 1493,
-                  "line": 13049,
+                  "line": 13056,
                   "entry": {
                     "kanji": "滑らか",
                     "reading": "なめらか",
@@ -466,7 +466,7 @@
               "occurrences": [
                 {
                   "index": 383,
-                  "line": 3101,
+                  "line": 3108,
                   "entry": {
                     "kanji": "伸びる",
                     "reading": "のびる",
@@ -477,7 +477,7 @@
                 },
                 {
                   "index": 1523,
-                  "line": 13399,
+                  "line": 13406,
                   "entry": {
                     "kanji": "伸びる",
                     "reading": "のびる",
@@ -499,7 +499,7 @@
               "occurrences": [
                 {
                   "index": 429,
-                  "line": 3484,
+                  "line": 3491,
                   "entry": {
                     "kanji": "長",
                     "reading": "チョウ",
@@ -510,7 +510,7 @@
                 },
                 {
                   "index": 1545,
-                  "line": 13636,
+                  "line": 13643,
                   "entry": {
                     "kanji": "長",
                     "reading": "ちょう",
@@ -528,7 +528,7 @@
               "occurrences": [
                 {
                   "index": 464,
-                  "line": 3742,
+                  "line": 3749,
                   "entry": {
                     "kanji": "元気",
                     "reading": "げんき",
@@ -539,7 +539,7 @@
                 },
                 {
                   "index": 1555,
-                  "line": 13716,
+                  "line": 13723,
                   "entry": {
                     "kanji": "元気",
                     "reading": "げんき",
@@ -557,7 +557,7 @@
               "occurrences": [
                 {
                   "index": 466,
-                  "line": 3756,
+                  "line": 3763,
                   "entry": {
                     "kanji": "安全",
                     "reading": "あんぜん",
@@ -571,7 +571,7 @@
                 },
                 {
                   "index": 805,
-                  "line": 6591,
+                  "line": 6598,
                   "entry": {
                     "kanji": "安全",
                     "reading": "あんぜん",
@@ -591,7 +591,7 @@
               "occurrences": [
                 {
                   "index": 467,
-                  "line": 3766,
+                  "line": 3773,
                   "entry": {
                     "kanji": "危険",
                     "reading": "きけん",
@@ -602,7 +602,7 @@
                 },
                 {
                   "index": 806,
-                  "line": 6601,
+                  "line": 6608,
                   "entry": {
                     "kanji": "危険",
                     "reading": "きけん",
@@ -619,7 +619,7 @@
               "occurrences": [
                 {
                   "index": 481,
-                  "line": 3865,
+                  "line": 3872,
                   "entry": {
                     "kanji": "子供",
                     "reading": "こども",
@@ -631,7 +631,7 @@
                 },
                 {
                   "index": 1550,
-                  "line": 13676,
+                  "line": 13683,
                   "entry": {
                     "kanji": "子供",
                     "reading": "こども",
@@ -649,7 +649,7 @@
               "occurrences": [
                 {
                   "index": 522,
-                  "line": 4185,
+                  "line": 4192,
                   "entry": {
                     "kanji": "林檎",
                     "reading": "りんご",
@@ -661,7 +661,7 @@
                 },
                 {
                   "index": 1465,
-                  "line": 12708,
+                  "line": 12715,
                   "entry": {
                     "kanji": "林檎",
                     "reading": "りんご",
@@ -683,7 +683,7 @@
               "occurrences": [
                 {
                   "index": 526,
-                  "line": 4220,
+                  "line": 4227,
                   "entry": {
                     "kanji": "彼",
                     "reading": "かれ",
@@ -695,7 +695,7 @@
                 },
                 {
                   "index": 1561,
-                  "line": 13764,
+                  "line": 13771,
                   "entry": {
                     "kanji": "彼",
                     "reading": "かれ",
@@ -713,7 +713,7 @@
               "occurrences": [
                 {
                   "index": 700,
-                  "line": 5831,
+                  "line": 5838,
                   "entry": {
                     "kanji": "予定",
                     "reading": "よてい",
@@ -724,7 +724,7 @@
                 },
                 {
                   "index": 1562,
-                  "line": 13772,
+                  "line": 13779,
                   "entry": {
                     "kanji": "予定",
                     "reading": "よてい",
@@ -742,7 +742,7 @@
               "occurrences": [
                 {
                   "index": 742,
-                  "line": 6138,
+                  "line": 6145,
                   "entry": {
                     "kanji": "犬",
                     "reading": "いぬ",
@@ -753,7 +753,7 @@
                 },
                 {
                   "index": 1395,
-                  "line": 11907,
+                  "line": 11914,
                   "entry": {
                     "kanji": "犬",
                     "reading": "いぬ",
@@ -774,7 +774,7 @@
               "occurrences": [
                 {
                   "index": 743,
-                  "line": 6145,
+                  "line": 6152,
                   "entry": {
                     "kanji": "猫",
                     "reading": "ねこ",
@@ -785,7 +785,7 @@
                 },
                 {
                   "index": 1396,
-                  "line": 11918,
+                  "line": 11925,
                   "entry": {
                     "kanji": "猫",
                     "reading": "ねこ",
@@ -806,7 +806,7 @@
               "occurrences": [
                 {
                   "index": 744,
-                  "line": 6152,
+                  "line": 6159,
                   "entry": {
                     "kanji": "鳥",
                     "reading": "とり",
@@ -817,7 +817,7 @@
                 },
                 {
                   "index": 1397,
-                  "line": 11929,
+                  "line": 11936,
                   "entry": {
                     "kanji": "鳥",
                     "reading": "とり",
@@ -838,7 +838,7 @@
               "occurrences": [
                 {
                   "index": 745,
-                  "line": 6159,
+                  "line": 6166,
                   "entry": {
                     "kanji": "魚",
                     "reading": "さかな",
@@ -849,7 +849,7 @@
                 },
                 {
                   "index": 1398,
-                  "line": 11940,
+                  "line": 11947,
                   "entry": {
                     "kanji": "魚",
                     "reading": "さかな",
@@ -870,7 +870,7 @@
               "occurrences": [
                 {
                   "index": 747,
-                  "line": 6176,
+                  "line": 6183,
                   "entry": {
                     "kanji": "牛",
                     "reading": "うし",
@@ -881,7 +881,7 @@
                 },
                 {
                   "index": 1400,
-                  "line": 11962,
+                  "line": 11969,
                   "entry": {
                     "kanji": "牛",
                     "reading": "うし",
@@ -902,7 +902,7 @@
               "occurrences": [
                 {
                   "index": 748,
-                  "line": 6183,
+                  "line": 6190,
                   "entry": {
                     "kanji": "馬",
                     "reading": "うま",
@@ -913,7 +913,7 @@
                 },
                 {
                   "index": 1399,
-                  "line": 11951,
+                  "line": 11958,
                   "entry": {
                     "kanji": "馬",
                     "reading": "うま",
@@ -934,7 +934,7 @@
               "occurrences": [
                 {
                   "index": 749,
-                  "line": 6190,
+                  "line": 6197,
                   "entry": {
                     "kanji": "羊",
                     "reading": "ひつじ",
@@ -945,7 +945,7 @@
                 },
                 {
                   "index": 1402,
-                  "line": 11984,
+                  "line": 11991,
                   "entry": {
                     "kanji": "羊",
                     "reading": "ひつじ",
@@ -966,7 +966,7 @@
               "occurrences": [
                 {
                   "index": 754,
-                  "line": 6225,
+                  "line": 6232,
                   "entry": {
                     "kanji": "水",
                     "reading": "みず",
@@ -980,7 +980,7 @@
                 },
                 {
                   "index": 1471,
-                  "line": 12783,
+                  "line": 12790,
                   "entry": {
                     "kanji": "水",
                     "reading": "みず",
@@ -1002,7 +1002,7 @@
               "occurrences": [
                 {
                   "index": 755,
-                  "line": 6235,
+                  "line": 6242,
                   "entry": {
                     "kanji": "牛乳",
                     "reading": "ぎゅうにゅう",
@@ -1013,7 +1013,7 @@
                 },
                 {
                   "index": 1445,
-                  "line": 12459,
+                  "line": 12466,
                   "entry": {
                     "kanji": "牛乳",
                     "reading": "ぎゅうにゅう",
@@ -1035,7 +1035,7 @@
               "occurrences": [
                 {
                   "index": 771,
-                  "line": 6347,
+                  "line": 6354,
                   "entry": {
                     "kanji": "家",
                     "reading": "いえ",
@@ -1046,7 +1046,7 @@
                 },
                 {
                   "index": 1554,
-                  "line": 13708,
+                  "line": 13715,
                   "entry": {
                     "kanji": "家",
                     "reading": "いえ",
@@ -1064,7 +1064,7 @@
               "occurrences": [
                 {
                   "index": 779,
-                  "line": 6403,
+                  "line": 6410,
                   "entry": {
                     "kanji": "本棚",
                     "reading": "ほんだな",
@@ -1075,7 +1075,7 @@
                 },
                 {
                   "index": 1516,
-                  "line": 13321,
+                  "line": 13328,
                   "entry": {
                     "kanji": "本棚",
                     "reading": "ほんだな",
@@ -1097,7 +1097,7 @@
               "occurrences": [
                 {
                   "index": 780,
-                  "line": 6410,
+                  "line": 6417,
                   "entry": {
                     "kanji": "本",
                     "reading": "ほん",
@@ -1108,7 +1108,7 @@
                 },
                 {
                   "index": 1520,
-                  "line": 13366,
+                  "line": 13373,
                   "entry": {
                     "kanji": "本",
                     "reading": "ほん",
@@ -1129,7 +1129,7 @@
               "occurrences": [
                 {
                   "index": 782,
-                  "line": 6424,
+                  "line": 6431,
                   "entry": {
                     "kanji": "雑誌",
                     "reading": "ざっし",
@@ -1140,7 +1140,7 @@
                 },
                 {
                   "index": 1509,
-                  "line": 13238,
+                  "line": 13245,
                   "entry": {
                     "kanji": "雑誌",
                     "reading": "ざっし",
@@ -1161,7 +1161,7 @@
               "occurrences": [
                 {
                   "index": 835,
-                  "line": 6810,
+                  "line": 6817,
                   "entry": {
                     "kanji": "料理",
                     "reading": "りょうり",
@@ -1172,7 +1172,7 @@
                 },
                 {
                   "index": 1559,
-                  "line": 13748,
+                  "line": 13755,
                   "entry": {
                     "kanji": "料理",
                     "reading": "りょうり",
@@ -1190,7 +1190,7 @@
               "occurrences": [
                 {
                   "index": 996,
-                  "line": 8058,
+                  "line": 8065,
                   "entry": {
                     "kanji": "男",
                     "reading": "おとこ",
@@ -1201,7 +1201,7 @@
                 },
                 {
                   "index": 1546,
-                  "line": 13644,
+                  "line": 13651,
                   "entry": {
                     "kanji": "男",
                     "reading": "おとこ",
@@ -1219,7 +1219,7 @@
               "occurrences": [
                 {
                   "index": 1023,
-                  "line": 8328,
+                  "line": 8335,
                   "entry": {
                     "kanji": "カンガルー",
                     "reading": "カンガルー",
@@ -1234,7 +1234,7 @@
                 },
                 {
                   "index": 1424,
-                  "line": 12226,
+                  "line": 12233,
                   "entry": {
                     "kanji": "カンガルー",
                     "reading": "カンガルー",
@@ -1255,7 +1255,7 @@
               "occurrences": [
                 {
                   "index": 1095,
-                  "line": 9116,
+                  "line": 9123,
                   "entry": {
                     "kanji": "ジュース",
                     "reading": "ジュース",
@@ -1269,7 +1269,7 @@
                 },
                 {
                   "index": 1470,
-                  "line": 12770,
+                  "line": 12777,
                   "entry": {
                     "kanji": "ジュース",
                     "reading": "ジュース",
@@ -1292,7 +1292,7 @@
               "occurrences": [
                 {
                   "index": 1097,
-                  "line": 9136,
+                  "line": 9143,
                   "entry": {
                     "kanji": "バター",
                     "reading": "バター",
@@ -1306,7 +1306,7 @@
                 },
                 {
                   "index": 1447,
-                  "line": 12483,
+                  "line": 12490,
                   "entry": {
                     "kanji": "バター",
                     "reading": "バター",
@@ -1329,7 +1329,7 @@
               "occurrences": [
                 {
                   "index": 1098,
-                  "line": 9146,
+                  "line": 9153,
                   "entry": {
                     "kanji": "チーズ",
                     "reading": "チーズ",
@@ -1343,7 +1343,7 @@
                 },
                 {
                   "index": 1448,
-                  "line": 12496,
+                  "line": 12503,
                   "entry": {
                     "kanji": "チーズ",
                     "reading": "チーズ",
@@ -1366,7 +1366,7 @@
               "occurrences": [
                 {
                   "index": 1164,
-                  "line": 9810,
+                  "line": 9817,
                   "entry": {
                     "kanji": "ソーセージ",
                     "reading": "ソーセージ",
@@ -1380,7 +1380,7 @@
                 },
                 {
                   "index": 1455,
-                  "line": 12584,
+                  "line": 12591,
                   "entry": {
                     "kanji": "ソーセージ",
                     "reading": "ソーセージ",
@@ -1403,7 +1403,7 @@
               "occurrences": [
                 {
                   "index": 1165,
-                  "line": 9820,
+                  "line": 9827,
                   "entry": {
                     "kanji": "ハム",
                     "reading": "ハム",
@@ -1417,7 +1417,7 @@
                 },
                 {
                   "index": 1453,
-                  "line": 12558,
+                  "line": 12565,
                   "entry": {
                     "kanji": "ハム",
                     "reading": "ハム",
@@ -1440,7 +1440,7 @@
               "occurrences": [
                 {
                   "index": 1166,
-                  "line": 9830,
+                  "line": 9837,
                   "entry": {
                     "kanji": "ヨーグルト",
                     "reading": "ヨーグルト",
@@ -1454,7 +1454,7 @@
                 },
                 {
                   "index": 1449,
-                  "line": 12509,
+                  "line": 12516,
                   "entry": {
                     "kanji": "ヨーグルト",
                     "reading": "ヨーグルト",
@@ -1477,7 +1477,7 @@
               "occurrences": [
                 {
                   "index": 1171,
-                  "line": 9880,
+                  "line": 9887,
                   "entry": {
                     "kanji": "トマト",
                     "reading": "トマト",
@@ -1491,7 +1491,7 @@
                 },
                 {
                   "index": 1463,
-                  "line": 12683,
+                  "line": 12690,
                   "entry": {
                     "kanji": "トマト",
                     "reading": "トマト",
@@ -1514,7 +1514,7 @@
               "occurrences": [
                 {
                   "index": 1172,
-                  "line": 9890,
+                  "line": 9897,
                   "entry": {
                     "kanji": "レモン",
                     "reading": "レモン",
@@ -1528,7 +1528,7 @@
                 },
                 {
                   "index": 1469,
-                  "line": 12757,
+                  "line": 12764,
                   "entry": {
                     "kanji": "レモン",
                     "reading": "レモン",
@@ -1551,7 +1551,7 @@
               "occurrences": [
                 {
                   "index": 1173,
-                  "line": 9900,
+                  "line": 9907,
                   "entry": {
                     "kanji": "オレンジ",
                     "reading": "オレンジ",
@@ -1565,7 +1565,7 @@
                 },
                 {
                   "index": 1468,
-                  "line": 12744,
+                  "line": 12751,
                   "entry": {
                     "kanji": "オレンジ",
                     "reading": "オレンジ",
@@ -1588,7 +1588,7 @@
               "occurrences": [
                 {
                   "index": 1314,
-                  "line": 11198,
+                  "line": 11205,
                   "entry": {
                     "kanji": "蜥蜴",
                     "reading": "とかげ",
@@ -1601,7 +1601,7 @@
                 },
                 {
                   "index": 1432,
-                  "line": 12314,
+                  "line": 12321,
                   "entry": {
                     "kanji": "蜥蜴",
                     "reading": "とかげ",
@@ -1622,7 +1622,7 @@
               "occurrences": [
                 {
                   "index": 1317,
-                  "line": 11226,
+                  "line": 11233,
                   "entry": {
                     "kanji": "亀",
                     "reading": "かめ",
@@ -1635,7 +1635,7 @@
                 },
                 {
                   "index": 1406,
-                  "line": 12028,
+                  "line": 12035,
                   "entry": {
                     "kanji": "亀",
                     "reading": "かめ",
@@ -1656,7 +1656,7 @@
               "occurrences": [
                 {
                   "index": 1342,
-                  "line": 11476,
+                  "line": 11483,
                   "entry": {
                     "kanji": "猿",
                     "reading": "さる",
@@ -1670,7 +1670,7 @@
                 },
                 {
                   "index": 1408,
-                  "line": 12050,
+                  "line": 12057,
                   "entry": {
                     "kanji": "猿",
                     "reading": "さる",
@@ -1691,7 +1691,7 @@
               "occurrences": [
                 {
                   "index": 1346,
-                  "line": 11516,
+                  "line": 11523,
                   "entry": {
                     "kanji": "鬼",
                     "reading": "おに",
@@ -1705,7 +1705,7 @@
                 },
                 {
                   "index": 1540,
-                  "line": 13596,
+                  "line": 13603,
                   "entry": {
                     "kanji": "鬼",
                     "reading": "おに",
@@ -1723,7 +1723,7 @@
               "occurrences": [
                 {
                   "index": 1348,
-                  "line": 11536,
+                  "line": 11543,
                   "entry": {
                     "kanji": "狐",
                     "reading": "きつね",
@@ -1737,7 +1737,7 @@
                 },
                 {
                   "index": 1415,
-                  "line": 12127,
+                  "line": 12134,
                   "entry": {
                     "kanji": "狐",
                     "reading": "きつね",
@@ -1752,7 +1752,7 @@
                 },
                 {
                   "index": 1573,
-                  "line": 13860,
+                  "line": 13867,
                   "entry": {
                     "kanji": "狐",
                     "reading": "きつね",
@@ -1774,7 +1774,7 @@
               "occurrences": [
                 {
                   "index": 1351,
-                  "line": 11566,
+                  "line": 11573,
                   "entry": {
                     "kanji": "蛇",
                     "reading": "へび",
@@ -1788,7 +1788,7 @@
                 },
                 {
                   "index": 1431,
-                  "line": 12303,
+                  "line": 12310,
                   "entry": {
                     "kanji": "蛇",
                     "reading": "へび",
@@ -1809,7 +1809,7 @@
               "occurrences": [
                 {
                   "index": 1356,
-                  "line": 11616,
+                  "line": 11623,
                   "entry": {
                     "kanji": "白",
                     "reading": "しろ",
@@ -1823,7 +1823,7 @@
                 },
                 {
                   "index": 1479,
-                  "line": 12881,
+                  "line": 12888,
                   "entry": {
                     "kanji": "白",
                     "reading": "しろ",
@@ -1845,7 +1845,7 @@
               "occurrences": [
                 {
                   "index": 1357,
-                  "line": 11626,
+                  "line": 11633,
                   "entry": {
                     "kanji": "鳩",
                     "reading": "はと",
@@ -1859,7 +1859,7 @@
                 },
                 {
                   "index": 1440,
-                  "line": 12402,
+                  "line": 12409,
                   "entry": {
                     "kanji": "鳩",
                     "reading": "はと",
@@ -1880,7 +1880,7 @@
               "occurrences": [
                 {
                   "index": 1382,
-                  "line": 11816,
+                  "line": 11823,
                   "entry": {
                     "kanji": "びっくり",
                     "reading": "びっくり",
@@ -1891,7 +1891,7 @@
                 },
                 {
                   "index": 1556,
-                  "line": 13724,
+                  "line": 13731,
                   "entry": {
                     "kanji": "びっくり",
                     "reading": "びっくり",
@@ -1910,7 +1910,7 @@
     },
     {
       "path": "languageHistory.json",
-      "modifiedAt": "2026-02-24T16:40:32.418Z",
+      "modifiedAt": "2026-02-24T20:04:00.901Z",
       "name": "Language History",
       "description": "Combined language history entries",
       "entriesCount": 12,

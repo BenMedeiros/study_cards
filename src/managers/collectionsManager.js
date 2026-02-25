@@ -2,6 +2,12 @@ import { basename, dirname, normalizeFolderPath, titleFromFilename } from '../ut
 import { buildHashRoute, parseHashRoute } from '../utils/helpers.js';
 import { timed } from '../utils/timing.js';
 import { compileTableSearchQuery, matchesTableSearch, filterRecordsAndIndicesByTableSearch } from '../utils/tableSearch.js';
+import {
+  collectionUsesJapaneseExpansion,
+  getJapaneseExpansionControlConfig,
+  expandJapaneseEntriesAndIndices,
+  getJapaneseExpansionDeltas,
+} from '../collectionExpansions/japaneseExpansion.js';
 
 export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, grammarProgressManager = null, collectionDB = null, settings = null }) {
   // Folder metadata helpers/storage used for lazy loads
@@ -1196,185 +1202,29 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   }
 
   // ============================================================================
-  // Adjective Form Expansion
+  // Collection Expansion Integration
   // ============================================================================
 
-  function normalizeType(v) {
-    return String(v || '').trim().toLowerCase();
+  function getCollectionExpansionConfig(collectionOrKey) {
+    const coll = (typeof collectionOrKey === 'string')
+      ? (state.collections.find(c => c?.key === collectionOrKey) || null)
+      : ((collectionOrKey && typeof collectionOrKey === 'object') ? collectionOrKey : null);
+
+    if (!coll || !collectionUsesJapaneseExpansion(coll)) {
+      return {
+        type: null,
+        supports: { i: false, na: false },
+        iBaseItems: [],
+        naBaseItems: [],
+        iItems: [],
+        naItems: [],
+      };
+    }
+    return getJapaneseExpansionControlConfig(coll, { includeActions: true });
   }
 
-  function normalizeExpansionForms(v) {
-    if (Array.isArray(v)) {
-      return v.map(s => String(s || '').trim()).filter(Boolean);
-    }
-    const s = String(v || '').trim();
-    if (!s) return [];
-    return s.split(/[,|\s]+/g).map(x => String(x || '').trim()).filter(Boolean);
-  }
-
-  function uniqueInOrder(values) {
-    const out = [];
-    const seen = new Set();
-    for (const v of (Array.isArray(values) ? values : [])) {
-      const s = String(v || '').trim();
-      if (!s || seen.has(s)) continue;
-      seen.add(s);
-      out.push(s);
-    }
-    return out;
-  }
-
-  function expandJapaneseAdjectiveEntry(entry, { kind = '', form = '', baseStudyKey = '' } = {}) {
-    if (!entry || typeof entry !== 'object') return entry;
-    const typeRaw = String(entry.type || '').trim();
-    const type = normalizeType(typeRaw);
-    const isI = kind === 'i';
-    const isNa = kind === 'na';
-
-    if (!form) return entry;
-
-    const next = { ...entry };
-    if (baseStudyKey) next.__baseStudyKey = baseStudyKey;
-
-    const surfaceKeys = ['kanji', 'character', 'text', 'word'];
-    const readingKeys = ['reading', 'kana'];
-
-    const inflect = (s) => {
-      if (isI) return inflectIAdjective(s, form);
-      if (isNa) return inflectNaAdjective(s, form);
-      return String(s || '');
-    };
-
-    for (const k of surfaceKeys) {
-      if (typeof next[k] === 'string' && next[k].trim()) next[k] = inflect(next[k]);
-    }
-    for (const k of readingKeys) {
-      if (typeof next[k] === 'string' && next[k].trim()) next[k] = inflect(next[k]);
-    }
-
-    const baseType = typeRaw || (isI ? 'i-adjective' : (isNa ? 'na-adjective' : ''));
-    next.type = baseType ? `${baseType}::${form}` : `::${form}`;
-    return next;
-  }
-
-  function inflectIAdjective(s, form) {
-    const str = String(s || '').trim();
-    if (!str) return str;
-    if (!str.endsWith('い')) return str;
-    const stem = str.slice(0, -1);
-    switch (form) {
-      case 'plain': return str;
-      case 'negative': return `${stem}くない`;
-      case 'past': return `${stem}かった`;
-      case 'pastNegative': return `${stem}くなかった`;
-      case 'te': return `${stem}くて`;
-      case 'adverb': return `${stem}く`;
-      default: return str;
-    }
-  }
-
-  function inflectNaAdjective(s, form) {
-    const str = String(s || '').trim();
-    if (!str) return str;
-    switch (form) {
-      case 'plain': return `${str}だ`;
-      case 'negative': return `${str}じゃない`;
-      case 'past': return `${str}だった`;
-      case 'pastNegative': return `${str}じゃなかった`;
-      case 'te': return `${str}で`;
-      case 'adverb': return `${str}に`;
-      default: return str;
-    }
-  }
-
-  function expandEntriesAndIndicesByAdjectiveForms(entries, indices, { iForms = [], naForms = [] } = {}) {
-    const arr = Array.isArray(entries) ? entries : [];
-    const idx = Array.isArray(indices) ? indices : arr.map((_, i) => i);
-    if (!arr.length) return { entries: [], indices: [] };
-
-    const iSel = uniqueInOrder(normalizeExpansionForms(iForms));
-    const naSel = uniqueInOrder(normalizeExpansionForms(naForms));
-
-    if (!iSel.length && !naSel.length) return { entries: arr.slice(), indices: idx.slice() };
-
-    const outEntries = [];
-    const outIndices = [];
-
-    for (let i = 0; i < arr.length; i++) {
-      const entry = arr[i];
-      const originalIndex = idx[i];
-      if (!entry || typeof entry !== 'object') {
-        outEntries.push(entry);
-        outIndices.push(originalIndex);
-        continue;
-      }
-
-      const typeRaw = String(entry.type || '').trim();
-      const type = normalizeType(typeRaw);
-      const isI = type === 'i-adjective' || type === 'i_adj' || type === 'i-adj';
-      const isNa = type === 'na-adjective' || type === 'na_adj' || type === 'na-adj';
-
-      const forms = isI ? iSel : (isNa ? naSel : []);
-
-      if (!forms.length) {
-        outEntries.push(entry);
-        outIndices.push(originalIndex);
-        continue;
-      }
-
-      const baseStudyKey = getEntryRawStudyKey(entry);
-      const kind = isI ? 'i' : 'na';
-
-      for (const form of forms) {
-        outEntries.push(expandJapaneseAdjectiveEntry(entry, { kind, form, baseStudyKey }));
-        outIndices.push(originalIndex);
-      }
-    }
-
-    return { entries: outEntries, indices: outIndices };
-  }
-
-  function expandEntriesByAdjectiveForm(entries, { iForms = [], naForms = [], iForm = '', naForm = '' } = {}) {
-    const arr = Array.isArray(entries) ? entries : [];
-    if (!arr.length) return [];
-    const nextIForms = (iForms && Array.isArray(iForms)) ? iForms : (iForm ? [iForm] : []);
-    const nextNaForms = (naForms && Array.isArray(naForms)) ? naForms : (naForm ? [naForm] : []);
-    return expandEntriesAndIndicesByAdjectiveForms(arr, null, { iForms: nextIForms, naForms: nextNaForms }).entries;
-  }
-
-  // Report how many extra rows adjective expansion adds.
-  // This is useful for UI summaries (e.g., Data View corner caption).
-  // NOTE: Expansion replaces each adjective entry with N "form" rows; the delta is (N-1) per matching entry.
-  function getAdjectiveExpansionDeltas(entries, { iForms = [], naForms = [] } = {}) {
-    const arr = Array.isArray(entries) ? entries : [];
-    const iSel = uniqueInOrder(normalizeExpansionForms(iForms));
-    const naSel = uniqueInOrder(normalizeExpansionForms(naForms));
-
-    let iBaseCount = 0;
-    let naBaseCount = 0;
-    for (const entry of arr) {
-      if (!entry || typeof entry !== 'object') continue;
-      const type = normalizeType(String(entry.type || '').trim());
-      const isI = type === 'i-adjective' || type === 'i_adj' || type === 'i-adj';
-      const isNa = type === 'na-adjective' || type === 'na_adj' || type === 'na-adj';
-      if (isI) iBaseCount++;
-      else if (isNa) naBaseCount++;
-    }
-
-    const iFormsCount = iSel.length;
-    const naFormsCount = naSel.length;
-    const iDelta = (iFormsCount > 0) ? (iBaseCount * Math.max(0, iFormsCount - 1)) : 0;
-    const naDelta = (naFormsCount > 0) ? (naBaseCount * Math.max(0, naFormsCount - 1)) : 0;
-
-    return {
-      iDelta,
-      naDelta,
-      totalDelta: iDelta + naDelta,
-      iBaseCount,
-      naBaseCount,
-      iFormsCount,
-      naFormsCount,
-    };
+  function getCollectionExpansionDeltas(entries, { iForms = [], naForms = [] } = {}) {
+    return getJapaneseExpansionDeltas(entries, { iForms, naForms });
   }
 
   // ============================================================================
@@ -1484,7 +1334,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     return { entries: outEntries, indices: outIdx };
   }
 
-  function getCollectionView(originalEntries, collState = {}, opts = { windowSize: 10 }) {
+  function getCollectionView(originalEntries, collState = {}, opts = { windowSize: 10, collection: null }) {
     const n = Array.isArray(originalEntries) ? originalEntries.length : 0;
     const baseIndices = [];
     const baseEntriesRaw = [];
@@ -1497,7 +1347,10 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
     const iForms = collState ? (collState.expansion_i ?? collState.expansion_iAdj ?? collState.expansion_i_adjective ?? []) : [];
     const naForms = collState ? (collState.expansion_na ?? collState.expansion_naAdj ?? collState.expansion_na_adjective ?? []) : [];
-    const expanded = expandEntriesAndIndicesByAdjectiveForms(baseEntriesRaw, baseIndices, { iForms, naForms });
+    const collection = (opts?.collection && typeof opts.collection === 'object') ? opts.collection : null;
+    const expanded = (collection && collectionUsesJapaneseExpansion(collection))
+      ? expandJapaneseEntriesAndIndices(baseEntriesRaw, baseIndices, { iForms, naForms })
+      : { entries: baseEntriesRaw.slice(), indices: baseIndices.slice() };
     const baseEntries = expanded.entries;
     const expandedIndices = expanded.indices;
     const m = baseEntries.length;
@@ -1519,7 +1372,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const baseEntries = Array.isArray(coll?.entries) ? coll.entries : (Array.isArray(opts?.entries) ? opts.entries : []);
     const stateObj = (collState && typeof collState === 'object') ? collState : {};
 
-    const view = getCollectionView(baseEntries, stateObj, opts);
+    const view = getCollectionView(baseEntries, stateObj, { ...opts, collection: coll });
     let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
     let nextIndices = Array.isArray(view.indices) ? view.indices.slice() : [];
 
@@ -1669,7 +1522,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     return true;
   }
 
-  function setAdjectiveExpansionForms(collKey, { iForms = [], naForms = [], iForm = '', naForm = '' } = {}) {
+  function setCollectionExpansionForms(collKey, { iForms = [], naForms = [], iForm = '', naForm = '' } = {}) {
     const coll = collKey ? getCollections().find(c => c?.key === collKey) : getActiveCollection();
     if (!coll) return false;
 
@@ -1730,6 +1583,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     deleteCollectionStateKeys,
     getInheritedFolderMetadata,
     collectionSetsDirPath,
+    getCollectionExpansionConfig,
 
     // Debug/read-only runtime inspection helpers (Entity Explorer)
     debugListRuntimeMaps,
@@ -1742,9 +1596,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     getEntryStudyKey,
     entryMatchesTableSearch,
     filterEntriesAndIndicesByTableSearch,
-    expandEntriesByAdjectiveForm,
-    expandEntriesAndIndicesByAdjectiveForms,
-    getAdjectiveExpansionDeltas,
+    getCollectionExpansionDeltas,
     getCollectionEntriesWithRelated,
 
     // Collection actions (state modifications)
@@ -1752,7 +1604,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     clearCollectionShuffle,
     setStudyFilter,
     setHeldTableSearch,
-    setAdjectiveExpansionForms,
+    setCollectionExpansionForms,
     clearLearnedForCollection,
   };
 }
