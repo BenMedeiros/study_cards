@@ -22,6 +22,17 @@ export function renderKanjiStudyCard({ store }) {
       ],
     });
   } catch (e) {}
+  try {
+    const map = {};
+    ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'].forEach(k => map[k] = Array.isArray(fullFieldSelection) ? fullFieldSelection.includes(k) : false);
+    if (fullCardApi && typeof fullCardApi.setFieldsVisible === 'function') fullCardApi.setFieldsVisible(map);
+  } catch (e) {}
+  try {
+    const set = new Set(Array.isArray(displayCardSelection) ? displayCardSelection : []);
+    if (mainCardApi && mainCardApi.el) mainCardApi.el.style.display = set.has('main') ? '' : 'none';
+    if (relatedCardApi && relatedCardApi.el) relatedCardApi.el.style.display = set.has('related') ? '' : 'none';
+    if (fullCardApi && fullCardApi.el) fullCardApi.el.style.display = set.has('full') ? '' : 'none';
+  } catch (e) {}
 
   function getCurrentKanjiKey() {
     const entry = entries && entries.length ? entries[index] : null;
@@ -89,6 +100,8 @@ export function renderKanjiStudyCard({ store }) {
               currentIndex: index,
               cardFields: Array.isArray(kanjiFieldSelection) ? kanjiFieldSelection.slice() : [],
               relatedFields: Array.isArray(relatedFieldSelection) ? relatedFieldSelection.slice() : [],
+              fullFields: Array.isArray(fullFieldSelection) ? fullFieldSelection.slice() : [],
+              displayCards: Array.isArray(displayCardSelection) ? displayCardSelection.slice() : [],
             }
           });
         } catch (e) {
@@ -123,12 +136,16 @@ export function renderKanjiStudyCard({ store }) {
   // Load per-collection saved dropdown state (if any)
   let kanjiFieldSelection = ['kanji', 'reading', 'meaning', 'type'];
   let relatedFieldSelection = ['showRelated', 'english'];
+  let fullFieldSelection = ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'];
+  let displayCardSelection = ['main', 'related'];
   try {
     const res = store?.collections?.getActiveCollectionView ? store.collections.getActiveCollectionView({ windowSize: 0 }) : null;
     const collState = res?.collState || {};
     const appState = collState?.kanjiStudyCardView || {};
     if (Array.isArray(appState.cardFields)) kanjiFieldSelection = appState.cardFields.slice();
     if (Array.isArray(appState.relatedFields)) relatedFieldSelection = appState.relatedFields.slice();
+    if (Array.isArray(appState.fullFields)) fullFieldSelection = appState.fullFields.slice();
+    if (Array.isArray(appState.displayCards)) displayCardSelection = appState.displayCards.slice();
   } catch (e) {}
 
   // Kanji main card: show/hide fields
@@ -363,17 +380,17 @@ export function renderKanjiStudyCard({ store }) {
     { value: 'tags', left: 'Tags', right: 'Visible' },
   ];
 
-  const _fullFieldRec = headerTools.addElement({
+    const _fullFieldRec = headerTools.addElement({
     type: 'dropdown', key: 'fullFields', items: fullFieldItems, multi: true,
-    values: ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'],
+    values: Array.isArray(fullFieldSelection) ? fullFieldSelection.slice() : ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'],
     commitOnClose: true,
     onChange: (vals) => {
       const set = new Set(Array.isArray(vals) ? vals : []);
       const map = {};
       ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'].forEach(k => map[k] = set.has(k));
       if (fullCardApi && typeof fullCardApi.setFieldsVisible === 'function') fullCardApi.setFieldsVisible(map);
-      // persist per-collection full card field selection if desired
-      try { /* noop: keep safe for now */ } catch (e) {}
+      try { fullFieldSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
+      try { saveUIState(); } catch (e) {}
     },
     className: 'data-expansion-dropdown',
     caption: 'card.full'
@@ -389,7 +406,7 @@ export function renderKanjiStudyCard({ store }) {
 
   const _displayCardsRec = headerTools.addElement({
     type: 'dropdown', key: 'displayCards', items: displayCardItems, multi: true,
-    values: ['main', 'related'],
+    values: Array.isArray(displayCardSelection) ? displayCardSelection.slice() : ['main', 'related'],
     commitOnClose: true,
     onChange: (vals) => {
       const set = new Set(Array.isArray(vals) ? vals : []);
@@ -400,6 +417,8 @@ export function renderKanjiStudyCard({ store }) {
       if (_kanjiFieldRec && _kanjiFieldRec.group) _kanjiFieldRec.group.style.display = set.has('main') ? '' : 'none';
       if (_relatedFieldRec && _relatedFieldRec.group) _relatedFieldRec.group.style.display = set.has('related') ? '' : 'none';
       if (_fullFieldRec && _fullFieldRec.group) _fullFieldRec.group.style.display = set.has('full') ? '' : 'none';
+      try { displayCardSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
+      try { saveUIState(); } catch (e) {}
     },
     className: 'data-expansion-dropdown',
     caption: 'which.cards'
@@ -497,12 +516,34 @@ export function renderKanjiStudyCard({ store }) {
           try { relatedCardApi.setVisible(initRelated.has('showRelated')); } catch (e) {}
           try { relatedCardApi.setEnglishVisible(initRelated.has('english')); } catch (e) {}
         }
+        if (Array.isArray(appState.fullFields)) {
+          fullFieldSelection = appState.fullFields.slice();
+          const map = {};
+          ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'].forEach(k => map[k] = fullFieldSelection.includes(k));
+          try { fullCardApi.setFieldsVisible(map); } catch (e) {}
+        }
+        if (Array.isArray(appState.displayCards)) {
+          displayCardSelection = appState.displayCards.slice();
+          const set = new Set(Array.isArray(displayCardSelection) ? displayCardSelection : []);
+          try { if (mainCardApi && mainCardApi.el) mainCardApi.el.style.display = set.has('main') ? '' : 'none'; } catch (e) {}
+          try { if (relatedCardApi && relatedCardApi.el) relatedCardApi.el.style.display = set.has('related') ? '' : 'none'; } catch (e) {}
+          try { if (fullCardApi && fullCardApi.el) fullCardApi.el.style.display = set.has('full') ? '' : 'none'; } catch (e) {}
+          try { if (_kanjiFieldRec && _kanjiFieldRec.group) _kanjiFieldRec.group.style.display = set.has('main') ? '' : 'none'; } catch (e) {}
+          try { if (_relatedFieldRec && _relatedFieldRec.group) _relatedFieldRec.group.style.display = set.has('related') ? '' : 'none'; } catch (e) {}
+          try { if (_fullFieldRec && _fullFieldRec.group) _fullFieldRec.group.style.display = set.has('full') ? '' : 'none'; } catch (e) {}
+        }
       } catch (e) {}
       uiStateRestored = true;
     }
     const prevIndex = index;
     index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
     if (index !== prevIndex) {/* index clamped */}
+
+    // Ensure full-detail card reflects the currently selected entry after entries refresh
+    try {
+      const curEntry = entries && entries.length ? entries[index] : null;
+      if (fullCardApi && typeof fullCardApi.setEntry === 'function') fullCardApi.setEntry(curEntry);
+    } catch (e) {}
 
     try {
       const activeKey = String(active?.key || '').trim();
@@ -730,22 +771,30 @@ export function renderKanjiStudyCard({ store }) {
       const bodyEl = mainCardApi.el.querySelector('.kanji-body');
       if (bodyEl) bodyEl.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
       try { mainCardApi.setEntry(null); } catch (e) {}
+      try { fullCardApi && typeof fullCardApi.setEntry === 'function' && fullCardApi.setEntry(null); } catch (e) {}
     } else {
       try { mainCardApi.setEntry(entry); } catch (e) {}
+      try { fullCardApi && typeof fullCardApi.setEntry === 'function' && fullCardApi.setEntry(entry); } catch (e) {}
     }
 
     // Update related sentence card via its API. show/hide depending on available related sentences
     const relatedSentences = Array.isArray(entry?.__related?.sentences) ? entry.__related.sentences : [];
-    if (entry && relatedSentences.length) {
-      relatedCardApi.setSentences(relatedSentences);
-      const jpText = relatedCardApi.el.querySelector('.kanji-related-jp')?.textContent || '';
-      // Respect the user's dropdown selection: only display if JP text exists and the relatedFieldSelection includes 'showRelated'
+    try {
+      const displaySet = new Set(Array.isArray(displayCardSelection) ? displayCardSelection : []);
       const wantShow = Array.isArray(relatedFieldSelection) ? relatedFieldSelection.includes('showRelated') : true;
-      relatedCardApi.el.style.display = (jpText && wantShow) ? '' : 'none';
-    } else {
-      relatedCardApi.setSentences([]);
-      relatedCardApi.el.style.display = 'none';
-    }
+      if (entry && relatedSentences.length) {
+        relatedCardApi.setSentences(relatedSentences);
+        const jpText = relatedCardApi.el.querySelector('.kanji-related-jp')?.textContent || '';
+        // Only show related card if user selected it in which.cards AND relatedFieldSelection allows it
+        relatedCardApi.el.style.display = (displaySet.has('related') && jpText && wantShow) ? '' : 'none';
+      } else {
+        relatedCardApi.setSentences([]);
+        relatedCardApi.el.style.display = 'none';
+      }
+      // Ensure main/full card visibility also respects the which.cards selection
+      try { if (mainCardApi && mainCardApi.el) mainCardApi.el.style.display = displaySet.has('main') ? '' : 'none'; } catch (e) {}
+      try { if (fullCardApi && fullCardApi.el) fullCardApi.el.style.display = displaySet.has('full') ? '' : 'none'; } catch (e) {}
+    } catch (e) {}
     
     // Update reveal button text based on current viewMode
     updateRevealButton();

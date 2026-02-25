@@ -97,18 +97,18 @@ body {
 }
 
 .view-footer-controls {
-    /* position: absolute; */
-    /* left: 0; */
-    /* bottom: var(--shell-footer-height); */
-    /* width: 100%; */
-    /* display: flex; */
-    flex-direction: column;
-    gap: 0.5rem;
-    background: rgba(17, 24, 39, 0.97);
-    border-top: var(--border-1);
-    box-shadow: 0 -2px 16px 0 rgba(96, 165, 250, 0.08);
-    /* padding: 0.6rem 0.5rem 0.9rem; */
-    /* z-index: 100; */
+  /* position: absolute; */
+  /* left: 0; */
+  /* bottom: var(--shell-footer-height); */
+  /* width: 100%; */
+  /* display: flex; */
+  flex-direction: column;
+  gap: 0.5rem;
+  background: rgba(17, 24, 39, 0.97);
+  border-top: var(--border-1);
+  box-shadow: 0 -2px 16px 0 rgba(96, 165, 250, 0.08);
+  /* padding: 0.6rem 0.5rem 0.9rem; */
+  /* z-index: 100; */
 }
 
 .view-footer-controls-row {
@@ -564,8 +564,10 @@ body.using-keyboard .view-footer-controls .btn .caption {
 #shell-root {
   display: grid;
   grid-template-rows: auto 1fr auto;
-  height: 100vh; /* fallback */
-  height: 100dvh; /* Fixes mobile  viewport height issues */
+  height: 100vh;
+  /* fallback */
+  height: 100dvh;
+  /* Fixes mobile  viewport height issues */
 }
 
 #shell-root>*,
@@ -1007,22 +1009,33 @@ input[type="number"].button::-webkit-inner-spin-button {
 } */
 
 /* Kanji study specific tweaks */
-.kanji-card {
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  min-height: 17rem;
-  width: min(48rem, 100%);
-  margin: 0 auto;
-  max-width: 30rem;
+
+
+.kanji-full-card .kanji-full-row {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  border-bottom: 1px grey solid;
+  padding: .3rem 0;
 }
 
-.kanji-related-card {
-  padding: 1rem;
-  width: min(48rem, 100%);
-  margin: 1rem auto 0;
-  max-width: 30rem;
+.kanji-full-card .kanji-full-label {
+  color: var(--muted);
+  font-size: 0.75rem;
 }
+
+.kanji-card {
+  min-height: 17rem;
+  width: min(30rem, 100%);
+  margin: 0 auto;
+}
+
+#kanji-study-root .card {
+  justify-content: center;
+  padding: 1rem;
+  width: min(30rem, 100%);
+  margin: 1rem auto 1rem;
+}
+
 
 .kanji-related-header {
   display: flex;
