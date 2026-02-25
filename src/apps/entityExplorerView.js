@@ -172,7 +172,7 @@ export function renderEntityExplorer({ store }) {
   content.className = 'entity-explorer-content';
 
   // Collapse-all control (added to header tools)
-  headerTools.addElement({
+  const _collapseRec = headerTools.addElement({
     type: 'button', key: 'collapseAll', label: 'Collapse all', title: 'Collapse all JSON viewers'
   });
 
@@ -198,7 +198,7 @@ export function renderEntityExplorer({ store }) {
   }
 
   // Wrap toggle control for JSON views
-  headerTools.addElement({ type: 'button', key: 'jsonWrap', label: 'Wrap', caption: 'JSON', title: 'Toggle JSON wrap' });
+  const _jsonWrapRec = headerTools.addElement({ type: 'button', key: 'jsonWrap', label: 'Wrap', caption: 'JSON', title: 'Toggle JSON wrap' });
 
   function updateJsonWrapBtn() {
     const wrapped = Boolean(root.classList && root.classList.contains('json-wrap'));
@@ -261,6 +261,10 @@ export function renderEntityExplorer({ store }) {
   })();
   const initialManager = String(_savedAppState.manager || 'idb');
 
+  let managerGroup = null;
+  let dbGroup = null;
+  let storeGroup = null;
+
   const managerDropdown = createDropdown({
     items: managerItems,
     value: initialManager,
@@ -291,30 +295,33 @@ export function renderEntityExplorer({ store }) {
   });
 
   // manager dropdown wrapped and added to headerTools
-  headerTools.addElement({ type: 'custom', key: 'manager', create: () => managerDropdown, caption: 'Storage' });
+  const _managerRec = headerTools.addElement({ type: 'custom', key: 'manager', create: () => managerDropdown, caption: 'Storage' });
 
   const dbDropdownSlot = document.createElement('div');
   dbDropdownSlot.className = 'entity-explorer-source-slot';
   // dbGroup will be created by headerTools and the slot used as the control element
-  headerTools.addElement({ type: 'custom', key: 'dbGroup', create: () => dbDropdownSlot, caption: 'Database' });
+  const _dbGroupRec = headerTools.addElement({ type: 'custom', key: 'dbGroup', create: () => dbDropdownSlot, caption: 'Database' });
 
   const storeDropdownSlot = document.createElement('div');
   storeDropdownSlot.className = 'entity-explorer-source-slot';
-  headerTools.addElement({ type: 'custom', key: 'storeGroup', create: () => storeDropdownSlot, caption: 'Store' });
+  const _storeGroupRec = headerTools.addElement({ type: 'custom', key: 'storeGroup', create: () => storeDropdownSlot, caption: 'Store' });
 
   const left = document.createElement('div');
   left.className = 'entity-explorer-controls-row';
   left.style.display = 'flex';
   left.style.alignItems = 'center';
   left.style.gap = '0.5rem';
-  left.append(managerGroup);
+  // Move the created header groups into our left controls row so they appear together
+  try { if (_managerRec && _managerRec.group) { managerGroup = _managerRec.group; left.append(_managerRec.group); } } catch (e) {}
+  try { if (_dbGroupRec && _dbGroupRec.group) { dbGroup = _dbGroupRec.group; left.append(_dbGroupRec.group); } } catch (e) {}
+  try { if (_storeGroupRec && _storeGroupRec.group) { storeGroup = _storeGroupRec.group; left.append(_storeGroupRec.group); } } catch (e) {}
 
   const spacer = document.createElement('div');
   spacer.className = 'qa-header-spacer';
   headerTools.append(left, spacer);
   // append JSON wrap group then collapse-all to the right side of header tools
-  headerTools.append(jsonWrapGroup);
-  headerTools.append(collapseAllBtn);
+  try { if (_jsonWrapRec && _jsonWrapRec.group) headerTools.append(_jsonWrapRec.group); } catch (e) {}
+  try { if (_collapseRec && _collapseRec.group) headerTools.append(_collapseRec.group); } catch (e) {}
 
   // set initial label for wrap button
   updateJsonWrapBtn();
@@ -330,7 +337,6 @@ export function renderEntityExplorer({ store }) {
   const _initState = _savedAppState || {};
   const _initManager = String(_initState.manager || 'idb');
   if (_initManager === 'idb') {
-    left.append(dbGroup, storeGroup);
     loadAndRenderManager('idb');
     rebuildDbDropdown();
   } else {

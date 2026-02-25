@@ -1527,6 +1527,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     if (!coll) return false;
 
     const normalizeList = (v, fallbackSingle) => {
+      if (v === 'all') return 'all';
       if (Array.isArray(v)) return v.map(x => String(x || '').trim()).filter(Boolean);
       const s = String(fallbackSingle || '').trim();
       if (!s) return [];

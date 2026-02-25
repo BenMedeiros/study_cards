@@ -1,4 +1,4 @@
-import { el } from './ui.js';
+import { el } from '../ui.js';
 
 function getFocusable(root) {
   const sel = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';

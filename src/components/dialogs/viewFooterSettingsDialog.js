@@ -1,4 +1,4 @@
-import { el, safeId } from './ui.js';
+import { el, safeId } from '../ui.js';
 import { openViewFooterCustomButtonDialog } from './viewFooterCustomButtonDialog.js';
 
 function deepClone(value) {

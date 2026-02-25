@@ -1,4 +1,4 @@
-import { el, safeId } from './ui.js';
+import { el, safeId } from '../ui.js';
 
 function asString(v) {
   return (v == null) ? '' : String(v);

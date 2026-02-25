@@ -3,7 +3,7 @@ import { card } from '../components/ui.js';
 import { el } from '../components/ui.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createDropdown } from '../components/dropdown.js';
-import { confirmDialog } from '../components/confirmDialog.js';
+import { confirmDialog } from '../components/dialogs/confirmDialog.js';
 import { parseHashRoute, buildHashRoute } from '../utils/helpers.js';
 
 export function renderData({ store }) {
@@ -319,7 +319,8 @@ export function renderData({ store }) {
       commitOnClose: true,
       getButtonLabel: ({ selectedValues }) => formatStudyFilterButtonLabel(selectedValues),
       onChange: (vals) => {
-        studyFilterStates = orderStudyStates(normalizeStudyFilterStates(vals));
+        const chosen = (typeof vals === 'string' && vals === 'all') ? STUDY_STATE_ORDER.slice() : vals;
+        studyFilterStates = orderStudyStates(normalizeStudyFilterStates(chosen));
         persistFilters();
         renderTable();
         updateStudyLabel();
@@ -347,6 +348,16 @@ export function renderData({ store }) {
     const iItems = Array.isArray(expansionConfig?.iItems) ? expansionConfig.iItems : [];
     const naItems = Array.isArray(expansionConfig?.naItems) ? expansionConfig.naItems : [];
 
+    // Expand any saved 'all' sentinel into explicit lists based on available items
+    try {
+      if (expansionIForms === 'all' || (Array.isArray(expansionIForms) && expansionIForms.includes('all'))) {
+        expansionIForms = iItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
+      }
+      if (expansionNaForms === 'all' || (Array.isArray(expansionNaForms) && expansionNaForms.includes('all'))) {
+        expansionNaForms = naItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
+      }
+    } catch (e) {}
+
     // use headerTools helper to create dropdowns then move the created groups into expansionWrap
     controls.removeControl && controls.removeControl('expansionI');
     const iRec = controls.addElement({
@@ -355,7 +366,10 @@ export function renderData({ store }) {
       commitOnClose: true,
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
       onChange: (vals) => {
-        expansionIForms = orderFormsByItems(normalizeFormList(vals), iBaseItems);
+        const chosen = (typeof vals === 'string' && vals === 'all')
+          ? iItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
+          : vals;
+        expansionIForms = orderFormsByItems(normalizeFormList(chosen), iBaseItems);
         persistCollectionExpansions();
       },
       className: 'data-expansion-dropdown',
@@ -370,7 +384,10 @@ export function renderData({ store }) {
       commitOnClose: true,
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
       onChange: (vals) => {
-        expansionNaForms = orderFormsByItems(normalizeFormList(vals), naBaseItems);
+        const chosen = (typeof vals === 'string' && vals === 'all')
+          ? naItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
+          : vals;
+        expansionNaForms = orderFormsByItems(normalizeFormList(chosen), naBaseItems);
         persistCollectionExpansions();
       },
       className: 'data-expansion-dropdown',
@@ -394,8 +411,12 @@ export function renderData({ store }) {
   try {
     const saved = readCollState();
     if (typeof saved?.studyFilter === 'string') {
-      const parsed = parseStudyFilter(saved.studyFilter);
-      studyFilterStates = orderStudyStates(parsed.states);
+      if (String(saved.studyFilter) === 'all') {
+        studyFilterStates = STUDY_STATE_ORDER.slice();
+      } else {
+        const parsed = parseStudyFilter(saved.studyFilter);
+        studyFilterStates = orderStudyStates(parsed.states);
+      }
     } else {
       // Legacy booleans
       const skipLearned = !!saved?.skipLearned;
@@ -591,7 +612,16 @@ export function renderData({ store }) {
   function persistCollectionExpansions() {
     const coll = store.collections.getActiveCollection();
     if (!coll) return;
-    store.collections.setCollectionExpansionForms(coll.key, { iForms: expansionIForms, naForms: expansionNaForms });
+    try {
+      const cfg = getExpansionConfig();
+      const iItems = Array.isArray(cfg?.iItems) ? cfg.iItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
+      const naItems = Array.isArray(cfg?.naItems) ? cfg.naItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
+      const iSave = (expansionIForms === 'all' || (Array.isArray(expansionIForms) && iItems.length > 0 && iItems.length === expansionIForms.length && iItems.every(v => expansionIForms.includes(v)))) ? 'all' : (Array.isArray(expansionIForms) ? expansionIForms.slice() : []);
+      const naSave = (expansionNaForms === 'all' || (Array.isArray(expansionNaForms) && naItems.length > 0 && naItems.length === expansionNaForms.length && naItems.every(v => expansionNaForms.includes(v)))) ? 'all' : (Array.isArray(expansionNaForms) ? expansionNaForms.slice() : []);
+      store.collections.setCollectionExpansionForms(coll.key, { iForms: iSave, naForms: naSave });
+    } catch (e) {
+      store.collections.setCollectionExpansionForms(coll.key, { iForms: expansionIForms, naForms: expansionNaForms });
+    }
   }
 
   // pruneStudyIndicesToFilters removed — studyIndices/studyStart no longer used.

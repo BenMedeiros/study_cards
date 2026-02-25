@@ -95,13 +95,24 @@ export function renderKanjiStudyCard({ store }) {
         });
         // persist app-scoped index and dropdown selections under `kanjiStudyCardView`
         try {
+          const sliceOrAll = (sel, items) => {
+            try {
+              if (sel === 'all') return 'all';
+              const arr = Array.isArray(sel) ? sel.slice() : [];
+              const allVals = Array.isArray(items) ? items.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
+              const set = new Set(arr);
+              const isAll = allVals.length > 0 && allVals.length === arr.length && allVals.every(v => set.has(v));
+              return isAll ? 'all' : arr;
+            } catch (e) { return Array.isArray(sel) ? sel.slice() : []; }
+          };
+
           store.collections.saveCollectionState(key, {
             kanjiStudyCardView: {
               currentIndex: index,
-              cardFields: Array.isArray(kanjiFieldSelection) ? kanjiFieldSelection.slice() : [],
-              relatedFields: Array.isArray(relatedFieldSelection) ? relatedFieldSelection.slice() : [],
-              fullFields: Array.isArray(fullFieldSelection) ? fullFieldSelection.slice() : [],
-              displayCards: Array.isArray(displayCardSelection) ? displayCardSelection.slice() : [],
+              cardFields: sliceOrAll(kanjiFieldSelection, kanjiFieldItems),
+              relatedFields: sliceOrAll(relatedFieldSelection, relatedFieldItems),
+              fullFields: sliceOrAll(fullFieldSelection, fullFieldItems),
+              displayCards: sliceOrAll(displayCardSelection, displayCardItems),
             }
           });
         } catch (e) {
@@ -143,9 +154,13 @@ export function renderKanjiStudyCard({ store }) {
     const collState = res?.collState || {};
     const appState = collState?.kanjiStudyCardView || {};
     if (Array.isArray(appState.cardFields)) kanjiFieldSelection = appState.cardFields.slice();
+    else if (typeof appState.cardFields === 'string' && appState.cardFields === 'all') kanjiFieldSelection = 'all';
     if (Array.isArray(appState.relatedFields)) relatedFieldSelection = appState.relatedFields.slice();
+    else if (typeof appState.relatedFields === 'string' && appState.relatedFields === 'all') relatedFieldSelection = 'all';
     if (Array.isArray(appState.fullFields)) fullFieldSelection = appState.fullFields.slice();
+    else if (typeof appState.fullFields === 'string' && appState.fullFields === 'all') fullFieldSelection = 'all';
     if (Array.isArray(appState.displayCards)) displayCardSelection = appState.displayCards.slice();
+    else if (typeof appState.displayCards === 'string' && appState.displayCards === 'all') displayCardSelection = 'all';
   } catch (e) {}
 
   // Kanji main card: show/hide fields
@@ -162,9 +177,12 @@ export function renderKanjiStudyCard({ store }) {
       values: Array.isArray(kanjiFieldSelection) ? kanjiFieldSelection.slice() : ['kanji', 'reading', 'meaning', 'type'],
       commitOnClose: true,
       onChange: (vals) => {
-        const set = new Set(Array.isArray(vals) ? vals : []);
+        const chosen = (typeof vals === 'string' && vals === 'all')
+          ? kanjiFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
+          : (Array.isArray(vals) ? vals.slice() : []);
+        const set = new Set(chosen);
         ['kanji', 'reading', 'meaning', 'type'].forEach(f => { try { mainCardApi.setFieldVisible(f, set.has(f)); } catch (e) {} });
-        try { kanjiFieldSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
+        try { kanjiFieldSelection = chosen; } catch (e) {}
         try { saveUIState(); } catch (e) {}
       },
       className: 'data-expansion-dropdown',
@@ -184,10 +202,13 @@ export function renderKanjiStudyCard({ store }) {
       values: Array.isArray(relatedFieldSelection) ? relatedFieldSelection.slice() : ['showRelated', 'english'],
       commitOnClose: true,
       onChange: (vals) => {
-        const set = new Set(Array.isArray(vals) ? vals : []);
+        const chosen = (typeof vals === 'string' && vals === 'all')
+          ? relatedFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
+          : (Array.isArray(vals) ? vals.slice() : []);
+        const set = new Set(chosen);
         try { relatedCardApi.setVisible(set.has('showRelated')); } catch (e) {}
         try { relatedCardApi.setEnglishVisible(set.has('english')); } catch (e) {}
-        try { relatedFieldSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
+        try { relatedFieldSelection = chosen; } catch (e) {}
         try { saveUIState(); } catch (e) {}
       },
       className: 'data-expansion-dropdown',
@@ -385,11 +406,14 @@ export function renderKanjiStudyCard({ store }) {
     values: Array.isArray(fullFieldSelection) ? fullFieldSelection.slice() : ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'],
     commitOnClose: true,
     onChange: (vals) => {
-      const set = new Set(Array.isArray(vals) ? vals : []);
+      const chosen = (typeof vals === 'string' && vals === 'all')
+        ? fullFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
+        : (Array.isArray(vals) ? vals.slice() : []);
+      const set = new Set(chosen);
       const map = {};
       ['kanji', 'reading', 'meaning', 'type', 'lexical', 'orthography', 'tags'].forEach(k => map[k] = set.has(k));
       if (fullCardApi && typeof fullCardApi.setFieldsVisible === 'function') fullCardApi.setFieldsVisible(map);
-      try { fullFieldSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
+      try { fullFieldSelection = chosen; } catch (e) {}
       try { saveUIState(); } catch (e) {}
     },
     className: 'data-expansion-dropdown',
@@ -409,7 +433,10 @@ export function renderKanjiStudyCard({ store }) {
     values: Array.isArray(displayCardSelection) ? displayCardSelection.slice() : ['main', 'related'],
     commitOnClose: true,
     onChange: (vals) => {
-      const set = new Set(Array.isArray(vals) ? vals : []);
+      const chosen = (typeof vals === 'string' && vals === 'all')
+        ? displayCardItems.map(it => String(it?.value || ''))
+        : (Array.isArray(vals) ? vals.slice() : []);
+      const set = new Set(chosen);
       if (mainCardApi && mainCardApi.el) mainCardApi.el.style.display = set.has('main') ? '' : 'none';
       if (relatedCardApi && relatedCardApi.el) relatedCardApi.el.style.display = set.has('related') ? '' : 'none';
       if (fullCardApi && fullCardApi.el) fullCardApi.el.style.display = set.has('full') ? '' : 'none';
@@ -417,7 +444,7 @@ export function renderKanjiStudyCard({ store }) {
       if (_kanjiFieldRec && _kanjiFieldRec.group) _kanjiFieldRec.group.style.display = set.has('main') ? '' : 'none';
       if (_relatedFieldRec && _relatedFieldRec.group) _relatedFieldRec.group.style.display = set.has('related') ? '' : 'none';
       if (_fullFieldRec && _fullFieldRec.group) _fullFieldRec.group.style.display = set.has('full') ? '' : 'none';
-      try { displayCardSelection = Array.isArray(vals) ? vals.slice() : []; } catch (e) {}
+      try { displayCardSelection = chosen; } catch (e) {}
       try { saveUIState(); } catch (e) {}
     },
     className: 'data-expansion-dropdown',
@@ -431,6 +458,12 @@ export function renderKanjiStudyCard({ store }) {
   const sentenceCard = relatedCardApi.el;
 
   // Apply initial visibility/mute defaults to cards to match dropdown defaults
+  try {
+    if (kanjiFieldSelection === 'all') kanjiFieldSelection = kanjiFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
+    if (relatedFieldSelection === 'all') relatedFieldSelection = relatedFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
+    if (fullFieldSelection === 'all') fullFieldSelection = fullFieldItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
+    if (displayCardSelection === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
+  } catch (e) {}
   try {
     const map = { kanji: false, reading: false, meaning: false, type: false };
     for (const k of Object.keys(map)) map[k] = Array.isArray(kanjiFieldSelection) ? kanjiFieldSelection.includes(k) : false;

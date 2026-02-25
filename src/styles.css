@@ -1273,7 +1273,7 @@ input[type="number"].button::-webkit-inner-spin-button {
 }
 
 /* Shared horizontal scroll container behavior (nav + header tools). */
-:where(.nav, .view-header-tools, .shell-footer) {
+:where(.nav, .view-header-tools, .shell-footer, .main) {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;

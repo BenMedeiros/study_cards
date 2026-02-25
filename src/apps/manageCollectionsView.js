@@ -1182,7 +1182,7 @@ export function renderManageCollections({ store, onNavigate }) {
 
   importHelpBtn.addEventListener('click', async () => {
     try {
-      const mod = await import('../components/helpDialogs/manageCollectionsImportHelpDialog.js');
+      const mod = await import('../components/dialogs/manageCollectionsImportHelpDialog.js');
       if (mod && typeof mod.showManageCollectionsImportHelpDialog === 'function') await mod.showManageCollectionsImportHelpDialog();
     } catch (e) {
       setStatus(`Failed to open help: ${e?.message || e}`);

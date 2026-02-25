@@ -178,7 +178,7 @@ export function createDropdown({
     if (wasOpen && multi && commitOnClose && !didCommitThisOpen) {
       didCommitThisOpen = true;
       try {
-        if (typeof onChange === 'function') onChange(selectedValues.slice());
+        if (typeof onChange === 'function') emitChange(selectedValues);
       } catch (e) {}
     }
     // Always notify close hook after commit.
@@ -318,6 +318,21 @@ export function createDropdown({
       .filter(Boolean);
   }
 
+  function emitChange(vals) {
+    if (!multi) {
+      if (typeof onChange === 'function') onChange(vals);
+      return;
+    }
+    // Normalize
+    const selected = Array.isArray(vals) ? vals.map(v => String(v || '')).filter(Boolean) : [];
+    const all = selectableValues();
+    const set = new Set(selected);
+    const isAll = all.length > 0 && all.length === selected.length && all.every(v => set.has(v));
+    try {
+      if (typeof onChange === 'function') onChange(isAll ? 'all' : selected.slice());
+    } catch (e) {}
+  }
+
   function syncSelectedClasses() {
     try {
       const set = new Set(selectedValues);
@@ -364,14 +379,14 @@ export function createDropdown({
           selectedValues = [];
           syncSelectedClasses();
           setButtonLabel();
-          if (!commitOnClose && onChange) onChange(selectedValues.slice());
+          if (!commitOnClose && onChange) emitChange(selectedValues);
           return;
         }
         if (action === 'all') {
           selectedValues = selectableValues();
           syncSelectedClasses();
           setButtonLabel();
-          if (!commitOnClose && onChange) onChange(selectedValues.slice());
+          if (!commitOnClose && onChange) emitChange(selectedValues);
           return;
         }
         if (action === 'toggleallnone') {
@@ -381,7 +396,7 @@ export function createDropdown({
           selectedValues = isAll ? [] : all;
           syncSelectedClasses();
           setButtonLabel();
-          if (!commitOnClose && onChange) onChange(selectedValues.slice());
+          if (!commitOnClose && onChange) emitChange(selectedValues);
           return;
         }
         return;
@@ -413,7 +428,7 @@ export function createDropdown({
       // Update selected state
       option.classList.toggle('selected', set.has(v));
       setButtonLabel();
-      if (!commitOnClose && onChange) onChange(selectedValues.slice());
+      if (!commitOnClose && onChange) emitChange(selectedValues);
     });
     
     menu.append(option);
