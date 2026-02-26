@@ -219,6 +219,25 @@ export function createStudyProgressManager({
     return getKanjiState(k, opts) === 'focus';
   }
 
+  // Explicit state setters for kanji progress (useful for wiring buttons)
+  function setStateLearned(v, opts = {}) {
+    const k = normalizeKanjiValue(v);
+    if (!k) return null;
+    return setKanjiState(k, 'learned', opts);
+  }
+
+  function setStateNull(v, opts = {}) {
+    const k = normalizeKanjiValue(v);
+    if (!k) return null;
+    return setKanjiState(k, null, opts);
+  }
+
+  function setStateFocus(v, opts = {}) {
+    const k = normalizeKanjiValue(v);
+    if (!k) return null;
+    return setKanjiState(k, 'focus', opts);
+  }
+
   function recordSeen(v, opts = {}) {
     const k = normalizeKanjiValue(v);
     if (!k) return null;
@@ -836,6 +855,9 @@ export function createStudyProgressManager({
     isKanjiFocus,
     toggleKanjiLearned,
     toggleKanjiFocus,
+    setStateLearned,
+    setStateNull,
+    setStateFocus,
     clearLearnedKanji,
     clearLearnedKanjiForValues,
     recordSeen,

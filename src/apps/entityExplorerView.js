@@ -3,6 +3,7 @@ import * as idb from '../utils/idb.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createTable } from '../components/table.js';
+import { createJsonViewer } from '../components/jsonViewer.js';
 
 // Persist UI selections for this view under the global namespaced blob
 // stored at localStorage key `study_cards:v1` -> `apps` -> `entityExplorer`.
@@ -32,78 +33,7 @@ function readLocalStorageValue(key) {
   } catch { return null; }
 }
 
-function renderJsonViewer(value) {
-  const text = safeJson(value);
-  // collapse very large JSON blobs to keep the UI snappy
-  const MAX_CHARS = 1000;
-  const MAX_LINES = 40;
-  const lines = (typeof text === 'string') ? text.split('\n').length : 0;
-  const isBig = (typeof text === 'string' && text.length > MAX_CHARS) || lines > MAX_LINES;
-
-  const wrapper = document.createElement('div');
-  wrapper.className = 'json-view-wrapper';
-  wrapper.style.position = 'relative';
-
-  const content = document.createElement('div');
-  content.className = 'json-content mono';
-
-  const pre = document.createElement('pre');
-  pre.className = 'json-view mono';
-  pre.textContent = text;
-
-  const previewLen = 200;
-  const previewText = typeof text === 'string' ? (text.slice(0, previewLen).replace(/\n/g, ' ') + (text.length > previewLen ? '…' : '')) : String(text);
-  const placeholder = document.createElement('div');
-  placeholder.className = 'json-collapsed-placeholder';
-  placeholder.textContent = previewText;
-
-  // create toggle button (top-right)
-  const toggle = document.createElement('button');
-  toggle.type = 'button';
-  toggle.className = 'json-toggle';
-  toggle.style.position = 'absolute';
-  toggle.style.top = '4px';
-  toggle.style.right = '4px';
-  toggle.style.padding = '0.15rem 0.4rem';
-  toggle.style.fontSize = '0.8rem';
-  toggle.style.cursor = 'pointer';
-
-  let expanded = !isBig; // default: expanded for small, collapsed for big
-
-  function renderCurrent() {
-    content.innerHTML = '';
-    if (expanded) {
-      content.appendChild(pre);
-      toggle.textContent = '−';
-      toggle.title = 'Collapse JSON';
-      toggle.setAttribute('aria-label', 'Collapse JSON');
-      wrapper.dataset.expanded = 'true';
-      toggle.setAttribute('aria-pressed', 'true');
-    } else {
-      content.appendChild(placeholder);
-      toggle.textContent = '+';
-      toggle.title = 'Expand JSON';
-      toggle.setAttribute('aria-label', 'Expand JSON');
-      wrapper.dataset.expanded = 'false';
-      toggle.setAttribute('aria-pressed', 'false');
-    }
-  }
-
-  toggle.addEventListener('click', (ev) => {
-    ev.stopPropagation();
-    expanded = !expanded;
-    renderCurrent();
-    // notify parent views that a toggle state changed so they can update controls
-    try { wrapper.dispatchEvent(new CustomEvent('json-toggle', { bubbles: true })); } catch (e) {}
-  });
-
-  // initial render
-  renderCurrent();
-
-  wrapper.appendChild(content);
-  wrapper.appendChild(toggle);
-  return wrapper;
-}
+function renderJsonViewer(value, opts) { return createJsonViewer(value, opts); }
 
 // Helpers for listing/opening arbitrary DBs and reading stores
 async function listDatabases() {

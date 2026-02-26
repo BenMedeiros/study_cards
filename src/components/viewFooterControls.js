@@ -363,6 +363,30 @@ function createViewFooterControls(items = [], opts = {}) {
 
   const baseControlItems = items.filter(it => isDescriptor(it) && it.key).map(it => ({ ...it }));
   const actionRegistry = buildActionRegistry(items);
+  // Allow caller to supply extra actions (e.g. dynamic sound.X handlers)
+  if (opts && Array.isArray(opts.extraActions)) {
+    for (const a of opts.extraActions) {
+      try {
+        if (!a || typeof a !== 'object' || !a.id) continue;
+        const id = String(a.id || '').trim();
+        if (!id || actionRegistry.has(id)) continue;
+        actionRegistry.set(id, {
+          id,
+          controlKey: String(a.controlKey || '').trim(),
+          state: String(a.state || '').trim(),
+          icon: String(a.icon || ''),
+          text: String(a.text || id),
+          caption: String(a.caption || ''),
+          shortcut: String(a.shortcut || ''),
+          fnName: String(a.fnName || ''),
+          invoke: a.invoke,
+        });
+      } catch (e) {
+        // ignore malformed extra action
+      }
+    }
+  }
+
   const availableActions = Array.from(actionRegistry.values()).map(a => ({
     id: a.id,
     controlKey: a.controlKey,

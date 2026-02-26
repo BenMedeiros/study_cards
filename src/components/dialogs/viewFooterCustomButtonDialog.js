@@ -61,16 +61,56 @@ export function openViewFooterCustomButtonDialog({
       const stateVal = asString(raw.state);
       if (stateVal) continue;
 
-      const item = {
-        id,
-        text: asString(raw.text) || id,
-        controlKey: asString(raw.controlKey),
-        fnName: asString(raw.fnName),
-        namespace: asString(raw.namespace) || inferNamespace(raw),
-      };
+        // Derive a human-friendly "action-field" for the UI. For sound actions
+        // prefer `entry.<field>` (e.g. `entry.reading`, `entry.kanji`). Fall back
+        // to the supplied namespace or an inferred namespace otherwise.
+        let actionField = '';
+        const rawNs = asString(raw.namespace);
+      if (id.toLowerCase().startsWith('sound.')) {
+        const parts = id.split('.');
+        const field = parts[1] || '';
+        actionField = field ? `entry.${field}` : 'entry';
+      } else if (id === 'prev' || id === 'next') {
+        // navigation controls belong to the kanji study app
+        actionField = 'app.kanjiStudyCardView';
+      } else if (/^(learned|practice)$/i.test(id) || /^toggle/i.test(id) || /^setstate/i.test(id) || /^togglekanji/i.test(id)) {
+        // learned/practice/toggle/setState actions map to the study progress manager
+        actionField = 'manager.studyProgress';
+      } else if (rawNs) {
+        actionField = rawNs;
+      } else {
+        actionField = inferNamespace(raw);
+      }
+
+        const item = {
+          id,
+          text: asString(raw.text) || id,
+          controlKey: asString(raw.controlKey),
+          fnName: asString(raw.fnName),
+          actionField,
+        };
       actionById.set(id, item);
       actionList.push(item);
     }
+
+      // Sort available actions: put all `sound.*` actions together at the top
+      // (sorted by field), then the rest alphabetically by text.
+      actionList.sort((a, b) => {
+        const aId = String(a.id || '');
+        const bId = String(b.id || '');
+        const aIsSound = aId.startsWith('sound.');
+        const bIsSound = bId.startsWith('sound.');
+        if (aIsSound !== bIsSound) return aIsSound ? -1 : 1;
+        const aIsApp = String(a.actionField || '').startsWith('app.');
+        const bIsApp = String(b.actionField || '').startsWith('app.');
+        if (aIsApp !== bIsApp) return aIsApp ? -1 : 1;
+        const aIsManager = String(a.actionField || '').startsWith('manager.');
+        const bIsManager = String(b.actionField || '').startsWith('manager.');
+        if (aIsManager !== bIsManager) return aIsManager ? -1 : 1;
+        // within each category sort by id (sound) or text otherwise
+        if (aIsSound && bIsSound) return aId.localeCompare(bId);
+        return String(a.text || '').localeCompare(String(b.text || ''));
+      });
 
     // Strip any pre-existing actions that reference state-based action IDs
     // (these were intentionally excluded from the available actions).
@@ -184,9 +224,9 @@ export function openViewFooterCustomButtonDialog({
       availableListEl.innerHTML = '';
       for (const action of actionList) {
         const row = el('div', { className: 'view-footer-custom-available-row' });
-        const left = el('div', { className: 'view-footer-custom-action-label', text: `${action.text}${action.state ? ` (${action.state})` : ''}` });
-        const ns = el('div', { className: 'view-footer-action-namespace', text: action.namespace });
-        const fn = el('div', { className: 'view-footer-action-fn', text: action.fnName || action.id });
+          const left = el('div', { className: 'view-footer-custom-action-label', text: action.text });
+          const ns = el('div', { className: 'view-footer-action-field', text: action.actionField });
+          const fn = el('div', { className: 'view-footer-action-fn', text: action.fnName || action.id });
         const addBtn = el('button', { className: 'btn small', text: 'Add' });
         addBtn.type = 'button';
         addBtn.addEventListener('click', () => {

@@ -2,6 +2,7 @@ import { createKanjiMainCard, kanjiMainCardToggleFields } from './kanjiMainCard.
 import { createKanjiRelatedCard, kanjiExampleCardToggleFields } from './kanjiExampleCard.js';
 import { createKanjiFullCard, kanjiFullCardToggleFields } from './kanjiFullCard.js';
 import { createGenericFlatCard, genericFlatCardToggleFields } from './genericFlatCard.js';
+import { createJsonViewerCard, jsonViewerCardToggleFields } from './jsonViewerCard.js';
 
 // Export individual factories/fields for backwards compatibility
 export { createKanjiMainCard, kanjiMainCardToggleFields };
@@ -15,4 +16,5 @@ export const CARD_REGISTRY = [
 	{ key: 'related', label: 'Related Card', factory: createKanjiRelatedCard, toggleFields: kanjiExampleCardToggleFields },
 	{ key: 'full', label: 'Full Details', factory: createKanjiFullCard, toggleFields: kanjiFullCardToggleFields },
 	{ key: 'generic', label: 'Generic', factory: createGenericFlatCard, toggleFields: genericFlatCardToggleFields },
+	{ key: 'json', label: 'JSON Viewer', factory: createJsonViewerCard, toggleFields: jsonViewerCardToggleFields },
 ];

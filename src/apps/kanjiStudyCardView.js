@@ -1,7 +1,5 @@
 import { nowMs } from '../utils/helpers.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
-import { createAutoplayControls } from '../components/autoplay.js';
-import { createSpeakerButton } from '../components/ui.js';
 
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createViewFooterControls } from '../components/viewFooterControls.js';
@@ -16,7 +14,6 @@ export function renderKanjiStudyCard({ store }) {
     consumerId: 'kanjiStudyCardView',
     settings: [
       'apps.kanjiStudy.defaultViewMode',
-      'apps.kanjiStudy.autoplaySequence',
     ],
   });
 
@@ -44,8 +41,6 @@ export function renderKanjiStudyCard({ store }) {
   let shownAt = nowMs();
   let isShuffled = false;
   
-  let isAutoPlaying = false;
-  let autoplayConfig = null; // will be defaulted from savedUI or component defaults
   let uiStateRestored = false; // ensure saved UI (index/order) is applied only once
   let originalEntries = [];
   let currentOrder = null; // array of indices mapping to originalEntries
@@ -244,7 +239,7 @@ export function renderKanjiStudyCard({ store }) {
     cardFieldControls[c.key] = rec && rec.control ? rec.control : null;
   }
 
-  // No legacy UI load: visual defaults used; autoplay/defaults remain runtime-only
+  // No legacy UI load: visual defaults used.
 
   // Footer controls: describe actions and let footer build UI + register shortcuts
   function getFooterButton(key) {
@@ -256,7 +251,10 @@ export function renderKanjiStudyCard({ store }) {
   const footerDesc = [
     { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', actionKey: 'prev', fnName: 'showPrev', action: () => showPrev() },
     // Note: removed stateful 'reveal' control (reveal/hide) as it caused issues.
-    { key: 'sound', icon: '🔊', text: 'Sound', caption: 'Space', shortcut: ' ', actionKey: 'sound', fnName: 'speakCurrent', action: () => speakCurrent() },
+    // Default sound buttons: kanji and reading. Additional sound.<field> actions
+    // are provided via extraActions so they can be added in custom buttons.
+    { key: 'sound.kanji', icon: '🔊', text: 'Sound', shortcut: '', actionKey: 'sound.kanji', fnName: 'speakField', action: () => speakField('kanji') },
+    { key: 'sound.reading', icon: '🔊', text: 'Sound', shortcut: ' ', actionKey: 'sound.reading', fnName: 'speakField', action: () => speakField('reading') },
     { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', actionKey: 'learned', fnName: 'toggleKanjiLearned', ariaPressed: false, action: () => {
       const entry = entries[index];
       const v = store.collections.getEntryStudyKey(entry);
@@ -292,7 +290,7 @@ export function renderKanjiStudyCard({ store }) {
     { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', actionKey: 'next', fnName: 'showNext', action: () => showNext() },
   ];
 
-  const footerControls = createViewFooterControls(footerDesc, { appId: 'kanjiStudy' });
+  let footerControls = null;
   // Unified speak helper: prefer reading/word/kana, fall back to kanji/character/text
   function speakEntry(entry) {
     if (!entry) return;
@@ -306,85 +304,63 @@ export function renderKanjiStudyCard({ store }) {
   }
   // Auto-speak setting removed from UI.
 
-  // Autoplay controls: create grouped play/gear control and hook into play loop
-  // Load app-specific autoplay config (saved under apps.kanjiStudy.*)
-  if (store?.settings && typeof store.settings.get === 'function') {
-    const seq = store.settings.get('apps.kanjiStudy.autoplaySequence', { consumerId: 'kanjiStudyCardView' });
-    if (Array.isArray(seq)) autoplayConfig = seq.slice();
-
-    const dvm = store.settings.get('apps.kanjiStudy.defaultViewMode', { consumerId: 'kanjiStudyCardView' });
-    if (typeof dvm === 'string') {
-      defaultViewMode = dvm;
-    }
-
-    // Ensure viewMode reflects restored default
-    viewMode = defaultViewMode;
+  // Speak a specific field from the current entry (used for sound.X actions)
+  function speakField(field) {
+    const entry = entries && entries.length ? entries[index] : null;
+    if (!entry || !field) return;
+    const text = getFieldValue(entry, [field]);
+    if (!text) return;
+    const lang = getLanguageCode(field);
+    speak(text, lang);
   }
 
-  // Ensure a sensible default sequence exists and persist it app-scoped if missing
-  const DEFAULT_AUTOPLAY_SEQUENCE = [
-    { action: 'next' },
-    { action: 'wait', ms: 1000 },
-    { action: 'sound' },
-    { action: 'wait', ms: 1000 }
-  ];
+  // Build extra dynamic sound actions so custom buttons can reference sound.<field>
+  // Only include fields present on kanji entries; exclude relatedCollections
+  const soundFields = ['kanji', 'lexicalClass', 'meaning', 'orthography', 'reading', 'type'];
+  const extraActions = soundFields.map((f) => ({
+    id: `sound.${f}`,
+    controlKey: `sound.${f}`,
+    text: `Sound (${f})`,
+    fnName: 'speakField',
+    invoke: (e) => { speakField(f); },
+  }));
 
-  if (!Array.isArray(autoplayConfig) || autoplayConfig.length === 0) {
-    autoplayConfig = DEFAULT_AUTOPLAY_SEQUENCE.slice();
-    store?.settings?.set?.('apps.kanjiStudy.autoplaySequence', autoplayConfig, { consumerId: 'kanjiStudyCardView' });
-  }
-
-  // Autoplay play/pause state must be toggleable from both UI and external
-  // media keys (Bluetooth play/pause). Keep UI + MediaSession in sync.
-  let autoplayControlsEl = null;
-  // Unique per mount: avoids a stale instance unregistering the active one.
-  const MEDIA_HANDLER_ID = `kanjiStudy-${Math.random().toString(36).slice(2, 10)}`;
-
-  function notifyShellMediaState() {
-    document.dispatchEvent(new CustomEvent('app:mediaStateChanged', { detail: { id: MEDIA_HANDLER_ID } }));
-  }
-
-  function setAutoplayPlaying(next, { source = 'internal' } = {}) {
-    const want = !!next;
-    if (want) {
-      // Mirror the autoplay UI's behavior: if no sequence exists, do not start.
-      if (!Array.isArray(autoplayConfig) || autoplayConfig.length === 0) return;
-    }
-    if (want === isAutoPlaying) {
-      // still keep MediaSession/UI consistent
-      if (autoplayControlsEl && autoplayControlsEl.__setPlaying) autoplayControlsEl.__setPlaying(want);
-      notifyShellMediaState();
-      return;
-    }
-
-    isAutoPlaying = want;
-    if (!isAutoPlaying) {
-      _autoplayAbort = true;
-    }
-
-    if (autoplayControlsEl && autoplayControlsEl.__setPlaying) autoplayControlsEl.__setPlaying(isAutoPlaying);
-    notifyShellMediaState();
-    saveUIState();
-    if (isAutoPlaying) startAutoplay();
-  }
-
-  autoplayControlsEl = createAutoplayControls({
-    sequence: Array.isArray(autoplayConfig) ? autoplayConfig : [],
-    isPlaying: !!isAutoPlaying,
-    onTogglePlay: (play) => {
-      // UI already toggled its own icon; we centralize state changes here so
-      // MediaSession + external controls stay consistent.
-      setAutoplayPlaying(!!play, { source: 'ui' });
-    },
-    onSequenceChange: (seq) => {
-      autoplayConfig = Array.isArray(seq) ? seq.slice() : [];
-      store?.settings?.set?.('apps.kanjiStudy.autoplaySequence', autoplayConfig, { consumerId: 'kanjiStudyCardView' });
-      saveUIState();
+  // Add explicit kanji state setters so custom buttons can call them directly.
+  // These wrap store.kanjiProgress APIs and operate on the current entry.
+  extraActions.push({
+    id: 'setStateLearned', controlKey: 'setStateLearned', text: 'Set Learned', fnName: 'setStateLearned', invoke: () => {
+      const entry = entries && entries.length ? entries[index] : null;
+      const key = entry ? store.collections.getEntryStudyKey(entry) : null;
+      if (!key) return;
+      try { store.kanjiProgress.setStateLearned(key, { collectionKey: getCurrentCollectionKey() }); } catch (e) {}
     }
   });
-  // place autoplay controls at start of headerTools, grouped visually
-  // place autoplay controls at start of headerTools
-  headerTools.prepend(autoplayControlsEl);
+  extraActions.push({
+    id: 'setStateNull', controlKey: 'setStateNull', text: 'Clear State', fnName: 'setStateNull', invoke: () => {
+      const entry = entries && entries.length ? entries[index] : null;
+      const key = entry ? store.collections.getEntryStudyKey(entry) : null;
+      if (!key) return;
+      try { store.kanjiProgress.setStateNull(key, { collectionKey: getCurrentCollectionKey() }); } catch (e) {}
+    }
+  });
+  extraActions.push({
+    id: 'setStateFocus', controlKey: 'setStateFocus', text: 'Set Focus', fnName: 'setStateFocus', invoke: () => {
+      const entry = entries && entries.length ? entries[index] : null;
+      const key = entry ? store.collections.getEntryStudyKey(entry) : null;
+      if (!key) return;
+      try { store.kanjiProgress.setStateFocus(key, { collectionKey: getCurrentCollectionKey() }); } catch (e) {}
+    }
+  });
+
+  // Now create footer controls, passing extraActions so they appear in availableActions
+  footerControls = createViewFooterControls(footerDesc, { appId: 'kanjiStudy', extraActions });
+
+  // Load default view mode from settings
+  if (store?.settings && typeof store.settings.get === 'function') {
+    const dvm = store.settings.get('apps.kanjiStudy.defaultViewMode', { consumerId: 'kanjiStudyCardView' });
+    if (typeof dvm === 'string') defaultViewMode = dvm;
+    viewMode = defaultViewMode;
+  }
 
   // Create main/related/full card APIs. Prefer registry instances where available;
   // recreate related card with handlers so it can call back into this view.
@@ -642,7 +618,7 @@ export function renderKanjiStudyCard({ store }) {
       revealFull();
     }
   }
-  function speakCurrent() { if (entries[index]) speakEntry(entries[index]); }
+  
 
   function updateMarkButtons() {
     const learnedBtn = getFooterButton('learned');
@@ -704,59 +680,7 @@ export function renderKanjiStudyCard({ store }) {
 
   // PRNG and permutation now in collectionsManager
 
-  // Autoplay loop: performs configured sequence for each card
-  let _autoplayAbort = false;
-  async function startAutoplay() {
-    _autoplayAbort = false;
-    // ensure we don't spawn multiple loops
-    if (!isAutoPlaying) return;
-    // default sequence if none configured
-    const defaultSequence = [
-      { action: 'next' },
-      { action: 'wait', ms: 2000 },
-      { action: 'sound' },
-      { action: 'wait', ms: 1000 }
-    ];
 
-    while (isAutoPlaying && !_autoplayAbort) {
-      const seq = Array.isArray(autoplayConfig) && autoplayConfig.length ? autoplayConfig.slice() : defaultSequence.slice();
-
-      for (const step of seq) {
-        if (!isAutoPlaying || _autoplayAbort) break;
-        if (step.action === 'next') {
-          // advance and wrap to start when reaching end
-          if (index >= entries.length - 1) {
-            goToIndex(0);
-          } else {
-            showNext();
-          }
-        } else if (step.action === 'prev') {
-          showPrev();
-        } else if (step.action === 'sound') {
-          speakCurrent();
-        } else if (step.action === 'wait') {
-          await sleep(Number(step.ms) || 0);
-        }
-
-        // small pacing gap between actions
-        await sleep(80);
-        if (!document.body.contains(el)) {
-          isAutoPlaying = false;
-          notifyShellMediaState();
-          try { autoplayControlsEl && autoplayControlsEl.__setPlaying && autoplayControlsEl.__setPlaying(false); } catch (e) {}
-          saveUIState();
-          _autoplayAbort = true;
-          break;
-        }
-      }
-      // after running full sequence, yield briefly to avoid tight loop
-      await sleep(200);
-    }
-    // update any UI state (play button) via saved state
-    notifyShellMediaState();
-    if (autoplayControlsEl && autoplayControlsEl.__setPlaying) autoplayControlsEl.__setPlaying(!!isAutoPlaying);
-    saveUIState();
-  }
 
   function toggleDefaultViewMode() {
     defaultViewMode = defaultViewMode === 'kanji-only' ? 'full' : 'kanji-only';
@@ -846,32 +770,7 @@ export function renderKanjiStudyCard({ store }) {
     });
   }
 
-  // start autoplay automatically if saved state requested and a sequence exists
-  if (isAutoPlaying && Array.isArray(autoplayConfig) && autoplayConfig.length) startAutoplay();
-
-  // Register media controls with the shell so Bluetooth/media play-pause can
-  // toggle autoplay just like clicking the play button.
-  document.dispatchEvent(new CustomEvent('app:registerMediaHandler', {
-    detail: {
-      id: MEDIA_HANDLER_ID,
-      play: () => {
-        if (!document.body.contains(el)) return { playing: false };
-        setAutoplayPlaying(true, { source: 'shell-media' });
-        return { playing: !!isAutoPlaying };
-      },
-      pause: () => {
-        if (!document.body.contains(el)) return { playing: false };
-        setAutoplayPlaying(false, { source: 'shell-media' });
-        return { playing: !!isAutoPlaying };
-      },
-      toggle: () => {
-        if (!document.body.contains(el)) return { playing: false };
-        setAutoplayPlaying(!isAutoPlaying, { source: 'shell-media' });
-        return { playing: !!isAutoPlaying };
-      },
-      getState: () => ({ playing: !!isAutoPlaying }),
-    }
-  }));
+  
 
   // Footer caption (below the card)
   const footer = document.createElement('div');
@@ -903,19 +802,16 @@ export function renderKanjiStudyCard({ store }) {
   try {
     headerTools.addElement({ type: 'button', key: 'shuffle', label: 'Shuffle', caption: 'col.shuffle', onClick: shuffleEntries });
   } catch (e) {}
-  // Ensure header order: play (autoplayControlsEl), shuffle, visible.cards (displayCards), then others
+  // Ensure header order: shuffle, visible.cards (displayCards), then others
   try {
     const parent = headerTools;
-    const autoplayNode = autoplayControlsEl;
     const shuffleCtrl = (typeof headerTools.getControl === 'function') ? headerTools.getControl('shuffle') : null;
     const displayCtrl = (typeof headerTools.getControl === 'function') ? headerTools.getControl('displayCards') : null;
     const shuffleGroup = shuffleCtrl && shuffleCtrl.parentNode ? shuffleCtrl.parentNode : null;
     const displayGroup = displayCtrl && displayCtrl.parentNode ? displayCtrl.parentNode : null;
-    if (parent && autoplayNode && shuffleGroup && parent.contains(autoplayNode) && parent.contains(shuffleGroup)) {
-      parent.insertBefore(shuffleGroup, autoplayNode.nextSibling);
-    }
-    if (parent && autoplayNode && displayGroup) {
-      const after = (shuffleGroup && parent.contains(shuffleGroup)) ? shuffleGroup.nextSibling : autoplayNode.nextSibling;
+    if (parent && shuffleGroup) parent.insertBefore(shuffleGroup, parent.firstChild);
+    if (parent && displayGroup) {
+      const after = (shuffleGroup && parent.contains(shuffleGroup)) ? shuffleGroup.nextSibling : parent.firstChild;
       parent.insertBefore(displayGroup, after);
     }
   } catch (e) {}
@@ -939,7 +835,7 @@ export function renderKanjiStudyCard({ store }) {
       // finalize any remaining credit when navigating away/unmounting
       progressTracker?.teardown?.();
       if (typeof unsub === 'function') unsub();
-      document.dispatchEvent(new CustomEvent('app:unregisterMediaHandler', { detail: { id: MEDIA_HANDLER_ID } }));
+      
       // cleanup header/footer moved into shell
       if (__mountedHeaderInShell && headerTools && headerTools.parentNode) headerTools.parentNode.removeChild(headerTools);
       if (__mountedFooterInShell && footerControls && footerControls.el && footerControls.el.parentNode) footerControls.el.parentNode.removeChild(footerControls.el);

@@ -1,6 +1,7 @@
 import { createTable } from '../components/table.js';
 import { card, el } from '../components/ui.js';
 import { createDropdown } from '../components/dropdown.js';
+import { createJsonViewer } from '../components/jsonViewer.js';
 import { validateSchemaArray, validateEntriesAgainstSchema } from '../utils/validation.js';
 
 function safeJsonStringify(v, space = 2) {
@@ -527,20 +528,8 @@ export function renderManageCollections({ store, onNavigate }) {
     }
 
     // Visible: build the full JSON view (stringify now — lazy)
-    const wrapper = document.createElement('div');
-    wrapper.className = 'json-view-wrapper mono';
-    wrapper.id = JSON_WRAPPER_ID;
-    wrapper.dataset.expanded = 'true';
-    wrapper.style.position = 'relative';
-
-    const pre = document.createElement('pre');
-    pre.className = 'json-view mono';
-    pre.id = JSON_PRE_ID;
-    if (isJsonWrapped && pre.style) pre.style.setProperty('text-wrap', 'auto');
-    pre.textContent = safeJsonStringify(src, 2);
-
-    wrapper.appendChild(pre);
-    jsonViewerMount.appendChild(wrapper);
+    const viewer = createJsonViewer(src, { id: JSON_WRAPPER_ID, preId: JSON_PRE_ID, expanded: true, wrapping: isJsonWrapped });
+    jsonViewerMount.appendChild(viewer);
     jsonBuilt = true;
     snapshotToggleBtn.disabled = !(previewResult && previewResult.merged);
   }
