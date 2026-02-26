@@ -22,10 +22,16 @@ export function addShuffleControls(headerTools, { store, onShuffle, onClearShuff
     type: 'button', key: 'clearShuffle', label: 'Clear Shuffle', caption: 'col.clear-shuffle',
     onClick: () => {
       try {
+        // Always clear persisted shuffle state first so views don't immediately reapply it.
+        try {
+          const coll = store?.collections?.getActiveCollection?.();
+          if (coll && coll.key && store?.collections && typeof store.collections.clearCollectionShuffle === 'function') {
+            store.collections.clearCollectionShuffle(coll.key);
+          }
+        } catch (e) {}
+
+        // Then invoke any view-specific handler if provided so the view can refresh UI.
         if (typeof onClearShuffle === 'function') { onClearShuffle(); return; }
-        const coll = store?.collections?.getActiveCollection?.();
-        if (!coll) return;
-        if (store?.collections && typeof store.collections.clearCollectionShuffle === 'function') store.collections.clearCollectionShuffle(coll.key);
       } catch (e) {}
     }
   });

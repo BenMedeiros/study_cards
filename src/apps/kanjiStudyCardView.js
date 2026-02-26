@@ -794,7 +794,6 @@ export function renderKanjiStudyCard({ store }) {
       onShuffle: shuffleEntries,
       onClearShuffle: () => {
         try {
-          // collectionControls will handle clearing persisted shuffle; view should just refresh
           refreshEntriesFromStore();
           index = 0;
           viewMode = defaultViewMode;

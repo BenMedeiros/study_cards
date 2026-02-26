@@ -192,7 +192,6 @@ export function renderQaCards({ store }) {
         },
         onClearShuffle: () => {
           try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
-          try { if (store?.collections && typeof store.collections.clearCollectionShuffle === 'function') store.collections.clearCollectionShuffle(active?.key); } catch (e) {}
           try { rebuildEntriesFromCollectionState(); } catch (e) {}
           index = Math.min(index, Math.max(0, entries.length - 1));
           try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
