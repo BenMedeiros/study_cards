@@ -1,6 +1,17 @@
 import { el, safeId } from '../ui.js';
 import { openViewFooterCustomButtonDialog } from './viewFooterCustomButtonDialog.js';
 
+// Autoplay constraints
+const AUTOPLAY_MIN_MS = 500;
+const AUTOPLAY_MAX_MS = 10000;
+const AUTOPLAY_STEP_MS = 500;
+
+function clampAutoplayMs(ms) {
+  const n = Number(ms || 0) || 0;
+  const stepped = Math.round(n / AUTOPLAY_STEP_MS) * AUTOPLAY_STEP_MS;
+  return Math.max(AUTOPLAY_MIN_MS, Math.min(AUTOPLAY_MAX_MS, stepped));
+}
+
 function deepClone(value) {
   try { return JSON.parse(JSON.stringify(value)); } catch (e) { return value; }
 }
@@ -893,6 +904,19 @@ export function openViewFooterSettingsDialog({
 
       const fields = el('div', { className: 'view-footer-control-fields' });
 
+      // Autoplay controls (checkbox + delay +/- .5s)
+      const autoplayWrap = el('div', { className: 'view-footer-autoplay-fields' });
+      const autoplayChk = el('input', { attrs: { type: 'checkbox' } });
+      const autoplayLabel = el('label', { className: 'view-footer-autoplay-label', text: 'Autoplay' });
+      autoplayLabel.prepend(autoplayChk);
+      const delayMinus = el('button', { className: 'btn small view-footer-autoplay-minus', text: '-' });
+      delayMinus.type = 'button';
+      const delayVal = el('div', { className: 'view-footer-custom-delay-value', text: '0.0s' });
+      const delayPlus = el('button', { className: 'btn small view-footer-autoplay-plus', text: '+' });
+      delayPlus.type = 'button';
+      autoplayWrap.append(autoplayLabel, delayMinus, delayVal, delayPlus);
+      fields.appendChild(autoplayWrap);
+
       if (isCustom && customBtn) {
         const actionWrap = el('div', { className: 'view-footer-action-list' });
         const header = el('div', { className: 'view-footer-action-row view-footer-action-row-header' });
@@ -985,6 +1009,72 @@ export function openViewFooterSettingsDialog({
         stRow.append(actionLabel, stIcon, stText, stHotkeyBtn, editBtn);
         actionWrap.appendChild(stRow);
         fields.appendChild(actionWrap);
+        // initialize autoplay values for custom buttons
+        try {
+          const ov = getControlOverride(cfg, key) || {};
+          const apRaw = (ov.autoplay && typeof ov.autoplay === 'object') ? ov.autoplay : { enabled: false, delayMs: AUTOPLAY_MIN_MS };
+          // detect any link actions and disable autoplay control if present
+          const hasLink = Array.isArray(customBtn.actions) && customBtn.actions.some(s => { const id = String((s && s.actionId) || '').trim(); return /^link(\.|$)/i.test(id); });
+          // clamp stored delay to valid range and step
+          const delayMs = clampAutoplayMs(Number(apRaw.delayMs || AUTOPLAY_MIN_MS));
+          autoplayChk.checked = !!apRaw.enabled && !hasLink;
+          delayVal.textContent = `${(delayMs / 1000).toFixed(1)}s`;
+          // disable +/- when not enabled
+          if (!autoplayChk.checked) {
+            delayMinus.disabled = true; delayPlus.disabled = true;
+          }
+          if (hasLink) {
+            autoplayChk.disabled = true;
+            try { autoplayLabel.title = 'Autoplay disabled: contains link actions which cannot be autoplayed.'; autoplayLabel.classList.add('disabled'); autoplayLabel.setAttribute('aria-disabled','true'); } catch (e) {}
+          }
+        } catch (e) {}
+        // custom button: change handlers for autoplay and +/- with clamping
+        autoplayChk.addEventListener('change', () => {
+          if (autoplayChk.disabled) return;
+          try {
+            const ov = getControlOverride(cfg, key) || {};
+            const apRaw = (ov.autoplay && typeof ov.autoplay === 'object') ? deepClone(ov.autoplay) : { enabled: false, delayMs: AUTOPLAY_MIN_MS };
+            const ap = { ...apRaw };
+            if (autoplayChk.checked) {
+              ap.enabled = true;
+              ap.delayMs = clampAutoplayMs(ap.delayMs || AUTOPLAY_MIN_MS);
+              delayMinus.disabled = (ap.delayMs <= AUTOPLAY_MIN_MS);
+              delayPlus.disabled = (ap.delayMs >= AUTOPLAY_MAX_MS);
+            } else {
+              ap.enabled = false;
+              delayMinus.disabled = true; delayPlus.disabled = true;
+            }
+            setControlOverride(cfg, key, { ...ov, autoplay: ap });
+            delayVal.textContent = `${(Number(ap.delayMs || 0) / 1000).toFixed(1)}s`;
+            markDirty();
+          } catch (e) {}
+        });
+        delayMinus.addEventListener('click', () => {
+          try {
+            const ov = getControlOverride(cfg, key) || {};
+            const apRaw = (ov.autoplay && typeof ov.autoplay === 'object') ? deepClone(ov.autoplay) : { enabled: false, delayMs: AUTOPLAY_MIN_MS };
+            const nextDelay = clampAutoplayMs(Math.max(AUTOPLAY_MIN_MS, Number(apRaw.delayMs || AUTOPLAY_MIN_MS) - AUTOPLAY_STEP_MS));
+            const ap = { ...apRaw, delayMs: nextDelay };
+            setControlOverride(cfg, key, { ...ov, autoplay: ap });
+            delayVal.textContent = `${(nextDelay / 1000).toFixed(1)}s`;
+            delayMinus.disabled = (nextDelay <= AUTOPLAY_MIN_MS);
+            delayPlus.disabled = (nextDelay >= AUTOPLAY_MAX_MS);
+            markDirty();
+          } catch (e) {}
+        });
+        delayPlus.addEventListener('click', () => {
+          try {
+            const ov = getControlOverride(cfg, key) || {};
+            const apRaw = (ov.autoplay && typeof ov.autoplay === 'object') ? deepClone(ov.autoplay) : { enabled: false, delayMs: AUTOPLAY_MIN_MS };
+            const nextDelay = clampAutoplayMs(Math.min(AUTOPLAY_MAX_MS, Number(apRaw.delayMs || AUTOPLAY_MIN_MS) + AUTOPLAY_STEP_MS));
+            const ap = { ...apRaw, delayMs: nextDelay };
+            setControlOverride(cfg, key, { ...ov, autoplay: ap });
+            delayVal.textContent = `${(nextDelay / 1000).toFixed(1)}s`;
+            delayMinus.disabled = (nextDelay <= AUTOPLAY_MIN_MS);
+            delayPlus.disabled = (nextDelay >= AUTOPLAY_MAX_MS);
+            markDirty();
+          } catch (e) {}
+        });
       } else {
         const actionWrap = el('div', { className: 'view-footer-action-list' });
         const header = el('div', { className: 'view-footer-action-row view-footer-action-row-header' });
@@ -1114,6 +1204,68 @@ export function openViewFooterSettingsDialog({
         }
 
         fields.appendChild(actionWrap);
+        // initialize autoplay values for base controls
+        try {
+          const ov = getControlOverride(cfg, key) || {};
+          const apRaw = (ov.autoplay && typeof ov.autoplay === 'object') ? ov.autoplay : { enabled: false, delayMs: AUTOPLAY_MIN_MS };
+          const actionId = asString(base.actionKey || base.key || '');
+          const isLinkAction = /^link(\.|$)/i.test(actionId);
+          const delayMs = clampAutoplayMs(Number(apRaw.delayMs || AUTOPLAY_MIN_MS));
+          autoplayChk.checked = !!apRaw.enabled && !isLinkAction;
+          delayVal.textContent = `${(delayMs / 1000).toFixed(1)}s`;
+          if (!autoplayChk.checked) {
+            delayMinus.disabled = true; delayPlus.disabled = true;
+          }
+          if (isLinkAction) {
+            autoplayChk.disabled = true;
+            try { autoplayLabel.title = 'Autoplay disabled: control action is a link and cannot be autoplayed.'; autoplayLabel.classList.add('disabled'); autoplayLabel.setAttribute('aria-disabled','true'); } catch (e) {}
+          }
+        } catch (e) {}
+        autoplayChk.addEventListener('change', () => {
+          if (autoplayChk.disabled) return;
+          try {
+            const ov = getControlOverride(cfg, key) || {};
+            const apRaw = (ov.autoplay && typeof ov.autoplay === 'object') ? deepClone(ov.autoplay) : { enabled: false, delayMs: AUTOPLAY_MIN_MS };
+            const ap = { ...apRaw };
+            if (autoplayChk.checked) {
+              ap.enabled = true;
+              ap.delayMs = clampAutoplayMs(ap.delayMs || AUTOPLAY_MIN_MS);
+              delayMinus.disabled = (ap.delayMs <= AUTOPLAY_MIN_MS);
+              delayPlus.disabled = (ap.delayMs >= AUTOPLAY_MAX_MS);
+            } else {
+              ap.enabled = false;
+              delayMinus.disabled = true; delayPlus.disabled = true;
+            }
+            setControlOverride(cfg, key, { ...ov, autoplay: ap });
+            markDirty();
+          } catch (e) {}
+        });
+        delayMinus.addEventListener('click', () => {
+          try {
+            const ov = getControlOverride(cfg, key) || {};
+            const apRaw = (ov.autoplay && typeof ov.autoplay === 'object') ? deepClone(ov.autoplay) : { enabled: false, delayMs: AUTOPLAY_MIN_MS };
+            const nextDelay = clampAutoplayMs(Math.max(AUTOPLAY_MIN_MS, Number(apRaw.delayMs || AUTOPLAY_MIN_MS) - AUTOPLAY_STEP_MS));
+            const ap = { ...apRaw, delayMs: nextDelay };
+            setControlOverride(cfg, key, { ...ov, autoplay: ap });
+            delayVal.textContent = `${(nextDelay / 1000).toFixed(1)}s`;
+            delayMinus.disabled = (nextDelay <= AUTOPLAY_MIN_MS);
+            delayPlus.disabled = (nextDelay >= AUTOPLAY_MAX_MS);
+            markDirty();
+          } catch (e) {}
+        });
+        delayPlus.addEventListener('click', () => {
+          try {
+            const ov = getControlOverride(cfg, key) || {};
+            const apRaw = (ov.autoplay && typeof ov.autoplay === 'object') ? deepClone(ov.autoplay) : { enabled: false, delayMs: AUTOPLAY_MIN_MS };
+            const nextDelay = clampAutoplayMs(Math.min(AUTOPLAY_MAX_MS, Number(apRaw.delayMs || AUTOPLAY_MIN_MS) + AUTOPLAY_STEP_MS));
+            const ap = { ...apRaw, delayMs: nextDelay };
+            setControlOverride(cfg, key, { ...ov, autoplay: ap });
+            delayVal.textContent = `${(nextDelay / 1000).toFixed(1)}s`;
+            delayMinus.disabled = (nextDelay <= AUTOPLAY_MIN_MS);
+            delayPlus.disabled = (nextDelay >= AUTOPLAY_MAX_MS);
+            markDirty();
+          } catch (e) {}
+        });
       }
 
       visibility.addEventListener('change', () => {

@@ -1,3 +1,46 @@
+/* Autoplay visuals for footer buttons */
+.view-footer-controls .btn {
+  position: relative;
+}
+
+.view-footer-controls .btn .autoplay-container > * {
+
+  font-size: 0.85em;
+  display: none;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.view-footer-controls .btn.autoplay-active {
+  border-color: #2196f3;
+  box-shadow: 0 0 0 2px rgba(33,150,243,0.12);
+}
+
+.view-footer-controls .btn.autoplay-active .autoplay-container > * {
+  display: block;
+  color: #2196f3;
+}
+
+/* disabled label for autoplay control */
+.view-footer-autoplay-label.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Autoplay wrapper and countdown */
+.view-footer-controls .autoplay-container {
+  position: absolute;
+  top: 0px;
+  right: .1rem;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: .1rem;
+}
+
+
+
+
 /* ============================================
    Theme / Tokens
    ============================================ */
@@ -65,6 +108,11 @@ body {
 /* ============================================
    Views / Components
    ============================================ */
+
+.view-footer-autoplay-fields {
+  display: flex;
+  align-items: center;
+}
 
 .view-footer-controls .btn {
   /* box-sizing: border-box; */

@@ -3,6 +3,17 @@ import { openViewFooterSettingsDialog } from './dialogs/viewFooterSettingsDialog
 
 const FOOTER_CONFIGS_SETTING_ID = 'apps.viewFooter.configs';
 
+// Autoplay constraints (mirror of settings dialog)
+const AUTOPLAY_MIN_MS = 500;
+const AUTOPLAY_MAX_MS = 10000;
+const AUTOPLAY_STEP_MS = 500;
+
+function clampAutoplayMs(ms) {
+  const n = Number(ms || 0) || 0;
+  const stepped = Math.round(n / AUTOPLAY_STEP_MS) * AUTOPLAY_STEP_MS;
+  return Math.max(AUTOPLAY_MIN_MS, Math.min(AUTOPLAY_MAX_MS, stepped));
+}
+
 function deepClone(value) {
   try { return JSON.parse(JSON.stringify(value)); } catch (e) { return value; }
 }
@@ -239,8 +250,12 @@ function createCustomButtonDescriptor(button, actionRegistry, disableHotkeys = f
     text: asString(button.text) || 'Custom',
     caption: asString(button.caption),
     shortcut: asString(button.shortcut),
-    action: (e) => { runAll(e); },
+    action: (e) => { return runAll(e); },
   };
+
+  // expose action ids for validation (used by autoplay checks)
+  try { descriptor.__actionIds = actions.map(a => String(a.actionId || '').trim()); } catch (e) { descriptor.__actionIds = []; }
+  try { descriptor.__hasLinkAction = descriptor.__actionIds.some(id => /^link(\.|$)/i.test(id)); } catch (e) { descriptor.__hasLinkAction = false; }
 
   if (disableHotkeys) {
     delete descriptor.shortcut;
@@ -267,7 +282,23 @@ function applyFooterConfig(items = [], appPrefs = null, actionRegistry = new Map
       : {};
     if (override.hidden) continue;
     const descriptor = createCustomButtonDescriptor(customBtn, actionRegistry, disableHotkeys);
-    if (descriptor) customButtonsByToken.set(token, descriptor);
+    if (descriptor) {
+      // carry autoplay override into custom descriptor (sanitize delay)
+      if (override && typeof override.autoplay === 'object') {
+        try {
+          const ap = deepClone(override.autoplay);
+          if (!ap || typeof ap !== 'object') throw new Error('bad');
+          const delay = Number(ap.delayMs) || 0;
+          // clamp to allowed range
+          const clamped = Math.max(0, Math.round(delay));
+          ap.delayMs = clamped;
+          descriptor.autoplay = ap;
+        } catch (e) {
+          // ignore malformed autoplay overrides
+        }
+      }
+      customButtonsByToken.set(token, descriptor);
+    }
   }
 
   for (const item of items) {
@@ -317,6 +348,10 @@ function applyFooterConfig(items = [], appPrefs = null, actionRegistry = new Map
         delete next.shortcut;
         delete next.caption;
       }
+    }
+    // carry autoplay override through to descriptor so controls can act on it
+    if (override && typeof override.autoplay === 'object') {
+      try { next.autoplay = deepClone(override.autoplay); } catch (e) { next.autoplay = { enabled: !!override.autoplay.enabled, delayMs: Number(override.autoplay.delayMs) || 0 }; }
     }
     controlsByKey.set(key, next);
   }
@@ -421,6 +456,99 @@ function createViewFooterControls(items = [], opts = {}) {
   const baseKeys = baseControlItems.map(it => String(it.key || '').trim()).filter(Boolean);
   let allFooterPrefs = {};
   let appPrefs = normalizeAppFooterPrefs(null, baseKeys);
+  // autoplay runtime state: only one autoplay allowed at a time
+  let currentAutoplay = null;
+
+  function cancelAutoplay() {
+    try {
+      if (!currentAutoplay) return;
+      if (currentAutoplay.interval) try { clearInterval(currentAutoplay.interval); } catch (e) {}
+      if (currentAutoplay.timeoutId) try { clearTimeout(currentAutoplay.timeoutId); } catch (e) {}
+      if (currentAutoplay.countdownInterval) try { clearInterval(currentAutoplay.countdownInterval); } catch (e) {}
+      try { currentAutoplay.el.setAutoplayActive(false); } catch (e) {}
+      try { currentAutoplay.el.setAutoplayCountdown(0); } catch (e) {}
+    } catch (e) {}
+    currentAutoplay = null;
+  }
+
+  function startAutoplayFor(key, el, item) {
+    try {
+      if (!item || !el) return false;
+      // validate: do not autoplay link actions
+      if (item.__hasLinkAction) {
+        console.error('Autoplay prevented: button contains link actions.');
+        return false;
+      }
+      // also check action registry for any actions for this control that look like links
+      for (const entry of actionRegistry.values()) {
+        try {
+          if (String(entry.controlKey || '') === String(key || '')) {
+            const id = String(entry.id || '').trim();
+            if (/^link(\.|$)/i.test(id)) {
+              console.error('Autoplay prevented: control action looks like a link (', id, ').');
+              return false;
+            }
+          }
+        } catch (e) {}
+      }
+
+      // clamp delay for safety
+      let delayMsRaw = (item.autoplay && Number.isFinite(Number(item.autoplay.delayMs))) ? Math.round(Number(item.autoplay.delayMs)) : AUTOPLAY_MIN_MS;
+      const delayMs = clampAutoplayMs(delayMsRaw || AUTOPLAY_MIN_MS);
+      cancelAutoplay();
+      try { el.setAutoplayDelay(delayMs); } catch (e) {}
+      try { console.debug('[autoplay] start next delayMs=', delayMs); } catch (e) {}
+      try { el.setAutoplayActive(true); } catch (e) {}
+
+      // serial runner: invoke action, wait for completion (if Promise), then start countdown for delayMs,
+      // then wait delayMs and repeat. This ensures custom button internal delays complete before countdown starts.
+      currentAutoplay = { key, el, timeoutId: null, countdownInterval: null, cancelled: false };
+
+      const invokeAndSchedule = async () => {
+        if (!currentAutoplay || currentAutoplay.cancelled) return;
+        // while the action is running, show the static delay value
+        try { el.setAutoplayCountdown(delayMs); } catch (e) {}
+
+        // invoke and await completion if it returns a Promise
+        try {
+          let res;
+          if (typeof el._invokeAction === 'function') res = el._invokeAction({ autoplay: true });
+          else if (typeof el._invokeStateAction === 'function') res = el._invokeStateAction({ autoplay: true });
+          else if (item && typeof item.action === 'function') res = item.action({ autoplay: true });
+          if (res && typeof res.then === 'function') {
+            try { await res; } catch (err) {}
+          }
+        } catch (err) {}
+
+        if (!currentAutoplay || currentAutoplay.cancelled) return;
+        // now start the live countdown for the delay until next run
+        let nextRun = Date.now() + delayMs;
+        try { currentAutoplay.countdownInterval = setInterval(() => {
+          try {
+            const rem = Math.max(0, nextRun - Date.now());
+            try { el.setAutoplayCountdown(rem); } catch (e) {}
+          } catch (e) {}
+        }, 100); } catch (e) { currentAutoplay.countdownInterval = null; }
+
+        // schedule next cycle
+        try {
+          currentAutoplay.timeoutId = setTimeout(() => {
+            try { if (currentAutoplay.countdownInterval) { try { clearInterval(currentAutoplay.countdownInterval); } catch (e) {} currentAutoplay.countdownInterval = null; } } catch (e) {}
+            // recurse
+            try { invokeAndSchedule(); } catch (e) {}
+          }, delayMs);
+        } catch (e) {
+          // if scheduling failed, clean up
+          try { if (currentAutoplay.countdownInterval) clearInterval(currentAutoplay.countdownInterval); } catch (e) {}
+          currentAutoplay = null;
+        }
+      };
+
+      // start first cycle immediately
+      invokeAndSchedule();
+      return true;
+    } catch (e) { return false; }
+  }
 
   // helper to create a simple button element from descriptor
   function makeButton(desc) {
@@ -436,11 +564,46 @@ function createViewFooterControls(items = [], opts = {}) {
     const caption = document.createElement('span');
     caption.className = 'caption';
     caption.textContent = desc.caption || '';
+    // autoplay indicator (positioned top-right by CSS)
+    const autoplayIcon = document.createElement('span');
+    autoplayIcon.className = 'autoplay-icon';
+    autoplayIcon.textContent = '⟳';
+    autoplayIcon.style.display = 'none';
+    const autoplayWrap = document.createElement('div');
+    autoplayWrap.className = 'autoplay-container';
+    const autoplayCountdown = document.createElement('span');
+    autoplayCountdown.className = 'autoplay-countdown';
+    autoplayCountdown.style.display = 'none';
+    autoplayWrap.appendChild(autoplayIcon);
+    autoplayWrap.appendChild(autoplayCountdown);
     if (desc.ariaPressed !== undefined) b.setAttribute('aria-pressed', String(!!desc.ariaPressed));
-    b.append(icon, text, caption);
+    b.append(icon, text, caption, autoplayWrap);
     if (typeof desc.action === 'function') {
-      b.addEventListener('click', (e) => desc.action(e));
+      b._invokeAction = (e) => { try { return desc.action(e); } catch (err) { return undefined; } };
     }
+    // autoplay helpers
+    b.setAutoplayActive = (v) => {
+      try {
+        if (v) {
+          b.classList.add('autoplay-active');
+          autoplayIcon.style.display = '';
+          autoplayCountdown.style.display = '';
+        } else {
+          b.classList.remove('autoplay-active');
+          autoplayIcon.style.display = 'none';
+          autoplayCountdown.style.display = 'none';
+        }
+      } catch (e) {}
+    };
+    b.setAutoplayDelay = (ms) => { b.dataset.autoplayDelay = String(Number(ms) || 0); };
+    b.setAutoplayCountdown = (ms) => {
+      try {
+        const n = Number(ms || 0) || 0;
+        // always update text; visibility is controlled by setAutoplayActive
+        autoplayCountdown.textContent = `${(n/1000).toFixed(1)}`;
+        autoplayCountdown.style.display = '';
+      } catch (e) {}
+    };
     // Helper API for apps to update parts of the button without rebuilding innerHTML
     b.setIcon = (v) => { icon.textContent = v || ''; };
     b.setText = (v) => { text.textContent = v || ''; };
@@ -461,7 +624,19 @@ function createViewFooterControls(items = [], opts = {}) {
     text.className = 'text';
     const caption = document.createElement('span');
     caption.className = 'caption';
-    b.append(icon, text, caption);
+    // autoplay indicator + countdown
+    const autoplayIcon = document.createElement('span');
+    autoplayIcon.className = 'autoplay-icon';
+    autoplayIcon.textContent = '⟳';
+    autoplayIcon.style.display = 'none';
+    const autoplayWrap = document.createElement('div');
+    autoplayWrap.className = 'autoplay-container';
+    const autoplayCountdown = document.createElement('span');
+    autoplayCountdown.className = 'autoplay-countdown';
+    autoplayCountdown.style.display = 'none';
+    autoplayWrap.appendChild(autoplayIcon);
+    autoplayWrap.appendChild(autoplayCountdown);
+    b.append(icon, text, caption, autoplayWrap);
 
     const states = Array.isArray(desc.states) ? desc.states.slice() : [];
     const stateMap = {};
@@ -484,10 +659,35 @@ function createViewFooterControls(items = [], opts = {}) {
     b.setState = (name) => { applyState(name); };
     b.getState = () => current;
 
+    b.setAutoplayActive = (v) => {
+      try {
+        if (v) {
+          b.classList.add('autoplay-active');
+          autoplayIcon.style.display = '';
+          autoplayCountdown.style.display = '';
+        } else {
+          b.classList.remove('autoplay-active');
+          autoplayIcon.style.display = 'none';
+          autoplayCountdown.style.display = 'none';
+        }
+      } catch (e) {}
+    };
+    b.setAutoplayDelay = (ms) => { b.dataset.autoplayDelay = String(Number(ms) || 0); };
+    b.setAutoplayCountdown = (ms) => {
+      try {
+        const n = Number(ms || 0) || 0;
+        // always update text; visibility is controlled by setAutoplayActive
+        autoplayCountdown.textContent = `${(n/1000).toFixed(1)}`;
+        autoplayCountdown.style.display = '';
+      } catch (e) {}
+    };
+
     // click executes current state's action if present
     b.addEventListener('click', (e) => {
       const s = stateMap[current];
-      if (s && typeof s.action === 'function') s.action(e);
+      if (s && typeof s.action === 'function') {
+        try { s.action(e); } catch (err) {}
+      }
     });
 
     // expose a handler to be called by shortcut wrapper
@@ -497,6 +697,9 @@ function createViewFooterControls(items = [], opts = {}) {
         if (typeof s.action === 'function') s.action(e);
       }
     };
+
+    // expose stateful invoke for build-time click handling
+    b._invokeStateAction = (e) => { const s = stateMap[current]; if (s && typeof s.action === 'function') { try { return s.action(e); } catch (err) { return undefined; } } return undefined; };
 
     // initialize visual
     if (current) applyState(current);
@@ -543,7 +746,33 @@ function createViewFooterControls(items = [], opts = {}) {
       }
       controlsRow.appendChild(el);
       visibleCount++;
-      if (it.key) buttons[it.key] = el;
+      if (it.key) {
+        buttons[it.key] = el;
+      }
+
+      // click handling: autoplay-enabled controls toggle autoplay; others run normal action
+      try {
+        el.addEventListener('click', (e) => {
+          try {
+            if (it && it.autoplay && it.autoplay.enabled) {
+              // toggle autoplay for this control
+              if (currentAutoplay && currentAutoplay.key === it.key) {
+                cancelAutoplay();
+              } else {
+                startAutoplayFor(it.key, el, it);
+              }
+              return;
+            }
+          } catch (err) {}
+          // normal behavior: cancel any running autoplay then invoke the control action
+          try { cancelAutoplay(); } catch (err) {}
+          try {
+            if (typeof el._invokeAction === 'function') el._invokeAction(e);
+            else if (typeof el._invokeStateAction === 'function') el._invokeStateAction(e);
+            else if (it.action && typeof it.action === 'function') it.action(e);
+          } catch (err) {}
+        });
+      } catch (e) {}
 
       if (it.shortcut && !(Array.isArray(it.states) && it.states.length)) {
         nextShortcuts[it.shortcut] = nextShortcuts[it.shortcut] || (it.key ? buttons[it.key] : null) || it.action;
@@ -636,6 +865,7 @@ function createViewFooterControls(items = [], opts = {}) {
       e.preventDefault();
       e.stopPropagation();
       try { settingsDialogHandle?.close?.(); } catch (err) {}
+      try { cancelAutoplay(); } catch (err) {}
       settingsDialogHandle = openViewFooterSettingsDialog({
         appId,
         baseControls: baseControlItems,
@@ -680,6 +910,7 @@ function createViewFooterControls(items = [], opts = {}) {
       try { settingsDialogHandle?.close?.(); } catch (e) {}
       try { if (typeof unregSettings === 'function') unregSettings(); } catch (e) {}
       try { mo.disconnect(); } catch (e) {}
+      try { cancelAutoplay(); } catch (e) {}
     }
   });
   mo.observe(document.body, { childList: true, subtree: true });
