@@ -6,6 +6,7 @@ import { createViewFooterControls } from '../components/viewFooterControls.js';
 import { CARD_REGISTRY } from '../cards/index.js';
 import { addStudyFilter } from '../components/studyControls.js';
 import { addShuffleControls } from '../components/collectionControls.js';
+import { settingsLog } from '../managers/settingsManager.js';
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
@@ -156,10 +157,10 @@ export function renderKanjiStudyCard({ store }) {
     const api = cardApis[c.key];
     const active = store?.collections?.getActiveCollection?.() || null;
     const metadata = active?.metadata;
-    console.log('[View] requesting getToggleFields()', { card: c.key, metadataPresent: !!metadata });
+    settingsLog('[View] requesting getToggleFields()', { card: c.key, metadataPresent: !!metadata });
     if (api && typeof api.getToggleFields === 'function') {
       const dyn = api.getToggleFields(metadata);
-      console.log('[View] getToggleFields() result', { card: c.key, count: Array.isArray(dyn) ? dyn.length : 0 });
+      settingsLog('[View] getToggleFields() result', { card: c.key, count: Array.isArray(dyn) ? dyn.length : 0 });
       if (Array.isArray(dyn) && dyn.length) items = dyn.slice();
     }
     const out = Array.isArray(items) ? items.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
@@ -194,10 +195,10 @@ export function renderKanjiStudyCard({ store }) {
     const api = cardApis[c.key];
     const active = store?.collections?.getActiveCollection?.() || null;
     const metadata = active?.metadata;
-    console.log('[View] requesting getToggleFields()', { card: c.key, metadataPresent: !!metadata });
+    settingsLog('[View] requesting getToggleFields()', { card: c.key, metadataPresent: !!metadata });
     if (api && typeof api.getToggleFields === 'function') {
       const dyn = api.getToggleFields(metadata);
-      console.log('[View] getToggleFields() result', { card: c.key, count: Array.isArray(dyn) ? dyn.length : 0 });
+      settingsLog('[View] getToggleFields() result', { card: c.key, count: Array.isArray(dyn) ? dyn.length : 0 });
       if (Array.isArray(dyn) && dyn.length) items = dyn.slice();
     }
         const key = `${c.key}Fields`;
@@ -360,6 +361,47 @@ export function renderKanjiStudyCard({ store }) {
       const key = entry ? store.collections.getEntryStudyKey(entry) : null;
       if (!key) return;
       try { store.kanjiProgress.setStateFocus(key, { collectionKey: getCurrentCollectionKey() }); } catch (e) {}
+    }
+  });
+
+  // Link actions: open searches for the primary kanji in a new tab.
+  function openSearchInNewTab(url) {
+    try { window.open(url, '_blank'); } catch (e) { }
+  }
+  function getSearchTerm() {
+    const entry = entries && entries.length ? entries[index] : null;
+    if (!entry) return '';
+    return (getPrimaryKanjiValue(entry) || '').trim();
+  }
+
+  extraActions.push({
+    id: 'link.google', controlKey: 'link.google', text: 'Link (Google)', fnName: 'linkGoogle', namespace: 'entry.kanji', invoke: () => {
+      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://www.google.com/search?q=' + encodeURIComponent(t));
+    }
+  });
+  extraActions.push({
+    id: 'link.google.images', controlKey: 'link.google.images', text: 'Link (Google Images)', fnName: 'linkGoogleImages', namespace: 'entry.kanji', invoke: () => {
+      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(t));
+    }
+  });
+  extraActions.push({
+    id: 'link.jisho', controlKey: 'link.jisho', text: 'Link (Jisho)', fnName: 'linkJisho', namespace: 'entry.kanji', invoke: () => {
+      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://jisho.org/search/' + encodeURIComponent(t));
+    }
+  });
+  extraActions.push({
+    id: 'link.wiktionary', controlKey: 'link.wiktionary', text: 'Link (Wiktionary)', fnName: 'linkWiktionary', namespace: 'entry.kanji', invoke: () => {
+      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://en.wiktionary.org/wiki/' + encodeURIComponent(t));
+    }
+  });
+  extraActions.push({
+    id: 'link.translate', controlKey: 'link.translate', text: 'Link (Google Translate)', fnName: 'linkTranslate', namespace: 'entry.kanji', invoke: () => {
+      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://translate.google.com/?sl=auto&tl=en&text=' + encodeURIComponent(t) + '&op=translate');
+    }
+  });
+  extraActions.push({
+    id: 'link.chatgpt', controlKey: 'link.chatgpt', text: 'Link (ChatGPT)', fnName: 'linkChatGPT', namespace: 'entry.kanji', invoke: () => {
+      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://chat.openai.com/?q=' + encodeURIComponent(t));
     }
   });
 

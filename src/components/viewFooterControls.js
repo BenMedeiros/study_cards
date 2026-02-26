@@ -192,10 +192,29 @@ function createCustomButtonDescriptor(button, actionRegistry, disableHotkeys = f
   const actions = Array.isArray(button.actions) ? button.actions.slice() : [];
 
   async function runAll(e) {
+    // First, synchronously invoke immediate link actions to avoid popup blockers
+    const invokedImmediate = new Set();
     for (const step of actions) {
       if (!step || typeof step !== 'object') continue;
       const actionId = asString(step.actionId).trim();
       if (!actionId) continue;
+      const delayMsNum = Number(step.delayMs);
+      const delayMs = Number.isFinite(delayMsNum) ? Math.max(0, Math.round(delayMsNum)) : 0;
+      if (delayMs === 0 && actionId.startsWith('link.')) {
+        const entry = actionRegistry.get(actionId);
+        if (entry && typeof entry.invoke === 'function') {
+          try { entry.invoke(e); } catch (err) { }
+          invokedImmediate.add(actionId);
+        }
+      }
+    }
+
+    // Then run remaining actions sequentially (honouring delays)
+    for (const step of actions) {
+      if (!step || typeof step !== 'object') continue;
+      const actionId = asString(step.actionId).trim();
+      if (!actionId) continue;
+      if (invokedImmediate.has(actionId)) continue;
       const delayMsNum = Number(step.delayMs);
       const delayMs = Number.isFinite(delayMsNum) ? Math.max(0, Math.round(delayMsNum)) : 0;
       if (delayMs > 0) {
@@ -379,6 +398,7 @@ function createViewFooterControls(items = [], opts = {}) {
           caption: String(a.caption || ''),
           shortcut: String(a.shortcut || ''),
           fnName: String(a.fnName || ''),
+          namespace: String(a.namespace || ''),
           invoke: a.invoke,
         });
       } catch (e) {
@@ -396,6 +416,7 @@ function createViewFooterControls(items = [], opts = {}) {
     caption: a.caption,
     shortcut: a.shortcut,
     fnName: a.fnName,
+    namespace: a.namespace || '',
   }));
   const baseKeys = baseControlItems.map(it => String(it.key || '').trim()).filter(Boolean);
   let allFooterPrefs = {};

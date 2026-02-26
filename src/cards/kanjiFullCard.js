@@ -1,8 +1,9 @@
 // Factory for a full-detail kanji card showing labelled rows for all common fields.
 import { speak, getLanguageCode } from '../utils/speech.js';
+import { settingsLog } from '../managers/settingsManager.js';
 
 export function createKanjiFullCard({ entry = null, config = {}, handlers = {} } = {}) {
-  console.log('[Card:Full] createKanjiFullCard()', { entry, config, handlers });
+  settingsLog('[Card:Full] createKanjiFullCard()', { entry, config, handlers });
   const root = document.createElement('div');
   root.className = 'card kanji-full-card';
 
@@ -100,7 +101,7 @@ export function createKanjiFullCard({ entry = null, config = {}, handlers = {} }
   }
 
   function setEntry(e) {
-    console.log('[Card:Full] setEntry()', e);
+    settingsLog('[Card:Full] setEntry()', e);
     const entryObj = e || {};
     // update current entry reference for handlers
     currentEntry = entryObj;
@@ -142,7 +143,7 @@ export function createKanjiFullCard({ entry = null, config = {}, handlers = {} }
   }
 
   function setFieldsVisible(map) {
-    console.log('[Card:Full] setFieldsVisible()', map);
+    settingsLog('[Card:Full] setFieldsVisible()', map);
     if (!map || typeof map !== 'object') return;
     for (const k of Object.keys(map)) setFieldVisible(k, !!map[k]);
   }
@@ -159,7 +160,7 @@ export function createKanjiFullCard({ entry = null, config = {}, handlers = {} }
   setEntry(entry);
 
   function getToggleFields(metadata) {
-    console.log('[Card:Full] getToggleFields()', { metadataKeys: metadata ? Object.keys(metadata) : null });
+    settingsLog('[Card:Full] getToggleFields()', { metadataKeys: metadata ? Object.keys(metadata) : null });
     if (!metadata || typeof metadata !== 'object') {
       return (Array.isArray(kanjiFullCardToggleFields) ? kanjiFullCardToggleFields.slice() : []);
     }

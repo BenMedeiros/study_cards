@@ -1,7 +1,9 @@
 // Factory for creating a Kanji main card element.
 // The card uses the existing project CSS classes (from src/styles.css).
+import { settingsLog } from '../managers/settingsManager.js';
+
 export function createKanjiMainCard({ entry = null, indexText = '', handlers = {} } = {}) {
-  console.log('[Card:Main] createKanjiMainCard()', { entry, indexText });
+  settingsLog('[Card:Main] createKanjiMainCard()', { entry, indexText });
   const root = document.createElement('div');
   root.className = 'card kanji-card';
 
@@ -50,7 +52,7 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   }
 
   function setEntry(e) {
-    console.log('[Card:Main] setEntry()', e);
+    settingsLog('[Card:Main] setEntry()', e);
     const entryObj = e || {};
     // Common field names used in this project: kanji/character/text, reading/kana, meaning/definition
     const kanji = resolvePath(entryObj, 'kanji') || resolvePath(entryObj, 'character') || resolvePath(entryObj, 'text') || '';
@@ -98,7 +100,7 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   }
 
   function setFieldsVisible(map) {
-    console.log('[Card:Main] setFieldsVisible()', map);
+    settingsLog('[Card:Main] setFieldsVisible()', map);
     if (!map || typeof map !== 'object') return;
     for (const k of Object.keys(map)) {
       setFieldVisible(k, !!map[k]);
@@ -120,7 +122,7 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   setIndexText(indexText);
 
   function getToggleFields(metadata) {
-    console.log('[Card:Main] getToggleFields()', { metadataKeys: metadata ? Object.keys(metadata) : null });
+    settingsLog('[Card:Main] getToggleFields()', { metadataKeys: metadata ? Object.keys(metadata) : null });
     if (!metadata || typeof metadata !== 'object') {
       return (Array.isArray(kanjiMainCardToggleFields) ? kanjiMainCardToggleFields.slice() : []);
     }

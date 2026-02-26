@@ -400,3 +400,28 @@ export function setGlobalSettingsManager(mgr) {
 export function getGlobalSettingsManager() {
   return _globalSettingsManager;
 }
+
+// Convenience helpers for conditional logging driven by persisted settings.
+export function isSettingsLoggingEnabled() {
+  try {
+    const mgr = getGlobalSettingsManager();
+    if (!mgr || typeof mgr.get !== 'function') return false;
+    if (typeof mgr.isReady === 'function' && !mgr.isReady()) return false;
+    try {
+      const v = mgr.get('shell.logSettings', { consumerId: 'settings.logging' });
+      return !!v;
+    } catch {
+      return false;
+    }
+  } catch {
+    return false;
+  }
+}
+
+export function settingsLog(...args) {
+  try {
+    if (isSettingsLoggingEnabled()) {
+      console.info(...args);
+    }
+  } catch {}
+}

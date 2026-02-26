@@ -1,7 +1,9 @@
 // Generic flat card: renders an object's top-level keys as labeled rows.
 // Styling mirrors the kanji full card (reuses .kanji-full-row/.kanji-full-label/.kanji-full-value).
+import { settingsLog } from '../managers/settingsManager.js';
+
 export function createGenericFlatCard({ entry = null, config = {} } = {}) {
-  console.log('[Card:Generic] createGenericFlatCard()', { entry, config });
+  settingsLog('[Card:Generic] createGenericFlatCard()', { entry, config });
   const root = document.createElement('div');
   root.className = 'card generic-flat-card';
 
@@ -35,7 +37,7 @@ export function createGenericFlatCard({ entry = null, config = {} } = {}) {
   }
 
   function setEntry(e) {
-    console.log('[Card:Generic] setEntry()', e);
+    settingsLog('[Card:Generic] setEntry()', e);
     const entryObj = e || {};
     rows = {};
     body.innerHTML = '';
@@ -76,7 +78,7 @@ export function createGenericFlatCard({ entry = null, config = {} } = {}) {
 
   // Provide a metadata-driven toggle descriptor so views can build per-card dropdowns.
   function getToggleFields(metadata) {
-    console.log('[Card:Generic] getToggleFields()', { metadataKeys: metadata ? Object.keys(metadata) : null });
+    settingsLog('[Card:Generic] getToggleFields()', { metadataKeys: metadata ? Object.keys(metadata) : null });
     if (!metadata || typeof metadata !== 'object') return [];
     const fields = Array.isArray(metadata.fields) ? metadata.fields : (Array.isArray(metadata.schema) ? metadata.schema : []);
     if (!Array.isArray(fields) || !fields.length) return [];

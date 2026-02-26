@@ -1,7 +1,9 @@
 // Factory for creating a Kanji related-item card element with internal carousel controls.
 // Uses existing CSS classes defined in src/styles.css.
+import { settingsLog } from '../managers/settingsManager.js';
+
 export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {} } = {}) {
-  console.log('[Card:Related] createKanjiRelatedCard()', { entry });
+  settingsLog('[Card:Related] createKanjiRelatedCard()', { entry });
   const root = document.createElement('div');
   root.className = 'card kanji-related-card';
 
@@ -81,9 +83,9 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   function extractSentencesFromEntry(ent) {
     if (!ent || typeof ent !== 'object') return [];
     // Prefer collection-specific related data if present, then legacy containers
-    console.log('[Card:Related] extractSentencesFromEntry(): keys', Object.keys(ent || {}));
+    settingsLog('[Card:Related] extractSentencesFromEntry(): keys', Object.keys(ent || {}));
     if (Array.isArray(ent.relatedCollections?.sentences)) {
-      console.log('[Card:Related] using relatedCollections.sentences', ent.relatedCollections.sentences.length);
+      settingsLog('[Card:Related] using relatedCollections.sentences', ent.relatedCollections.sentences.length);
       return ent.relatedCollections.sentences.slice();
     }
     return [];
@@ -110,10 +112,10 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
 
   // Standard API: accept `entry` and derive sentences from entry.relatedCollections.sentences
   function setEntry(newEntry) {
-    console.log('[Card:Related] setEntry()', newEntry);
+    settingsLog('[Card:Related] setEntry()', newEntry);
     entry = newEntry || null;
     listItems = extractSentencesFromEntry(entry);
-    console.log('[Card:Related] setEntry => listItems.length', Array.isArray(listItems) ? listItems.length : 0, listItems && listItems[0]);
+    settingsLog('[Card:Related] setEntry => listItems.length', Array.isArray(listItems) ? listItems.length : 0, listItems && listItems[0]);
     currentIndex = 0;
     render();
   }
@@ -140,7 +142,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
 
     if (!hasContent && (!Array.isArray(listItems) || listItems.length === 0)) {
       // No related data and no fallback content: show only header + placeholder for consistency.
-      console.log('[Card:Related] updateDisplay(): no content; listItems.length=', Array.isArray(listItems) ? listItems.length : 0);
+      settingsLog('[Card:Related] updateDisplay(): no content; listItems.length=', Array.isArray(listItems) ? listItems.length : 0);
       placeholder.style.display = '';
       jpText.style.display = 'none';
       enLabel.style.display = 'none';
@@ -172,7 +174,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   }
 
   function render() {
-    console.log('[Card:Related] render()', { currentIndex, listItemsLength: Array.isArray(listItems) ? listItems.length : 0, entrySample: entry ? (entry.sentence || entry.jp || entry.japanese || entry.text) : null });
+    settingsLog('[Card:Related] render()', { currentIndex, listItemsLength: Array.isArray(listItems) ? listItems.length : 0, entrySample: entry ? (entry.sentence || entry.jp || entry.japanese || entry.text) : null });
     updateDisplay();
   }
 
@@ -206,7 +208,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   });
 
   function update(newEntry) {
-    console.log('[Card:Related] update()', { newEntrySample: newEntry ? (newEntry.sentence || newEntry.jp || newEntry.japanese || newEntry.text) : null });
+    settingsLog('[Card:Related] update()', { newEntrySample: newEntry ? (newEntry.sentence || newEntry.jp || newEntry.japanese || newEntry.text) : null });
     if (newEntry) entry = newEntry;
     listItems = extractSentencesFromEntry(entry);
     currentIndex = 0;
