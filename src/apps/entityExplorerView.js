@@ -127,24 +127,6 @@ export function renderEntityExplorer({ store }) {
     });
   }
 
-  // Wrap toggle control for JSON views
-  const _jsonWrapRec = headerTools.addElement({ type: 'button', key: 'jsonWrap', label: 'Wrap', caption: 'JSON', title: 'Toggle JSON wrap' });
-
-  function updateJsonWrapBtn() {
-    const wrapped = Boolean(root.classList && root.classList.contains('json-wrap'));
-    const jsonWrapBtn = headerTools.getControl('jsonWrap');
-    if (!jsonWrapBtn) return;
-    jsonWrapBtn.textContent = wrapped ? 'Unwrap' : 'Wrap';
-    jsonWrapBtn.setAttribute('aria-pressed', wrapped ? 'true' : 'false');
-  }
-
-  const jsonWrapBtn = headerTools.getControl('jsonWrap');
-  if (jsonWrapBtn) {
-    jsonWrapBtn.addEventListener('click', () => {
-      const wrapped = root.classList.toggle('json-wrap');
-      updateJsonWrapBtn();
-    });
-  }
 
   const managerItems = [
     { value: 'idb', label: 'IndexedDB' },
@@ -249,12 +231,10 @@ export function renderEntityExplorer({ store }) {
   const spacer = document.createElement('div');
   spacer.className = 'qa-header-spacer';
   headerTools.append(left, spacer);
-  // append JSON wrap group then collapse-all to the right side of header tools
-  try { if (_jsonWrapRec && _jsonWrapRec.group) headerTools.append(_jsonWrapRec.group); } catch (e) {}
+  // append collapse-all to the right side of header tools
   try { if (_collapseRec && _collapseRec.group) headerTools.append(_collapseRec.group); } catch (e) {}
 
-  // set initial label for wrap button
-  updateJsonWrapBtn();
+  // wrap handled per-view inside each JSON viewer component
 
   root.append(headerTools, content);
 

@@ -2695,8 +2695,7 @@ select:hover {
   z-index: 8;
 }
 
-.json-view-wrapper .json-controls button.json-toggle,
-.json-view-wrapper .json-controls button.json-maximize {
+.json-view-wrapper .json-controls button {
   background: rgba(0, 0, 0, 0.32);
   border: 1px solid rgba(255, 255, 255, 0.06);
   color: var(--text);
@@ -2712,8 +2711,7 @@ select:hover {
   transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
 }
 
-.json-view-wrapper .json-controls button.json-toggle:hover,
-.json-view-wrapper .json-controls button.json-maximize:hover {
+.json-view-wrapper .json-controls button:hover {
   background: rgba(96, 165, 250, 0.12);
   border-color: rgba(96, 165, 250, 0.25);
 }

@@ -42,6 +42,12 @@ export function createJsonViewer(value, opts = {}) {
   maxBtn.title = 'Maximize JSON';
   maxBtn.textContent = '⤢';
 
+  // wrapping state for this viewer (controls whether pre uses pre-wrap)
+  let wrapping = !!opts.wrapping;
+  if (wrapping) {
+    try { pre.style.setProperty('white-space', 'pre-wrap'); } catch (e) {}
+  }
+
   // Always start collapsed for large payloads, even if `opts.expanded` is true.
   let expanded;
   if (isBig) expanded = false;
@@ -56,6 +62,7 @@ export function createJsonViewer(value, opts = {}) {
       toggle.setAttribute('aria-label', 'Collapse JSON');
       wrapper.dataset.expanded = 'true';
       toggle.setAttribute('aria-pressed', 'true');
+      try { if (wrapMainBtn) wrapMainBtn.style.display = ''; } catch (e) {}
     } else {
       content.appendChild(placeholder);
       toggle.textContent = '+';
@@ -63,6 +70,7 @@ export function createJsonViewer(value, opts = {}) {
       toggle.setAttribute('aria-label', 'Expand JSON');
       wrapper.dataset.expanded = 'false';
       toggle.setAttribute('aria-pressed', 'false');
+      try { if (wrapMainBtn) wrapMainBtn.style.display = 'none'; } catch (e) {}
     }
   }
 
@@ -78,8 +86,45 @@ export function createJsonViewer(value, opts = {}) {
   // controls container to hold action buttons (toggle, maximize, etc.)
   const controls = document.createElement('div');
   controls.className = 'json-controls';
+  
+  // copy button for quickly copying the current JSON payload
+  const copyMainBtn = document.createElement('button');
+  copyMainBtn.type = 'button';
+  copyMainBtn.className = 'json-copy';
+  copyMainBtn.title = 'Copy JSON';
+  copyMainBtn.textContent = '⧉';
+  copyMainBtn.addEventListener('click', async (ev) => {
+    ev.stopPropagation();
+    try {
+      const txt = pre.textContent || '';
+      if (navigator?.clipboard?.writeText) await navigator.clipboard.writeText(txt);
+      else {
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+    } catch (e) {}
+  });
   // attach buttons according to options
   if (opts.showMaximize !== false) controls.appendChild(maxBtn);
+  // wrap toggle (icon) — handled here so per-view wrapping is local
+  const wrapMainBtn = document.createElement('button');
+  wrapMainBtn.type = 'button';
+  wrapMainBtn.className = 'json-wrap';
+  wrapMainBtn.title = 'Toggle wrap';
+  wrapMainBtn.textContent = '↪';
+  wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false');
+  wrapMainBtn.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    wrapping = !wrapping;
+    try { pre.style.setProperty('white-space', wrapping ? 'pre-wrap' : 'pre'); } catch (e) {}
+    wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false');
+  });
+  controls.appendChild(wrapMainBtn);
+  if (opts.showCopy !== false) controls.appendChild(copyMainBtn);
   if (showToggle) controls.appendChild(toggle);
 
   // Modal dialog helper for maximize
@@ -130,6 +175,12 @@ export function createJsonViewer(value, opts = {}) {
       copyBtn.className = 'btn small';
       copyBtn.textContent = 'Copy JSON';
 
+      const wrapBtn = document.createElement('button');
+      wrapBtn.type = 'button';
+      wrapBtn.className = 'btn small';
+      wrapBtn.title = 'Toggle wrap';
+      wrapBtn.textContent = '↪';
+
       const closeBtn = document.createElement('button');
       closeBtn.type = 'button';
       closeBtn.className = 'btn small';
@@ -146,7 +197,7 @@ export function createJsonViewer(value, opts = {}) {
       const bigPre = document.createElement('pre');
       bigPre.className = 'json-view json-view-max mono';
       bigPre.style.margin = '0';
-      bigPre.style.whiteSpace = opts.wrapping ? 'pre-wrap' : 'pre';
+      bigPre.style.whiteSpace = wrapping ? 'pre-wrap' : 'pre';
       bigPre.style.fontSize = '0.95rem';
       bigPre.textContent = pre.textContent;
 
@@ -178,6 +229,18 @@ export function createJsonViewer(value, opts = {}) {
           }
         } catch (e) {}
       });
+
+      wrapBtn.addEventListener('click', () => {
+        try {
+          wrapping = !wrapping;
+          bigPre.style.whiteSpace = wrapping ? 'pre-wrap' : 'pre';
+          try { pre.style.setProperty('white-space', wrapping ? 'pre-wrap' : 'pre'); } catch (e) {}
+          // mirror aria state on main control if present
+          try { wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false'); } catch (e) {}
+        } catch (e) {}
+      });
+
+      actions.insertBefore(wrapBtn, actions.firstChild || null);
 
       closeBtn.addEventListener('click', closeDialog);
       backdrop.addEventListener('click', closeDialog);

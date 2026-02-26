@@ -274,52 +274,136 @@ export function renderManageCollections({ store, onNavigate }) {
 
   // collapse/expand handled by the JSON viewer itself; no toggle button needed
 
-  // JSON wrap toggle (mirrors entityExplorerView behavior)
-  const jsonWrapBtn = document.createElement('button');
-  jsonWrapBtn.type = 'button';
-  jsonWrapBtn.className = 'btn small';
-  jsonWrapBtn.textContent = 'Wrap';
-  jsonWrapBtn.title = 'Toggle JSON wrap';
 
   // IDs for inner viewer elements so behavior is unambiguous
   const JSON_WRAPPER_ID = 'mc-snapshot-wrapper';
   const JSON_PRE_ID = 'mc-snapshot-pre';
 
-  // track wrap state (applies `text-wrap: auto` to the inner pre element)
-  let isJsonWrapped = true;
   // track whether we've built the full JSON HTML blob yet
   let jsonBuilt = false;
   // track whether the JSON viewer is currently visible (expanded)
   let jsonVisible = false;
 
-  function updateJsonWrapBtn() {
-    jsonWrapBtn.textContent = isJsonWrapped ? 'Unwrap' : 'Wrap';
-    jsonWrapBtn.setAttribute('aria-pressed', isJsonWrapped ? 'true' : 'false');
-  }
-
-  jsonWrapBtn.addEventListener('click', () => {
-    isJsonWrapped = !isJsonWrapped;
-    try {
-      const pre = document.getElementById(JSON_PRE_ID);
-      if (pre && pre.style) {
-        if (isJsonWrapped) pre.style.setProperty('text-wrap', 'auto');
-        else {
-          pre.style.removeProperty('text-wrap');
-          // also remove any fallback properties that might affect wrapping
-          pre.style.removeProperty('overflow-wrap');
-          pre.style.removeProperty('word-wrap');
-          pre.style.removeProperty('white-space');
-        }
-      }
-    } catch (e) {}
-    updateJsonWrapBtn();
-  });
 
   // (copy full JSON button removed; use Export/Copy actions elsewhere)
 
   // group buttons into logical clusters
   const grp1 = document.createElement('div'); grp1.className = 'mc-json-group'; grp1.append(snapshotToggleBtn);
-  const grp2 = document.createElement('div'); grp2.className = 'mc-json-group'; grp2.append(jsonWrapBtn);
+  // Copy AI Prompt button: copies a blurb + metadata + schema + a diverse sample of entries
+  const copyAiBtn = document.createElement('button');
+  copyAiBtn.type = 'button';
+  copyAiBtn.className = 'btn small';
+  copyAiBtn.textContent = 'Copy AI Prompt';
+  copyAiBtn.title = 'Copy metadata, schema, and example entries for an AI prompt';
+  copyAiBtn.addEventListener('click', async () => {
+    try {
+      const src = (currentJsonMode === 'preview' && previewResult?.merged) ? previewResult.merged : currentCollection;
+      if (!src) { setStatus('No collection loaded to build AI prompt.'); return; }
+
+      const meta = (src.metadata && typeof src.metadata === 'object') ? src.metadata : (src.metadata ?? {});
+      const schema = Array.isArray(src?.metadata?.schema) ? src.metadata.schema : (Array.isArray(src?.schema) ? src.schema : []);
+      const arrayKey = detectArrayKey(src) || 'entries';
+      const entriesArr = Array.isArray(src[arrayKey]) ? src[arrayKey] : [];
+
+      // New sampling strategy:
+      // 1) Sample ~100 entries evenly across the collection: indices floor(i * total / 100) for i=0..99
+      // 2) From that sample, try to find a field (schema order or entry keys) whose distinct value
+      //    count across the sample is between 5 and 20 (i.e., grouped). If found, return one example
+      //    entry per distinct value. Otherwise fall back to a small diverse slice.
+      const examples = (function buildExamples() {
+        if (!Array.isArray(entriesArr) || !entriesArr.length) return [];
+        const total = entriesArr.length;
+        // collect ~100 evenly spaced indices (deduplicated)
+        const idxSet = new Set();
+        for (let i = 0; i < 100; i++) {
+          const idx = Math.floor(i * total / 100);
+          idxSet.add(Math.min(total - 1, Math.max(0, idx)));
+        }
+        const sampled = Array.from(idxSet).sort((a, b) => a - b).map(i => entriesArr[i]).filter(Boolean);
+
+        // derive candidate field keys from schema first, then from a sample entry
+        let fieldKeys = [];
+        if (Array.isArray(schema) && schema.length) {
+          fieldKeys = schema.map(f => (f && typeof f === 'object' ? f.key : null)).filter(Boolean);
+        }
+        if (!fieldKeys.length) {
+          const firstObj = entriesArr.find(e => e && typeof e === 'object');
+          if (firstObj) fieldKeys = Object.keys(firstObj || []);
+        }
+
+        // helper to stringify a field value for counting/distinctness
+        const valKey = (v) => {
+          try { return safeJsonStringify(v); } catch (e) { return String(v); }
+        };
+
+        // find counts per distinct value for each candidate field
+        let groupingKey = null;
+        let bestCounts = null;
+        for (const k of fieldKeys) {
+          const counts = new Map();
+          for (const e of sampled) {
+            const v = e && typeof e === 'object' ? e[k] : undefined;
+            const vk = valKey(v);
+            counts.set(vk, (counts.get(vk) || 0) + 1);
+            if (counts.size > 200) break; // too many distinct values, skip
+          }
+          const distinct = counts.size;
+          if (distinct >= 5) {
+            // prefer fields with moderate distinct counts; accept if distinct <= 200
+            groupingKey = k;
+            bestCounts = counts;
+            break;
+          }
+        }
+
+        // fallback: small evenly spaced sample (up to 5)
+        function limitRelatedCollections(entry) {
+          if (!entry || typeof entry !== 'object') return entry;
+          const copy = { ...entry };
+          if (copy.relatedCollections && typeof copy.relatedCollections === 'object') {
+            const rc = {};
+            for (const [rk, rv] of Object.entries(copy.relatedCollections)) {
+              if (Array.isArray(rv)) rc[rk] = rv.length ? [rv[0]] : [];
+              else rc[rk] = rv;
+            }
+            copy.relatedCollections = rc;
+          }
+          return copy;
+        }
+
+        if (!groupingKey || !bestCounts) {
+          const take = Math.min(5, sampled.length);
+          return sampled.slice(0, take).map(limitRelatedCollections);
+        }
+
+        // pick the top 5 most popular distinct values and return one representative entry per value
+        const topValues = Array.from(bestCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5).map(x => x[0]);
+        const reps = [];
+        for (const tv of topValues) {
+          const found = sampled.find(e => valKey(e && e[groupingKey]) === tv) || entriesArr.find(e => valKey(e && e[groupingKey]) === tv);
+          if (found) reps.push(limitRelatedCollections(found));
+        }
+        return reps.slice(0, 5);
+      })();
+
+      const blurb = `Context: I will paste the metadata, schema, and several example entries from a collection. Using the provided schema, please produce new entries that match the schema and reflect the concepts shown in the examples. Return only a JSON array of new entries.`;
+
+      const parts = [];
+      parts.push(blurb);
+      parts.push('\nMetadata:\n' + safeJsonStringify(meta, 0));
+      // parts.push('\nSchema:\n' + safeJsonStringify(schema, 0)); // schema already in metadata
+      parts.push('\nExamples:\n' + safeJsonStringify(examples, 0));
+      parts.push('\nInstructions:\n- Produce new entries that follow the schema exactly.\n- Keep values realistic and varied, matching the examples you may have already provided.  Include at least one example per meaning/sense.\n- Output only a JSON array of entries (no extra text).');
+
+      const promptText = parts.join('\n\n');
+      await copyToClipboard(promptText);
+      setStatus('Copied AI prompt to clipboard.');
+    } catch (e) {
+      setStatus('Failed to copy AI prompt.');
+    }
+  });
+  grp1.append(copyAiBtn);
+  // grp2 removed — per-view wrapping handled by the JSON viewer component
   // JSON fields dropdown (multi-select)
   const jsonFieldsItems = [
     { value: 'metadata', label: 'Metadata' },
@@ -353,7 +437,7 @@ export function renderManageCollections({ store, onNavigate }) {
     });
     jsonFieldsMount.append(jsonFieldsDropdown);
   }
-  jsonModeRow.append(grp1, grp2, jsonFieldsMount);
+  jsonModeRow.append(grp1, jsonFieldsMount);
   jsonHeaderRow.append(jsonModeRow);
 
   // mount for the JSON viewer widget
@@ -546,9 +630,17 @@ export function renderManageCollections({ store, onNavigate }) {
     const arrayKey = detectArrayKey(src) || 'entries';
     const entriesArr = Array.isArray(src[arrayKey]) ? src[arrayKey] : [];
 
-    const includeEntries = sel.has('entries') || (sel.has('relatedCollections') && entriesArr.some(e => e && typeof e.relatedCollections === 'object' && Object.values(e.relatedCollections).some(v => Array.isArray(v) && v.length > 0)));
+    const hasAnyRelated = entriesArr.some(e => e && typeof e.relatedCollections === 'object' && Object.values(e.relatedCollections).some(v => Array.isArray(v) && v.length > 0));
+    const includeEntries = sel.has('entries') || (sel.has('relatedCollections') && hasAnyRelated);
     if (includeEntries) {
-      const processed = entriesArr.map(e => {
+      // If `entries` is not selected but `relatedCollections` is, only include
+      // those entries that actually have non-empty relatedCollections arrays.
+      let baseList = entriesArr;
+      if (!sel.has('entries') && sel.has('relatedCollections')) {
+        baseList = entriesArr.filter(e => e && typeof e.relatedCollections === 'object' && Object.values(e.relatedCollections).some(v => Array.isArray(v) && v.length > 0));
+      }
+
+      const processed = baseList.map(e => {
         if (!e || typeof e !== 'object') return e;
         const copy = { ...e };
         if (!sel.has('relatedCollections')) delete copy.relatedCollections;
@@ -607,11 +699,11 @@ export function renderManageCollections({ store, onNavigate }) {
       try { jsonViewerExpose.setJson(filteredSrc); } catch (e) {}
     } else {
       try {
-        jsonViewerWidget = createJsonViewer(filteredSrc, { id: JSON_WRAPPER_ID, preId: JSON_PRE_ID, expanded: true, wrapping: isJsonWrapped, expose: jsonViewerExpose });
+        jsonViewerWidget = createJsonViewer(filteredSrc, { id: JSON_WRAPPER_ID, preId: JSON_PRE_ID, expanded: true, expose: jsonViewerExpose });
         jsonViewerMount.appendChild(jsonViewerWidget);
         jsonBuilt = true;
       } catch (e) {
-        const viewer = createJsonViewer(filteredSrc, { id: JSON_WRAPPER_ID, preId: JSON_PRE_ID, expanded: true, wrapping: isJsonWrapped });
+        const viewer = createJsonViewer(filteredSrc, { id: JSON_WRAPPER_ID, preId: JSON_PRE_ID, expanded: true });
         jsonViewerMount.appendChild(viewer);
         jsonBuilt = true;
       }
@@ -1481,7 +1573,7 @@ export function renderManageCollections({ store, onNavigate }) {
 
   // ---- init ----
   initKeyFromActive();
-  try { updateJsonWrapBtn(); } catch (e) {}
+  // per-view wrapping handled by `jsonViewer`; no global wrap button to init
   // Ensure the JSON viewer is created on init — the viewer manages its own collapse state.
   jsonVisible = true;
   try { renderJson(currentJsonMode); } catch (e) {}
