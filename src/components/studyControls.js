@@ -4,7 +4,6 @@ export function addStudyFilter(headerTools, { store, getCurrentCollectionKey, co
   if (!headerTools || typeof headerTools.addElement !== 'function') return null;
 
   const STUDY_FILTER_ITEMS = [
-    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
     { value: 'null', label: 'null', left: 'state', right: 'null' },
     { value: 'focus', label: 'focus', left: 'state', right: 'focus' },
     { value: 'learned', label: 'learned', left: 'state', right: 'learned' },
@@ -54,6 +53,7 @@ export function addStudyFilter(headerTools, { store, getCurrentCollectionKey, co
       } catch (e) {}
       try { if (typeof onChange === 'function') onChange(ordered); } catch (e) {}
     },
+    includeAllNone: true,
     className: 'data-expansion-dropdown',
     caption: 'col.study-filter'
   });

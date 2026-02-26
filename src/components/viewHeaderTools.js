@@ -93,6 +93,7 @@ export function createViewHeaderTools(opts = {}) {
           commitOnClose: !!elem.commitOnClose,
           getButtonLabel: elem.getButtonLabel,
           onChange: elem.onChange,
+          includeAllNone: !!elem.includeAllNone,
           className: elem.className || elem.dropdownClassName || 'data-expansion-dropdown',
           closeOverlaysOnOpen: elem.closeOverlaysOnOpen,
         });

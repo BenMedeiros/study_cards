@@ -65,7 +65,6 @@ export function renderData({ store }) {
   }
 
   const STUDY_FILTER_ITEMS = [
-    { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
     { value: 'null', label: 'null', left: 'state', right: 'null' },
     { value: 'focus', label: 'focus', left: 'state', right: 'focus' },
     { value: 'learned', label: 'learned', left: 'state', right: 'learned' },
@@ -343,11 +342,12 @@ export function renderData({ store }) {
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
       onChange: (vals) => {
         const chosen = (typeof vals === 'string' && vals === 'all')
-          ? iItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
+          ? iItems.map(it => String(it?.value || ''))
           : vals;
         expansionIForms = orderFormsByItems(normalizeFormList(chosen), iBaseItems);
         persistCollectionExpansions();
       },
+      includeAllNone: true,
       className: 'data-expansion-dropdown',
       caption: 'i-adj'
     });
@@ -361,11 +361,12 @@ export function renderData({ store }) {
       getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
       onChange: (vals) => {
         const chosen = (typeof vals === 'string' && vals === 'all')
-          ? naItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
+          ? naItems.map(it => String(it?.value || ''))
           : vals;
         expansionNaForms = orderFormsByItems(normalizeFormList(chosen), naBaseItems);
         persistCollectionExpansions();
       },
+      includeAllNone: true,
       className: 'data-expansion-dropdown',
       caption: 'na-adj'
     });

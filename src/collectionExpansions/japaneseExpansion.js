@@ -51,7 +51,6 @@ const NA_ADJ_BASE_FORM_ITEMS = [
   { value: 'sou', label: 'looks ~', rightText: '~sou', jpSuffix: 'そう', meaningPrefix: 'looks', outputType: 'na-adjective' },
 ];
 
-const TOGGLE_ITEM = { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' };
 
 const I_ADJ_FORM_SUFFIX = new Map(I_ADJ_BASE_FORM_ITEMS.map(item => [item.value, String(item.jpSuffix || '')]));
 const NA_ADJ_FORM_SUFFIX = new Map(NA_ADJ_BASE_FORM_ITEMS.map(item => [item.value, String(item.jpSuffix || '')]));
@@ -187,8 +186,9 @@ export function getJapaneseExpansionControlConfig(collection, opts = {}) {
     supports: { i: hasI, na: hasNa },
     iBaseItems: I_ADJ_BASE_FORM_ITEMS.map(x => ({ ...x })),
     naBaseItems: NA_ADJ_BASE_FORM_ITEMS.map(x => ({ ...x })),
-    iItems: includeActions ? [TOGGLE_ITEM, ...I_ADJ_BASE_FORM_ITEMS].map(x => ({ ...x })) : I_ADJ_BASE_FORM_ITEMS.map(x => ({ ...x })),
-    naItems: includeActions ? [TOGGLE_ITEM, ...NA_ADJ_BASE_FORM_ITEMS].map(x => ({ ...x })) : NA_ADJ_BASE_FORM_ITEMS.map(x => ({ ...x })),
+    // Do not inject UI action rows here; callers should opt-in via dropdown options.
+    iItems: I_ADJ_BASE_FORM_ITEMS.map(x => ({ ...x })),
+    naItems: NA_ADJ_BASE_FORM_ITEMS.map(x => ({ ...x })),
   };
 }
 

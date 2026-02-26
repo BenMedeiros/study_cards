@@ -171,6 +171,7 @@ export function renderKanjiStudyCard({ store }) {
     type: 'dropdown', key: 'entryFields', items: entryFieldItems, multi: true,
     values: (entryFieldSelection === 'all') ? entryFieldItems.map(it => String(it.value || '')) : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []),
     commitOnClose: true,
+    includeAllNone: true,
     onChange: (vals) => {
       const chosen = (typeof vals === 'string' && vals === 'all') ? entryFieldItems.map(it => String(it.value || '')) : (Array.isArray(vals) ? vals.slice() : []);
       const set = new Set(chosen);
@@ -202,6 +203,7 @@ export function renderKanjiStudyCard({ store }) {
       type: 'dropdown', key: `related.${name}.fields`, items, multi: true,
       values: (sel === 'all') ? items.map(it => String(it.value || '')) : (Array.isArray(sel) ? sel.slice() : []),
       commitOnClose: true,
+      includeAllNone: true,
       onChange: (vals) => {
         const chosen = (typeof vals === 'string' && vals === 'all') ? items.map(it => String(it.value || '')) : (Array.isArray(vals) ? vals.slice() : []);
         relatedFieldSelections[name] = chosen;
@@ -407,6 +409,7 @@ export function renderKanjiStudyCard({ store }) {
       ? displayCardSelection.slice()
       : (displayCardSelection === 'all' ? displayCardItems.map(it => String(it?.value || '')) : ['main', 'related']),
     commitOnClose: true,
+    includeAllNone: true,
     onChange: (vals) => {
       const chosen = (typeof vals === 'string' && vals === 'all')
         ? displayCardItems.map(it => String(it?.value || ''))

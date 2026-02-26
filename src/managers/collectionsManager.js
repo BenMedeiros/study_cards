@@ -1218,7 +1218,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         naItems: [],
       };
     }
-    return getJapaneseExpansionControlConfig(coll, { includeActions: true });
+    return getJapaneseExpansionControlConfig(coll);
   }
 
   function getCollectionExpansionDeltas(entries, { iForms = [], naForms = [] } = {}) {
@@ -1343,12 +1343,29 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       baseEntriesRaw.push(e);
     }
 
-    const iForms = collState ? (collState.expansion_i ?? collState.expansion_iAdj ?? collState.expansion_i_adjective ?? []) : [];
-    const naForms = collState ? (collState.expansion_na ?? collState.expansion_naAdj ?? collState.expansion_na_adjective ?? []) : [];
+    let iForms = collState ? (collState.expansion_i ?? collState.expansion_iAdj ?? collState.expansion_i_adjective ?? []) : [];
+    let naForms = collState ? (collState.expansion_na ?? collState.expansion_naAdj ?? collState.expansion_na_adjective ?? []) : [];
     const collection = (opts?.collection && typeof opts.collection === 'object') ? opts.collection : null;
-    const expanded = (collection && collectionUsesJapaneseExpansion(collection))
-      ? expandJapaneseEntriesAndIndices(baseEntriesRaw, baseIndices, { iForms, naForms })
-      : { entries: baseEntriesRaw.slice(), indices: baseIndices.slice() };
+
+    // If the collection supports japanese adjective expansion and callers
+    // persisted the sentinel value 'all', expand that sentinel into an
+    // explicit list of available forms based on the expansion config.
+    let expanded = { entries: baseEntriesRaw.slice(), indices: baseIndices.slice() };
+    if (collection && collectionUsesJapaneseExpansion(collection)) {
+      try {
+        const cfg = getCollectionExpansionConfig(collection) || {};
+        if (iForms === 'all' || (Array.isArray(iForms) && iForms.includes('all'))) {
+          iForms = Array.isArray(cfg?.iItems) ? cfg.iItems.map(it => String(it?.value ?? it)) : [];
+        }
+        if (naForms === 'all' || (Array.isArray(naForms) && naForms.includes('all'))) {
+          naForms = Array.isArray(cfg?.naItems) ? cfg.naItems.map(it => String(it?.value ?? it)) : [];
+        }
+      } catch (e) {
+        // ignore and fall back to whatever was provided
+      }
+
+      expanded = expandJapaneseEntriesAndIndices(baseEntriesRaw, baseIndices, { iForms, naForms });
+    }
     const baseEntries = expanded.entries;
     const expandedIndices = expanded.indices;
     const m = baseEntries.length;

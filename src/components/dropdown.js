@@ -27,11 +27,22 @@ export function createDropdown({
   commitOnClose = false,
   // Optional hook fired whenever the menu closes.
   onClose = null,
+  // If true (multi-select only), include a top action row that toggles all/none.
+  includeAllNone = false,
 }) {
   const container = document.createElement('div');
   container.className = `custom-dropdown ${className}`;
   
   const normalizedItems = Array.isArray(items) ? items : [];
+
+  // If requested, inject a top-level action row to toggle/select all/none for multi-selects.
+  if (multi && includeAllNone) {
+    const hasToggle = normalizedItems.some(it => String(it?.kind || '').trim() === 'action' && String((it?.action || '')).toLowerCase().includes('toggle'));
+    if (!hasToggle) {
+      // Insert at the top so it appears first in the menu
+      normalizedItems.unshift({ kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' });
+    }
+  }
 
   // internal selection state
   let selectedValues = [];
