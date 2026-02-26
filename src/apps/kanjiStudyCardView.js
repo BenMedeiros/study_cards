@@ -883,18 +883,21 @@ export function renderKanjiStudyCard({ store }) {
       includeClearLearned: false
     });
   } catch (e) {}
-  // Ensure header order: shuffle, visible.cards (displayCards), then others
+  // Ensure header order: shuffle, clearShuffle, studyFilter, then remaining controls
   try {
     const parent = headerTools;
-    const shuffleCtrl = (typeof headerTools.getControl === 'function') ? headerTools.getControl('shuffle') : null;
-    const displayCtrl = (typeof headerTools.getControl === 'function') ? headerTools.getControl('displayCards') : null;
-    const shuffleGroup = shuffleCtrl && shuffleCtrl.parentNode ? shuffleCtrl.parentNode : null;
-    const displayGroup = displayCtrl && displayCtrl.parentNode ? displayCtrl.parentNode : null;
+    const getCtrlGroup = (key) => {
+      const ctrl = (typeof headerTools.getControl === 'function') ? headerTools.getControl(key) : null;
+      return ctrl && ctrl.parentNode ? ctrl.parentNode : null;
+    };
+    const shuffleGroup = getCtrlGroup('shuffle');
+    const clearShuffleGroup = getCtrlGroup('clearShuffle');
+    const studyFilterGroup = getCtrlGroup('studyFilter');
+
+    // Insert in desired sequence at the start of the parent container.
     if (parent && shuffleGroup) parent.insertBefore(shuffleGroup, parent.firstChild);
-    if (parent && displayGroup) {
-      const after = (shuffleGroup && parent.contains(shuffleGroup)) ? shuffleGroup.nextSibling : parent.firstChild;
-      parent.insertBefore(displayGroup, after);
-    }
+    if (parent && clearShuffleGroup) parent.insertBefore(clearShuffleGroup, shuffleGroup ? shuffleGroup.nextSibling : parent.firstChild);
+    if (parent && studyFilterGroup) parent.insertBefore(studyFilterGroup, (clearShuffleGroup && parent.contains(clearShuffleGroup)) ? clearShuffleGroup.nextSibling : (shuffleGroup && parent.contains(shuffleGroup) ? shuffleGroup.nextSibling : parent.firstChild));
   } catch (e) {}
   // Details toggle removed from header tools
 
