@@ -62,6 +62,32 @@ function diffEntryFields(before, after) {
   const keys = new Set([...Object.keys(o), ...Object.keys(n)]);
   const out = [];
   for (const k of keys) {
+    // Treat relatedCollections that are empty (or missing) as equal to avoid
+    // noisy diffs when imports omit this field.
+    if (k === 'relatedCollections') {
+      const isEmptyRelated = (v) => {
+        try {
+          if (v == null) return true;
+          if (Array.isArray(v)) return v.length === 0;
+          if (typeof v === 'object') {
+            // consider it empty if all values are empty arrays/objects
+            for (const val of Object.values(v)) {
+              if (Array.isArray(val) && val.length) return false;
+              if (val && typeof val === 'object') {
+                if (Object.keys(val).length) return false;
+              } else if (val != null) {
+                return false;
+              }
+            }
+            return true;
+          }
+          return false;
+        } catch (e) { return false; }
+      };
+      if (isEmptyRelated(o[k]) && isEmptyRelated(n[k])) continue;
+      if (!jsonEqual(o[k], n[k])) out.push(k);
+      continue;
+    }
     if (!jsonEqual(o[k], n[k])) out.push(k);
   }
   out.sort();
@@ -301,6 +327,9 @@ export function renderManageCollections({ store, onNavigate }) {
       if (!src) { setStatus('No collection loaded to build AI prompt.'); return; }
 
       const meta = (src.metadata && typeof src.metadata === 'object') ? src.metadata : (src.metadata ?? {});
+      // exclude relatedCollections from the AI prompt metadata
+      const metaForPrompt = (meta && typeof meta === 'object') ? { ...meta } : meta;
+      try { if (metaForPrompt && typeof metaForPrompt === 'object') delete metaForPrompt.relatedCollections; } catch (e) {}
       const schema = Array.isArray(src?.metadata?.schema) ? src.metadata.schema : (Array.isArray(src?.schema) ? src.schema : []);
       const arrayKey = detectArrayKey(src) || 'entries';
       const entriesArr = Array.isArray(src[arrayKey]) ? src[arrayKey] : [];
@@ -386,14 +415,22 @@ export function renderManageCollections({ store, onNavigate }) {
         return reps.slice(0, 5);
       })();
 
+      // remove relatedCollections from example entries for the AI prompt
+      const examplesForPrompt = Array.isArray(examples) ? examples.map(e => {
+        if (!e || typeof e !== 'object') return e;
+        const c = { ...e };
+        try { delete c.relatedCollections; } catch (err) {}
+        return c;
+      }) : examples;
+
       const blurb = `Context: I will paste the metadata, schema, and several example entries from a collection. Using the provided schema, please produce new entries that match the schema and reflect the concepts shown in the examples. Return only a JSON array of new entries.`;
 
       const parts = [];
       parts.push(blurb);
-      parts.push('\nMetadata:\n' + safeJsonStringify(meta, 0));
+      parts.push('\nMetadata:\n' + safeJsonStringify(metaForPrompt, 0));
       // parts.push('\nSchema:\n' + safeJsonStringify(schema, 0)); // schema already in metadata
-      parts.push('\nExamples:\n' + safeJsonStringify(examples, 0));
-      parts.push('\nInstructions:\n- Produce new entries that follow the schema exactly.\n- Keep values realistic and varied, matching the examples you may have already provided.  Include at least one example per meaning/sense.\n- Output only a JSON array of entries (no extra text).');
+      parts.push('\nExamples:\n' + safeJsonStringify(examplesForPrompt, 0));
+      parts.push('\nInstructions:\n- Produce new entries that follow the schema exactly.\n- Output only a JSON array of entries (no extra text).');
 
       const promptText = parts.join('\n\n');
       await copyToClipboard(promptText);
@@ -470,6 +507,8 @@ export function renderManageCollections({ store, onNavigate }) {
   parseBtn.type = 'button';
   parseBtn.className = 'btn';
   parseBtn.textContent = 'Parse & Diff';
+
+  
 
   const importHelpBtn = document.createElement('button');
   importHelpBtn.type = 'button';
@@ -1010,8 +1049,11 @@ export function renderManageCollections({ store, onNavigate }) {
         // after remains the incoming; we can't reliably map to mergedMap without a key
       }
       const changedFields = before ? diffEntryFields(before, after) : [];
-      // if there's a before and the objects are deeply equal, classify as unchanged
-      if (before && deepEqual(before, after)) {
+      // if there's a before and either the objects are deeply equal or
+      // there are no detected changed fields (e.g. differences are only
+      // in ignored/masked properties like empty relatedCollections),
+      // classify as unchanged
+      if (before && (deepEqual(before, after) || (Array.isArray(changedFields) && changedFields.length === 0))) {
         const summaryBits = pickEntrySummary(after);
         const label = k || '(no key)';
         const body = el('div', { className: 'mc-diff-body', children: [ el('div', { className: 'mc-single-col', children: [preJson(after, '18rem')] }) ] });
@@ -1440,6 +1482,36 @@ export function renderManageCollections({ store, onNavigate }) {
       parsed = tryParseJsonLoose(raw);
       if (parsed == null) {
         setStatus('Invalid JSON: unable to parse input after cleanup.');
+        return;
+      }
+
+      // Disallow importing related collections for now — TODO feature
+      const hasRelatedCollections = (v) => {
+        try {
+          if (!v) return false;
+          if (Array.isArray(v)) return v.some(hasRelatedCollections);
+          if (typeof v === 'object') {
+            if (Object.prototype.hasOwnProperty.call(v, 'relatedCollections')) {
+              const rc = v.relatedCollections;
+              if (rc && typeof rc === 'object') {
+                // any non-empty array under relatedCollections keys counts
+                for (const val of Object.values(rc)) {
+                  if (Array.isArray(val) && val.length) return true;
+                }
+                // presence of the property is enough to disallow as well
+                return true;
+              }
+            }
+            for (const o of Object.values(v)) {
+              if (hasRelatedCollections(o)) return true;
+            }
+          }
+        } catch (e) {}
+        return false;
+      };
+
+      if (hasRelatedCollections(parsed)) {
+        setStatus('Import contains relatedCollections — not supported yet (TODO).');
         return;
       }
     } catch (e) {
