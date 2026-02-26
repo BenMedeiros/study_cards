@@ -2738,7 +2738,7 @@ select:hover {
 /* Manage Collections view */
 #manage-collections-root .mc-layout {
   display: grid;
-  grid-template-columns: 35rem 1fr;
+  grid-template-columns: min(50%, 40rem) 1fr;
   gap: 0.75rem;
 }
 
@@ -2878,7 +2878,7 @@ select:hover {
 }
 
 #manage-collections-root .mc-diff-list {
-  max-height: 21rem;
+  max-height: 28rem;
   overflow-y: auto;
 }
 

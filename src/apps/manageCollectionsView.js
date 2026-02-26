@@ -910,6 +910,18 @@ export function renderManageCollections({ store, onNavigate }) {
       }
     } catch (e) {}
     const removeKeys = Array.isArray(patch?.entries?.removeKeys) ? patch.entries.removeKeys : [];
+    
+    // map of minimal upsert objects (when provided by preview/patcher)
+    const upsertMinimalArr = Array.isArray(patch?.entries?.upsertMinimal) ? patch.entries.upsertMinimal : [];
+    const upsertMinimalMap = new Map();
+    if (entryKeyField) {
+      for (const m of upsertMinimalArr) {
+        try {
+          const mk = m && typeof m === 'object' && m[entryKeyField] != null ? String(m[entryKeyField]).trim() : '';
+          if (mk) upsertMinimalMap.set(mk, m);
+        } catch (e) {}
+      }
+    }
 
     const editedItems = [];
     const newItems = [];
@@ -1013,39 +1025,86 @@ export function renderManageCollections({ store, onNavigate }) {
         ? (summaryBits ? `new • ${summaryBits}` : 'new')
         : `${changedFields.length} field(s) • ${summaryBits}`.trim();
 
-      const copyRow = el('div', {
-        className: 'mc-diff-actions',
-        children: [
-          before ? el('button', { className: 'btn small', text: 'Copy Before', attrs: { type: 'button' } }) : null,
-          el('button', { className: 'btn small', text: isNew ? 'Copy Entry' : 'Copy After', attrs: { type: 'button' } }),
-        ].filter(Boolean)
-      });
-      const copyBtns = copyRow.querySelectorAll('button');
-      if (before && copyBtns[0]) {
-        copyBtns[0].addEventListener('click', async () => {
-          await copyToClipboard(safeJsonStringify(before, 2));
+      // toggleable view: show diffs (only changed fields / minimal) or show full
+      const toggleBtn = el('button', { className: 'btn small', text: 'Show Diffs', attrs: { type: 'button' } });
+
+      // Copy buttons
+      const beforeCopyBtn = before ? el('button', { className: 'btn small', text: 'Copy Before', attrs: { type: 'button' } }) : null;
+      const afterCopyBtn = el('button', { className: 'btn small', text: isNew ? 'Copy Entry' : 'Copy After', attrs: { type: 'button' } });
+
+      const copyRow = el('div', { className: 'mc-diff-actions', children: [toggleBtn, beforeCopyBtn, afterCopyBtn].filter(Boolean) });
+
+      if (beforeCopyBtn) {
+        beforeCopyBtn.addEventListener('click', async () => {
+          const v = (typeof showDiffOnly !== 'undefined' && showDiffOnly) ? (minimalBefore ?? before) : before;
+          await copyToClipboard(safeJsonStringify(v, 2));
           setStatus('Copied before entry JSON.');
         });
       }
-      const afterBtn = before ? copyBtns[1] : copyBtns[0];
-      if (afterBtn) {
-        afterBtn.addEventListener('click', async () => {
-          await copyToClipboard(safeJsonStringify(after, 2));
+      if (afterCopyBtn) {
+        afterCopyBtn.addEventListener('click', async () => {
+          const v = (typeof showDiffOnly !== 'undefined' && showDiffOnly) ? (minimalAfter ?? after) : after;
+          await copyToClipboard(safeJsonStringify(v, 2));
           setStatus('Copied entry JSON.');
         });
       }
+
+      // create pre elements (we'll update their content when toggling)
+      const beforePre = before ? preJson(before, '18rem') : null;
+      const afterPre = preJson(after, isNew ? '22rem' : '18rem');
+
+      // helpers to pick fields
+      const pickFields = (obj, keys) => {
+        if (!obj || typeof obj !== 'object') return obj;
+        const out = {};
+        for (const k of keys) if (typeof obj[k] !== 'undefined') out[k] = obj[k];
+        return out;
+      };
+
+      // compute minimal objects for diff view
+      const minimalBefore = (!isNew && before && changedFields && changedFields.length) ? pickFields(before, changedFields) : null;
+      let minimalAfter = null;
+      if (!isNew && after && changedFields && changedFields.length) minimalAfter = pickFields(after, changedFields);
+      // for new entries, try to use upsertMinimal mapping when available
+      if (isNew && entryKeyField && typeof k === 'string' && k && upsertMinimalMap.has(k)) {
+        minimalAfter = upsertMinimalMap.get(k);
+      }
+
+      // stateful toggle
+      let showDiffOnly = true;
+      const applyView = (diffOnly) => {
+        try {
+          if (beforePre) {
+            const v = (diffOnly && minimalBefore) ? minimalBefore : before;
+            beforePre.textContent = safeJsonStringify(v, 2);
+          }
+          if (afterPre) {
+            const v = (diffOnly && minimalAfter) ? minimalAfter : after;
+            afterPre.textContent = safeJsonStringify(v, 2);
+          }
+        } catch (e) {}
+      };
+      // initialize view: when there are no changedFields/minimals, default to full
+      if ((!isNew && (!changedFields || !changedFields.length)) || (isNew && !minimalAfter)) showDiffOnly = false;
+      applyView(showDiffOnly);
+      toggleBtn.textContent = showDiffOnly ? 'Show Full' : 'Show Diffs';
+      toggleBtn.addEventListener('click', () => {
+        showDiffOnly = !showDiffOnly;
+        applyView(showDiffOnly);
+        toggleBtn.textContent = showDiffOnly ? 'Show Full' : 'Show Diffs';
+      });
 
       const body = el('div', {
         className: 'mc-diff-body',
         children: [
           copyRow,
           isNew
-            ? el('div', { className: 'mc-single-col', children: [preJson(after, '22rem')] })
+            ? el('div', { className: 'mc-single-col', children: [afterPre] })
             : el('div', {
               className: 'mc-diff-cols',
               children: [
-                el('div', { className: 'mc-diff-col', children: [el('div', { className: 'mc-diff-col-title', text: 'Before' }), preJson(before, '18rem')] }),
-                el('div', { className: 'mc-diff-col', children: [el('div', { className: 'mc-diff-col-title', text: 'After' }), preJson(after, '18rem')] }),
+                el('div', { className: 'mc-diff-col', children: [el('div', { className: 'mc-diff-col-title', text: 'Before' }), beforePre] }),
+                el('div', { className: 'mc-diff-col', children: [el('div', { className: 'mc-diff-col-title', text: 'After' }), afterPre] }),
               ]
             }),
 
