@@ -223,47 +223,24 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
     root.style.display = visible ? '' : 'none';
   }
 
-  // Control english visibility via inline style (visibility:hidden)
-  function setEnglishVisible(visible) {
+  // Generic field visibility API
+  function setFieldVisible(field, visible) {
     const v = !!visible;
-    // Keep the English label visible; only hide the English text content.
-    enText.style.visibility = v ? '' : 'hidden';
+    const f = String(field || '').trim();
+    if (!f) return;
+    if (f === 'english') enText.style.visibility = v ? '' : 'hidden';
+    else if (f === 'japanese') jpText.style.visibility = v ? '' : 'hidden';
+    else if (f === 'notes') notesList.style.visibility = v ? '' : 'hidden';
   }
 
-  // Control japanese visibility (the primary JP text)
-  function setJapaneseVisible(visible) {
-    const v = !!visible;
-    jpText.style.visibility = v ? '' : 'hidden';
-  }
-
-  // Control notes visibility
-  function setNotesVisible(visible) {
-    const v = !!visible;
-    // Keep the Notes label visible; only hide the notes list content.
-    notesList.style.visibility = v ? '' : 'hidden';
+  function setFieldsVisible(map) {
+    if (!map || typeof map !== 'object') return;
+    for (const k of Object.keys(map)) setFieldVisible(k, !!map[k]);
   }
 
   // initialize from `entry`
   setEntry(entry);
   render();
 
-  // Allow the view to request toggleable field descriptors based on collection metadata.
-  function getToggleFields(metadata) {
-    const fields = metadata?.relatedCollections?.fields;
-    if (Array.isArray(fields) && fields.length) {
-      return fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f), right: 'Visible' }));
-    }
-    // Fallback to the canonical static list
-    return (Array.isArray(kanjiExampleCardToggleFields) ? kanjiExampleCardToggleFields.slice() : []);
-  }
-
-  return { el: root, update, setEntry, setVisible, setEnglishVisible, setJapaneseVisible, setNotesVisible, getToggleFields, destroy };
+  return { el: root, update, setEntry, setVisible, setFieldVisible, setFieldsVisible, destroy };
 }
-
-// Export canonical toggleable fields for the related/example card
-export const kanjiExampleCardToggleFields = [
-  { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
-  { value: 'english', left: 'English', right: 'Visible' },
-  { value: 'japanese', left: 'Japanese', right: 'Visible' },
-  { value: 'notes', left: 'Notes', right: 'Visible' },
-];

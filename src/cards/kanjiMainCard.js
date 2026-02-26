@@ -121,24 +121,5 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   setEntry(entry);
   setIndexText(indexText);
 
-  function getToggleFields(metadata) {
-    settingsLog('[Card:Main] getToggleFields()', { metadataKeys: metadata ? Object.keys(metadata) : null });
-    if (!metadata || typeof metadata !== 'object') {
-      return (Array.isArray(kanjiMainCardToggleFields) ? kanjiMainCardToggleFields.slice() : []);
-    }
-    const fields = Array.isArray(metadata.fields) ? metadata.fields : (Array.isArray(metadata.schema) ? metadata.schema : []);
-    if (!Array.isArray(fields) || !fields.length) return (Array.isArray(kanjiMainCardToggleFields) ? kanjiMainCardToggleFields.slice() : []);
-    return fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f), right: 'Visible' }));
-  }
-
-  return { el: root, setEntry, setIndexText, setFieldVisible, setFieldsVisible, getToggleFields, destroy };
+  return { el: root, setEntry, setIndexText, setFieldVisible, setFieldsVisible, destroy };
 }
-
-// Export a canonical list of toggleable fields for this card
-export const kanjiMainCardToggleFields = [
-  { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
-  { value: 'kanji', left: 'Kanji', right: 'Visible' },
-  { value: 'reading', left: 'Reading', right: 'Visible' },
-  { value: 'meaning', left: 'Meaning', right: 'Visible' },
-  { value: 'type', left: 'Type', right: 'Visible' },
-];

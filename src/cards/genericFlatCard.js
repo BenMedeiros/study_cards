@@ -76,17 +76,5 @@ export function createGenericFlatCard({ entry = null, config = {} } = {}) {
   // initialize
   setEntry(entry);
 
-  // Provide a metadata-driven toggle descriptor so views can build per-card dropdowns.
-  function getToggleFields(metadata) {
-    settingsLog('[Card:Generic] getToggleFields()', { metadataKeys: metadata ? Object.keys(metadata) : null });
-    if (!metadata || typeof metadata !== 'object') return [];
-    const fields = Array.isArray(metadata.fields) ? metadata.fields : (Array.isArray(metadata.schema) ? metadata.schema : []);
-    if (!Array.isArray(fields) || !fields.length) return [];
-    return fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f), right: 'Visible' }));
-  }
-
-  return { el: root, setEntry, setFieldVisible, setFieldsVisible, setVisible, getToggleFields, destroy };
+  return { el: root, setEntry, setFieldVisible, setFieldsVisible, setVisible, destroy };
 }
-
-// Export a simple set of toggleable fields (empty by default — apps can use keys)
-export const genericFlatCardToggleFields = [];

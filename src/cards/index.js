@@ -1,20 +1,14 @@
-import { createKanjiMainCard, kanjiMainCardToggleFields } from './kanjiMainCard.js';
-import { createKanjiRelatedCard, kanjiExampleCardToggleFields } from './kanjiExampleCard.js';
-import { createKanjiFullCard, kanjiFullCardToggleFields } from './kanjiFullCard.js';
-import { createGenericFlatCard, genericFlatCardToggleFields } from './genericFlatCard.js';
-import { createJsonViewerCard, jsonViewerCardToggleFields } from './jsonViewerCard.js';
-
-// Export individual factories/fields for backwards compatibility
-export { createKanjiMainCard, kanjiMainCardToggleFields };
-export { createKanjiRelatedCard, kanjiExampleCardToggleFields };
-export { createKanjiFullCard, kanjiFullCardToggleFields };
-export { createGenericFlatCard, genericFlatCardToggleFields };
+import { createKanjiMainCard } from './kanjiMainCard.js';
+import { createKanjiRelatedCard } from './kanjiExampleCard.js';
+import { createKanjiFullCard } from './kanjiFullCard.js';
+import { createGenericFlatCard } from './genericFlatCard.js';
+import { createJsonViewerCard } from './jsonViewerCard.js';
 
 // Card registry used by views to auto-discover available card types.
 export const CARD_REGISTRY = [
-	{ key: 'main', label: 'Main Card', factory: createKanjiMainCard, toggleFields: kanjiMainCardToggleFields },
-	{ key: 'related', label: 'Related Card', factory: createKanjiRelatedCard, toggleFields: kanjiExampleCardToggleFields },
-	{ key: 'full', label: 'Full Details', factory: createKanjiFullCard, toggleFields: kanjiFullCardToggleFields },
-	{ key: 'generic', label: 'Generic', factory: createGenericFlatCard, toggleFields: genericFlatCardToggleFields },
-	{ key: 'json', label: 'JSON Viewer', factory: createJsonViewerCard, toggleFields: jsonViewerCardToggleFields },
+    { key: 'main', label: 'Main Card', factory: createKanjiMainCard, toggleFields: [] },
+    { key: 'related', label: 'Related Card', factory: createKanjiRelatedCard, toggleFields: [] },
+    { key: 'full', label: 'Full Details', factory: createKanjiFullCard, toggleFields: [] },
+    { key: 'generic', label: 'Generic', factory: createGenericFlatCard, toggleFields: [] },
+    { key: 'json', label: 'JSON Viewer', factory: createJsonViewerCard, toggleFields: [] },
 ];

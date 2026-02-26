@@ -32,4 +32,4 @@ export function createJsonViewerCard({ entry = null, config = {} } = {}) {
   return { el: root, setEntry, setVisible, destroy };
 }
 
-export const jsonViewerCardToggleFields = [];
+// No toggle fields; visibility is controlled by the view layer now.

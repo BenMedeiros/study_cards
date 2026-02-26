@@ -159,27 +159,5 @@ export function createKanjiFullCard({ entry = null, config = {}, handlers = {} }
   // initialize
   setEntry(entry);
 
-  function getToggleFields(metadata) {
-    settingsLog('[Card:Full] getToggleFields()', { metadataKeys: metadata ? Object.keys(metadata) : null });
-    if (!metadata || typeof metadata !== 'object') {
-      return (Array.isArray(kanjiFullCardToggleFields) ? kanjiFullCardToggleFields.slice() : []);
-    }
-    const fields = Array.isArray(metadata.fields) ? metadata.fields : (Array.isArray(metadata.schema) ? metadata.schema : []);
-    if (!Array.isArray(fields) || !fields.length) return (Array.isArray(kanjiFullCardToggleFields) ? kanjiFullCardToggleFields.slice() : []);
-    return fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f), right: 'Visible' }));
-  }
-
-  return { el: root, setEntry, setFieldVisible, setFieldsVisible, setVisible, getToggleFields, destroy };
+  return { el: root, setEntry, setFieldVisible, setFieldsVisible, setVisible, destroy };
 }
-
-// Export canonical toggleable fields for the full-detail card
-export const kanjiFullCardToggleFields = [
-  { kind: 'action', action: 'toggleAllNone', value: '__toggle__', label: '(all/none)' },
-  { value: 'kanji', left: 'Kanji', right: 'Visible' },
-  { value: 'reading', left: 'Reading', right: 'Visible' },
-  { value: 'meaning', left: 'Meaning', right: 'Visible' },
-  { value: 'type', left: 'Type', right: 'Visible' },
-  { value: 'lexical', left: 'Lexical Class', right: 'Visible' },
-  { value: 'orthography', left: 'Orthography', right: 'Visible' },
-  { value: 'tags', left: 'Tags', right: 'Visible' },
-];

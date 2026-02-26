@@ -86,20 +86,15 @@ export function renderKanjiStudyCard({ store }) {
         return isAll ? 'all' : arr;
       };
 
-      // Persist per-card field selections as an object keyed by card key.
-      const cardFieldsOut = {};
-      for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-        const items = Array.isArray(c.toggleFields) ? c.toggleFields.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-        const sel = cardFieldSelections[c.key];
-        if (sel === 'all') cardFieldsOut[c.key] = 'all';
-        else if (Array.isArray(sel)) cardFieldsOut[c.key] = sel.slice();
-        else cardFieldsOut[c.key] = items.slice();
-      }
+      // Persist entry-level and related-collection visibility selections
+      const relatedOut = {};
+      for (const k of Object.keys(relatedFieldSelections || {})) relatedOut[k] = Array.isArray(relatedFieldSelections[k]) ? relatedFieldSelections[k].slice() : relatedFieldSelections[k];
 
       store.collections.saveCollectionState(key, {
         kanjiStudyCardView: {
           currentIndex: index,
-          cardFields: cardFieldsOut,
+          entryFields: (entryFieldSelection === 'all') ? 'all' : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []),
+          relatedFields: relatedOut,
           displayCards: sliceOrAll(displayCardSelection, displayCardItems),
         }
       });
@@ -142,113 +137,88 @@ export function renderKanjiStudyCard({ store }) {
 
   // shuffle control will be added later once handler is defined
 
-  // --- Header dropdowns to control card field visibility ---
-  // Use registry-driven per-card field selections and dropdowns.
-  let cardFieldSelections = {}; // { [cardKey]: Array<string> | 'all' }
+  // --- Header dropdowns to control field visibility (entry-level + related collections) ---
+  // New authoritative model: visibility is controlled at the entry level (and per-related-collection).
+  // Build items from collection metadata only (no legacy fallbacks).
   let displayCardSelection = ['main', 'related'];
   const res = store?.collections?.getActiveCollectionView ? store.collections.getActiveCollectionView({ windowSize: 0 }) : null;
   const collState = res?.collState || {};
   const appState = collState?.kanjiStudyCardView || {};
-    // Load legacy or new per-card saved state.
-    // Initialize cardFieldSelections with registry defaults (all non-action fields)
-  for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-    // Prefer dynamic toggle fields from the instantiated card API when available.
-    let items = Array.isArray(c.toggleFields) ? c.toggleFields.slice() : [];
-    const api = cardApis[c.key];
-    const active = store?.collections?.getActiveCollection?.() || null;
-    const metadata = active?.metadata;
-    settingsLog('[View] requesting getToggleFields()', { card: c.key, metadataPresent: !!metadata });
-    if (api && typeof api.getToggleFields === 'function') {
-      const dyn = api.getToggleFields(metadata);
-      settingsLog('[View] getToggleFields() result', { card: c.key, count: Array.isArray(dyn) ? dyn.length : 0 });
-      if (Array.isArray(dyn) && dyn.length) items = dyn.slice();
+
+  // state for visibility selections
+  let entryFieldSelection = Array.isArray(appState?.entryFields) ? appState.entryFields.slice() : 'all';
+  const relatedFieldSelections = (appState && typeof appState.relatedFields === 'object') ? { ...appState.relatedFields } : {};
+
+  // helper to apply an entry-level visibility map to all card APIs
+  function applyEntryFieldVisibility(map) {
+    for (const k of Object.keys(cardApis || {})) {
+      const api = cardApis[k];
+      if (!api) continue;
+      if (typeof api.setFieldsVisible === 'function') api.setFieldsVisible(map);
+      else if (typeof api.setFieldVisible === 'function') {
+        for (const fk of Object.keys(map)) api.setFieldVisible(fk, !!map[fk]);
+      }
     }
-    const out = Array.isArray(items) ? items.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-    cardFieldSelections[c.key] = out.slice();
   }
 
-    if (appState && appState.cardFields) {
-      // If saved as an object mapping, copy entries
-    if (typeof appState.cardFields === 'object' && !Array.isArray(appState.cardFields)) {
-      for (const k of Object.keys(appState.cardFields || {})) {
-        cardFieldSelections[k] = appState.cardFields[k];
-      }
-    } else if (Array.isArray(appState.cardFields)) {
-        // legacy: array -> treat as main card selection
-        cardFieldSelections['main'] = appState.cardFields.slice();
-      } else if (typeof appState.cardFields === 'string' && appState.cardFields === 'all') {
-        for (const k of Object.keys(cardFieldSelections)) cardFieldSelections[k] = 'all';
-      }
-    }
-    // support legacy relatedFields/fullFields keys
-    if (Array.isArray(appState.relatedFields)) cardFieldSelections['related'] = appState.relatedFields.slice();
-    else if (typeof appState.relatedFields === 'string' && appState.relatedFields === 'all') cardFieldSelections['related'] = 'all';
-    if (Array.isArray(appState.fullFields)) cardFieldSelections['full'] = appState.fullFields.slice();
-    else if (typeof appState.fullFields === 'string' && appState.fullFields === 'all') cardFieldSelections['full'] = 'all';
-    if (Array.isArray(appState.displayCards)) displayCardSelection = appState.displayCards.slice();
-    else if (typeof appState.displayCards === 'string' && appState.displayCards === 'all') displayCardSelection = 'all';
+  // derive entry field items from collection metadata (authoritative)
+  const activeColl = store?.collections?.getActiveCollection?.() || null;
+  const metadata = activeColl?.metadata || {};
+  const entryFieldItems = Array.isArray(metadata?.fields) ? metadata.fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f) })) : [];
 
-  // Create per-card toggle dropdowns based on CARD_REGISTRY entries.
-  const cardFieldControls = {};
-  for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-    let items = Array.isArray(c.toggleFields) ? c.toggleFields.slice() : [];
-    const api = cardApis[c.key];
-    const active = store?.collections?.getActiveCollection?.() || null;
-    const metadata = active?.metadata;
-    settingsLog('[View] requesting getToggleFields()', { card: c.key, metadataPresent: !!metadata });
-    if (api && typeof api.getToggleFields === 'function') {
-      const dyn = api.getToggleFields(metadata);
-      settingsLog('[View] getToggleFields() result', { card: c.key, count: Array.isArray(dyn) ? dyn.length : 0 });
-      if (Array.isArray(dyn) && dyn.length) items = dyn.slice();
-    }
-        const key = `${c.key}Fields`;
-        const values = (function() {
-          const sel = cardFieldSelections[c.key];
-          if (sel === 'all') return items.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
-          if (Array.isArray(sel)) return sel.slice();
-          // default: all non-action values
-          return items.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
-        })();
+  // create entry-level dropdown
+  const entryFieldsRec = headerTools.addElement({
+    type: 'dropdown', key: 'entryFields', items: entryFieldItems, multi: true,
+    values: (entryFieldSelection === 'all') ? entryFieldItems.map(it => String(it.value || '')) : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []),
+    commitOnClose: true,
+    onChange: (vals) => {
+      const chosen = (typeof vals === 'string' && vals === 'all') ? entryFieldItems.map(it => String(it.value || '')) : (Array.isArray(vals) ? vals.slice() : []);
+      const set = new Set(chosen);
+      const map = {};
+      for (const it of entryFieldItems) map[String(it.value || '')] = set.has(String(it.value || ''));
+      entryFieldSelection = chosen;
+      applyEntryFieldVisibility(map);
+      saveUIState();
+    },
+    className: 'data-expansion-dropdown',
+    caption: 'entry.fields.visibility'
+  });
 
-        const rec = headerTools.addElement({
-          type: 'dropdown', key, items, multi: true,
-          values, commitOnClose: true,
-          onChange: (vals) => {
-            const chosen = (typeof vals === 'string' && vals === 'all')
-              ? items.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''))
-              : (Array.isArray(vals) ? vals.slice() : []);
-            // apply to card API: prefer setFieldsVisible(map), fallback to individual setters
-            const api = cardApis[c.key];
-            const set = new Set(chosen);
-            if (api && typeof api.setFieldsVisible === 'function') {
-              const map = {};
-              for (const it of items) if (String(it?.kind || '') !== 'action') map[String(it.value || '')] = set.has(String(it.value || ''));
-              api.setFieldsVisible(map);
-            } else {
-              for (const it of items) {
-                const v = String(it?.value || '');
-                const cap = v.charAt(0).toUpperCase() + v.slice(1);
-                const fnName = `set${cap}Visible`;
-                if (api && typeof api[fnName] === 'function') api[fnName](set.has(v));
-                else if (api && typeof api.setFieldVisible === 'function') api.setFieldVisible(v, set.has(v));
-              }
-            }
-            cardFieldSelections[c.key] = chosen;
-            saveUIState();
-          },
-          className: 'data-expansion-dropdown',
-          caption: `${c.label}.visibility`
-        });
-        cardFieldControls[c.key] = rec && rec.control ? rec.control : null;
-        // If this card is not currently selected in `displayCardSelection`, hide its
-        // per-card field dropdown group to avoid showing controls for invisible cards.
-        try {
-          const ctrl = rec && rec.control ? rec.control : null;
-          if (ctrl && ctrl.parentNode) {
-            const visible = (displayCardSelection === 'all') || (Array.isArray(displayCardSelection) && displayCardSelection.includes(c.key));
-            ctrl.parentNode.style.display = visible ? '' : 'none';
-          }
-        } catch (e) {}
+  // For each related-collection declared in the collection metadata, add a dropdown.
+  const relatedDefs = Array.isArray(metadata?.relatedCollections) ? metadata.relatedCollections.slice() : [];
+  const relatedDropdownControls = {};
+  const RELATED_DEFAULT_ITEMS = [
+    { value: 'english', left: 'English' },
+    { value: 'japanese', left: 'Japanese' },
+    { value: 'notes', left: 'Notes' },
+  ];
+
+  for (const rel of relatedDefs) {
+    const name = String(rel?.name || '').trim();
+    if (!name) continue;
+    const items = Array.isArray(rel.fields) ? rel.fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f) })) : RELATED_DEFAULT_ITEMS.slice();
+    const sel = relatedFieldSelections[name] || 'all';
+    const rec = headerTools.addElement({
+      type: 'dropdown', key: `related.${name}.fields`, items, multi: true,
+      values: (sel === 'all') ? items.map(it => String(it.value || '')) : (Array.isArray(sel) ? sel.slice() : []),
+      commitOnClose: true,
+      onChange: (vals) => {
+        const chosen = (typeof vals === 'string' && vals === 'all') ? items.map(it => String(it.value || '')) : (Array.isArray(vals) ? vals.slice() : []);
+        relatedFieldSelections[name] = chosen;
+        // apply to related card API if available
+        const api = cardApis['related'];
+        if (api && typeof api.setFieldsVisible === 'function') {
+          const set = new Set(chosen);
+          const map = {};
+          for (const it of items) map[String(it.value || '')] = set.has(String(it.value || ''));
+          api.setFieldsVisible(map);
+        }
+        saveUIState();
+      },
+      className: 'data-expansion-dropdown',
+      caption: `${name}.fields.visibility`
+    });
+    relatedDropdownControls[name] = rec && rec.control ? rec.control : null;
   }
 
   // No legacy UI load: visual defaults used.
@@ -447,8 +417,13 @@ export function renderKanjiStudyCard({ store }) {
         if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
         // Also hide/show the corresponding per-card field dropdown group
         try {
-          const ctrl = cardFieldControls[c.key];
-          if (ctrl && ctrl.parentNode) ctrl.parentNode.style.display = set.has(c.key) ? '' : 'none';
+          // Hide/show related dropdown groups when the related card is toggled
+          if (c.key === 'related') {
+            for (const rn of Object.keys(relatedDropdownControls || {})) {
+              const rc = relatedDropdownControls[rn];
+              if (rc && rc.parentNode) rc.parentNode.style.display = set.has(c.key) ? '' : 'none';
+            }
+          }
         } catch (e) {}
       }
       displayCardSelection = chosen;
@@ -473,38 +448,30 @@ export function renderKanjiStudyCard({ store }) {
     if (api && api.el) registryCardEls.push(api.el);
   }
 
-  // Apply initial visibility/mute defaults to cards to match dropdown defaults
+  // Apply initial visibility defaults based on entry-level and related selections
   if (displayCardSelection === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
-  for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-    const items = Array.isArray(c.toggleFields) ? c.toggleFields.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-    const sel = cardFieldSelections[c.key];
-    const values = (sel === 'all') ? items.slice() : (Array.isArray(sel) ? sel.slice() : items.slice());
-    const api = cardApis[c.key];
-    const set = new Set(values);
+
+  // Apply entry-level visibility
+  const entrySelected = (entryFieldSelection === 'all') ? entryFieldItems.map(it => String(it.value || '')) : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []);
+  const entrySet = new Set(entrySelected);
+  const entryMap = {};
+  for (const it of entryFieldItems) entryMap[String(it.value || '')] = entrySet.has(String(it.value || ''));
+  applyEntryFieldVisibility(entryMap);
+
+  // Apply related-collection visibility selections
+  for (const rel of relatedDefs) {
+    const name = String(rel?.name || '').trim();
+    if (!name) continue;
+    const items = Array.isArray(rel.fields) ? rel.fields.map(f => String(f.key || f)) : RELATED_DEFAULT_ITEMS.map(it => it.value);
+    const sel = relatedFieldSelections[name] || 'all';
+    const chosen = (sel === 'all') ? items.slice() : (Array.isArray(sel) ? sel.slice() : []);
+    const api = cardApis['related'];
     if (api && typeof api.setFieldsVisible === 'function') {
+      const set = new Set(chosen);
       const map = {};
       for (const v of items) map[v] = set.has(v);
       api.setFieldsVisible(map);
-    } else {
-      for (const v of items) {
-        const cap = String(v).charAt(0).toUpperCase() + String(v).slice(1);
-        const fnName = `set${cap}Visible`;
-        if (api && typeof api[fnName] === 'function') api[fnName](set.has(v));
-        else if (api && typeof api.setFieldVisible === 'function') api.setFieldVisible(v, set.has(v));
-      }
     }
-  }
-  // ensure related card toggles are applied even if no registry items matched earlier
-  const regRelated = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(c => c.key === 'related') : null);
-  if (regRelated) {
-    const api = cardApis['related'];
-    const sel = cardFieldSelections['related'];
-    const items = Array.isArray(regRelated.toggleFields) ? regRelated.toggleFields.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-    const values = (sel === 'all') ? items.slice() : (Array.isArray(sel) ? sel.slice() : items.slice());
-    const set = new Set(values);
-    if (api && typeof api.setEnglishVisible === 'function') api.setEnglishVisible(set.has('english'));
-    if (api && typeof api.setJapaneseVisible === 'function') api.setJapaneseVisible(set.has('japanese'));
-    if (api && typeof api.setNotesVisible === 'function') api.setNotesVisible(set.has('notes'));
   }
 
   // render a single card body
@@ -563,63 +530,16 @@ export function renderKanjiStudyCard({ store }) {
       const savedIndex = (collState && collState.kanjiStudyCardView && typeof collState.kanjiStudyCardView.currentIndex === 'number')
         ? collState.kanjiStudyCardView.currentIndex
         : undefined;
-      if (typeof savedIndex === 'number') {
-        index = savedIndex;
+      if (typeof savedIndex === 'number') index = savedIndex;
+
+      const savedApp = collState.kanjiStudyCardView || {};
+      if (savedApp.entryFields !== undefined) entryFieldSelection = savedApp.entryFields === 'all' ? 'all' : (Array.isArray(savedApp.entryFields) ? savedApp.entryFields.slice() : savedApp.entryFields);
+      if (savedApp.relatedFields && typeof savedApp.relatedFields === 'object') {
+        for (const k of Object.keys(savedApp.relatedFields)) relatedFieldSelections[k] = Array.isArray(savedApp.relatedFields[k]) ? savedApp.relatedFields[k].slice() : savedApp.relatedFields[k];
       }
-      const appState = collState.kanjiStudyCardView || {};
-      // Apply saved per-card field selections (supports new object format and legacy values)
-      if (appState.cardFields && typeof appState.cardFields === 'object' && !Array.isArray(appState.cardFields)) {
-        for (const k of Object.keys(appState.cardFields || {})) {
-          const sel = appState.cardFields[k];
-          const reg = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(x => x.key === k) : null);
-          const items = (reg && Array.isArray(reg.toggleFields)) ? reg.toggleFields.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-          const values = (sel === 'all') ? items.slice() : (Array.isArray(sel) ? sel.slice() : []);
-          const api = cardApis[k];
-          const set = new Set(values);
-          if (api && typeof api.setFieldsVisible === 'function') {
-            const map = {};
-            for (const val of items) map[val] = set.has(val);
-            api.setFieldsVisible(map);
-          } else {
-            for (const val of items) {
-              const cap = String(val).charAt(0).toUpperCase() + String(val).slice(1);
-              const fnName = `set${cap}Visible`;
-              if (api && typeof api[fnName] === 'function') api[fnName](set.has(val));
-              else if (api && typeof api.setFieldVisible === 'function') api.setFieldVisible(val, set.has(val));
-            }
-          }
-          cardFieldSelections[k] = sel === 'all' ? 'all' : (Array.isArray(sel) ? sel.slice() : values.slice());
-        }
-      } else if (Array.isArray(appState.cardFields)) {
-        // legacy: treat as main card selection
-        cardFieldSelections['main'] = appState.cardFields.slice();
-        if (mainCardApi && typeof mainCardApi.setFieldsVisible === 'function') {
-          const regMain = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(x => x.key === 'main') : null);
-          const items = (regMain && Array.isArray(regMain.toggleFields)) ? regMain.toggleFields.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-          const map = {};
-          for (const val of items) map[val] = Array.isArray(appState.cardFields) ? appState.cardFields.includes(val) : false;
-          mainCardApi.setFieldsVisible(map);
-        }
-      } else if (typeof appState.cardFields === 'string' && appState.cardFields === 'all') {
-        for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) cardFieldSelections[c.key] = 'all';
-      }
-      // legacy singular keys
-      if (Array.isArray(appState.relatedFields)) cardFieldSelections['related'] = appState.relatedFields.slice();
-      if (typeof appState.relatedFields === 'string' && appState.relatedFields === 'all') cardFieldSelections['related'] = 'all';
-      if (Array.isArray(appState.fullFields)) cardFieldSelections['full'] = appState.fullFields.slice();
-      if (typeof appState.fullFields === 'string' && appState.fullFields === 'all') cardFieldSelections['full'] = 'all';
-      if (Array.isArray(appState.displayCards)) {
-        displayCardSelection = appState.displayCards.slice();
-        const set = new Set(Array.isArray(displayCardSelection) ? displayCardSelection : []);
-        for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-          const api = cardApis[c.key];
-          if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
-          try {
-            const ctrl = cardFieldControls[c.key];
-            if (ctrl && ctrl.parentNode) ctrl.parentNode.style.display = set.has(c.key) ? '' : 'none';
-          } catch (e) {}
-        }
-      }
+      if (Array.isArray(savedApp.displayCards)) displayCardSelection = savedApp.displayCards.slice();
+      else if (savedApp.displayCards === 'all') displayCardSelection = 'all';
+
       uiStateRestored = true;
     }
     const prevIndex = index;
