@@ -236,7 +236,16 @@ export function renderKanjiStudyCard({ store }) {
           className: 'data-expansion-dropdown',
           caption: `${c.label}.visibility`
         });
-    cardFieldControls[c.key] = rec && rec.control ? rec.control : null;
+        cardFieldControls[c.key] = rec && rec.control ? rec.control : null;
+        // If this card is not currently selected in `displayCardSelection`, hide its
+        // per-card field dropdown group to avoid showing controls for invisible cards.
+        try {
+          const ctrl = rec && rec.control ? rec.control : null;
+          if (ctrl && ctrl.parentNode) {
+            const visible = (displayCardSelection === 'all') || (Array.isArray(displayCardSelection) && displayCardSelection.includes(c.key));
+            ctrl.parentNode.style.display = visible ? '' : 'none';
+          }
+        } catch (e) {}
   }
 
   // No legacy UI load: visual defaults used.
@@ -392,6 +401,11 @@ export function renderKanjiStudyCard({ store }) {
       for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
         const api = cardApis[c.key];
         if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
+        // Also hide/show the corresponding per-card field dropdown group
+        try {
+          const ctrl = cardFieldControls[c.key];
+          if (ctrl && ctrl.parentNode) ctrl.parentNode.style.display = set.has(c.key) ? '' : 'none';
+        } catch (e) {}
       }
       displayCardSelection = chosen;
       saveUIState();
@@ -552,6 +566,10 @@ export function renderKanjiStudyCard({ store }) {
         for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
           const api = cardApis[c.key];
           if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
+          try {
+            const ctrl = cardFieldControls[c.key];
+            if (ctrl && ctrl.parentNode) ctrl.parentNode.style.display = set.has(c.key) ? '' : 'none';
+          } catch (e) {}
         }
       }
       uiStateRestored = true;
