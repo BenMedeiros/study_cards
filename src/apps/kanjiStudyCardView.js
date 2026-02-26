@@ -4,6 +4,8 @@ import { speak, getLanguageCode } from '../utils/speech.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createViewFooterControls } from '../components/viewFooterControls.js';
 import { CARD_REGISTRY } from '../cards/index.js';
+import { addStudyFilter } from '../components/studyControls.js';
+import { addShuffleControls } from '../components/collectionControls.js';
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
@@ -414,6 +416,10 @@ export function renderKanjiStudyCard({ store }) {
     caption: 'visible.cards'
   });
 
+  try {
+    addStudyFilter(headerTools, { store, getCurrentCollectionKey, collState, onChange: () => { try { refreshEntriesFromStore(); render(); } catch (e) {} } });
+  } catch (e) {}
+
 
   // expose the same variable names used elsewhere so render() logic needs minimal changes
   const card = mainCardApi.el; // root .card kanji-card
@@ -818,7 +824,22 @@ export function renderKanjiStudyCard({ store }) {
   // Tools behaviour
   // wire shuffle control after handler exists
   try {
-    headerTools.addElement({ type: 'button', key: 'shuffle', label: 'Shuffle', caption: 'col.shuffle', onClick: shuffleEntries });
+    addShuffleControls(headerTools, {
+      store,
+      onShuffle: shuffleEntries,
+      onClearShuffle: () => {
+        try {
+          // collectionControls will handle clearing persisted shuffle; view should just refresh
+          refreshEntriesFromStore();
+          index = 0;
+          viewMode = defaultViewMode;
+          isShuffled = false;
+          render();
+        } catch (e) {}
+      },
+      includeClearShuffle: true,
+      includeClearLearned: false
+    });
   } catch (e) {}
   // Ensure header order: shuffle, visible.cards (displayCards), then others
   try {

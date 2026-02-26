@@ -42,7 +42,10 @@ export function createJsonViewer(value, opts = {}) {
   maxBtn.title = 'Maximize JSON';
   maxBtn.textContent = '⤢';
 
-  let expanded = (opts.expanded !== undefined) ? !!opts.expanded : !isBig;
+  // Always start collapsed for large payloads, even if `opts.expanded` is true.
+  let expanded;
+  if (isBig) expanded = false;
+  else expanded = (opts.expanded !== undefined) ? !!opts.expanded : true;
 
   function renderCurrent() {
     content.innerHTML = '';
@@ -189,12 +192,39 @@ export function createJsonViewer(value, opts = {}) {
   // initial render
   renderCurrent();
 
+  // updater: allow external callers to update the JSON payload without
+  // recreating the component. This preserves controls/state while swapping
+  // out the underlying <pre> content and placeholder preview.
+  function setJson(newValue) {
+    try {
+      const newText = safeJson(newValue);
+      const newLines = (typeof newText === 'string') ? newText.split('\n').length : 0;
+      const newIsBig = (typeof newText === 'string' && newText.length > MAX_CHARS) || newLines > MAX_LINES;
+
+      // update pre and placeholder
+      pre.textContent = newText;
+      const newPreview = typeof newText === 'string' ? (newText.slice(0, previewLen).replace(/\n/g, ' ') + (newText.length > previewLen ? '…' : '')) : String(newText);
+      placeholder.textContent = newPreview;
+
+      // If the new payload is large, force collapse to avoid rendering huge text.
+      if (newIsBig && expanded) {
+        expanded = false;
+      }
+      // If new payload is small, leave expanded state as-is (preserve user choice).
+
+      // If currently expanded, ensure the pre is visible; otherwise placeholder.
+      renderCurrent();
+    } catch (e) {
+      // ignore
+    }
+  }
+
   wrapper.appendChild(content);
   wrapper.appendChild(controls);
 
   // expose some handles for external control
   if (opts.expose) {
-    try { opts.expose.wrapper = wrapper; opts.expose.pre = pre; } catch (e) {}
+    try { opts.expose.wrapper = wrapper; opts.expose.pre = pre; opts.expose.setJson = setJson; } catch (e) {}
   }
 
   // apply optional wrapping state

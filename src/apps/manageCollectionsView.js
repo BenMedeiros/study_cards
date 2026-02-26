@@ -272,10 +272,7 @@ export function renderManageCollections({ store, onNavigate }) {
   snapshotToggleBtn.textContent = 'Show Preview';
   snapshotToggleBtn.disabled = true;
 
-  const toggleJsonBtn = document.createElement('button');
-  toggleJsonBtn.type = 'button';
-  toggleJsonBtn.className = 'btn small';
-  toggleJsonBtn.textContent = 'Expand';
+  // collapse/expand handled by the JSON viewer itself; no toggle button needed
 
   // JSON wrap toggle (mirrors entityExplorerView behavior)
   const jsonWrapBtn = document.createElement('button');
@@ -318,22 +315,54 @@ export function renderManageCollections({ store, onNavigate }) {
     updateJsonWrapBtn();
   });
 
-  const copyFullBtn = document.createElement('button');
-  copyFullBtn.type = 'button';
-  copyFullBtn.className = 'btn small';
-  copyFullBtn.textContent = 'Copy Full JSON';
+  // (copy full JSON button removed; use Export/Copy actions elsewhere)
 
   // group buttons into logical clusters
   const grp1 = document.createElement('div'); grp1.className = 'mc-json-group'; grp1.append(snapshotToggleBtn);
-  const grp2 = document.createElement('div'); grp2.className = 'mc-json-group'; grp2.append(toggleJsonBtn, jsonWrapBtn);
-  const grp3 = document.createElement('div'); grp3.className = 'mc-json-group'; grp3.append(copyFullBtn);
-  jsonModeRow.append(grp1, grp2, grp3);
+  const grp2 = document.createElement('div'); grp2.className = 'mc-json-group'; grp2.append(jsonWrapBtn);
+  // JSON fields dropdown (multi-select)
+  const jsonFieldsItems = [
+    { value: 'metadata', label: 'Metadata' },
+    { value: 'schema', label: 'Schema' },
+    { value: 'entries', label: 'Entries' },
+    { value: 'relatedCollections', label: 'Related Collections' },
+  ];
+  let jsonFieldsSelected = jsonFieldsItems.map(i => i.value);
+  const jsonFieldsMount = document.createElement('div');
+  jsonFieldsMount.className = 'mc-json-group';
+  // createDropdown may be provided globally or as an import; guard access
+  const createDropdownFn = (typeof createDropdown === 'function') ? createDropdown : (window && window.createDropdown ? window.createDropdown : null);
+  let jsonFieldsDropdown = null;
+  if (createDropdownFn) {
+    jsonFieldsDropdown = createDropdownFn({
+      items: jsonFieldsItems,
+      values: jsonFieldsSelected,
+      multi: true,
+      commitOnClose: true,
+      getButtonLabel: ({ selectedValues }) => {
+        if (!selectedValues || !selectedValues.length) return 'Fields: none';
+        if (selectedValues.length === jsonFieldsItems.length) return 'Fields: all';
+        return `Fields: ${selectedValues.length}`;
+      },
+      onChange: (vals) => {
+        if (vals === 'all') jsonFieldsSelected = jsonFieldsItems.map(i => i.value);
+        else jsonFieldsSelected = Array.isArray(vals) ? vals.map(v => String(v)) : [];
+        // re-render snapshot viewer if currently visible
+        renderJson(currentJsonMode);
+      }
+    });
+    jsonFieldsMount.append(jsonFieldsDropdown);
+  }
+  jsonModeRow.append(grp1, grp2, jsonFieldsMount);
   jsonHeaderRow.append(jsonModeRow);
 
   // mount for the JSON viewer widget
   const jsonViewerMount = document.createElement('div');
   jsonViewerMount.className = 'mc-json-mount';
   jsonViewerMount.id = 'mc-snapshot-json';
+  // viewer expose handle so we can update JSON without recreating the component
+  let jsonViewerExpose = {};
+  let jsonViewerWidget = null;
 
   jsonWrap.append(jsonHeaderRow, jsonViewerMount);
   left.append(card({ id: 'mc-snapshot-card', title: 'Snapshot', className: 'mc-card', children: [el('p', { className: 'hint', text: 'Shows the current collection JSON; switch to preview to view merged changes.' }), jsonWrap] }));
@@ -494,11 +523,50 @@ export function renderManageCollections({ store, onNavigate }) {
     try { if (store?.shell && typeof store.shell.setFooterLeftWarnings === 'function') store.shell.setFooterLeftWarnings(arr); } catch (e) {}
   }
 
+  // Build a filtered snapshot object according to selected JSON fields
+  function buildFilteredSnapshot(src) {
+    if (!src || typeof src !== 'object') return src;
+    const sel = new Set(Array.isArray(jsonFieldsSelected) ? jsonFieldsSelected : []);
+    const out = {};
+
+    // Metadata
+    if (sel.has('metadata')) {
+      const meta = (src.metadata && typeof src.metadata === 'object') ? { ...src.metadata } : (src.metadata ?? null);
+      if (meta && !sel.has('schema')) delete meta.schema;
+      if (meta !== null) out.metadata = meta;
+    }
+
+    // Schema when requested but metadata is not included: promote schema to top-level
+    if (sel.has('schema') && !sel.has('metadata')) {
+      const schema = Array.isArray(src?.metadata?.schema) ? src.metadata.schema : (Array.isArray(src?.schema) ? src.schema : null);
+      if (schema) out.schema = schema;
+    }
+
+    // Entries / relatedCollections
+    const arrayKey = detectArrayKey(src) || 'entries';
+    const entriesArr = Array.isArray(src[arrayKey]) ? src[arrayKey] : [];
+
+    const includeEntries = sel.has('entries') || (sel.has('relatedCollections') && entriesArr.some(e => e && typeof e.relatedCollections === 'object' && Object.values(e.relatedCollections).some(v => Array.isArray(v) && v.length > 0)));
+    if (includeEntries) {
+      const processed = entriesArr.map(e => {
+        if (!e || typeof e !== 'object') return e;
+        const copy = { ...e };
+        if (!sel.has('relatedCollections')) delete copy.relatedCollections;
+        return copy;
+      });
+      out[arrayKey] = processed;
+    }
+
+    return out;
+  }
+
   function renderJson(mode = null) {
     const m = mode || currentJsonMode;
     const src = (m === 'preview' && previewResult?.merged) ? previewResult.merged : currentCollection;
+    const filteredSrc = buildFilteredSnapshot(src);
     // do not build the full JSON blob unless the viewer is visible (expanded)
-    jsonViewerMount.innerHTML = '';
+    // If a viewer exists and exposes `setJson`, reuse it instead of clearing.
+    if (!(jsonViewerExpose && typeof jsonViewerExpose.setJson === 'function')) jsonViewerMount.innerHTML = '';
     if (!src) {
       jsonViewerMount.textContent = '';
       snapshotToggleBtn.disabled = !(previewResult && previewResult.merged);
@@ -509,8 +577,8 @@ export function renderManageCollections({ store, onNavigate }) {
     try {
       const cardEl = document.getElementById('mc-snapshot-card');
       if (cardEl) {
-        const arrayKey = detectArrayKey(src || {});
-        const arr = Array.isArray(src?.[arrayKey]) ? src[arrayKey] : [];
+        const arrayKey = detectArrayKey(filteredSrc || src || {});
+        const arr = Array.isArray(filteredSrc?.[arrayKey]) ? filteredSrc[arrayKey] : (Array.isArray(src?.[arrayKey]) ? src[arrayKey] : []);
         const count = Array.isArray(arr) ? arr.length : 0;
         const corner = cardEl.querySelector('.card-corner-caption');
         if (corner) corner.textContent = `${count} ${count === 1 ? 'entry' : 'entries'}`;
@@ -528,26 +596,30 @@ export function renderManageCollections({ store, onNavigate }) {
     }
 
     // Visible: build the full JSON view (stringify now — lazy)
-    const viewer = createJsonViewer(src, { id: JSON_WRAPPER_ID, preId: JSON_PRE_ID, expanded: true, wrapping: isJsonWrapped });
-    jsonViewerMount.appendChild(viewer);
-    jsonBuilt = true;
+    try {
+      const countKey = detectArrayKey(filteredSrc || src || {});
+      const entryCount = Array.isArray((filteredSrc || {})[countKey]) ? (filteredSrc || {})[countKey].length : 0;
+      console.log('[manageCollections] snapshot redraw — mode:', m, 'fields:', Array.isArray(jsonFieldsSelected) ? jsonFieldsSelected.slice() : jsonFieldsSelected, 'entries:', entryCount);
+    } catch (e) {
+      console.log('[manageCollections] snapshot redraw');
+    }
+    if (jsonViewerExpose && typeof jsonViewerExpose.setJson === 'function') {
+      try { jsonViewerExpose.setJson(filteredSrc); } catch (e) {}
+    } else {
+      try {
+        jsonViewerWidget = createJsonViewer(filteredSrc, { id: JSON_WRAPPER_ID, preId: JSON_PRE_ID, expanded: true, wrapping: isJsonWrapped, expose: jsonViewerExpose });
+        jsonViewerMount.appendChild(jsonViewerWidget);
+        jsonBuilt = true;
+      } catch (e) {
+        const viewer = createJsonViewer(filteredSrc, { id: JSON_WRAPPER_ID, preId: JSON_PRE_ID, expanded: true, wrapping: isJsonWrapped });
+        jsonViewerMount.appendChild(viewer);
+        jsonBuilt = true;
+      }
+    }
     snapshotToggleBtn.disabled = !(previewResult && previewResult.merged);
   }
 
-  function setJsonCollapsed(collapsed) {
-    const isCollapsed = !!collapsed;
-    jsonVisible = !isCollapsed;
-    // collapse the viewer by hiding the mount
-    jsonViewerMount.style.display = isCollapsed ? 'none' : '';
-    toggleJsonBtn.textContent = isCollapsed ? 'Expand' : 'Collapse';
-    // If we're expanding and haven't built the JSON yet, render it now
-    try {
-      if (!isCollapsed && !jsonBuilt) {
-        // build using the current mode
-        renderJson(currentJsonMode);
-      }
-    } catch (e) {}
-  }
+  // collapse control removed — the JSON viewer manages its own collapse state.
 
   function refreshVersionSelect() {
     // Version select removed; keep no-op to avoid callers needing changes.
@@ -1156,17 +1228,9 @@ export function renderManageCollections({ store, onNavigate }) {
     }
   });
 
-  toggleJsonBtn.addEventListener('click', () => {
-    const collapsed = jsonViewerMount.style.display !== 'none' ? true : false;
-    setJsonCollapsed(collapsed);
-  });
+  // collapse/expand handled by the JSON viewer; no handler needed
 
-  copyFullBtn.addEventListener('click', async () => {
-    const src = (currentJsonMode === 'preview' && previewResult?.merged) ? previewResult.merged : currentCollection;
-    if (!src) return;
-    await copyToClipboard(safeJsonStringify(src, 2));
-    setStatus('Copied full JSON.');
-  });
+  // copy full JSON control removed
   // copyMeta/copySchema/copyTemplate controls removed from header.
 
   importHelpBtn.addEventListener('click', async () => {
@@ -1418,8 +1482,9 @@ export function renderManageCollections({ store, onNavigate }) {
   // ---- init ----
   initKeyFromActive();
   try { updateJsonWrapBtn(); } catch (e) {}
-  // start collapsed and lazily build JSON when expanded
-  setJsonCollapsed(true);
+  // Ensure the JSON viewer is created on init — the viewer manages its own collapse state.
+  jsonVisible = true;
+  try { renderJson(currentJsonMode); } catch (e) {}
   Promise.resolve().then(loadCurrent);
 
   return root;

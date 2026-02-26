@@ -3,6 +3,7 @@ import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } fro
 import { createDropdown } from '../components/dropdown.js';
 import { createSpeakerButton } from '../components/ui.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
+import { addShuffleControls } from '../components/collectionControls.js';
 
 export function renderQaCards({ store }) {
   const el = document.createElement('div');
@@ -173,49 +174,36 @@ export function renderQaCards({ store }) {
 
 
     headerTools.append(selectorsWrap, spacer);
-    // Collection-level shuffle (shared action via collectionsManager)
-    headerTools.addElement({
-      type: 'button', key: 'shuffle', label: 'Shuffle', caption: 'col.shuffle',
-      onClick: () => {
-        try {
-          if (store?.collections && typeof store.collections.shuffleCollection === 'function') {
-            try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
-            store.collections.shuffleCollection(active?.key);
-            rebuildEntriesFromCollectionState();
-            index = 0;
-            try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
-            shownAt = nowMs();
-            feedbackMode = false;
-            userAnswer = '';
-            completed = false;
-            render();
-          }
-        } catch (e) {
-          // ignore
-        }
-      }
-    });
-
-    headerTools.addElement({
-      type: 'button', key: 'clearShuffle', label: 'Clear Shuffle', caption: 'col.clear-shuffle',
-      disabled: !(collState && !!collState.isShuffled),
-      onClick: () => {
-        try {
-          if (store?.collections && typeof store.collections.clearCollectionShuffle === 'function') {
-            try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
-            store.collections.clearCollectionShuffle(active?.key);
-            rebuildEntriesFromCollectionState();
-            index = Math.min(index, Math.max(0, entries.length - 1));
-            try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
-            shownAt = nowMs();
-            feedbackMode = false;
-            userAnswer = '';
-            completed = false;
-            render();
-          }
-        } catch (e) {}
-      }
-    });
+    // Collection-level shuffle/clear-shuffle controls (use shared helper)
+    try {
+      addShuffleControls(headerTools, {
+        store,
+        onShuffle: () => {
+          try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
+          try { if (store?.collections && typeof store.collections.shuffleCollection === 'function') store.collections.shuffleCollection(active?.key); } catch (e) {}
+          try { rebuildEntriesFromCollectionState(); } catch (e) {}
+          index = 0;
+          try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
+          shownAt = nowMs();
+          feedbackMode = false;
+          userAnswer = '';
+          completed = false;
+          render();
+        },
+        onClearShuffle: () => {
+          try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
+          try { if (store?.collections && typeof store.collections.clearCollectionShuffle === 'function') store.collections.clearCollectionShuffle(active?.key); } catch (e) {}
+          try { rebuildEntriesFromCollectionState(); } catch (e) {}
+          index = Math.min(index, Math.max(0, entries.length - 1));
+          try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
+          shownAt = nowMs();
+          feedbackMode = false;
+          userAnswer = '';
+          completed = false;
+          render();
+        },
+      });
+    } catch (e) {}
 
     if (showContinue) {
       headerTools.addElement({ type: 'button', key: 'continue', label: 'Continue', onClick: (e) => { if (typeof onContinue === 'function') onContinue(e); } });

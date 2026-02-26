@@ -148,6 +148,9 @@ export function createDropdown({
 
   // Track whether we've committed changes for the current open/close cycle.
   let didCommitThisOpen = false;
+  // Snapshot of selectedValues when the menu was opened (used to avoid emitting
+  // an onChange on close when nothing actually changed).
+  let openSelectedSnapshot = null;
 
   function onCloseOverlaysEvent() {
     if (isOpen()) closeMenu({ focusButton: true });
@@ -178,8 +181,13 @@ export function createDropdown({
     if (wasOpen && multi && commitOnClose && !didCommitThisOpen) {
       didCommitThisOpen = true;
       try {
-        if (typeof onChange === 'function') emitChange(selectedValues);
+        // Only emit if the selection actually changed since open.
+        const nowSnapshot = (() => { try { return JSON.stringify((selectedValues || []).slice().sort()); } catch (e) { return null; } })();
+        if (nowSnapshot !== openSelectedSnapshot) {
+          if (typeof onChange === 'function') emitChange(selectedValues);
+        }
       } catch (e) {}
+      openSelectedSnapshot = null;
     }
     // Always notify close hook after commit.
     if (wasOpen && typeof onClose === 'function') {
@@ -208,19 +216,7 @@ export function createDropdown({
           value: (multi ? null : value),
           items: normalizedItems.slice(),
         });
-        if (rendered && typeof rendered === 'object' && rendered.nodeType === 1) {
-          button.innerHTML = '';
-          button.append(rendered);
-          button.classList.add('custom-dropdown-button-multiline');
-          return;
-        }
-        if (typeof rendered === 'string') {
-          button.textContent = rendered;
-          // heuristically treat multi-line strings as multi-line labels
-          if (rendered.includes('\n')) button.classList.add('custom-dropdown-button-multiline');
-          else button.classList.remove('custom-dropdown-button-multiline');
-          return;
-        }
+        if (rendered && typeof rendered === 'object' && rendered.nodeType === 1) return rendered;
       }
     } catch (e) {
       // fallback to default
@@ -459,6 +455,8 @@ export function createDropdown({
     if (!open) {
       container.classList.add('open');
       didCommitThisOpen = false;
+      // snapshot current selection so we can detect real changes on close
+      try { openSelectedSnapshot = JSON.stringify((selectedValues || []).slice().sort()); } catch (e) { openSelectedSnapshot = null; }
       document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
 
       // Portal the menu so it isn't clipped by overflow containers.
