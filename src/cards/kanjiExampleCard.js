@@ -86,14 +86,6 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
       console.log('[Card:Related] using relatedCollections.sentences', ent.relatedCollections.sentences.length);
       return ent.relatedCollections.sentences.slice();
     }
-    if (Array.isArray(ent.__related?.sentences)) {
-      console.log('[Card:Related] using __related.sentences', ent.__related.sentences.length);
-      return ent.__related.sentences.slice();
-    }
-    if (Array.isArray(ent.sentences)) {
-      console.log('[Card:Related] using sentences', ent.sentences.length);
-      return ent.sentences.slice();
-    }
     return [];
   }
 
@@ -116,7 +108,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
     counter.style.display = count ? '' : 'none';
   }
 
-  // Standard API: accept `entry` and derive sentences from entry.__related.sentences
+  // Standard API: accept `entry` and derive sentences from entry.relatedCollections.sentences
   function setEntry(newEntry) {
     console.log('[Card:Related] setEntry()', newEntry);
     entry = newEntry || null;

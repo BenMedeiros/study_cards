@@ -1021,7 +1021,7 @@ input[type="number"].button::-webkit-inner-spin-button {
 
 .kanji-full-card .kanji-full-row {
   display: grid;
-  grid-template-columns: 10rem 1fr;
+  grid-template-columns: 10rem 1fr 3rem;
   border-bottom: 1px grey solid;
   padding: .3rem 0;
 }

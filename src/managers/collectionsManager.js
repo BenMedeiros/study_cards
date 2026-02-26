@@ -68,9 +68,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const relations = normalizeRelatedCollectionsConfig(collection?.metadata?.relatedCollections);
     for (const relation of relations) {
       const name = relation.name;
-      const arr = Array.isArray(entry?.relatedCollections?.[name])
-        ? entry.relatedCollections[name]
-        : (Array.isArray(entry?.__related?.[name]) ? entry.__related[name] : (Array.isArray(entry?.[name]) ? entry[name] : []));
+      const arr = Array.isArray(entry?.relatedCollections?.[name]) ? entry.relatedCollections[name] : [];
       out[name] = arr.length;
     }
     return out;
@@ -1448,17 +1446,11 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         const relatedCounts = getEntryRelatedCounts(e, coll);
         const relatedSamples = {};
         for (const rel of relations) {
-          const arr = Array.isArray(e?.relatedCollections?.[rel.name])
-            ? e.relatedCollections[rel.name]
-            : (Array.isArray(e?.__related?.[rel.name]) ? e.__related[rel.name] : (Array.isArray(e?.[rel.name]) ? e[rel.name] : []));
+          const arr = Array.isArray(e?.relatedCollections?.[rel.name]) ? e.relatedCollections[rel.name] : [];
           relatedSamples[rel.name] = sampleN > 0 ? arr.slice(0, sampleN) : [];
         }
 
-        out.push({
-          ...e,
-          __relatedCounts: relatedCounts,
-          __relatedSample: relatedSamples,
-        });
+        out.push({ ...e, /* related counts/samples are available via entry.relatedCollections */ });
       }
       return out;
     } catch (err) {

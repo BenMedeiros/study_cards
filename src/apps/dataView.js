@@ -36,10 +36,8 @@ export function renderData({ store }) {
   function getRelatedCountForEntry(entry, relationName) {
     const name = String(relationName || '').trim();
     if (!name) return 0;
-    const byCountMap = Number(entry?.__relatedCounts?.[name]);
-    if (Number.isFinite(byCountMap)) return Math.max(0, Math.round(byCountMap));
-    if (Array.isArray(entry?.__related?.[name])) return entry.__related[name].length;
-    return 0;
+    const arr = Array.isArray(entry?.relatedCollections?.[name]) ? entry.relatedCollections[name] : [];
+    return arr.length;
   }
 
   const STUDY_STATE_ORDER = ['null', 'focus', 'learned'];

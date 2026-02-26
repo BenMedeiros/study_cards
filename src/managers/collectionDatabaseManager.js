@@ -246,7 +246,6 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
       for (const entry of coll.entries) {
         if (!entry || typeof entry !== 'object') continue;
         if (!entry.relatedCollections || typeof entry.relatedCollections !== 'object') entry.relatedCollections = {};
-        if (!entry.__related || typeof entry.__related !== 'object') entry.__related = {};
 
         const localValues = normalizeRelatedLookupValues(extractPathValues(entry, relation.this_key));
         const matches = [];
@@ -262,22 +261,9 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
         }
 
         entry.relatedCollections[relName] = matches;
-        entry.__related[relName] = matches;
       }
     }
-
-    for (const entry of coll.entries) {
-      if (!entry || typeof entry !== 'object') continue;
-      const counts = {};
-      for (const relation of relations) {
-        const relName = relation.name;
-        const arr = Array.isArray(entry?.relatedCollections?.[relName]) ? entry.relatedCollections[relName] : [];
-        counts[relName] = arr.length;
-      }
-      entry.__relatedCounts = counts;
-    }
-
-    coll.__relatedCollectionsBuilt = true;
+    // compute counts on demand via `entry.relatedCollections[relName].length` — no legacy caches
     return coll;
   }
 
