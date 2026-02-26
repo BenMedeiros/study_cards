@@ -263,7 +263,6 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
 
         entry.relatedCollections[relName] = matches;
         entry.__related[relName] = matches;
-        entry[relName] = matches;
       }
     }
 

@@ -1,7 +1,7 @@
 // Generic flat card: renders an object's top-level keys as labeled rows.
 // Styling mirrors the kanji full card (reuses .kanji-full-row/.kanji-full-label/.kanji-full-value).
 export function createGenericFlatCard({ entry = null, config = {} } = {}) {
-  try { console.debug('[Card:Generic] createGenericFlatCard()', { entry, config }); } catch (e) {}
+  console.log('[Card:Generic] createGenericFlatCard()', { entry, config });
   const root = document.createElement('div');
   root.className = 'card generic-flat-card';
 
@@ -30,11 +30,12 @@ export function createGenericFlatCard({ entry = null, config = {} } = {}) {
     if (typeof v === 'string') return v;
     if (typeof v === 'number' || typeof v === 'boolean') return String(v);
     if (Array.isArray(v)) return v.join(', ');
-    try { return JSON.stringify(v); } catch (e) { return String(v); }
+    // Avoid JSON.stringify to prevent unexpected exceptions (circular structures). Use generic string conversion.
+    return String(v);
   }
 
   function setEntry(e) {
-    try { console.debug('[Card:Generic] setEntry()', e); } catch (e) {}
+    console.log('[Card:Generic] setEntry()', e);
     const entryObj = e || {};
     rows = {};
     body.innerHTML = '';
@@ -73,7 +74,16 @@ export function createGenericFlatCard({ entry = null, config = {} } = {}) {
   // initialize
   setEntry(entry);
 
-  return { el: root, setEntry, setFieldVisible, setFieldsVisible, setVisible, destroy };
+  // Provide a metadata-driven toggle descriptor so views can build per-card dropdowns.
+  function getToggleFields(metadata) {
+    console.log('[Card:Generic] getToggleFields()', { metadataKeys: metadata ? Object.keys(metadata) : null });
+    if (!metadata || typeof metadata !== 'object') return [];
+    const fields = Array.isArray(metadata.fields) ? metadata.fields : (Array.isArray(metadata.schema) ? metadata.schema : []);
+    if (!Array.isArray(fields) || !fields.length) return [];
+    return fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f), right: 'Visible' }));
+  }
+
+  return { el: root, setEntry, setFieldVisible, setFieldsVisible, setVisible, getToggleFields, destroy };
 }
 
 // Export a simple set of toggleable fields (empty by default — apps can use keys)

@@ -1,7 +1,7 @@
 // Factory for creating a Kanji main card element.
 // The card uses the existing project CSS classes (from src/styles.css).
 export function createKanjiMainCard({ entry = null, indexText = '', handlers = {} } = {}) {
-  try { console.debug('[Card:Main] createKanjiMainCard()', { entry, indexText }); } catch (e) {}
+  console.log('[Card:Main] createKanjiMainCard()', { entry, indexText });
   const root = document.createElement('div');
   root.className = 'card kanji-card';
 
@@ -50,7 +50,7 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   }
 
   function setEntry(e) {
-    try { console.debug('[Card:Main] setEntry()', e); } catch (e) {}
+    console.log('[Card:Main] setEntry()', e);
     const entryObj = e || {};
     // Common field names used in this project: kanji/character/text, reading/kana, meaning/definition
     const kanji = resolvePath(entryObj, 'kanji') || resolvePath(entryObj, 'character') || resolvePath(entryObj, 'text') || '';
@@ -98,7 +98,7 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   }
 
   function setFieldsVisible(map) {
-    try { console.debug('[Card:Main] setFieldsVisible()', map); } catch (e) {}
+    console.log('[Card:Main] setFieldsVisible()', map);
     if (!map || typeof map !== 'object') return;
     for (const k of Object.keys(map)) {
       setFieldVisible(k, !!map[k]);
@@ -119,7 +119,17 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   setEntry(entry);
   setIndexText(indexText);
 
-  return { el: root, setEntry, setIndexText, setFieldVisible, setFieldsVisible, destroy };
+  function getToggleFields(metadata) {
+    console.log('[Card:Main] getToggleFields()', { metadataKeys: metadata ? Object.keys(metadata) : null });
+    if (!metadata || typeof metadata !== 'object') {
+      return (Array.isArray(kanjiMainCardToggleFields) ? kanjiMainCardToggleFields.slice() : []);
+    }
+    const fields = Array.isArray(metadata.fields) ? metadata.fields : (Array.isArray(metadata.schema) ? metadata.schema : []);
+    if (!Array.isArray(fields) || !fields.length) return (Array.isArray(kanjiMainCardToggleFields) ? kanjiMainCardToggleFields.slice() : []);
+    return fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f), right: 'Visible' }));
+  }
+
+  return { el: root, setEntry, setIndexText, setFieldVisible, setFieldsVisible, getToggleFields, destroy };
 }
 
 // Export a canonical list of toggleable fields for this card

@@ -1,7 +1,7 @@
 // Factory for creating a Kanji related-item card element with internal carousel controls.
 // Uses existing CSS classes defined in src/styles.css.
 export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {} } = {}) {
-  try { console.debug('[Card:Related] createKanjiRelatedCard()', { entry }); } catch (e) {}
+  console.log('[Card:Related] createKanjiRelatedCard()', { entry });
   const root = document.createElement('div');
   root.className = 'card kanji-related-card';
 
@@ -81,10 +81,19 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   function extractSentencesFromEntry(ent) {
     if (!ent || typeof ent !== 'object') return [];
     // Prefer collection-specific related data if present, then legacy containers
-    try { console.debug('[Card:Related] extractSentencesFromEntry(): keys', Object.keys(ent || {})); } catch (e) {}
-    try { if (Array.isArray(ent.relatedCollections?.sentences)) { console.debug('[Card:Related] using relatedCollections.sentences', ent.relatedCollections.sentences.length); return ent.relatedCollections.sentences.slice(); } } catch (e) {}
-    try { if (Array.isArray(ent.__related?.sentences)) { console.debug('[Card:Related] using __related.sentences', ent.__related.sentences.length); return ent.__related.sentences.slice(); } } catch (e) {}
-    try { if (Array.isArray(ent.sentences)) { console.debug('[Card:Related] using sentences', ent.sentences.length); return ent.sentences.slice(); } } catch (e) {}
+    console.log('[Card:Related] extractSentencesFromEntry(): keys', Object.keys(ent || {}));
+    if (Array.isArray(ent.relatedCollections?.sentences)) {
+      console.log('[Card:Related] using relatedCollections.sentences', ent.relatedCollections.sentences.length);
+      return ent.relatedCollections.sentences.slice();
+    }
+    if (Array.isArray(ent.__related?.sentences)) {
+      console.log('[Card:Related] using __related.sentences', ent.__related.sentences.length);
+      return ent.__related.sentences.slice();
+    }
+    if (Array.isArray(ent.sentences)) {
+      console.log('[Card:Related] using sentences', ent.sentences.length);
+      return ent.sentences.slice();
+    }
     return [];
   }
 
@@ -109,10 +118,10 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
 
   // Standard API: accept `entry` and derive sentences from entry.__related.sentences
   function setEntry(newEntry) {
-    try { console.debug('[Card:Related] setEntry()', newEntry); } catch (e) {}
+    console.log('[Card:Related] setEntry()', newEntry);
     entry = newEntry || null;
     listItems = extractSentencesFromEntry(entry);
-    try { console.debug('[Card:Related] setEntry => listItems.length', Array.isArray(listItems) ? listItems.length : 0, listItems && listItems[0]); } catch (e) {}
+    console.log('[Card:Related] setEntry => listItems.length', Array.isArray(listItems) ? listItems.length : 0, listItems && listItems[0]);
     currentIndex = 0;
     render();
   }
@@ -139,21 +148,21 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
 
     if (!hasContent && (!Array.isArray(listItems) || listItems.length === 0)) {
       // No related data and no fallback content: show only header + placeholder for consistency.
-      try { console.debug('[Card:Related] updateDisplay(): no content; listItems.length=', Array.isArray(listItems) ? listItems.length : 0); } catch (e) {}
-      try { placeholder.style.display = ''; } catch (e) {}
-      try { jpText.style.display = 'none'; } catch (e) {}
-      try { enLabel.style.display = 'none'; } catch (e) {}
-      try { enText.style.display = 'none'; } catch (e) {}
-      try { notesLabel.style.display = 'none'; } catch (e) {}
-      try { notesList.style.display = 'none'; } catch (e) {}
+      console.log('[Card:Related] updateDisplay(): no content; listItems.length=', Array.isArray(listItems) ? listItems.length : 0);
+      placeholder.style.display = '';
+      jpText.style.display = 'none';
+      enLabel.style.display = 'none';
+      enText.style.display = 'none';
+      notesLabel.style.display = 'none';
+      notesList.style.display = 'none';
     } else {
       // Show the content areas and populate them. Hide placeholder.
-      try { placeholder.style.display = 'none'; } catch (e) {}
-      try { jpText.style.display = ''; } catch (e) {}
-      try { enLabel.style.display = ''; } catch (e) {}
-      try { enText.style.display = ''; } catch (e) {}
-      try { notesLabel.style.display = ''; } catch (e) {}
-      try { notesList.style.display = ''; } catch (e) {}
+      placeholder.style.display = 'none';
+      jpText.style.display = '';
+      enLabel.style.display = '';
+      enText.style.display = '';
+      notesLabel.style.display = '';
+      notesList.style.display = '';
 
       jpText.textContent = jp;
       enText.textContent = en;
@@ -171,7 +180,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   }
 
   function render() {
-    try { console.debug('[Card:Related] render()', { currentIndex, listItemsLength: Array.isArray(listItems) ? listItems.length : 0, entrySample: entry ? (entry.sentence || entry.jp || entry.japanese || entry.text) : null }); } catch (e) {}
+    console.log('[Card:Related] render()', { currentIndex, listItemsLength: Array.isArray(listItems) ? listItems.length : 0, entrySample: entry ? (entry.sentence || entry.jp || entry.japanese || entry.text) : null });
     updateDisplay();
   }
 
@@ -205,7 +214,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   });
 
   function update(newEntry) {
-    try { console.debug('[Card:Related] update()', { newEntrySample: newEntry ? (newEntry.sentence || newEntry.jp || newEntry.japanese || newEntry.text) : null }); } catch (e) {}
+    console.log('[Card:Related] update()', { newEntrySample: newEntry ? (newEntry.sentence || newEntry.jp || newEntry.japanese || newEntry.text) : null });
     if (newEntry) entry = newEntry;
     listItems = extractSentencesFromEntry(entry);
     currentIndex = 0;
@@ -244,7 +253,17 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   setEntry(entry);
   render();
 
-  return { el: root, update, setEntry, setVisible, setEnglishVisible, setJapaneseVisible, setNotesVisible, destroy };
+  // Allow the view to request toggleable field descriptors based on collection metadata.
+  function getToggleFields(metadata) {
+    const fields = metadata?.relatedCollections?.fields;
+    if (Array.isArray(fields) && fields.length) {
+      return fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f), right: 'Visible' }));
+    }
+    // Fallback to the canonical static list
+    return (Array.isArray(kanjiExampleCardToggleFields) ? kanjiExampleCardToggleFields.slice() : []);
+  }
+
+  return { el: root, update, setEntry, setVisible, setEnglishVisible, setJapaneseVisible, setNotesVisible, getToggleFields, destroy };
 }
 
 // Export canonical toggleable fields for the related/example card
