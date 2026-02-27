@@ -450,6 +450,26 @@ export function renderKanjiStudyCard({ store }) {
   // Apply initial visibility defaults based on entry-level and related selections
   if (displayCardSelection === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
 
+  // Apply initial per-card visibility immediately so cards reflect persisted selection
+  try {
+    const set = new Set(Array.isArray(displayCardSelection) ? displayCardSelection.map(String) : []);
+    for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+      try {
+        const api = cardApis[c.key];
+        if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
+        // Also hide/show related dropdown groups when the related card is toggled
+        if (c.key === 'related') {
+          for (const rn of Object.keys(relatedDropdownControls || {})) {
+            const rc = relatedDropdownControls[rn];
+            if (rc && rc.parentNode) rc.parentNode.style.display = set.has(c.key) ? '' : 'none';
+          }
+        }
+      } catch (e) {
+        /* ignore per-card errors */
+      }
+    }
+  } catch (e) {}
+
   // Apply entry-level visibility
   const entrySelected = (entryFieldSelection === 'all') ? entryFieldItems.map(it => String(it.value || '')) : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []);
   const entrySet = new Set(entrySelected);
@@ -537,7 +557,7 @@ export function renderKanjiStudyCard({ store }) {
         for (const k of Object.keys(savedApp.relatedFields)) relatedFieldSelections[k] = Array.isArray(savedApp.relatedFields[k]) ? savedApp.relatedFields[k].slice() : savedApp.relatedFields[k];
       }
       if (Array.isArray(savedApp.displayCards)) displayCardSelection = savedApp.displayCards.slice();
-      else if (savedApp.displayCards === 'all') displayCardSelection = 'all';
+      else if (savedApp.displayCards === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
 
       uiStateRestored = true;
     }
