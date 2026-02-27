@@ -14,10 +14,14 @@ import { createShellFooter } from './components/shellFooter.js';
 import { speak } from './utils/speech.js';
 import { createDropdown } from './components/dropdown.js';
 import { timed } from './utils/timing.js';
+import collectionSettingsController from './controllers/collectionSettingsController.js';
 
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
   el.id = 'shell-root';
+
+  // Initialize controllers with store
+  collectionSettingsController.init({ store });
 
   // Register shell as a settings consumer for persisted shell settings.
   try {
@@ -481,13 +485,9 @@ export function createAppShell({ store, onNavigate }) {
           // Fetch any per-collection UI state (held filter / studyFilter)
           let held = '';
           let sf = '';
-          try {
-            if (store && store.collections && typeof store.collections.loadCollectionState === 'function') {
-              const st = store.collections.loadCollectionState(activeStudySession.collectionId) || {};
-              held = String(st?.heldTableSearch || '').trim();
-              sf = String(st?.studyFilter || '').trim();
-            }
-          } catch (e) {}
+          const st = collectionSettingsController.get(activeStudySession.collectionId) || {};
+          held = String(st?.heldTableSearch || '').trim();
+          sf = String(st?.studyFilter || '').trim();
 
           store.studyTime.recordAppCollectionStudySession({
             appId: activeStudySession.appId,

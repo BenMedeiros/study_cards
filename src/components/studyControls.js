@@ -1,6 +1,8 @@
 // Helper to add a study-filter dropdown into a view headerTools
-// Usage: addStudyFilter(headerTools, { store, getCurrentCollectionKey, collState, onChange })
-export function addStudyFilter(headerTools, { store, getCurrentCollectionKey, collState = {}, onChange } = {}) {
+// Usage: addStudyFilter(headerTools, { getCurrentCollectionKey, onChange })
+import collectionSettingsController from '../controllers/collectionSettingsController.js';
+
+export function addStudyFilter(headerTools, { getCurrentCollectionKey, onChange } = {}) {
   if (!headerTools || typeof headerTools.addElement !== 'function') return null;
 
   const STUDY_FILTER_ITEMS = [
@@ -24,18 +26,17 @@ export function addStudyFilter(headerTools, { store, getCurrentCollectionKey, co
     return ordered[0];
   }
 
-  // derive initial selection from provided collState if present
+  // derive initial selection from persisted collection settings
   let initialStudyFilterValues = ['null', 'focus', 'learned'];
-  try {
-    const saved = collState && typeof collState.studyFilter === 'string' ? String(collState.studyFilter).trim() : null;
+  const key = (typeof getCurrentCollectionKey === 'function') ? getCurrentCollectionKey() : null;
+  if (key) {
+    const st = collectionSettingsController.get(key) || {};
+    const saved = typeof st.studyFilter === 'string' ? String(st.studyFilter).trim() : null;
     if (saved) {
       if (saved === 'all') initialStudyFilterValues = ['null', 'focus', 'learned'];
       else initialStudyFilterValues = orderStudyStates(saved.split(/[,|\s]+/));
-    } else if (typeof collState?.skipLearned === 'boolean' || typeof collState?.focusOnly === 'boolean') {
-      if (collState.focusOnly) initialStudyFilterValues = ['focus'];
-      else if (collState.skipLearned) initialStudyFilterValues = ['null', 'focus'];
     }
-  } catch (e) {}
+  }
 
   return headerTools.addElement({
     type: 'dropdown', key: 'studyFilter', items: STUDY_FILTER_ITEMS, multi: true,
@@ -45,13 +46,11 @@ export function addStudyFilter(headerTools, { store, getCurrentCollectionKey, co
     onChange: (vals) => {
       const chosen = (typeof vals === 'string' && vals === 'all') ? ['null', 'focus', 'learned'] : (Array.isArray(vals) ? vals.slice() : []);
       const ordered = orderStudyStates(chosen);
-      try {
-        const key = (typeof getCurrentCollectionKey === 'function') ? getCurrentCollectionKey() : (store?.collections?.getActiveCollection?.()?.key || null);
-        if (key && store?.collections && typeof store.collections.setStudyFilter === 'function') {
-          store.collections.setStudyFilter(key, { states: ordered });
-        }
-      } catch (e) {}
-      try { if (typeof onChange === 'function') onChange(ordered); } catch (e) {}
+      const key = (typeof getCurrentCollectionKey === 'function') ? getCurrentCollectionKey() : null;
+      if (key) {
+        collectionSettingsController.set(key, { studyFilter: ordered.join(',') });
+      }
+      if (typeof onChange === 'function') onChange(ordered);
     },
     includeAllNone: true,
     className: 'data-expansion-dropdown',

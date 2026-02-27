@@ -68,6 +68,8 @@ const CATALOG = Object.freeze((() => {
     // Manager-specific log toggles for collectionDatabaseManager
     'managers.collectionDatabaseManager.log.enabled': { type: { kind: 'boolean' }, default: false },
     'managers.collectionDatabaseManager.log.cachedCollections': { type: { kind: 'boolean' }, default: false },
+    // Controller-specific logging toggle
+    'managers.controllerLogging': { type: { kind: 'boolean' }, default: false },
 
     // Whether table search inputs auto-normalize via cleanSearchQuery() (e.g. spaces -> '&').
     // Functional: whether table search inputs are auto-normalized via
@@ -423,5 +425,21 @@ export function settingsLog(...args) {
     if (isSettingsLoggingEnabled()) {
       console.info(...args);
     }
+  } catch {}
+}
+
+// Controller-specific logging helper (separate toggle)
+export function settingsLogControllers(...args) {
+  try {
+    const mgr = getGlobalSettingsManager();
+    if (!mgr || typeof mgr.get !== 'function') return;
+    if (typeof mgr.isReady === 'function' && !mgr.isReady()) return;
+    try {
+      const v = mgr.get('managers.controllerLogging', { consumerId: 'controllers.logging' });
+      if (!v) return;
+    } catch {
+      return;
+    }
+    console.info(...args);
   } catch {}
 }

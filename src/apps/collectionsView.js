@@ -2,6 +2,10 @@ import { createTable } from '../components/table.js';
 import { card } from '../components/ui.js';
 import { validateCollection } from '../utils/validation.js';
 import { formatDurationMs, formatIsoShort } from '../utils/helpers.js';
+import collectionSettingsController from '../controllers/collectionSettingsController.js';
+import kanjiStudyController from '../controllers/kanjiStudyController.js';
+import qaCardsController from '../controllers/qaCardsController.js';
+import flashcardsController from '../controllers/flashcardsController.js';
 
 export function renderCollectionsManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
@@ -36,20 +40,16 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     // Try several candidate keys because persisted records may use slightly
     // different identifiers (path vs key vs id).
     let meta = {};
-    try {
-      if (store?.collections && typeof store.collections.loadCollectionState === 'function') {
-        const candidates = [c.path, c.id, c.key, c.path && c.path.replace(/^\.?\/*collections\/*/, ''), c.path && c.path.replace(/^\/*/, '')].filter(Boolean);
-        for (const k of candidates) {
-          const s = store.collections.loadCollectionState(k);
-          if (s && Object.keys(s).length) { meta = s; break; }
-        }
-        if (!meta || !Object.keys(meta).length) {
-          meta = c.value || c.metadata || {};
-        }
-      } else {
-        meta = c.value || c.metadata || {};
+    if (store?.collections) {
+      const candidates = [c.path, c.id, c.key, c.path && c.path.replace(/^\.?\/*collections\/*/, ''), c.path && c.path.replace(/^\/*/, '')].filter(Boolean);
+      for (const k of candidates) {
+        const s = collectionSettingsController.get(k) || {};
+        if (s && Object.keys(s).length) { meta = s; break; }
       }
-    } catch (e) { meta = c.value || c.metadata || {}; }
+      if (!meta || !Object.keys(meta).length) meta = c.value || c.metadata || {};
+    } else {
+      meta = c.value || c.metadata || {};
+    }
     const collectionId = c.id || c.key || c.path || '';
     const study = (store?.studyTime && typeof store.studyTime.getCollectionStudyStats === 'function')
       ? store.studyTime.getCollectionStudyStats(collectionId)
@@ -149,29 +149,20 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
       className: 'btn-clear-settings',
       onClick: (rowData, rowIndex, { tr }) => {
         const id = tr?.dataset?.rowId || rowData.__id;
-        try {
-            if (store?.collections && typeof store.collections.saveCollectionState === 'function') {
-            store.collections.saveCollectionState(id, { order_hash_int: null, isShuffled: false, studyFilter: '', defaultViewMode: null, heldTableSearch: '', expansion_i: [], expansion_na: [] });
-            // clear app-scoped indices (kanji/grammar/qa/flashcard views)
-            try {
-              if (typeof store.collections.deleteCollectionStateKeys === 'function') {
-                store.collections.deleteCollectionStateKeys(id, ['currentIndex'], { app: 'kanjiStudyCardView' });
-                store.collections.deleteCollectionStateKeys(id, ['currentIndex'], { app: 'qaCardsView' });
-                store.collections.deleteCollectionStateKeys(id, ['currentIndex'], { app: 'flashcardsView' });
-              }
-            } catch (e) {}
-          }
-        } catch (e) {}
+        // Reset top-level collection settings
+        collectionSettingsController.set(id, { order_hash_int: null, isShuffled: false, studyFilter: '', defaultViewMode: null, heldTableSearch: '', expansion_i: [], expansion_na: [] });
+        // Reset per-view app indices
+        kanjiStudyController.create(id).set({ currentIndex: 0 });
+        qaCardsController.create(id).set({ currentIndex: 0 });
+        flashcardsController.create(id).setCurrentIndex(0);
         // update the row cells in-place so UI reflects cleared settings
-        try {
-          if (tr) {
-            const ci = tr.querySelector('[data-field="currentIndex"]'); if (ci) ci.textContent = '';
-            const dv = tr.querySelector('[data-field="defaultView"]'); if (dv) dv.textContent = '';
-            const sh = tr.querySelector('[data-field="isShuffled"]'); if (sh) sh.textContent = 'No';
-            const oh = tr.querySelector('[data-field="orderHash"]'); if (oh) oh.textContent = '';
-            const sf = tr.querySelector('[data-field="studyFilter"]'); if (sf) sf.textContent = '';
-          }
-        } catch (e) {}
+        if (tr) {
+          const ci = tr.querySelector('[data-field="currentIndex"]'); if (ci) ci.textContent = '';
+          const dv = tr.querySelector('[data-field="defaultView"]'); if (dv) dv.textContent = '';
+          const sh = tr.querySelector('[data-field="isShuffled"]'); if (sh) sh.textContent = 'No';
+          const oh = tr.querySelector('[data-field="orderHash"]'); if (oh) oh.textContent = '';
+          const sf = tr.querySelector('[data-field="studyFilter"]'); if (sf) sf.textContent = '';
+        }
       }
     },
     {

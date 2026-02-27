@@ -166,6 +166,22 @@ export function createShellTitleContextMenu({
       });
     } catch (e) {}
 
+    // Controller logging toggle (managers.controllerLogging)
+    try {
+      const controllersLogs = !!_read('managers.controllerLogging', false);
+      items.push({
+        label: `${controllersLogs ? '☑' : '☐'} Controller Logs`,
+        onClick: () => {
+          try {
+            const cur = !!_read('managers.controllerLogging', false);
+            const next = !cur;
+            _write('managers.controllerLogging', !!next, { immediate: true });
+            try { console.info(`[Controllers] logging ${next ? 'enabled' : 'disabled'}`); } catch (e) {}
+          } catch (e) {}
+        }
+      });
+    } catch (e) {}
+
     // Table search auto-clean toggle
     try {
       const autoClean = !!_read('utils.tableSearch.log.autoCleanQuery', true);

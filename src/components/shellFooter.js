@@ -1,3 +1,5 @@
+import collectionSettingsController from '../controllers/collectionSettingsController.js';
+
 export function createShellFooter({ store, captionsVisible = false } = {}) {
   const FLASH_MS = 420;
   const PIN_MS = FLASH_MS;
@@ -179,8 +181,8 @@ export function createShellFooter({ store, captionsVisible = false } = {}) {
       try {
         const collId = activeId || activeCollection?.key || null;
         let filterLabel = '';
-        if (collId && store && store.collections && typeof store.collections.loadCollectionState === 'function') {
-          const st = store.collections.loadCollectionState(collId) || {};
+        if (collId) {
+          const st = collectionSettingsController.get(collId) || {};
           const held = String(st?.heldTableSearch || '').trim();
           const sf = String(st?.studyFilter || '').trim();
           const f = held || (sf ? sf : '');

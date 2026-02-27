@@ -1,5 +1,6 @@
 import { card, el } from '../components/ui.js';
 import { formatDurationMs, formatIsoShort, formatRelativeFromIso } from '../utils/helpers.js';
+import collectionSettingsController from '../controllers/collectionSettingsController.js';
 
 const APP_META = {
   home: { label: 'Home', path: '/' },
@@ -196,12 +197,9 @@ export function renderHome({ store, onNavigate }) {
     } else {
       for (const coll of collList) {
         if (!coll || !coll.key) continue;
-        let state = {};
-        try {
-          if (typeof store.collections.loadCollectionState === 'function') state = store.collections.loadCollectionState(coll.key) || {};
-        } catch (e) {
-          state = {};
-        }
+        const state = (typeof collectionSettingsController !== 'undefined' && collectionSettingsController.get)
+          ? (collectionSettingsController.get(coll.key) || {})
+          : (typeof store.collections.loadCollectionState === 'function' ? store.collections.loadCollectionState(coll.key) || {} : {});
         const list = Array.isArray(state?.savedTableSearches) ? state.savedTableSearches : (Array.isArray(coll?.savedTableSearches) ? coll.savedTableSearches : []);
         if (!list || !list.length) continue;
         const group = el('div', { className: 'saved-filters-group' });

@@ -1,38 +1,35 @@
 // Helper to add shuffle/clear-shuffle/clear-learned controls to a headerTools instance.
 // Usage: addShuffleControls(headerTools, { store, onShuffle, onClearShuffle, onClearLearned, includeClearShuffle=true, includeClearLearned=true })
+import collectionSettingsController from '../controllers/collectionSettingsController.js';
+
 export function addShuffleControls(headerTools, { store, onShuffle, onClearShuffle, onClearLearned, includeClearShuffle = true, includeClearLearned = true } = {}) {
   if (!headerTools || typeof headerTools.addElement !== 'function') return null;
 
   const makeShuffle = () => ({
     type: 'button', key: 'shuffle', label: 'Shuffle', caption: 'col.shuffle',
     onClick: () => {
-      try {
-        if (typeof onShuffle === 'function') {
-          onShuffle();
-          return;
-        }
-        const coll = store?.collections?.getActiveCollection?.();
-        if (!coll) return;
-        if (store?.collections && typeof store.collections.shuffleCollection === 'function') store.collections.shuffleCollection(coll.key);
-      } catch (e) {}
+      if (typeof onShuffle === 'function') {
+        onShuffle();
+        return;
+      }
+      const coll = store.collections.getActiveCollection();
+      if (!coll) return;
+      // set persisted shuffle state (controller will persist)
+      const seed = (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues)
+        ? (window.crypto.getRandomValues(new Uint32Array(1))[0] >>> 0)
+        : (Math.floor(Math.random() * 0x100000000) >>> 0);
+      collectionSettingsController.set(coll.key, { order_hash_int: seed, isShuffled: true });
     }
   });
 
   const makeClearShuffle = () => ({
     type: 'button', key: 'clearShuffle', label: 'Clear Shuffle', caption: 'col.clear-shuffle',
     onClick: () => {
-      try {
-        // Always clear persisted shuffle state first so views don't immediately reapply it.
-        try {
-          const coll = store?.collections?.getActiveCollection?.();
-          if (coll && coll.key && store?.collections && typeof store.collections.clearCollectionShuffle === 'function') {
-            store.collections.clearCollectionShuffle(coll.key);
-          }
-        } catch (e) {}
-
-        // Then invoke any view-specific handler if provided so the view can refresh UI.
-        if (typeof onClearShuffle === 'function') { onClearShuffle(); return; }
-      } catch (e) {}
+      // Always clear persisted shuffle state first so views don't immediately reapply it.
+      const coll = store.collections.getActiveCollection();
+      if (!coll) return;
+      collectionSettingsController.set(coll.key, { order_hash_int: null, isShuffled: false });
+      if (typeof onClearShuffle === 'function') { onClearShuffle(); return; }
     }
   });
 

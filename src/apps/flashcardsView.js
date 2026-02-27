@@ -2,6 +2,8 @@ import { nowMs } from '../utils/helpers.js';
 import { speak, getLanguageCode } from '../utils/speech.js';
 
 import { createViewFooterControls } from '../components/viewFooterControls.js';
+import collectionSettingsController from '../controllers/collectionSettingsController.js';
+import flashcardsController from '../controllers/flashcardsController.js';
 
 export function renderFlashcards({ store }) {
   const el = document.createElement('div');
@@ -12,6 +14,7 @@ export function renderFlashcards({ store }) {
   wrapper.id = 'flashcards-card';
 
   let active = store.collections.getActiveCollection();
+    let flashController = null;
   if (!active) {
     wrapper.innerHTML = '<h2>Flashcards</h2><p class="hint">No active collection.</p>';
     el.append(wrapper);
@@ -45,6 +48,12 @@ export function renderFlashcards({ store }) {
   function refreshFromStore() {
     const res = store.collections.getActiveCollectionView({ windowSize: 10 });
     active = res?.collection || null;
+    // setup controller bound to active collection
+    if (flashController && flashController.collKey !== (active && active.key)) {
+      try { flashController.dispose(); } catch (e) {}
+      flashController = null;
+    }
+    if (!flashController && active && active.key) flashController = flashcardsController.create(active.key);
     const collState = (res?.collState && typeof res.collState === 'object') ? res.collState : {};
     entries = Array.isArray(res?.view?.entries) ? res.view.entries.slice() : [];
     // restore per-app index once (no legacy fallback)
@@ -107,10 +116,10 @@ export function renderFlashcards({ store }) {
 
   function goToIndex(newIndex) {
     if (newIndex < 0 || newIndex >= entries.length) return;
-    try { progressTracker?.flush?.(); } catch (e) {}
+    progressTracker?.flush?.();
     index = newIndex;
     shownAt = nowMs();
-    try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'flashcardsView' }); } catch (e) {}
+    (flashController || flashcardsController.create(active?.key)).setCurrentIndex(index);
     render();
   }
 

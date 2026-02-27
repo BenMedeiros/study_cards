@@ -4,6 +4,8 @@ import { createDropdown } from '../components/dropdown.js';
 import { createSpeakerButton } from '../components/ui.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { addShuffleControls } from '../components/collectionControls.js';
+import collectionSettingsController from '../controllers/collectionSettingsController.js';
+import qaCardsController from '../controllers/qaCardsController.js';
 
 export function renderQaCards({ store }) {
   const el = document.createElement('div');
@@ -19,6 +21,7 @@ export function renderQaCards({ store }) {
 
   let active = null;
   let collState = {};
+  let qaController = null;
   let fields = [];
   let questionField = 'question';
   let answerField = 'answer';
@@ -71,6 +74,12 @@ export function renderQaCards({ store }) {
   function rebuildEntriesFromCollectionState() {
     const res = store.collections.getActiveCollectionView({ windowSize: 10 });
     active = res?.collection || null;
+    // setup bound controller for current collection
+    if (qaController && qaController.collKey !== (active && active.key)) {
+      try { qaController.dispose(); } catch (e) {}
+      qaController = null;
+    }
+    if (!qaController && active && active.key) qaController = qaCardsController.create(active.key);
     collState = (res?.collState && typeof res.collState === 'object') ? res.collState : {};
 
     fields = Array.isArray(active?.metadata?.fields) ? active.metadata.fields : [];
@@ -136,7 +145,7 @@ export function renderQaCards({ store }) {
       feedbackMode = false;
       userAnswer = '';
       completed = false;
-      try { store.collections.saveCollectionState?.(active?.key, { questionField: value }, { app: 'qaCardsView' }); } catch (e) {}
+      (qaController || qaCardsController.create(active?.key)).set({ questionField: value });
       render();
     }, 'Question');
 
@@ -145,7 +154,7 @@ export function renderQaCards({ store }) {
       feedbackMode = false;
       userAnswer = '';
       completed = false;
-      try { store.collections.saveCollectionState?.(active?.key, { answerField: value }, { app: 'qaCardsView' }); } catch (e) {}
+      (qaController || qaCardsController.create(active?.key)).set({ answerField: value });
       render();
     }, 'Answer');
 
@@ -161,7 +170,7 @@ export function renderQaCards({ store }) {
         onChange: (value) => {
           submitMethod = value || 'enter';
           feedbackMode = false; userAnswer = ''; completed = false;
-          try { store.collections.saveCollectionState?.(active?.key, { qaCardsView: { submitMethod: submitMethod } }); } catch (e) {}
+          (qaController || qaCardsController.create(active?.key)).set({ submitMethod: submitMethod });
           render();
         },
         className: '',
@@ -175,34 +184,41 @@ export function renderQaCards({ store }) {
 
     headerTools.append(selectorsWrap, spacer);
     // Collection-level shuffle/clear-shuffle controls (use shared helper)
-    try {
-      addShuffleControls(headerTools, {
-        store,
-        onShuffle: () => {
-          try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
-          try { if (store?.collections && typeof store.collections.shuffleCollection === 'function') store.collections.shuffleCollection(active?.key); } catch (e) {}
-          try { rebuildEntriesFromCollectionState(); } catch (e) {}
-          index = 0;
-          try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
-          shownAt = nowMs();
-          feedbackMode = false;
-          userAnswer = '';
-          completed = false;
-          render();
-        },
-        onClearShuffle: () => {
-          try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
-          try { rebuildEntriesFromCollectionState(); } catch (e) {}
-          index = Math.min(index, Math.max(0, entries.length - 1));
-          try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
-          shownAt = nowMs();
-          feedbackMode = false;
-          userAnswer = '';
-          completed = false;
-          render();
-        },
-      });
-    } catch (e) {}
+    addShuffleControls(headerTools, {
+      store,
+      onShuffle: () => {
+        progressTracker?.flush?.({ immediate: true });
+        const collKey = active?.key;
+        if (!collKey) return;
+        // Set persisted shuffle state via controller
+        const seed = (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues)
+          ? (window.crypto.getRandomValues(new Uint32Array(1))[0] >>> 0)
+          : (Math.floor(Math.random() * 0x100000000) >>> 0);
+        collectionSettingsController.set(collKey, { order_hash_int: seed, isShuffled: true });
+        rebuildEntriesFromCollectionState();
+        index = 0;
+        (qaController || qaCardsController.create(collKey)).set({ currentIndex: 0 });
+        shownAt = nowMs();
+        feedbackMode = false;
+        userAnswer = '';
+        completed = false;
+        render();
+      },
+      onClearShuffle: () => {
+        progressTracker?.flush?.({ immediate: true });
+        const collKey = active?.key;
+        if (!collKey) return;
+        collectionSettingsController.set(collKey, { order_hash_int: null, isShuffled: false });
+        rebuildEntriesFromCollectionState();
+        index = Math.min(index, Math.max(0, entries.length - 1));
+        (qaController || qaCardsController.create(collKey)).set({ currentIndex: index });
+        shownAt = nowMs();
+        feedbackMode = false;
+        userAnswer = '';
+        completed = false;
+        render();
+      },
+    });
 
     if (showContinue) {
       headerTools.addElement({ type: 'button', key: 'continue', label: 'Continue', onClick: (e) => { if (typeof onContinue === 'function') onContinue(e); } });
@@ -473,14 +489,14 @@ export function renderQaCards({ store }) {
         feedbackMode = false;
         userAnswer = '';
         index += 1;
-        try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
+        qaCardsController.create(active?.key).set({ currentIndex: index });
         shownAt = nowMs();
         render();
       } else {
         // Last card - show completion
         try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
         completed = true;
-        try { store.collections.saveCollectionState?.(active?.key, { currentIndex: index }, { app: 'qaCardsView' }); } catch (e) {}
+        qaCardsController.create(active?.key).set({ currentIndex: index });
         render();
       }
     };
@@ -521,7 +537,7 @@ export function renderQaCards({ store }) {
           restartBtn.addEventListener('click', () => {
             try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
             index = 0;
-            try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
+            (qaController || qaCardsController.create(active?.key)).set({ currentIndex: 0 });
             feedbackMode = false;
             userAnswer = '';
             completed = false;
@@ -536,7 +552,7 @@ export function renderQaCards({ store }) {
             wrapper.removeEventListener('keydown', keyHandlerRestart);
             try { progressTracker?.flush?.({ immediate: true }); } catch (e) {}
             index = 0;
-            try { store.collections.saveCollectionState?.(active?.key, { currentIndex: 0 }, { app: 'qaCardsView' }); } catch (e) {}
+            (qaController || qaCardsController.create(active?.key)).set({ currentIndex: 0 });
             feedbackMode = false;
             userAnswer = '';
             completed = false;

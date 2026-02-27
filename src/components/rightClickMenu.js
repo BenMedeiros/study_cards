@@ -4,8 +4,8 @@
 // Keep a small registry of allowed context-menu subtypes so callers
 // must opt-in to adding subtype classes (helps keep CSS maintenance
 // explicit and prevents accidental class proliferation).
-const _allowedRcmContexts = new Set(['brand', 'table']);
-const _allowedRcmClassNames = new Set(['brand-context-menu', 'table-context-menu']);
+const _allowedRcmContexts = new Set(['brand', 'table', 'controllers']);
+const _allowedRcmClassNames = new Set(['brand-context-menu', 'table-context-menu', 'controllers-context-menu']);
 
 export function registerRightClickContext(name) {
   try {

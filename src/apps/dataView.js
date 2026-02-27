@@ -4,6 +4,7 @@ import { el } from '../components/ui.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { addShuffleControls } from '../components/collectionControls.js';
 import { addStudyFilter } from '../components/studyControls.js';
+import collectionSettingsController from '../controllers/collectionSettingsController.js';
 import { createDropdown } from '../components/dropdown.js';
 import { confirmDialog } from '../components/dialogs/confirmDialog.js';
 import { parseHashRoute, buildHashRoute } from '../utils/helpers.js';
@@ -291,21 +292,17 @@ export function renderData({ store }) {
 
   function renderStudyFilterControl() {
     controls.removeControl && controls.removeControl('studyFilter');
-    try {
-      addStudyFilter(controls, {
-        store,
-        getCurrentCollectionKey: () => store.collections.getActiveCollection()?.key,
-        collState: readCollState(),
-        onChange: (ordered) => {
-          studyFilterStates = orderStudyStates(ordered);
-          persistFilters();
-          renderTable();
-          updateStudyLabel();
-          markStudyRows();
-          updateControlStates();
-        }
-      });
-    } catch (e) {}
+    addStudyFilter(controls, {
+      getCurrentCollectionKey: () => store.collections.getActiveCollection()?.key,
+      onChange: (ordered) => {
+        studyFilterStates = orderStudyStates(ordered);
+        persistFilters();
+        renderTable();
+        updateStudyLabel();
+        markStudyRows();
+        updateControlStates();
+      }
+    });
   }
 
   // Collection expansion dropdowns (persisted per-collection)
@@ -459,8 +456,7 @@ export function renderData({ store }) {
   function readCollState() {
     const coll = store.collections.getActiveCollection();
     if (!coll) return null;
-    if (typeof store?.collections?.loadCollectionState === 'function') return store.collections.loadCollectionState(coll.key) || {};
-    return {};
+    return collectionSettingsController.get(coll.key) || {};
   }
 
   function getEntryKanjiValue(entry) {
@@ -561,7 +557,7 @@ export function renderData({ store }) {
     const coll = store.collections.getActiveCollection();
     if (!coll) return;
     // Persist only the held query; system always applies the held query.
-    store.collections.saveCollectionState(coll.key, { heldTableSearch: String(query || '') });
+    collectionSettingsController.set(coll.key, { heldTableSearch: String(query || '') });
   }
 
   function persistSavedTableSearches(nextList) {
@@ -569,36 +565,24 @@ export function renderData({ store }) {
     if (!coll) return;
     const list = normalizeSavedSearchList(nextList);
     if (!list.length) {
-      try {
-        if (typeof store?.collections?.deleteCollectionStateKeys === 'function') {
-          store.collections.deleteCollectionStateKeys(coll.key, ['savedTableSearches', 'saved_table_searches', 'savedTableSearch', 'savedFiltersTableSearch']);
-        } else {
-          store.collections.saveCollectionState(coll.key, { savedTableSearches: [] });
-        }
-      } catch (e) {
-        // ignore
-      }
+      collectionSettingsController.set(coll.key, { savedTableSearches: [] });
       savedTableSearches = [];
       return;
     }
 
     savedTableSearches = list;
-    store.collections.saveCollectionState(coll.key, { savedTableSearches: list });
+    collectionSettingsController.set(coll.key, { savedTableSearches: list });
   }
 
   function persistCollectionExpansions() {
     const coll = store.collections.getActiveCollection();
     if (!coll) return;
-    try {
-      const cfg = getExpansionConfig();
-      const iItems = Array.isArray(cfg?.iItems) ? cfg.iItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-      const naItems = Array.isArray(cfg?.naItems) ? cfg.naItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-      const iSave = (expansionIForms === 'all' || (Array.isArray(expansionIForms) && iItems.length > 0 && iItems.length === expansionIForms.length && iItems.every(v => expansionIForms.includes(v)))) ? 'all' : (Array.isArray(expansionIForms) ? expansionIForms.slice() : []);
-      const naSave = (expansionNaForms === 'all' || (Array.isArray(expansionNaForms) && naItems.length > 0 && naItems.length === expansionNaForms.length && naItems.every(v => expansionNaForms.includes(v)))) ? 'all' : (Array.isArray(expansionNaForms) ? expansionNaForms.slice() : []);
-      store.collections.setCollectionExpansionForms(coll.key, { iForms: iSave, naForms: naSave });
-    } catch (e) {
-      store.collections.setCollectionExpansionForms(coll.key, { iForms: expansionIForms, naForms: expansionNaForms });
-    }
+    const cfg = getExpansionConfig();
+    const iItems = Array.isArray(cfg?.iItems) ? cfg.iItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
+    const naItems = Array.isArray(cfg?.naItems) ? cfg.naItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
+    const iSave = (expansionIForms === 'all' || (Array.isArray(expansionIForms) && iItems.length > 0 && iItems.length === expansionIForms.length && iItems.every(v => expansionIForms.includes(v)))) ? 'all' : (Array.isArray(expansionIForms) ? expansionIForms.slice() : []);
+    const naSave = (expansionNaForms === 'all' || (Array.isArray(expansionNaForms) && naItems.length > 0 && naItems.length === expansionNaForms.length && naItems.every(v => expansionNaForms.includes(v)))) ? 'all' : (Array.isArray(expansionNaForms) ? expansionNaForms.slice() : []);
+    collectionSettingsController.set(coll.key, { expansion_i: iSave, expansion_na: naSave });
   }
 
   // pruneStudyIndicesToFilters removed — studyIndices/studyStart no longer used.

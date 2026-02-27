@@ -8,6 +8,9 @@ import { addStudyFilter } from '../components/studyControls.js';
 import { addShuffleControls } from '../components/collectionControls.js';
 import { settingsLog } from '../managers/settingsManager.js';
 
+import collectionSettingsController from '../controllers/collectionSettingsController.js';
+import kanjiStudyController from '../controllers/kanjiStudyController.js';
+
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
   el.id = 'kanji-study-root';
@@ -51,6 +54,7 @@ export function renderKanjiStudyCard({ store }) {
   let viewIndices = []; // indices into originalEntries for the current rendered entries array
   let relatedHydratedCollectionKey = null;
   let relatedHydrationPromise = null;
+  let kanjiController = null;
 
   // Helpers
   function getFieldValue(entry, keys) {
@@ -70,12 +74,11 @@ export function renderKanjiStudyCard({ store }) {
     const active = store?.collections?.getActiveCollection ? store.collections.getActiveCollection() : null;
     const key = active && active.key ? active.key : null;
     if (!key) return;
-    if (typeof store?.collections?.saveCollectionState === 'function') {
-      // persist collection fundamentals at top-level
-      store.collections.saveCollectionState(key, {
-        isShuffled: !!isShuffled,
-        order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
-      });
+    // persist collection fundamentals at top-level
+    collectionSettingsController.set(key, {
+      isShuffled: !!isShuffled,
+      order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
+    });
       // persist app-scoped index and dropdown selections under `kanjiStudyCardView`
       const sliceOrAll = (sel, items) => {
         if (sel === 'all') return 'all';
@@ -90,20 +93,17 @@ export function renderKanjiStudyCard({ store }) {
       const relatedOut = {};
       for (const k of Object.keys(relatedFieldSelections || {})) relatedOut[k] = Array.isArray(relatedFieldSelections[k]) ? relatedFieldSelections[k].slice() : relatedFieldSelections[k];
 
-      store.collections.saveCollectionState(key, {
-        kanjiStudyCardView: {
-          currentIndex: index,
-          entryFields: (entryFieldSelection === 'all') ? 'all' : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []),
-          relatedFields: relatedOut,
-          displayCards: sliceOrAll(displayCardSelection, displayCardItems),
-        }
+      (kanjiController || kanjiStudyController.create(key)).set({
+        currentIndex: index,
+        entryFields: (entryFieldSelection === 'all') ? 'all' : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []),
+        relatedFields: relatedOut,
+        displayCards: sliceOrAll(displayCardSelection, displayCardItems),
       });
 
       // persist app-global default view mode under apps.kanjiStudy
       if (store?.settings && typeof store.settings.set === 'function') {
         store.settings.set('apps.kanjiStudy.defaultViewMode', defaultViewMode, { consumerId: 'kanjiStudyCardView' });
       }
-    }
   }
 
   // Root UI pieces
@@ -140,10 +140,16 @@ export function renderKanjiStudyCard({ store }) {
   // --- Header dropdowns to control field visibility (entry-level + related collections) ---
   // New authoritative model: visibility is controlled at the entry level (and per-related-collection).
   // Build items from collection metadata only (no legacy fallbacks).
-  let displayCardSelection = ['main', 'related'];
   const res = store?.collections?.getActiveCollectionView ? store.collections.getActiveCollectionView({ windowSize: 0 }) : null;
-  const collState = res?.collState || {};
-  const appState = collState?.kanjiStudyCardView || {};
+  const coll = store?.collections?.getActiveCollection ? store.collections.getActiveCollection() : null;
+  if (coll && coll.key) {
+    if (kanjiController && kanjiController.collKey !== coll.key) { kanjiController.dispose(); kanjiController = null; }
+    if (!kanjiController) kanjiController = kanjiStudyController.create(coll.key);
+  }
+  const appState = (coll && coll.key) ? (kanjiController ? kanjiController.get() : {}) : {};
+  let displayCardSelection = (appState && appState.displayCards !== undefined)
+    ? (Array.isArray(appState.displayCards) ? appState.displayCards.slice() : appState.displayCards)
+    : undefined;
 
   // state for visibility selections
   let entryFieldSelection = Array.isArray(appState?.entryFields) ? appState.entryFields.slice() : 'all';
@@ -177,7 +183,8 @@ export function renderKanjiStudyCard({ store }) {
       const set = new Set(chosen);
       const map = {};
       for (const it of entryFieldItems) map[String(it.value || '')] = set.has(String(it.value || ''));
-      entryFieldSelection = chosen;
+      // Preserve the literal 'all' when the dropdown reports it, so persistence stores 'all' (not an expanded array).
+      entryFieldSelection = (typeof vals === 'string' && vals === 'all') ? 'all' : chosen;
       applyEntryFieldVisibility(map);
       saveUIState();
     },
@@ -205,8 +212,9 @@ export function renderKanjiStudyCard({ store }) {
       commitOnClose: true,
       includeAllNone: true,
       onChange: (vals) => {
-        const chosen = (typeof vals === 'string' && vals === 'all') ? items.map(it => String(it.value || '')) : (Array.isArray(vals) ? vals.slice() : []);
-        relatedFieldSelections[name] = chosen;
+        const chosen = (typeof vals === 'string' && vals === 'all') ? items.map(it => String(it?.value || '')) : (Array.isArray(vals) ? vals.slice() : []);
+        // Preserve 'all' when applicable so we persist the compact marker instead of the expanded list
+        relatedFieldSelections[name] = (typeof vals === 'string' && vals === 'all') ? 'all' : chosen;
         // apply to related card API if available
         const api = cardApis['related'];
         if (api && typeof api.setFieldsVisible === 'function') {
@@ -275,17 +283,6 @@ export function renderKanjiStudyCard({ store }) {
   ];
 
   let footerControls = null;
-  // Unified speak helper: prefer reading/word/kana, fall back to kanji/character/text
-  function speakEntry(entry) {
-    if (!entry) return;
-    const primary = getFieldValue(entry, ['reading', 'kana', 'word', 'text']);
-    const fallback = getFieldValue(entry, ['kanji', 'character', 'text']);
-    const speakText = primary || fallback || '';
-    if (!speakText) return;
-    const fieldKey = primary ? 'reading' : 'kanji';
-    const lang = getLanguageCode(fieldKey);
-    speak(speakText, lang);
-  }
   // Auto-speak setting removed from UI.
 
   // Speak a specific field from the current entry (used for sound.X actions)
@@ -429,16 +426,15 @@ export function renderKanjiStudyCard({ store }) {
           }
         } catch (e) {}
       }
-      displayCardSelection = chosen;
+      // Preserve the literal 'all' marker for compact persistence when the dropdown reports it.
+      displayCardSelection = (typeof vals === 'string' && vals === 'all') ? 'all' : chosen;
       saveUIState();
     },
     className: 'data-expansion-dropdown',
     caption: 'visible.cards'
   });
 
-  try {
-    addStudyFilter(headerTools, { store, getCurrentCollectionKey, collState, onChange: () => { try { refreshEntriesFromStore(); render(); } catch (e) {} } });
-  } catch (e) {}
+  addStudyFilter(headerTools, { getCurrentCollectionKey, onChange: () => { refreshEntriesFromStore(); render(); } });
 
 
   // expose the same variable names used elsewhere so render() logic needs minimal changes
@@ -518,7 +514,7 @@ export function renderKanjiStudyCard({ store }) {
   function refreshEntriesFromStore() {
     const res = store.collections.getActiveCollectionView({ windowSize: 10 });
     const active = res?.collection || null;
-    const collState = res?.collState || {};
+    const collState = (active && active.key) ? (collectionSettingsController.get(active.key) || {}) : (res?.collState || {});
     const view = res?.view || {};
 
     originalEntries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
@@ -530,7 +526,7 @@ export function renderKanjiStudyCard({ store }) {
     // If a saved index exists in collection state, restore it once on initial load.
     // Only use the app-scoped `kanjiStudyCardView.currentIndex` (no legacy fallbacks).
     if (!uiStateRestored && collState) {
-      const savedIndex = (collState && collState.kanjiStudyCardView && typeof collState.kanjiStudyCardView.currentIndex === 'number')
+      const savedIndex = (collState.kanjiStudyCardView && typeof collState.kanjiStudyCardView.currentIndex === 'number')
         ? collState.kanjiStudyCardView.currentIndex
         : undefined;
       if (typeof savedIndex === 'number') index = savedIndex;
