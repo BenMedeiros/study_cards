@@ -12701,6 +12701,33 @@
       ]
     },
     {
+      "kanji": "蜂蜜",
+      "reading": "はちみつ",
+      "meaning": "honey",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": ["food","animal_related"]
+    },
+    {
+      "kanji": "雀蜂",
+      "reading": "すずめばち",
+      "meaning": "hornet",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal","dangerous_insect"]
+    },
+    {
+      "kanji": "蜂の巣",
+      "reading": "はちのす",
+      "meaning": "beehive; wasp nest",
+      "type": "expression",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": ["animal_related","compound_phrase"]
+    },
+    {
       "kanji": "蟻",
       "reading": "あり",
       "meaning": "ant",

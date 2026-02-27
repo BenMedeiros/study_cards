@@ -2571,6 +2571,376 @@
       "notes": [
         "Common collocation: やる気を削ぐ = demotivate someone."
       ]
+    },
+    {
+      "ja": "庭で蜂を見たので、窓を閉めました。",
+      "en": "I saw a bee in the yard, so I closed the window.",
+      "notes": [
+        "Uses ので for a neutral, explanatory “because,” fitting for giving a reason without sounding accusatory."
+      ],
+      "grammarNotes": [
+        "ので is a softer, explanatory “because” than から and often sounds more neutral/polite."
+      ],
+      "chunks": [
+        {
+          "ja": "庭で蜂を見たので、",
+          "gloss": "because I saw a bee in the yard,",
+          "focus": "AのでB",
+          "refs": [
+            "庭",
+            "蜂",
+            "見る",
+            "ので"
+          ]
+        },
+        {
+          "ja": "窓を閉めました。",
+          "gloss": "I closed the window.",
+          "refs": [
+            "窓",
+            "閉める"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "夏は蜂が多いから、甘い飲み物に気をつけて。",
+      "en": "There are lots of bees in summer, so be careful with sweet drinks.",
+      "notes": [
+        "A casual warning; 気をつけて sounds natural in conversation."
+      ],
+      "grammarNotes": [
+        "から gives a straightforward reason; it can sound more direct than ので.",
+        "気をつけて is a common casual imperative meaning “be careful.”"
+      ],
+      "chunks": [
+        {
+          "ja": "夏は蜂が多いから、",
+          "gloss": "because there are many bees in summer,",
+          "focus": "AからB",
+          "refs": [
+            "夏",
+            "蜂",
+            "多い",
+            "から"
+          ]
+        },
+        {
+          "ja": "甘い飲み物に",
+          "gloss": "with sweet drinks",
+          "refs": [
+            "甘い",
+            "飲み物"
+          ]
+        },
+        {
+          "ja": "気をつけて。",
+          "gloss": "be careful.",
+          "refs": [
+            "気をつける"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "その花には蜜蜂がたくさん集まっています。",
+      "en": "Many honeybees are gathering on that flower.",
+      "notes": [
+        "には highlights the location/target where honeybees gather (on/around the flower)."
+      ],
+      "grammarNotes": [
+        "Vている can describe an ongoing state/result (here: “are gathering/clustered”)."
+      ],
+      "chunks": [
+        {
+          "ja": "その花には",
+          "gloss": "on that flower",
+          "refs": [
+            "花"
+          ]
+        },
+        {
+          "ja": "蜜蜂がたくさん",
+          "gloss": "many honeybees",
+          "refs": [
+            "蜜蜂",
+            "たくさん"
+          ]
+        },
+        {
+          "ja": "集まっています。",
+          "gloss": "are gathering",
+          "focus": "Vている",
+          "refs": [
+            "集まる",
+            "ている"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "蜜蜂は花粉を運ぶので、農業にも大切です。",
+      "en": "Honeybees carry pollen, so they are important for agriculture too.",
+      "notes": [
+        "も emphasizes “also/too,” adding agriculture as another relevant domain."
+      ],
+      "grammarNotes": [
+        "ので is a neutral explanatory “because.”",
+        "にも adds “also/too” to a target (here: agriculture)."
+      ],
+      "chunks": [
+        {
+          "ja": "蜜蜂は花粉を運ぶので、",
+          "gloss": "because honeybees carry pollen,",
+          "focus": "AのでB",
+          "refs": [
+            "蜜蜂",
+            "花粉",
+            "運ぶ",
+            "ので"
+          ]
+        },
+        {
+          "ja": "農業にも",
+          "gloss": "for agriculture too",
+          "refs": [
+            "農業"
+          ]
+        },
+        {
+          "ja": "大切です。",
+          "gloss": "it is important.",
+          "refs": [
+            "大切"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "のどが痛いとき、温かいお茶に蜂蜜を入れます。",
+      "en": "When my throat hurts, I add honey to warm tea.",
+      "notes": [
+        "A common home remedy context: honey in warm tea for a sore throat."
+      ],
+      "grammarNotes": [
+        "とき means “when” (time/occasion) and can set a general situation."
+      ],
+      "chunks": [
+        {
+          "ja": "のどが痛いとき、",
+          "gloss": "when my throat hurts,",
+          "focus": "Aとき",
+          "refs": [
+            "のど",
+            "痛い",
+            "とき"
+          ]
+        },
+        {
+          "ja": "温かいお茶に",
+          "gloss": "into warm tea",
+          "refs": [
+            "温かい",
+            "お茶"
+          ]
+        },
+        {
+          "ja": "蜂蜜を入れます。",
+          "gloss": "I add honey.",
+          "refs": [
+            "蜂蜜",
+            "入れる"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "ヨーグルトに蜂蜜をかけると食べやすいです。",
+      "en": "If you drizzle honey on yogurt, it’s easier to eat.",
+      "notes": [
+        "A practical, everyday tip; 食べやすい expresses ease/comfort in eating."
+      ],
+      "grammarNotes": [
+        "Vると can express a natural result: “when/if you do X, Y happens.”",
+        "やすい attaches to a verb stem to mean “easy to do” (食べやすい)."
+      ],
+      "chunks": [
+        {
+          "ja": "ヨーグルトに蜂蜜をかけると",
+          "gloss": "if you drizzle honey on yogurt,",
+          "focus": "Vると",
+          "refs": [
+            "ヨーグルト",
+            "蜂蜜",
+            "かける",
+            "と"
+          ]
+        },
+        {
+          "ja": "食べやすいです。",
+          "gloss": "it is easy to eat.",
+          "refs": [
+            "食べやすい",
+            "食べる"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "山で雀蜂を見かけたら、走らずに静かに離れてください。",
+      "en": "If you spot a hornet in the mountains, please don’t run—quietly move away.",
+      "notes": [
+        "Safety instruction tone: 〜てください is polite and appropriate for guidance."
+      ],
+      "grammarNotes": [
+        "Vたら is a common conditional for “if/when.”",
+        "〜ずに means “without doing” (走らずに = without running)."
+      ],
+      "chunks": [
+        {
+          "ja": "山で雀蜂を見かけたら、",
+          "gloss": "if you spot a hornet in the mountains,",
+          "focus": "Vたら",
+          "refs": [
+            "山",
+            "雀蜂",
+            "見かける",
+            "たら"
+          ]
+        },
+        {
+          "ja": "走らずに",
+          "gloss": "without running",
+          "focus": "Vずに",
+          "refs": [
+            "走る",
+            "ずに"
+          ]
+        },
+        {
+          "ja": "静かに離れてください。",
+          "gloss": "please move away quietly.",
+          "refs": [
+            "静か",
+            "離れる"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "雀蜂は危ないので、巣を見つけたら市役所に連絡します。",
+      "en": "Hornets are dangerous, so if I find a nest, I contact city hall.",
+      "notes": [
+        "市役所 (city hall) is a realistic contact point in Japan for reporting hazards like nests."
+      ],
+      "grammarNotes": [
+        "ので is an explanatory “because.”",
+        "Vたら is a common “if/when” conditional."
+      ],
+      "chunks": [
+        {
+          "ja": "雀蜂は危ないので、",
+          "gloss": "because hornets are dangerous,",
+          "focus": "AのでB",
+          "refs": [
+            "雀蜂",
+            "危ない",
+            "ので"
+          ]
+        },
+        {
+          "ja": "巣を見つけたら",
+          "gloss": "if I find a nest",
+          "focus": "Vたら",
+          "refs": [
+            "巣",
+            "見つける",
+            "たら"
+          ]
+        },
+        {
+          "ja": "市役所に連絡します。",
+          "gloss": "I contact city hall.",
+          "refs": [
+            "市役所",
+            "連絡する"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "ベランダに蜂の巣ができていて、びっくりしました。",
+      "en": "There was a wasp nest on the balcony, and I was surprised.",
+      "notes": [
+        "できている describes an established state: the nest has formed and exists there now."
+      ],
+      "grammarNotes": [
+        "Vている can describe a resulting state (できている = has formed/is there).",
+        "〜ていて can connect clauses with a causal/scene-setting feel."
+      ],
+      "chunks": [
+        {
+          "ja": "ベランダに蜂の巣ができていて、",
+          "gloss": "there being a wasp nest on the balcony,",
+          "focus": "Vていて",
+          "refs": [
+            "ベランダ",
+            "蜂の巣",
+            "できる",
+            "ている"
+          ]
+        },
+        {
+          "ja": "びっくりしました。",
+          "gloss": "I was surprised.",
+          "refs": [
+            "びっくりする"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "蜂の巣が近いと危ないから、子どもには近づかないように言った。",
+      "en": "Because a nest nearby is dangerous, I told the kids not to go near it.",
+      "notes": [
+        "近づかないように言った is a common way to report giving a caution/instruction."
+      ],
+      "grammarNotes": [
+        "Aと expresses a general condition: “if/when A, then (it is) B.”",
+        "〜ないように言う means “tell someone not to do” (caution/instruction).",
+        "から gives a direct reason."
+      ],
+      "chunks": [
+        {
+          "ja": "蜂の巣が近いと危ないから、",
+          "gloss": "because it’s dangerous if a nest is nearby,",
+          "focus": "AとB",
+          "refs": [
+            "蜂の巣",
+            "近い",
+            "危ない",
+            "と",
+            "から"
+          ]
+        },
+        {
+          "ja": "子どもには",
+          "gloss": "to the kids",
+          "refs": [
+            "子ども"
+          ]
+        },
+        {
+          "ja": "近づかないように言った。",
+          "gloss": "I told them not to go near it.",
+          "focus": "Vないように言う",
+          "refs": [
+            "近づく",
+            "言う",
+            "ないように"
+          ]
+        }
+      ]
     }
   ]
 }
