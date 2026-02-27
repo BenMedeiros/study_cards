@@ -12154,6 +12154,366 @@
       ]
     },
     {
+      "kanji": "子犬",
+      "reading": "こいぬ",
+      "meaning": "puppy",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "番犬",
+      "reading": "ばんけん",
+      "meaning": "guard dog",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "子猫",
+      "reading": "こねこ",
+      "meaning": "kitten",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "野良猫",
+      "reading": "のらねこ",
+      "meaning": "stray cat",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "小鳥",
+      "reading": "ことり",
+      "meaning": "small bird",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "焼き鳥",
+      "reading": "やきとり",
+      "meaning": "grilled chicken (yakitori)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "both",
+      "tags": ["food","animal_compound"]
+    },
+    {
+      "kanji": "金魚",
+      "reading": "きんぎょ",
+      "meaning": "goldfish",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "競馬",
+      "reading": "けいば",
+      "meaning": "horse racing",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound","sports"]
+    },
+    {
+      "kanji": "馬車",
+      "reading": "ばしゃ",
+      "meaning": "horse-drawn carriage",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "乳牛",
+      "reading": "にゅうぎゅう",
+      "meaning": "dairy cow",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "子豚",
+      "reading": "こぶた",
+      "meaning": "piglet",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "羊毛",
+      "reading": "ようもう",
+      "meaning": "wool",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "子羊",
+      "reading": "こひつじ",
+      "meaning": "lamb",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "山羊座",
+      "reading": "やぎざ",
+      "meaning": "Capricorn (zodiac)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["zodiac"]
+    },
+    {
+      "kanji": "養鶏",
+      "reading": "ようけい",
+      "meaning": "poultry farming",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["industry","animal_compound"]
+    },
+    {
+      "kanji": "白兎",
+      "reading": "しろうさぎ",
+      "meaning": "white rabbit",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "海亀",
+      "reading": "うみがめ",
+      "meaning": "sea turtle",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "雨蛙",
+      "reading": "あまがえる",
+      "meaning": "tree frog",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "猿山",
+      "reading": "さるやま",
+      "meaning": "monkey hill (zoo area)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["place","animal_compound"]
+    },
+    {
+      "kanji": "熊本",
+      "reading": "くまもと",
+      "meaning": "Kumamoto (place name)",
+      "type": "proper-noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["place"]
+    },
+    {
+      "kanji": "虎柄",
+      "reading": "とらがら",
+      "meaning": "tiger pattern",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "獅子舞",
+      "reading": "ししまい",
+      "meaning": "lion dance",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["culture","animal_compound"]
+    },
+    {
+      "kanji": "鹿肉",
+      "reading": "しかにく",
+      "meaning": "venison",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["food","animal_compound"]
+    },
+    {
+      "kanji": "人狼",
+      "reading": "じんろう",
+      "meaning": "werewolf",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["myth","animal_compound"]
+    },
+    {
+      "kanji": "狐火",
+      "reading": "きつねび",
+      "meaning": "foxfire (folklore)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["folklore","animal_compound"]
+    },
+    {
+      "kanji": "白鼠",
+      "reading": "しろねずみ",
+      "meaning": "white mouse",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "黒豹",
+      "reading": "くろひょう",
+      "meaning": "black panther",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "捕鯨",
+      "reading": "ほげい",
+      "meaning": "whaling",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["industry","animal_compound"]
+    },
+    {
+      "kanji": "人食い鮫",
+      "reading": "ひとくいざめ",
+      "meaning": "man-eating shark",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["danger","animal_compound"]
+    },
+    {
+      "kanji": "凧",
+      "reading": "たこ",
+      "meaning": "kite (homophone)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["homophone"]
+    },
+    {
+      "kanji": "車海老",
+      "reading": "くるまえび",
+      "meaning": "kuruma prawn",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["food","animal_compound"]
+    },
+    {
+      "kanji": "毛蟹",
+      "reading": "けがに",
+      "meaning": "hairy crab",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["food","animal_compound"]
+    },
+    {
+      "kanji": "毒蛇",
+      "reading": "どくじゃ",
+      "meaning": "venomous snake",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["danger","animal_compound"]
+    },
+    {
+      "kanji": "蜜蜂",
+      "reading": "みつばち",
+      "meaning": "honeybee",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "蟻地獄",
+      "reading": "ありじごく",
+      "meaning": "antlion (lit. ant hell)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound","insect"]
+    },
+    {
+      "kanji": "胡蝶",
+      "reading": "こちょう",
+      "meaning": "butterfly (poetic)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["poetic","animal_compound"]
+    },
+    {
+      "kanji": "蚊取り線香",
+      "reading": "かとりせんこう",
+      "meaning": "mosquito coil",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["household","animal_compound"]
+    },
+    {
+      "kanji": "鷹狩り",
+      "reading": "たかがり",
+      "meaning": "falconry",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["culture","animal_compound"]
+    },
+    {
+      "kanji": "伝書鳩",
+      "reading": "でんしょばと",
+      "meaning": "carrier pigeon",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["animal_compound"]
+    },
+    {
+      "kanji": "狸寝入り",
+      "reading": "たぬきねいり",
+      "meaning": "pretending to sleep",
+      "type": "expression",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": ["idiom","animal_compound"]
+    },
+    {
       "kanji": "猟犬",
       "reading": "りょうけん",
       "meaning": "hunting dog",
@@ -14000,6 +14360,166 @@
       "orthography": "hiragana",
       "tags": [
         "yokai"
+      ]
+    }
+    ,
+    {
+      "kanji": "梨",
+      "reading": "なし",
+      "meaning": "Japanese pear",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "kanji": "洋梨",
+      "reading": "ようなし",
+      "meaning": "(western) pear",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "kanji": "柿",
+      "reading": "かき",
+      "meaning": "persimmon",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "kanji": "さくらんぼ",
+      "reading": "さくらんぼ",
+      "meaning": "cherry (fruit)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "kanji": "メロン",
+      "reading": "メロン",
+      "meaning": "melon (honeydew-type)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "kanji": "西瓜",
+      "reading": "すいか",
+      "meaning": "watermelon",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "kanji": "ブルーベリー",
+      "reading": "ブルーベリー",
+      "meaning": "blueberry",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "kanji": "ライム",
+      "reading": "ライム",
+      "meaning": "lime",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "kanji": "グレープフルーツ",
+      "reading": "グレープフルーツ",
+      "meaning": "grapefruit",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "katakana",
+      "tags": [
+        "food"
+      ]
+    },
+    {
+      "kanji": "醤油",
+      "reading": "しょうゆ",
+      "meaning": "soy sauce",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "seasoning",
+        "food"
+      ]
+    },
+    {
+      "kanji": "みりん",
+      "reading": "みりん",
+      "meaning": "sweet cooking sake (mirin)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "seasoning",
+        "food"
+      ]
+    },
+    {
+      "kanji": "胡椒",
+      "reading": "こしょう",
+      "meaning": "pepper (ground)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "seasoning",
+        "food"
+      ]
+    },
+    {
+      "kanji": "わさび",
+      "reading": "わさび",
+      "meaning": "wasabi",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "hiragana",
+      "tags": [
+        "seasoning",
+        "food"
+      ]
+    },
+    {
+      "kanji": "胡麻",
+      "reading": "ごま",
+      "meaning": "sesame (seeds)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "orthography": "kanji",
+      "tags": [
+        "seasoning",
+        "food"
       ]
     }
   ]
