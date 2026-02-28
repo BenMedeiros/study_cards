@@ -2941,6 +2941,709 @@
           ]
         }
       ]
+    },
+    {
+      "ja": "田中さんは東京で新しい仕事を掴んだ。",
+      "en": "Mr. Tanaka secured a new job in Tokyo.",
+      "grammarNotes": [
+        "で marks the location where something happens."
+      ],
+      "chunks": [
+        {
+          "ja": "田中さんは東京で",
+          "gloss": "Mr. Tanaka in Tokyo",
+          "refs": [
+            "田中",
+            "東京"
+          ]
+        },
+        {
+          "ja": "新しい仕事を掴んだ",
+          "gloss": "secured a new job",
+          "refs": [
+            "新しい",
+            "仕事",
+            "掴む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "山田さんは進路について悩んでいる。",
+      "en": "Ms. Yamada is worrying about her future path.",
+      "grammarNotes": [
+        "Vている shows an ongoing state or action."
+      ],
+      "chunks": [
+        {
+          "ja": "山田さんは進路について",
+          "gloss": "Ms. Yamada about her future path",
+          "refs": [
+            "山田",
+            "進路"
+          ]
+        },
+        {
+          "ja": "悩んでいる",
+          "gloss": "is worrying",
+          "refs": [
+            "悩む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "大阪のカフェでコーヒーを頼んだ。",
+      "en": "I ordered coffee at a café in Osaka.",
+      "chunks": [
+        {
+          "ja": "大阪のカフェで",
+          "gloss": "at a café in Osaka",
+          "refs": [
+            "大阪",
+            "カフェ"
+          ]
+        },
+        {
+          "ja": "コーヒーを頼んだ",
+          "gloss": "ordered coffee",
+          "refs": [
+            "コーヒー",
+            "頼む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "ノートの字が雨で滲んだ。",
+      "en": "The writing in the notebook smudged because of the rain.",
+      "chunks": [
+        {
+          "ja": "ノートの字が雨で",
+          "gloss": "the notebook writing from rain",
+          "refs": [
+            "ノート",
+            "字",
+            "雨"
+          ]
+        },
+        {
+          "ja": "滲んだ",
+          "gloss": "smudged",
+          "refs": [
+            "滲む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "鈴木さんは毎朝お茶を飲む。",
+      "en": "Mr. Suzuki drinks tea every morning.",
+      "chunks": [
+        {
+          "ja": "鈴木さんは毎朝",
+          "gloss": "Mr. Suzuki every morning",
+          "refs": [
+            "鈴木",
+            "毎朝"
+          ]
+        },
+        {
+          "ja": "お茶を飲む",
+          "gloss": "drinks tea",
+          "refs": [
+            "お茶",
+            "飲む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "昨日から頭が少し痛む。",
+      "en": "My head has been hurting a little since yesterday.",
+      "grammarNotes": [
+        "から marks the starting point in time."
+      ],
+      "chunks": [
+        {
+          "ja": "昨日から",
+          "gloss": "since yesterday",
+          "refs": [
+            "昨日"
+          ]
+        },
+        {
+          "ja": "頭が少し痛む",
+          "gloss": "my head hurts a little",
+          "refs": [
+            "頭",
+            "少し",
+            "痛む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "佐藤さんは箱を車に積んだ。",
+      "en": "Mr. Sato loaded the boxes into the car.",
+      "chunks": [
+        {
+          "ja": "佐藤さんは箱を",
+          "gloss": "Mr. Sato the boxes",
+          "refs": [
+            "佐藤",
+            "箱"
+          ]
+        },
+        {
+          "ja": "車に積んだ",
+          "gloss": "loaded into the car",
+          "refs": [
+            "車",
+            "積む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "古いテーブルが少し歪んでいる。",
+      "en": "The old table is slightly warped.",
+      "grammarNotes": [
+        "Vている can describe a resulting state."
+      ],
+      "chunks": [
+        {
+          "ja": "古いテーブルが少し",
+          "gloss": "the old table slightly",
+          "refs": [
+            "古い",
+            "テーブル",
+            "少し"
+          ]
+        },
+        {
+          "ja": "歪んでいる",
+          "gloss": "is warped",
+          "refs": [
+            "歪む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "彼は昔の失敗を悔む。",
+      "en": "He regrets his past mistakes.",
+      "chunks": [
+        {
+          "ja": "彼は昔の失敗を",
+          "gloss": "he past mistakes",
+          "refs": [
+            "彼",
+            "昔",
+            "失敗"
+          ]
+        },
+        {
+          "ja": "悔む",
+          "gloss": "regrets",
+          "refs": [
+            "悔む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "このセーターは洗うと縮む。",
+      "en": "This sweater shrinks when washed.",
+      "grammarNotes": [
+        "と can express a natural result or general truth."
+      ],
+      "chunks": [
+        {
+          "ja": "このセーターは",
+          "gloss": "this sweater",
+          "refs": [
+            "セーター"
+          ]
+        },
+        {
+          "ja": "洗うと縮む",
+          "gloss": "shrinks when washed",
+          "focus": "Vると",
+          "refs": [
+            "洗う",
+            "縮む",
+            "Vると"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "京都で起きた事故を多くの人が悔やんだ。",
+      "en": "Many people mourned the accident that happened in Kyoto.",
+      "chunks": [
+        {
+          "ja": "京都で起きた事故を",
+          "gloss": "the accident that happened in Kyoto",
+          "refs": [
+            "京都",
+            "起きる",
+            "事故"
+          ]
+        },
+        {
+          "ja": "多くの人が悔やんだ",
+          "gloss": "many people mourned",
+          "refs": [
+            "多く",
+            "人",
+            "悔やむ"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "中村さんは福岡に住んでいる。",
+      "en": "Mr. Nakamura lives in Fukuoka.",
+      "chunks": [
+        {
+          "ja": "中村さんは福岡に",
+          "gloss": "Mr. Nakamura in Fukuoka",
+          "refs": [
+            "中村",
+            "福岡"
+          ]
+        },
+        {
+          "ja": "住んでいる",
+          "gloss": "lives",
+          "refs": [
+            "住む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "二人でチームを組んだ。",
+      "en": "The two of us formed a team.",
+      "grammarNotes": [
+        "二人 is the counter for two people."
+      ],
+      "chunks": [
+        {
+          "ja": "二人で",
+          "gloss": "with two people",
+          "refs": [
+            "二人"
+          ]
+        },
+        {
+          "ja": "チームを組んだ",
+          "gloss": "formed a team",
+          "refs": [
+            "チーム",
+            "組む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "午後になって雨が止んだ。",
+      "en": "The rain stopped in the afternoon.",
+      "chunks": [
+        {
+          "ja": "午後になって",
+          "gloss": "when it became afternoon",
+          "refs": [
+            "午後",
+            "なる"
+          ]
+        },
+        {
+          "ja": "雨が止んだ",
+          "gloss": "the rain stopped",
+          "refs": [
+            "雨",
+            "止む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "町の人々は有名な作家の死を悼んだ。",
+      "en": "The townspeople mourned the death of the famous writer.",
+      "chunks": [
+        {
+          "ja": "町の人々は",
+          "gloss": "the townspeople",
+          "refs": [
+            "町",
+            "人々"
+          ]
+        },
+        {
+          "ja": "有名な作家の死を悼んだ",
+          "gloss": "mourned the famous writer's death",
+          "refs": [
+            "有名",
+            "作家",
+            "死",
+            "悼む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "北海道は自然に富んでいる。",
+      "en": "Hokkaido is rich in nature.",
+      "grammarNotes": [
+        "に富む means “to be rich in / abound in.”"
+      ],
+      "chunks": [
+        {
+          "ja": "北海道は自然に",
+          "gloss": "Hokkaido in nature",
+          "refs": [
+            "北海道",
+            "自然"
+          ]
+        },
+        {
+          "ja": "富んでいる",
+          "gloss": "is rich in",
+          "refs": [
+            "富む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "彼は質問に答えず、口を噤んだ。",
+      "en": "He didn’t answer the question and fell silent.",
+      "grammarNotes": [
+        "ず is a formal negative connective meaning “without doing.”"
+      ],
+      "chunks": [
+        {
+          "ja": "彼は質問に答えず",
+          "gloss": "he without answering the question",
+          "refs": [
+            "彼",
+            "質問",
+            "答える",
+            "ず"
+          ]
+        },
+        {
+          "ja": "口を噤んだ",
+          "gloss": "fell silent",
+          "refs": [
+            "口",
+            "噤む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "田村さんは甘い物を慎んでいる。",
+      "en": "Mr. Tamura is refraining from sweets.",
+      "chunks": [
+        {
+          "ja": "田村さんは甘い物を",
+          "gloss": "Mr. Tamura sweets",
+          "refs": [
+            "田村",
+            "甘い",
+            "物"
+          ]
+        },
+        {
+          "ja": "慎んでいる",
+          "gloss": "is refraining from",
+          "refs": [
+            "慎む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "山口さんは小さな店を営んでいる。",
+      "en": "Mr. Yamaguchi runs a small shop.",
+      "chunks": [
+        {
+          "ja": "山口さんは小さな店を",
+          "gloss": "Mr. Yamaguchi a small shop",
+          "refs": [
+            "山口",
+            "小さい",
+            "店"
+          ]
+        },
+        {
+          "ja": "営んでいる",
+          "gloss": "runs",
+          "refs": [
+            "営む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "彼は昔の上司を今でも恨んでいる。",
+      "en": "He still resents his former boss.",
+      "chunks": [
+        {
+          "ja": "彼は昔の上司を",
+          "gloss": "he his former boss",
+          "refs": [
+            "彼",
+            "昔",
+            "上司"
+          ]
+        },
+        {
+          "ja": "今でも恨んでいる",
+          "gloss": "still resents",
+          "refs": [
+            "今でも",
+            "恨む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "先生は学生をじっと睨んだ。",
+      "en": "The teacher stared intensely at the student.",
+      "chunks": [
+        {
+          "ja": "先生は学生を",
+          "gloss": "the teacher the student",
+          "refs": [
+            "先生",
+            "学生"
+          ]
+        },
+        {
+          "ja": "じっと睨んだ",
+          "gloss": "stared intensely",
+          "refs": [
+            "じっと",
+            "睨む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "健太くんは図書館で本を読む。",
+      "en": "Kenta reads books at the library.",
+      "chunks": [
+        {
+          "ja": "健太くんは図書館で",
+          "gloss": "Kenta at the library",
+          "refs": [
+            "健太",
+            "図書館"
+          ]
+        },
+        {
+          "ja": "本を読む",
+          "gloss": "reads books",
+          "refs": [
+            "本",
+            "読む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "母はプレゼントをきれいな紙で包んだ。",
+      "en": "My mother wrapped the present in pretty paper.",
+      "chunks": [
+        {
+          "ja": "母はプレゼントを",
+          "gloss": "my mother the present",
+          "refs": [
+            "母",
+            "プレゼント"
+          ]
+        },
+        {
+          "ja": "きれいな紙で包んだ",
+          "gloss": "wrapped in pretty paper",
+          "refs": [
+            "きれい",
+            "紙",
+            "包む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "祖母は冬になるとマフラーを編む。",
+      "en": "My grandmother knits scarves when winter comes.",
+      "grammarNotes": [
+        "と can express a habitual or natural occurrence."
+      ],
+      "chunks": [
+        {
+          "ja": "祖母は冬になると",
+          "gloss": "my grandmother when winter comes",
+          "refs": [
+            "祖母",
+            "冬",
+            "なる"
+          ]
+        },
+        {
+          "ja": "マフラーを編む",
+          "gloss": "knits scarves",
+          "refs": [
+            "マフラー",
+            "編む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "上野動物園でパンダの赤ちゃんが生まれた。",
+      "en": "A baby panda was born at Ueno Zoo.",
+      "notes": [
+        "生まれる is the intransitive counterpart of 生む."
+      ],
+      "chunks": [
+        {
+          "ja": "上野動物園で",
+          "gloss": "at Ueno Zoo",
+          "refs": [
+            "上野動物園"
+          ]
+        },
+        {
+          "ja": "パンダの赤ちゃんが生まれた",
+          "gloss": "a baby panda was born",
+          "refs": [
+            "パンダ",
+            "赤ちゃん",
+            "生む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "日曜日は家でゆっくり休む。",
+      "en": "I rest slowly at home on Sundays.",
+      "chunks": [
+        {
+          "ja": "日曜日は家で",
+          "gloss": "on Sunday at home",
+          "refs": [
+            "日曜日",
+            "家"
+          ]
+        },
+        {
+          "ja": "ゆっくり休む",
+          "gloss": "rest slowly",
+          "refs": [
+            "ゆっくり",
+            "休む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "このバナナはもう傷んでいる。",
+      "en": "This banana has already gone bad.",
+      "chunks": [
+        {
+          "ja": "このバナナはもう",
+          "gloss": "this banana already",
+          "refs": [
+            "バナナ",
+            "もう"
+          ]
+        },
+        {
+          "ja": "傷んでいる",
+          "gloss": "has gone bad",
+          "refs": [
+            "傷む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "試験に落ちて、彼はしょげている。",
+      "en": "He failed the exam and is feeling down.",
+      "notes": [
+        "しょげる is the standard modern form meaning to feel dejected."
+      ],
+      "chunks": [
+        {
+          "ja": "試験に落ちて",
+          "gloss": "failing the exam and",
+          "refs": [
+            "試験",
+            "落ちる"
+          ]
+        },
+        {
+          "ja": "彼はしょげている",
+          "gloss": "he is feeling down",
+          "refs": [
+            "彼",
+            "しょげる"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "彼女は海外で働くことを望んでいる。",
+      "en": "She hopes to work abroad.",
+      "chunks": [
+        {
+          "ja": "彼女は海外で働くことを",
+          "gloss": "she working abroad",
+          "refs": [
+            "彼女",
+            "海外",
+            "働く"
+          ]
+        },
+        {
+          "ja": "望んでいる",
+          "gloss": "hopes for",
+          "refs": [
+            "望む"
+          ]
+        }
+      ]
+    },
+    {
+      "ja": "駅で誰かの足を踏んでしまった。",
+      "en": "I accidentally stepped on someone's foot at the station.",
+      "grammarNotes": [
+        "Vてしまう often expresses regret or accidental completion."
+      ],
+      "chunks": [
+        {
+          "ja": "駅で誰かの足を",
+          "gloss": "at the station someone's foot",
+          "refs": [
+            "駅",
+            "誰か",
+            "足"
+          ]
+        },
+        {
+          "ja": "踏んでしまった",
+          "gloss": "accidentally stepped on",
+          "refs": [
+            "踏む",
+            "Vてしまう"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -40,10 +40,10 @@
     },
     {
       "path": "japanese/japanese_sentences.json",
-      "modifiedAt": "2026-02-27T18:21:41.575Z",
+      "modifiedAt": "2026-02-28T03:51:26.885Z",
       "name": "Japanese Sentences",
       "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
-      "entriesCount": 105,
+      "entriesCount": 135,
       "valid": true,
       "validation": {
         "schema": {
