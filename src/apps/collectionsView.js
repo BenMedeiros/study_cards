@@ -143,6 +143,20 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
         } catch (e) { console.error('Validate: unexpected error', e); }
       }
     },
+      {
+        label: 'Apply Defaults',
+        title: 'Apply collection defaults',
+        className: 'btn-apply-defaults',
+        onClick: async (rowData, rowIndex, { tr }) => {
+          const id = tr?.dataset?.rowId || rowData.__id;
+          try {
+            await collectionSettingsController.applyDefaults(id);
+            console.log('Apply Defaults: applied defaults for', id);
+          } catch (e) {
+            console.error('Apply Defaults: failed for', id, e);
+          }
+        }
+      },
     {
       label: 'Clear settings',
       title: 'Clear collection settings',

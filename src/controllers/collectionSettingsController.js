@@ -19,6 +19,67 @@ const DEFAULTS = {
   studyFilter: 'null,focus,learned',
 };
 
+
+const collectionDefaults = {
+  collection: "japanese/japanese_words.json",
+  savedTableSearches: [
+    "{type:i-adjective}",
+    "{type:godan-verb} & {kanji:%む}",
+    "{type:godan-verb} & {kanji:%ぶ}",
+    "{type:godan-verb} & {kanji:%ぬ}",
+    "{type:godan-verb} & {kanji:%る}",
+    "{type:godan-verb} & {kanji:%う}",
+    "{type:godan-verb} & {kanji:%つ}",
+    "{type:godan-verb} & {kanji:%く}",
+    "{type:godan-verb} & {kanji:%ぐ}",
+    "{type:godan-verb} & {kanji:%す}",
+    "{type:godan-verb} & {kanji:%ふ}",
+    "%pokemon%",
+    "%animal%",
+    "%color%"
+  ]
+};
+
+// Apply any collection-specific defaults for a given collection key.
+function applyCollectionDefaults(collKey, target) {
+  if (!collKey || !target) return;
+  if (collKey !== collectionDefaults.collection) return;
+  for (const [k, v] of Object.entries(collectionDefaults)) {
+    // skip the collection identifier key itself
+    if (k === 'collection') continue;
+    const cur = target[k];
+    if (Array.isArray(v)) {
+      if (!Array.isArray(cur) || cur.length === 0) target[k] = v.slice();
+    } else if (cur === undefined || cur === null || cur === '') {
+      target[k] = v;
+    }
+  }
+}
+
+// Apply and persist collection-specific defaults for a collection key.
+function applyDefaults(collKey) {
+  if (!collKey) throw new Error('collKey required');
+  if (!_store) throw new Error('controller not initialized');
+  settingsLogControllers('collectionSettingsController.applyDefaults', { collKey });
+  const current = get(collKey) || {};
+  const next = { ...current };
+  applyCollectionDefaults(collKey, next);
+  const patch = {};
+  for (const [k, v] of Object.entries(collectionDefaults)) {
+    if (k === 'collection') continue;
+    const curVal = current[k];
+    const nextVal = next[k];
+    const curStr = (curVal === undefined) ? undefined : JSON.stringify(curVal);
+    const nextStr = (nextVal === undefined) ? undefined : JSON.stringify(nextVal);
+    if (curStr !== nextStr) patch[k] = nextVal;
+  }
+  if (Object.keys(patch).length === 0) return current;
+  _store.collections.saveCollectionState(collKey, patch);
+  cache.set(collKey, next);
+  _notify(collKey, next, patch);
+  return next;
+}
+
 function init({ store }) {
   _store = store;
   settingsLogControllers('collectionSettingsController.init', { storePresent: !!store });
@@ -28,6 +89,7 @@ function _load(collKey) {
   if (!_store) throw new Error('controller not initialized');
   const raw = _store.collections.loadCollectionState(collKey) || {};
   const merged = { ...DEFAULTS, ...raw };
+  applyCollectionDefaults(collKey, merged);
   cache.set(collKey, merged);
   return merged;
 }
@@ -122,4 +184,5 @@ export default {
   getStore,
   ensureArray,
   fetchCollection,
+  applyDefaults,
 };
