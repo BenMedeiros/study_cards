@@ -40,10 +40,10 @@
     },
     {
       "path": "japanese/japanese_sentences.json",
-      "modifiedAt": "2026-02-24T20:52:08.837Z",
+      "modifiedAt": "2026-02-27T18:21:41.575Z",
       "name": "Japanese Sentences",
       "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
-      "entriesCount": 95,
+      "entriesCount": 105,
       "valid": true,
       "validation": {
         "schema": {
@@ -63,10 +63,10 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-02-24T19:46:47.705Z",
+      "modifiedAt": "2026-02-27T18:18:53.904Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
-      "entriesCount": 1585,
+      "entriesCount": 1642,
       "valid": false,
       "validation": {
         "schema": {
@@ -318,8 +318,8 @@
                   }
                 },
                 {
-                  "index": 1565,
-                  "line": 13803,
+                  "index": 1608,
+                  "line": 14190,
                   "entry": {
                     "kanji": "働く",
                     "reading": "はたらく",
@@ -346,8 +346,8 @@
                   }
                 },
                 {
-                  "index": 1557,
-                  "line": 13739,
+                  "index": 1600,
+                  "line": 14126,
                   "entry": {
                     "kanji": "大きい",
                     "reading": "おおきい",
@@ -374,8 +374,8 @@
                   }
                 },
                 {
-                  "index": 1495,
-                  "line": 13080,
+                  "index": 1538,
+                  "line": 13467,
                   "entry": {
                     "kanji": "硬い",
                     "reading": "かたい",
@@ -406,8 +406,8 @@
                   }
                 },
                 {
-                  "index": 1494,
-                  "line": 13068,
+                  "index": 1537,
+                  "line": 13455,
                   "entry": {
                     "kanji": "柔らかい",
                     "reading": "やわらかい",
@@ -443,8 +443,8 @@
                   }
                 },
                 {
-                  "index": 1493,
-                  "line": 13056,
+                  "index": 1536,
+                  "line": 13443,
                   "entry": {
                     "kanji": "滑らか",
                     "reading": "なめらか",
@@ -476,8 +476,8 @@
                   }
                 },
                 {
-                  "index": 1523,
-                  "line": 13406,
+                  "index": 1566,
+                  "line": 13793,
                   "entry": {
                     "kanji": "伸びる",
                     "reading": "のびる",
@@ -509,8 +509,8 @@
                   }
                 },
                 {
-                  "index": 1545,
-                  "line": 13643,
+                  "index": 1588,
+                  "line": 14030,
                   "entry": {
                     "kanji": "長",
                     "reading": "ちょう",
@@ -538,8 +538,8 @@
                   }
                 },
                 {
-                  "index": 1555,
-                  "line": 13723,
+                  "index": 1598,
+                  "line": 14110,
                   "entry": {
                     "kanji": "元気",
                     "reading": "げんき",
@@ -630,8 +630,8 @@
                   }
                 },
                 {
-                  "index": 1550,
-                  "line": 13683,
+                  "index": 1593,
+                  "line": 14070,
                   "entry": {
                     "kanji": "子供",
                     "reading": "こども",
@@ -660,8 +660,8 @@
                   }
                 },
                 {
-                  "index": 1465,
-                  "line": 12715,
+                  "index": 1508,
+                  "line": 13102,
                   "entry": {
                     "kanji": "林檎",
                     "reading": "りんご",
@@ -694,8 +694,8 @@
                   }
                 },
                 {
-                  "index": 1561,
-                  "line": 13771,
+                  "index": 1604,
+                  "line": 14158,
                   "entry": {
                     "kanji": "彼",
                     "reading": "かれ",
@@ -723,8 +723,8 @@
                   }
                 },
                 {
-                  "index": 1562,
-                  "line": 13779,
+                  "index": 1605,
+                  "line": 14166,
                   "entry": {
                     "kanji": "予定",
                     "reading": "よてい",
@@ -979,8 +979,8 @@
                   }
                 },
                 {
-                  "index": 1471,
-                  "line": 12790,
+                  "index": 1514,
+                  "line": 13177,
                   "entry": {
                     "kanji": "水",
                     "reading": "みず",
@@ -1012,8 +1012,8 @@
                   }
                 },
                 {
-                  "index": 1445,
-                  "line": 12466,
+                  "index": 1488,
+                  "line": 12853,
                   "entry": {
                     "kanji": "牛乳",
                     "reading": "ぎゅうにゅう",
@@ -1045,8 +1045,8 @@
                   }
                 },
                 {
-                  "index": 1554,
-                  "line": 13715,
+                  "index": 1597,
+                  "line": 14102,
                   "entry": {
                     "kanji": "家",
                     "reading": "いえ",
@@ -1074,8 +1074,8 @@
                   }
                 },
                 {
-                  "index": 1516,
-                  "line": 13328,
+                  "index": 1559,
+                  "line": 13715,
                   "entry": {
                     "kanji": "本棚",
                     "reading": "ほんだな",
@@ -1107,8 +1107,8 @@
                   }
                 },
                 {
-                  "index": 1520,
-                  "line": 13373,
+                  "index": 1563,
+                  "line": 13760,
                   "entry": {
                     "kanji": "本",
                     "reading": "ほん",
@@ -1139,8 +1139,8 @@
                   }
                 },
                 {
-                  "index": 1509,
-                  "line": 13245,
+                  "index": 1552,
+                  "line": 13632,
                   "entry": {
                     "kanji": "雑誌",
                     "reading": "ざっし",
@@ -1171,8 +1171,8 @@
                   }
                 },
                 {
-                  "index": 1559,
-                  "line": 13755,
+                  "index": 1602,
+                  "line": 14142,
                   "entry": {
                     "kanji": "料理",
                     "reading": "りょうり",
@@ -1200,8 +1200,8 @@
                   }
                 },
                 {
-                  "index": 1546,
-                  "line": 13651,
+                  "index": 1589,
+                  "line": 14038,
                   "entry": {
                     "kanji": "男",
                     "reading": "おとこ",
@@ -1233,8 +1233,8 @@
                   }
                 },
                 {
-                  "index": 1424,
-                  "line": 12233,
+                  "index": 1464,
+                  "line": 12593,
                   "entry": {
                     "kanji": "カンガルー",
                     "reading": "カンガルー",
@@ -1268,8 +1268,8 @@
                   }
                 },
                 {
-                  "index": 1470,
-                  "line": 12777,
+                  "index": 1513,
+                  "line": 13164,
                   "entry": {
                     "kanji": "ジュース",
                     "reading": "ジュース",
@@ -1305,8 +1305,8 @@
                   }
                 },
                 {
-                  "index": 1447,
-                  "line": 12490,
+                  "index": 1490,
+                  "line": 12877,
                   "entry": {
                     "kanji": "バター",
                     "reading": "バター",
@@ -1342,8 +1342,8 @@
                   }
                 },
                 {
-                  "index": 1448,
-                  "line": 12503,
+                  "index": 1491,
+                  "line": 12890,
                   "entry": {
                     "kanji": "チーズ",
                     "reading": "チーズ",
@@ -1379,8 +1379,8 @@
                   }
                 },
                 {
-                  "index": 1455,
-                  "line": 12591,
+                  "index": 1498,
+                  "line": 12978,
                   "entry": {
                     "kanji": "ソーセージ",
                     "reading": "ソーセージ",
@@ -1416,8 +1416,8 @@
                   }
                 },
                 {
-                  "index": 1453,
-                  "line": 12565,
+                  "index": 1496,
+                  "line": 12952,
                   "entry": {
                     "kanji": "ハム",
                     "reading": "ハム",
@@ -1453,8 +1453,8 @@
                   }
                 },
                 {
-                  "index": 1449,
-                  "line": 12516,
+                  "index": 1492,
+                  "line": 12903,
                   "entry": {
                     "kanji": "ヨーグルト",
                     "reading": "ヨーグルト",
@@ -1490,8 +1490,8 @@
                   }
                 },
                 {
-                  "index": 1463,
-                  "line": 12690,
+                  "index": 1506,
+                  "line": 13077,
                   "entry": {
                     "kanji": "トマト",
                     "reading": "トマト",
@@ -1527,8 +1527,8 @@
                   }
                 },
                 {
-                  "index": 1469,
-                  "line": 12764,
+                  "index": 1512,
+                  "line": 13151,
                   "entry": {
                     "kanji": "レモン",
                     "reading": "レモン",
@@ -1564,8 +1564,8 @@
                   }
                 },
                 {
-                  "index": 1468,
-                  "line": 12751,
+                  "index": 1511,
+                  "line": 13138,
                   "entry": {
                     "kanji": "オレンジ",
                     "reading": "オレンジ",
@@ -1600,8 +1600,8 @@
                   }
                 },
                 {
-                  "index": 1432,
-                  "line": 12321,
+                  "index": 1472,
+                  "line": 12681,
                   "entry": {
                     "kanji": "蜥蜴",
                     "reading": "とかげ",
@@ -1704,8 +1704,8 @@
                   }
                 },
                 {
-                  "index": 1540,
-                  "line": 13603,
+                  "index": 1583,
+                  "line": 13990,
                   "entry": {
                     "kanji": "鬼",
                     "reading": "おに",
@@ -1751,8 +1751,8 @@
                   }
                 },
                 {
-                  "index": 1573,
-                  "line": 13867,
+                  "index": 1616,
+                  "line": 14254,
                   "entry": {
                     "kanji": "狐",
                     "reading": "きつね",
@@ -1787,8 +1787,8 @@
                   }
                 },
                 {
-                  "index": 1431,
-                  "line": 12310,
+                  "index": 1471,
+                  "line": 12670,
                   "entry": {
                     "kanji": "蛇",
                     "reading": "へび",
@@ -1822,8 +1822,8 @@
                   }
                 },
                 {
-                  "index": 1479,
-                  "line": 12888,
+                  "index": 1522,
+                  "line": 13275,
                   "entry": {
                     "kanji": "白",
                     "reading": "しろ",
@@ -1858,8 +1858,8 @@
                   }
                 },
                 {
-                  "index": 1440,
-                  "line": 12409,
+                  "index": 1483,
+                  "line": 12796,
                   "entry": {
                     "kanji": "鳩",
                     "reading": "はと",
@@ -1890,8 +1890,8 @@
                   }
                 },
                 {
-                  "index": 1556,
-                  "line": 13731,
+                  "index": 1599,
+                  "line": 14118,
                   "entry": {
                     "kanji": "びっくり",
                     "reading": "びっくり",
