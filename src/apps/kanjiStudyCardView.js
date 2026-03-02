@@ -6,10 +6,8 @@ import { createViewFooterControls } from '../components/viewFooterControls.js';
 import { CARD_REGISTRY } from '../cards/index.js';
 import { addStudyFilter } from '../components/studyControls.js';
 import { addShuffleControls } from '../components/collectionControls.js';
-import { settingsLog } from '../managers/settingsManager.js';
-
-import collectionSettingsController from '../controllers/collectionSettingsController.js';
 import kanjiStudyController from '../controllers/kanjiStudyController.js';
+import { createKanjiStudyFooterActionsController } from '../controllers/actionsController.js';
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
@@ -42,19 +40,19 @@ export function renderKanjiStudyCard({ store }) {
   // Simple state
   let entries = [];
   let index = 0;
-  let viewMode = 'kanji-only'; // current card view
   let defaultViewMode = 'kanji-only'; // controls what is shown when changing cards
   let shownAt = nowMs();
   let isShuffled = false;
   
   let uiStateRestored = false; // ensure saved UI (index/order) is applied only once
   let originalEntries = [];
-  let currentOrder = null; // array of indices mapping to originalEntries
+  
   let orderHashInt = null; // deterministic seed for shuffle (preferred persisted form)
   let viewIndices = []; // indices into originalEntries for the current rendered entries array
   let relatedHydratedCollectionKey = null;
   let relatedHydrationPromise = null;
   let kanjiController = null;
+  let kanjiUnsub = null;
 
   // Helpers
   function getFieldValue(entry, keys) {
@@ -69,41 +67,12 @@ export function renderKanjiStudyCard({ store }) {
     return getFieldValue(entry, ['kanji', 'character', 'text']) || '';
   }
 
-  // Persist minimal UI state into per-collection state (no legacy fallbacks)
-  function saveUIState() {
+  // Persist small per-view patches to the controller (view delegates all state persistence)
+  function persistViewState(patch) {
     const active = store?.collections?.getActiveCollection ? store.collections.getActiveCollection() : null;
     const key = active && active.key ? active.key : null;
     if (!key) return;
-    // persist collection fundamentals at top-level
-    collectionSettingsController.set(key, {
-      isShuffled: !!isShuffled,
-      order_hash_int: (typeof orderHashInt === 'number') ? orderHashInt : null,
-    });
-      // persist app-scoped index and dropdown selections under `kanjiStudyCardView`
-      const sliceOrAll = (sel, items) => {
-        if (sel === 'all') return 'all';
-        const arr = Array.isArray(sel) ? sel.slice() : [];
-        const allVals = Array.isArray(items) ? items.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-        const set = new Set(arr);
-        const isAll = allVals.length > 0 && allVals.length === arr.length && allVals.every(v => set.has(v));
-        return isAll ? 'all' : arr;
-      };
-
-      // Persist entry-level and related-collection visibility selections
-      const relatedOut = {};
-      for (const k of Object.keys(relatedFieldSelections || {})) relatedOut[k] = Array.isArray(relatedFieldSelections[k]) ? relatedFieldSelections[k].slice() : relatedFieldSelections[k];
-
-      (kanjiController || kanjiStudyController.create(key)).set({
-        currentIndex: index,
-        entryFields: (entryFieldSelection === 'all') ? 'all' : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []),
-        relatedFields: relatedOut,
-        displayCards: sliceOrAll(displayCardSelection, displayCardItems),
-      });
-
-      // persist app-global default view mode under apps.kanjiStudy
-      if (store?.settings && typeof store.settings.set === 'function') {
-        store.settings.set('apps.kanjiStudy.defaultViewMode', defaultViewMode, { consumerId: 'kanjiStudyCardView' });
-      }
+    (kanjiController || kanjiStudyController.create(key)).set(patch);
   }
 
   // Root UI pieces
@@ -143,8 +112,97 @@ export function renderKanjiStudyCard({ store }) {
   const res = store?.collections?.getActiveCollectionView ? store.collections.getActiveCollectionView({ windowSize: 0 }) : null;
   const coll = store?.collections?.getActiveCollection ? store.collections.getActiveCollection() : null;
   if (coll && coll.key) {
-    if (kanjiController && kanjiController.collKey !== coll.key) { kanjiController.dispose(); kanjiController = null; }
-    if (!kanjiController) kanjiController = kanjiStudyController.create(coll.key);
+    if (kanjiController && kanjiController.collKey !== coll.key) {
+      if (typeof kanjiUnsub === 'function') kanjiUnsub();
+      try { kanjiController.dispose(); } catch (e) {}
+      kanjiController = null;
+      kanjiUnsub = null;
+    }
+    if (!kanjiController) {
+      kanjiController = kanjiStudyController.create(coll.key);
+      try {
+        kanjiUnsub = kanjiController.subscribe((viewState, viewPatch) => {
+          try {
+            if (viewPatch && Object.prototype.hasOwnProperty.call(viewPatch, 'currentIndex')) {
+              const raw = viewState && typeof viewState.currentIndex === 'number' ? viewState.currentIndex : (typeof viewPatch.currentIndex === 'number' ? viewPatch.currentIndex : undefined);
+              if (typeof raw === 'number') {
+                const clamped = Math.min(Math.max(0, raw), Math.max(0, entries.length - 1));
+                index = clamped;
+                shownAt = nowMs();
+                render();
+              }
+            }
+
+            // entry field selection changed
+            if (viewPatch && Object.prototype.hasOwnProperty.call(viewPatch, 'entryFields')) {
+              entryFieldSelection = (viewState && viewState.entryFields !== undefined) ? (viewState.entryFields === 'all' ? 'all' : (Array.isArray(viewState.entryFields) ? viewState.entryFields.slice() : viewState.entryFields)) : entryFieldSelection;
+              const resolvedMap = (viewPatch && viewPatch.resolved && viewPatch.resolved.entryFieldMap) ? viewPatch.resolved.entryFieldMap : (viewState && viewState.resolved && viewState.resolved.entryFieldMap) ? viewState.resolved.entryFieldMap : null;
+              if (resolvedMap) applyEntryFieldVisibility(resolvedMap);
+              else {
+                const entrySelectedLocal = (entryFieldSelection === 'all') ? entryFieldItems.map(it => String(it.value || '')) : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []);
+                const setLocal = new Set(entrySelectedLocal);
+                const map = {};
+                for (const it of entryFieldItems) map[String(it.value || '')] = setLocal.has(String(it.value || ''));
+                applyEntryFieldVisibility(map);
+              }
+            }
+
+            // display card selection changed
+            if (viewPatch && Object.prototype.hasOwnProperty.call(viewPatch, 'displayCards')) {
+              const ds = viewState && viewState.displayCards !== undefined ? viewState.displayCards : viewPatch.displayCards;
+              displayCardSelection = (ds === 'all') ? displayCardItems.map(it => String(it?.value || '')) : (Array.isArray(ds) ? ds.slice() : displayCardSelection);
+              const resolvedDisplay = (viewPatch && viewPatch.resolved && Array.isArray(viewPatch.resolved.displayCards)) ? viewPatch.resolved.displayCards : ((viewState && viewState.resolved && Array.isArray(viewState.resolved.displayCards)) ? viewState.resolved.displayCards : null);
+              try {
+                const set = new Set(Array.isArray(resolvedDisplay) ? resolvedDisplay.map(String) : (Array.isArray(displayCardSelection) ? displayCardSelection.map(String) : []));
+                for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+                  const api = cardApis[c.key];
+                  if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
+                }
+                try {
+                  if (Array.isArray(resolvedDisplay)) {
+                    for (const rn of Object.keys(relatedDropdownControls || {})) {
+                      const rc = relatedDropdownControls[rn];
+                      if (rc && rc.parentNode) rc.parentNode.style.display = set.has('related') ? '' : 'none';
+                    }
+                  }
+                } catch (e) {}
+              } catch (e) {}
+            }
+
+            // related fields changed
+            if (viewPatch && Object.prototype.hasOwnProperty.call(viewPatch, 'relatedFields')) {
+              const raw = viewState && viewState.relatedFields !== undefined ? viewState.relatedFields : viewPatch.relatedFields;
+              if (raw && typeof raw === 'object') {
+                for (const k of Object.keys(raw)) relatedFieldSelections[k] = Array.isArray(raw[k]) ? raw[k].slice() : raw[k];
+              }
+              const resolvedRelated = (viewPatch && viewPatch.resolved && viewPatch.resolved.relatedFieldMaps) ? viewPatch.resolved.relatedFieldMaps : ((viewState && viewState.resolved && viewState.resolved.relatedFieldMaps) ? viewState.resolved.relatedFieldMaps : null);
+              if (resolvedRelated) {
+                const api = cardApis['related'];
+                for (const rn of Object.keys(resolvedRelated || {})) {
+                  try { if (api && typeof api.setFieldsVisible === 'function') api.setFieldsVisible(resolvedRelated[rn]); } catch (e) {}
+                }
+              } else {
+                // fallback: apply per-dropdown selection
+                const api = cardApis['related'];
+                for (const rel of relatedDefs) {
+                  const name = String(rel?.name || '').trim();
+                  if (!name) continue;
+                  const items = Array.isArray(rel.fields) ? rel.fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f) })) : RELATED_DEFAULT_ITEMS.slice();
+                  const sel = relatedFieldSelections[name] || 'all';
+                  const chosen = (sel === 'all') ? items.map(it => String(it.value || '')) : (Array.isArray(sel) ? sel.slice() : []);
+                  if (api && typeof api.setFieldsVisible === 'function') {
+                    const set = new Set(chosen);
+                    const map = {};
+                    for (const it of items) map[String(it.value || '')] = set.has(String(it.value || ''));
+                    try { api.setFieldsVisible(map); } catch (e) {}
+                  }
+                }
+              }
+            }
+          } catch (e) {}
+        });
+      } catch (e) {}
+    }
   }
   const appState = (coll && coll.key) ? (kanjiController ? kanjiController.get() : {}) : {};
   let displayCardSelection = (appState && appState.displayCards !== undefined)
@@ -179,14 +237,9 @@ export function renderKanjiStudyCard({ store }) {
     commitOnClose: true,
     includeAllNone: true,
     onChange: (vals) => {
-      const chosen = (typeof vals === 'string' && vals === 'all') ? entryFieldItems.map(it => String(it.value || '')) : (Array.isArray(vals) ? vals.slice() : []);
-      const set = new Set(chosen);
-      const map = {};
-      for (const it of entryFieldItems) map[String(it.value || '')] = set.has(String(it.value || ''));
-      // Preserve the literal 'all' when the dropdown reports it, so persistence stores 'all' (not an expanded array).
-      entryFieldSelection = (typeof vals === 'string' && vals === 'all') ? 'all' : chosen;
-      applyEntryFieldVisibility(map);
-      saveUIState();
+      // Persist selection and let controller compute + publish resolved visibility maps.
+      entryFieldSelection = (typeof vals === 'string' && vals === 'all') ? 'all' : (Array.isArray(vals) ? vals.slice() : []);
+      persistViewState({ entryFields: (entryFieldSelection === 'all') ? 'all' : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []) });
     },
     className: 'data-expansion-dropdown',
     caption: 'entry.fields.visibility'
@@ -212,18 +265,12 @@ export function renderKanjiStudyCard({ store }) {
       commitOnClose: true,
       includeAllNone: true,
       onChange: (vals) => {
+        // Persist selection and let controller compute + publish resolved related maps.
         const chosen = (typeof vals === 'string' && vals === 'all') ? items.map(it => String(it?.value || '')) : (Array.isArray(vals) ? vals.slice() : []);
-        // Preserve 'all' when applicable so we persist the compact marker instead of the expanded list
         relatedFieldSelections[name] = (typeof vals === 'string' && vals === 'all') ? 'all' : chosen;
-        // apply to related card API if available
-        const api = cardApis['related'];
-        if (api && typeof api.setFieldsVisible === 'function') {
-          const set = new Set(chosen);
-          const map = {};
-          for (const it of items) map[String(it.value || '')] = set.has(String(it.value || ''));
-          api.setFieldsVisible(map);
-        }
-        saveUIState();
+        const relatedOut = {};
+        for (const k of Object.keys(relatedFieldSelections || {})) relatedOut[k] = Array.isArray(relatedFieldSelections[k]) ? relatedFieldSelections[k].slice() : relatedFieldSelections[k];
+        persistViewState({ relatedFields: relatedOut });
       },
       className: 'data-expansion-dropdown',
       caption: `${name}.fields.visibility`
@@ -240,47 +287,23 @@ export function renderKanjiStudyCard({ store }) {
     return (footerControls.buttons && footerControls.buttons[key]) || null;
   }
 
-  const footerDesc = [
-    { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', actionKey: 'prev', fnName: 'showPrev', action: () => showPrev() },
-    // Note: removed stateful 'reveal' control (reveal/hide) as it caused issues.
-    // Default sound buttons: kanji and reading. Additional sound.<field> actions
-    // are provided via extraActions so they can be added in custom buttons.
-    { key: 'sound.kanji', icon: '🔊', text: 'Sound', shortcut: '', actionKey: 'sound.kanji', fnName: 'speakField', action: () => speakField('kanji') },
-    { key: 'sound.reading', icon: '🔊', text: 'Sound', shortcut: ' ', actionKey: 'sound.reading', fnName: 'speakField', action: () => speakField('reading') },
-    { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', actionKey: 'learned', fnName: 'toggleKanjiLearned', ariaPressed: false, action: () => {
-      const entry = entries[index];
-      const v = store.collections.getEntryStudyKey(entry);
-      if (!v) return;
-      if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiLearned === 'function') {
-        store.kanjiProgress.toggleKanjiLearned(v, { collectionKey: getCurrentCollectionKey() });
-        updateMarkButtons();
-        const view = store.collections.getActiveCollectionView({ windowSize: 10 })?.view;
-        if (view?.skipLearned) {
-          refreshEntriesFromStore();
-          index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
-          render();
-          saveUIState();
-        }
-      }
-    } },
-    { key: 'practice', icon: '🎯', text: 'Practice', caption: 'X', shortcut: 'x', actionKey: 'practice', fnName: 'toggleKanjiFocus', ariaPressed: false, action: () => {
-      const entry = entries[index];
-      const v = store.collections.getEntryStudyKey(entry);
-      if (!v) return;
-      if (store?.kanjiProgress && typeof store.kanjiProgress.toggleKanjiFocus === 'function') {
-        store.kanjiProgress.toggleKanjiFocus(v, { collectionKey: getCurrentCollectionKey() });
-        updateMarkButtons();
-        const view = store.collections.getActiveCollectionView({ windowSize: 10 })?.view;
-        if (view?.focusOnly) {
-          refreshEntriesFromStore();
-          index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
-          render();
-          saveUIState();
-        }
-      }
-    } },
-    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', actionKey: 'next', fnName: 'showNext', action: () => showNext() },
-  ];
+  function goToIndex(newIndex) {
+    const total = Array.isArray(entries) ? entries.length : 0;
+    if (!total) return;
+    const nextIndex = Math.round(Number(newIndex));
+    if (!Number.isFinite(nextIndex)) return;
+    if (nextIndex < 0 || nextIndex >= total) return;
+    try { progressTracker?.flush?.(); } catch (e) {}
+    index = nextIndex;
+    shownAt = nowMs();
+    if (kanjiController && typeof kanjiController.setCurrentIndex === 'function') {
+      kanjiController.setCurrentIndex(index);
+    }
+    render();
+  }
+
+  function showPrev() { goToIndex(index - 1); }
+  function showNext() { goToIndex(index + 1); }
 
   let footerControls = null;
   // Auto-speak setting removed from UI.
@@ -295,93 +318,54 @@ export function renderKanjiStudyCard({ store }) {
     speak(text, lang);
   }
 
-  // Build extra dynamic sound actions so custom buttons can reference sound.<field>
-  // Only include fields present on kanji entries; exclude relatedCollections
-  const soundFields = ['kanji', 'lexicalClass', 'meaning', 'orthography', 'reading', 'type'];
-  const extraActions = soundFields.map((f) => ({
-    id: `sound.${f}`,
-    controlKey: `sound.${f}`,
-    text: `Sound (${f})`,
-    fnName: 'speakField',
-    invoke: (e) => { speakField(f); },
-  }));
-
-  // Add explicit kanji state setters so custom buttons can call them directly.
-  // These wrap store.kanjiProgress APIs and operate on the current entry.
-  extraActions.push({
-    id: 'setStateLearned', controlKey: 'setStateLearned', text: 'Set Learned', fnName: 'setStateLearned', invoke: () => {
-      const entry = entries && entries.length ? entries[index] : null;
-      const key = entry ? store.collections.getEntryStudyKey(entry) : null;
-      if (!key) return;
-      try { store.kanjiProgress.setStateLearned(key, { collectionKey: getCurrentCollectionKey() }); } catch (e) {}
-    }
-  });
-  extraActions.push({
-    id: 'setStateNull', controlKey: 'setStateNull', text: 'Clear State', fnName: 'setStateNull', invoke: () => {
-      const entry = entries && entries.length ? entries[index] : null;
-      const key = entry ? store.collections.getEntryStudyKey(entry) : null;
-      if (!key) return;
-      try { store.kanjiProgress.setStateNull(key, { collectionKey: getCurrentCollectionKey() }); } catch (e) {}
-    }
-  });
-  extraActions.push({
-    id: 'setStateFocus', controlKey: 'setStateFocus', text: 'Set Focus', fnName: 'setStateFocus', invoke: () => {
-      const entry = entries && entries.length ? entries[index] : null;
-      const key = entry ? store.collections.getEntryStudyKey(entry) : null;
-      if (!key) return;
-      try { store.kanjiProgress.setStateFocus(key, { collectionKey: getCurrentCollectionKey() }); } catch (e) {}
-    }
-  });
-
-  // Link actions: open searches for the primary kanji in a new tab.
-  function openSearchInNewTab(url) {
-    try { window.open(url, '_blank'); } catch (e) { }
-  }
   function getSearchTerm() {
     const entry = entries && entries.length ? entries[index] : null;
     if (!entry) return '';
     return (getPrimaryKanjiValue(entry) || '').trim();
   }
 
-  extraActions.push({
-    id: 'link.google', controlKey: 'link.google', text: 'Link (Google)', fnName: 'linkGoogle', namespace: 'entry.kanji', invoke: () => {
-      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://www.google.com/search?q=' + encodeURIComponent(t));
-    }
-  });
-  extraActions.push({
-    id: 'link.google.images', controlKey: 'link.google.images', text: 'Link (Google Images)', fnName: 'linkGoogleImages', namespace: 'entry.kanji', invoke: () => {
-      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(t));
-    }
-  });
-  extraActions.push({
-    id: 'link.jisho', controlKey: 'link.jisho', text: 'Link (Jisho)', fnName: 'linkJisho', namespace: 'entry.kanji', invoke: () => {
-      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://jisho.org/search/' + encodeURIComponent(t));
-    }
-  });
-  extraActions.push({
-    id: 'link.wiktionary', controlKey: 'link.wiktionary', text: 'Link (Wiktionary)', fnName: 'linkWiktionary', namespace: 'entry.kanji', invoke: () => {
-      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://en.wiktionary.org/wiki/' + encodeURIComponent(t));
-    }
-  });
-  extraActions.push({
-    id: 'link.translate', controlKey: 'link.translate', text: 'Link (Google Translate)', fnName: 'linkTranslate', namespace: 'entry.kanji', invoke: () => {
-      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://translate.google.com/?sl=auto&tl=en&text=' + encodeURIComponent(t) + '&op=translate');
-    }
-  });
-  extraActions.push({
-    id: 'link.chatgpt', controlKey: 'link.chatgpt', text: 'Link (ChatGPT)', fnName: 'linkChatGPT', namespace: 'entry.kanji', invoke: () => {
-      const t = getSearchTerm(); if (!t) return; openSearchInNewTab('https://chat.openai.com/?q=' + encodeURIComponent(t));
-    }
+  function getCurrentEntryKey() {
+    const entry = entries && entries.length ? entries[index] : null;
+    return String(store?.collections?.getEntryStudyKey?.(entry) || '').trim();
+  }
+
+  const footerActions = createKanjiStudyFooterActionsController({
+    showPrev,
+    showNext,
+    speakField,
+    getSearchTerm,
+    kanjiProgress: store?.kanjiProgress || null,
+    getCurrentCollectionKey,
+    getCurrentEntryKey,
+    onProgressChanged: ({ actionName }) => {
+      updateMarkButtons();
+      const view = store?.collections?.getActiveCollectionView?.({ windowSize: 10 })?.view;
+      const isLearnedToggle = actionName === 'toggleKanjiLearned';
+      const isPracticeToggle = actionName === 'toggleKanjiFocus';
+      if (!isLearnedToggle && !isPracticeToggle) return;
+
+      const needsRefresh = (isLearnedToggle && !!view?.skipLearned) || (isPracticeToggle && !!view?.focusOnly);
+      if (!needsRefresh) return;
+
+      refreshEntriesFromStore();
+      const newIndex = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
+      if (kanjiController && typeof kanjiController.setCurrentIndex === 'function') {
+        kanjiController.setCurrentIndex(newIndex);
+      }
+    },
   });
 
-  // Now create footer controls, passing extraActions so they appear in availableActions
-  footerControls = createViewFooterControls(footerDesc, { appId: 'kanjiStudy', extraActions });
+  footerControls = createViewFooterControls(footerActions.baseControls, {
+    appId: footerActions.appId,
+    actionDefinitions: footerActions.actionDefinitions,
+    defaultPrefs: footerActions.defaultPrefs,
+    customOnly: true,
+  });
 
   // Load default view mode from settings
   if (store?.settings && typeof store.settings.get === 'function') {
     const dvm = store.settings.get('apps.kanjiStudy.defaultViewMode', { consumerId: 'kanjiStudyCardView' });
     if (typeof dvm === 'string') defaultViewMode = dvm;
-    viewMode = defaultViewMode;
   }
 
   // Create main/related/full card APIs. Prefer registry instances where available;
@@ -408,27 +392,9 @@ export function renderKanjiStudyCard({ store }) {
     commitOnClose: true,
     includeAllNone: true,
     onChange: (vals) => {
-      const chosen = (typeof vals === 'string' && vals === 'all')
-        ? displayCardItems.map(it => String(it?.value || ''))
-        : (Array.isArray(vals) ? vals.slice() : []);
-      const set = new Set(chosen);
-      for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-        const api = cardApis[c.key];
-        if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
-        // Also hide/show the corresponding per-card field dropdown group
-        try {
-          // Hide/show related dropdown groups when the related card is toggled
-          if (c.key === 'related') {
-            for (const rn of Object.keys(relatedDropdownControls || {})) {
-              const rc = relatedDropdownControls[rn];
-              if (rc && rc.parentNode) rc.parentNode.style.display = set.has(c.key) ? '' : 'none';
-            }
-          }
-        } catch (e) {}
-      }
-      // Preserve the literal 'all' marker for compact persistence when the dropdown reports it.
-      displayCardSelection = (typeof vals === 'string' && vals === 'all') ? 'all' : chosen;
-      saveUIState();
+      // Persist selection and let controller compute + publish resolved display list.
+      displayCardSelection = (typeof vals === 'string' && vals === 'all') ? displayCardItems.map(it => String(it?.value || '')) : (Array.isArray(vals) ? vals.slice() : []);
+      persistViewState({ displayCards: (Array.isArray(vals) && vals.length === 0) ? [] : ((typeof vals === 'string' && vals === 'all') ? 'all' : (Array.isArray(vals) ? vals.slice() : [])) });
     },
     className: 'data-expansion-dropdown',
     caption: 'visible.cards'
@@ -450,48 +416,7 @@ export function renderKanjiStudyCard({ store }) {
   // Apply initial visibility defaults based on entry-level and related selections
   if (displayCardSelection === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
 
-  // Apply initial per-card visibility immediately so cards reflect persisted selection
-  try {
-    const set = new Set(Array.isArray(displayCardSelection) ? displayCardSelection.map(String) : []);
-    for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-      try {
-        const api = cardApis[c.key];
-        if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
-        // Also hide/show related dropdown groups when the related card is toggled
-        if (c.key === 'related') {
-          for (const rn of Object.keys(relatedDropdownControls || {})) {
-            const rc = relatedDropdownControls[rn];
-            if (rc && rc.parentNode) rc.parentNode.style.display = set.has(c.key) ? '' : 'none';
-          }
-        }
-      } catch (e) {
-        /* ignore per-card errors */
-      }
-    }
-  } catch (e) {}
-
-  // Apply entry-level visibility
-  const entrySelected = (entryFieldSelection === 'all') ? entryFieldItems.map(it => String(it.value || '')) : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []);
-  const entrySet = new Set(entrySelected);
-  const entryMap = {};
-  for (const it of entryFieldItems) entryMap[String(it.value || '')] = entrySet.has(String(it.value || ''));
-  applyEntryFieldVisibility(entryMap);
-
-  // Apply related-collection visibility selections
-  for (const rel of relatedDefs) {
-    const name = String(rel?.name || '').trim();
-    if (!name) continue;
-    const items = Array.isArray(rel.fields) ? rel.fields.map(f => String(f.key || f)) : RELATED_DEFAULT_ITEMS.map(it => it.value);
-    const sel = relatedFieldSelections[name] || 'all';
-    const chosen = (sel === 'all') ? items.slice() : (Array.isArray(sel) ? sel.slice() : []);
-    const api = cardApis['related'];
-    if (api && typeof api.setFieldsVisible === 'function') {
-      const set = new Set(chosen);
-      const map = {};
-      for (const v of items) map[v] = set.has(v);
-      api.setFieldsVisible(map);
-    }
-  }
+  // Resolved visibility and display are applied from controller `resolved` state on init/subscription.
 
   // render a single card body
   function renderCard(body, entry) {
@@ -534,7 +459,6 @@ export function renderKanjiStudyCard({ store }) {
   function refreshEntriesFromStore() {
     const res = store.collections.getActiveCollectionView({ windowSize: 10 });
     const active = res?.collection || null;
-    const collState = (active && active.key) ? (collectionSettingsController.get(active.key) || {}) : (res?.collState || {});
     const view = res?.view || {};
 
     originalEntries = (active && Array.isArray(active.entries)) ? [...active.entries] : [];
@@ -542,25 +466,69 @@ export function renderKanjiStudyCard({ store }) {
     viewIndices = Array.isArray(view?.indices) ? view.indices : [];
     isShuffled = !!view?.isShuffled;
     orderHashInt = (typeof view?.order_hash_int === 'number') ? view.order_hash_int : null;
-    currentOrder = null;
-    // If a saved index exists in collection state, restore it once on initial load.
-    // Only use the app-scoped `kanjiStudyCardView.currentIndex` (no legacy fallbacks).
-    if (!uiStateRestored && collState) {
-      const savedIndex = (collState.kanjiStudyCardView && typeof collState.kanjiStudyCardView.currentIndex === 'number')
-        ? collState.kanjiStudyCardView.currentIndex
-        : undefined;
-      if (typeof savedIndex === 'number') index = savedIndex;
 
-      const savedApp = collState.kanjiStudyCardView || {};
-      if (savedApp.entryFields !== undefined) entryFieldSelection = savedApp.entryFields === 'all' ? 'all' : (Array.isArray(savedApp.entryFields) ? savedApp.entryFields.slice() : savedApp.entryFields);
-      if (savedApp.relatedFields && typeof savedApp.relatedFields === 'object') {
-        for (const k of Object.keys(savedApp.relatedFields)) relatedFieldSelections[k] = Array.isArray(savedApp.relatedFields[k]) ? savedApp.relatedFields[k].slice() : savedApp.relatedFields[k];
-      }
-      if (Array.isArray(savedApp.displayCards)) displayCardSelection = savedApp.displayCards.slice();
-      else if (savedApp.displayCards === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
+    // Initialize app-scoped UI from the controller once on initial load.
+    if (!uiStateRestored) {
+      try {
+        const appState = (kanjiController && typeof kanjiController.get === 'function') ? (kanjiController.get() || {}) : {};
+        if (typeof appState.currentIndex === 'number') index = appState.currentIndex;
+        if (appState.entryFields !== undefined) entryFieldSelection = appState.entryFields === 'all' ? 'all' : (Array.isArray(appState.entryFields) ? appState.entryFields.slice() : appState.entryFields);
+        if (appState.relatedFields && typeof appState.relatedFields === 'object') {
+          for (const k of Object.keys(appState.relatedFields)) relatedFieldSelections[k] = Array.isArray(appState.relatedFields[k]) ? appState.relatedFields[k].slice() : appState.relatedFields[k];
+        }
+        if (Array.isArray(appState.displayCards)) displayCardSelection = appState.displayCards.slice();
+        else if (appState.displayCards === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
 
+        // apply resolved maps if controller provided them
+        try {
+          if (appState && appState.resolved) {
+            if (appState.resolved.entryFieldMap) applyEntryFieldVisibility(appState.resolved.entryFieldMap);
+            if (Array.isArray(appState.resolved.displayCards)) {
+              const set = new Set(appState.resolved.displayCards.map(String));
+              for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+                const api = cardApis[c.key];
+                if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
+              }
+              try {
+                for (const rn of Object.keys(relatedDropdownControls || {})) {
+                  const rc = relatedDropdownControls[rn];
+                  if (rc && rc.parentNode) rc.parentNode.style.display = set.has('related') ? '' : 'none';
+                }
+              } catch (e) {}
+            }
+            if (appState.resolved.relatedFieldMaps) {
+              const api = cardApis['related'];
+              for (const rn of Object.keys(appState.resolved.relatedFieldMaps || {})) {
+                try { if (api && typeof api.setFieldsVisible === 'function') api.setFieldsVisible(appState.resolved.relatedFieldMaps[rn]); } catch (e) {}
+              }
+            }
+          } else {
+            // fallback: apply selections directly
+            const entrySelected = (entryFieldSelection === 'all') ? entryFieldItems.map(it => String(it.value || '')) : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []);
+            const entrySet = new Set(entrySelected);
+            const entryMap = {};
+            for (const it of entryFieldItems) entryMap[String(it.value || '')] = entrySet.has(String(it.value || ''));
+            applyEntryFieldVisibility(entryMap);
+            for (const rel of relatedDefs) {
+              const name = String(rel?.name || '').trim();
+              if (!name) continue;
+              const items = Array.isArray(rel.fields) ? rel.fields.map(f => String(f.key || f)) : RELATED_DEFAULT_ITEMS.map(it => it.value);
+              const sel = relatedFieldSelections[name] || 'all';
+              const chosen = (sel === 'all') ? items.slice() : (Array.isArray(sel) ? sel.slice() : []);
+              const api = cardApis['related'];
+              if (api && typeof api.setFieldsVisible === 'function') {
+                const set = new Set(chosen);
+                const map = {};
+                for (const v of items) map[v] = set.has(v);
+                api.setFieldsVisible(map);
+              }
+            }
+          }
+        } catch (e) {}
+      } catch (e) {}
       uiStateRestored = true;
     }
+
     const prevIndex = index;
     index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
     if (index !== prevIndex) {/* index clamped */}
@@ -589,51 +557,18 @@ export function renderKanjiStudyCard({ store }) {
             render();
           })
           .catch(() => {})
-          .finally(() => {
-            relatedHydrationPromise = null;
-          });
+          .finally(() => { relatedHydrationPromise = null; });
       }
     } catch (e) {}
   }
-
-  // Navigation / control helpers to avoid duplicated logic
-  function goToIndex(newIndex) {
-    if (newIndex < 0 || newIndex >= entries.length) return;
-    // finalize time for previous card before switching
-    progressTracker?.flush?.({ immediate: false });
-    const prev = index;
-    index = newIndex;
-    shownAt = nowMs();
-    viewMode = defaultViewMode;
-    // index updated
-    render();
-    // auto-speak removed from UI; preserve speak on navigation via explicit calls elsewhere
-    // persist current index so it's restored when navigating back
-    saveUIState();
-  }
-
-  function showPrev() { goToIndex(index - 1); }
-  function showNext() { goToIndex(index + 1); }
-  function revealFull() { viewMode = 'full'; render(); }
-  function showKanjiOnly() { viewMode = 'kanji-only'; render(); }
-  function toggleReveal() {
-    if (viewMode === 'full') {
-      showKanjiOnly();
-    } else {
-      revealFull();
-    }
-  }
+  // reveal/toggle removed; view mode is controlled via controller state
   
 
   function updateMarkButtons() {
     const learnedBtn = getFooterButton('learned');
     const practiceBtn = getFooterButton('practice');
     if (!learnedBtn || !practiceBtn) return;
-    const entry = entries[index];
-    const v = store.collections.getEntryStudyKey(entry);
-    const collectionKey = getCurrentCollectionKey();
-    const isLearned = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiLearned === 'function' && v) ? store.kanjiProgress.isKanjiLearned(v, { collectionKey }) : false;
-    const isFocus = !!(store?.kanjiProgress && typeof store.kanjiProgress.isKanjiFocus === 'function' && v) ? store.kanjiProgress.isKanjiFocus(v, { collectionKey }) : false;
+    const { isLearned, isFocus } = footerActions.getCurrentProgressFlags();
 
     learnedBtn.classList.toggle('state-learned', isLearned);
     practiceBtn.classList.toggle('state-focus', isFocus);
@@ -644,10 +579,7 @@ export function renderKanjiStudyCard({ store }) {
 
   
 
-  function updateRevealButton() {
-    // Reveal/hide state removed — no-op to avoid errors from older calls.
-    return;
-  }
+  
 
   function shuffleEntries() {
     const n = originalEntries.length;
@@ -671,16 +603,10 @@ export function renderKanjiStudyCard({ store }) {
 
     // rebuild view from saved collection state
     refreshEntriesFromStore();
-    index = 0;
-    viewMode = defaultViewMode;
+    if (kanjiController && typeof kanjiController.goToIndex === 'function') kanjiController.goToIndex(0);
     isShuffled = true;
     const sb = headerTools.getControl && headerTools.getControl('shuffle'); if (sb) sb.setAttribute('aria-pressed', 'true');
     render();
-  }
-
-  // small sleep helper
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   // PRNG and permutation now in collectionsManager
@@ -689,9 +615,10 @@ export function renderKanjiStudyCard({ store }) {
 
   function toggleDefaultViewMode() {
     defaultViewMode = defaultViewMode === 'kanji-only' ? 'full' : 'kanji-only';
-    viewMode = defaultViewMode;
     render();
-    saveUIState();
+    if (store?.settings && typeof store.settings.set === 'function') {
+      store.settings.set('apps.kanjiStudy.defaultViewMode', defaultViewMode, { consumerId: 'kanjiStudyCardView' });
+    }
   }
 
   function render() {
@@ -709,7 +636,7 @@ export function renderKanjiStudyCard({ store }) {
     const total = entries.length;
 
     // update view mode class on the wrapper (maintains previous behavior)
-    if (viewMode === 'kanji-only') wrapper.classList.add('kanji-only');
+    if (defaultViewMode === 'kanji-only') wrapper.classList.add('kanji-only');
     else wrapper.classList.remove('kanji-only');
 
     // update main card content and corner caption
@@ -742,8 +669,7 @@ export function renderKanjiStudyCard({ store }) {
       if (api && api.el) api.el.style.display = displaySet.has(c.key) ? '' : 'none';
     }
     
-    // Update reveal button text based on current viewMode
-    updateRevealButton();
+    // (reveal toggle removed)
 
     // Update learned/focus button state
     updateMarkButtons();
@@ -811,9 +737,9 @@ export function renderKanjiStudyCard({ store }) {
       onClearShuffle: () => {
         try {
           refreshEntriesFromStore();
-          index = 0;
-          viewMode = defaultViewMode;
+          if (kanjiController && typeof kanjiController.goToIndex === 'function') kanjiController.goToIndex(0);
           isShuffled = false;
+          // ensure UI updates; controller will persist index when appropriate
           render();
         } catch (e) {}
       },

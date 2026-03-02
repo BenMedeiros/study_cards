@@ -21,7 +21,7 @@ function asString(v) {
 }
 
 function isCustomToken(key) {
-  return typeof key === 'string' && key.startsWith('__custom:');
+  return typeof key === 'string' && (key.startsWith('__custom:') || key.startsWith('_custom:'));
 }
 
 function customTokenFromId(id) {
@@ -30,7 +30,15 @@ function customTokenFromId(id) {
 
 function customIdFromToken(token) {
   if (!isCustomToken(token)) return '';
-  return asString(token).slice('__custom:'.length).trim();
+  const t = asString(token).trim();
+  if (t.startsWith('__custom:')) return t.slice('__custom:'.length).trim();
+  if (t.startsWith('_custom:')) return t.slice('_custom:'.length).trim();
+  return '';
+}
+
+function normalizeCustomToken(token) {
+  if (!isCustomToken(token)) return asString(token).trim();
+  return customTokenFromId(customIdFromToken(token));
 }
 
 function normalizeCustomButtons(raw = []) {
@@ -123,7 +131,7 @@ function ensureDefaultConfig(config) {
   };
 }
 
-function normalizeAppPrefs(raw, baseControls) {
+function normalizeAppPrefs(raw, baseControls, { customOnly = false } = {}) {
   const baseKeys = baseControls.map(c => c.key);
   const src = (raw && typeof raw === 'object') ? raw : {};
   const rawConfigs = Array.isArray(src.configs) ? src.configs : [];
@@ -134,12 +142,12 @@ function normalizeAppPrefs(raw, baseControls) {
     const id = String(n.id || '').trim();
     if (!id) continue;
     n.id = id;
-    n.order = normalizeOrder(n.order, baseKeys, n.customButtons);
+    n.order = normalizeOrder(n.order, baseKeys, n.customButtons, { customOnly });
     byId.set(n.id, n);
   }
 
   if (!byId.has('default')) {
-    byId.set('default', { id: 'default', name: 'Default', order: baseKeys.slice(), controls: {}, customButtons: [], hotkeysDisabled: false });
+    byId.set('default', { id: 'default', name: 'Default', order: customOnly ? [] : baseKeys.slice(), controls: {}, customButtons: [], hotkeysDisabled: false });
   }
 
   const configs = Array.from(byId.values());
@@ -147,16 +155,18 @@ function normalizeAppPrefs(raw, baseControls) {
   return { activeConfigId, configs };
 }
 
-function normalizeOrder(order, baseKeys, customButtons = []) {
+function normalizeOrder(order, baseKeys, customButtons = [], { customOnly = false } = {}) {
   const customTokens = new Set((Array.isArray(customButtons) ? customButtons : []).map(btn => customTokenFromId(btn.id)));
   const seen = new Set();
   const out = [];
   const source = Array.isArray(order) ? order : [];
   for (const key of source) {
-    const k = String(key || '').trim();
+    const k = normalizeCustomToken(String(key || '').trim());
     // allow placeholder token '__empty' to be included in the order
     const isPlaceholder = (k === '__empty');
-    if (!k || (!isPlaceholder && seen.has(k)) || (!isPlaceholder && !baseKeys.includes(k) && !customTokens.has(k))) continue;
+    const allowedBase = !customOnly && baseKeys.includes(k);
+    const allowedCustom = customTokens.has(k);
+    if (!k || (!isPlaceholder && seen.has(k)) || (!isPlaceholder && !allowedBase && !allowedCustom)) continue;
     if (!isPlaceholder) seen.add(k);
     out.push(k);
   }
@@ -166,8 +176,10 @@ function normalizeOrder(order, baseKeys, customButtons = []) {
       out.push(token);
     }
   }
-  for (const k of baseKeys) {
-    if (!seen.has(k)) out.push(k);
+  if (!customOnly) {
+    for (const k of baseKeys) {
+      if (!seen.has(k)) out.push(k);
+    }
   }
   return out;
 }
@@ -386,17 +398,31 @@ export function openViewFooterSettingsDialog({
   baseControls = [],
   availableActions = [],
   appPrefs = null,
+  defaultAppPrefs = null,
+  customOnly = false,
   onChange = null,
 } = {}) {
   const controls = normalizeBaseControls(baseControls);
   const baseKeys = controls.map(c => c.key);
-  let prefs = normalizeAppPrefs(appPrefs, controls);
+  let prefs = normalizeAppPrefs(appPrefs, controls, { customOnly: !!customOnly });
   let savedPrefs = deepClone(prefs);
   let selectedConfigId = prefs.activeConfigId;
   let isDirty = false;
   let expandedRows = new Set();
   const availableActionList = Array.isArray(availableActions) ? availableActions.slice() : [];
   const availableActionById = new Map(availableActionList.map(a => [asString(a.id).trim(), a]));
+  const templatePrefs = normalizeAppPrefs(defaultAppPrefs, controls, { customOnly: !!customOnly });
+
+  function getDefaultTemplateConfig() {
+    return getConfigById(templatePrefs, 'default') || getConfigById(prefs, 'default') || {
+      id: 'default',
+      name: 'Default',
+      order: customOnly ? [] : baseKeys.slice(),
+      controls: {},
+      customButtons: [],
+      hotkeysDisabled: false,
+    };
+  }
 
   function buildStateActionDisplay(base, st) {
     const actionId = asString(st.actionKey || `${base.key}:${st.name}`).trim();
@@ -438,7 +464,7 @@ export function openViewFooterSettingsDialog({
 
   function ensureSelectedOrder(config) {
     if (!config) return;
-    config.order = normalizeOrder(config.order, baseKeys, config.customButtons || []);
+    config.order = normalizeOrder(config.order, baseKeys, config.customButtons || [], { customOnly: !!customOnly });
   }
 
   function getCustomButton(config, token) {
@@ -492,12 +518,16 @@ export function openViewFooterSettingsDialog({
   function createNewConfig() {
     const stamp = Date.now().toString(36).slice(-5);
     const id = `cfg-${safeId(`${appId}-${stamp}`) || stamp}`;
+    const defaultCfg = ensureDefaultConfig(deepClone(getDefaultTemplateConfig()));
     const next = {
       id,
       name: `Config ${prefs.configs.length + 1}`,
-      order: baseKeys.slice(),
+      order: customOnly
+        ? normalizeOrder(defaultCfg?.order || [], baseKeys, defaultCfg?.customButtons || [], { customOnly: true })
+        : baseKeys.slice(),
       controls: {},
-      customButtons: [],
+      customButtons: customOnly ? normalizeCustomButtons(defaultCfg?.customButtons || []) : [],
+      hotkeysDisabled: !!(defaultCfg && defaultCfg.hotkeysDisabled),
     };
     prefs.configs.push(next);
     prefs.activeConfigId = id;
@@ -530,9 +560,12 @@ export function openViewFooterSettingsDialog({
 
   function resetFooterToDefault(config) {
     if (!config) return;
+    const defaultCfg = ensureDefaultConfig(deepClone(getDefaultTemplateConfig()));
     config.controls = {};
-    config.customButtons = [];
-    config.order = baseKeys.slice();
+    config.customButtons = customOnly ? normalizeCustomButtons(defaultCfg?.customButtons || []) : [];
+    config.order = customOnly
+      ? normalizeOrder(defaultCfg?.order || [], baseKeys, config.customButtons || [], { customOnly: true })
+      : baseKeys.slice();
     markDirty();
   }
 
@@ -580,36 +613,41 @@ export function openViewFooterSettingsDialog({
 
   async function openCustomButtonEditor(config, existing = null) {
     if (!config) return;
-    const initialButton = existing ? deepClone(existing) : null;
-    const nextButton = await openViewFooterCustomButtonDialog({
+    const picked = await openViewFooterCustomButtonDialog({
       availableActions: availableActionList,
-      initialButton,
-      captureHotkey: async ({ currentShortcut = '', skipToken = '' } = {}) => {
-        if (config.hotkeysDisabled) return null;
-        const taken = getAssignedShortcutMap(config, { skipKey: skipToken || null, skipState: null });
-        return openHotkeyCaptureDialog({
-          currentShortcut,
-          isTaken: (nextShortcut) => {
-            const hit = taken.get(String(nextShortcut || '').toUpperCase());
-            return hit ? `That key is already used by ${hit}.` : '';
-          },
-        });
-      },
     });
-    if (!nextButton) return;
+    const actionId = asString(picked && picked.actionId).trim();
+    if (!actionId) return;
 
-    const id = asString(nextButton.id || '').trim() || `custom-${Date.now().toString(36).slice(-6)}`;
+    const source = existing ? deepClone(existing) : {
+      id: `custom-${Date.now().toString(36).slice(-6)}`,
+      icon: '',
+      text: 'Custom',
+      caption: '',
+      shortcut: '',
+      actions: [],
+    };
+
+    const id = asString(source.id || '').trim() || `custom-${Date.now().toString(36).slice(-6)}`;
+    const actions = Array.isArray(source.actions)
+      ? source.actions.map(a => ({
+        actionId: asString(a && a.actionId).trim(),
+        delayMs: Math.max(0, Math.round(Number(a && a.delayMs) || 0)),
+      })).filter(a => a.actionId)
+      : [];
+    actions.push({ actionId, delayMs: 0 });
+
     const normalized = {
       id,
-      icon: asString(nextButton.icon),
-      text: asString(nextButton.text || 'Custom'),
-      caption: asString(nextButton.caption),
-      shortcut: asString(nextButton.shortcut),
-      actions: Array.isArray(nextButton.actions) ? nextButton.actions.map(a => ({ actionId: asString(a.actionId).trim(), delayMs: Math.max(0, Math.round(Number(a.delayMs) || 0)) })).filter(a => a.actionId) : [],
+      icon: asString(source.icon),
+      text: asString(source.text || 'Custom'),
+      caption: asString(source.caption),
+      shortcut: asString(source.shortcut),
+      actions,
     };
 
     upsertCustomButton(config, normalized);
-    const token = customTokenFromId(id);
+    const token = customTokenFromId(normalized.id);
     if (!Array.isArray(config.order)) config.order = [];
     if (!config.order.includes(token)) config.order.push(token);
     markDirty();
@@ -932,14 +970,13 @@ export function openViewFooterSettingsDialog({
         const actionCount = Array.isArray(customBtn.actions) ? customBtn.actions.length : 0;
         const stRow = el('div', { className: 'view-footer-action-row' });
 
-        const actionLabel = el('div', { className: 'view-footer-action-name', text: `${customBtn.text || 'Custom'} ${actionCount ? `· ${actionCount} action${actionCount === 1 ? '' : 's'}` : ''}` });
+        const actionLabel = el('div', { className: 'view-footer-action-name', text: 'Custom Button' });
         const stIcon = el('input', { attrs: { type: 'text', maxlength: '8', placeholder: customBtn.icon || '' } });
         const stText = el('input', { attrs: { type: 'text', maxlength: '40', placeholder: customBtn.text || '' } });
         const stHotkeyBtn = el('button', { className: 'btn small view-footer-hotkey-btn', text: shortcutToCaption(asString(customBtn.shortcut)) || 'Set hotkey' });
         stHotkeyBtn.type = 'button';
-
-        const editBtn = el('button', { className: 'btn small view-footer-edit-btn', text: 'Edit' });
-        editBtn.type = 'button';
+        const addActionBtn = el('button', { className: 'btn small view-footer-edit-btn', text: `Add Action${actionCount ? ` (${actionCount})` : ''}` });
+        addActionBtn.type = 'button';
 
         stIcon.value = asString(customBtn.icon || '');
         stText.value = asString(customBtn.text || '');
@@ -960,7 +997,6 @@ export function openViewFooterSettingsDialog({
           upsertCustomButton(cfg, next);
           markDirty();
           try { resetControlBtn.disabled = isControlDefault(cfg, key); } catch (e) {}
-          try { actionLabel.textContent = `${next.text || 'Custom'} ${actionCount ? `· ${actionCount} action${actionCount === 1 ? '' : 's'}` : ''}`; } catch (e) {}
         });
 
         try { if (cfg.hotkeysDisabled) stHotkeyBtn.style.visibility = 'hidden'; } catch (e) {}
@@ -984,30 +1020,118 @@ export function openViewFooterSettingsDialog({
           renderEditor();
         });
 
-        // Edit button: opens the custom-button editor; set title summarizing actions
-        try {
-          if (actionCount === 0) editBtn.title = 'No actions';
-          else if (actionCount === 1) {
-            const aid = asString((customBtn.actions[0] && customBtn.actions[0].actionId) || '');
-            const mapped = availableActionById.get(aid) || null;
-            editBtn.title = asString(mapped?.fnName || aid || 'Edit actions');
-          } else {
-            const names = [];
-            for (const step of (customBtn.actions || [])) {
-              const aId = asString(step && step.actionId || '');
-              const mapped = availableActionById.get(aId) || null;
-              names.push(asString(mapped?.fnName || mapped?.text || aId));
-            }
-            editBtn.title = names.join(' → ');
-          }
-        } catch (e) { editBtn.title = 'Edit actions'; }
-
-        editBtn.addEventListener('click', () => {
+        addActionBtn.addEventListener('click', () => {
           openCustomButtonEditor(cfg, customBtn);
         });
 
-        stRow.append(actionLabel, stIcon, stText, stHotkeyBtn, editBtn);
+        stRow.append(actionLabel, stIcon, stText, stHotkeyBtn, addActionBtn);
         actionWrap.appendChild(stRow);
+
+        const customActions = Array.isArray(customBtn.actions) ? customBtn.actions.slice() : [];
+        for (let stepIndex = 0; stepIndex < customActions.length; stepIndex++) {
+          const step = customActions[stepIndex];
+          if (!step || typeof step !== 'object') continue;
+          const actionId = asString(step.actionId).trim();
+          if (!actionId) continue;
+
+          const mapped = availableActionById.get(actionId) || null;
+          const stepRow = el('div', { className: 'view-footer-action-row' });
+          const stepTitle = el('div', { className: 'view-footer-action-name', text: asString(mapped?.text || actionId) });
+          const stepIcon = el('div', { className: 'view-footer-action-name', text: asString(mapped?.icon || '') || '—' });
+          const stepName = el('div', { className: 'view-footer-action-name', text: asString(mapped?.actionField || actionId) });
+
+          const stepDelayWrap = el('div', { className: 'view-footer-hotkey-actions' });
+          stepDelayWrap.style.marginTop = '0';
+          stepDelayWrap.style.justifyContent = 'flex-start';
+          const stepMinus = el('button', { className: 'btn small', text: '-' });
+          stepMinus.type = 'button';
+          const stepDelayValue = el('div', { className: 'view-footer-custom-delay-value', text: `${(Math.max(0, Math.round(Number(step.delayMs) || 0)) / 1000).toFixed(1)}s` });
+          const stepPlus = el('button', { className: 'btn small', text: '+' });
+          stepPlus.type = 'button';
+          stepDelayWrap.append(stepMinus, stepDelayValue, stepPlus);
+
+          const stepFnWrap = el('div', { className: 'view-footer-hotkey-actions' });
+          stepFnWrap.style.marginTop = '0';
+          stepFnWrap.style.justifyContent = 'flex-start';
+          const upBtn = el('button', { className: 'btn small', text: '↑' });
+          upBtn.type = 'button';
+          const downBtn = el('button', { className: 'btn small', text: '↓' });
+          downBtn.type = 'button';
+          const removeStepBtn = el('button', { className: 'btn small danger', text: 'Remove' });
+          removeStepBtn.type = 'button';
+          const fnText = el('div', { className: 'view-footer-action-fn', text: asString(mapped?.fnName || actionId) });
+          stepFnWrap.append(upBtn, downBtn, removeStepBtn, fnText);
+
+          const writeCustomActions = (updater) => {
+            const nextBtn = deepClone(getCustomButton(cfg, key) || customBtn) || {};
+            const nextActions = Array.isArray(nextBtn.actions)
+              ? nextBtn.actions.map(a => ({
+                actionId: asString(a && a.actionId).trim(),
+                delayMs: Math.max(0, Math.round(Number(a && a.delayMs) || 0)),
+              })).filter(a => a.actionId)
+              : [];
+            updater(nextActions);
+            nextBtn.actions = nextActions;
+            upsertCustomButton(cfg, nextBtn);
+            markDirty();
+            renderEditor();
+          };
+
+          stepMinus.addEventListener('click', () => {
+            writeCustomActions((arr) => {
+              if (!arr[stepIndex]) return;
+              arr[stepIndex].delayMs = Math.max(0, Math.round(Number(arr[stepIndex].delayMs || 0) - AUTOPLAY_STEP_MS));
+            });
+          });
+
+          stepPlus.addEventListener('click', () => {
+            writeCustomActions((arr) => {
+              if (!arr[stepIndex]) return;
+              arr[stepIndex].delayMs = Math.max(0, Math.round(Number(arr[stepIndex].delayMs || 0) + AUTOPLAY_STEP_MS));
+            });
+          });
+
+          upBtn.addEventListener('click', () => {
+            writeCustomActions((arr) => {
+              if (stepIndex <= 0 || stepIndex >= arr.length) return;
+              const tmp = arr[stepIndex - 1];
+              arr[stepIndex - 1] = arr[stepIndex];
+              arr[stepIndex] = tmp;
+            });
+          });
+
+          downBtn.addEventListener('click', () => {
+            writeCustomActions((arr) => {
+              if (stepIndex < 0 || stepIndex >= arr.length - 1) return;
+              const tmp = arr[stepIndex + 1];
+              arr[stepIndex + 1] = arr[stepIndex];
+              arr[stepIndex] = tmp;
+            });
+          });
+
+          removeStepBtn.addEventListener('click', () => {
+            writeCustomActions((arr) => {
+              if (stepIndex < 0 || stepIndex >= arr.length) return;
+              arr.splice(stepIndex, 1);
+            });
+          });
+
+          stepRow.append(stepTitle, stepIcon, stepName, stepDelayWrap, stepFnWrap);
+          actionWrap.appendChild(stepRow);
+        }
+
+        if (!customActions.length) {
+          const emptyRow = el('div', { className: 'view-footer-action-row' });
+          emptyRow.append(
+            el('div', { className: 'view-footer-action-name', text: 'No actions yet.' }),
+            el('div', { className: 'view-footer-action-name', text: '—' }),
+            el('div', { className: 'view-footer-action-name', text: 'Click Add Action' }),
+            el('div', { className: 'view-footer-action-name', text: '—' }),
+            el('div', { className: 'view-footer-action-fn', text: '—' }),
+          );
+          actionWrap.appendChild(emptyRow);
+        }
+
         fields.appendChild(actionWrap);
         // initialize autoplay values for custom buttons
         try {
@@ -1408,7 +1532,21 @@ export function openViewFooterSettingsDialog({
   addCustomBtn.addEventListener('click', async () => {
     const cfg = selectedConfig();
     if (!cfg) return;
-    await openCustomButtonEditor(cfg, null);
+    const id = `custom-${Date.now().toString(36).slice(-6)}`;
+    const nextButton = {
+      id,
+      icon: '',
+      text: 'Custom',
+      caption: '',
+      shortcut: '',
+      actions: [],
+    };
+    upsertCustomButton(cfg, nextButton);
+    const token = customTokenFromId(id);
+    if (!Array.isArray(cfg.order)) cfg.order = [];
+    if (!cfg.order.includes(token)) cfg.order.push(token);
+    markDirty();
+    renderEditor();
   });
 
   expandCollapseAllBtn.addEventListener('click', () => {

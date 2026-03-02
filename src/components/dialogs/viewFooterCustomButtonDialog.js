@@ -1,11 +1,7 @@
-import { el, safeId } from '../ui.js';
+import { el } from '../ui.js';
 
 function asString(v) {
   return (v == null) ? '' : String(v);
-}
-
-function deepClone(value) {
-  try { return JSON.parse(JSON.stringify(value)); } catch (e) { return value; }
 }
 
 function inferNamespace(raw) {
@@ -22,35 +18,10 @@ function inferNamespace(raw) {
   return raw.namespace || 'unknown';
 }
 
-function normalizeActionSteps(raw = []) {
-  const out = [];
-  for (const step of (Array.isArray(raw) ? raw : [])) {
-    if (!step || typeof step !== 'object') continue;
-    const actionId = asString(step.actionId).trim();
-    if (!actionId) continue;
-    const delayNum = Number(step.delayMs);
-    const delayMs = Number.isFinite(delayNum) ? Math.max(0, Math.round(delayNum)) : 0;
-    out.push({ actionId, delayMs });
-  }
-  return out;
-}
-
 export function openViewFooterCustomButtonDialog({
-  initialButton = null,
   availableActions = [],
-  captureHotkey = null,
 } = {}) {
   return new Promise((resolve) => {
-    const source = (initialButton && typeof initialButton === 'object') ? deepClone(initialButton) : {};
-    const state = {
-      id: asString(source.id).trim() || `custom-${safeId(Date.now().toString(36)) || Date.now().toString(36)}`,
-      icon: asString(source.icon),
-      text: asString(source.text) || 'Custom',
-      caption: asString(source.caption),
-      shortcut: asString(source.shortcut),
-      actions: normalizeActionSteps(source.actions),
-    };
-
     const actionById = new Map();
     const actionList = [];
     for (const raw of (Array.isArray(availableActions) ? availableActions : [])) {
@@ -66,7 +37,10 @@ export function openViewFooterCustomButtonDialog({
         // to the supplied namespace or an inferred namespace otherwise.
         let actionField = '';
         const rawNs = asString(raw.namespace);
-      if (id.toLowerCase().startsWith('sound.')) {
+      const rawActionField = asString(raw.actionField);
+      if (rawActionField) {
+        actionField = rawActionField;
+      } else if (id.toLowerCase().startsWith('sound.')) {
         const parts = id.split('.');
         const field = parts[1] || '';
         actionField = field ? `entry.${field}` : 'entry';
@@ -112,12 +86,6 @@ export function openViewFooterCustomButtonDialog({
         return String(a.text || '').localeCompare(String(b.text || ''));
       });
 
-    // Strip any pre-existing actions that reference state-based action IDs
-    // (these were intentionally excluded from the available actions).
-    if (Array.isArray(state.actions) && state.actions.length) {
-      state.actions = state.actions.filter(s => s && actionById.has(s.actionId));
-    }
-
     const backdrop = el('div', { className: 'view-footer-hotkey-backdrop' });
     const dialog = el('div', {
       className: 'view-footer-hotkey-dialog view-footer-custom-dialog',
@@ -129,10 +97,7 @@ export function openViewFooterCustomButtonDialog({
     });
     dialog.tabIndex = -1;
 
-    const title = el('div', { className: 'view-footer-hotkey-title', text: initialButton ? 'Edit Custom Button' : 'New Custom Button' });
-
-    const selectedTitle = el('div', { className: 'hint', text: 'Button Actions' });
-    const selectedList = el('div', { className: 'view-footer-custom-selected-list' });
+    const title = el('div', { className: 'view-footer-hotkey-title', text: 'Add Action to Custom Button' });
 
     const availableTitle = el('div', { className: 'hint', text: 'Available Actions' });
     const availableListEl = el('div', { className: 'view-footer-custom-available-list' });
@@ -140,85 +105,13 @@ export function openViewFooterCustomButtonDialog({
     const actions = el('div', { className: 'view-footer-hotkey-actions' });
     const cancelBtn = el('button', { className: 'btn small', text: 'Cancel' });
     cancelBtn.type = 'button';
-    const saveBtn = el('button', { className: 'btn small', text: 'Save' });
-    saveBtn.type = 'button';
 
-    actions.append(cancelBtn, saveBtn);
-    dialog.append(title, selectedTitle, selectedList, availableTitle, availableListEl, actions);
+    actions.append(cancelBtn);
+    dialog.append(title, availableTitle, availableListEl, actions);
 
     const mount = document.getElementById('shell-root') || document.getElementById('app') || document.body;
     const prevFocus = document.activeElement;
     mount.append(backdrop, dialog);
-
-    function stepLabel(step) {
-      const info = actionById.get(step.actionId);
-      if (!info) return step.actionId;
-      return `${info.text}${info.state ? ` (${info.state})` : ''}`;
-    }
-
-    function renderSelected() {
-      selectedList.innerHTML = '';
-      if (!state.actions.length) {
-        selectedList.appendChild(el('div', { className: 'hint', text: 'No actions selected yet.' }));
-        return;
-      }
-
-      state.actions.forEach((step, index) => {
-        const row = el('div', { className: 'view-footer-custom-selected-row' });
-        const label = el('div', { className: 'view-footer-custom-action-label', text: stepLabel(step) });
-
-        const minusDelay = el('button', { className: 'btn small', text: '-' });
-        minusDelay.type = 'button';
-        const delayValue = el('div', { className: 'view-footer-custom-delay-value', text: `${(step.delayMs / 1000).toFixed(1)}s` });
-        const plusDelay = el('button', { className: 'btn small', text: '+' });
-        plusDelay.type = 'button';
-
-        const upBtn = el('button', { className: 'btn small', text: '↑' });
-        upBtn.type = 'button';
-        const downBtn = el('button', { className: 'btn small', text: '↓' });
-        downBtn.type = 'button';
-        const removeBtn = el('button', { className: 'btn small danger', text: 'Remove' });
-        removeBtn.type = 'button';
-
-        minusDelay.addEventListener('click', () => {
-          step.delayMs = Math.max(0, step.delayMs - 500);
-          renderSelected();
-        });
-
-        plusDelay.addEventListener('click', () => {
-          step.delayMs += 500;
-          renderSelected();
-        });
-
-        upBtn.addEventListener('click', () => {
-          if (index <= 0) return;
-          const arr = state.actions.slice();
-          const tmp = arr[index - 1];
-          arr[index - 1] = arr[index];
-          arr[index] = tmp;
-          state.actions = arr;
-          renderSelected();
-        });
-
-        downBtn.addEventListener('click', () => {
-          if (index >= state.actions.length - 1) return;
-          const arr = state.actions.slice();
-          const tmp = arr[index + 1];
-          arr[index + 1] = arr[index];
-          arr[index] = tmp;
-          state.actions = arr;
-          renderSelected();
-        });
-
-        removeBtn.addEventListener('click', () => {
-          state.actions = state.actions.filter((_, i) => i !== index);
-          renderSelected();
-        });
-
-        row.append(label, minusDelay, delayValue, plusDelay, upBtn, downBtn, removeBtn);
-        selectedList.appendChild(row);
-      });
-    }
 
     function renderAvailable() {
       availableListEl.innerHTML = '';
@@ -227,18 +120,18 @@ export function openViewFooterCustomButtonDialog({
           const left = el('div', { className: 'view-footer-custom-action-label', text: action.text });
           const ns = el('div', { className: 'view-footer-action-field', text: action.actionField });
           const fn = el('div', { className: 'view-footer-action-fn', text: action.fnName || action.id });
-        const addBtn = el('button', { className: 'btn small', text: 'Add' });
-        addBtn.type = 'button';
-        addBtn.addEventListener('click', () => {
-          state.actions.push({ actionId: action.id, delayMs: 0 });
-          renderSelected();
+        const selectBtn = el('button', { className: 'btn small', text: 'Select' });
+        selectBtn.type = 'button';
+        selectBtn.addEventListener('click', () => {
+          close({ actionId: action.id });
         });
-        row.append(left, ns, fn, addBtn);
+        row.append(left, ns, fn, selectBtn);
         availableListEl.appendChild(row);
       }
+      if (!actionList.length) {
+        availableListEl.appendChild(el('div', { className: 'hint', text: 'No available actions.' }));
+      }
     }
-
-    // Icon/name/hotkey inputs removed; shortcut/caption preserved from initial state if present.
 
     let closed = false;
     function close(result = null) {
@@ -260,19 +153,8 @@ export function openViewFooterCustomButtonDialog({
     }
 
     cancelBtn.addEventListener('click', () => close(null));
-    saveBtn.addEventListener('click', () => {
-      close({
-        id: state.id,
-        icon: asString(state.icon).trim(),
-        text: asString(state.text).trim() || 'Custom',
-        caption: asString(state.caption),
-        shortcut: asString(state.shortcut),
-        actions: normalizeActionSteps(state.actions),
-      });
-    });
     backdrop.addEventListener('click', () => close(null));
 
-    renderSelected();
     renderAvailable();
 
     document.addEventListener('keydown', onKeyDown, true);

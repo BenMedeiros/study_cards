@@ -27,11 +27,24 @@ function asString(v) {
 }
 
 function isCustomToken(key) {
-  return typeof key === 'string' && key.startsWith('__custom:');
+  return typeof key === 'string' && (key.startsWith('__custom:') || key.startsWith('_custom:'));
 }
 
 function customTokenFromId(id) {
   return `__custom:${asString(id).trim()}`;
+}
+
+function customIdFromToken(token) {
+  const t = asString(token).trim();
+  if (t.startsWith('__custom:')) return t.slice('__custom:'.length).trim();
+  if (t.startsWith('_custom:')) return t.slice('_custom:'.length).trim();
+  return '';
+}
+
+function normalizeCustomToken(token) {
+  const t = asString(token).trim();
+  if (!isCustomToken(t)) return t;
+  return customTokenFromId(customIdFromToken(t));
 }
 
 function normalizeCustomButtons(raw = []) {
@@ -63,7 +76,7 @@ function normalizeCustomButtons(raw = []) {
   return out;
 }
 
-function normalizeConfigEntry(raw, baseKeys = []) {
+function normalizeConfigEntry(raw, baseKeys = [], { customOnly = false } = {}) {
   const src = (raw && typeof raw === 'object') ? raw : {};
   const customButtons = normalizeCustomButtons(src.customButtons);
   const customTokens = new Set(customButtons.map(btn => customTokenFromId(btn.id)));
@@ -71,10 +84,12 @@ function normalizeConfigEntry(raw, baseKeys = []) {
   const seen = new Set();
   const normalizedOrder = [];
   for (const key of order) {
-    const k = String(key || '').trim();
+    const k = normalizeCustomToken(String(key || '').trim());
     // allow special placeholder token '__empty' in order
     const isPlaceholder = (k === '__empty');
-    if (!k || (!isPlaceholder && seen.has(k)) || (!isPlaceholder && !baseKeys.includes(k) && !customTokens.has(k))) continue;
+    const allowedBase = !customOnly && baseKeys.includes(k);
+    const allowedCustom = customTokens.has(k);
+    if (!k || (!isPlaceholder && seen.has(k)) || (!isPlaceholder && !allowedBase && !allowedCustom)) continue;
     if (!isPlaceholder) seen.add(k);
     // preserve placeholder token as-is; allow multiple placeholders
     normalizedOrder.push(k);
@@ -85,8 +100,10 @@ function normalizeConfigEntry(raw, baseKeys = []) {
       normalizedOrder.push(token);
     }
   }
-  for (const key of baseKeys) {
-    if (!seen.has(key)) normalizedOrder.push(key);
+  if (!customOnly) {
+    for (const key of baseKeys) {
+      if (!seen.has(key)) normalizedOrder.push(key);
+    }
   }
   return {
     id: String(src.id || 'default'),
@@ -98,19 +115,19 @@ function normalizeConfigEntry(raw, baseKeys = []) {
   };
 }
 
-function normalizeAppFooterPrefs(raw, baseKeys = []) {
+function normalizeAppFooterPrefs(raw, baseKeys = [], { customOnly = false } = {}) {
   const src = (raw && typeof raw === 'object') ? raw : {};
   const configs = Array.isArray(src.configs) ? src.configs : [];
   const byId = new Map();
   for (const c of configs) {
-    const n = normalizeConfigEntry(c, baseKeys);
+    const n = normalizeConfigEntry(c, baseKeys, { customOnly });
     const id = String(n.id || '').trim();
     if (!id) continue;
     n.id = id;
     byId.set(id, n);
   }
   if (!byId.has('default')) {
-    byId.set('default', { id: 'default', name: 'Default', order: baseKeys.slice(), controls: {}, customButtons: [] });
+    byId.set('default', { id: 'default', name: 'Default', order: customOnly ? [] : baseKeys.slice(), controls: {}, customButtons: [] });
   }
   const activeConfigId = byId.has(src.activeConfigId) ? src.activeConfigId : 'default';
   return {
@@ -149,7 +166,7 @@ function applyStateOverrides(state, overrideState, disableHotkeys = false) {
   return out;
 }
 
-function buildActionRegistry(items = []) {
+function buildActionRegistry(items = [], actionDefinitions = []) {
   const map = new Map();
   for (const item of items) {
     if (!isDescriptor(item) || !item.key) continue;
@@ -193,6 +210,26 @@ function buildActionRegistry(items = []) {
       });
     }
   }
+
+  for (const raw of (Array.isArray(actionDefinitions) ? actionDefinitions : [])) {
+    if (!raw || typeof raw !== 'object') continue;
+    const id = asString(raw.id).trim();
+    if (!id || map.has(id) || typeof raw.invoke !== 'function') continue;
+    map.set(id, {
+      id,
+      controlKey: asString(raw.controlKey),
+      state: asString(raw.state),
+      icon: asString(raw.icon),
+      text: asString(raw.text) || id,
+      caption: asString(raw.caption),
+      shortcut: asString(raw.shortcut),
+      fnName: asString(raw.fnName),
+      namespace: asString(raw.namespace),
+      actionField: asString(raw.actionField),
+      invoke: raw.invoke,
+    });
+  }
+
   return map;
 }
 
@@ -265,7 +302,7 @@ function createCustomButtonDescriptor(button, actionRegistry, disableHotkeys = f
   return descriptor;
 }
 
-function applyFooterConfig(items = [], appPrefs = null, actionRegistry = new Map()) {
+function applyFooterConfig(items = [], appPrefs = null, actionRegistry = new Map(), { customOnly = false } = {}) {
   const activeConfig = getConfigById(appPrefs, appPrefs?.activeConfigId) || getConfigById(appPrefs, 'default');
   if (!activeConfig) return items.slice();
 
@@ -360,7 +397,7 @@ function applyFooterConfig(items = [], appPrefs = null, actionRegistry = new Map
   const seen = new Set();
   const order = Array.isArray(activeConfig.order) ? activeConfig.order : [];
   for (const key of order) {
-    const k = String(key || '').trim();
+    const k = normalizeCustomToken(String(key || '').trim());
     if (!k) continue;
     if (k === '__empty') {
       // insert a placeholder slot
@@ -385,12 +422,14 @@ function applyFooterConfig(items = [], appPrefs = null, actionRegistry = new Map
     out.push(custom);
   }
 
-  for (const item of items) {
-    if (!isDescriptor(item) || !item.key) continue;
-    const key = String(item.key || '').trim();
-    if (!key || seen.has(key) || !controlsByKey.has(key)) continue;
-    seen.add(key);
-    out.push(controlsByKey.get(key));
+  if (!customOnly) {
+    for (const item of items) {
+      if (!isDescriptor(item) || !item.key) continue;
+      const key = String(item.key || '').trim();
+      if (!key || seen.has(key) || !controlsByKey.has(key)) continue;
+      seen.add(key);
+      out.push(controlsByKey.get(key));
+    }
   }
 
   for (const other of others) out.push(other);
@@ -416,7 +455,8 @@ function createViewFooterControls(items = [], opts = {}) {
   const appId = (opts && typeof opts.appId === 'string') ? opts.appId : `viewFooterControls${Math.random().toString(36).slice(2, 8)}`;
 
   const baseControlItems = items.filter(it => isDescriptor(it) && it.key).map(it => ({ ...it }));
-  const actionRegistry = buildActionRegistry(items);
+  const controllerActions = (opts && Array.isArray(opts.actionDefinitions)) ? opts.actionDefinitions : [];
+  const actionRegistry = buildActionRegistry(items, controllerActions);
   // Allow caller to supply extra actions (e.g. dynamic sound.X handlers)
   if (opts && Array.isArray(opts.extraActions)) {
     for (const a of opts.extraActions) {
@@ -452,10 +492,13 @@ function createViewFooterControls(items = [], opts = {}) {
     shortcut: a.shortcut,
     fnName: a.fnName,
     namespace: a.namespace || '',
+    actionField: a.actionField || '',
   }));
   const baseKeys = baseControlItems.map(it => String(it.key || '').trim()).filter(Boolean);
+  const customOnly = !!(opts && opts.customOnly);
   let allFooterPrefs = {};
-  let appPrefs = normalizeAppFooterPrefs(null, baseKeys);
+  const defaultAppPrefs = normalizeAppFooterPrefs(opts?.defaultPrefs || null, baseKeys, { customOnly });
+  let appPrefs = deepClone(defaultAppPrefs);
   // autoplay runtime state: only one autoplay allowed at a time
   let currentAutoplay = null;
 
@@ -796,15 +839,18 @@ function createViewFooterControls(items = [], opts = {}) {
 
   function readPrefs() {
     if (!settingsManager || typeof settingsManager.get !== 'function' || typeof settingsManager.set !== 'function' || typeof settingsManager.registerConsumer !== 'function') {
-      appPrefs = normalizeAppFooterPrefs(null, baseKeys);
+      appPrefs = deepClone(defaultAppPrefs);
       return;
     }
     try {
       allFooterPrefs = settingsManager.get(FOOTER_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
-      appPrefs = normalizeAppFooterPrefs(allFooterPrefs[appId], baseKeys);
+      appPrefs = normalizeAppFooterPrefs(allFooterPrefs[appId], baseKeys, { customOnly });
+      if (!allFooterPrefs || !allFooterPrefs[appId]) {
+        appPrefs = deepClone(defaultAppPrefs);
+      }
     } catch (e) {
       allFooterPrefs = {};
-      appPrefs = normalizeAppFooterPrefs(null, baseKeys);
+      appPrefs = deepClone(defaultAppPrefs);
     }
   }
 
@@ -820,7 +866,7 @@ function createViewFooterControls(items = [], opts = {}) {
   }
 
   function rebuildFromConfig() {
-    const renderItems = applyFooterConfig(items, appPrefs, actionRegistry);
+    const renderItems = applyFooterConfig(items, appPrefs, actionRegistry, { customOnly });
     buildButtons(renderItems);
   }
 
@@ -871,8 +917,10 @@ function createViewFooterControls(items = [], opts = {}) {
         baseControls: baseControlItems,
         availableActions,
         appPrefs,
+        defaultAppPrefs: deepClone(defaultAppPrefs),
+        customOnly,
         onChange: (nextPrefs) => {
-          appPrefs = normalizeAppFooterPrefs(nextPrefs, baseKeys);
+          appPrefs = normalizeAppFooterPrefs(nextPrefs, baseKeys, { customOnly });
           persistPrefs(appPrefs);
           rebuildFromConfig();
         }
@@ -892,7 +940,7 @@ function createViewFooterControls(items = [], opts = {}) {
           if (settingId !== FOOTER_CONFIGS_SETTING_ID) return;
           try {
             const all = (next && typeof next === 'object') ? next : {};
-            appPrefs = normalizeAppFooterPrefs(all[appId], baseKeys);
+            appPrefs = normalizeAppFooterPrefs(all[appId], baseKeys, { customOnly });
             rebuildFromConfig();
           } catch (e) {
             // ignore
