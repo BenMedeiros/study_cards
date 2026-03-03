@@ -10,6 +10,8 @@ function customTokenFromId(id) {
   return `__custom:${asString(id).trim()}`;
 }
 
+const KANJI_STUDY_ENTRY_FIELDS = ['kanji', 'reading', 'type', 'lexicalClass', 'orthography', 'tags'];
+
 const KANJI_STUDY_DEFAULT_CUSTOM_BUTTONS = [
   {
     id: 'prev',
@@ -84,6 +86,9 @@ export function createKanjiStudyFooterActionsController({
   showNext,
   speakField,
   getSearchTerm,
+  getEntryFields,
+  getAvailableEntryFields,
+  setEntryFields,
   openInNewTab,
   kanjiProgress,
   getCurrentCollectionKey,
@@ -95,6 +100,9 @@ export function createKanjiStudyFooterActionsController({
     showNext: (typeof showNext === 'function') ? showNext : () => {},
     speakField: (typeof speakField === 'function') ? speakField : () => {},
     getSearchTerm: (typeof getSearchTerm === 'function') ? getSearchTerm : () => '',
+    getEntryFields: (typeof getEntryFields === 'function') ? getEntryFields : () => 'all',
+    getAvailableEntryFields: (typeof getAvailableEntryFields === 'function') ? getAvailableEntryFields : () => KANJI_STUDY_ENTRY_FIELDS.slice(),
+    setEntryFields: (typeof setEntryFields === 'function') ? setEntryFields : () => {},
     getCurrentCollectionKey: (typeof getCurrentCollectionKey === 'function') ? getCurrentCollectionKey : () => '',
     getCurrentEntryKey: (typeof getCurrentEntryKey === 'function') ? getCurrentEntryKey : () => '',
     kanjiProgress: (kanjiProgress && typeof kanjiProgress === 'object') ? kanjiProgress : null,
@@ -161,6 +169,97 @@ export function createKanjiStudyFooterActionsController({
     };
   }
 
+  function getAvailableEntryFieldsList() {
+    try {
+      const raw = run.getAvailableEntryFields();
+      if (Array.isArray(raw) && raw.length) {
+        const out = [];
+        const seen = new Set();
+        for (const f of raw) {
+          const key = String(f || '').trim();
+          if (!key || seen.has(key)) continue;
+          seen.add(key);
+          out.push(key);
+        }
+        if (out.length) return out;
+      }
+    } catch (e) {}
+    return KANJI_STUDY_ENTRY_FIELDS.slice();
+  }
+
+  function getSelectedEntryFieldSet() {
+    try {
+      const available = getAvailableEntryFieldsList();
+      const raw = run.getEntryFields();
+      if (raw === 'all') return new Set(available);
+      if (Array.isArray(raw)) {
+        const selected = new Set(raw.map(v => String(v || '').trim()).filter(Boolean));
+        return new Set(available.filter(f => selected.has(f)));
+      }
+    } catch (e) {}
+    return new Set();
+  }
+
+  function writeEntryFieldSet(selectedSet) {
+    const available = getAvailableEntryFieldsList();
+    const ordered = available.filter(f => selectedSet.has(f));
+    if (ordered.length === available.length) {
+      run.setEntryFields('all');
+      return;
+    }
+    run.setEntryFields(ordered);
+  }
+
+  function selectedSetToArray(selectedSet) {
+    return getAvailableEntryFieldsList().filter(f => selectedSet.has(f));
+  }
+
+  function logEntryFieldMutation(kind, fieldKey, beforeSet, afterSet) {
+    try {
+      const before = selectedSetToArray(beforeSet);
+      const after = selectedSetToArray(afterSet);
+      console.debug('[kanjiStudy][entryFields]', {
+        action: kind,
+        field: fieldKey,
+        before,
+        after,
+        beforeCount: before.length,
+        afterCount: after.length,
+      });
+    } catch (e) {}
+  }
+
+  function runEntryFieldSetOn(fieldKey) {
+    return () => {
+      const selected = getSelectedEntryFieldSet();
+      const before = new Set(selected);
+      selected.add(fieldKey);
+      logEntryFieldMutation('setOn', fieldKey, before, selected);
+      writeEntryFieldSet(selected);
+    };
+  }
+
+  function runEntryFieldSetOff(fieldKey) {
+    return () => {
+      const selected = getSelectedEntryFieldSet();
+      const before = new Set(selected);
+      selected.delete(fieldKey);
+      logEntryFieldMutation('setOff', fieldKey, before, selected);
+      writeEntryFieldSet(selected);
+    };
+  }
+
+  function runEntryFieldToggle(fieldKey) {
+    return () => {
+      const selected = getSelectedEntryFieldSet();
+      const before = new Set(selected);
+      if (selected.has(fieldKey)) selected.delete(fieldKey);
+      else selected.add(fieldKey);
+      logEntryFieldMutation('toggle', fieldKey, before, selected);
+      writeEntryFieldSet(selected);
+    };
+  }
+
   // Link templates keyed by logical name. Templates are simple base URLs
   // that will receive the encoded search term. Keeping them here makes it
   // easier to add more link targets later or expose them to UI.
@@ -173,9 +272,33 @@ export function createKanjiStudyFooterActionsController({
     'wiktionary': 'https://en.wiktionary.org/wiki/',
   };
 
+  const entryFieldActionDefinitions = [];
+  for (const fieldKey of KANJI_STUDY_ENTRY_FIELDS) {
+    entryFieldActionDefinitions.push(
+      {
+        id: `entryField.${fieldKey}.setOn`,
+        fnName: `app.kanjiStudyCardView.entryFields.setOn[${fieldKey}]`,
+        actionField: `entry.${fieldKey}`,
+        invoke: runEntryFieldSetOn(fieldKey),
+      },
+      {
+        id: `entryField.${fieldKey}.setOff`,
+        fnName: `app.kanjiStudyCardView.entryFields.setOff[${fieldKey}]`,
+        actionField: `entry.${fieldKey}`,
+        invoke: runEntryFieldSetOff(fieldKey),
+      },
+      {
+        id: `entryField.${fieldKey}.toggle`,
+        fnName: `app.kanjiStudyCardView.entryFields.toggle[${fieldKey}]`,
+        actionField: `entry.${fieldKey}`,
+        invoke: runEntryFieldToggle(fieldKey),
+      },
+    );
+  }
+
   const actionDefinitions = [
-    { id: 'prev', fnName: 'view.showPrev', actionField: 'app.kanjiStudyCardView', invoke: () => run.showPrev() },
-    { id: 'next', fnName: 'view.showNext', actionField: 'app.kanjiStudyCardView', invoke: () => run.showNext() },
+    { id: 'prev', fnName: 'app.kanjiStudyCardView.showPrev', actionField: '', invoke: () => run.showPrev() },
+    { id: 'next', fnName: 'app.kanjiStudyCardView.showNext', actionField: '', invoke: () => run.showNext() },
 
     // Use a generic 'Sound' label for all sound actions; the specific
     // actionField indicates which entry field will be spoken.
@@ -213,6 +336,7 @@ export function createKanjiStudyFooterActionsController({
     { id: 'link.google', fnName: 'link.open[google]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['google']) },
     { id: 'link.jisho', fnName: 'link.open[jisho]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['jisho']) },
     { id: 'link.wiktionary', fnName: 'link.open[wiktionary]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['wiktionary']) },
+    ...entryFieldActionDefinitions,
   ];
 
   // Build a minimal set of baseControls from actionDefinitions so callers

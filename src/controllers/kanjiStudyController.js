@@ -6,7 +6,7 @@ const AVAILABLE_CARD_KEYS = new Set((CARD_REGISTRY || []).map(c => c.key));
 
 const DEFAULT_VIEW = {
   currentIndex: 0,
-  entryFields: ['kanji', 'reading', 'type', 'lexicalClass', 'orthography', 'tags'],
+  entryFields: ['kanji', 'reading', 'meaning', 'type', 'lexicalClass', 'orthography', 'tags'],
   relatedFields: { sentences: ['english', 'notes'] },
   displayCards: ['main', 'related', 'full', 'generic', 'json'],
 };

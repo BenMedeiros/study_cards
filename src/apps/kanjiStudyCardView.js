@@ -53,6 +53,7 @@ export function renderKanjiStudyCard({ store }) {
   let relatedHydrationPromise = null;
   let kanjiController = null;
   let kanjiUnsub = null;
+  let entryFieldsControl = null;
 
   // Helpers
   function getFieldValue(entry, keys) {
@@ -136,6 +137,15 @@ export function renderKanjiStudyCard({ store }) {
             // entry field selection changed
             if (viewPatch && Object.prototype.hasOwnProperty.call(viewPatch, 'entryFields')) {
               entryFieldSelection = (viewState && viewState.entryFields !== undefined) ? (viewState.entryFields === 'all' ? 'all' : (Array.isArray(viewState.entryFields) ? viewState.entryFields.slice() : viewState.entryFields)) : entryFieldSelection;
+              try {
+                if (entryFieldsControl && typeof entryFieldsControl.setValues === 'function') {
+                  entryFieldsControl.setValues(
+                    entryFieldSelection === 'all'
+                      ? entryFieldItems.map(it => String(it.value || ''))
+                      : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : [])
+                  );
+                }
+              } catch (e) {}
               const resolvedMap = (viewPatch && viewPatch.resolved && viewPatch.resolved.entryFieldMap) ? viewPatch.resolved.entryFieldMap : (viewState && viewState.resolved && viewState.resolved.entryFieldMap) ? viewState.resolved.entryFieldMap : null;
               if (resolvedMap) applyEntryFieldVisibility(resolvedMap);
               else {
@@ -244,6 +254,7 @@ export function renderKanjiStudyCard({ store }) {
     className: 'data-expansion-dropdown',
     caption: 'entry.fields.visibility'
   });
+  entryFieldsControl = entryFieldsRec && entryFieldsRec.control ? entryFieldsRec.control : null;
 
   // For each related-collection declared in the collection metadata, add a dropdown.
   const relatedDefs = Array.isArray(metadata?.relatedCollections) ? metadata.relatedCollections.slice() : [];
@@ -329,11 +340,40 @@ export function renderKanjiStudyCard({ store }) {
     return String(store?.collections?.getEntryStudyKey?.(entry) || '').trim();
   }
 
+  function getEntryFieldsSelection() {
+    try {
+      const st = (kanjiController && typeof kanjiController.get === 'function') ? (kanjiController.get() || {}) : {};
+      if (st && Object.prototype.hasOwnProperty.call(st, 'entryFields')) return st.entryFields;
+    } catch (e) {}
+    return entryFieldSelection;
+  }
+
+  function getAvailableEntryFields() {
+    try {
+      const vals = Array.isArray(entryFieldItems)
+        ? entryFieldItems.map(it => String(it?.value || '')).filter(Boolean)
+        : [];
+      if (vals.length) return vals;
+    } catch (e) {}
+    return ['kanji', 'reading', 'type', 'lexicalClass', 'orthography', 'tags'];
+  }
+
+  function setEntryFieldsSelection(nextSelection) {
+    if (kanjiController && typeof kanjiController.setEntryFields === 'function') {
+      kanjiController.setEntryFields(nextSelection);
+      return;
+    }
+    persistViewState({ entryFields: nextSelection });
+  }
+
   const footerActions = createKanjiStudyFooterActionsController({
     showPrev,
     showNext,
     speakField,
     getSearchTerm,
+    getEntryFields: getEntryFieldsSelection,
+    getAvailableEntryFields,
+    setEntryFields: setEntryFieldsSelection,
     kanjiProgress: store?.kanjiProgress || null,
     getCurrentCollectionKey,
     getCurrentEntryKey,

@@ -29,17 +29,13 @@ function customTokenFromId(id) {
   return `__custom:${asString(id).trim()}`;
 }
 
-function customIdFromToken(token) {
-  if (!isCustomToken(token)) return '';
-  const t = asString(token).trim();
-  if (t.startsWith('__custom:')) return t.slice('__custom:'.length).trim();
-  if (t.startsWith('_custom:')) return t.slice('_custom:'.length).trim();
-  return '';
-}
-
 function normalizeCustomToken(token) {
-  if (!isCustomToken(token)) return asString(token).trim();
-  return customTokenFromId(customIdFromToken(token));
+  const t = asString(token).trim();
+  if (!isCustomToken(t)) return t;
+  const id = t.startsWith('__custom:')
+    ? t.slice('__custom:'.length).trim()
+    : (t.startsWith('_custom:') ? t.slice('_custom:'.length).trim() : '');
+  return customTokenFromId(id);
 }
 
 function normalizeCustomButtons(raw = []) {
@@ -469,7 +465,10 @@ export function openViewFooterSettingsDialog({
 
   function getCustomButton(config, token) {
     if (!config || !isCustomToken(token)) return null;
-    const id = customIdFromToken(token);
+    const t = asString(token).trim();
+    const id = t.startsWith('__custom:')
+      ? t.slice('__custom:'.length).trim()
+      : (t.startsWith('_custom:') ? t.slice('_custom:'.length).trim() : '');
     if (!id) return null;
     const list = Array.isArray(config.customButtons) ? config.customButtons : [];
     return list.find(btn => btn && btn.id === id) || null;
@@ -487,7 +486,10 @@ export function openViewFooterSettingsDialog({
 
   function removeCustomButton(config, token) {
     if (!config || !Array.isArray(config.customButtons)) return;
-    const id = customIdFromToken(token);
+    const t = asString(token).trim();
+    const id = t.startsWith('__custom:')
+      ? t.slice('__custom:'.length).trim()
+      : (t.startsWith('_custom:') ? t.slice('_custom:'.length).trim() : '');
     if (!id) return;
     config.customButtons = config.customButtons.filter(btn => btn && btn.id !== id);
   }
@@ -835,7 +837,7 @@ export function openViewFooterSettingsDialog({
       const visibilityLabel = el('label', { className: 'view-footer-visible-label', text: 'Show' });
       visibilityLabel.prepend(visibility);
 
-      const keyBadge = el('div', { className: 'view-footer-control-key', text: isCustom ? `custom:${customIdFromToken(key)}` : key });
+      const keyBadge = el('div', { className: 'view-footer-control-key', text: isCustom ? asString(customBtn?.text || 'Custom') : key });
       const moveUp = el('button', { className: 'btn small', text: '↑' });
       moveUp.type = 'button';
       const moveDown = el('button', { className: 'btn small', text: '↓' });

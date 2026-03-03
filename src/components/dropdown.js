@@ -353,6 +353,30 @@ export function createDropdown({
       // ignore
     }
   }
+
+  function setSelectedValuesNoEmit(nextValues) {
+    const vals = Array.isArray(nextValues)
+      ? nextValues.map(v => String(v || '')).filter(Boolean)
+      : [];
+    const allowed = new Set(selectableValues());
+    selectedValues = vals.filter(v => allowed.has(v));
+    syncSelectedClasses();
+    setButtonLabel();
+  }
+
+  function setSelectedValueNoEmit(nextValue) {
+    const v = String(nextValue ?? '');
+    value = v;
+    menu.querySelectorAll('.custom-dropdown-option').forEach((opt) => {
+      const kind = String(opt?.dataset?.kind || '').trim();
+      if (kind === 'divider' || kind === 'action') {
+        opt.classList.remove('selected');
+        return;
+      }
+      opt.classList.toggle('selected', String(opt?.dataset?.value ?? '') === v);
+    });
+    setButtonLabel();
+  }
   
   for (const item of normalizedItems) {
     const option = document.createElement('div');
@@ -596,5 +620,21 @@ export function createDropdown({
   });
   
   container.append(button, menu);
+
+  container.getValue = () => (multi ? null : value);
+  container.getValues = () => (multi ? selectedValues.slice() : []);
+  container.setValue = (nextValue) => {
+    if (multi) return;
+    setSelectedValueNoEmit(nextValue);
+  };
+  container.setValues = (nextValues) => {
+    if (!multi) return;
+    if (nextValues === 'all') {
+      setSelectedValuesNoEmit(selectableValues());
+      return;
+    }
+    setSelectedValuesNoEmit(nextValues);
+  };
+
   return container;
 }
