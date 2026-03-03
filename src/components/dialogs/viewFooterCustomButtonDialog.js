@@ -58,7 +58,8 @@ export function openViewFooterCustomButtonDialog({
 
         const item = {
           id,
-          text: asString(raw.text) || id,
+          // prefer fnName for display; actionDefinitions no longer provide `text`
+          text: asString(raw.fnName) || id,
           controlKey: asString(raw.controlKey),
           fnName: asString(raw.fnName),
           actionField,
@@ -112,20 +113,27 @@ export function openViewFooterCustomButtonDialog({
     const mount = document.getElementById('shell-root') || document.getElementById('app') || document.body;
     const prevFocus = document.activeElement;
     mount.append(backdrop, dialog);
+    try { console.debug('[dialog] open viewFooterCustomButtonDialog', { availableCount: actionList.length }); } catch (e) {}
 
     function renderAvailable() {
       availableListEl.innerHTML = '';
+      // header row for columns: Function | Field
+      const header = el('div', { className: 'view-footer-custom-available-header' });
+      header.append(
+        el('div', { className: 'view-footer-custom-action-label header', text: 'Function' }),
+        el('div', { className: 'view-footer-action-field header', text: 'Field' })
+      );
+      availableListEl.appendChild(header);
       for (const action of actionList) {
         const row = el('div', { className: 'view-footer-custom-available-row' });
-          const left = el('div', { className: 'view-footer-custom-action-label', text: action.text });
+          const left = el('div', { className: 'view-footer-custom-action-label', text: action.fnName || action.id });
           const ns = el('div', { className: 'view-footer-action-field', text: action.actionField });
-          const fn = el('div', { className: 'view-footer-action-fn', text: action.fnName || action.id });
         const selectBtn = el('button', { className: 'btn small', text: 'Select' });
         selectBtn.type = 'button';
         selectBtn.addEventListener('click', () => {
           close({ actionId: action.id });
         });
-        row.append(left, ns, fn, selectBtn);
+        row.append(left, ns, selectBtn);
         availableListEl.appendChild(row);
       }
       if (!actionList.length) {
@@ -137,6 +145,7 @@ export function openViewFooterCustomButtonDialog({
     function close(result = null) {
       if (closed) return;
       closed = true;
+      try { console.debug('[dialog] close viewFooterCustomButtonDialog', { result }); } catch (e) {}
       try { document.removeEventListener('keydown', onKeyDown, true); } catch (e) {}
       try { if (dialog.parentNode) dialog.parentNode.removeChild(dialog); } catch (e) {}
       try { if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop); } catch (e) {}

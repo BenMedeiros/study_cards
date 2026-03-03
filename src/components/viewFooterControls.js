@@ -117,22 +117,23 @@ function normalizeConfigEntry(raw, baseKeys = [], { customOnly = false } = {}) {
 
 function normalizeAppFooterPrefs(raw, baseKeys = [], { customOnly = false } = {}) {
   const src = (raw && typeof raw === 'object') ? raw : {};
-  const configs = Array.isArray(src.configs) ? src.configs : [];
+  const rawConfigs = Array.isArray(src.configs) ? src.configs : [];
   const byId = new Map();
-  for (const c of configs) {
+  for (const c of rawConfigs) {
     const n = normalizeConfigEntry(c, baseKeys, { customOnly });
     const id = String(n.id || '').trim();
     if (!id) continue;
     n.id = id;
     byId.set(id, n);
   }
-  if (!byId.has('default')) {
-    byId.set('default', { id: 'default', name: 'Default', order: customOnly ? [] : baseKeys.slice(), controls: {}, customButtons: [] });
-  }
-  const activeConfigId = byId.has(src.activeConfigId) ? src.activeConfigId : 'default';
+  const configs = Array.from(byId.values());
+  const preferredActiveId = asString(src.activeConfigId).trim();
+  const activeConfigId = byId.has(preferredActiveId)
+    ? preferredActiveId
+    : (configs[0] ? asString(configs[0].id).trim() : '');
   return {
     activeConfigId,
-    configs: Array.from(byId.values()),
+    configs,
   };
 }
 
@@ -303,8 +304,8 @@ function createCustomButtonDescriptor(button, actionRegistry, disableHotkeys = f
 }
 
 function applyFooterConfig(items = [], appPrefs = null, actionRegistry = new Map(), { customOnly = false } = {}) {
-  const activeConfig = getConfigById(appPrefs, appPrefs?.activeConfigId) || getConfigById(appPrefs, 'default');
-  if (!activeConfig) return items.slice();
+  const activeConfig = getConfigById(appPrefs, appPrefs?.activeConfigId) || (Array.isArray(appPrefs?.configs) ? appPrefs.configs[0] : null);
+  if (!activeConfig) return [];
 
   const disableHotkeys = !!activeConfig.hotkeysDisabled;
 
@@ -498,7 +499,7 @@ function createViewFooterControls(items = [], opts = {}) {
   const customOnly = !!(opts && opts.customOnly);
   let allFooterPrefs = {};
   const defaultAppPrefs = normalizeAppFooterPrefs(opts?.defaultPrefs || null, baseKeys, { customOnly });
-  let appPrefs = deepClone(defaultAppPrefs);
+  let appPrefs = normalizeAppFooterPrefs(null, baseKeys, { customOnly });
   // autoplay runtime state: only one autoplay allowed at a time
   let currentAutoplay = null;
 
@@ -839,18 +840,15 @@ function createViewFooterControls(items = [], opts = {}) {
 
   function readPrefs() {
     if (!settingsManager || typeof settingsManager.get !== 'function' || typeof settingsManager.set !== 'function' || typeof settingsManager.registerConsumer !== 'function') {
-      appPrefs = deepClone(defaultAppPrefs);
+      appPrefs = normalizeAppFooterPrefs(null, baseKeys, { customOnly });
       return;
     }
     try {
       allFooterPrefs = settingsManager.get(FOOTER_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
       appPrefs = normalizeAppFooterPrefs(allFooterPrefs[appId], baseKeys, { customOnly });
-      if (!allFooterPrefs || !allFooterPrefs[appId]) {
-        appPrefs = deepClone(defaultAppPrefs);
-      }
     } catch (e) {
       allFooterPrefs = {};
-      appPrefs = deepClone(defaultAppPrefs);
+      appPrefs = normalizeAppFooterPrefs(null, baseKeys, { customOnly });
     }
   }
 

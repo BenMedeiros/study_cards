@@ -16,6 +16,12 @@ export function confirmDialog({
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   danger = false,
+  // Optional save button support. When `hasSave` is true the dialog will
+  // present a Save action and the returned value will be a string: 'save',
+  // 'confirm' or 'cancel'. When false (default) the function preserves the
+  // original boolean return (true = confirmed, false = cancelled).
+  hasSave = false,
+  saveText = 'Save',
 } = {}) {
   // Close any other overlays (dropdowns, autoplay editor, etc.)
   try {
@@ -39,6 +45,10 @@ export function confirmDialog({
     });
     dialog.tabIndex = -1;
 
+    // Ensure confirm dialog appears above other overlays by using high z-index
+    try { backdrop.style.zIndex = '99999'; } catch (e) {}
+    try { dialog.style.zIndex = '100000'; } catch (e) {}
+
     const header = el('div', { className: 'confirm-header' });
     const titleEl = el('div', { className: 'confirm-title', text: String(title || '') });
     header.append(titleEl);
@@ -53,19 +63,24 @@ export function confirmDialog({
     const cancelBtn = el('button', { className: 'btn', text: String(cancelText || 'Cancel') });
     cancelBtn.type = 'button';
 
+    // Optionally include a save button (make it a primary action)
+    const saveBtn = hasSave ? el('button', { className: 'btn primary', text: String(saveText || 'Save') }) : null;
+    if (saveBtn) saveBtn.type = 'button';
+
     const confirmBtn = el('button', {
       className: `btn ${danger ? 'danger' : ''}`.trim(),
       text: String(confirmText || 'Confirm')
     });
     confirmBtn.type = 'button';
 
-    footer.append(cancelBtn, confirmBtn);
+    if (saveBtn) footer.append(cancelBtn, saveBtn, confirmBtn);
+    else footer.append(cancelBtn, confirmBtn);
 
     dialog.append(header, body, footer);
 
     let _prevActive = null;
 
-    function finish(result) {
+    function finish(resultAction) {
       if (done) return;
       done = true;
 
@@ -88,41 +103,44 @@ export function confirmDialog({
 
       try { document.removeEventListener('keydown', onKeyDown); } catch (e) {}
 
-      resolve(!!result);
+      try { console.debug('[dialog] confirmDialog close', { title, result: resultAction }); } catch (e) {}
+      // Support both boolean returns (legacy) and action strings when hasSave
+      if (hasSave) resolve(resultAction);
+      else resolve(!!resultAction);
     }
 
     function onKeyDown(e) {
       if (e.key === 'Escape') {
         e.preventDefault();
-        finish(false);
+        e.stopPropagation();
+        finish(hasSave ? 'cancel' : false);
         return;
       }
       if (e.key !== 'Tab') return;
 
+      // Trap focus inside the confirm dialog and stop propagation so parent
+      // dialogs do not also handle Tab/Escape while confirm is open.
+      e.preventDefault();
+      e.stopPropagation();
+
       const focusables = getFocusable(dialog);
-      if (!focusables.length) {
-        e.preventDefault();
-        return;
-      }
+      if (!focusables.length) return;
 
       const first = focusables[0];
       const last = focusables[focusables.length - 1];
       if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        }
+        if (document.activeElement === first) last.focus();
+        else first.focus();
       } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
+        if (document.activeElement === last) first.focus();
+        else last.focus();
       }
     }
 
-    backdrop.addEventListener('click', () => finish(false));
-    cancelBtn.addEventListener('click', () => finish(false));
-    confirmBtn.addEventListener('click', () => finish(true));
+    backdrop.addEventListener('click', () => finish(hasSave ? 'cancel' : false));
+    cancelBtn.addEventListener('click', () => finish(hasSave ? 'cancel' : false));
+    if (saveBtn) saveBtn.addEventListener('click', () => finish('save'));
+    confirmBtn.addEventListener('click', () => finish(hasSave ? 'confirm' : true));
 
     // choose mount point: prefer #shell-root, then #app, then document.body
     const mount = document.getElementById('shell-root') || document.getElementById('app') || document.body;
@@ -131,6 +149,8 @@ export function confirmDialog({
 
     mount.appendChild(backdrop);
     mount.appendChild(dialog);
+
+    try { console.debug('[dialog] confirmDialog open', { title, hasSave }); } catch (e) {}
 
     // center and show
     dialog.style.position = 'fixed';
@@ -144,8 +164,11 @@ export function confirmDialog({
         dialog.classList && dialog.classList.add('open');
       } catch (e) {}
 
-      // Focus confirm by default for quick keyboard usage
-      try { confirmBtn.focus(); } catch (e) { try { dialog.focus(); } catch (e2) {} }
+      // Focus the most likely action: Save if available, otherwise Confirm
+      try {
+        if (saveBtn) saveBtn.focus();
+        else confirmBtn.focus();
+      } catch (e) { try { dialog.focus(); } catch (e2) {} }
     });
 
     document.addEventListener('keydown', onKeyDown);

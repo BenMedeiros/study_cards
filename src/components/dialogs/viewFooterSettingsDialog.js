@@ -1,5 +1,6 @@
 import { el, safeId } from '../ui.js';
 import { openViewFooterCustomButtonDialog } from './viewFooterCustomButtonDialog.js';
+import { confirmDialog } from './confirmDialog.js';
 
 // Autoplay constraints
 const AUTOPLAY_MIN_MS = 500;
@@ -146,12 +147,11 @@ function normalizeAppPrefs(raw, baseControls, { customOnly = false } = {}) {
     byId.set(n.id, n);
   }
 
-  if (!byId.has('default')) {
-    byId.set('default', { id: 'default', name: 'Default', order: customOnly ? [] : baseKeys.slice(), controls: {}, customButtons: [], hotkeysDisabled: false });
-  }
-
   const configs = Array.from(byId.values());
-  const activeConfigId = byId.has(src.activeConfigId) ? src.activeConfigId : 'default';
+  const preferredActiveId = asString(src.activeConfigId).trim();
+  const activeConfigId = byId.has(preferredActiveId)
+    ? preferredActiveId
+    : (configs[0] ? asString(configs[0].id).trim() : '');
   return { activeConfigId, configs };
 }
 
@@ -459,7 +459,7 @@ export function openViewFooterSettingsDialog({
   }
 
   function selectedConfig() {
-    return getConfigById(prefs, selectedConfigId) || getConfigById(prefs, 'default');
+    return getConfigById(prefs, selectedConfigId) || (Array.isArray(prefs?.configs) ? prefs.configs[0] : null) || null;
   }
 
   function ensureSelectedOrder(config) {
@@ -509,10 +509,6 @@ export function openViewFooterSettingsDialog({
   function markDirty() {
     isDirty = JSON.stringify(prefs) !== JSON.stringify(savedPrefs);
     if (saveBtn) saveBtn.disabled = !isDirty;
-    try {
-      const cfg = selectedConfig();
-      if (resetBtn) resetBtn.disabled = isConfigDefault(cfg);
-    } catch (e) {}
   }
 
   function createNewConfig() {
@@ -551,21 +547,11 @@ export function openViewFooterSettingsDialog({
 
   function deleteSelectedConfig() {
     const current = selectedConfig();
-    if (!current || current.id === 'default') return;
+    if (!current) return;
     prefs.configs = prefs.configs.filter(c => c.id !== current.id);
-    prefs.activeConfigId = 'default';
-    selectedConfigId = 'default';
-    markDirty();
-  }
-
-  function resetFooterToDefault(config) {
-    if (!config) return;
-    const defaultCfg = ensureDefaultConfig(deepClone(getDefaultTemplateConfig()));
-    config.controls = {};
-    config.customButtons = customOnly ? normalizeCustomButtons(defaultCfg?.customButtons || []) : [];
-    config.order = customOnly
-      ? normalizeOrder(defaultCfg?.order || [], baseKeys, config.customButtons || [], { customOnly: true })
-      : baseKeys.slice();
+    const nextActive = (prefs.configs[0] && asString(prefs.configs[0].id).trim()) || '';
+    prefs.activeConfigId = nextActive;
+    selectedConfigId = nextActive;
     markDirty();
   }
 
@@ -719,20 +705,6 @@ export function openViewFooterSettingsDialog({
     return true;
   }
 
-  function isConfigDefault(config) {
-    if (!config) return true;
-    // no control overrides
-    if (config.controls && typeof config.controls === 'object' && Object.keys(config.controls).length > 0) return false;
-    if (Array.isArray(config.customButtons) && config.customButtons.length > 0) return false;
-    // order must exactly match base keys
-    const order = Array.isArray(config.order) ? config.order : [];
-    if (order.length !== baseKeys.length) return false;
-    for (let i = 0; i < baseKeys.length; i++) {
-      if (order[i] !== baseKeys[i]) return false;
-    }
-    return true;
-  }
-
   // Close any existing overlays first.
   try { document.dispatchEvent(new CustomEvent('ui:closeOverlays')); } catch (e) {}
 
@@ -774,11 +746,9 @@ export function openViewFooterSettingsDialog({
   const rightTop = el('div', { className: 'view-footer-editor-top' });
   const nameLabel = el('div', { className: 'hint', text: 'Config Name' });
   const nameInput = el('input', { className: 'view-footer-config-name', attrs: { type: 'text', maxlength: '64' } });
-  const resetBtn = el('button', { className: 'btn small', text: 'Reset' });
-  resetBtn.type = 'button';
   const addEmptyBtn = el('button', { className: 'btn small', text: 'Add Empty' });
   addEmptyBtn.type = 'button';
-  const addCustomBtn = el('button', { className: 'btn small', text: 'Custom Button' });
+  const addCustomBtn = el('button', { className: 'btn small', text: 'Add Button' });
   addCustomBtn.type = 'button';
   const disableHotkeysBtn = el('button', { className: 'btn small', text: 'Disable Hotkeys' });
   disableHotkeysBtn.type = 'button';
@@ -789,7 +759,7 @@ export function openViewFooterSettingsDialog({
   const expandCollapseAllBtn = el('button', { className: 'btn small', text: 'Collapse All' });
   expandCollapseAllBtn.type = 'button';
 
-  rightTop.append(nameLabel, nameInput, expandCollapseAllBtn, resetBtn, saveBtn);
+  rightTop.append(nameLabel, nameInput, expandCollapseAllBtn, saveBtn);
 
   const controlsTitle = el('div', { className: 'hint', text: 'Controls' });
   const controlsList = el('div', { className: 'view-footer-controls-editor-list' });
@@ -828,13 +798,16 @@ export function openViewFooterSettingsDialog({
     const cfg = selectedConfig();
     if (!cfg) {
       nameInput.value = '';
+      dupBtn.disabled = true;
+      delBtn.disabled = true;
       controlsList.innerHTML = '';
       return;
     }
 
     ensureSelectedOrder(cfg);
     nameInput.value = cfg.name || cfg.id;
-    delBtn.disabled = cfg.id === 'default';
+    dupBtn.disabled = false;
+    delBtn.disabled = false;
 
     controlsList.innerHTML = '';
     for (let i = 0; i < cfg.order.length; i++) {
@@ -956,30 +929,52 @@ export function openViewFooterSettingsDialog({
       fields.appendChild(autoplayWrap);
 
       if (isCustom && customBtn) {
-        const actionWrap = el('div', { className: 'view-footer-action-list' });
-        const header = el('div', { className: 'view-footer-action-row view-footer-action-row-header' });
+        const actionCount = Array.isArray(customBtn.actions) ? customBtn.actions.length : 0;
+
+        const buttonHeader = el('div', { className: 'view-footer-button-header' });
+        const iconField = el('label', { className: 'view-footer-button-header-field' });
+        iconField.append(
+          el('span', { className: 'view-footer-button-header-label', text: 'Icon' }),
+        );
+        const actionWrap = el('div', { className: 'view-footer-action-list view-footer-custom-action-list' });
+
+        const stIcon = el('input', { attrs: { type: 'text', maxlength: '8', placeholder: customBtn.icon || '' } });
+        stIcon.value = asString(customBtn.icon || '');
+        iconField.append(stIcon);
+
+        const nameField = el('label', { className: 'view-footer-button-header-field' });
+        nameField.append(
+          el('span', { className: 'view-footer-button-header-label', text: 'Name' }),
+        );
+        const stText = el('input', { attrs: { type: 'text', maxlength: '40', placeholder: customBtn.text || '' } });
+        stText.value = asString(customBtn.text || '');
+        nameField.append(stText);
+
+        const hotkeyField = el('div', { className: 'view-footer-button-header-field' });
+        hotkeyField.append(el('span', { className: 'view-footer-button-header-label', text: 'Hotkey' }));
+        const stHotkeyBtn = el('button', { className: 'btn small view-footer-hotkey-btn', text: shortcutToCaption(asString(customBtn.shortcut)) || 'Set' });
+        stHotkeyBtn.type = 'button';
+        hotkeyField.append(stHotkeyBtn);
+
+        const addActionField = el('div', { className: 'view-footer-button-header-field' });
+        addActionField.append(el('span', { className: 'view-footer-button-header-label', text: 'Actions' }));
+        const addActionBtn = el('button', { className: 'btn small view-footer-edit-btn', text: 'Add' });
+        addActionBtn.type = 'button';
+        addActionField.append(addActionBtn);
+
+        buttonHeader.append(iconField, nameField, hotkeyField, addActionField);
+        fields.appendChild(buttonHeader);
+
+        const header = el('div', { className: 'view-footer-action-row view-footer-action-row-header view-footer-custom-action-row' });
         header.append(
-          el('div', { className: 'view-footer-action-name', text: 'Action' }),
-          el('div', { className: 'view-footer-action-name', text: 'Icon' }),
-          el('div', { className: 'view-footer-action-name', text: 'Name' }),
-          el('div', { className: 'view-footer-action-name', text: 'Hotkey' }),
-          el('div', { className: 'view-footer-action-name', text: 'Fn' }),
+          el('div', { className: 'view-footer-action-name', text: 'Function' }),
+          el('div', { className: 'view-footer-action-name', text: 'Field' }),
+          el('div', { className: 'view-footer-action-name', text: 'Delay' }),
+          el('div', { className: 'view-footer-action-name', text: '↑' }),
+          el('div', { className: 'view-footer-action-name', text: '↓' }),
+          el('div', { className: 'view-footer-action-name', text: 'Remove' }),
         );
         actionWrap.appendChild(header);
-
-        const actionCount = Array.isArray(customBtn.actions) ? customBtn.actions.length : 0;
-        const stRow = el('div', { className: 'view-footer-action-row' });
-
-        const actionLabel = el('div', { className: 'view-footer-action-name', text: 'Custom Button' });
-        const stIcon = el('input', { attrs: { type: 'text', maxlength: '8', placeholder: customBtn.icon || '' } });
-        const stText = el('input', { attrs: { type: 'text', maxlength: '40', placeholder: customBtn.text || '' } });
-        const stHotkeyBtn = el('button', { className: 'btn small view-footer-hotkey-btn', text: shortcutToCaption(asString(customBtn.shortcut)) || 'Set hotkey' });
-        stHotkeyBtn.type = 'button';
-        const addActionBtn = el('button', { className: 'btn small view-footer-edit-btn', text: `Add Action${actionCount ? ` (${actionCount})` : ''}` });
-        addActionBtn.type = 'button';
-
-        stIcon.value = asString(customBtn.icon || '');
-        stText.value = asString(customBtn.text || '');
 
         stIcon.addEventListener('input', () => {
           const next = deepClone(customBtn) || {};
@@ -1024,9 +1019,6 @@ export function openViewFooterSettingsDialog({
           openCustomButtonEditor(cfg, customBtn);
         });
 
-        stRow.append(actionLabel, stIcon, stText, stHotkeyBtn, addActionBtn);
-        actionWrap.appendChild(stRow);
-
         const customActions = Array.isArray(customBtn.actions) ? customBtn.actions.slice() : [];
         for (let stepIndex = 0; stepIndex < customActions.length; stepIndex++) {
           const step = customActions[stepIndex];
@@ -1035,14 +1027,9 @@ export function openViewFooterSettingsDialog({
           if (!actionId) continue;
 
           const mapped = availableActionById.get(actionId) || null;
-          const stepRow = el('div', { className: 'view-footer-action-row' });
-          const stepTitle = el('div', { className: 'view-footer-action-name', text: asString(mapped?.text || actionId) });
-          const stepIcon = el('div', { className: 'view-footer-action-name', text: asString(mapped?.icon || '') || '—' });
-          const stepName = el('div', { className: 'view-footer-action-name', text: asString(mapped?.actionField || actionId) });
+          const stepRow = el('div', { className: 'view-footer-action-row view-footer-custom-action-row' });
 
-          const stepDelayWrap = el('div', { className: 'view-footer-hotkey-actions' });
-          stepDelayWrap.style.marginTop = '0';
-          stepDelayWrap.style.justifyContent = 'flex-start';
+          const stepDelayWrap = el('div', { className: 'view-footer-action-inline-controls' });
           const stepMinus = el('button', { className: 'btn small', text: '-' });
           stepMinus.type = 'button';
           const stepDelayValue = el('div', { className: 'view-footer-custom-delay-value', text: `${(Math.max(0, Math.round(Number(step.delayMs) || 0)) / 1000).toFixed(1)}s` });
@@ -1050,17 +1037,14 @@ export function openViewFooterSettingsDialog({
           stepPlus.type = 'button';
           stepDelayWrap.append(stepMinus, stepDelayValue, stepPlus);
 
-          const stepFnWrap = el('div', { className: 'view-footer-hotkey-actions' });
-          stepFnWrap.style.marginTop = '0';
-          stepFnWrap.style.justifyContent = 'flex-start';
+          const fnText = el('div', { className: 'view-footer-action-fn', text: asString(mapped?.fnName || actionId) });
+          const ns = el('div', { className: 'view-footer-action-field', text: asString(mapped?.actionField || '') });
           const upBtn = el('button', { className: 'btn small', text: '↑' });
           upBtn.type = 'button';
           const downBtn = el('button', { className: 'btn small', text: '↓' });
           downBtn.type = 'button';
           const removeStepBtn = el('button', { className: 'btn small danger', text: 'Remove' });
           removeStepBtn.type = 'button';
-          const fnText = el('div', { className: 'view-footer-action-fn', text: asString(mapped?.fnName || actionId) });
-          stepFnWrap.append(upBtn, downBtn, removeStepBtn, fnText);
 
           const writeCustomActions = (updater) => {
             const nextBtn = deepClone(getCustomButton(cfg, key) || customBtn) || {};
@@ -1116,18 +1100,20 @@ export function openViewFooterSettingsDialog({
             });
           });
 
-          stepRow.append(stepTitle, stepIcon, stepName, stepDelayWrap, stepFnWrap);
+          // order: Function, Field, Delay, Up, Down, Remove
+          stepRow.append(fnText, ns, stepDelayWrap, upBtn, downBtn, removeStepBtn);
           actionWrap.appendChild(stepRow);
         }
 
         if (!customActions.length) {
-          const emptyRow = el('div', { className: 'view-footer-action-row' });
+          const emptyRow = el('div', { className: 'view-footer-action-row view-footer-custom-action-row' });
           emptyRow.append(
             el('div', { className: 'view-footer-action-name', text: 'No actions yet.' }),
             el('div', { className: 'view-footer-action-name', text: '—' }),
-            el('div', { className: 'view-footer-action-name', text: 'Click Add Action' }),
             el('div', { className: 'view-footer-action-name', text: '—' }),
-            el('div', { className: 'view-footer-action-fn', text: '—' }),
+            el('div', { className: 'view-footer-action-name', text: '—' }),
+            el('div', { className: 'view-footer-action-name', text: '—' }),
+            el('div', { className: 'view-footer-action-name', text: '—' } ),
           );
           actionWrap.appendChild(emptyRow);
         }
@@ -1497,7 +1483,7 @@ export function openViewFooterSettingsDialog({
 
   delBtn.addEventListener('click', async () => {
     const cfg = selectedConfig();
-    if (!cfg || cfg.id === 'default') return;
+    if (!cfg) return;
     const ok = await openDeleteConfigConfirmDialog({ configName: cfg.name || cfg.id });
     if (!ok) return;
     deleteSelectedConfig();
@@ -1512,13 +1498,6 @@ export function openViewFooterSettingsDialog({
     cfg.name = asString(nameInput.value).trim() || cfg.id;
     markDirty();
     renderConfigList();
-  });
-
-  resetBtn.addEventListener('click', () => {
-    const cfg = selectedConfig();
-    if (!cfg) return;
-    resetFooterToDefault(cfg);
-    renderEditor();
   });
 
   addEmptyBtn.addEventListener('click', () => {
@@ -1594,7 +1573,7 @@ export function openViewFooterSettingsDialog({
   function onKeyDown(e) {
     if (e.key === 'Escape') {
       e.preventDefault();
-      close();
+      attemptClose();
       return;
     }
     if (e.key !== 'Tab') return;
@@ -1611,12 +1590,48 @@ export function openViewFooterSettingsDialog({
   }
 
   function onCloseOverlaysEvent() {
+    attemptClose();
+  }
+
+  async function attemptClose() {
+    if (closed) return;
+    if (isDirty) {
+      // Prevent confirmDialog from triggering our overlay-close handler
+      try { document.removeEventListener('ui:closeOverlays', onCloseOverlaysEvent); } catch (e) {}
+      let res = null;
+      try {
+        res = await confirmDialog({
+          title: 'Unsaved changes',
+          message: 'You have unsaved changes. Save, discard, or cancel?',
+          detail: '',
+          confirmText: 'Discard',
+          cancelText: 'Cancel',
+          saveText: 'Save',
+          hasSave: true,
+          danger: true,
+        });
+      } finally {
+        try { document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent); } catch (e) {}
+      }
+      // res is one of: 'save' | 'confirm' | 'cancel' (when hasSave)
+      if (!res || res === 'cancel') return;
+      if (res === 'save') {
+        try { emitSave(); } catch (e) {}
+        savedPrefs = deepClone(prefs);
+        markDirty();
+        close();
+        return;
+      }
+      // res === 'confirm' -> discard and close
+    }
     close();
   }
 
   function close() {
     if (closed) return;
     closed = true;
+
+    try { console.debug('[dialog] close viewFooterSettingsDialog'); } catch (e) {}
 
     try { dialog.classList.remove('open'); } catch (e) {}
     try { backdrop.classList.remove('show'); } catch (e) {}
@@ -1635,12 +1650,13 @@ export function openViewFooterSettingsDialog({
     setTimeout(finish, 220);
   }
 
-  closeBtn.addEventListener('click', close);
-  backdrop.addEventListener('click', close);
+  closeBtn.addEventListener('click', () => attemptClose());
+  backdrop.addEventListener('click', () => attemptClose());
 
   const mount = document.getElementById('shell-root') || document.getElementById('app') || document.body;
   prevFocus = document.activeElement;
   mount.append(backdrop, dialog);
+  try { console.debug('[dialog] open viewFooterSettingsDialog', { appId, selectedConfigId }); } catch (e) {}
 
   dialog.style.position = 'fixed';
   dialog.style.left = '50%';

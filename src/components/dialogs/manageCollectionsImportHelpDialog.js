@@ -78,6 +78,7 @@ export async function showManageCollectionsImportHelpDialog() {
 
     function finish() {
       if (done) return; done = true;
+      try { console.debug('[dialog] close manageCollectionsImportHelpDialog'); } catch (e) {}
       try { dialog.classList && dialog.classList.remove('open'); backdrop.classList && backdrop.classList.remove('show'); } catch (e) {}
       const cleanup = () => { try { if (dialog.parentNode) dialog.parentNode.removeChild(dialog); } catch (e) {} try { if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop); } catch (e) {} };
       try { dialog.addEventListener('transitionend', cleanup); } catch (e) {}
@@ -104,6 +105,7 @@ export async function showManageCollectionsImportHelpDialog() {
     const mount = document.getElementById('shell-root') || document.getElementById('app') || document.body;
     _prevActive = document.activeElement;
     mount.appendChild(backdrop); mount.appendChild(dialog);
+    try { console.debug('[dialog] open manageCollectionsImportHelpDialog'); } catch (e) {}
 
     dialog.style.position = 'fixed'; dialog.style.left = '50%'; dialog.style.top = '50%'; dialog.style.transform = 'translate(-50%, -50%)';
     requestAnimationFrame(() => { try { backdrop.classList && backdrop.classList.add('show'); dialog.classList && dialog.classList.add('open'); } catch (e) {} try { closeBtn.focus(); } catch (e) { try { dialog.focus(); } catch (e2) {} } });

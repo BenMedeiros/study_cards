@@ -268,9 +268,8 @@ body {
 .view-footer-settings-shell {
   margin-top: 0.7rem;
   display: grid;
-  grid-template-columns: 15rem 30rem;
+  grid-template-columns:12rem 45rem;
   gap: 0.75rem;
-  height: 60vh;
 }
 
 .view-footer-settings-left,
@@ -340,6 +339,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+  overflow-y: auto;
+  height: 24rem;
+  max-height: 24rem;
 }
 
 .view-footer-control-row {
@@ -402,7 +404,7 @@ body {
 
 @media (max-width: 900px) {
   .view-footer-action-list {
-    flex-direction: row;
+    /* flex-direction: row; */
   }
 }
 
@@ -414,15 +416,40 @@ body {
   align-items: center;
 }
 
+.view-footer-custom-action-row {
+  grid-template-columns: 18rem 7rem 8rem auto auto auto 1fr;
+}
+
+.view-footer-button-header {
+  display: grid;
+  grid-template-columns: 3rem 1fr 5rem 6rem;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.view-footer-button-header-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.view-footer-button-header-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.view-footer-button-header-field input,
+.view-footer-button-header-field button {
+  min-width: 0;
+}
+
 .view-footer-state-name,
 .view-footer-action-name {
   color: var(--muted);
   font-size: 0.82rem;
 }
 
-.view-footer-action-row-header {
-  opacity: 0.8;
-}
 
 .view-footer-action-fn {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
@@ -467,10 +494,13 @@ body {
   align-items: center;
 }
 
-.view-footer-custom-available-row {
-  grid-template-columns: 10rem 13rem 10rem;
+.view-footer-custom-available-list > * {
+  display: grid;
+  grid-template-columns: 18rem 12rem auto;
   grid-auto-flow: column;
   grid-auto-columns: 4rem;
+      gap: 0.35rem;
+    align-items: center;
 }
 
 .view-footer-custom-action-label {
@@ -483,6 +513,15 @@ body {
   text-align: center;
   color: var(--muted);
   font-size: 0.8rem;
+}
+
+.view-footer-action-inline-controls {
+  margin-top: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
 }
 
 .view-footer-hotkey-backdrop {
@@ -555,6 +594,10 @@ body {
   }
 
   .view-footer-action-row {
+    grid-template-columns: 1fr;
+  }
+
+  .view-footer-button-header {
     grid-template-columns: 1fr;
   }
 
@@ -1574,6 +1617,24 @@ input[type="number"].button::-webkit-inner-spin-button {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.5rem;
+}
+
+/* Style the optional Save button in confirm dialogs as a green primary action */
+.confirm-footer .btn.primary {
+  background-color: #28a745; /* success green */
+  border-color: #1e7e34;
+  color: #ffffff;
+}
+.confirm-footer .btn.primary:hover {
+  background-color: #2fb04f;
+}
+.confirm-footer .btn.primary:active {
+  background-color: #19692c;
+  transform: translateY(1px);
+}
+.confirm-footer .btn.primary:focus {
+  outline: 3px solid rgba(40, 167, 69, 0.22);
+  outline-offset: 2px;
 }
 
 .confirm-title {

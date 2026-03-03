@@ -151,14 +151,7 @@ export function createKanjiStudyFooterActionsController({
     }
   }
 
-  const baseControls = [
-    { key: 'prev', icon: '←', text: 'Prev', caption: '←', shortcut: 'ArrowLeft', actionKey: 'prev', fnName: 'showPrev', action: () => run.showPrev() },
-    { key: 'sound.kanji', icon: '🔊', text: 'Sound', shortcut: '', actionKey: 'sound.kanji', fnName: 'speakField', action: () => run.speakField('kanji') },
-    { key: 'sound.reading', icon: '🔊', text: 'Sound', shortcut: ' ', actionKey: 'sound.reading', fnName: 'speakField', action: () => run.speakField('reading') },
-    { key: 'learned', icon: '✅', text: 'Learned', caption: 'V', shortcut: 'v', actionKey: 'learned', fnName: 'toggleKanjiLearned', ariaPressed: false, action: runToggleLearned },
-    { key: 'practice', icon: '🎯', text: 'Practice', caption: 'X', shortcut: 'x', actionKey: 'practice', fnName: 'toggleKanjiFocus', ariaPressed: false, action: runTogglePractice },
-    { key: 'next', icon: '→', text: 'Next', caption: '→', shortcut: 'ArrowRight', actionKey: 'next', fnName: 'showNext', action: () => run.showNext() },
-  ];
+  // baseControls are provided from defaults/base; do not duplicate here
 
   function withSearchUrl(baseUrl) {
     return () => {
@@ -168,42 +161,73 @@ export function createKanjiStudyFooterActionsController({
     };
   }
 
+  // Link templates keyed by logical name. Templates are simple base URLs
+  // that will receive the encoded search term. Keeping them here makes it
+  // easier to add more link targets later or expose them to UI.
+  const LINK_TEMPLATES = {
+    'chatgpt': 'https://chat.openai.com/?q=',
+    'google.images': 'https://www.google.com/search?tbm=isch&q=',
+    'translate': 'https://translate.google.com/?sl=auto&tl=en&text=',
+    'google': 'https://www.google.com/search?q=',
+    'jisho': 'https://jisho.org/search/',
+    'wiktionary': 'https://en.wiktionary.org/wiki/',
+  };
+
   const actionDefinitions = [
-    { id: 'prev', controlKey: 'prev', text: 'Prev', fnName: 'showPrev', actionField: 'app.kanjiStudyCardView', namespace: 'app.kanjiStudyCardView', invoke: () => run.showPrev() },
-    { id: 'next', controlKey: 'next', text: 'Next', fnName: 'showNext', actionField: 'app.kanjiStudyCardView', namespace: 'app.kanjiStudyCardView', invoke: () => run.showNext() },
+    { id: 'prev', fnName: 'view.showPrev', actionField: 'app.kanjiStudyCardView', invoke: () => run.showPrev() },
+    { id: 'next', fnName: 'view.showNext', actionField: 'app.kanjiStudyCardView', invoke: () => run.showNext() },
 
-    { id: 'sound.kanji', controlKey: 'sound.kanji', text: 'Sound', fnName: 'speakField', actionField: 'entry.kanji', namespace: 'entry.kanji', invoke: () => run.speakField('kanji') },
-    { id: 'sound.lexicalClass', controlKey: 'sound.lexicalClass', text: 'Sound (lexicalClass)', fnName: 'speakField', actionField: 'entry.lexicalClass', namespace: 'entry.lexicalClass', invoke: () => run.speakField('lexicalClass') },
-    { id: 'sound.meaning', controlKey: 'sound.meaning', text: 'Sound (meaning)', fnName: 'speakField', actionField: 'entry.meaning', namespace: 'entry.meaning', invoke: () => run.speakField('meaning') },
-    { id: 'sound.orthography', controlKey: 'sound.orthography', text: 'Sound (orthography)', fnName: 'speakField', actionField: 'entry.orthography', namespace: 'entry.orthography', invoke: () => run.speakField('orthography') },
-    { id: 'sound.reading', controlKey: 'sound.reading', text: 'Sound', fnName: 'speakField', actionField: 'entry.reading', namespace: 'entry.reading', invoke: () => run.speakField('reading') },
-    { id: 'sound.type', controlKey: 'sound.type', text: 'Sound (type)', fnName: 'speakField', actionField: 'entry.type', namespace: 'entry.type', invoke: () => run.speakField('type') },
+    // Use a generic 'Sound' label for all sound actions; the specific
+    // actionField indicates which entry field will be spoken.
+    { id: 'sound.kanji', fnName: 'entry.speakField', actionField: 'entry.kanji', invoke: () => run.speakField('kanji') },
+    { id: 'sound.lexicalClass', fnName: 'entry.speakField', actionField: 'entry.lexicalClass', invoke: () => run.speakField('lexicalClass') },
+    { id: 'sound.meaning', fnName: 'entry.speakField', actionField: 'entry.meaning', invoke: () => run.speakField('meaning') },
+    { id: 'sound.orthography', fnName: 'entry.speakField', actionField: 'entry.orthography', invoke: () => run.speakField('orthography') },
+    { id: 'sound.reading', fnName: 'entry.speakField', actionField: 'entry.reading', invoke: () => run.speakField('reading') },
+    { id: 'sound.type', fnName: 'entry.speakField', actionField: 'entry.type', invoke: () => run.speakField('type') },
 
-    { id: 'learned', controlKey: 'learned', text: 'Learned', fnName: 'toggleKanjiLearned', actionField: 'manager.studyProgress', namespace: 'manager.studyProgress', invoke: runToggleLearned },
-    { id: 'practice', controlKey: 'practice', text: 'Practice', fnName: 'toggleKanjiFocus', actionField: 'manager.studyProgress', namespace: 'manager.studyProgress', invoke: runTogglePractice },
-    { id: 'setStateLearned', controlKey: 'setStateLearned', text: 'Set Learned', fnName: 'setStateLearned', actionField: 'manager.studyProgress', namespace: 'manager.studyProgress', invoke: runSetStateLearned },
-    { id: 'setStateNull', controlKey: 'setStateNull', text: 'Clear State', fnName: 'setStateNull', actionField: 'manager.studyProgress', namespace: 'manager.studyProgress', invoke: runSetStateNull },
-    { id: 'setStateFocus', controlKey: 'setStateFocus', text: 'Set Focus', fnName: 'setStateFocus', actionField: 'manager.studyProgress', namespace: 'manager.studyProgress', invoke: runSetStateFocus },
+    // Progress-related functions use a fully-qualified fnName to make it
+    // clearer where the operation is performed.
+    { id: 'learned', fnName: 'manager.studyProgress.toggleKanjiLearned', actionField: 'entry.kanji', invoke: runToggleLearned },
+    { id: 'practice', fnName: 'manager.studyProgress.toggleKanjiFocus', actionField: 'entry.kanji', invoke: runTogglePractice },
+    { id: 'setStateLearned', fnName: 'manager.studyProgress.setStateLearned', actionField: 'entry.kanji', invoke: runSetStateLearned },
+    { id: 'setStateNull', fnName: 'manager.studyProgress.setStateNull', actionField: 'entry.kanji', invoke: runSetStateNull },
+    { id: 'setStateFocus', fnName: 'manager.studyProgress.setStateFocus', actionField: 'entry.kanji', invoke: runSetStateFocus },
 
-    { id: 'link.chatgpt', controlKey: 'link.chatgpt', text: 'Link (ChatGPT)', fnName: 'linkChatGPT', actionField: 'entry.kanji', namespace: 'entry.kanji', invoke: withSearchUrl('https://chat.openai.com/?q=') },
-    { id: 'link.google.images', controlKey: 'link.google.images', text: 'Link (Google Images)', fnName: 'linkGoogleImages', actionField: 'entry.kanji', namespace: 'entry.kanji', invoke: withSearchUrl('https://www.google.com/search?tbm=isch&q=') },
+    // Generic link actions that reuse a single link-opening helper. Each
+    // definition includes a `linkKey` which maps into LINK_TEMPLATES.
+    { id: 'link.chatgpt', fnName: 'link.open[chatgpt]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['chatgpt']) },
+    { id: 'link.google.images', fnName: 'link.open[google.images]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['google.images']) },
     {
       id: 'link.translate',
-      controlKey: 'link.translate',
-      text: 'Link (Google Translate)',
-      fnName: 'linkTranslate',
+      fnName: 'link.open',
       actionField: 'entry.kanji',
-      namespace: 'entry.kanji',
+      fnName: 'link.open[translate]',
       invoke: () => {
         const term = asString(run.getSearchTerm()).trim();
         if (!term) return;
-        run.openInNewTab(`https://translate.google.com/?sl=auto&tl=en&text=${encodeURIComponent(term)}&op=translate`);
+        // translate requires a different URL form (text param + op=translate)
+        run.openInNewTab(`${LINK_TEMPLATES['translate']}${encodeURIComponent(term)}&op=translate`);
       },
     },
-    { id: 'link.google', controlKey: 'link.google', text: 'Link (Google)', fnName: 'linkGoogle', actionField: 'entry.kanji', namespace: 'entry.kanji', invoke: withSearchUrl('https://www.google.com/search?q=') },
-    { id: 'link.jisho', controlKey: 'link.jisho', text: 'Link (Jisho)', fnName: 'linkJisho', actionField: 'entry.kanji', namespace: 'entry.kanji', invoke: withSearchUrl('https://jisho.org/search/') },
-    { id: 'link.wiktionary', controlKey: 'link.wiktionary', text: 'Link (Wiktionary)', fnName: 'linkWiktionary', actionField: 'entry.kanji', namespace: 'entry.kanji', invoke: withSearchUrl('https://en.wiktionary.org/wiki/') },
+    { id: 'link.google', fnName: 'link.open[google]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['google']) },
+    { id: 'link.jisho', fnName: 'link.open[jisho]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['jisho']) },
+    { id: 'link.wiktionary', fnName: 'link.open[wiktionary]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['wiktionary']) },
   ];
+
+  // Build a minimal set of baseControls from actionDefinitions so callers
+  // that expect control descriptors (settings UI, footer builder) continue
+  // to work when base control definitions are not duplicated elsewhere.
+  const baseControls = (Array.isArray(actionDefinitions) ? actionDefinitions.map(ad => ({
+    key: String(ad.id || ad.actionId || ''),
+    text: String(ad.text || ad.id || ''),
+    icon: String(ad.icon || ''),
+    caption: String(ad.caption || ''),
+    shortcut: String(ad.shortcut || ''),
+    actionKey: String(ad.id || ad.actionId || ''),
+    fnName: String(ad.fnName || ''),
+    states: Array.isArray(ad.states) ? ad.states.slice() : [],
+  })) : []);
 
   return {
     appId: 'kanjiStudy',
