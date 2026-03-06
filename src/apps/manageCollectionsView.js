@@ -40,6 +40,27 @@ async function copyToClipboard(text) {
   }
 }
 
+function downloadTextFile({ fileName, content, mimeType = 'application/json' } = {}) {
+  try {
+    const name = String(fileName || '').trim() || 'download.json';
+    const text = String(content ?? '');
+    const blob = new Blob([text], { type: `${mimeType};charset=utf-8` });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => {
+      try { URL.revokeObjectURL(url); } catch (e) {}
+    }, 0);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function detectArrayKey(collection) {
   if (!collection || typeof collection !== 'object') return 'entries';
   for (const k of ['entries', 'sentences', 'paragraphs', 'items', 'cards']) {
@@ -440,6 +461,33 @@ export function renderManageCollections({ store, onNavigate }) {
     }
   });
   grp1.append(copyAiBtn);
+
+  const downloadSnapshotBtn = document.createElement('button');
+  downloadSnapshotBtn.type = 'button';
+  downloadSnapshotBtn.className = 'btn small';
+  downloadSnapshotBtn.textContent = '⬇ Snapshot';
+  downloadSnapshotBtn.title = 'Download snapshot JSON using current selected fields';
+  downloadSnapshotBtn.addEventListener('click', async () => {
+    try {
+      const src = (currentJsonMode === 'preview' && previewResult?.merged) ? previewResult.merged : currentCollection;
+      if (!src) { setStatus('No snapshot loaded to download.'); return; }
+
+      const filtered = buildFilteredSnapshot(src);
+      const collectionPart = String(collectionKey || 'collection')
+        .replace(/\.json$/i, '')
+        .replace(/[\\/]+/g, '_')
+        .replace(/[^a-zA-Z0-9._-]/g, '_');
+      const modePart = currentJsonMode === 'preview' ? 'preview' : 'current';
+      const fileName = `${collectionPart}.snapshot.${modePart}.json`;
+      const ok = downloadTextFile({ fileName, content: safeJsonStringify(filtered, 2), mimeType: 'application/json' });
+      if (ok) setStatus(`Downloaded snapshot JSON: ${fileName}`);
+      else setStatus('Failed to download snapshot JSON.');
+    } catch (e) {
+      setStatus('Failed to download snapshot JSON.');
+    }
+  });
+  grp1.append(downloadSnapshotBtn);
+
   // grp2 removed — per-view wrapping handled by the JSON viewer component
   // JSON fields dropdown (multi-select)
   const jsonFieldsItems = [
@@ -496,6 +544,7 @@ export function renderManageCollections({ store, onNavigate }) {
   importArea.className = 'mc-import';
   importArea.placeholder = 'Paste JSON here (full collection, entries array, metadata object, or schema array)…';
   importArea.spellcheck = false;
+  importArea.title = 'Paste JSON or drag and drop a file here';
 
   const labelInput = document.createElement('input');
   labelInput.type = 'text';
@@ -1246,6 +1295,25 @@ export function renderManageCollections({ store, onNavigate }) {
 
   function renderHistory() {
     historyMount.innerHTML = '';
+
+    function buildPatchExportPayload(rec) {
+      const targetCollectionKey = String(rec?.collectionKey || collectionKey || '').trim() || null;
+      if (rec?.kind === 'system') {
+        return { id: rec.id, kind: rec.kind, collectionKey: targetCollectionKey, label: rec.label, blob: rec.blob };
+      }
+      return { id: rec?.id, kind: rec?.kind, collectionKey: targetCollectionKey, parentId: rec?.parentId ?? null, label: rec?.label ?? null, patch: rec?.patch ?? null };
+    }
+
+    function buildPatchExportFileName(rec) {
+      const kind = String(rec?.kind || 'diff').trim() || 'diff';
+      const collectionPart = String(rec?.collectionKey || collectionKey || 'collection')
+        .replace(/\.json$/i, '')
+        .replace(/[\\/]+/g, '_')
+        .replace(/[^a-zA-Z0-9._-]/g, '_');
+      const idPart = String(rec?.id || 'revision').replace(/[^a-zA-Z0-9._-]/g, '_');
+      return `${collectionPart}.${kind}.${idPart}.json`;
+    }
+
     const rows = (Array.isArray(revisions) ? revisions.slice().reverse() : []).map(r => {
       const label = r.label || (r.kind === 'system' ? 'System base' : '');
       const active = ((r.id && activeRevisionId && r.id === activeRevisionId) || (r.kind === 'system' && !activeRevisionId)) ? 'active' : '';
@@ -1318,6 +1386,21 @@ export function renderManageCollections({ store, onNavigate }) {
         }
       },
       {
+        label: '⬇',
+        title: 'Download patch JSON for this revision',
+        className: 'btn small',
+        onClick: async (rowData, rowIndex, { tr }) => {
+          const rid = tr?.dataset?.rowId || rowData.__id;
+          const rec = (Array.isArray(revisions) ? revisions.find(x => x && x.id === rid) : null);
+          if (!rec) return;
+          const payload = buildPatchExportPayload(rec);
+          const fileName = buildPatchExportFileName(rec);
+          const ok = downloadTextFile({ fileName, content: safeJsonStringify(payload, 2), mimeType: 'application/json' });
+          if (ok) setStatus(`Downloaded patch JSON: ${fileName}`);
+          else setStatus('Failed to download patch JSON.');
+        }
+      },
+      {
         label: 'Copy Patch',
         title: 'Copy patch JSON for this revision',
         className: 'btn small',
@@ -1325,11 +1408,8 @@ export function renderManageCollections({ store, onNavigate }) {
           const rid = tr?.dataset?.rowId || rowData.__id;
           const rec = (Array.isArray(revisions) ? revisions.find(x => x && x.id === rid) : null);
           if (!rec) return;
-          if (rec.kind === 'system') {
-            await copyToClipboard(safeJsonStringify({ id: rec.id, kind: rec.kind, label: rec.label, blob: rec.blob }, 2));
-          } else {
-            await copyToClipboard(safeJsonStringify({ id: rec.id, kind: rec.kind, parentId: rec.parentId, label: rec.label, patch: rec.patch }, 2));
-          }
+          const payload = buildPatchExportPayload(rec);
+          await copyToClipboard(safeJsonStringify(payload, 2));
           setStatus('Copied patch JSON.');
         }
       }
@@ -1357,11 +1437,22 @@ export function renderManageCollections({ store, onNavigate }) {
     } catch (e) {
       revisions = [];
     }
+
+    let systemModifiedAt = '';
+    try {
+      const available = await store.collectionDB.listAvailableCollections();
+      const rows = Array.isArray(available) ? available : [];
+      const idx = rows.find(r => String(r?.key || r?.path || '').trim() === String(collectionKey || '').trim()) || null;
+      systemModifiedAt = (idx && typeof idx.modifiedAt === 'string') ? idx.modifiedAt : '';
+    } catch (e) {
+      systemModifiedAt = '';
+    }
+
     // Try to include the system/base collection as the first history item
     try {
       const sys = await store.collectionDB.getSystemCollection(collectionKey).catch(() => null);
       if (sys) {
-        const sysRec = { id: '__system__', collectionKey, kind: 'system', createdAt: '', parentId: null, label: 'System base', blob: sys, patch: null };
+        const sysRec = { id: '__system__', collectionKey, kind: 'system', createdAt: systemModifiedAt || '', parentId: null, label: 'System base', blob: sys, patch: null };
         revisions = [sysRec, ...(Array.isArray(revisions) ? revisions : [])];
       }
     } catch (e) {
@@ -1466,6 +1557,8 @@ export function renderManageCollections({ store, onNavigate }) {
     saveSnapshotBtn.style.display = 'none';
     // hold per-entry validation results here so we can attach to previewResult
     let entryValidation = null;
+    let patchSchemaDetected = false;
+    let patchTargetCollectionKey = '';
     // clear diff card bodies
     metadataBody.innerHTML = '';
     schemaBody.innerHTML = '';
@@ -1484,6 +1577,61 @@ export function renderManageCollections({ store, onNavigate }) {
         setStatus('Invalid JSON: unable to parse input after cleanup.');
         return;
       }
+
+      // Accept copied "Copy Patch" payloads by unwrapping to entries.upsert only.
+      // Supported shapes:
+      // - full revision wrapper: { id, kind, parentId, label, patch: { ... } }
+      // - raw patch object: { targetArrayKey, entryKeyField, metadata, schema, entries }
+      try {
+        const root = (parsed && typeof parsed === 'object') ? parsed : null;
+        const candidate = (root && root.patch && typeof root.patch === 'object') ? root.patch : root;
+
+        const normalizeCollectionRef = (v) => {
+          let s = String(v || '').trim();
+          if (!s) return '';
+          s = s.replace(/^\.\//, '');
+          s = s.replace(/^collections\//, '');
+          return s;
+        };
+
+        const detectedTarget = normalizeCollectionRef(
+          root?.collectionKey || root?.targetCollectionKey || root?.collection || root?.path ||
+          candidate?.collectionKey || candidate?.targetCollectionKey || candidate?.collection || candidate?.path
+        );
+
+        const looksLikePatchSchema = !!(
+          candidate &&
+          typeof candidate === 'object' &&
+          candidate.entries &&
+          typeof candidate.entries === 'object' &&
+          (
+            Array.isArray(candidate.entries.upsert) ||
+            Array.isArray(candidate.entries.upsertMinimal) ||
+            Array.isArray(candidate.entries.removeKeys)
+          ) &&
+          (
+            typeof candidate.targetArrayKey === 'string' ||
+            typeof candidate.entryKeyField === 'string' ||
+            'metadata' in candidate ||
+            'schema' in candidate
+          )
+        );
+
+        if (looksLikePatchSchema) {
+          patchTargetCollectionKey = detectedTarget;
+          const activeCollectionKey = normalizeCollectionRef(collectionKey);
+          if (patchTargetCollectionKey && activeCollectionKey && patchTargetCollectionKey !== activeCollectionKey) {
+            setStatus(`Patch schema detected. Target collection mismatch: ${patchTargetCollectionKey} (patch) vs ${activeCollectionKey} (active).`);
+            return;
+          }
+          const arrayKey = (typeof candidate.targetArrayKey === 'string' && candidate.targetArrayKey.trim())
+            ? candidate.targetArrayKey.trim()
+            : (detectArrayKey(currentCollection || {}) || 'entries');
+          const upsert = Array.isArray(candidate?.entries?.upsert) ? candidate.entries.upsert : [];
+          parsed = { [arrayKey]: upsert };
+          patchSchemaDetected = true;
+        }
+      } catch (e) {}
 
       // Disallow importing related collections for now — TODO feature
       const hasRelatedCollections = (v) => {
@@ -1639,7 +1787,8 @@ export function renderManageCollections({ store, onNavigate }) {
       renderDiffPanels();
       currentJsonMode = 'preview';
       renderJson('preview');
-      setStatus('Diff computed. Review changes, then save.');
+      if (patchSchemaDetected) setStatus('Patch schema detected. Diff computed. Review changes, then save.');
+      else setStatus('Diff computed. Review changes, then save.');
       try { metadataCard.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
     } catch (e) {
       setStatus(`Failed to diff: ${e?.message || e}`);
@@ -1698,6 +1847,74 @@ export function renderManageCollections({ store, onNavigate }) {
 
   // keep action buttons in sync as the user types
   importArea.addEventListener('input', () => updateActionButtons());
+
+  // drag-and-drop file import for the textarea
+  let importDragDepth = 0;
+  const setImportDragState = (active) => {
+    try {
+      if (active) importArea.classList.add('mc-drag-over');
+      else importArea.classList.remove('mc-drag-over');
+    } catch (e) {}
+  };
+
+  importArea.addEventListener('dragenter', (e) => {
+    try {
+      e.preventDefault();
+      importDragDepth += 1;
+      setImportDragState(true);
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+    } catch (err) {}
+  });
+
+  importArea.addEventListener('dragover', (e) => {
+    try {
+      e.preventDefault();
+      setImportDragState(true);
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+    } catch (err) {}
+  });
+
+  importArea.addEventListener('dragleave', (e) => {
+    try {
+      e.preventDefault();
+      importDragDepth = Math.max(0, importDragDepth - 1);
+      if (importDragDepth === 0) setImportDragState(false);
+    } catch (err) {}
+  });
+
+  importArea.addEventListener('drop', async (e) => {
+    try {
+      e.preventDefault();
+      importDragDepth = 0;
+      setImportDragState(false);
+      const dt = e.dataTransfer;
+      if (!dt) return;
+
+      const files = dt.files;
+      if (files && files.length) {
+        const file = files[0];
+        if (!file) return;
+        const text = await file.text();
+        importArea.value = String(text || '');
+        try { importArea.focus(); } catch (err) {}
+        setStatus(`Loaded file into import box: ${file.name || 'file'}`);
+        updateActionButtons();
+        return;
+      }
+
+      const txt = dt.getData('text/plain');
+      if (typeof txt === 'string' && txt.trim()) {
+        importArea.value = txt;
+        try { importArea.focus(); } catch (err) {}
+        setStatus('Loaded dropped text into import box.');
+        updateActionButtons();
+      }
+    } catch (err) {
+      importDragDepth = 0;
+      setImportDragState(false);
+      setStatus(`Failed to load dropped file: ${err?.message || err}`);
+    }
+  });
 
   // initialize action button states
   updateActionButtons();

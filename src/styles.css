@@ -2940,6 +2940,14 @@ select:hover {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 0.88rem;
   line-height: 1.45;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+#manage-collections-root .mc-import.mc-drag-over {
+  border-color: rgba(96, 165, 250, 0.75);
+  background: rgba(96, 165, 250, 0.10);
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.18);
+  cursor: copy;
 }
 
 #manage-collections-root .mc-label-input {

@@ -43,6 +43,35 @@ function _safeClone(v) {
   try { return JSON.parse(JSON.stringify(v)); } catch { return null; }
 }
 
+function _normalizeFetchHistory(history) {
+  const arr = Array.isArray(history) ? history : [];
+  const out = [];
+  for (const item of arr) {
+    if (!item || typeof item !== 'object') continue;
+    out.push({
+      entries: (typeof item.entries === 'number') ? item.entries : null,
+      modifiedAt: (typeof item.modifiedAt === 'string') ? item.modifiedAt : null,
+      fetchedAt: (typeof item.fetchedAt === 'string') ? item.fetchedAt : null,
+      fetchedSizeBytes: (typeof item.fetchedSizeBytes === 'number') ? item.fetchedSizeBytes : null,
+    });
+  }
+  return out;
+}
+
+function _appendFetchHistory(history, row, { limit = 100 } = {}) {
+  const base = _normalizeFetchHistory(history);
+  const item = {
+    entries: (typeof row?.entries === 'number') ? row.entries : null,
+    modifiedAt: (typeof row?.modifiedAt === 'string') ? row.modifiedAt : null,
+    fetchedAt: (typeof row?.fetchedAt === 'string') ? row.fetchedAt : null,
+    fetchedSizeBytes: (typeof row?.fetchedSizeBytes === 'number') ? row.fetchedSizeBytes : null,
+  };
+  if (!item.fetchedAt) return base;
+  base.push(item);
+  if (base.length > limit) return base.slice(base.length - limit);
+  return base;
+}
+
 function normalizeRelatedCollectionsConfig(v) {
   const arr = Array.isArray(v) ? v : [];
   const out = [];
@@ -339,7 +368,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
   }
 
   // initialize: load ./collections/index.json (preferred), build folderMetadataMap,
-  // persist lightweight index to IDB while preserving existing fetchedAt/fetchedSizeBytes.
+  // persist lightweight index to IDB while preserving existing fetchedAt/fetchedSizeBytes/fetchHistory.
   async function initialize() {
     return timed('collectionDB.initialize', async () => {
       logger('initialize: loading collections/index.json');
@@ -357,6 +386,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
         // normalize any legacy sizeBytes -> fetchedSizeBytes
         for (const [k, v] of availableIndexMap.entries()) {
           if (v && v.sizeBytes != null && v.fetchedSizeBytes == null) v.fetchedSizeBytes = v.sizeBytes;
+          if (v && v.fetchHistory == null) v.fetchHistory = [];
         }
 
         // Merge in user-defined collection keys so they appear in the UI.
@@ -401,7 +431,8 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
           const existing = await idbGet('system_collections_index', r.key).catch(() => null);
           const fetchedAt = existing?.fetchedAt ?? null;
           const fetchedSizeBytes = (existing && (existing.fetchedSizeBytes ?? existing.sizeBytes)) ?? null;
-          await idbPut('system_collections_index', { key: r.key, name: r.name, description: r.description, entries: r.entries, modifiedAt: r.modifiedAt || null, fetchedAt, fetchedSizeBytes });
+          const fetchHistory = _normalizeFetchHistory(existing?.fetchHistory);
+          await idbPut('system_collections_index', { key: r.key, name: r.name, description: r.description, entries: r.entries, modifiedAt: r.modifiedAt || null, fetchedAt, fetchedSizeBytes, fetchHistory });
         } catch (e) {
           logger('initialize: idbPut index failed', e?.message || e);
         }
@@ -441,6 +472,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
     const rows = await idbGetAll('system_collections_index').catch(() => []);
     for (const r of rows) {
       if (r && r.sizeBytes != null && r.fetchedSizeBytes == null) r.fetchedSizeBytes = r.sizeBytes;
+      if (r && r.fetchHistory == null) r.fetchHistory = [];
       availableIndexMap.set(r.key, r);
     }
 
@@ -573,7 +605,16 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
         await idbPut('system_collections', toStore);
         // update index fetchedAt and fetchedSizeBytes
         try {
-          await idbPut('system_collections_index', { key, name: idx?.name || null, description: idx?.description || null, entries: idx?.entries ?? null, modifiedAt, fetchedAt: now, fetchedSizeBytes });
+          const prevFetchHistory = _normalizeFetchHistory(idx?.fetchHistory);
+          const fetchHistory = _appendFetchHistory(prevFetchHistory, {
+            entries: idx?.entries ?? null,
+            modifiedAt,
+            fetchedAt: now,
+            fetchedSizeBytes,
+          });
+          const indexRow = { key, name: idx?.name || null, description: idx?.description || null, entries: idx?.entries ?? null, modifiedAt, fetchedAt: now, fetchedSizeBytes, fetchHistory };
+          await idbPut('system_collections_index', indexRow);
+          try { availableIndexMap.set(key, indexRow); } catch (e) {}
         } catch (e) {
           logger('getCollection: updating index failed', e?.message || e);
         }

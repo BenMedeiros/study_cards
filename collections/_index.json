@@ -40,10 +40,10 @@
     },
     {
       "path": "japanese/japanese_sentences.json",
-      "modifiedAt": "2026-02-28T03:51:26.885Z",
+      "modifiedAt": "2026-03-06T15:47:35.657Z",
       "name": "Japanese Sentences",
       "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
-      "entriesCount": 135,
+      "entriesCount": 138,
       "valid": true,
       "validation": {
         "schema": {
@@ -63,7 +63,7 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-02-27T18:18:53.904Z",
+      "modifiedAt": "2026-03-06T15:28:33.531Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
       "entriesCount": 1642,
