@@ -834,8 +834,9 @@ export function openViewFooterSettingsDialog({
 
       const visibility = el('input', { attrs: { type: 'checkbox' } });
       visibility.checked = !override.hidden;
-      const visibilityLabel = el('label', { className: 'view-footer-visible-label', text: 'Show' });
-      visibilityLabel.prepend(visibility);
+      const visibilityLabel = el('label', { className: 'view-footer-visible-label' });
+      const visibilityText = el('span', { className: 'view-footer-visible-text', text: 'Show' });
+      visibilityLabel.append(visibility, visibilityText);
 
       const keyBadge = el('div', { className: 'view-footer-control-key', text: isCustom ? asString(customBtn?.text || 'Custom') : key });
       const moveUp = el('button', { className: 'btn small', text: '↑' });
