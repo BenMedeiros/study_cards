@@ -1,6 +1,7 @@
 // Factory for creating a Kanji related-item card element with internal carousel controls.
 // Uses existing CSS classes defined in src/styles.css.
 import { settingsLog } from '../managers/settingsManager.js';
+import { speak, getLanguageCode } from '../utils/speech.js';
 
 export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {} } = {}) {
   settingsLog('[Card:Related] createKanjiRelatedCard()', { entry });
@@ -51,13 +52,39 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   controls.append(prevBtn, counter, nextBtn);
   header.append(label, controls, speakWrapper);
 
-  const jpText = document.createElement('div');
-  jpText.className = 'kanji-related-text kanji-related-jp';
-
   const placeholder = document.createElement('div');
   placeholder.className = 'hint kanji-related-empty';
   placeholder.style.marginTop = '0.5rem';
   placeholder.textContent = 'No related items.';
+
+  const sentenceBtn = document.createElement('button');
+  sentenceBtn.type = 'button';
+  sentenceBtn.className = 'kanji-related-text kanji-related-jp';
+  sentenceBtn.style.margin = '0.5rem 0 0';
+  sentenceBtn.style.padding = '0';
+  sentenceBtn.style.border = 'none';
+  sentenceBtn.style.background = 'transparent';
+  sentenceBtn.style.cursor = 'pointer';
+  sentenceBtn.style.textAlign = 'left';
+  sentenceBtn.title = 'Show sentence chunks';
+
+  const chunksPanel = document.createElement('div');
+  chunksPanel.style.marginTop = '0.75rem';
+  chunksPanel.style.display = 'none';
+  chunksPanel.style.borderLeft = '3px solid var(--line)';
+  chunksPanel.style.paddingLeft = '0.75rem';
+
+  const chunksHeader = document.createElement('div');
+  chunksHeader.className = 'kanji-related-label';
+  chunksHeader.textContent = 'Chunks';
+
+  const chunksList = document.createElement('div');
+  chunksList.style.display = 'flex';
+  chunksList.style.flexDirection = 'column';
+  chunksList.style.gap = '0.5rem';
+  chunksList.style.marginTop = '0.5rem';
+
+  chunksPanel.append(chunksHeader, chunksList);
 
   const enLabel = document.createElement('div');
   enLabel.className = 'kanji-related-label';
@@ -67,6 +94,8 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   const enText = document.createElement('div');
   enText.className = 'kanji-related-text kanji-related-en';
   enText.style.fontSize = '1rem';
+  enText.style.color = 'var(--text)';
+  enText.style.opacity = '0.9';
 
   const notesLabel = document.createElement('div');
   notesLabel.className = 'kanji-related-label';
@@ -76,22 +105,20 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   const notesList = document.createElement('ul');
   notesList.className = 'kanji-related-notes';
 
-  root.append(header, placeholder, jpText, enLabel, enText, notesLabel, notesList);
+  root.append(
+    header,
+    placeholder,
+    sentenceBtn,
+    chunksPanel,
+    enLabel,
+    enText,
+    notesLabel,
+    notesList
+  );
 
   let currentIndex = 0;
-  // Only accept `entry` as the source of truth for related items.
-  function extractSentencesFromEntry(ent) {
-    if (!ent || typeof ent !== 'object') return [];
-    // Prefer collection-specific related data if present, then legacy containers
-    settingsLog('[Card:Related] extractSentencesFromEntry(): keys', Object.keys(ent || {}));
-    if (Array.isArray(ent.relatedCollections?.sentences)) {
-      settingsLog('[Card:Related] using relatedCollections.sentences', ent.relatedCollections.sentences.length);
-      return ent.relatedCollections.sentences.slice();
-    }
-    return [];
-  }
-
-  let listItems = extractSentencesFromEntry(entry);
+  let showChunks = false;
+  let selectedChunkIndex = -1;
 
   function firstDefinedString(obj, keys = []) {
     if (!obj || typeof obj !== 'object') return '';
@@ -102,7 +129,20 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
     return '';
   }
 
-  function renderControls() {
+  function extractSentencesFromEntry(ent) {
+    if (!ent || typeof ent !== 'object') return [];
+    if (Array.isArray(ent.relatedCollections?.sentences)) return ent.relatedCollections.sentences.slice();
+    const hasSentenceFields = firstDefinedString(ent, [...primaryKeys, ...secondaryKeys, 'sentence']) || Array.isArray(ent?.chunks);
+    if (hasSentenceFields) return [ent];
+    return [];
+  }
+
+  function getCurrentItem() {
+    const listItems = extractSentencesFromEntry(entry);
+    return { listItems, item: listItems[currentIndex] || null };
+  }
+
+  function renderControls(listItems) {
     const count = listItems.length;
     counter.textContent = count ? `${currentIndex + 1} / ${count}` : '';
     prevBtn.style.display = count > 1 ? '' : 'none';
@@ -110,108 +150,221 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
     counter.style.display = count ? '' : 'none';
   }
 
-  // Standard API: accept `entry` and derive sentences from entry.relatedCollections.sentences
   function setEntry(newEntry) {
     settingsLog('[Card:Related] setEntry()', newEntry);
     entry = newEntry || null;
-    listItems = extractSentencesFromEntry(entry);
-    settingsLog('[Card:Related] setEntry => listItems.length', Array.isArray(listItems) ? listItems.length : 0, listItems && listItems[0]);
     currentIndex = 0;
+    showChunks = false;
+    selectedChunkIndex = -1;
     render();
   }
 
-  // Internal DOM update helper (no debug) so callers can avoid emitting a separate
-  // `render` debug line when they're already logging an action like `setEntry`.
-  function updateDisplay() {
-    renderControls();
-    const s = listItems[currentIndex] || null;
-    // sentence object can be string or { jp, en, notes }
-    let jp = '', en = '', notes = [];
-    if (s) {
-      if (typeof s === 'string') jp = s;
-      else {
-        jp = firstDefinedString(s, primaryKeys);
-        en = firstDefinedString(s, secondaryKeys);
-        notes = Array.isArray(s.notes) ? s.notes : (s.note ? [s.note] : []);
-      }
+  function renderChunkList(chunks = []) {
+    chunksList.innerHTML = '';
+    if (!Array.isArray(chunks) || !chunks.length) {
+      const empty = document.createElement('div');
+      empty.className = 'kanji-related-label';
+      empty.textContent = 'No chunks available for this sentence.';
+      chunksList.appendChild(empty);
+      return;
     }
-    // fallback to entry-level fields when available
-    if (!jp) jp = firstDefinedString(entry, ['sentence', 'jp', 'ja', 'japanese', 'text']);
-    if (!en) en = firstDefinedString(entry, ['english', 'en', 'translation']);
-    const hasContent = !!(jp || en || (Array.isArray(notes) && notes.length));
 
-    if (!hasContent && (!Array.isArray(listItems) || listItems.length === 0)) {
-      // No related data and no fallback content: show only header + placeholder for consistency.
-      settingsLog('[Card:Related] updateDisplay(): no content; listItems.length=', Array.isArray(listItems) ? listItems.length : 0);
+    if (selectedChunkIndex < 0 || selectedChunkIndex >= chunks.length) {
+      selectedChunkIndex = 0;
+    }
+
+    chunks.forEach((chunk, i) => {
+      const row = document.createElement('div');
+      row.style.border = '1px solid var(--line)';
+      row.style.borderRadius = '8px';
+      row.style.padding = '0.5rem 0.65rem';
+      row.style.background = i === selectedChunkIndex ? 'var(--panel)' : 'transparent';
+      row.style.borderLeft = i === selectedChunkIndex ? '4px solid var(--accent)' : '4px solid transparent';
+
+      const chunkBtn = document.createElement('button');
+      chunkBtn.type = 'button';
+      chunkBtn.style.width = '100%';
+      chunkBtn.style.textAlign = 'left';
+      chunkBtn.style.border = 'none';
+      chunkBtn.style.background = 'transparent';
+      chunkBtn.style.padding = '0';
+      chunkBtn.style.cursor = 'pointer';
+      chunkBtn.title = 'Show chunk details';
+
+      const chunkTop = document.createElement('div');
+      chunkTop.style.display = 'flex';
+      chunkTop.style.alignItems = 'center';
+      chunkTop.style.justifyContent = 'space-between';
+      chunkTop.style.gap = '0.5rem';
+
+      const ja = document.createElement('div');
+      ja.className = 'kanji-related-text';
+      ja.style.fontSize = '1rem';
+      ja.style.flex = '1';
+      ja.textContent = String(chunk?.ja || '');
+
+      const chunkSpeakBtn = document.createElement('button');
+      chunkSpeakBtn.type = 'button';
+      chunkSpeakBtn.className = 'icon-button';
+      chunkSpeakBtn.title = 'Listen to this chunk';
+      chunkSpeakBtn.textContent = '🔊';
+
+      chunkSpeakBtn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const text = String(chunk?.ja || '').trim();
+        if (!text) return;
+        if (handlers.onSpeak) handlers.onSpeak(text, { index: currentIndex, chunkIndex: i, entry });
+        else speak(text, getLanguageCode('reading'));
+      });
+
+      const gloss = document.createElement('div');
+      gloss.className = 'kanji-related-label';
+      gloss.style.marginTop = '0.25rem';
+      gloss.style.color = 'var(--text)';
+      gloss.style.opacity = '0.85';
+      gloss.style.fontSize = '0.95rem';
+      gloss.textContent = String(chunk?.gloss || '');
+
+      chunkTop.append(ja, chunkSpeakBtn);
+      chunkBtn.append(chunkTop, gloss);
+      row.appendChild(chunkBtn);
+
+      if (i === selectedChunkIndex) {
+        if (chunk?.focus) {
+          const focus = document.createElement('div');
+          focus.className = 'kanji-related-label';
+          focus.style.marginTop = '0.4rem';
+          focus.textContent = `Focus: ${chunk.focus}`;
+          row.appendChild(focus);
+        }
+        if (Array.isArray(chunk?.refs) && chunk.refs.length) {
+          const refs = document.createElement('div');
+          refs.className = 'kanji-related-label';
+          refs.style.marginTop = '0.25rem';
+          refs.textContent = `Refs: ${chunk.refs.map((v) => String(v)).join(', ')}`;
+          row.appendChild(refs);
+        }
+      }
+
+      chunkBtn.addEventListener('click', () => {
+        selectedChunkIndex = i;
+        render();
+      });
+      chunksList.appendChild(row);
+    });
+  }
+
+  function updateDisplay() {
+    const { listItems, item } = getCurrentItem();
+    renderControls(listItems);
+
+    let jp = '';
+    let en = '';
+    let notes = [];
+    let chunks = [];
+    if (item && typeof item === 'object') {
+      jp = firstDefinedString(item, primaryKeys);
+      en = firstDefinedString(item, secondaryKeys);
+      notes = Array.isArray(item.notes) ? item.notes : (item.note ? [item.note] : []);
+      chunks = Array.isArray(item.chunks) ? item.chunks : [];
+    } else if (typeof item === 'string') {
+      jp = item;
+    }
+
+    const hasContent = !!(jp || en || notes.length || chunks.length);
+    if (!hasContent) {
       placeholder.style.display = '';
-      jpText.style.display = 'none';
+      sentenceBtn.style.display = 'none';
+      chunksPanel.style.display = 'none';
       enLabel.style.display = 'none';
       enText.style.display = 'none';
       notesLabel.style.display = 'none';
       notesList.style.display = 'none';
-    } else {
-      // Show the content areas and populate them. Hide placeholder.
-      placeholder.style.display = 'none';
-      jpText.style.display = '';
-      enLabel.style.display = '';
-      enText.style.display = '';
+      return;
+    }
+
+    placeholder.style.display = 'none';
+    sentenceBtn.style.display = jp ? '' : 'none';
+    sentenceBtn.textContent = jp;
+    sentenceBtn.setAttribute('aria-expanded', showChunks ? 'true' : 'false');
+    chunksPanel.style.display = showChunks && chunks.length ? '' : 'none';
+    if (showChunks && chunks.length) renderChunkList(chunks);
+
+    enLabel.style.display = en ? '' : 'none';
+    enText.style.display = en ? '' : 'none';
+    enText.textContent = en;
+
+    notesList.innerHTML = '';
+    if (notes.length) {
       notesLabel.style.display = '';
       notesList.style.display = '';
-
-      jpText.textContent = jp;
-      enText.textContent = en;
-
-      // rebuild notes
-      notesList.innerHTML = '';
-      if (Array.isArray(notes) && notes.length) {
-        for (const n of notes) {
-          const li = document.createElement('li');
-          li.textContent = String(n);
-          notesList.appendChild(li);
-        }
+      for (const n of notes) {
+        const li = document.createElement('li');
+        li.textContent = String(n);
+        notesList.appendChild(li);
       }
+    } else {
+      notesLabel.style.display = 'none';
+      notesList.style.display = 'none';
     }
   }
 
   function render() {
-    settingsLog('[Card:Related] render()', { currentIndex, listItemsLength: Array.isArray(listItems) ? listItems.length : 0, entrySample: entry ? (entry.sentence || entry.jp || entry.japanese || entry.text) : null });
+    settingsLog('[Card:Related] render()', { currentIndex, hasEntry: !!entry });
     updateDisplay();
   }
 
   prevBtn.addEventListener('click', (ev) => {
     ev.preventDefault();
-    if (!listItems.length) return;
-    currentIndex = (currentIndex - 1 + listItems.length) % listItems.length;
+    const items = extractSentencesFromEntry(entry);
+    if (!items.length) return;
+    currentIndex = (currentIndex - 1 + items.length) % items.length;
+    showChunks = false;
+    selectedChunkIndex = -1;
     render();
     handlers.onPrev && handlers.onPrev(currentIndex);
   });
 
   nextBtn.addEventListener('click', (ev) => {
     ev.preventDefault();
-    if (!listItems.length) return;
-    currentIndex = (currentIndex + 1) % listItems.length;
+    const items = extractSentencesFromEntry(entry);
+    if (!items.length) return;
+    currentIndex = (currentIndex + 1) % items.length;
+    showChunks = false;
+    selectedChunkIndex = -1;
     render();
     handlers.onNext && handlers.onNext(currentIndex);
   });
 
+  sentenceBtn.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    const { item } = getCurrentItem();
+    const chunks = Array.isArray(item?.chunks) ? item.chunks : [];
+    if (!chunks.length) return;
+    showChunks = !showChunks;
+    if (showChunks && selectedChunkIndex < 0) selectedChunkIndex = 0;
+    render();
+  });
+
   speakBtn.addEventListener('click', (ev) => {
     ev.preventDefault();
-    const cur = listItems[currentIndex] || {};
+    const { item } = getCurrentItem();
     let text = '';
-    if (typeof cur === 'string') text = cur;
-    else {
-      text = firstDefinedString(cur, primaryKeys);
-    }
-    // fallback to entry-level sentence if individual item lacks JP text
-    if (!text) text = (entry && (entry.sentence || entry.jp || entry.japanese || entry.text)) || '';
+    if (typeof item === 'string') text = item;
+    else text = firstDefinedString(item, primaryKeys);
+    if (!text) text = (entry && (entry.sentence || entry.jp || entry.japanese || entry.text || entry.ja)) || '';
+    if (!text) return;
     if (handlers.onSpeak) handlers.onSpeak(text, { index: currentIndex, entry });
+    else speak(text, getLanguageCode('reading'));
   });
 
   function update(newEntry) {
-    settingsLog('[Card:Related] update()', { newEntrySample: newEntry ? (newEntry.sentence || newEntry.jp || newEntry.japanese || newEntry.text) : null });
+    settingsLog('[Card:Related] update()', { hasEntry: !!newEntry });
     if (newEntry) entry = newEntry;
-    listItems = extractSentencesFromEntry(entry);
     currentIndex = 0;
+    showChunks = false;
+    selectedChunkIndex = -1;
     render();
   }
 
@@ -226,11 +379,12 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   // Generic field visibility API
   function setFieldVisible(field, visible) {
     const v = !!visible;
-    const f = String(field || '').trim();
+    const f = String(field || '').trim().toLowerCase();
     if (!f) return;
     if (f === 'english') enText.style.visibility = v ? '' : 'hidden';
-    else if (f === 'japanese') jpText.style.visibility = v ? '' : 'hidden';
+    else if (f === 'japanese') sentenceBtn.style.visibility = v ? '' : 'hidden';
     else if (f === 'notes') notesList.style.visibility = v ? '' : 'hidden';
+    else if (f === 'chunks') chunksPanel.style.visibility = v ? '' : 'hidden';
   }
 
   function setFieldsVisible(map) {
@@ -238,7 +392,6 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
     for (const k of Object.keys(map)) setFieldVisible(k, !!map[k]);
   }
 
-  // initialize from `entry`
   setEntry(entry);
   render();
 
