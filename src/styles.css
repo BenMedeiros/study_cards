@@ -268,6 +268,7 @@ body {
   right: 0.55rem;
 }
 
+
 .view-footer-settings-title {
   font-size: 1.05rem;
   font-weight: 750;
@@ -322,6 +323,13 @@ body {
 .view-footer-editor-controls {
   display: grid;
   gap: 0.5rem;
+}
+
+.view-footer-editor-top .btn.small.primary:not(:disabled) {
+  background-color: #28a745;
+  /* success green */
+  border-color: #1e7e34;
+  color: #ffffff;
 }
 
 @media (max-width: 900px) {
@@ -532,6 +540,46 @@ body {
   font-size: 0.85rem;
 }
 
+.view-footer-custom-group-dropdown {
+  width: 100%;
+  min-width: 10rem;
+}
+
+.view-footer-custom-group-dropdown .custom-dropdown-button {
+  width: 100%;
+  font-size: 0.82rem;
+  border-radius: 0.5rem;
+}
+
+.view-footer-custom-group-dropdown .custom-dropdown-menu {
+  min-width: 12rem;
+}
+
+.view-footer-icon-dropdown {
+  min-width: 3.2rem;
+}
+
+.view-footer-icon-dropdown .custom-dropdown-button {
+  min-width: 3.2rem;
+  width: 100%;
+  text-align: center;
+  padding-left: 0.45rem;
+  padding-right: 1.5rem;
+  font-size: 1rem;
+}
+
+.view-footer-icon-dropdown .custom-dropdown-menu {
+  min-width: 3.2rem;
+}
+
+.view-footer-icon-option {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
 .view-footer-custom-delay-value {
   min-width: 3.3rem;
   text-align: center;
@@ -622,7 +670,7 @@ body {
   }
 
   .view-footer-button-header {
-    grid-template-columns: 2rem 1fr 3rem 3rem;
+    grid-template-columns: 3rem 1fr 3rem 3rem;
   }
 
   .view-footer-action-row.view-footer-custom-action-row {
@@ -3227,3 +3275,9 @@ select:hover {
   outline: 3px solid rgba(40, 167, 69, 0.22);
   outline-offset: 2px;
 }
+
+
+
+
+
+

@@ -1,6 +1,7 @@
 import { el, safeId } from '../ui.js';
 import { openViewFooterCustomButtonDialog } from './viewFooterCustomButtonDialog.js';
 import { confirmDialog } from './confirmDialog.js';
+import { createDropdown } from '../dropdown.js';
 
 // Autoplay constraints
 const AUTOPLAY_MIN_MS = 500;
@@ -21,6 +22,53 @@ function asString(v) {
   return (v == null) ? '' : String(v);
 }
 
+const COMMON_ICON_CHOICES = [
+  { value: '', label: '—', title: '(none)' },
+  { value: '🔊', label: '🔊', title: 'speaker' },
+  { value: '🎯', label: '🎯', title: 'target' },
+  { value: '✅', label: '✅', title: 'check' },
+  { value: '→', label: '→', title: 'next' },
+  { value: '←', label: '←', title: 'prev' },
+  { value: '🔍', label: '🔍', title: 'search' },
+  { value: '📘', label: '📘', title: 'book' },
+  { value: '⭐', label: '⭐', title: 'star' },
+  { value: '🧠', label: '🧠', title: 'brain' },
+  { value: '📝', label: '📝', title: 'notes' },
+  { value: '🧹', label: '🧹', title: 'clear' },
+  { value: '⚙️', label: '⚙️', title: 'settings' },
+  { value: '➕', label: '➕', title: 'add' },
+  { value: '➖', label: '➖', title: 'remove' },
+];
+
+function createIconDropdown({ value = '', onChange } = {}) {
+  const current = asString(value).trim();
+  const baseItems = COMMON_ICON_CHOICES.map(it => ({ ...it }));
+  if (current && !baseItems.some(it => asString(it.value) === current)) {
+    baseItems.unshift({ value: current, label: current, title: 'custom' });
+  }
+
+  return createDropdown({
+    items: baseItems,
+    value: current,
+    className: 'view-footer-icon-dropdown',
+    closeOverlaysOnOpen: false,
+    portalZIndex: 1400,
+    getButtonLabel: ({ selectedItem }) => {
+      const icon = asString(selectedItem?.value).trim();
+      return icon || '—';
+    },
+    renderOption: ({ item }) => {
+      const node = el('span', { text: asString(item?.label || '—') });
+      node.className = 'view-footer-icon-option';
+      const title = asString(item?.title || '');
+      if (title) node.title = title;
+      return node;
+    },
+    onChange: (nextVal) => {
+      if (typeof onChange === 'function') onChange(asString(nextVal).trim());
+    },
+  });
+}
 function isCustomToken(key) {
   return typeof key === 'string' && (key.startsWith('__custom:') || key.startsWith('_custom:'));
 }
@@ -754,7 +802,7 @@ export function openViewFooterSettingsDialog({
   addCustomBtn.type = 'button';
   const disableHotkeysBtn = el('button', { className: 'btn small', text: 'Disable Hotkeys' });
   disableHotkeysBtn.type = 'button';
-  const saveBtn = el('button', { className: 'btn small', text: 'Save' });
+  const saveBtn = el('button', { className: 'btn small primary', text: 'Save' });
   saveBtn.type = 'button';
   saveBtn.disabled = true;
 
@@ -941,8 +989,16 @@ export function openViewFooterSettingsDialog({
         );
         const actionWrap = el('div', { className: 'view-footer-action-list view-footer-custom-action-list' });
 
-        const stIcon = el('input', { attrs: { type: 'text', maxlength: '8', placeholder: customBtn.icon || '' } });
-        stIcon.value = asString(customBtn.icon || '');
+        const stIcon = createIconDropdown({
+          value: asString(customBtn.icon || ''),
+          onChange: (iconValue) => {
+            const next = deepClone(customBtn) || {};
+            if (!iconValue) delete next.icon; else next.icon = iconValue;
+            upsertCustomButton(cfg, next);
+            markDirty();
+            try { resetControlBtn.disabled = isControlDefault(cfg, key); } catch (e) {}
+          },
+        });
         iconField.append(stIcon);
 
         const nameField = el('label', { className: 'view-footer-button-header-field' });
@@ -978,16 +1034,6 @@ export function openViewFooterSettingsDialog({
           el('div', { className: 'view-footer-action-name', text: 'Remove' }),
         );
         actionWrap.appendChild(header);
-
-        stIcon.addEventListener('input', () => {
-          const next = deepClone(customBtn) || {};
-          const v = asString(stIcon.value).trim();
-          if (!v) delete next.icon; else next.icon = v;
-          upsertCustomButton(cfg, next);
-          markDirty();
-          try { resetControlBtn.disabled = isControlDefault(cfg, key); } catch (e) {}
-        });
-
         stText.addEventListener('input', () => {
           const next = deepClone(customBtn) || {};
           const v = asString(stText.value).trim();
@@ -1205,24 +1251,23 @@ export function openViewFooterSettingsDialog({
           const meta = buildControlActionDisplay(base);
           const stRow = el('div', { className: 'view-footer-action-row' });
           const stTitle = el('div', { className: 'view-footer-action-name', text: meta.title });
-          const stIcon = el('input', { attrs: { type: 'text', maxlength: '8', placeholder: meta.icon } });
+          const stIcon = createIconDropdown({
+            value: asString(override.icon || ''),
+            onChange: (iconValue) => {
+              const next = { ...getControlOverride(cfg, key) };
+              if (!iconValue) delete next.icon;
+              else next.icon = iconValue;
+              setControlOverride(cfg, key, next);
+              markDirty();
+              try { resetControlBtn.disabled = isCustom ? false : isControlDefault(cfg, key); } catch (e) {}
+            },
+          });
           const stText = el('input', { attrs: { type: 'text', maxlength: '40', placeholder: meta.text } });
           const stHotkeyBtn = el('button', { className: 'btn small view-footer-hotkey-btn', text: shortcutToCaption(resolveShortcut(base, override)) || 'Set hotkey' });
           stHotkeyBtn.type = 'button';
           const fnLabel = el('div', { className: 'view-footer-action-fn', text: meta.fnName || '-' });
 
-          stIcon.value = asString(override.icon || '');
           stText.value = asString(override.text || '');
-
-          stIcon.addEventListener('input', () => {
-            const next = { ...getControlOverride(cfg, key) };
-            const v = asString(stIcon.value).trim();
-            if (!v) delete next.icon;
-            else next.icon = v;
-            setControlOverride(cfg, key, next);
-            markDirty();
-            try { resetControlBtn.disabled = isCustom ? false : isControlDefault(cfg, key); } catch (e) {}
-          });
 
           stText.addEventListener('input', () => {
             const next = { ...getControlOverride(cfg, key) };
@@ -1263,18 +1308,31 @@ export function openViewFooterSettingsDialog({
             const meta = buildStateActionDisplay(base, st);
             const stRow = el('div', { className: 'view-footer-action-row' });
             const stTitle = el('div', { className: 'view-footer-action-name', text: meta.title });
-            const stIcon = el('input', { attrs: { type: 'text', maxlength: '8', placeholder: meta.icon } });
+            const stIcon = createIconDropdown({
+              value: asString(stOv.icon || ''),
+              onChange: (iconValue) => {
+                let next = { ...getControlOverride(cfg, key) };
+                next = upsertStateOverride(next, st.name, (dst) => {
+                  const i = asString(iconValue).trim();
+                  const t = asString(stText.value).trim();
+                  if (!i) delete dst.icon; else dst.icon = i;
+                  if (!t) delete dst.text; else dst.text = t;
+                });
+                setControlOverride(cfg, key, next);
+                markDirty();
+                try { resetControlBtn.disabled = isCustom ? false : isControlDefault(cfg, key); } catch (e) {}
+              },
+            });
             const stText = el('input', { attrs: { type: 'text', maxlength: '40', placeholder: meta.text } });
             const stHotkeyBtn = el('button', { className: 'btn small view-footer-hotkey-btn', text: shortcutToCaption(resolveStateShortcut(st, stOv)) || 'Set hotkey' });
             stHotkeyBtn.type = 'button';
             const fnLabel = el('div', { className: 'view-footer-action-fn', text: meta.fnName || '-' });
-            stIcon.value = asString(stOv.icon || '');
             stText.value = asString(stOv.text || '');
 
             const writeState = () => {
               let next = { ...getControlOverride(cfg, key) };
               next = upsertStateOverride(next, st.name, (dst) => {
-                const i = asString(stIcon.value).trim();
+                const i = asString(stIcon.getValue ? stIcon.getValue() : '').trim();
                 const t = asString(stText.value).trim();
                 if (!i) delete dst.icon; else dst.icon = i;
                 if (!t) delete dst.text; else dst.text = t;
@@ -1283,8 +1341,6 @@ export function openViewFooterSettingsDialog({
               markDirty();
               try { resetControlBtn.disabled = isCustom ? false : isControlDefault(cfg, key); } catch (e) {}
             };
-
-            stIcon.addEventListener('input', writeState);
             stText.addEventListener('input', writeState);
 
             try { if (cfg.hotkeysDisabled) stHotkeyBtn.style.visibility = 'hidden'; } catch (e) {}
@@ -1682,3 +1738,11 @@ export function openViewFooterSettingsDialog({
 
   return { close };
 }
+
+
+
+
+
+
+
+

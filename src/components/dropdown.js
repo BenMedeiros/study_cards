@@ -29,6 +29,8 @@ export function createDropdown({
   onClose = null,
   // If true (multi-select only), include a top action row that toggles all/none.
   includeAllNone = false,
+  // z-index used when the menu is portaled (fixed-position overlay).
+  portalZIndex = 1300,
 }) {
   const container = document.createElement('div');
   container.className = `custom-dropdown ${className}`;
@@ -85,7 +87,7 @@ export function createDropdown({
       // Ensure the menu is visible even when it is no longer a descendant of `.custom-dropdown.open`.
       menu.style.display = 'block';
       menu.style.position = 'fixed';
-      menu.style.zIndex = '1300';
+      menu.style.zIndex = String(Number.isFinite(Number(portalZIndex)) ? Number(portalZIndex) : 1300);
     } catch (e) {
       // If portaling fails for any reason, keep the menu in place.
       isPortaled = false;
@@ -638,3 +640,4 @@ export function createDropdown({
 
   return container;
 }
+

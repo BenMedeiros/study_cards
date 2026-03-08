@@ -1,4 +1,5 @@
 import { el } from '../ui.js';
+import { createDropdown } from '../dropdown.js';
 
 function asString(v) {
   return (v == null) ? '' : String(v);
@@ -18,6 +19,47 @@ function inferNamespace(raw) {
   return raw.namespace || 'unknown';
 }
 
+function resolveGroupedActionMeta(action) {
+  const fnName = asString(action?.fnName).trim();
+  const actionField = asString(action?.actionField).trim();
+
+  if (fnName === 'entry.speakField') {
+    const fieldKey = actionField.startsWith('entry.') ? actionField.slice('entry.'.length) : '';
+    const normalized = fieldKey || asString(action?.id).replace(/^sound\./, '');
+    return {
+      groupKey: 'entry.speakField',
+      groupFnName: 'entry.speakField',
+      optionLabel: normalized ? `entry.${normalized}` : asString(action?.id),
+      optionSort: normalized || asString(action?.id),
+    };
+  }
+
+  const entryFieldsMatch = fnName.match(/^app\.kanjiStudyCardView\.entryFields\.(setOff|setOn|toggle)\[(.+)\]$/);
+  if (entryFieldsMatch) {
+    const op = asString(entryFieldsMatch[1]).trim();
+    const fieldKey = asString(entryFieldsMatch[2]).trim();
+    return {
+      groupKey: `app.kanjiStudyCardView.entryFields.${op}`,
+      groupFnName: `app.kanjiStudyCardView.entryFields.${op}`,
+      optionLabel: fieldKey ? `entry.${fieldKey}` : asString(action?.id),
+      optionSort: fieldKey || asString(action?.id),
+    };
+  }
+
+  const linkMatch = fnName.match(/^link\.open\[(.+)\]$/);
+  if (linkMatch) {
+    const linkKey = asString(linkMatch[1]).trim();
+    return {
+      groupKey: 'link.open',
+      groupFnName: 'link.open',
+      optionLabel: linkKey || asString(action?.id),
+      optionSort: linkKey || asString(action?.id),
+    };
+  }
+
+  return null;
+}
+
 export function openViewFooterCustomButtonDialog({
   availableActions = [],
 } = {}) {
@@ -32,11 +74,9 @@ export function openViewFooterCustomButtonDialog({
       const stateVal = asString(raw.state);
       if (stateVal) continue;
 
-        // Derive a human-friendly "action-field" for the UI. For sound actions
-        // prefer `entry.<field>` (e.g. `entry.reading`, `entry.kanji`). Fall back
-        // to the supplied namespace or an inferred namespace otherwise.
-        let actionField = '';
-        const rawNs = asString(raw.namespace);
+      // Derive a human-friendly "action-field" for the UI.
+      let actionField = '';
+      const rawNs = asString(raw.namespace);
       const rawActionField = asString(raw.actionField);
       if (rawActionField) {
         actionField = rawActionField;
@@ -45,10 +85,8 @@ export function openViewFooterCustomButtonDialog({
         const field = parts[1] || '';
         actionField = field ? `entry.${field}` : 'entry';
       } else if (id === 'prev' || id === 'next') {
-        // navigation controls belong to the kanji study app
         actionField = 'app.kanjiStudyCardView';
       } else if (/^(learned|practice)$/i.test(id) || /^toggle/i.test(id) || /^setstate/i.test(id) || /^togglekanji/i.test(id)) {
-        // learned/practice/toggle/setState actions map to the study progress manager
         actionField = 'manager.studyProgress';
       } else if (rawNs) {
         actionField = rawNs;
@@ -56,36 +94,67 @@ export function openViewFooterCustomButtonDialog({
         actionField = inferNamespace(raw);
       }
 
-        const item = {
-          id,
-          // prefer fnName for display; actionDefinitions no longer provide `text`
-          text: asString(raw.fnName) || id,
-          controlKey: asString(raw.controlKey),
-          fnName: asString(raw.fnName),
-          actionField,
-        };
+      const item = {
+        id,
+        text: asString(raw.fnName) || id,
+        controlKey: asString(raw.controlKey),
+        fnName: asString(raw.fnName),
+        actionField,
+      };
       actionById.set(id, item);
       actionList.push(item);
     }
 
-      // Sort available actions: put all `sound.*` actions together at the top
-      // (sorted by field), then the rest alphabetically by text.
-      actionList.sort((a, b) => {
-        const aId = String(a.id || '');
-        const bId = String(b.id || '');
-        const aIsSound = aId.startsWith('sound.');
-        const bIsSound = bId.startsWith('sound.');
-        if (aIsSound !== bIsSound) return aIsSound ? -1 : 1;
-        const aIsApp = String(a.actionField || '').startsWith('app.');
-        const bIsApp = String(b.actionField || '').startsWith('app.');
-        if (aIsApp !== bIsApp) return aIsApp ? -1 : 1;
-        const aIsManager = String(a.actionField || '').startsWith('manager.');
-        const bIsManager = String(b.actionField || '').startsWith('manager.');
-        if (aIsManager !== bIsManager) return aIsManager ? -1 : 1;
-        // within each category sort by id (sound) or text otherwise
-        if (aIsSound && bIsSound) return aId.localeCompare(bId);
-        return String(a.text || '').localeCompare(String(b.text || ''));
+    // Keep existing broad ordering behavior before grouping.
+    actionList.sort((a, b) => {
+      const aId = String(a.id || '');
+      const bId = String(b.id || '');
+      const aIsSound = aId.startsWith('sound.');
+      const bIsSound = bId.startsWith('sound.');
+      if (aIsSound !== bIsSound) return aIsSound ? -1 : 1;
+      const aIsApp = String(a.actionField || '').startsWith('app.');
+      const bIsApp = String(b.actionField || '').startsWith('app.');
+      if (aIsApp !== bIsApp) return aIsApp ? -1 : 1;
+      const aIsManager = String(a.actionField || '').startsWith('manager.');
+      const bIsManager = String(b.actionField || '').startsWith('manager.');
+      if (aIsManager !== bIsManager) return aIsManager ? -1 : 1;
+      if (aIsSound && bIsSound) return aId.localeCompare(bId);
+      return String(a.text || '').localeCompare(String(b.text || ''));
+    });
+
+    // Collapse a few action families into one row + dropdown selector.
+    const groupedByKey = new Map();
+    const displayRows = [];
+    for (const action of actionList) {
+      const grouped = resolveGroupedActionMeta(action);
+      if (!grouped) {
+        displayRows.push({ type: 'single', action });
+        continue;
+      }
+
+      let row = groupedByKey.get(grouped.groupKey);
+      if (!row) {
+        row = {
+          type: 'group',
+          key: grouped.groupKey,
+          fnName: grouped.groupFnName,
+          options: [],
+        };
+        groupedByKey.set(grouped.groupKey, row);
+        displayRows.push(row);
+      }
+
+      row.options.push({
+        actionId: action.id,
+        optionLabel: grouped.optionLabel,
+        optionSort: grouped.optionSort,
       });
+    }
+
+    for (const row of displayRows) {
+      if (row.type !== 'group') continue;
+      row.options.sort((a, b) => String(a.optionSort || '').localeCompare(String(b.optionSort || '')));
+    }
 
     const backdrop = el('div', { className: 'view-footer-hotkey-backdrop' });
     const dialog = el('div', {
@@ -113,21 +182,52 @@ export function openViewFooterCustomButtonDialog({
     const mount = document.getElementById('shell-root') || document.getElementById('app') || document.body;
     const prevFocus = document.activeElement;
     mount.append(backdrop, dialog);
-    try { console.debug('[dialog] open viewFooterCustomButtonDialog', { availableCount: actionList.length }); } catch (e) {}
+    try { console.debug('[dialog] open viewFooterCustomButtonDialog', { availableCount: actionList.length, displayCount: displayRows.length }); } catch (e) {}
 
     function renderAvailable() {
       availableListEl.innerHTML = '';
-      // header row for columns: Function | Field
       const header = el('div', { className: 'view-footer-custom-available-header' });
       header.append(
         el('div', { className: 'view-footer-custom-action-label header', text: 'Function' }),
         el('div', { className: 'view-footer-action-field header', text: 'Field' })
       );
       availableListEl.appendChild(header);
-      for (const action of actionList) {
+
+      for (const rowData of displayRows) {
         const row = el('div', { className: 'view-footer-custom-available-row' });
-          const left = el('div', { className: 'view-footer-custom-action-label', text: action.fnName || action.id });
-          const ns = el('div', { className: 'view-footer-action-field', text: action.actionField });
+
+        if (rowData.type === 'group') {
+          const left = el('div', { className: 'view-footer-custom-action-label', text: rowData.fnName });
+          const fieldCell = el('div', { className: 'view-footer-action-field' });
+          const groupedItems = rowData.options.map(opt => ({
+            value: asString(opt.actionId),
+            label: asString(opt.optionLabel),
+          }));
+          const dropdown = createDropdown({
+            items: groupedItems,
+            value: groupedItems[0]?.value || '',
+            className: 'view-footer-custom-group-dropdown',
+            closeOverlaysOnOpen: false,
+            portalZIndex: 1400,
+          });
+          fieldCell.appendChild(dropdown);
+
+          const selectBtn = el('button', { className: 'btn small', text: 'Select' });
+          selectBtn.type = 'button';
+          selectBtn.addEventListener('click', () => {
+            const chosen = asString(dropdown?.getValue ? dropdown.getValue() : '').trim();
+            if (!chosen) return;
+            close({ actionId: chosen });
+          });
+
+          row.append(left, fieldCell, selectBtn);
+          availableListEl.appendChild(row);
+          continue;
+        }
+
+        const action = rowData.action;
+        const left = el('div', { className: 'view-footer-custom-action-label', text: action.fnName || action.id });
+        const ns = el('div', { className: 'view-footer-action-field', text: action.actionField });
         const selectBtn = el('button', { className: 'btn small', text: 'Select' });
         selectBtn.type = 'button';
         selectBtn.addEventListener('click', () => {
@@ -136,7 +236,8 @@ export function openViewFooterCustomButtonDialog({
         row.append(left, ns, selectBtn);
         availableListEl.appendChild(row);
       }
-      if (!actionList.length) {
+
+      if (!displayRows.length) {
         availableListEl.appendChild(el('div', { className: 'hint', text: 'No available actions.' }));
       }
     }
@@ -170,3 +271,5 @@ export function openViewFooterCustomButtonDialog({
     try { dialog.focus(); } catch (e) {}
   });
 }
+
+
