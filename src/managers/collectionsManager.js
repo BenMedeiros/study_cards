@@ -8,6 +8,16 @@ import {
   expandJapaneseEntriesAndIndices,
   getJapaneseExpansionDeltas,
 } from '../collectionExpansions/japaneseExpansion.js';
+import {
+  getJapaneseCountersExpansionControlConfig,
+  expandJapaneseCountersEntriesAndIndices,
+  getJapaneseCountersExpansionDeltas,
+} from '../collectionExpansions/japaneseCountersExpansion.js';
+import {
+  getJapaneseSentencesMathExpansionControlConfig,
+  expandJapaneseSentencesMathEntriesAndIndices,
+  getJapaneseSentencesMathExpansionDeltas,
+} from '../collectionExpansions/japaneseSentencesMath.js';
 
 export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, grammarProgressManager = null, collectionDB = null, settings = null }) {
   // Folder metadata helpers/storage used for lazy loads
@@ -1211,27 +1221,57 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     if (!coll || !collectionUsesJapaneseExpansion(coll)) {
       return {
         type: null,
-        supports: { i: false, na: false, ichidan: false, godan: false, irregular: false },
+        supports: { i: false, na: false, ichidan: false, godan: false, irregular: false, counters: false, sentenceMath: false },
         iBaseItems: [],
         naBaseItems: [],
         ichidanVerbBaseItems: [],
         godanVerbBaseItems: [],
         irregularVerbBaseItems: [],
+        counterBaseItems: [],
         iItems: [],
         naItems: [],
         ichidanVerbItems: [],
         godanVerbItems: [],
         irregularVerbItems: [],
+        counterItems: [],
+        sentenceMathBaseItems: [],
+        sentenceMathItems: [],
       };
     }
-    return getJapaneseExpansionControlConfig(coll);
+
+    const morphologyCfg = getJapaneseExpansionControlConfig(coll);
+    const countersCfg = getJapaneseCountersExpansionControlConfig(coll);
+    const sentenceMathCfg = getJapaneseSentencesMathExpansionControlConfig(coll);
+    return {
+      ...morphologyCfg,
+      supports: {
+        ...(morphologyCfg?.supports || {}),
+        counters: !!countersCfg?.supports?.counters,
+        sentenceMath: !!sentenceMathCfg?.supports?.sentenceMath,
+      },
+      counterBaseItems: Array.isArray(countersCfg?.counterBaseItems) ? countersCfg.counterBaseItems : [],
+      counterItems: Array.isArray(countersCfg?.counterItems) ? countersCfg.counterItems : [],
+      sentenceMathBaseItems: Array.isArray(sentenceMathCfg?.sentenceMathBaseItems) ? sentenceMathCfg.sentenceMathBaseItems : [],
+      sentenceMathItems: Array.isArray(sentenceMathCfg?.sentenceMathItems) ? sentenceMathCfg.sentenceMathItems : [],
+    };
   }
 
   function getCollectionExpansionDeltas(
     entries,
-    { iForms = [], naForms = [], ichidanForms = [], godanForms = [], irregularForms = [] } = {},
+    { iForms = [], naForms = [], ichidanForms = [], godanForms = [], irregularForms = [], counterForms = [], sentenceMathForms = [] } = {},
   ) {
-    return getJapaneseExpansionDeltas(entries, { iForms, naForms, ichidanForms, godanForms, irregularForms });
+    const morphology = getJapaneseExpansionDeltas(entries, { iForms, naForms, ichidanForms, godanForms, irregularForms });
+    const counters = getJapaneseCountersExpansionDeltas(entries, { counterForms });
+    const sentenceMath = getJapaneseSentencesMathExpansionDeltas(entries, { sentenceMathForms });
+    return {
+      ...morphology,
+      ...counters,
+      ...sentenceMath,
+      totalDelta:
+        Number(morphology?.totalDelta || 0)
+        + Number(counters?.counterDelta || 0)
+        + Number(sentenceMath?.sentenceMathDelta || 0),
+    };
   }
 
   // ============================================================================
@@ -1357,6 +1397,9 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     let ichidanForms = collState ? (collState.expansion_ichidan ?? collState.expansion_ichidanVerb ?? collState.expansion_ichidan_verb ?? []) : [];
     let godanForms = collState ? (collState.expansion_godan ?? collState.expansion_godanVerb ?? collState.expansion_godan_verb ?? []) : [];
     let irregularForms = collState ? (collState.expansion_irregular ?? collState.expansion_irregularVerb ?? collState.expansion_irregular_verb ?? []) : [];
+    let counterForms = collState ? (collState.expansion_counters ?? collState.expansion_counter ?? []) : [];
+    let sentenceMathForms = collState ? (collState.expansion_sentence_math ?? collState.expansion_sentenceMath ?? []) : [];
+    const sentenceMathSeed = Number(collState?.expansion_sentence_math_seed ?? collState?.expansion_sentenceMathSeed ?? 0) || 0;
     const collection = (opts?.collection && typeof opts.collection === 'object') ? opts.collection : null;
 
     // If the collection supports japanese adjective expansion and callers
@@ -1381,6 +1424,12 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         if (irregularForms === 'all' || (Array.isArray(irregularForms) && irregularForms.includes('all'))) {
           irregularForms = Array.isArray(cfg?.irregularVerbItems) ? cfg.irregularVerbItems.map(it => String(it?.value ?? it)) : [];
         }
+        if (counterForms === 'all' || (Array.isArray(counterForms) && counterForms.includes('all'))) {
+          counterForms = Array.isArray(cfg?.counterItems) ? cfg.counterItems.map(it => String(it?.value ?? it)) : [];
+        }
+        if (sentenceMathForms === 'all' || (Array.isArray(sentenceMathForms) && sentenceMathForms.includes('all'))) {
+          sentenceMathForms = Array.isArray(cfg?.sentenceMathItems) ? cfg.sentenceMathItems.map(it => String(it?.value ?? it)) : [];
+        }
       } catch (e) {
         // ignore and fall back to whatever was provided
       }
@@ -1391,6 +1440,11 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         ichidanForms,
         godanForms,
         irregularForms,
+      });
+      expanded = expandJapaneseCountersEntriesAndIndices(expanded.entries, expanded.indices, { counterForms });
+      expanded = expandJapaneseSentencesMathEntriesAndIndices(expanded.entries, expanded.indices, {
+        sentenceMathForms,
+        generationSeed: sentenceMathSeed,
       });
     }
     const baseEntries = expanded.entries;
@@ -1566,11 +1620,16 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       ichidanForms = [],
       godanForms = [],
       irregularForms = [],
+      counterForms = [],
+      sentenceMathForms = [],
       iForm = '',
       naForm = '',
       ichidanForm = '',
       godanForm = '',
       irregularForm = '',
+      counterForm = '',
+      sentenceMathForm = '',
+      sentenceMathSeed = 0,
     } = {},
   ) {
     const coll = collKey ? getCollections().find(c => c?.key === collKey) : getActiveCollection();
@@ -1589,12 +1648,18 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const ichidan = normalizeList(ichidanForms, ichidanForm);
     const godan = normalizeList(godanForms, godanForm);
     const irregular = normalizeList(irregularForms, irregularForm);
+    const counters = normalizeList(counterForms, counterForm);
+    const sentenceMath = normalizeList(sentenceMathForms, sentenceMathForm);
+    const seed = Number(sentenceMathSeed) || 0;
     saveCollectionState(coll.key, {
       expansion_i: i,
       expansion_na: na,
       expansion_ichidan: ichidan,
       expansion_godan: godan,
       expansion_irregular: irregular,
+      expansion_counters: counters,
+      expansion_sentence_math: sentenceMath,
+      expansion_sentence_math_seed: seed,
     });
     emit();
     return true;
@@ -1665,4 +1730,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     clearLearnedForCollection,
   };
 }
+
+
+
+
 
