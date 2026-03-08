@@ -63,7 +63,7 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-03-06T15:28:33.531Z",
+      "modifiedAt": "2026-03-08T17:23:32.346Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
       "entriesCount": 1642,
@@ -75,6 +75,201 @@
         },
         "entries": {
           "errors": [
+            {
+              "id": "一ページ",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "単独の漢字",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "一時間",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "九時",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "五秒",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "三回",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "三時間",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "三日",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "三枚",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "二個",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "二人",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "二点",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "二分",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "二本",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "壱",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "弐",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "参",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "拾",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "阡",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "萬",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "零",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "一",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "二",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "三",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "四",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "五",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "六",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "七",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "八",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "九",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "十",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "百",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "千",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "万",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "億",
+              "field": "type",
+              "message": "Invalid enum value 'numeral' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "あんな",
+              "field": "type",
+              "message": "Invalid enum value 'descriptive-phrase' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "出てくる",
+              "field": "type",
+              "message": "Invalid enum value 'phrase-sentence' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "家をつぐ",
+              "field": "type",
+              "message": "Invalid enum value 'phrase-sentence' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
+            {
+              "id": "なので",
+              "field": "type",
+              "message": "Invalid enum value 'conjunction' for 'type'. Allowed: noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression"
+            },
             {
               "id": "開く",
               "message": "Duplicate entry key '開く' appears 2 times in file"
@@ -280,7 +475,7 @@
               "occurrences": [
                 {
                   "index": 196,
-                  "line": 1877,
+                  "line": 1756,
                   "entry": {
                     "kanji": "開く",
                     "reading": "あく",
@@ -291,7 +486,7 @@
                 },
                 {
                   "index": 199,
-                  "line": 1898,
+                  "line": 1777,
                   "entry": {
                     "kanji": "開く",
                     "reading": "ひらく",
@@ -308,7 +503,7 @@
               "occurrences": [
                 {
                   "index": 204,
-                  "line": 1933,
+                  "line": 1812,
                   "entry": {
                     "kanji": "働く",
                     "reading": "はたらく",
@@ -319,14 +514,13 @@
                 },
                 {
                   "index": 1608,
-                  "line": 14190,
+                  "line": 12939,
                   "entry": {
                     "kanji": "働く",
                     "reading": "はたらく",
                     "meaning": "to work",
                     "type": "godan-verb",
-                    "lexicalClass": "regular",
-                    "orthography": "kanji"
+                    "lexicalClass": "regular"
                   }
                 }
               ]
@@ -337,7 +531,7 @@
               "occurrences": [
                 {
                   "index": 255,
-                  "line": 2284,
+                  "line": 2161,
                   "entry": {
                     "kanji": "大きい",
                     "reading": "おおきい",
@@ -347,14 +541,13 @@
                 },
                 {
                   "index": 1600,
-                  "line": 14126,
+                  "line": 12883,
                   "entry": {
                     "kanji": "大きい",
                     "reading": "おおきい",
                     "meaning": "big; large",
                     "type": "i-adjective",
-                    "lexicalClass": "regular",
-                    "orthography": "kanji"
+                    "lexicalClass": "regular"
                   }
                 }
               ]
@@ -365,7 +558,7 @@
               "occurrences": [
                 {
                   "index": 315,
-                  "line": 2652,
+                  "line": 2528,
                   "entry": {
                     "kanji": "硬い",
                     "reading": "かたい",
@@ -375,14 +568,13 @@
                 },
                 {
                   "index": 1538,
-                  "line": 13467,
+                  "line": 12286,
                   "entry": {
                     "kanji": "硬い",
                     "reading": "かたい",
                     "meaning": "hard (solid/firm)",
                     "type": "i-adjective",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "texture",
                       "touch_property"
@@ -397,7 +589,7 @@
               "occurrences": [
                 {
                   "index": 316,
-                  "line": 2658,
+                  "line": 2534,
                   "entry": {
                     "kanji": "柔らかい",
                     "reading": "やわらかい",
@@ -407,14 +599,13 @@
                 },
                 {
                   "index": 1537,
-                  "line": 13455,
+                  "line": 12275,
                   "entry": {
                     "kanji": "柔らかい",
                     "reading": "やわらかい",
                     "meaning": "soft",
                     "type": "i-adjective",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "texture",
                       "touch_property"
@@ -429,14 +620,13 @@
               "occurrences": [
                 {
                   "index": 333,
-                  "line": 2760,
+                  "line": 2636,
                   "entry": {
                     "kanji": "滑らか",
                     "reading": "なめらか",
                     "meaning": "smooth; fluent",
                     "type": "na-adjective",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "jlpt_n3"
                     ]
@@ -444,14 +634,13 @@
                 },
                 {
                   "index": 1536,
-                  "line": 13443,
+                  "line": 12264,
                   "entry": {
                     "kanji": "滑らか",
                     "reading": "なめらか",
                     "meaning": "smooth",
                     "type": "na-adjective",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "texture",
                       "surface_property"
@@ -466,25 +655,23 @@
               "occurrences": [
                 {
                   "index": 383,
-                  "line": 3108,
+                  "line": 2945,
                   "entry": {
                     "kanji": "伸びる",
                     "reading": "のびる",
                     "meaning": "to grow; to stretch; to improve",
-                    "type": "ichidan-verb",
-                    "orthography": "kanji"
+                    "type": "ichidan-verb"
                   }
                 },
                 {
                   "index": 1566,
-                  "line": 13793,
+                  "line": 12584,
                   "entry": {
                     "kanji": "伸びる",
                     "reading": "のびる",
                     "meaning": "to stretch; to extend; to grow",
                     "type": "ichidan-verb",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "action",
                       "movement"
@@ -499,25 +686,23 @@
               "occurrences": [
                 {
                   "index": 429,
-                  "line": 3491,
+                  "line": 3302,
                   "entry": {
                     "kanji": "長",
                     "reading": "チョウ",
                     "meaning": "long; leader; head",
-                    "type": "compound-morpheme",
-                    "orthography": "kanji"
+                    "type": "morpheme"
                   }
                 },
                 {
                   "index": 1588,
-                  "line": 14030,
+                  "line": 12799,
                   "entry": {
                     "kanji": "長",
                     "reading": "ちょう",
                     "meaning": "chief; head; long (bound morpheme)",
-                    "type": "compound-morpheme",
-                    "lexicalClass": "regular",
-                    "orthography": "kanji"
+                    "type": "morpheme",
+                    "lexicalClass": "regular"
                   }
                 }
               ]
@@ -528,25 +713,23 @@
               "occurrences": [
                 {
                   "index": 464,
-                  "line": 3749,
+                  "line": 3525,
                   "entry": {
                     "kanji": "元気",
                     "reading": "げんき",
                     "meaning": "healthy; energetic; fine",
-                    "type": "na-adjective",
-                    "orthography": "kanji"
+                    "type": "na-adjective"
                   }
                 },
                 {
                   "index": 1598,
-                  "line": 14110,
+                  "line": 12869,
                   "entry": {
                     "kanji": "元気",
                     "reading": "げんき",
                     "meaning": "healthy; well; energetic",
                     "type": "na-adjective",
-                    "lexicalClass": "regular",
-                    "orthography": "kanji"
+                    "lexicalClass": "regular"
                   }
                 }
               ]
@@ -557,13 +740,12 @@
               "occurrences": [
                 {
                   "index": 466,
-                  "line": 3763,
+                  "line": 3537,
                   "entry": {
                     "kanji": "安全",
                     "reading": "あんぜん",
                     "meaning": "safe; secure",
                     "type": "na-adjective",
-                    "orthography": "kanji",
                     "tags": [
                       "phone_settings"
                     ]
@@ -571,12 +753,11 @@
                 },
                 {
                   "index": 805,
-                  "line": 6598,
+                  "line": 6033,
                   "entry": {
                     "kanji": "安全",
                     "reading": "あんぜん",
                     "meaning": "safety",
-                    "orthography": "kanji",
                     "type": "noun",
                     "tags": [
                       "phone_settings"
@@ -591,23 +772,21 @@
               "occurrences": [
                 {
                   "index": 467,
-                  "line": 3773,
+                  "line": 3546,
                   "entry": {
                     "kanji": "危険",
                     "reading": "きけん",
                     "meaning": "dangerous; risky",
-                    "type": "na-adjective",
-                    "orthography": "kanji"
+                    "type": "na-adjective"
                   }
                 },
                 {
                   "index": 806,
-                  "line": 6608,
+                  "line": 6042,
                   "entry": {
                     "kanji": "危険",
                     "reading": "きけん",
                     "meaning": "danger",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 }
@@ -619,26 +798,24 @@
               "occurrences": [
                 {
                   "index": 481,
-                  "line": 3872,
+                  "line": 3631,
                   "entry": {
                     "kanji": "子供",
                     "reading": "こども",
                     "meaning": "child; children",
                     "lexicalClass": "regular",
-                    "type": "noun",
-                    "orthography": "both"
+                    "type": "noun"
                   }
                 },
                 {
                   "index": 1593,
-                  "line": 14070,
+                  "line": 12834,
                   "entry": {
                     "kanji": "子供",
                     "reading": "こども",
                     "meaning": "child; children",
                     "type": "noun",
-                    "lexicalClass": "regular",
-                    "orthography": "both"
+                    "lexicalClass": "regular"
                   }
                 }
               ]
@@ -649,26 +826,24 @@
               "occurrences": [
                 {
                   "index": 522,
-                  "line": 4192,
+                  "line": 3910,
                   "entry": {
                     "kanji": "林檎",
                     "reading": "りんご",
                     "meaning": "apple",
                     "lexicalClass": "regular",
-                    "type": "noun",
-                    "orthography": "hiragana"
+                    "type": "noun"
                   }
                 },
                 {
                   "index": 1508,
-                  "line": 13102,
+                  "line": 11951,
                   "entry": {
                     "kanji": "林檎",
                     "reading": "りんご",
                     "meaning": "apple",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "hiragana",
                     "tags": [
                       "food",
                       "refrigerator_common"
@@ -683,26 +858,24 @@
               "occurrences": [
                 {
                   "index": 526,
-                  "line": 4227,
+                  "line": 3941,
                   "entry": {
                     "kanji": "彼",
                     "reading": "かれ",
                     "meaning": "he; him; boyfriend (context-dependent)",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1604,
-                  "line": 14158,
+                  "line": 12911,
                   "entry": {
                     "kanji": "彼",
                     "reading": "かれ",
                     "meaning": "he; boyfriend",
                     "type": "noun",
-                    "lexicalClass": "regular",
-                    "orthography": "kanji"
+                    "lexicalClass": "regular"
                   }
                 }
               ]
@@ -713,25 +886,23 @@
               "occurrences": [
                 {
                   "index": 700,
-                  "line": 5838,
+                  "line": 5378,
                   "entry": {
                     "kanji": "予定",
                     "reading": "よてい",
                     "meaning": "plan; schedule",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1605,
-                  "line": 14166,
+                  "line": 12918,
                   "entry": {
                     "kanji": "予定",
                     "reading": "よてい",
                     "meaning": "plan; schedule",
                     "type": "noun",
-                    "lexicalClass": "regular",
-                    "orthography": "kanji"
+                    "lexicalClass": "regular"
                   }
                 }
               ]
@@ -742,25 +913,23 @@
               "occurrences": [
                 {
                   "index": 742,
-                  "line": 6145,
+                  "line": 5643,
                   "entry": {
                     "kanji": "犬",
                     "reading": "いぬ",
                     "meaning": "dog",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1395,
-                  "line": 11914,
+                  "line": 10769,
                   "entry": {
                     "kanji": "犬",
                     "reading": "いぬ",
                     "meaning": "dog",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -774,25 +943,23 @@
               "occurrences": [
                 {
                   "index": 743,
-                  "line": 6152,
+                  "line": 5649,
                   "entry": {
                     "kanji": "猫",
                     "reading": "ねこ",
                     "meaning": "cat",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1396,
-                  "line": 11925,
+                  "line": 10779,
                   "entry": {
                     "kanji": "猫",
                     "reading": "ねこ",
                     "meaning": "cat",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -806,25 +973,23 @@
               "occurrences": [
                 {
                   "index": 744,
-                  "line": 6159,
+                  "line": 5655,
                   "entry": {
                     "kanji": "鳥",
                     "reading": "とり",
                     "meaning": "bird",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1397,
-                  "line": 11936,
+                  "line": 10789,
                   "entry": {
                     "kanji": "鳥",
                     "reading": "とり",
                     "meaning": "bird",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -838,25 +1003,23 @@
               "occurrences": [
                 {
                   "index": 745,
-                  "line": 6166,
+                  "line": 5661,
                   "entry": {
                     "kanji": "魚",
                     "reading": "さかな",
                     "meaning": "fish",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1398,
-                  "line": 11947,
+                  "line": 10799,
                   "entry": {
                     "kanji": "魚",
                     "reading": "さかな",
                     "meaning": "fish",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -870,25 +1033,23 @@
               "occurrences": [
                 {
                   "index": 747,
-                  "line": 6183,
+                  "line": 5676,
                   "entry": {
                     "kanji": "牛",
                     "reading": "うし",
                     "meaning": "cow; cattle",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1400,
-                  "line": 11969,
+                  "line": 10819,
                   "entry": {
                     "kanji": "牛",
                     "reading": "うし",
                     "meaning": "cow",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -902,25 +1063,23 @@
               "occurrences": [
                 {
                   "index": 748,
-                  "line": 6190,
+                  "line": 5682,
                   "entry": {
                     "kanji": "馬",
                     "reading": "うま",
                     "meaning": "horse",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1399,
-                  "line": 11958,
+                  "line": 10809,
                   "entry": {
                     "kanji": "馬",
                     "reading": "うま",
                     "meaning": "horse",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -934,25 +1093,23 @@
               "occurrences": [
                 {
                   "index": 749,
-                  "line": 6197,
+                  "line": 5688,
                   "entry": {
                     "kanji": "羊",
                     "reading": "ひつじ",
                     "meaning": "sheep",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1402,
-                  "line": 11991,
+                  "line": 10839,
                   "entry": {
                     "kanji": "羊",
                     "reading": "ひつじ",
                     "meaning": "sheep",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -966,13 +1123,12 @@
               "occurrences": [
                 {
                   "index": 754,
-                  "line": 6232,
+                  "line": 5718,
                   "entry": {
                     "kanji": "水",
                     "reading": "みず",
                     "meaning": "water",
-                    "type": "standalone-noun",
-                    "orthography": "kanji",
+                    "type": "noun",
                     "tags": [
                       "pokemon-type"
                     ]
@@ -980,14 +1136,13 @@
                 },
                 {
                   "index": 1514,
-                  "line": 13177,
+                  "line": 12020,
                   "entry": {
                     "kanji": "水",
                     "reading": "みず",
                     "meaning": "water",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "drink",
                       "refrigerator_common"
@@ -1002,25 +1157,23 @@
               "occurrences": [
                 {
                   "index": 755,
-                  "line": 6242,
+                  "line": 5727,
                   "entry": {
                     "kanji": "牛乳",
                     "reading": "ぎゅうにゅう",
                     "meaning": "milk",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1488,
-                  "line": 12853,
+                  "line": 11722,
                   "entry": {
                     "kanji": "牛乳",
                     "reading": "ぎゅうにゅう",
                     "meaning": "milk",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "food",
                       "refrigerator_common"
@@ -1035,25 +1188,23 @@
               "occurrences": [
                 {
                   "index": 771,
-                  "line": 6354,
+                  "line": 5823,
                   "entry": {
                     "kanji": "家",
                     "reading": "いえ",
                     "meaning": "house; home",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1597,
-                  "line": 14102,
+                  "line": 12862,
                   "entry": {
                     "kanji": "家",
                     "reading": "いえ",
                     "meaning": "house; home",
                     "type": "noun",
-                    "lexicalClass": "regular",
-                    "orthography": "kanji"
+                    "lexicalClass": "regular"
                   }
                 }
               ]
@@ -1064,25 +1215,23 @@
               "occurrences": [
                 {
                   "index": 779,
-                  "line": 6410,
+                  "line": 5871,
                   "entry": {
                     "kanji": "本棚",
                     "reading": "ほんだな",
                     "meaning": "bookshelf",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1559,
-                  "line": 13715,
+                  "line": 12513,
                   "entry": {
                     "kanji": "本棚",
                     "reading": "ほんだな",
                     "meaning": "bookshelf",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "object",
                       "books"
@@ -1097,25 +1246,23 @@
               "occurrences": [
                 {
                   "index": 780,
-                  "line": 6417,
+                  "line": 5877,
                   "entry": {
                     "kanji": "本",
                     "reading": "ほん",
                     "meaning": "book",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1563,
-                  "line": 13760,
+                  "line": 12554,
                   "entry": {
                     "kanji": "本",
                     "reading": "ほん",
                     "meaning": "book",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "core_vocab"
                     ]
@@ -1129,25 +1276,23 @@
               "occurrences": [
                 {
                   "index": 782,
-                  "line": 6431,
+                  "line": 5889,
                   "entry": {
                     "kanji": "雑誌",
                     "reading": "ざっし",
                     "meaning": "magazine",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1552,
-                  "line": 13632,
+                  "line": 12437,
                   "entry": {
                     "kanji": "雑誌",
                     "reading": "ざっし",
                     "meaning": "magazine",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "publishing"
                     ]
@@ -1161,25 +1306,23 @@
               "occurrences": [
                 {
                   "index": 835,
-                  "line": 6817,
+                  "line": 6222,
                   "entry": {
                     "kanji": "料理",
                     "reading": "りょうり",
                     "meaning": "cooking; cuisine",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1602,
-                  "line": 14142,
+                  "line": 12897,
                   "entry": {
                     "kanji": "料理",
                     "reading": "りょうり",
                     "meaning": "cooking; cuisine",
                     "type": "noun",
-                    "lexicalClass": "regular",
-                    "orthography": "kanji"
+                    "lexicalClass": "regular"
                   }
                 }
               ]
@@ -1190,25 +1333,23 @@
               "occurrences": [
                 {
                   "index": 996,
-                  "line": 8065,
+                  "line": 7309,
                   "entry": {
                     "kanji": "男",
                     "reading": "おとこ",
                     "meaning": "man",
-                    "orthography": "kanji",
                     "type": "noun"
                   }
                 },
                 {
                   "index": 1589,
-                  "line": 14038,
+                  "line": 12806,
                   "entry": {
                     "kanji": "男",
                     "reading": "おとこ",
                     "meaning": "man; male",
                     "type": "noun",
-                    "lexicalClass": "regular",
-                    "orthography": "kanji"
+                    "lexicalClass": "regular"
                   }
                 }
               ]
@@ -1219,13 +1360,12 @@
               "occurrences": [
                 {
                   "index": 1023,
-                  "line": 8335,
+                  "line": 7552,
                   "entry": {
                     "kanji": "カンガルー",
                     "reading": "カンガルー",
                     "meaning": "kangaroo",
                     "type": "noun",
-                    "orthography": "katakana",
                     "tags": [
                       "origin:English",
                       "pokemon-name-root"
@@ -1234,14 +1374,13 @@
                 },
                 {
                   "index": 1464,
-                  "line": 12593,
+                  "line": 11477,
                   "entry": {
                     "kanji": "カンガルー",
                     "reading": "カンガルー",
                     "meaning": "kangaroo",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "katakana",
                     "tags": [
                       "common_animal"
                     ]
@@ -1255,13 +1394,12 @@
               "occurrences": [
                 {
                   "index": 1095,
-                  "line": 9123,
+                  "line": 8268,
                   "entry": {
                     "kanji": "ジュース",
                     "reading": "ジュース",
                     "meaning": "juice",
                     "type": "noun",
-                    "orthography": "katakana",
                     "tags": [
                       "origin:English"
                     ]
@@ -1269,14 +1407,13 @@
                 },
                 {
                   "index": 1513,
-                  "line": 13164,
+                  "line": 12008,
                   "entry": {
                     "kanji": "ジュース",
                     "reading": "ジュース",
                     "meaning": "juice",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "katakana",
                     "tags": [
                       "drink",
                       "refrigerator_common",
@@ -1292,13 +1429,12 @@
               "occurrences": [
                 {
                   "index": 1097,
-                  "line": 9143,
+                  "line": 8286,
                   "entry": {
                     "kanji": "バター",
                     "reading": "バター",
                     "meaning": "butter",
                     "type": "noun",
-                    "orthography": "katakana",
                     "tags": [
                       "origin:English"
                     ]
@@ -1306,14 +1442,13 @@
                 },
                 {
                   "index": 1490,
-                  "line": 12877,
+                  "line": 11744,
                   "entry": {
                     "kanji": "バター",
                     "reading": "バター",
                     "meaning": "butter",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "katakana",
                     "tags": [
                       "food",
                       "refrigerator_common",
@@ -1329,13 +1464,12 @@
               "occurrences": [
                 {
                   "index": 1098,
-                  "line": 9153,
+                  "line": 8295,
                   "entry": {
                     "kanji": "チーズ",
                     "reading": "チーズ",
                     "meaning": "cheese",
                     "type": "noun",
-                    "orthography": "katakana",
                     "tags": [
                       "origin:English"
                     ]
@@ -1343,14 +1477,13 @@
                 },
                 {
                   "index": 1491,
-                  "line": 12890,
+                  "line": 11756,
                   "entry": {
                     "kanji": "チーズ",
                     "reading": "チーズ",
                     "meaning": "cheese",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "katakana",
                     "tags": [
                       "food",
                       "refrigerator_common",
@@ -1366,13 +1499,12 @@
               "occurrences": [
                 {
                   "index": 1164,
-                  "line": 9817,
+                  "line": 8893,
                   "entry": {
                     "kanji": "ソーセージ",
                     "reading": "ソーセージ",
                     "meaning": "sausage",
                     "type": "noun",
-                    "orthography": "katakana",
                     "tags": [
                       "origin:English"
                     ]
@@ -1380,14 +1512,13 @@
                 },
                 {
                   "index": 1498,
-                  "line": 12978,
+                  "line": 11837,
                   "entry": {
                     "kanji": "ソーセージ",
                     "reading": "ソーセージ",
                     "meaning": "sausage",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "katakana",
                     "tags": [
                       "food",
                       "refrigerator_common",
@@ -1403,13 +1534,12 @@
               "occurrences": [
                 {
                   "index": 1165,
-                  "line": 9827,
+                  "line": 8902,
                   "entry": {
                     "kanji": "ハム",
                     "reading": "ハム",
                     "meaning": "ham",
                     "type": "noun",
-                    "orthography": "katakana",
                     "tags": [
                       "origin:English"
                     ]
@@ -1417,14 +1547,13 @@
                 },
                 {
                   "index": 1496,
-                  "line": 12952,
+                  "line": 11813,
                   "entry": {
                     "kanji": "ハム",
                     "reading": "ハム",
                     "meaning": "ham",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "katakana",
                     "tags": [
                       "food",
                       "refrigerator_common",
@@ -1440,13 +1569,12 @@
               "occurrences": [
                 {
                   "index": 1166,
-                  "line": 9837,
+                  "line": 8911,
                   "entry": {
                     "kanji": "ヨーグルト",
                     "reading": "ヨーグルト",
                     "meaning": "yogurt",
                     "type": "noun",
-                    "orthography": "katakana",
                     "tags": [
                       "origin:English"
                     ]
@@ -1454,14 +1582,13 @@
                 },
                 {
                   "index": 1492,
-                  "line": 12903,
+                  "line": 11768,
                   "entry": {
                     "kanji": "ヨーグルト",
                     "reading": "ヨーグルト",
                     "meaning": "yogurt",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "katakana",
                     "tags": [
                       "food",
                       "refrigerator_common",
@@ -1477,13 +1604,12 @@
               "occurrences": [
                 {
                   "index": 1171,
-                  "line": 9887,
+                  "line": 8956,
                   "entry": {
                     "kanji": "トマト",
                     "reading": "トマト",
                     "meaning": "tomato",
                     "type": "noun",
-                    "orthography": "katakana",
                     "tags": [
                       "origin:English"
                     ]
@@ -1491,14 +1617,13 @@
                 },
                 {
                   "index": 1506,
-                  "line": 13077,
+                  "line": 11928,
                   "entry": {
                     "kanji": "トマト",
                     "reading": "トマト",
                     "meaning": "tomato",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "katakana",
                     "tags": [
                       "food",
                       "refrigerator_common",
@@ -1514,13 +1639,12 @@
               "occurrences": [
                 {
                   "index": 1172,
-                  "line": 9897,
+                  "line": 8965,
                   "entry": {
                     "kanji": "レモン",
                     "reading": "レモン",
                     "meaning": "lemon",
                     "type": "noun",
-                    "orthography": "katakana",
                     "tags": [
                       "origin:English"
                     ]
@@ -1528,14 +1652,13 @@
                 },
                 {
                   "index": 1512,
-                  "line": 13151,
+                  "line": 11996,
                   "entry": {
                     "kanji": "レモン",
                     "reading": "レモン",
                     "meaning": "lemon",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "katakana",
                     "tags": [
                       "food",
                       "refrigerator_common",
@@ -1551,13 +1674,12 @@
               "occurrences": [
                 {
                   "index": 1173,
-                  "line": 9907,
+                  "line": 8974,
                   "entry": {
                     "kanji": "オレンジ",
                     "reading": "オレンジ",
                     "meaning": "orange",
                     "type": "noun",
-                    "orthography": "katakana",
                     "tags": [
                       "origin:English"
                     ]
@@ -1565,14 +1687,13 @@
                 },
                 {
                   "index": 1511,
-                  "line": 13138,
+                  "line": 11984,
                   "entry": {
                     "kanji": "オレンジ",
                     "reading": "オレンジ",
                     "meaning": "orange",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "katakana",
                     "tags": [
                       "food",
                       "refrigerator_common",
@@ -1588,12 +1709,12 @@
               "occurrences": [
                 {
                   "index": 1314,
-                  "line": 11205,
+                  "line": 10134,
                   "entry": {
                     "kanji": "蜥蜴",
                     "reading": "とかげ",
                     "meaning": "lizard",
-                    "type": "standalone-noun",
+                    "type": "noun",
                     "tags": [
                       "pokemon-name-root"
                     ]
@@ -1601,14 +1722,13 @@
                 },
                 {
                   "index": 1472,
-                  "line": 12681,
+                  "line": 11557,
                   "entry": {
                     "kanji": "蜥蜴",
                     "reading": "とかげ",
                     "meaning": "lizard",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "both",
                     "tags": [
                       "common_animal"
                     ]
@@ -1622,12 +1742,12 @@
               "occurrences": [
                 {
                   "index": 1317,
-                  "line": 11233,
+                  "line": 10162,
                   "entry": {
                     "kanji": "亀",
                     "reading": "かめ",
                     "meaning": "turtle; tortoise",
-                    "type": "standalone-noun",
+                    "type": "noun",
                     "tags": [
                       "pokemon-name-root"
                     ]
@@ -1635,14 +1755,13 @@
                 },
                 {
                   "index": 1406,
-                  "line": 12035,
+                  "line": 10879,
                   "entry": {
                     "kanji": "亀",
                     "reading": "かめ",
                     "meaning": "turtle",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -1656,13 +1775,12 @@
               "occurrences": [
                 {
                   "index": 1342,
-                  "line": 11483,
+                  "line": 10391,
                   "entry": {
                     "kanji": "猿",
                     "reading": "さる",
                     "meaning": "monkey",
-                    "type": "standalone-noun",
-                    "orthography": "kanji",
+                    "type": "noun",
                     "tags": [
                       "pokemon-name-root"
                     ]
@@ -1670,14 +1788,13 @@
                 },
                 {
                   "index": 1408,
-                  "line": 12057,
+                  "line": 10899,
                   "entry": {
                     "kanji": "猿",
                     "reading": "さる",
                     "meaning": "monkey",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -1691,13 +1808,12 @@
               "occurrences": [
                 {
                   "index": 1346,
-                  "line": 11523,
+                  "line": 10427,
                   "entry": {
                     "kanji": "鬼",
                     "reading": "おに",
                     "meaning": "oni; demon ogre",
-                    "type": "standalone-noun",
-                    "orthography": "kanji",
+                    "type": "noun",
                     "tags": [
                       "pokemon-name-root"
                     ]
@@ -1705,14 +1821,13 @@
                 },
                 {
                   "index": 1583,
-                  "line": 13990,
+                  "line": 12764,
                   "entry": {
                     "kanji": "鬼",
                     "reading": "おに",
                     "meaning": "demon; ogre",
                     "type": "noun",
-                    "lexicalClass": "regular",
-                    "orthography": "kanji"
+                    "lexicalClass": "regular"
                   }
                 }
               ]
@@ -1723,13 +1838,12 @@
               "occurrences": [
                 {
                   "index": 1348,
-                  "line": 11543,
+                  "line": 10445,
                   "entry": {
                     "kanji": "狐",
                     "reading": "きつね",
                     "meaning": "fox",
-                    "type": "standalone-noun",
-                    "orthography": "kanji",
+                    "type": "noun",
                     "tags": [
                       "pokemon-name-root"
                     ]
@@ -1737,14 +1851,13 @@
                 },
                 {
                   "index": 1415,
-                  "line": 12134,
+                  "line": 10969,
                   "entry": {
                     "kanji": "狐",
                     "reading": "きつね",
                     "meaning": "fox",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -1752,14 +1865,13 @@
                 },
                 {
                   "index": 1616,
-                  "line": 14254,
+                  "line": 12995,
                   "entry": {
                     "kanji": "狐",
                     "reading": "きつね",
                     "meaning": "fox; fox spirit (kitsune)",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "yokai",
                       "animal_spirit"
@@ -1774,13 +1886,12 @@
               "occurrences": [
                 {
                   "index": 1351,
-                  "line": 11573,
+                  "line": 10472,
                   "entry": {
                     "kanji": "蛇",
                     "reading": "へび",
                     "meaning": "snake",
-                    "type": "standalone-noun",
-                    "orthography": "kanji",
+                    "type": "noun",
                     "tags": [
                       "pokemon-name-root"
                     ]
@@ -1788,14 +1899,13 @@
                 },
                 {
                   "index": 1471,
-                  "line": 12670,
+                  "line": 11547,
                   "entry": {
                     "kanji": "蛇",
                     "reading": "へび",
                     "meaning": "snake",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -1809,13 +1919,12 @@
               "occurrences": [
                 {
                   "index": 1356,
-                  "line": 11623,
+                  "line": 10517,
                   "entry": {
                     "kanji": "白",
                     "reading": "しろ",
                     "meaning": "white",
-                    "type": "standalone-noun",
-                    "orthography": "kanji",
+                    "type": "noun",
                     "tags": [
                       "pokemon-name-root"
                     ]
@@ -1823,14 +1932,13 @@
                 },
                 {
                   "index": 1522,
-                  "line": 13275,
+                  "line": 12110,
                   "entry": {
                     "kanji": "白",
                     "reading": "しろ",
                     "meaning": "white",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "color",
                       "common_descriptor"
@@ -1845,13 +1953,12 @@
               "occurrences": [
                 {
                   "index": 1357,
-                  "line": 11633,
+                  "line": 10526,
                   "entry": {
                     "kanji": "鳩",
                     "reading": "はと",
                     "meaning": "pigeon; dove",
-                    "type": "standalone-noun",
-                    "orthography": "kanji",
+                    "type": "noun",
                     "tags": [
                       "pokemon-name-root"
                     ]
@@ -1859,14 +1966,13 @@
                 },
                 {
                   "index": 1483,
-                  "line": 12796,
+                  "line": 11670,
                   "entry": {
                     "kanji": "鳩",
                     "reading": "はと",
                     "meaning": "pigeon; dove",
                     "type": "noun",
                     "lexicalClass": "regular",
-                    "orthography": "kanji",
                     "tags": [
                       "common_animal"
                     ]
@@ -1880,25 +1986,23 @@
               "occurrences": [
                 {
                   "index": 1382,
-                  "line": 11823,
+                  "line": 10691,
                   "entry": {
                     "kanji": "びっくり",
                     "reading": "びっくり",
                     "meaning": "to be surprised; surprise (onomatopoeic/adverb)",
-                    "type": "adverb",
-                    "orthography": "hiragana"
+                    "type": "adverb"
                   }
                 },
                 {
                   "index": 1599,
-                  "line": 14118,
+                  "line": 12876,
                   "entry": {
                     "kanji": "びっくり",
                     "reading": "びっくり",
                     "meaning": "surprise; be surprised (onomatopoeia)",
                     "type": "adverb",
-                    "lexicalClass": "onomatopoeia",
-                    "orthography": "hiragana"
+                    "lexicalClass": "onomatopoeia"
                   }
                 }
               ]

@@ -1211,18 +1211,27 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     if (!coll || !collectionUsesJapaneseExpansion(coll)) {
       return {
         type: null,
-        supports: { i: false, na: false },
+        supports: { i: false, na: false, ichidan: false, godan: false, irregular: false },
         iBaseItems: [],
         naBaseItems: [],
+        ichidanVerbBaseItems: [],
+        godanVerbBaseItems: [],
+        irregularVerbBaseItems: [],
         iItems: [],
         naItems: [],
+        ichidanVerbItems: [],
+        godanVerbItems: [],
+        irregularVerbItems: [],
       };
     }
     return getJapaneseExpansionControlConfig(coll);
   }
 
-  function getCollectionExpansionDeltas(entries, { iForms = [], naForms = [] } = {}) {
-    return getJapaneseExpansionDeltas(entries, { iForms, naForms });
+  function getCollectionExpansionDeltas(
+    entries,
+    { iForms = [], naForms = [], ichidanForms = [], godanForms = [], irregularForms = [] } = {},
+  ) {
+    return getJapaneseExpansionDeltas(entries, { iForms, naForms, ichidanForms, godanForms, irregularForms });
   }
 
   // ============================================================================
@@ -1345,6 +1354,9 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
     let iForms = collState ? (collState.expansion_i ?? collState.expansion_iAdj ?? collState.expansion_i_adjective ?? []) : [];
     let naForms = collState ? (collState.expansion_na ?? collState.expansion_naAdj ?? collState.expansion_na_adjective ?? []) : [];
+    let ichidanForms = collState ? (collState.expansion_ichidan ?? collState.expansion_ichidanVerb ?? collState.expansion_ichidan_verb ?? []) : [];
+    let godanForms = collState ? (collState.expansion_godan ?? collState.expansion_godanVerb ?? collState.expansion_godan_verb ?? []) : [];
+    let irregularForms = collState ? (collState.expansion_irregular ?? collState.expansion_irregularVerb ?? collState.expansion_irregular_verb ?? []) : [];
     const collection = (opts?.collection && typeof opts.collection === 'object') ? opts.collection : null;
 
     // If the collection supports japanese adjective expansion and callers
@@ -1360,11 +1372,26 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         if (naForms === 'all' || (Array.isArray(naForms) && naForms.includes('all'))) {
           naForms = Array.isArray(cfg?.naItems) ? cfg.naItems.map(it => String(it?.value ?? it)) : [];
         }
+        if (ichidanForms === 'all' || (Array.isArray(ichidanForms) && ichidanForms.includes('all'))) {
+          ichidanForms = Array.isArray(cfg?.ichidanVerbItems) ? cfg.ichidanVerbItems.map(it => String(it?.value ?? it)) : [];
+        }
+        if (godanForms === 'all' || (Array.isArray(godanForms) && godanForms.includes('all'))) {
+          godanForms = Array.isArray(cfg?.godanVerbItems) ? cfg.godanVerbItems.map(it => String(it?.value ?? it)) : [];
+        }
+        if (irregularForms === 'all' || (Array.isArray(irregularForms) && irregularForms.includes('all'))) {
+          irregularForms = Array.isArray(cfg?.irregularVerbItems) ? cfg.irregularVerbItems.map(it => String(it?.value ?? it)) : [];
+        }
       } catch (e) {
         // ignore and fall back to whatever was provided
       }
 
-      expanded = expandJapaneseEntriesAndIndices(baseEntriesRaw, baseIndices, { iForms, naForms });
+      expanded = expandJapaneseEntriesAndIndices(baseEntriesRaw, baseIndices, {
+        iForms,
+        naForms,
+        ichidanForms,
+        godanForms,
+        irregularForms,
+      });
     }
     const baseEntries = expanded.entries;
     const expandedIndices = expanded.indices;
@@ -1531,7 +1558,21 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     return true;
   }
 
-  function setCollectionExpansionForms(collKey, { iForms = [], naForms = [], iForm = '', naForm = '' } = {}) {
+  function setCollectionExpansionForms(
+    collKey,
+    {
+      iForms = [],
+      naForms = [],
+      ichidanForms = [],
+      godanForms = [],
+      irregularForms = [],
+      iForm = '',
+      naForm = '',
+      ichidanForm = '',
+      godanForm = '',
+      irregularForm = '',
+    } = {},
+  ) {
     const coll = collKey ? getCollections().find(c => c?.key === collKey) : getActiveCollection();
     if (!coll) return false;
 
@@ -1545,9 +1586,15 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
     const i = normalizeList(iForms, iForm);
     const na = normalizeList(naForms, naForm);
+    const ichidan = normalizeList(ichidanForms, ichidanForm);
+    const godan = normalizeList(godanForms, godanForm);
+    const irregular = normalizeList(irregularForms, irregularForm);
     saveCollectionState(coll.key, {
       expansion_i: i,
       expansion_na: na,
+      expansion_ichidan: ichidan,
+      expansion_godan: godan,
+      expansion_irregular: irregular,
     });
     emit();
     return true;
@@ -1618,3 +1665,4 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     clearLearnedForCollection,
   };
 }
+

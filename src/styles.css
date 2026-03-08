@@ -3165,7 +3165,7 @@ select:hover {
   #manage-collections-root .mc-left,
   #manage-collections-root .mc-right {
     overflow-y: auto;
-    height: 38rem;
+    height: 35rem;
     padding: 0rem 0.2rem;
   }
 }
@@ -3173,8 +3173,7 @@ select:hover {
 @media (max-width: 900px) {
   #manage-collections-root {
     overflow-y: auto;
-    height: 83vh;
-    /* This makes the div take up the full viewport height */
+  
   }
 
   #manage-collections-root .mc-layout {
