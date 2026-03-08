@@ -301,9 +301,9 @@ export function renderKanjiStudyCard({ store }) {
   function goToIndex(newIndex) {
     const total = Array.isArray(entries) ? entries.length : 0;
     if (!total) return;
-    const nextIndex = Math.round(Number(newIndex));
-    if (!Number.isFinite(nextIndex)) return;
-    if (nextIndex < 0 || nextIndex >= total) return;
+    const raw = Math.round(Number(newIndex));
+    if (!Number.isFinite(raw)) return;
+    const nextIndex = ((raw % total) + total) % total;
     try { progressTracker?.flush?.(); } catch (e) {}
     index = nextIndex;
     shownAt = nowMs();
@@ -839,3 +839,4 @@ export function renderKanjiStudyCard({ store }) {
   // expose fragment so the shell can mount header -> view -> footer in order
   return frag;
 }
+
