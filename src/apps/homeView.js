@@ -9,6 +9,7 @@ const APP_META = {
   kanji: { label: 'Kanji Study', path: '/kanji' },
   explorer: { label: 'Explorer', path: '/explorer' },
   data: { label: 'Data', path: '/data' },
+  'study-manager': { label: 'Study Manager', path: '/study-manager' },
   collections: { label: 'Collections', path: '/collections' },
 };
 
@@ -84,6 +85,7 @@ export function renderHome({ store, onNavigate }) {
   quickLinks.push(makeLink({ label: 'Flashcards', goTo: linkToAppAndCollection('flashcards', activeId), sublabel: 'Browse and review all fields' }));
   quickLinks.push(makeLink({ label: 'QA Cards', goTo: linkToAppAndCollection('qa-cards', activeId), sublabel: 'Type answers with romaji conversion' }));
   quickLinks.push(makeLink({ label: 'Data', goTo: linkToAppAndCollection('data', activeId), sublabel: 'Table view of entries' }));
+  quickLinks.push(makeLink({ label: 'Study Manager', goTo: linkToAppAndCollection('study-manager', activeId), sublabel: 'Filter history and rollups' }));
   if (activeCategory === 'japanese') {
     quickLinks.push(makeLink({ label: 'Kanji Study', goTo: linkToAppAndCollection('kanji', activeId), sublabel: 'Study kanji cards' }));
   }
@@ -235,3 +237,5 @@ export function renderHome({ store, onNavigate }) {
 
   return root;
 }
+
+

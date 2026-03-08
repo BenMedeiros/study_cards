@@ -3,6 +3,7 @@ import { renderFlashcards } from './apps/flashcardsView.js';
 import { renderQaCards } from './apps/qaCardsView.js';
 import { renderCollectionsManager } from './apps/collectionsView.js';
 import { renderManageCollections } from './apps/manageCollectionsView.js';
+import { renderStudyManager } from './apps/studyManagerView.js';
 import { parseHashRoute } from './utils/helpers.js';
 import { renderData } from './apps/dataView.js';
 import { renderKanjiStudyCard } from './apps/kanjiStudyCardView.js';
@@ -15,6 +16,7 @@ import { speak } from './utils/speech.js';
 import { createDropdown } from './components/dropdown.js';
 import { timed } from './utils/timing.js';
 import collectionSettingsController from './controllers/collectionSettingsController.js';
+import studyManagerController from './controllers/studyManagerController.js';
 
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
@@ -22,6 +24,7 @@ export function createAppShell({ store, onNavigate }) {
 
   // Initialize controllers with store
   collectionSettingsController.init({ store });
+  try { studyManagerController.init({ store }); } catch (e) {}
 
   // Register shell as a settings consumer for persisted shell settings.
   try {
@@ -471,6 +474,7 @@ export function createAppShell({ store, onNavigate }) {
     if (p === '/explorer') return 'explorer';
     if (p === '/data') return 'data';
     if (p === '/collections') return 'collections';
+    if (p === '/study-manager') return 'study-manager';
     return null;
   }
 
@@ -919,6 +923,7 @@ export function createAppShell({ store, onNavigate }) {
       // only include Kanji when active collection category is japanese
       ...(activeCategory.toLowerCase() === 'japanese' ? [{ href: '#/kanji', label: 'Kanji Study' }] : []),
       { href: '#/data', label: 'Data' },
+      { href: '#/study-manager', label: 'Study Manager' },
       { href: '#/collections', label: 'Collections' },
       { href: '#/manage-collections', label: 'Manage Collections' },
       { href: '#/explorer', label: 'Explorer' },
@@ -1016,6 +1021,11 @@ export function createAppShell({ store, onNavigate }) {
         return;
       }
 
+      if (route.pathname === '/study-manager') {
+        main.append(timed('view.renderStudyManager', () => renderStudyManager({ store, onNavigate, route })));
+        return;
+      }
+
       if (route.pathname === '/collections') {
         main.append(timed('view.renderCollectionsManager', () => renderCollectionsManager({ store, onNavigate, route })));
         return;
@@ -1085,3 +1095,6 @@ export function createAppShell({ store, onNavigate }) {
 
   return { el, renderHeader, renderRoute, getCurrentRoute };
 }
+
+
+
