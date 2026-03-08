@@ -356,9 +356,16 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   function getEntryFieldsSelection() {
+    // Use local state first so sequential zero-delay footer actions compose
+    // against the latest in-turn selection instead of async controller lag.
+    if (entryFieldSelection === 'all') return 'all';
+    if (Array.isArray(entryFieldSelection)) return entryFieldSelection.slice();
     try {
       const st = (kanjiController && typeof kanjiController.get === 'function') ? (kanjiController.get() || {}) : {};
-      if (st && Object.prototype.hasOwnProperty.call(st, 'entryFields')) return st.entryFields;
+      if (st && Object.prototype.hasOwnProperty.call(st, 'entryFields')) {
+        const next = st.entryFields;
+        return next === 'all' ? 'all' : (Array.isArray(next) ? next.slice() : next);
+      }
     } catch (e) {}
     return entryFieldSelection;
   }
@@ -370,15 +377,20 @@ export function renderKanjiStudyCard({ store }) {
         : [];
       if (vals.length) return vals;
     } catch (e) {}
-    return ['kanji', 'reading', 'type', 'lexicalClass', 'orthography', 'tags'];
+    return ['kanji', 'reading', 'meaning', 'type', 'lexicalClass', 'orthography', 'tags'];
   }
 
   function setEntryFieldsSelection(nextSelection) {
+    // Update local selection immediately so multiple actions in one custom
+    // button run can build on each other even before async controller writes resolve.
+    entryFieldSelection = (nextSelection === 'all')
+      ? 'all'
+      : (Array.isArray(nextSelection) ? nextSelection.slice() : []);
     if (kanjiController && typeof kanjiController.setEntryFields === 'function') {
-      kanjiController.setEntryFields(nextSelection);
+      kanjiController.setEntryFields(entryFieldSelection);
       return;
     }
-    persistViewState({ entryFields: nextSelection });
+    persistViewState({ entryFields: entryFieldSelection });
   }
 
   const footerActions = createKanjiStudyFooterActionsController({
