@@ -316,20 +316,20 @@ export function createKanjiStudyFooterActionsController({
 
     // Progress-related functions use a fully-qualified fnName to make it
     // clearer where the operation is performed.
-    { id: 'learned', fnName: 'manager.studyProgress.toggleKanjiLearned', actionField: 'entry.kanji', invoke: runToggleLearned },
-    { id: 'practice', fnName: 'manager.studyProgress.toggleKanjiFocus', actionField: 'entry.kanji', invoke: runTogglePractice },
-    { id: 'setStateLearned', fnName: 'manager.studyProgress.setStateLearned', actionField: 'entry.kanji', invoke: runSetStateLearned },
-    { id: 'setStateNull', fnName: 'manager.studyProgress.setStateNull', actionField: 'entry.kanji', invoke: runSetStateNull },
-    { id: 'setStateFocus', fnName: 'manager.studyProgress.setStateFocus', actionField: 'entry.kanji', invoke: runSetStateFocus },
+    { id: 'learned', fnName: 'manager.studyProgress.toggleKanjiLearned', actionField: 'entry.studyKey', invoke: runToggleLearned },
+    { id: 'practice', fnName: 'manager.studyProgress.toggleKanjiFocus', actionField: 'entry.studyKey', invoke: runTogglePractice },
+    { id: 'setStateLearned', fnName: 'manager.studyProgress.setStateLearned', actionField: 'entry.studyKey', invoke: runSetStateLearned },
+    { id: 'setStateNull', fnName: 'manager.studyProgress.setStateNull', actionField: 'entry.studyKey', invoke: runSetStateNull },
+    { id: 'setStateFocus', fnName: 'manager.studyProgress.setStateFocus', actionField: 'entry.studyKey', invoke: runSetStateFocus },
 
     // Generic link actions that reuse a single link-opening helper. Each
     // definition includes a `linkKey` which maps into LINK_TEMPLATES.
-    { id: 'link.chatgpt', fnName: 'link.open[chatgpt]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['chatgpt']) },
-    { id: 'link.google.images', fnName: 'link.open[google.images]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['google.images']) },
+    { id: 'link.chatgpt', fnName: 'link.open[chatgpt]', actionField: 'entry.studyKey', invoke: withSearchUrl(LINK_TEMPLATES['chatgpt']) },
+    { id: 'link.google.images', fnName: 'link.open[google.images]', actionField: 'entry.studyKey', invoke: withSearchUrl(LINK_TEMPLATES['google.images']) },
     {
       id: 'link.translate',
       fnName: 'link.open',
-      actionField: 'entry.kanji',
+      actionField: 'entry.studyKey',
       fnName: 'link.open[translate]',
       invoke: () => {
         const term = asString(run.getSearchTerm()).trim();
@@ -338,9 +338,9 @@ export function createKanjiStudyFooterActionsController({
         run.openInNewTab(`${LINK_TEMPLATES['translate']}${encodeURIComponent(term)}&op=translate`);
       },
     },
-    { id: 'link.google', fnName: 'link.open[google]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['google']) },
-    { id: 'link.jisho', fnName: 'link.open[jisho]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['jisho']) },
-    { id: 'link.wiktionary', fnName: 'link.open[wiktionary]', actionField: 'entry.kanji', invoke: withSearchUrl(LINK_TEMPLATES['wiktionary']) },
+    { id: 'link.google', fnName: 'link.open[google]', actionField: 'entry.studyKey', invoke: withSearchUrl(LINK_TEMPLATES['google']) },
+    { id: 'link.jisho', fnName: 'link.open[jisho]', actionField: 'entry.studyKey', invoke: withSearchUrl(LINK_TEMPLATES['jisho']) },
+    { id: 'link.wiktionary', fnName: 'link.open[wiktionary]', actionField: 'entry.studyKey', invoke: withSearchUrl(LINK_TEMPLATES['wiktionary']) },
     ...entryFieldActionDefinitions,
   ];
 

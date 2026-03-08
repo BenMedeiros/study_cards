@@ -6,10 +6,27 @@ const AVAILABLE_CARD_KEYS = new Set((CARD_REGISTRY || []).map(c => c.key));
 
 const DEFAULT_VIEW = {
   currentIndex: 0,
-  entryFields: ['kanji', 'reading', 'meaning', 'type', 'lexicalClass', 'orthography', 'tags'],
-  relatedFields: { sentences: ['english', 'notes'] },
-  displayCards: ['main', 'related', 'full', 'generic', 'json'],
+  // Keep this app's naming, but default behavior should be collection-agnostic.
+  entryFields: 'all',
+  relatedFields: {},
+  displayCards: 'all',
 };
+
+function getCollectionFieldKeys(collection) {
+  const md = collection?.metadata || {};
+  const defs = Array.isArray(md.fields)
+    ? md.fields
+    : (Array.isArray(md.schema) ? md.schema : []);
+  const out = [];
+  const seen = new Set();
+  for (const def of defs) {
+    const key = String((def && typeof def === 'object') ? (def.key || '') : (def || '')).trim();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(key);
+  }
+  return out;
+}
 
 function _validateDisplayCards(cards) {
   // Allow the compact 'all' marker (string) used by the UI dropdowns.
@@ -32,7 +49,7 @@ function _validateEntryFields(fields, collection) {
     throw new Error('entryFields must be an array or "all"');
   }
   if (!Array.isArray(fields)) throw new Error('entryFields must be an array');
-  const fieldKeys = new Set((Array.isArray(collection?.metadata?.fields) ? collection.metadata.fields : []).map(f => f.key));
+  const fieldKeys = new Set(getCollectionFieldKeys(collection));
   for (const f of fields) {
     if (typeof f !== 'string') throw new Error('entryFields must contain strings');
     if (f === '__toggle__') continue;
@@ -59,7 +76,7 @@ function create(collKey) {
   function _computeResolved(viewState) {
     const collection = _collectionRef || {};
     const md = collection.metadata || {};
-    const fields = Array.isArray(md.fields) ? md.fields.map(f => String(f.key || f)) : [];
+    const fields = getCollectionFieldKeys(collection);
     const relatedDefs = Array.isArray(md.relatedCollections) ? md.relatedCollections.slice() : [];
 
     const effective = { ...DEFAULT_VIEW, ...(viewState || {}) };
@@ -97,7 +114,7 @@ function create(collKey) {
     let displayCardsResolved = [];
     if (effective.displayCards === 'all') displayCardsResolved = Array.from(AVAILABLE_CARD_KEYS);
     else if (Array.isArray(effective.displayCards)) displayCardsResolved = effective.displayCards.filter(c => AVAILABLE_CARD_KEYS.has(c));
-    else displayCardsResolved = Array.from(DEFAULT_VIEW.displayCards || []);
+    else displayCardsResolved = Array.from(AVAILABLE_CARD_KEYS);
 
     return { entryFieldMap, relatedFieldMaps, displayCards: displayCardsResolved };
   }
@@ -159,3 +176,4 @@ function create(collKey) {
 async function forCollection(collKey) { const c = create(collKey); await c.ready; return c; }
 
 export default { create, forCollection };
+

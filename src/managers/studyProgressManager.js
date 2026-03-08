@@ -170,8 +170,33 @@ export function createStudyProgressManager({
     };
   }
 
-  // Kanji helpers
-  function normalizeKanjiValue(v) { return normalizeValue(v); }
+  // Kanji helpers (also accepts generic entry objects).
+  function normalizeKanjiValue(v) {
+    if (v && typeof v === 'object') {
+      const candidates = [
+        v.studyKey,
+        v.entryKey,
+        v.key,
+        v.id,
+        v.kanji,
+        v.character,
+        v.text,
+        v.word,
+        v.term,
+        v.value,
+        v.name,
+        v.title,
+        v.reading,
+        v.kana,
+        v.pattern,
+      ];
+      for (const candidate of candidates) {
+        const normalized = normalizeValue(candidate);
+        if (normalized) return normalized;
+      }
+    }
+    return normalizeValue(v);
+  }
 
   function getKanjiProgressRecord(v, opts = {}) {
     const k = normalizeKanjiValue(v);
@@ -891,3 +916,4 @@ export function createStudyProgressManager({
     sumSessionDurations,
   };
 }
+

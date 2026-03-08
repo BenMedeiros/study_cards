@@ -1186,27 +1186,61 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   // Entry Study Key Extraction
   // ============================================================================
 
-  function getEntryStudyKey(entry) {
+  function resolveCollectionForEntryKey(opts = {}) {
+    if (opts?.collection && typeof opts.collection === 'object') return opts.collection;
+    const collectionKey = String(opts?.collectionKey || '').trim();
+    if (collectionKey) {
+      const byKey = state.collections.find(c => String(c?.key || '').trim() === collectionKey);
+      if (byKey) return byKey;
+    }
+    return getActiveCollection();
+  }
+
+  function readEntryValueByPath(entry, keyPath) {
+    if (!entry || typeof entry !== 'object') return '';
+    const path = String(keyPath || '').trim();
+    if (!path) return '';
+
+    const direct = entry[path];
+    if (direct != null && String(direct).trim()) return String(direct).trim();
+
+    const parts = path.split('.').map(p => String(p || '').trim()).filter(Boolean);
+    if (!parts.length) return '';
+
+    let cur = entry;
+    for (const part of parts) {
+      if (!cur || typeof cur !== 'object') return '';
+      cur = cur[part];
+    }
+    if (cur == null) return '';
+    return String(cur).trim();
+  }
+
+  function getEntryRawStudyKey(entry, opts = {}) {
+    if (!entry || typeof entry !== 'object') return '';
+
+    const coll = resolveCollectionForEntryKey(opts);
+    const metadataEntryKey = String(coll?.metadata?.entry_key || '').trim();
+    if (metadataEntryKey) {
+      const explicit = readEntryValueByPath(entry, metadataEntryKey);
+      if (explicit) return explicit;
+    }
+
+    for (const k of ['kanji', 'character', 'text', 'word', 'reading', 'kana', 'id', 'key', 'value', 'name', 'title', 'term', 'lowercase', 'uppercase', 'pattern']) {
+      const v = entry[k];
+      if (typeof v === 'string' && v.trim()) return v.trim();
+      if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+    }
+    return '';
+  }
+
+  function getEntryStudyKey(entry, opts = {}) {
     try {
       const base = entry && typeof entry === 'object' ? entry.__baseStudyKey : null;
       if (typeof base === 'string' && base.trim()) return base.trim();
     } catch {}
 
-    if (!entry || typeof entry !== 'object') return '';
-    for (const k of ['kanji', 'character', 'text', 'word', 'reading', 'kana']) {
-      const v = entry[k];
-      if (typeof v === 'string' && v.trim()) return v.trim();
-    }
-    return '';
-  }
-
-  function getEntryRawStudyKey(entry) {
-    if (!entry || typeof entry !== 'object') return '';
-    for (const k of ['kanji', 'character', 'text', 'word', 'reading', 'kana']) {
-      const v = entry[k];
-      if (typeof v === 'string' && v.trim()) return v.trim();
-    }
-    return '';
+    return getEntryRawStudyKey(entry, opts);
   }
 
   // ============================================================================
@@ -1347,7 +1381,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
     return {
       kind: 'kanji',
-      getKey: (entry) => String(getEntryStudyKey(entry) || '').trim(),
+      getKey: (entry) => String(getEntryStudyKey(entry, { collection: coll }) || '').trim(),
       isLearned: (key) => !!(key && typeof progressManager?.isKanjiLearned === 'function' && progressManager.isKanjiLearned(key, { collectionKey: coll?.key })),
       isFocus: (key) => !!(key && typeof progressManager?.isKanjiFocus === 'function' && progressManager.isKanjiFocus(key, { collectionKey: coll?.key })),
     };
@@ -1362,7 +1396,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     if (allowed.has('null') && allowed.has('focus') && allowed.has('learned')) {
       return { entries: arr.slice(), indices: idx.slice() };
     }
-    const a = adapter || { getKey: (e) => String(getEntryStudyKey(e) || '').trim(), isLearned: () => false, isFocus: () => true };
+    const a = adapter || { getKey: (e) => String(getEntryStudyKey(e, { collection: getActiveCollection() }) || '').trim(), isLearned: () => false, isFocus: () => true };
 
     const outEntries = [];
     const outIdx = [];
@@ -1730,6 +1764,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     clearLearnedForCollection,
   };
 }
+
 
 
 

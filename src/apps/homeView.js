@@ -52,7 +52,6 @@ export function renderHome({ store, onNavigate }) {
   const active = store.collections.getActiveCollection();
   const activeId = store.collections.getActiveCollectionId?.() || null;
   const activeName = active?.metadata?.name || 'None';
-  const activeCategory = String(active?.metadata?.category || '').toLowerCase();
 
   const now = Date.now();
   const total24h = store.studyTime.sumSessionDurations?.({ windowMs: 24 * 60 * 60 * 1000 }) || 0;
@@ -86,9 +85,7 @@ export function renderHome({ store, onNavigate }) {
   quickLinks.push(makeLink({ label: 'QA Cards', goTo: linkToAppAndCollection('qa-cards', activeId), sublabel: 'Type answers with romaji conversion' }));
   quickLinks.push(makeLink({ label: 'Data', goTo: linkToAppAndCollection('data', activeId), sublabel: 'Table view of entries' }));
   quickLinks.push(makeLink({ label: 'Study Manager', goTo: linkToAppAndCollection('study-manager', activeId), sublabel: 'Filter history and rollups' }));
-  if (activeCategory === 'japanese') {
-    quickLinks.push(makeLink({ label: 'Kanji Study', goTo: linkToAppAndCollection('kanji', activeId), sublabel: 'Study kanji cards' }));
-  }
+  quickLinks.push(makeLink({ label: 'Kanji Study', goTo: linkToAppAndCollection('kanji', activeId), sublabel: 'Study card view' }));
   quickLinks.push(makeLink({ label: 'Collections', goTo: '/collections', sublabel: 'Manage collection settings + stats' }));
 
   // Helper: return sorted, Japanese-filtered items for a window
@@ -237,5 +234,4 @@ export function renderHome({ store, onNavigate }) {
 
   return root;
 }
-
 

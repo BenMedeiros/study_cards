@@ -65,7 +65,10 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   function getPrimaryKanjiValue(entry) {
-    return getFieldValue(entry, ['kanji', 'character', 'text']) || '';
+    if (!entry) return '';
+    const studyKey = String(store?.collections?.getEntryStudyKey?.(entry) || '').trim();
+    if (studyKey) return studyKey;
+    return getFieldValue(entry, ['kanji', 'character', 'text', 'word', 'term', 'name', 'title', 'reading', 'kana']) || '';
   }
 
   // Persist small per-view patches to the controller (view delegates all state persistence)
@@ -238,22 +241,37 @@ export function renderKanjiStudyCard({ store }) {
   // derive entry field items from collection schema keys (authoritative)
   const activeColl = store?.collections?.getActiveCollection?.() || null;
   const metadata = activeColl?.metadata || {};
-  function buildEntryFieldItemsFromSchema(meta) {
+  function buildEntryFieldItemsFromSchema(meta, sampleEntry) {
     const candidates = Array.isArray(meta?.schema) ? meta.schema : (Array.isArray(meta?.fields) ? meta.fields : []);
     const out = [];
     const seen = new Set();
-    for (const raw of candidates) {
-      const key = String((raw && typeof raw === 'object') ? (raw.key || '') : (raw || '')).trim();
-      if (!key || seen.has(key)) continue;
+    const addField = (rawKey, rawLabel) => {
+      const key = String(rawKey || '').trim();
+      if (!key || seen.has(key)) return;
       seen.add(key);
-      const label = (raw && typeof raw === 'object' && raw.label != null)
-        ? String(raw.label)
-        : key;
-      out.push({ value: key, left: label });
+      out.push({ value: key, left: String(rawLabel || key) });
+    };
+
+    for (const raw of candidates) {
+      const key = (raw && typeof raw === 'object') ? (raw.key || '') : (raw || '');
+      const label = (raw && typeof raw === 'object' && raw.label != null) ? raw.label : key;
+      addField(key, label);
     }
+
+    if (!out.length && sampleEntry && typeof sampleEntry === 'object') {
+      for (const key of Object.keys(sampleEntry)) addField(key, key);
+    }
+
+    if (!out.length) {
+      for (const key of ['kanji', 'reading', 'meaning', 'type']) addField(key, key);
+    }
+
     return out;
   }
-  const entryFieldItems = buildEntryFieldItemsFromSchema(metadata);
+  const sampleEntry = (Array.isArray(res?.view?.entries) && res.view.entries.length)
+    ? res.view.entries[0]
+    : ((Array.isArray(coll?.entries) && coll.entries.length) ? coll.entries[0] : null);
+  const entryFieldItems = buildEntryFieldItemsFromSchema(metadata, sampleEntry);
 
   // create entry-level dropdown
   const entryFieldsRec = headerTools.addElement({
@@ -347,7 +365,9 @@ export function renderKanjiStudyCard({ store }) {
   function getSearchTerm() {
     const entry = entries && entries.length ? entries[index] : null;
     if (!entry) return '';
-    return (getPrimaryKanjiValue(entry) || '').trim();
+    const primary = (getPrimaryKanjiValue(entry) || '').trim();
+    if (primary) return primary;
+    return (getFieldValue(entry, ['meaning', 'definition', 'gloss', 'description']) || '').trim();
   }
 
   function getCurrentEntryKey() {
@@ -377,7 +397,14 @@ export function renderKanjiStudyCard({ store }) {
         : [];
       if (vals.length) return vals;
     } catch (e) {}
-    return ['kanji', 'reading', 'meaning', 'type', 'lexicalClass', 'orthography', 'tags'];
+    try {
+      const entry = entries && entries.length ? entries[index] : null;
+      const dynamic = (entry && typeof entry === 'object')
+        ? Object.keys(entry).map(k => String(k || '').trim()).filter(Boolean)
+        : [];
+      if (dynamic.length) return dynamic;
+    } catch (e) {}
+    return ['kanji', 'reading', 'meaning', 'type'];
   }
 
   function setEntryFieldsSelection(nextSelection) {

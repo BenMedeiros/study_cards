@@ -2953,7 +2953,7 @@ select:hover {
   gap: 0.75rem;
 }
 
-#manage-collections-root h2 {
+h2 {
   margin: 0;
   font-size: medium;
 }
