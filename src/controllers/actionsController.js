@@ -10,7 +10,7 @@ function customTokenFromId(id) {
   return `__custom:${asString(id).trim()}`;
 }
 
-const KANJI_STUDY_ENTRY_FIELDS = ['kanji', 'reading', 'type', 'lexicalClass', 'orthography', 'tags'];
+const KANJI_STUDY_ENTRY_FIELDS_FALLBACK = ['kanji', 'reading', 'meaning', 'type', 'lexicalClass', 'orthography', 'tags'];
 
 const KANJI_STUDY_DEFAULT_CUSTOM_BUTTONS = [
   {
@@ -101,7 +101,7 @@ export function createKanjiStudyFooterActionsController({
     speakField: (typeof speakField === 'function') ? speakField : () => {},
     getSearchTerm: (typeof getSearchTerm === 'function') ? getSearchTerm : () => '',
     getEntryFields: (typeof getEntryFields === 'function') ? getEntryFields : () => 'all',
-    getAvailableEntryFields: (typeof getAvailableEntryFields === 'function') ? getAvailableEntryFields : () => KANJI_STUDY_ENTRY_FIELDS.slice(),
+    getAvailableEntryFields: (typeof getAvailableEntryFields === 'function') ? getAvailableEntryFields : () => KANJI_STUDY_ENTRY_FIELDS_FALLBACK.slice(),
     setEntryFields: (typeof setEntryFields === 'function') ? setEntryFields : () => {},
     getCurrentCollectionKey: (typeof getCurrentCollectionKey === 'function') ? getCurrentCollectionKey : () => '',
     getCurrentEntryKey: (typeof getCurrentEntryKey === 'function') ? getCurrentEntryKey : () => '',
@@ -184,7 +184,7 @@ export function createKanjiStudyFooterActionsController({
         if (out.length) return out;
       }
     } catch (e) {}
-    return KANJI_STUDY_ENTRY_FIELDS.slice();
+    return KANJI_STUDY_ENTRY_FIELDS_FALLBACK.slice();
   }
 
   function getSelectedEntryFieldSet() {
@@ -272,8 +272,18 @@ export function createKanjiStudyFooterActionsController({
     'wiktionary': 'https://en.wiktionary.org/wiki/',
   };
 
+  const speakFieldActionDefinitions = [];
+  for (const fieldKey of getAvailableEntryFieldsList()) {
+    speakFieldActionDefinitions.push({
+      id: `sound.${fieldKey}`,
+      fnName: 'entry.speakField',
+      actionField: `entry.${fieldKey}`,
+      invoke: () => run.speakField(fieldKey),
+    });
+  }
+
   const entryFieldActionDefinitions = [];
-  for (const fieldKey of KANJI_STUDY_ENTRY_FIELDS) {
+  for (const fieldKey of getAvailableEntryFieldsList()) {
     entryFieldActionDefinitions.push(
       {
         id: `entryField.${fieldKey}.setOn`,
@@ -302,12 +312,7 @@ export function createKanjiStudyFooterActionsController({
 
     // Use a generic 'Sound' label for all sound actions; the specific
     // actionField indicates which entry field will be spoken.
-    { id: 'sound.kanji', fnName: 'entry.speakField', actionField: 'entry.kanji', invoke: () => run.speakField('kanji') },
-    { id: 'sound.lexicalClass', fnName: 'entry.speakField', actionField: 'entry.lexicalClass', invoke: () => run.speakField('lexicalClass') },
-    { id: 'sound.meaning', fnName: 'entry.speakField', actionField: 'entry.meaning', invoke: () => run.speakField('meaning') },
-    { id: 'sound.orthography', fnName: 'entry.speakField', actionField: 'entry.orthography', invoke: () => run.speakField('orthography') },
-    { id: 'sound.reading', fnName: 'entry.speakField', actionField: 'entry.reading', invoke: () => run.speakField('reading') },
-    { id: 'sound.type', fnName: 'entry.speakField', actionField: 'entry.type', invoke: () => run.speakField('type') },
+    ...speakFieldActionDefinitions,
 
     // Progress-related functions use a fully-qualified fnName to make it
     // clearer where the operation is performed.
@@ -366,3 +371,4 @@ export default {
   createKanjiStudyFooterActionsController,
   getKanjiStudyDefaultFooterPrefs,
 };
+

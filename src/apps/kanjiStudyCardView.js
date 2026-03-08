@@ -235,10 +235,25 @@ export function renderKanjiStudyCard({ store }) {
     }
   }
 
-  // derive entry field items from collection metadata (authoritative)
+  // derive entry field items from collection schema keys (authoritative)
   const activeColl = store?.collections?.getActiveCollection?.() || null;
   const metadata = activeColl?.metadata || {};
-  const entryFieldItems = Array.isArray(metadata?.fields) ? metadata.fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f) })) : [];
+  function buildEntryFieldItemsFromSchema(meta) {
+    const candidates = Array.isArray(meta?.schema) ? meta.schema : (Array.isArray(meta?.fields) ? meta.fields : []);
+    const out = [];
+    const seen = new Set();
+    for (const raw of candidates) {
+      const key = String((raw && typeof raw === 'object') ? (raw.key || '') : (raw || '')).trim();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      const label = (raw && typeof raw === 'object' && raw.label != null)
+        ? String(raw.label)
+        : key;
+      out.push({ value: key, left: label });
+    }
+    return out;
+  }
+  const entryFieldItems = buildEntryFieldItemsFromSchema(metadata);
 
   // create entry-level dropdown
   const entryFieldsRec = headerTools.addElement({
