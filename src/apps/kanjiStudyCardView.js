@@ -131,9 +131,11 @@ export function renderKanjiStudyCard({ store }) {
               const raw = viewState && typeof viewState.currentIndex === 'number' ? viewState.currentIndex : (typeof viewPatch.currentIndex === 'number' ? viewPatch.currentIndex : undefined);
               if (typeof raw === 'number') {
                 const clamped = Math.min(Math.max(0, raw), Math.max(0, entries.length - 1));
-                index = clamped;
-                shownAt = nowMs();
-                render();
+                if (clamped !== index) {
+                  index = clamped;
+                  shownAt = nowMs();
+                  render({ skipRefresh: true });
+                }
               }
             }
 
@@ -343,7 +345,7 @@ export function renderKanjiStudyCard({ store }) {
     if (kanjiController && typeof kanjiController.setCurrentIndex === 'function') {
       kanjiController.setCurrentIndex(index);
     }
-    render();
+    render({ skipRefresh: true });
   }
 
   function showPrev() { goToIndex(index - 1); }
@@ -715,10 +717,10 @@ export function renderKanjiStudyCard({ store }) {
     }
   }
 
-  function render() {
-      if (!isShuffled) {
-    refreshEntriesFromStore();
-      }
+  function render({ skipRefresh = false } = {}) {
+    if (!skipRefresh && !isShuffled) {
+      refreshEntriesFromStore();
+    }
     const sb = headerTools.getControl && headerTools.getControl('shuffle'); if (sb) sb.setAttribute('aria-pressed', String(!!isShuffled));
     // render
 
@@ -748,12 +750,11 @@ export function renderKanjiStudyCard({ store }) {
       fullCardApi && typeof fullCardApi.setEntry === 'function' && fullCardApi.setEntry(entry);
     }
 
-    // Update related sentence card via its API. the card expects `entry` only.
     const displaySet = new Set(Array.isArray(displayCardSelection) ? displayCardSelection : []);
-    // Pass the current entry to the related card so it can derive its sentences.
     if (relatedCardApi && typeof relatedCardApi.setEntry === 'function') relatedCardApi.setEntry(entry);
-    // Also set the entry on any other registered cards (e.g., generic) so they can render.
+    // Set entry on any other registered cards (e.g., generic) so they can render.
     for (const k of Object.keys(cardApis || {})) {
+      if (k === 'main' || k === 'full' || k === 'related') continue;
       const api = cardApis[k];
       if (api && typeof api.setEntry === 'function') api.setEntry(entry);
     }
