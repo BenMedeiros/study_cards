@@ -1,14 +1,15 @@
 # Study Cards
 
-Local-first, vanilla JavaScript study tools — single-page app with hash routing and client-side collections.
+Local-first, vanilla JavaScript study tools - single-page app with hash routing and client-side collections.
 
 Features
 - Multiple study apps built on the same collections model
-  - Flashcards — browse fields, batch navigation, randomize support
-  - QA Cards — type answers (with romaji→hiragana support in some collections)
-  - Crossword — generate crosswords from collection entries
-  - Collections Manager — view and edit collections (client-side)
-  - Data viewer — raw collection JSON browser
+  - QA Cards - type answers (with romaji->hiragana support in some collections)
+  - Kanji Study - focused card flow for kanji learning
+  - Study Manager - filterable study history and rollups
+  - Collections Manager - view and edit collections (client-side)
+  - Data viewer - raw collection JSON browser
+  - Explorer - inspect entities and related data
 - Static-first: runs entirely in the browser with JSON collection files
 - Simple dev server for local development (no backend required)
 
@@ -48,7 +49,6 @@ Example collection shape
       { "key": "back", "label": "Back" }
     ],
     "settings": {
-      "flashcards": { "randomize": true },
       "qaCards": { "submitMethod": "enter" }
     }
   },
@@ -66,16 +66,16 @@ Architecture highlights
 - Hash-based routing: src/router.js
 - App shell and header: src/shell.js
 - Central store and collection loading/merging: src/store.js
-- Entry point: index.html → src/main.js
+- Entry point: index.html -> src/main.js
 - Dev server: npm run dev (http-server)
 
 Project structure (top-level)
-- apps/             — optional server code (unused for static mode)
-- collections/      — collection JSON files and category metadata
-- src/              — client source
-  - apps/           — app implementations (flashcards, qaCards, crossword, landing, collections, data, placeholder)
-  - components/     — reusable UI components
-  - utils/          — helpers
+- apps/             - optional server code (unused for static mode)
+- collections/      - collection JSON files and category metadata
+- src/              - client source
+  - apps/           - app implementations (home, qaCards, kanjiStudyCard, studyManager, collections, manageCollections, data, entityExplorer)
+  - components/     - reusable UI components
+  - utils/          - helpers
   - router.js
   - shell.js
   - store.js

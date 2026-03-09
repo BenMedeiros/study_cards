@@ -899,6 +899,25 @@ function createViewFooterControls(items = [], opts = {}) {
     // settings button should sit in its own block row above the controls
     const settingsRow = document.createElement('div');
     settingsRow.className = 'view-footer-settings-row';
+
+    const flattenBtn = document.createElement('button');
+    flattenBtn.type = 'button';
+    flattenBtn.className = 'view-footer-flatten-btn btn small';
+    flattenBtn.title = 'Toggle flattened footer';
+    flattenBtn.setAttribute('aria-label', 'Toggle flattened footer');
+    flattenBtn.setAttribute('aria-pressed', 'false');
+    // dedicated icon element so we can flip it without replacing the whole button text
+    const flattenIcon = document.createElement('span');
+    flattenIcon.className = 'flatten-icon';
+    flattenIcon.textContent = '⌄';
+    flattenBtn.appendChild(flattenIcon);
+    flattenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const isFlattened = controlsRow.classList.toggle('flatten-footer');
+      flattenBtn.setAttribute('aria-pressed', String(isFlattened));
+      try { flattenIcon.textContent = isFlattened ? '⌃' : '⌄'; } catch (err) {}
+    });
     const settingsBtn = document.createElement('button');
     settingsBtn.type = 'button';
     settingsBtn.className = 'view-footer-settings-btn btn small';
@@ -924,6 +943,7 @@ function createViewFooterControls(items = [], opts = {}) {
         }
       });
     });
+    settingsRow.appendChild(flattenBtn);
     settingsRow.appendChild(settingsBtn);
     // insert settings row before the controls row so it appears above
     footerControls.insertBefore(settingsRow, controlsRow);

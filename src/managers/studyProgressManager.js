@@ -5,7 +5,7 @@ export function createStudyProgressManager({
   studyProgressKey = 'study_progress',
   studyTimeKey = 'study_time',
 } = {}) {
-  const KNOWN_APP_IDS = ['flashcardsView', 'kanjiStudyCardView', 'qaCardsView'];
+  const KNOWN_APP_IDS = ['kanjiStudyCardView', 'qaCardsView'];
   let trackerSeq = 0;
   let activeTrackerStatus = {
     trackerId: null,
@@ -916,4 +916,3 @@ export function createStudyProgressManager({
     sumSessionDurations,
   };
 }
-

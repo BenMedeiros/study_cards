@@ -4,7 +4,6 @@ import collectionSettingsController from '../controllers/collectionSettingsContr
 
 const APP_META = {
   home: { label: 'Home', path: '/' },
-  flashcards: { label: 'Flashcards', path: '/flashcards' },
   'qa-cards': { label: 'QA Cards', path: '/qa-cards' },
   kanji: { label: 'Kanji Study', path: '/kanji' },
   explorer: { label: 'Explorer', path: '/explorer' },
@@ -81,7 +80,6 @@ export function renderHome({ store, onNavigate }) {
   // old stats grid removed — replaced by Japanese-focused windows below
 
   const quickLinks = [];
-  quickLinks.push(makeLink({ label: 'Flashcards', goTo: linkToAppAndCollection('flashcards', activeId), sublabel: 'Browse and review all fields' }));
   quickLinks.push(makeLink({ label: 'QA Cards', goTo: linkToAppAndCollection('qa-cards', activeId), sublabel: 'Type answers with romaji conversion' }));
   quickLinks.push(makeLink({ label: 'Data', goTo: linkToAppAndCollection('data', activeId), sublabel: 'Table view of entries' }));
   quickLinks.push(makeLink({ label: 'Study Manager', goTo: linkToAppAndCollection('study-manager', activeId), sublabel: 'Filter history and rollups' }));
@@ -234,4 +232,3 @@ export function renderHome({ store, onNavigate }) {
 
   return root;
 }
-

@@ -285,7 +285,7 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     }
 
     // Also add a document-level capturing handler so keys are intercepted
-    // before other document listeners (e.g., flashcards) can react.
+    // before other document listeners can react.
     if (!container._captureKeyHandler) {
       container._captureKeyHandler = (e) => {
         const navKeys = ['ArrowUp','ArrowDown','Enter',' ','ArrowLeft','ArrowRight','Escape'];

@@ -5,7 +5,6 @@ import { formatDurationMs, formatIsoShort } from '../utils/helpers.js';
 import collectionSettingsController from '../controllers/collectionSettingsController.js';
 import kanjiStudyController from '../controllers/kanjiStudyController.js';
 import qaCardsController from '../controllers/qaCardsController.js';
-import flashcardsController from '../controllers/flashcardsController.js';
 
 export function renderCollectionsManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
@@ -168,7 +167,6 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
         // Reset per-view app indices
         kanjiStudyController.create(id).set({ currentIndex: 0 });
         qaCardsController.create(id).set({ currentIndex: 0 });
-        flashcardsController.create(id).setCurrentIndex(0);
         // update the row cells in-place so UI reflects cleared settings
         if (tr) {
           const ci = tr.querySelector('[data-field="currentIndex"]'); if (ci) ci.textContent = '';

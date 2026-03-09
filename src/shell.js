@@ -1,5 +1,4 @@
 import { renderHome } from './apps/homeView.js';
-import { renderFlashcards } from './apps/flashcardsView.js';
 import { renderQaCards } from './apps/qaCardsView.js';
 import { renderCollectionsManager } from './apps/collectionsView.js';
 import { renderManageCollections } from './apps/manageCollectionsView.js';
@@ -468,7 +467,6 @@ export function createAppShell({ store, onNavigate }) {
     const p = String(pathname || '').trim();
     if (!p) return null;
     if (p === '/') return 'home';
-    if (p === '/flashcards') return 'flashcards';
     if (p === '/qa-cards') return 'qa-cards';
     if (p === '/kanji') return 'kanji';
     if (p === '/explorer') return 'explorer';
@@ -915,7 +913,6 @@ export function createAppShell({ store, onNavigate }) {
 
     const links = [
       { href: '#/', label: 'Home' },
-      { href: '#/flashcards', label: 'Flashcards' },
       { href: '#/qa-cards', label: 'QA Cards' },
       { href: '#/kanji', label: 'Kanji Study' },
       { href: '#/data', label: 'Data' },
@@ -981,11 +978,6 @@ export function createAppShell({ store, onNavigate }) {
 
       if (route.pathname === '/') {
         main.append(timed('view.renderHome', () => renderHome({ store, onNavigate })));
-        return;
-      }
-
-      if (route.pathname === '/flashcards') {
-        main.append(timed('view.renderFlashcards', () => renderFlashcards({ store })));
         return;
       }
 
@@ -1083,4 +1075,3 @@ export function createAppShell({ store, onNavigate }) {
 
   return { el, renderHeader, renderRoute, getCurrentRoute };
 }
-
