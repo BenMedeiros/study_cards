@@ -210,7 +210,7 @@ export function renderEntityExplorer({ store }) {
         });
         const headers = ['Key', 'Value'];
         const applied = applyTableColumnSettings({ headers, rows, tableSettings: storageTableSettings });
-        const table = createTable({ store, headers: applied.headers, rows: applied.rows, id: 'ls-table', searchable: true, sortable: true });
+        const table = createTable({ store, headers: applied.headers, rows: applied.rows, columnRenderSettings: (storageTableSettings?.columns?.stylesByKey || {}), tableRenderSettings: storageTableSettings?.table || {}, id: 'ls-table', searchable: true, sortable: true });
         applyTableColumnStyles({ wrapper: table, tableSettings: storageTableSettings });
         applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings: storageTableSettings, actionItems: TABLE_ACTION_ITEMS });
         latestTableHeaders = headers;
@@ -432,7 +432,7 @@ export function renderEntityExplorer({ store }) {
       }) : [];
       const headers = ['Key', 'Value'];
       const applied = applyTableColumnSettings({ headers, rows, tableSettings: storageTableSettings });
-      const table = createTable({ store, headers: applied.headers, rows: applied.rows, id: `idb-${dbName}-${storeName}-table`, searchable: true, sortable: true });
+      const table = createTable({ store, headers: applied.headers, rows: applied.rows, columnRenderSettings: (storageTableSettings?.columns?.stylesByKey || {}), tableRenderSettings: storageTableSettings?.table || {}, id: `idb-${dbName}-${storeName}-table`, searchable: true, sortable: true });
       applyTableColumnStyles({ wrapper: table, tableSettings: storageTableSettings });
       applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings: storageTableSettings, actionItems: TABLE_ACTION_ITEMS });
       latestTableHeaders = headers;
@@ -458,6 +458,10 @@ export function renderEntityExplorer({ store }) {
   mo.observe(document.body, { childList: true, subtree: true });
   return root;
 }
+
+
+
+
 
 
 

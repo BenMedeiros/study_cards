@@ -160,6 +160,8 @@ function buildFilterTable({ store, report, onNavigate, tableSettings }) {
     store,
     headers: applied.headers,
     rows: applied.rows,
+    columnRenderSettings: (tableSettings?.columns?.stylesByKey || {}),
+    tableRenderSettings: tableSettings?.table || {},
     id: 'study-manager-filters-table',
     sortable: true,
     searchable: true,
@@ -197,7 +199,8 @@ function buildAppsTable({ store, report, tableSettings }) {
   ];
 
   const applied = applyTableColumnSettings({ headers, rows, tableSettings });
-  const table = createTable({ store, headers: applied.headers, rows: applied.rows, id: 'study-manager-apps-table', sortable: true, searchable: true });
+  const table = createTable({ store, headers: applied.headers, rows: applied.rows, columnRenderSettings: (tableSettings?.columns?.stylesByKey || {}),
+    tableRenderSettings: tableSettings?.table || {}, id: 'study-manager-apps-table', sortable: true, searchable: true });
   applyTableColumnStyles({ wrapper: table, tableSettings });
   applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings, actionItems: TABLE_ACTION_ITEMS });
 
@@ -226,7 +229,8 @@ function buildSessionsTable({ store, report, tableSettings }) {
   ];
 
   const applied = applyTableColumnSettings({ headers, rows, tableSettings });
-  const table = createTable({ store, headers: applied.headers, rows: applied.rows, id: 'study-manager-sessions-table', sortable: true, searchable: true });
+  const table = createTable({ store, headers: applied.headers, rows: applied.rows, columnRenderSettings: (tableSettings?.columns?.stylesByKey || {}),
+    tableRenderSettings: tableSettings?.table || {}, id: 'study-manager-sessions-table', sortable: true, searchable: true });
   applyTableColumnStyles({ wrapper: table, tableSettings });
   applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings, actionItems: TABLE_ACTION_ITEMS });
 
@@ -486,6 +490,11 @@ export function renderStudyManager({ store, onNavigate, route }) {
 
   return root;
 }
+
+
+
+
+
 
 
 

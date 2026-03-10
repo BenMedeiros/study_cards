@@ -2,6 +2,7 @@ let _tableGlobalResizeHookInstalled = false;
 
 import { timed } from '../utils/timing.js';
 import { openRightClickMenu, registerRightClickContext } from './rightClickMenu.js';
+import { createJsonViewer } from './jsonViewer.js';
 import { cleanSearchQuery, compileTableSearchQuery, matchesTableSearch, buildAddToSearchColumnAnalyses } from '../utils/tableSearch.js';
 
 // register the table context class so CSS and code searches can find it
@@ -45,7 +46,7 @@ function _installGlobalTableResizeHook() {
  * @param {string} [options.collection] - Optional collection name the table was populated from
  * @returns {HTMLTableElement}
  */
-export function createTable({ store = null, headers, rows, className = '', id, collection, sourceMetadata = null, sortable = false, searchable = false, rowActions = [], initialSortKey = null, initialSortDir = 'asc' } = {}) {
+export function createTable({ store = null, headers, rows, className = '', id, collection, sourceMetadata = null, sortable = false, searchable = false, rowActions = [], initialSortKey = null, initialSortDir = 'asc', columnRenderSettings = {}, tableRenderSettings = {} } = {}) {
   const __tableLabel = (() => {
     const parts = [];
     if (id) parts.push(String(id));
@@ -61,9 +62,13 @@ export function createTable({ store = null, headers, rows, className = '', id, c
   wrapper.className = 'table-wrapper';
   if (id) wrapper.id = `${id}-wrapper`;
 
-  const VIRTUALIZE_THRESHOLD = 50;
-  const VIRTUAL_ROW_HEIGHT_PX = 36;
-  const VIRTUAL_OVERSCAN = 10;
+  const virtualCfgSrc = (tableRenderSettings && typeof tableRenderSettings === 'object')
+    ? (tableRenderSettings.virtualization || {})
+    : {};
+  const VIRTUAL_ENABLED = (typeof virtualCfgSrc.enabled === 'boolean') ? virtualCfgSrc.enabled : true;
+  const VIRTUALIZE_THRESHOLD = Math.max(0, Math.round(Number(virtualCfgSrc.threshold ?? 50) || 50));
+  const VIRTUAL_ROW_HEIGHT_PX = Math.max(16, Math.round(Number(virtualCfgSrc.rowHeightPx ?? 36) || 36));
+  const VIRTUAL_OVERSCAN = Math.max(0, Math.round(Number(virtualCfgSrc.overscan ?? 10) || 10));
   let searchWrapEl = null;
   let searchInputEl = null;
   let displayRows = Array.isArray(rows) ? rows.slice() : [];
@@ -191,7 +196,11 @@ export function createTable({ store = null, headers, rows, className = '', id, c
       return (cell.textContent || '').trim();
     }
     if (typeof cell === 'number') return cell;
+    if (typeof cell === 'boolean') return cell ? 'true' : 'false';
     if (typeof cell === 'string') return cell.trim();
+    if (cell && typeof cell === 'object') {
+      try { return JSON.stringify(cell); } catch (e) { return String(cell); }
+    }
     return String(cell ?? '').trim();
   }
 
@@ -302,7 +311,7 @@ export function createTable({ store = null, headers, rows, className = '', id, c
   }
 
   function shouldVirtualize(rowsArr) {
-    return Array.isArray(rowsArr) && rowsArr.length > VIRTUALIZE_THRESHOLD;
+    return VIRTUAL_ENABLED && Array.isArray(rowsArr) && rowsArr.length > VIRTUALIZE_THRESHOLD;
   }
 
   function getTotalColumnCount() {
@@ -348,10 +357,33 @@ export function createTable({ store = null, headers, rows, className = '', id, c
       td.dataset.field = key;
       td.classList.add(`col-${keyClass}`);
 
+      const colCfg = (columnRenderSettings && typeof columnRenderSettings === 'object')
+        ? (columnRenderSettings[key] || {})
+        : {};
+      const useJsonViewer = (colCfg?.useJsonViewer !== false);
+      const jsonButtons = (colCfg?.jsonViewerButtons && typeof colCfg.jsonViewerButtons === 'object')
+        ? colCfg.jsonViewerButtons
+        : {};
+      const jsonViewerDefaultExpanded = !!colCfg?.jsonViewerDefaultExpanded;
+
       if (typeof cellData === 'string' || typeof cellData === 'number') {
         td.textContent = cellData;
       } else if (cellData instanceof HTMLElement) {
         td.append(cellData);
+      } else if (cellData && typeof cellData === 'object' && useJsonViewer) {
+        td.classList.add('table-cell-json');
+        const viewer = createJsonViewer(cellData, {
+          showMaximize: jsonButtons.maximize !== false,
+          showCopy: jsonButtons.copy !== false,
+          showWrap: jsonButtons.wrap !== false,
+          showToggle: jsonButtons.toggle !== false,
+          maxChars: 240,
+          maxLines: 8,
+          previewLen: 120,
+          expanded: jsonViewerDefaultExpanded,
+          className: 'table-cell-json-viewer',
+        });
+        td.append(viewer);
       } else {
         td.textContent = String(cellData ?? '');
       }
@@ -410,9 +442,11 @@ export function createTable({ store = null, headers, rows, className = '', id, c
     const viewportH = Math.max(0, wrapper.clientHeight - stickyTop - headH);
     const visibleCount = Math.max(1, Math.ceil(viewportH / VIRTUAL_ROW_HEIGHT_PX));
     const scrollTop = wrapper.scrollTop || 0;
+    const renderCount = Math.max(1, visibleCount + (VIRTUAL_OVERSCAN * 2));
+    const maxStart = Math.max(0, total - renderCount);
     const rawStart = Math.floor(scrollTop / VIRTUAL_ROW_HEIGHT_PX) - VIRTUAL_OVERSCAN;
-    const start = Math.max(0, Math.min(total - 1, rawStart));
-    const end = Math.max(start, Math.min(total - 1, start + visibleCount + (VIRTUAL_OVERSCAN * 2)));
+    const start = Math.max(0, Math.min(maxStart, rawStart));
+    const end = Math.max(start, Math.min(total - 1, start + renderCount - 1));
 
     const key = `${_virtualRenderNonce}:${total}:${start}:${end}`;
     if (_lastVirtualKey === key) return;
@@ -880,4 +914,9 @@ export function createTable({ store = null, headers, rows, className = '', id, c
   return wrapper;
   });
 }
+
+
+
+
+
 

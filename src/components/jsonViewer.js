@@ -31,6 +31,7 @@ export function createJsonViewer(value, opts = {}) {
   placeholder.textContent = previewText;
 
   const showToggle = opts.showToggle !== false;
+  const showWrap = opts.showWrap !== false;
   const toggle = document.createElement('button');
   toggle.type = 'button';
   toggle.className = 'json-toggle';
@@ -52,6 +53,8 @@ export function createJsonViewer(value, opts = {}) {
   let expanded;
   if (isBig) expanded = false;
   else expanded = (opts.expanded !== undefined) ? !!opts.expanded : true;
+
+  let wrapMainBtn = null;
 
   function renderCurrent() {
     content.innerHTML = '';
@@ -86,7 +89,7 @@ export function createJsonViewer(value, opts = {}) {
   // controls container to hold action buttons (toggle, maximize, etc.)
   const controls = document.createElement('div');
   controls.className = 'json-controls';
-  
+
   // copy button for quickly copying the current JSON payload
   const copyMainBtn = document.createElement('button');
   copyMainBtn.type = 'button';
@@ -108,22 +111,27 @@ export function createJsonViewer(value, opts = {}) {
       }
     } catch (e) {}
   });
+
   // attach buttons according to options
   if (opts.showMaximize !== false) controls.appendChild(maxBtn);
-  // wrap toggle (icon) — handled here so per-view wrapping is local
-  const wrapMainBtn = document.createElement('button');
-  wrapMainBtn.type = 'button';
-  wrapMainBtn.className = 'json-wrap';
-  wrapMainBtn.title = 'Toggle wrap';
-  wrapMainBtn.textContent = '↪';
-  wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false');
-  wrapMainBtn.addEventListener('click', (ev) => {
-    ev.stopPropagation();
-    wrapping = !wrapping;
-    try { pre.style.setProperty('white-space', wrapping ? 'pre-wrap' : 'pre'); } catch (e) {}
+
+  // wrap toggle (icon) - handled here so per-view wrapping is local
+  if (showWrap) {
+    wrapMainBtn = document.createElement('button');
+    wrapMainBtn.type = 'button';
+    wrapMainBtn.className = 'json-wrap';
+    wrapMainBtn.title = 'Toggle wrap';
+    wrapMainBtn.textContent = '↪';
     wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false');
-  });
-  controls.appendChild(wrapMainBtn);
+    wrapMainBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      wrapping = !wrapping;
+      try { pre.style.setProperty('white-space', wrapping ? 'pre-wrap' : 'pre'); } catch (e) {}
+      wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false');
+    });
+    controls.appendChild(wrapMainBtn);
+  }
+
   if (opts.showCopy !== false) controls.appendChild(copyMainBtn);
   if (showToggle) controls.appendChild(toggle);
 
@@ -175,12 +183,6 @@ export function createJsonViewer(value, opts = {}) {
       copyBtn.className = 'btn small';
       copyBtn.textContent = 'Copy JSON';
 
-      const wrapBtn = document.createElement('button');
-      wrapBtn.type = 'button';
-      wrapBtn.className = 'btn small';
-      wrapBtn.title = 'Toggle wrap';
-      wrapBtn.textContent = '↪';
-
       const closeBtn = document.createElement('button');
       closeBtn.type = 'button';
       closeBtn.className = 'btn small';
@@ -230,17 +232,22 @@ export function createJsonViewer(value, opts = {}) {
         } catch (e) {}
       });
 
-      wrapBtn.addEventListener('click', () => {
-        try {
-          wrapping = !wrapping;
-          bigPre.style.whiteSpace = wrapping ? 'pre-wrap' : 'pre';
-          try { pre.style.setProperty('white-space', wrapping ? 'pre-wrap' : 'pre'); } catch (e) {}
-          // mirror aria state on main control if present
-          try { wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false'); } catch (e) {}
-        } catch (e) {}
-      });
-
-      actions.insertBefore(wrapBtn, actions.firstChild || null);
+      if (showWrap) {
+        const wrapBtn = document.createElement('button');
+        wrapBtn.type = 'button';
+        wrapBtn.className = 'btn small';
+        wrapBtn.title = 'Toggle wrap';
+        wrapBtn.textContent = '↪';
+        wrapBtn.addEventListener('click', () => {
+          try {
+            wrapping = !wrapping;
+            bigPre.style.whiteSpace = wrapping ? 'pre-wrap' : 'pre';
+            try { pre.style.setProperty('white-space', wrapping ? 'pre-wrap' : 'pre'); } catch (e) {}
+            try { if (wrapMainBtn) wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false'); } catch (e) {}
+          } catch (e) {}
+        });
+        actions.insertBefore(wrapBtn, actions.firstChild || null);
+      }
 
       closeBtn.addEventListener('click', closeDialog);
       backdrop.addEventListener('click', closeDialog);

@@ -1177,6 +1177,8 @@ export function renderData({ store }) {
       id: 'data-table',
       collection: active?.key || null,
       sourceMetadata: active?.metadata || null,
+      columnRenderSettings: (dataTableSettings?.columns?.stylesByKey || {}),
+      tableRenderSettings: dataTableSettings?.table || {},
       sortable: true,
       searchable: true,
       initialSortKey,
@@ -1688,6 +1690,11 @@ export function renderData({ store }) {
 
   return root;
 }
+
+
+
+
+
 
 
 

@@ -2,15 +2,25 @@ import controllerFactory from './controller.js';
 
 const VIEW = 'dataView';
 
+const DEFAULT_TABLE_VIRTUALIZATION = {
+  enabled: true,
+  threshold: 50,
+  overscan: 10,
+  rowHeightPx: 36,
+};
+
 const DEFAULT_TABLE_SETTINGS = {
   columns: {
     orderKeys: [],
     hiddenKeys: [],
     stylesByKey: {},
   },
-  actions: {
+    actions: {
     orderKeys: ['clear', 'copyJson', 'saveFilter', 'copyFullJson'],
     hiddenKeys: [],
+  },
+  table: {
+    virtualization: { ...DEFAULT_TABLE_VIRTUALIZATION },
   },
 };
 
@@ -46,6 +56,31 @@ function toCssSize(v) {
   return s;
 }
 
+function toWholeNumber(v, fallback) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.round(n);
+}
+
+function normalizeVirtualization(v) {
+  const src = (v && typeof v === 'object') ? v : {};
+  const enabled = (typeof src.enabled === 'boolean') ? src.enabled : DEFAULT_TABLE_VIRTUALIZATION.enabled;
+  const threshold = Math.max(0, toWholeNumber(src.threshold, DEFAULT_TABLE_VIRTUALIZATION.threshold));
+  const overscan = Math.max(0, toWholeNumber(src.overscan, DEFAULT_TABLE_VIRTUALIZATION.overscan));
+  const rowHeightPx = Math.max(16, toWholeNumber(src.rowHeightPx, DEFAULT_TABLE_VIRTUALIZATION.rowHeightPx));
+  return { enabled, threshold, overscan, rowHeightPx };
+}
+const JSON_VIEWER_BUTTON_KEYS = ['maximize', 'copy', 'wrap', 'toggle'];
+
+function normalizeJsonViewerButtons(v) {
+  const src = (v && typeof v === 'object') ? v : {};
+  const out = {};
+  for (const k of JSON_VIEWER_BUTTON_KEYS) {
+    if (typeof src[k] === 'boolean') out[k] = src[k];
+  }
+  return out;
+}
+
 function normalizeColumnStyle(v) {
   const src = (v && typeof v === 'object') ? v : {};
   const out = {};
@@ -55,6 +90,11 @@ function normalizeColumnStyle(v) {
 
   const width = toCssSize(src.width ?? src.minWidth ?? src.maxWidth);
   if (width) out.width = width;
+
+  if (typeof src.useJsonViewer === 'boolean') out.useJsonViewer = src.useJsonViewer;
+  const jsonViewerButtons = normalizeJsonViewerButtons(src.jsonViewerButtons);
+  if (Object.keys(jsonViewerButtons).length) out.jsonViewerButtons = jsonViewerButtons;
+  if (typeof src.jsonViewerDefaultExpanded === 'boolean') out.jsonViewerDefaultExpanded = src.jsonViewerDefaultExpanded;
 
   return out;
 }
@@ -75,6 +115,7 @@ function normalizeDataTableSettings(v) {
   const src = (v && typeof v === 'object') ? v : {};
   const cols = (src.columns && typeof src.columns === 'object') ? src.columns : {};
   const acts = (src.actions && typeof src.actions === 'object') ? src.actions : {};
+  const table = (src.table && typeof src.table === 'object') ? src.table : {};
   return {
     columns: {
       orderKeys: normalizeKeyList(cols.orderKeys),
@@ -84,6 +125,9 @@ function normalizeDataTableSettings(v) {
     actions: {
       orderKeys: normalizeKeyList(acts.orderKeys),
       hiddenKeys: normalizeKeyList(acts.hiddenKeys),
+    },
+    table: {
+      virtualization: normalizeVirtualization(table.virtualization),
     },
   };
 }
@@ -148,4 +192,10 @@ export default {
   normalizeDataTableSettings,
   getDefaultTableSettings,
 };
+
+
+
+
+
+
 

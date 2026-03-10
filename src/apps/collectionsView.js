@@ -229,6 +229,8 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     store,
     headers: applied.headers,
     rows: applied.rows,
+    columnRenderSettings: (collectionsTableSettings?.columns?.stylesByKey || {}),
+    tableRenderSettings: collectionsTableSettings?.table || {},
     id: 'collections-table',
     sortable: true,
     searchable: true,
@@ -274,4 +276,9 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
 
   return root;
 }
+
+
+
+
+
 

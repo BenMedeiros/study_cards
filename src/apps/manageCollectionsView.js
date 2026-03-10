@@ -1465,6 +1465,8 @@ export function renderManageCollections({ store, onNavigate }) {
     const table = createTable({
       headers: applied.headers,
       rows: applied.rows,
+      columnRenderSettings: (historyTableSettings?.columns?.stylesByKey || {}),
+      tableRenderSettings: historyTableSettings?.table || {},
       sortable: true,
       searchable: true,
       rowActions,
@@ -2001,6 +2003,11 @@ export function renderManageCollections({ store, onNavigate }) {
   mo.observe(document.body, { childList: true, subtree: true });
   return root;
 }
+
+
+
+
+
 
 
 

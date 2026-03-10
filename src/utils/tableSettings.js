@@ -26,6 +26,17 @@ function toCssSize(v) {
   return s;
 }
 
+const JSON_VIEWER_BUTTON_KEYS = ['maximize', 'copy', 'wrap', 'toggle'];
+
+function normalizeJsonViewerButtons(v) {
+  const src = (v && typeof v === 'object') ? v : {};
+  const out = {};
+  for (const k of JSON_VIEWER_BUTTON_KEYS) {
+    if (typeof src[k] === 'boolean') out[k] = src[k];
+  }
+  return out;
+}
+
 function normalizeColumnStyle(v) {
   const src = (v && typeof v === 'object') ? v : {};
   const out = {};
@@ -35,6 +46,15 @@ function normalizeColumnStyle(v) {
 
   const width = toCssSize(src.width ?? src.minWidth ?? src.maxWidth);
   if (width) out.width = width;
+
+  if (typeof src.useJsonViewer === 'boolean') out.useJsonViewer = src.useJsonViewer;
+
+  const jsonViewerButtons = normalizeJsonViewerButtons(src.jsonViewerButtons);
+  if (Object.keys(jsonViewerButtons).length) out.jsonViewerButtons = jsonViewerButtons;
+
+  if (typeof src.jsonViewerDefaultExpanded === 'boolean') {
+    out.jsonViewerDefaultExpanded = src.jsonViewerDefaultExpanded;
+  }
 
   return out;
 }
@@ -51,10 +71,33 @@ function normalizeStylesByKey(v) {
   return out;
 }
 
+export const DEFAULT_TABLE_VIRTUALIZATION = {
+  enabled: true,
+  threshold: 50,
+  overscan: 10,
+  rowHeightPx: 36,
+};
+
+function toWholeNumber(v, fallback) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.round(n);
+}
+
+function normalizeVirtualization(v) {
+  const src = (v && typeof v === 'object') ? v : {};
+  const enabled = (typeof src.enabled === 'boolean') ? src.enabled : DEFAULT_TABLE_VIRTUALIZATION.enabled;
+  const threshold = Math.max(0, toWholeNumber(src.threshold, DEFAULT_TABLE_VIRTUALIZATION.threshold));
+  const overscan = Math.max(0, toWholeNumber(src.overscan, DEFAULT_TABLE_VIRTUALIZATION.overscan));
+  const rowHeightPx = Math.max(16, toWholeNumber(src.rowHeightPx, DEFAULT_TABLE_VIRTUALIZATION.rowHeightPx));
+  return { enabled, threshold, overscan, rowHeightPx };
+}
+
 export function normalizeTableSettings(v) {
   const src = (v && typeof v === 'object') ? v : {};
   const cols = (src.columns && typeof src.columns === 'object') ? src.columns : {};
   const acts = (src.actions && typeof src.actions === 'object') ? src.actions : {};
+  const table = (src.table && typeof src.table === 'object') ? src.table : {};
   return {
     columns: {
       orderKeys: normalizeKeyList(cols.orderKeys),
@@ -64,6 +107,9 @@ export function normalizeTableSettings(v) {
     actions: {
       orderKeys: normalizeKeyList(acts.orderKeys),
       hiddenKeys: normalizeKeyList(acts.hiddenKeys),
+    },
+    table: {
+      virtualization: normalizeVirtualization(table.virtualization),
     },
   };
 }
@@ -79,9 +125,11 @@ export function createDefaultTableSettings(actionOrder = []) {
       orderKeys: normalizeKeyList(actionOrder),
       hiddenKeys: [],
     },
+    table: {
+      virtualization: normalizeVirtualization(null),
+    },
   };
 }
-
 export function resolveOrderedKeys(savedOrder, availableKeys) {
   const current = normalizeKeyList(availableKeys);
   const saved = normalizeKeyList(savedOrder).filter(k => current.includes(k));
@@ -237,6 +285,23 @@ function computeColumnStats(rows, count) {
   return stats;
 }
 
+function computeObjectColumns(rows, count) {
+  const safeRows = Array.isArray(rows) ? rows : [];
+  const colCount = Math.max(0, Number(count) || 0);
+  const out = Array.from({ length: colCount }, () => false);
+
+  for (const row of safeRows) {
+    if (!Array.isArray(row)) continue;
+    for (let i = 0; i < colCount; i++) {
+      const cell = row[i];
+      if (!cell) continue;
+      if (typeof HTMLElement !== 'undefined' && cell instanceof HTMLElement) continue;
+      if (typeof cell === 'object') out[i] = true;
+    }
+  }
+
+  return out;
+}
 function normalizeSchemaByKey(schemaFields) {
   const out = {};
   const arr = Array.isArray(schemaFields) ? schemaFields : [];
@@ -271,6 +336,7 @@ function getRecommendedWidthPlaceholder(stats) {
 export function buildTableColumnItems(headers, rows = [], { schemaFields = [] } = {}) {
   const hs = Array.isArray(headers) ? headers : [];
   const statsByCol = computeColumnStats(rows, hs.length);
+  const objectFlags = computeObjectColumns(rows, hs.length);
   const schemaByKey = normalizeSchemaByKey(schemaFields);
   const out = [];
 
@@ -302,6 +368,7 @@ export function buildTableColumnItems(headers, rows = [], { schemaFields = [] } 
         count: Number(stats.count || 0),
       },
       recommendedWidthPlaceholder: getRecommendedWidthPlaceholder(stats),
+      hasObjectData: !!objectFlags[i],
     });
   }
 
@@ -338,4 +405,13 @@ export function attachCardTableSettingsButton({
 export function cloneTableSettings(v, fallback = null) {
   return cloneJson(v, fallback);
 }
+
+
+
+
+
+
+
+
+
 

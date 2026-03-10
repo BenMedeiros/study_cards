@@ -9,6 +9,12 @@ const WORD_BREAK_OPTIONS = [
   { value: 'keep-all', label: 'keep-all' },
   { value: 'break-word', label: 'break-word' },
 ];
+const DEFAULT_TABLE_VIRTUALIZATION = {
+  enabled: true,
+  threshold: 50,
+  overscan: 10,
+  rowHeightPx: 36,
+};
 
 function cloneJson(v, fallback) {
   try { return JSON.parse(JSON.stringify(v)); } catch (e) { return fallback; }
@@ -25,6 +31,20 @@ function toLengthNumber(v) {
   return Math.round(n * 10) / 10;
 }
 
+function toWholeNumber(v, fallback) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.round(n);
+}
+
+function normalizeVirtualizationSettings(v) {
+  const src = (v && typeof v === 'object') ? v : {};
+  const enabled = (typeof src.enabled === 'boolean') ? src.enabled : DEFAULT_TABLE_VIRTUALIZATION.enabled;
+  const threshold = Math.max(0, toWholeNumber(src.threshold, DEFAULT_TABLE_VIRTUALIZATION.threshold));
+  const overscan = Math.max(0, toWholeNumber(src.overscan, DEFAULT_TABLE_VIRTUALIZATION.overscan));
+  const rowHeightPx = Math.max(16, toWholeNumber(src.rowHeightPx, DEFAULT_TABLE_VIRTUALIZATION.rowHeightPx));
+  return { enabled, threshold, overscan, rowHeightPx };
+}
 function normalizeKeyList(v) {
   const arr = Array.isArray(v) ? v : [];
   const out = [];
@@ -38,6 +58,17 @@ function normalizeKeyList(v) {
   return out;
 }
 
+const JSON_VIEWER_BUTTON_KEYS = ['maximize', 'copy', 'wrap', 'toggle'];
+
+function normalizeJsonViewerButtons(v) {
+  const src = (v && typeof v === 'object') ? v : {};
+  const out = {};
+  for (const k of JSON_VIEWER_BUTTON_KEYS) {
+    if (typeof src[k] === 'boolean') out[k] = src[k];
+  }
+  return out;
+}
+
 function normalizeStyle(v) {
   const src = (v && typeof v === 'object') ? v : {};
   const out = {};
@@ -45,6 +76,12 @@ function normalizeStyle(v) {
   if (width) out.width = width;
   const wb = String(src.wordBreak || '').trim();
   if (wb) out.wordBreak = wb;
+
+  if (typeof src.useJsonViewer === 'boolean') out.useJsonViewer = src.useJsonViewer;
+  const jsonViewerButtons = normalizeJsonViewerButtons(src.jsonViewerButtons);
+  if (Object.keys(jsonViewerButtons).length) out.jsonViewerButtons = jsonViewerButtons;
+  if (typeof src.jsonViewerDefaultExpanded === 'boolean') out.jsonViewerDefaultExpanded = src.jsonViewerDefaultExpanded;
+
   return out;
 }
 
@@ -52,6 +89,7 @@ function normalizeSettings(raw) {
   const src = (raw && typeof raw === 'object') ? raw : {};
   const cols = (src.columns && typeof src.columns === 'object') ? src.columns : {};
   const acts = (src.actions && typeof src.actions === 'object') ? src.actions : {};
+  const table = (src.table && typeof src.table === 'object') ? src.table : {};
   const stylesRaw = (cols.stylesByKey && typeof cols.stylesByKey === 'object') ? cols.stylesByKey : {};
   const stylesByKey = {};
   for (const [k, v] of Object.entries(stylesRaw)) {
@@ -69,6 +107,9 @@ function normalizeSettings(raw) {
     actions: {
       orderKeys: normalizeKeyList(acts.orderKeys),
       hiddenKeys: normalizeKeyList(acts.hiddenKeys),
+    },
+    table: {
+      virtualization: normalizeVirtualizationSettings(table.virtualization),
     },
   };
 }
@@ -92,6 +133,22 @@ function normalizeCssSizeInput(raw) {
   if (/^\d+(\.\d+)?(px|rem|em|ch|vh|vw|%)$/i.test(txt)) return { ok: true, value: txt };
   if (/^(auto|min-content|max-content|fit-content)$/i.test(txt)) return { ok: true, value: txt };
   return { ok: false, error: 'Use number, px/rem/em/ch/vh/vw/%, or auto/min-content/max-content/fit-content.' };
+}
+
+function normalizeNonNegativeIntegerInput(raw) {
+  const txt = String(raw || '').trim();
+  if (!txt) return { ok: false, error: 'Required.' };
+  if (!/^\d+$/.test(txt)) return { ok: false, error: 'Use a whole number (0+).' };
+  return { ok: true, value: Math.max(0, Math.round(Number(txt))) };
+}
+
+function normalizeMinIntegerInput(raw, minValue, label) {
+  const txt = String(raw || '').trim();
+  if (!txt) return { ok: false, error: 'Required.' };
+  if (!/^\d+$/.test(txt)) return { ok: false, error: `Use a whole number (${minValue}+).` };
+  const n = Math.round(Number(txt));
+  if (n < minValue) return { ok: false, error: `${label || 'Value'} must be ${minValue} or higher.` };
+  return { ok: true, value: n };
 }
 
 export function openTableSettingsDialog({
@@ -123,7 +180,7 @@ export function openTableSettingsDialog({
     ];
     state.actions.hiddenKeys = state.actions.hiddenKeys.filter(k => actionKeys.includes(k));
 
-    const validation = { byCol: {} };
+    const validation = { byCol: {}, byTable: {} };
 
     const backdrop = el('div', { className: 'table-settings-backdrop' });
     const dialog = el('div', {
@@ -150,10 +207,12 @@ export function openTableSettingsDialog({
 
     const columnsSection = el('div', { className: 'table-settings-section' });
     const actionsSection = el('div', { className: 'table-settings-section' });
+    const tableSection = el('div', { className: 'table-settings-section' });
     const columnsBody = el('div', { className: 'table-settings-section-body' });
     const actionsBody = el('div', { className: 'table-settings-section-body' });
+    const tableBody = el('div', { className: 'table-settings-section-body' });
 
-    const collapsed = { columns: true, actions: true };
+    const collapsed = { columns: true, actions: true, table: true };
     const expandedDetailsByCol = {};
     let closed = false;
     let saveBtn = null;
@@ -194,6 +253,7 @@ export function openTableSettingsDialog({
       if (closed) return;
       closed = true;
       try { document.removeEventListener('keydown', onKeydown, true); } catch (e) {}
+      try { document.removeEventListener('pointerdown', dropdownGuard, true); } catch (e) {}
       try { dialog.classList.remove('open'); } catch (e) {}
       try { backdrop.classList.remove('show'); } catch (e) {}
 
@@ -228,7 +288,7 @@ export function openTableSettingsDialog({
       if (!res || res === 'cancel') return;
       if (res === 'save') {
         if (hasValidationErrors()) {
-          globalMsg.textContent = 'Please fix invalid width values before saving.';
+          globalMsg.textContent = 'Please fix invalid table settings before saving.';
           updateSaveState();
           return;
         }
@@ -256,8 +316,19 @@ export function openTableSettingsDialog({
       return Object.values(validation.byCol[key]);
     }
 
+    function setTableFieldError(field, message) {
+      const f = String(field || '').trim();
+      if (!f) return;
+      if (!message) delete validation.byTable[f];
+      else validation.byTable[f] = String(message);
+    }
+
+    function getTableMessages() {
+      return Object.values(validation.byTable || {});
+    }
+
     function hasValidationErrors() {
-      return Object.keys(validation.byCol).length > 0;
+      return Object.keys(validation.byCol).length > 0 || Object.keys(validation.byTable).length > 0;
     }
 
     function makeWordBreakDropdown(key) {
@@ -321,6 +392,56 @@ export function openTableSettingsDialog({
       return wrap;
     }
 
+    function makeBooleanSetting({ key, styleKey, label, defaultValue = false, compact = false }) {
+      const wrap = el('label', { className: compact ? 'table-settings-bool table-settings-bool-compact' : 'table-settings-bool' });
+      const box = el('input', { attrs: { type: 'checkbox' } });
+      const cur = state.columns.stylesByKey[key] || {};
+      const current = (typeof cur[styleKey] === 'boolean') ? cur[styleKey] : defaultValue;
+      box.checked = !!current;
+      box.addEventListener('change', () => {
+        const next = { ...(state.columns.stylesByKey[key] || {}) };
+        next[styleKey] = !!box.checked;
+        if (Object.keys(next).length) state.columns.stylesByKey[key] = next;
+        else delete state.columns.stylesByKey[key];
+        updateSaveState();
+      });
+      wrap.append(box, el('span', { className: 'table-settings-bool-label', text: label }));
+      return wrap;
+    }
+
+    function makeJsonViewerButtonsControl(key) {
+      const wrap = el('div', { className: 'table-settings-json-buttons' });
+      wrap.append(el('div', { className: 'table-settings-style-label', text: 'json buttons' }));
+
+      const row = el('div', { className: 'table-settings-json-buttons-row' });
+      const cfg = state.columns.stylesByKey[key] || {};
+      const buttons = (cfg.jsonViewerButtons && typeof cfg.jsonViewerButtons === 'object') ? cfg.jsonViewerButtons : {};
+
+      function addToggle(btnKey, label) {
+        const ctl = el('label', { className: 'table-settings-bool table-settings-bool-compact' });
+        const box = el('input', { attrs: { type: 'checkbox' } });
+        box.checked = buttons[btnKey] !== false;
+        box.addEventListener('change', () => {
+          const next = { ...(state.columns.stylesByKey[key] || {}) };
+          const nextButtons = { ...(next.jsonViewerButtons || {}) };
+          nextButtons[btnKey] = !!box.checked;
+          next.jsonViewerButtons = nextButtons;
+          if (Object.keys(next).length) state.columns.stylesByKey[key] = next;
+          else delete state.columns.stylesByKey[key];
+          updateSaveState();
+        });
+        ctl.append(box, el('span', { className: 'table-settings-bool-label', text: label }));
+        row.append(ctl);
+      }
+
+      addToggle('maximize', 'Max');
+      addToggle('copy', 'Copy');
+      addToggle('wrap', 'Wrap');
+      addToggle('toggle', 'Expand');
+
+      wrap.append(row);
+      return wrap;
+    }
     function makeHideControl({ checked, onChange }) {
       const hide = el('label', { className: 'table-settings-hide-control' });
       const hideBox = el('input', { attrs: { type: 'checkbox' } });
@@ -431,11 +552,23 @@ export function openTableSettingsDialog({
           makeWordBreakDropdown(key)
         );
 
+        let jsonSettings = null;
+        if (meta?.hasObjectData) {
+          jsonSettings = el('div', { className: 'table-settings-json-settings' });
+          jsonSettings.append(
+            makeBooleanSetting({ key, styleKey: 'useJsonViewer', label: 'use json viewer', defaultValue: true }),
+            makeBooleanSetting({ key, styleKey: 'jsonViewerDefaultExpanded', label: 'start expanded', defaultValue: false }),
+            makeJsonViewerButtonsControl(key)
+          );
+        }
+
         const messages = getColMessages(key);
         msg.textContent = messages.join(' ');
         msg.style.display = messages.length ? '' : 'none';
 
-        row.append(head, styles, msg);
+        row.append(head, styles);
+        if (jsonSettings) row.append(jsonSettings);
+        row.append(msg);
         columnsBody.append(row);
       }
     }
@@ -472,7 +605,8 @@ export function openTableSettingsDialog({
         upBtn.addEventListener('click', () => {
           state.actions.orderKeys = reorderKey(state.actions.orderKeys, key, -1);
           renderActions();
-          updateSaveState();
+    renderTableSettings();
+    updateSaveState();
         });
 
         const downBtn = el('button', { className: 'btn small', text: 'Down' });
@@ -481,7 +615,8 @@ export function openTableSettingsDialog({
         downBtn.addEventListener('click', () => {
           state.actions.orderKeys = reorderKey(state.actions.orderKeys, key, 1);
           renderActions();
-          updateSaveState();
+    renderTableSettings();
+    updateSaveState();
         });
 
         right.append(hideControl, upBtn, downBtn);
@@ -491,7 +626,86 @@ export function openTableSettingsDialog({
         actionsBody.append(row);
       }
     }
+    function renderTableSettings() {
+      tableBody.innerHTML = '';
+      const row = el('div', { className: 'table-settings-row table-settings-row-table' });
 
+      const head = el('div', { className: 'table-settings-row-head' });
+      const left = el('div', {
+        className: 'table-settings-row-left',
+        children: [
+          el('strong', { text: 'Virtual Scrolling' }),
+          el('div', { className: 'hint', text: 'Used for larger tables to improve render performance.' }),
+        ],
+      });
+      head.append(left);
+
+      const bodyWrap = el('div', { className: 'table-settings-table-grid' });
+
+      const enabledWrap = el('label', { className: 'table-settings-bool' });
+      const enabledBox = el('input', { attrs: { type: 'checkbox' } });
+      enabledBox.checked = state.table.virtualization.enabled !== false;
+      enabledBox.addEventListener('change', () => {
+        state.table.virtualization.enabled = !!enabledBox.checked;
+        updateSaveState();
+      });
+      enabledWrap.append(enabledBox, el('span', { className: 'table-settings-bool-label', text: 'Enable virtualization' }));
+      bodyWrap.append(enabledWrap);
+
+      const msg = el('div', { className: 'table-settings-row-msg hint', text: '' });
+
+      function renderTableMsg() {
+        const messages = getTableMessages();
+        msg.textContent = messages.join(' ');
+        msg.style.display = messages.length ? '' : 'none';
+      }
+
+      function makeNumInput({ field, label, value, parseFn }) {
+        const item = el('label', { className: 'table-settings-style-item' });
+        const cap = el('span', { className: 'table-settings-style-label', text: label });
+        const inp = el('input', { className: 'input small', attrs: { type: 'text', value: String(value ?? '') } });
+        inp.addEventListener('input', () => {
+          const parsed = parseFn(inp.value);
+          if (!parsed.ok) {
+            inp.classList.add('invalid');
+            setTableFieldError(field, parsed.error || 'Invalid value.');
+          } else {
+            inp.classList.remove('invalid');
+            setTableFieldError(field, '');
+            state.table.virtualization[field] = parsed.value;
+          }
+          renderTableMsg();
+          updateSaveState();
+        });
+        item.append(cap, inp);
+        return item;
+      }
+
+      bodyWrap.append(
+        makeNumInput({
+          field: 'threshold',
+          label: 'threshold',
+          value: state.table.virtualization.threshold,
+          parseFn: normalizeNonNegativeIntegerInput,
+        }),
+        makeNumInput({
+          field: 'overscan',
+          label: 'overscan',
+          value: state.table.virtualization.overscan,
+          parseFn: normalizeNonNegativeIntegerInput,
+        }),
+        makeNumInput({
+          field: 'rowHeightPx',
+          label: 'row height (px)',
+          value: state.table.virtualization.rowHeightPx,
+          parseFn: (raw) => normalizeMinIntegerInput(raw, 16, 'Row height'),
+        })
+      );
+
+      renderTableMsg();
+      row.append(head, bodyWrap, msg);
+      tableBody.append(row);
+    }
     const controls = el('div', { className: 'table-settings-actions' });
     const cancelBtn = el('button', { className: 'btn small', text: 'Cancel' });
     cancelBtn.type = 'button';
@@ -503,7 +717,7 @@ export function openTableSettingsDialog({
     saveBtn.addEventListener('click', () => {
       if (!isDirty()) return;
       if (hasValidationErrors()) {
-        globalMsg.textContent = 'Please fix invalid width values before saving.';
+        globalMsg.textContent = 'Please fix invalid table settings before saving.';
         updateSaveState();
         return;
       }
@@ -515,10 +729,25 @@ export function openTableSettingsDialog({
 
     renderSectionToggle({ section: 'columns', titleText: 'Columns', body: columnsBody, root: columnsSection });
     renderSectionToggle({ section: 'actions', titleText: 'Actions', body: actionsBody, root: actionsSection });
+    renderSectionToggle({ section: 'table', titleText: 'Table', body: tableBody, root: tableSection });
 
-    dialog.append(title, info, globalMsg, columnsSection, actionsSection, controls);
+    dialog.append(title, info, globalMsg, columnsSection, actionsSection, tableSection, controls);
     backdrop.append(dialog);
-    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) void attemptClose(); });
+    let lastDropdownInteractionAt = 0;
+    const dropdownGuard = (e) => {
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (target.closest('.custom-dropdown') || target.closest('.custom-dropdown-menu')) {
+        lastDropdownInteractionAt = Date.now();
+      }
+    };
+    document.addEventListener('pointerdown', dropdownGuard, true);
+
+    backdrop.addEventListener('click', (e) => {
+      if (e.target !== backdrop) return;
+      if ((Date.now() - lastDropdownInteractionAt) < 250) return;
+      void attemptClose();
+    });
 
     function onKeydown(e) {
       if (e.key === 'Escape') {
@@ -535,10 +764,29 @@ export function openTableSettingsDialog({
 
     renderColumns();
     renderActions();
+    renderTableSettings();
     updateSaveState();
     try { dialog.focus(); } catch (e) {}
   });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
