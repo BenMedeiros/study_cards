@@ -7,6 +7,8 @@ import { addStudyFilter } from '../components/studyControls.js';
 import collectionSettingsController from '../controllers/collectionSettingsController.js';
 import { createDropdown } from '../components/dropdown.js';
 import { confirmDialog } from '../components/dialogs/confirmDialog.js';
+import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
+import dataViewController from '../controllers/dataViewController.js';
 import { parseHashRoute, buildHashRoute } from '../utils/helpers.js';
 
 export function renderData({ store }) {
@@ -52,6 +54,152 @@ export function renderData({ store }) {
   // Persisted per-collection saved table search filters (autocomplete suggestions)
   let savedTableSearches = [];
 
+  const DATA_TABLE_ACTION_ITEMS = [
+    { key: 'clear', label: 'Clear' },
+    { key: 'copyJson', label: 'Copy JSON' },
+    { key: 'saveFilter', label: 'Save Filter' },
+    { key: 'copyFullJson', label: 'Copy Full JSON' },
+  ];
+
+  let dataViewCtrl = null;
+  let dataTableSettings = dataViewController.getDefaultTableSettings();
+  let latestDataTableColumns = [];
+
+  try {
+    if (active?.key) {
+      dataViewCtrl = dataViewController.create(active.key);
+      dataTableSettings = dataViewCtrl.getTableSettings();
+    }
+  } catch (e) {
+    dataViewCtrl = null;
+    dataTableSettings = dataViewController.getDefaultTableSettings();
+  }
+
+  function normalizeKeyList(v) {
+    const arr = Array.isArray(v) ? v : [];
+    const out = [];
+    const seen = new Set();
+    for (const raw of arr) {
+      const s = String(raw || '').trim();
+      if (!s || seen.has(s)) continue;
+      seen.add(s);
+      out.push(s);
+    }
+    return out;
+  }
+
+  function resolveOrderedKeys(savedOrder, availableKeys) {
+    const current = normalizeKeyList(availableKeys);
+    const saved = normalizeKeyList(savedOrder).filter(k => current.includes(k));
+    const missing = current.filter(k => !saved.includes(k));
+    return [...saved, ...missing];
+  }
+
+  function normalizeDataTableSettingsLocal(v) {
+    return dataViewController.normalizeDataTableSettings(v);
+  }
+
+  function sameDataTableSettings(a, b) {
+    try { return JSON.stringify(normalizeDataTableSettingsLocal(a)) === JSON.stringify(normalizeDataTableSettingsLocal(b)); } catch (e) { return false; }
+  }
+
+  async function persistDataTableSettings(nextDataTable, { rerender = true } = {}) {
+    const normalized = normalizeDataTableSettingsLocal(nextDataTable);
+    dataTableSettings = normalized;
+    try {
+      if (dataViewCtrl) await dataViewCtrl.setTableSettings(normalized);
+      else if (active?.key) collectionSettingsController.setView(active.key, 'dataView', { dataTable: normalized });
+    } catch (e) {
+      // ignore persistence errors; keep UI state
+    }
+    if (rerender) {
+      renderTable();
+      updateStudyLabel();
+      markStudyRows();
+      updateControlStates();
+    }
+  }
+
+  function applyDataTableColumnSettings({ headers, rows }) {
+    const hs = Array.isArray(headers) ? headers : [];
+    const rs = Array.isArray(rows) ? rows : [];
+    const byKey = new Map();
+    hs.forEach((h, i) => {
+      const key = String(h?.key || '').trim();
+      if (key && !byKey.has(key)) byKey.set(key, i);
+    });
+    const allKeys = hs.map(h => String(h?.key || '').trim()).filter(Boolean);
+    const orderKeys = resolveOrderedKeys(dataTableSettings?.columns?.orderKeys, allKeys);
+    const hiddenSet = new Set(normalizeKeyList(dataTableSettings?.columns?.hiddenKeys).filter(k => allKeys.includes(k)));
+    const visibleKeys = orderKeys.filter(k => !hiddenSet.has(k));
+
+    const nextHeaders = visibleKeys.map(k => hs[byKey.get(k)]).filter(Boolean);
+    const nextRows = rs.map((row) => {
+      const out = visibleKeys.map((k) => {
+        const idx = byKey.get(k);
+        return (idx == null) ? '' : row[idx];
+      });
+      try { out.__id = row.__id; } catch (e) {}
+      return out;
+    });
+
+    return {
+      headers: nextHeaders,
+      rows: nextRows,
+      allKeys,
+      orderKeys,
+      hiddenKeys: Array.from(hiddenSet),
+      visibleKeys,
+    };
+  }
+
+  function applyDataTableColumnStyles(wrapper) {
+    const map = (dataTableSettings?.columns?.stylesByKey && typeof dataTableSettings.columns.stylesByKey === 'object')
+      ? dataTableSettings.columns.stylesByKey
+      : {};
+    const rootEl = wrapper || tableMount?.querySelector('.table-wrapper');
+    if (!rootEl) return;
+    for (const [rawKey, style] of Object.entries(map)) {
+      const key = String(rawKey || '').trim();
+      if (!key) continue;
+      const nodes = rootEl.querySelectorAll(`th[data-field="${key}"], td[data-field="${key}"]`);
+      if (!nodes || !nodes.length) continue;
+      const wordBreak = String(style?.wordBreak || '').trim();
+      const width = String(style?.width || '').trim();
+      for (const node of Array.from(nodes)) {
+        if (wordBreak) node.style.wordBreak = wordBreak;
+        if (width) {
+          node.style.setProperty('text-wrap-mode', 'wrap');
+          node.style.width = width;
+          node.style.minWidth = width;
+          node.style.maxWidth = width;
+        }
+      }
+    }
+  }
+
+  function applyDataTableActionSettings(searchWrap) {
+    if (!searchWrap) return;
+    const actionKeys = DATA_TABLE_ACTION_ITEMS.map(a => a.key);
+    const order = resolveOrderedKeys(dataTableSettings?.actions?.orderKeys, actionKeys);
+    const hidden = new Set(normalizeKeyList(dataTableSettings?.actions?.hiddenKeys).filter(k => actionKeys.includes(k)));
+
+    const nodesByKey = new Map();
+    for (const key of actionKeys) {
+      const node = searchWrap.querySelector(`[data-table-action="${key}"]`);
+      if (node) nodesByKey.set(key, node);
+    }
+
+    for (const [key, node] of nodesByKey.entries()) {
+      node.style.display = hidden.has(key) ? 'none' : '';
+    }
+
+    for (const key of order) {
+      if (hidden.has(key)) continue;
+      const node = nodesByKey.get(key);
+      if (node) searchWrap.append(node);
+    }
+  }
   // Persisted per-collection expansion settings (Data view header dropdowns)
   let expansionIForms = [];
   let expansionNaForms = [];
@@ -919,6 +1067,22 @@ export function renderData({ store }) {
     updateControlStates();
   }
 
+  async function openDataTableSettings() {
+    const coll = store.collections.getActiveCollection();
+    const sourceInfoParts = [];
+    if (coll?.key) sourceInfoParts.push(coll.key);
+    if (Array.isArray(coll?.metadata?.fields)) sourceInfoParts.push(`${coll.metadata.fields.length} schema fields`);
+
+    const next = await openTableSettingsDialog({
+      tableName: 'Data Table',
+      sourceInfo: sourceInfoParts.join(' | '),
+      columns: latestDataTableColumns,
+      actions: DATA_TABLE_ACTION_ITEMS,
+      settings: dataTableSettings,
+    });
+    if (!next) return;
+    await persistDataTableSettings(next, { rerender: true });
+  }
   // Build table headers from fields (preserve schema `key` and `label` separately)
   const headers = [
     { key: 'status', label: '' },
@@ -1000,10 +1164,17 @@ export function renderData({ store }) {
       }
     } catch (e) {}
 
+        const configured = applyDataTableColumnSettings({ headers, rows });
+    latestDataTableColumns = headers.map(h => ({
+      key: String(h?.key || '').trim(),
+      label: String(h?.label || h?.key || '').trim(),
+      type: h?.type ?? null,
+    })).filter(h => h.key);
+
     const tbl = createTable({
       store,
-      headers,
-      rows,
+      headers: configured.headers,
+      rows: configured.rows,
       id: 'data-table',
       collection: active?.key || null,
       sourceMetadata: active?.metadata || null,
@@ -1014,6 +1185,7 @@ export function renderData({ store }) {
     });
     tableMount.innerHTML = '';
     tableMount.append(tbl);
+    applyDataTableColumnStyles(tbl);
 
     // Insert Hold Filter switch next to Copy JSON.
     try {
@@ -1046,11 +1218,13 @@ export function renderData({ store }) {
         saveBtn.className = 'table-save-filter btn small';
         saveBtn.title = 'Save this search filter for quick reuse';
         saveBtn.textContent = 'Save Filter';
+        saveBtn.dataset.tableAction = 'saveFilter';
 
         // Insert after Copy JSON
         if (!searchWrap.querySelector('.table-save-filter')) {
           copyBtn.insertAdjacentElement('afterend', saveBtn);
         }
+        applyDataTableActionSettings(searchWrap);
 
         function updateSavedFilterButtons(q) {
           const query = String(q || '').trim();
@@ -1373,6 +1547,8 @@ export function renderData({ store }) {
         // update label and highlighting when collection/session state changes
         try {
           const saved = readCollState();
+          const nextTable = normalizeDataTableSettingsLocal(saved?.dataView?.dataTable ?? dataTableSettings);
+          if (!sameDataTableSettings(nextTable, dataTableSettings)) dataTableSettings = nextTable;
           if (typeof saved?.studyFilter === 'string') {
             const parsed = parseStudyFilter(saved.studyFilter);
             studyFilterStates = orderStudyStates(parsed.states);
@@ -1474,6 +1650,7 @@ export function renderData({ store }) {
   const mo = new MutationObserver(() => {
     if (!document.body.contains(root)) {
       if (typeof unsub === 'function') unsub();
+      try { if (dataViewCtrl && typeof dataViewCtrl.dispose === 'function') dataViewCtrl.dispose(); } catch (e) {}
       mo.disconnect();
     }
   });
@@ -1484,6 +1661,21 @@ export function renderData({ store }) {
     cornerCaption: `${getCurrentVisibleEntries().length} Entries`,
     children: [tableMount]
   });
+
+  try {
+    const corner = dataCard.querySelector('.card-corner-caption');
+    if (corner) {
+      const settingsBtn = document.createElement('button');
+      settingsBtn.type = 'button';
+      settingsBtn.className = 'btn small data-table-settings-btn';
+      settingsBtn.textContent = 'Table';
+      settingsBtn.title = 'Table settings';
+      settingsBtn.addEventListener('click', () => { openDataTableSettings(); });
+      corner.insertAdjacentElement('afterend', settingsBtn);
+    }
+  } catch (e) {
+    // ignore
+  }
 
   root.append(
     dataCard
@@ -1497,6 +1689,17 @@ export function renderData({ store }) {
 
   return root;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

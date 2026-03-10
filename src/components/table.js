@@ -537,16 +537,19 @@ export function createTable({ store = null, headers, rows, className = '', id, c
     clearBtn.type = 'button';
     clearBtn.className = 'table-search-clear';
     clearBtn.textContent = 'Clear';
+    clearBtn.dataset.tableAction = 'clear';
     const copyBtn = document.createElement('button');
     copyBtn.type = 'button';
     copyBtn.className = 'table-copy-json btn small';
     copyBtn.textContent = 'Copy JSON';
     copyBtn.title = 'Copy current (filtered) rows as JSON';
+    copyBtn.dataset.tableAction = 'copyJson';
     const copyFullBtn = document.createElement('button');
     copyFullBtn.type = 'button';
     copyFullBtn.className = 'table-copy-full-json btn small';
     copyFullBtn.textContent = 'Copy Full JSON';
     copyFullBtn.title = 'Copy table metadata + columns + current (filtered) rows as JSON';
+    copyFullBtn.dataset.tableAction = 'copyFullJson';
     searchWrap.append(searchInput, clearBtn);
     searchWrap.append(copyBtn);
     searchWrap.append(copyFullBtn);
@@ -877,3 +880,4 @@ export function createTable({ store = null, headers, rows, className = '', id, c
   return wrapper;
   });
 }
+
