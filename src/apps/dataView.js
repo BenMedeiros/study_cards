@@ -10,6 +10,7 @@ import { confirmDialog } from '../components/dialogs/confirmDialog.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import dataViewController from '../controllers/dataViewController.js';
 import { parseHashRoute, buildHashRoute } from '../utils/helpers.js';
+import { buildTableColumnItems } from '../utils/tableSettings.js';
 
 export function renderData({ store }) {
   const root = document.createElement('div');
@@ -1165,11 +1166,9 @@ export function renderData({ store }) {
     } catch (e) {}
 
         const configured = applyDataTableColumnSettings({ headers, rows });
-    latestDataTableColumns = headers.map(h => ({
-      key: String(h?.key || '').trim(),
-      label: String(h?.label || h?.key || '').trim(),
-      type: h?.type ?? null,
-    })).filter(h => h.key);
+    latestDataTableColumns = buildTableColumnItems(headers, rows, {
+      schemaFields: Array.isArray(fields) ? fields : [],
+    });
 
     const tbl = createTable({
       store,
@@ -1689,6 +1688,7 @@ export function renderData({ store }) {
 
   return root;
 }
+
 
 
 

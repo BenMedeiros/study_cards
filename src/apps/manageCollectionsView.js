@@ -3,6 +3,22 @@ import { card, el } from '../components/ui.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createJsonViewer } from '../components/jsonViewer.js';
 import { validateSchemaArray, validateEntriesAgainstSchema } from '../utils/validation.js';
+import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
+import manageCollectionsViewController from '../controllers/manageCollectionsViewController.js';
+import {
+  normalizeTableSettings,
+  applyTableColumnSettings,
+  applyTableColumnStyles,
+  applyTableActionSettings,
+  buildTableColumnItems,
+  attachCardTableSettingsButton,
+} from '../utils/tableSettings.js';
+
+const TABLE_ACTION_ITEMS = [
+  { key: 'clear', label: 'Clear' },
+  { key: 'copyJson', label: 'Copy JSON' },
+  { key: 'copyFullJson', label: 'Copy Full JSON' },
+];
 
 function safeJsonStringify(v, space = 2) {
   try { return JSON.stringify(v, null, space); } catch { return String(v ?? ''); }
@@ -659,8 +675,35 @@ export function renderManageCollections({ store, onNavigate }) {
   let previewResult = null; // {patch,diffs,merged,warnings}
   let revisions = [];
   let activeRevisionId = null;
-  // last parsed raw text (trimmed). Used to disable Parse when unchanged.
-  let lastParsedRaw = null;
+  let historyTableSettings = manageCollectionsViewController.getDefaultHistoryTableSettings();
+  let historyTableCtrl = null;
+
+  function ensureHistoryTableController(collKey) {
+    const key = String(collKey || '').trim();
+    if (!key) {
+      historyTableCtrl = null;
+      historyTableSettings = manageCollectionsViewController.getDefaultHistoryTableSettings();
+      return;
+    }
+    if (historyTableCtrl && historyTableCtrl.collKey === key) return;
+    try { if (historyTableCtrl && typeof historyTableCtrl.dispose === 'function') historyTableCtrl.dispose(); } catch (e) {}
+    try {
+      historyTableCtrl = manageCollectionsViewController.create(key);
+      historyTableSettings = normalizeTableSettings(historyTableCtrl.getHistoryTableSettings());
+    } catch (e) {
+      historyTableCtrl = null;
+      historyTableSettings = manageCollectionsViewController.getDefaultHistoryTableSettings();
+    }
+  }
+
+  async function persistHistoryTableSettings(nextSettings) {
+    const normalized = normalizeTableSettings(nextSettings);
+    historyTableSettings = normalized;
+    try { if (historyTableCtrl) await historyTableCtrl.setHistoryTableSettings(normalized); } catch (e) {}
+    renderHistory();
+  }
+
+  // last parsed raw text (trimmed). Used to disable Parse when unchanged.  let lastParsedRaw = null;
 
   function updateActionButtons() {
     try {
@@ -1295,6 +1338,7 @@ export function renderManageCollections({ store, onNavigate }) {
 
   function renderHistory() {
     historyMount.innerHTML = '';
+    ensureHistoryTableController(collectionKey);
 
     function buildPatchExportPayload(rec) {
       const targetCollectionKey = String(rec?.collectionKey || collectionKey || '').trim() || null;
@@ -1415,20 +1459,41 @@ export function renderManageCollections({ store, onNavigate }) {
       }
     ];
 
+    const historyHeaders = ['active', 'kind', 'createdAt', 'id', 'label', 'parent', 'summary'];
+    const applied = applyTableColumnSettings({ headers: historyHeaders, rows, tableSettings: historyTableSettings });
+
     const table = createTable({
-      headers: ['active', 'kind', 'createdAt', 'id', 'label', 'parent', 'summary'],
-      rows,
+      headers: applied.headers,
+      rows: applied.rows,
       sortable: true,
       searchable: true,
       rowActions,
     });
+    applyTableColumnStyles({ wrapper: table, tableSettings: historyTableSettings });
+    applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings: historyTableSettings, actionItems: TABLE_ACTION_ITEMS });
 
-    historyMount.append(card({
+    const historyCard = card({
       title: 'History',
       cornerCaption: `${revisions.length} revisions`,
       className: 'mc-card',
       children: [el('p', { className: 'hint', text: 'List of saved revisions — preview or activate a revision from here.' }), table]
-    }));
+    });
+
+    attachCardTableSettingsButton({
+      cardEl: historyCard,
+      onClick: async () => {
+        const next = await openTableSettingsDialog({
+          tableName: 'Manage Collections History Table',
+          sourceInfo: `${collectionKey} | ${revisions.length} revisions`,
+          columns: buildTableColumnItems(historyHeaders, rows),
+          actions: TABLE_ACTION_ITEMS,
+          settings: historyTableSettings,
+        });
+        if (next) await persistHistoryTableSettings(next);
+      },
+    });
+
+    historyMount.append(historyCard);
   }
 
   async function loadHistory() {
@@ -1927,5 +1992,18 @@ export function renderManageCollections({ store, onNavigate }) {
   try { renderJson(currentJsonMode); } catch (e) {}
   Promise.resolve().then(loadCurrent);
 
+  const mo = new MutationObserver(() => {
+    if (!document.body.contains(root)) {
+      try { if (historyTableCtrl && typeof historyTableCtrl.dispose === 'function') historyTableCtrl.dispose(); } catch (e) {}
+      mo.disconnect();
+    }
+  });
+  mo.observe(document.body, { childList: true, subtree: true });
   return root;
 }
+
+
+
+
+
+

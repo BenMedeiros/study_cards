@@ -18,6 +18,13 @@ function toText(v) {
   return (v == null) ? '' : String(v);
 }
 
+function toLengthNumber(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n) || n < 0) return 0;
+  if (n >= 10) return Math.round(n);
+  return Math.round(n * 10) / 10;
+}
+
 function normalizeKeyList(v) {
   const arr = Array.isArray(v) ? v : [];
   const out = [];
@@ -147,6 +154,7 @@ export function openTableSettingsDialog({
     const actionsBody = el('div', { className: 'table-settings-section-body' });
 
     const collapsed = { columns: true, actions: true };
+    const expandedDetailsByCol = {};
     let closed = false;
     let saveBtn = null;
 
@@ -278,11 +286,12 @@ export function openTableSettingsDialog({
       return wrap;
     }
 
-    function makeWidthInput(key, msgEl) {
+    function makeWidthInput(key, msgEl, meta = null) {
       const current = toText(state.columns.stylesByKey[key]?.width || '');
       const wrap = el('label', { className: 'table-settings-style-item' });
       const cap = el('span', { className: 'table-settings-style-label', text: 'width' });
-      const inp = el('input', { className: 'input small', attrs: { type: 'text', value: current, placeholder: 'e.g. 120px' } });
+      const rec = String(meta?.recommendedWidthPlaceholder || '').trim();
+      const inp = el('input', { className: 'input small', attrs: { type: 'text', value: current, placeholder: rec || 'e.g. 120px' } });
 
       function renderMsg() {
         const msgs = getColMessages(key);
@@ -335,13 +344,52 @@ export function openTableSettingsDialog({
         const row = el('div', { className: 'table-settings-row' });
 
         const head = el('div', { className: 'table-settings-row-head' });
-        const left = el('div', {
-          className: 'table-settings-row-left',
-          children: [
-            el('strong', { text: toText(meta.label || key) }),
-            el('span', { className: 'hint', text: `(${key})` }),
-          ],
-        });
+        const left = el('div', { className: 'table-settings-row-left' });
+
+        const titleRow = el('div', { className: 'table-settings-name-row' });
+        titleRow.append(
+          el('strong', { text: toText(meta.label || key) }),
+          el('span', { className: 'hint', text: `(${key})` })
+        );
+
+        const typeText = String(meta?.type || '').trim();
+        if (typeText) {
+          titleRow.append(el('span', { className: 'hint table-settings-col-type', text: `type: ${typeText}` }));
+        }
+
+        const stats = meta?.stats && typeof meta.stats === 'object' ? meta.stats : null;
+        const hasStats = !!stats && (Number(stats?.count || 0) > 0 || Number(stats?.max || 0) > 0);
+
+        left.append(titleRow);
+        if (hasStats) {
+          const min = toLengthNumber(stats?.min || 0);
+          const avg = toLengthNumber(stats?.avg || 0);
+          const max = toLengthNumber(stats?.max || 0);
+          left.append(el('div', {
+            className: 'hint table-settings-col-stats',
+            text: `chars: [${min},${avg},${max}]`,
+          }));
+        }
+
+        const descText = String(meta?.description || '').trim();
+        if (descText) {
+          const descBtn = el('button', {
+            className: 'btn small table-settings-desc-toggle',
+            text: expandedDetailsByCol[key] ? 'Hide Description' : 'Show Description',
+          });
+          descBtn.type = 'button';
+          const descBody = el('div', {
+            className: 'table-settings-col-desc hint',
+            text: descText,
+          });
+          descBody.style.display = expandedDetailsByCol[key] ? '' : 'none';
+          descBtn.addEventListener('click', () => {
+            expandedDetailsByCol[key] = !expandedDetailsByCol[key];
+            descBody.style.display = expandedDetailsByCol[key] ? '' : 'none';
+            descBtn.textContent = expandedDetailsByCol[key] ? 'Hide Description' : 'Show Description';
+          });
+          left.append(descBtn, descBody);
+        }
 
         const right = el('div', { className: 'table-settings-row-right' });
 
@@ -379,7 +427,7 @@ export function openTableSettingsDialog({
         const msg = el('div', { className: 'table-settings-row-msg hint', text: '' });
         const styles = el('div', { className: 'table-settings-style-grid table-settings-style-grid-simple' });
         styles.append(
-          makeWidthInput(key, msg),
+          makeWidthInput(key, msg, meta),
           makeWordBreakDropdown(key)
         );
 
@@ -391,7 +439,6 @@ export function openTableSettingsDialog({
         columnsBody.append(row);
       }
     }
-
     function renderActions() {
       actionsBody.innerHTML = '';
       const order = state.actions.orderKeys.slice();
@@ -492,6 +539,11 @@ export function openTableSettingsDialog({
     try { dialog.focus(); } catch (e) {}
   });
 }
+
+
+
+
+
 
 
 

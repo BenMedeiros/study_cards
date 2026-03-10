@@ -1,8 +1,24 @@
 import { createTable } from '../components/table.js';
 import { card, el } from '../components/ui.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
+import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import { formatDurationMs, formatIsoShort, formatRelativeFromIso } from '../utils/helpers.js';
 import studyManagerController from '../controllers/studyManagerController.js';
+import studyManagerViewController from '../controllers/studyManagerViewController.js';
+import {
+  normalizeTableSettings,
+  applyTableColumnSettings,
+  applyTableColumnStyles,
+  applyTableActionSettings,
+  buildTableColumnItems,
+  attachCardTableSettingsButton,
+} from '../utils/tableSettings.js';
+
+const TABLE_ACTION_ITEMS = [
+  { key: 'clear', label: 'Clear' },
+  { key: 'copyJson', label: 'Copy JSON' },
+  { key: 'copyFullJson', label: 'Copy Full JSON' },
+];
 
 function asNumber(v) {
   return Math.max(0, Math.round(Number(v) || 0));
@@ -80,7 +96,7 @@ function buildInsightsSection({ report, onNavigate }) {
   return el('div', { className: 'study-manager-insights', children: blocks });
 }
 
-function buildFilterTable({ store, report, onNavigate }) {
+function buildFilterTable({ store, report, onNavigate, tableSettings }) {
   const headers = [
     { key: 'filter', label: 'Filter' },
     { key: 'savedFilter', label: 'Saved' },
@@ -138,10 +154,12 @@ function buildFilterTable({ store, report, onNavigate }) {
     return out;
   });
 
-  return createTable({
+  const applied = applyTableColumnSettings({ headers, rows, tableSettings });
+
+  const table = createTable({
     store,
-    headers,
-    rows,
+    headers: applied.headers,
+    rows: applied.rows,
     id: 'study-manager-filters-table',
     sortable: true,
     searchable: true,
@@ -159,9 +177,14 @@ function buildFilterTable({ store, report, onNavigate }) {
       },
     ],
   });
+
+  applyTableColumnStyles({ wrapper: table, tableSettings });
+  applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings, actionItems: TABLE_ACTION_ITEMS });
+
+  return { table, headers, rows, sourceInfo: `Filters: ${rows.length}` };
 }
 
-function buildAppsTable({ store, report }) {
+function buildAppsTable({ store, report, tableSettings }) {
   const rows = (Array.isArray(report?.appRows) ? report.appRows : []).map((r) => [
     String(r.appId || ''),
     formatDurationMs(asNumber(r.durationMs)),
@@ -172,10 +195,16 @@ function buildAppsTable({ store, report }) {
     { key: 'duration', label: 'Time' },
     { key: 'durationMs', label: 'Duration Ms', type: 'number' },
   ];
-  return createTable({ store, headers, rows, id: 'study-manager-apps-table', sortable: true, searchable: true });
+
+  const applied = applyTableColumnSettings({ headers, rows, tableSettings });
+  const table = createTable({ store, headers: applied.headers, rows: applied.rows, id: 'study-manager-apps-table', sortable: true, searchable: true });
+  applyTableColumnStyles({ wrapper: table, tableSettings });
+  applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings, actionItems: TABLE_ACTION_ITEMS });
+
+  return { table, headers, rows, sourceInfo: `Apps: ${rows.length}` };
 }
 
-function buildSessionsTable({ store, report }) {
+function buildSessionsTable({ store, report, tableSettings }) {
   const sessions = (Array.isArray(report?.recentSessions) ? report.recentSessions : []).slice(0, 300);
   const rows = sessions.map((s) => [
     s.endIso ? formatIsoShort(s.endIso) : '',
@@ -195,7 +224,13 @@ function buildSessionsTable({ store, report }) {
     { key: 'duration', label: 'Duration' },
     { key: 'durationMs', label: 'Duration Ms', type: 'number' },
   ];
-  return createTable({ store, headers, rows, id: 'study-manager-sessions-table', sortable: true, searchable: true });
+
+  const applied = applyTableColumnSettings({ headers, rows, tableSettings });
+  const table = createTable({ store, headers: applied.headers, rows: applied.rows, id: 'study-manager-sessions-table', sortable: true, searchable: true });
+  applyTableColumnStyles({ wrapper: table, tableSettings });
+  applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings, actionItems: TABLE_ACTION_ITEMS });
+
+  return { table, headers, rows, sourceInfo: `${sessions.length} shown` };
 }
 
 export function renderStudyManager({ store, onNavigate, route }) {
@@ -207,6 +242,61 @@ export function renderStudyManager({ store, onNavigate, route }) {
   let snapshot = studyManagerController.getSnapshot() || {};
   let pendingSnapshot = null;
   let selectedCollectionId = String(route?.query?.get('collection') || store?.collections?.getActiveCollectionId?.() || '').trim();
+
+  let tableSettingsCtrl = null;
+  let tableSettingsCollectionId = '';
+  let filtersTableSettings = studyManagerViewController.getDefaultFiltersTableSettings();
+  let appsTableSettings = studyManagerViewController.getDefaultAppsTableSettings();
+  let sessionsTableSettings = studyManagerViewController.getDefaultSessionsTableSettings();
+
+  function ensureTableSettingsController(collId) {
+    const key = String(collId || '').trim();
+    if (!key) {
+      tableSettingsCtrl = null;
+      tableSettingsCollectionId = '';
+      filtersTableSettings = studyManagerViewController.getDefaultFiltersTableSettings();
+      appsTableSettings = studyManagerViewController.getDefaultAppsTableSettings();
+      sessionsTableSettings = studyManagerViewController.getDefaultSessionsTableSettings();
+      return;
+    }
+    if (tableSettingsCtrl && tableSettingsCollectionId === key) return;
+
+    try { if (tableSettingsCtrl && typeof tableSettingsCtrl.dispose === 'function') tableSettingsCtrl.dispose(); } catch (e) {}
+
+    tableSettingsCollectionId = key;
+    try {
+      tableSettingsCtrl = studyManagerViewController.create(key);
+      filtersTableSettings = normalizeTableSettings(tableSettingsCtrl.getFiltersTableSettings());
+      appsTableSettings = normalizeTableSettings(tableSettingsCtrl.getAppsTableSettings());
+      sessionsTableSettings = normalizeTableSettings(tableSettingsCtrl.getSessionsTableSettings());
+    } catch (e) {
+      tableSettingsCtrl = null;
+      filtersTableSettings = studyManagerViewController.getDefaultFiltersTableSettings();
+      appsTableSettings = studyManagerViewController.getDefaultAppsTableSettings();
+      sessionsTableSettings = studyManagerViewController.getDefaultSessionsTableSettings();
+    }
+  }
+
+  async function persistFiltersTableSettings(nextSettings) {
+    const normalized = normalizeTableSettings(nextSettings);
+    filtersTableSettings = normalized;
+    try { if (tableSettingsCtrl) await tableSettingsCtrl.setFiltersTableSettings(normalized); } catch (e) {}
+    renderBody();
+  }
+
+  async function persistAppsTableSettings(nextSettings) {
+    const normalized = normalizeTableSettings(nextSettings);
+    appsTableSettings = normalized;
+    try { if (tableSettingsCtrl) await tableSettingsCtrl.setAppsTableSettings(normalized); } catch (e) {}
+    renderBody();
+  }
+
+  async function persistSessionsTableSettings(nextSettings) {
+    const normalized = normalizeTableSettings(nextSettings);
+    sessionsTableSettings = normalized;
+    try { if (tableSettingsCtrl) await tableSettingsCtrl.setSessionsTableSettings(normalized); } catch (e) {}
+    renderBody();
+  }
 
   const controls = createViewHeaderTools({ elements: [] });
   const body = el('div', { className: 'study-manager-body' });
@@ -299,25 +389,69 @@ export function renderStudyManager({ store, onNavigate, route }) {
       ].filter(Boolean),
     });
 
+    ensureTableSettingsController(report.collectionId);
+
+    const filtersTableObj = buildFilterTable({ store, report, onNavigate, tableSettings: filtersTableSettings });
     const filtersCard = makeTableCard({
       id: 'study-manager-filters-card',
       title: 'Filter Aggregates',
       caption: `${report.filterRows?.length || 0} filters`,
-      table: buildFilterTable({ store, report, onNavigate }),
+      table: filtersTableObj.table,
+    });
+    attachCardTableSettingsButton({
+      cardEl: filtersCard,
+      onClick: async () => {
+        const next = await openTableSettingsDialog({
+          tableName: 'Study Manager Filters Table',
+          sourceInfo: `${report.collectionId} | ${filtersTableObj.sourceInfo}`,
+          columns: buildTableColumnItems(filtersTableObj.headers, filtersTableObj.rows),
+          actions: TABLE_ACTION_ITEMS,
+          settings: filtersTableSettings,
+        });
+        if (next) await persistFiltersTableSettings(next);
+      },
     });
 
+    const appsTableObj = buildAppsTable({ store, report, tableSettings: appsTableSettings });
     const appsCard = makeTableCard({
       id: 'study-manager-apps-card',
       title: 'App Time Totals',
       caption: `${report.appRows?.length || 0} apps`,
-      table: buildAppsTable({ store, report }),
+      table: appsTableObj.table,
+    });
+    attachCardTableSettingsButton({
+      cardEl: appsCard,
+      onClick: async () => {
+        const next = await openTableSettingsDialog({
+          tableName: 'Study Manager Apps Table',
+          sourceInfo: `${report.collectionId} | ${appsTableObj.sourceInfo}`,
+          columns: buildTableColumnItems(appsTableObj.headers, appsTableObj.rows),
+          actions: TABLE_ACTION_ITEMS,
+          settings: appsTableSettings,
+        });
+        if (next) await persistAppsTableSettings(next);
+      },
     });
 
+    const sessionsTableObj = buildSessionsTable({ store, report, tableSettings: sessionsTableSettings });
     const sessionsCard = makeTableCard({
       id: 'study-manager-sessions-card',
       title: 'Recent Study Sessions',
       caption: `${Math.min(300, report.recentSessions?.length || 0)} shown`,
-      table: buildSessionsTable({ store, report }),
+      table: sessionsTableObj.table,
+    });
+    attachCardTableSettingsButton({
+      cardEl: sessionsCard,
+      onClick: async () => {
+        const next = await openTableSettingsDialog({
+          tableName: 'Study Manager Sessions Table',
+          sourceInfo: `${report.collectionId} | ${sessionsTableObj.sourceInfo}`,
+          columns: buildTableColumnItems(sessionsTableObj.headers, sessionsTableObj.rows),
+          actions: TABLE_ACTION_ITEMS,
+          settings: sessionsTableSettings,
+        });
+        if (next) await persistSessionsTableSettings(next);
+      },
     });
 
     body.append(summaryCard, filtersCard, appsCard, sessionsCard);
@@ -344,6 +478,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
   const mo = new MutationObserver(() => {
     if (!document.body.contains(root)) {
       try { if (typeof unsub === 'function') unsub(); } catch {}
+      try { if (tableSettingsCtrl && typeof tableSettingsCtrl.dispose === 'function') tableSettingsCtrl.dispose(); } catch {}
       mo.disconnect();
     }
   });
@@ -351,3 +486,10 @@ export function renderStudyManager({ store, onNavigate, route }) {
 
   return root;
 }
+
+
+
+
+
+
+

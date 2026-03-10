@@ -2000,14 +2000,14 @@ input[type="number"].button::-webkit-inner-spin-button {
   text-wrap-mode: nowrap;
 }
 
-
+/* 
 .table td.col-meaning {
   text-wrap-mode: wrap;
   min-width: 14rem;
   word-break: keep-all;
-}
+} */
 
-.table td.col-god-of,
+/* .table td.col-god-of,
 .table td.col-powers,
 .table td.col-physical-desc,
 .table td.col-source,
@@ -2017,7 +2017,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   text-wrap-mode: wrap;
   min-width: 12rem;
   word-break: keep-all;
-}
+} */
 
 .table thead {
   position: sticky;
@@ -3482,7 +3482,42 @@ h2 {
 
 .table-settings-row-left .hint {
   font-size: 0.7rem;
+}.table-settings-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+  flex-wrap: wrap;
 }
+
+.table-settings-col-type {
+  font-size: 0.62rem;
+  color: var(--muted);
+}
+
+.table-settings-col-stats {
+  margin-top: 0.15rem;
+  font-size: 0.62rem;
+}
+
+.table-settings-desc-toggle {
+  margin-top: 0.18rem;
+  font-size: 0.62rem;
+  line-height: 1;
+  padding: 0.14rem 0.34rem;
+  min-height: 1.3rem;
+}
+
+.table-settings-col-desc {
+  margin-top: 0.2rem;
+  font-size: 0.64rem;
+  line-height: 1.22;
+  border: var(--border-1);
+  border-radius: 0.36rem;
+  padding: 0.24rem 0.3rem;
+  background: rgba(0, 0, 0, 0.14);
+  white-space: pre-wrap;
+}
+
 
 .table-settings-row-right {
   display: inline-flex;
@@ -3593,6 +3628,14 @@ h2 {
   outline: 3px solid rgba(40, 167, 69, 0.22);
   outline-offset: 2px;
 }
+.card .table-card-settings-btn {
+  position: absolute;
+  top: 0.34rem;
+  z-index: 2;
+  font-size: 0.66rem;
+  line-height: 1;
+  padding: 0.2rem 0.42rem;
+}
 #data-card .data-table-settings-btn {
   position: absolute;
   top: 0.34rem;
@@ -3625,4 +3668,6 @@ h2 {
     right: 7rem;
   }
 }
+
+
 

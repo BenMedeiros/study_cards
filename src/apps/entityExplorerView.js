@@ -4,6 +4,21 @@ import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createTable } from '../components/table.js';
 import { createJsonViewer } from '../components/jsonViewer.js';
+import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
+import entityExplorerViewController from '../controllers/entityExplorerViewController.js';
+import {
+  normalizeTableSettings,
+  applyTableColumnSettings,
+  applyTableColumnStyles,
+  applyTableActionSettings,
+  buildTableColumnItems,
+} from '../utils/tableSettings.js';
+
+const TABLE_ACTION_ITEMS = [
+  { key: 'clear', label: 'Clear' },
+  { key: 'copyJson', label: 'Copy JSON' },
+  { key: 'copyFullJson', label: 'Copy Full JSON' },
+];
 
 // Persist UI selections for this view under the global namespaced blob
 // stored at localStorage key `study_cards:v1` -> `apps` -> `entityExplorer`.
@@ -85,6 +100,44 @@ export function renderEntityExplorer({ store }) {
   const root = document.createElement('div');
   root.id = 'entity-explorer-root';
 
+  const activeCollection = store?.collections?.getActiveCollection?.();
+  const settingsCollectionKey = String(activeCollection?.key || activeCollection?.path || '').trim();
+  let tableSettingsCtrl = null;
+  let storageTableSettings = entityExplorerViewController.getDefaultStorageTableSettings();
+  let latestTableHeaders = [];
+  let latestTableRows = [];
+  let latestTableSourceInfo = '';
+
+  try {
+    if (settingsCollectionKey) {
+      tableSettingsCtrl = entityExplorerViewController.create(settingsCollectionKey);
+      storageTableSettings = normalizeTableSettings(tableSettingsCtrl.getStorageTableSettings());
+    }
+  } catch (e) {
+    tableSettingsCtrl = null;
+    storageTableSettings = entityExplorerViewController.getDefaultStorageTableSettings();
+  }
+
+  async function persistStorageTableSettings(nextSettings) {
+    const normalized = normalizeTableSettings(nextSettings);
+    storageTableSettings = normalized;
+    try { if (tableSettingsCtrl) await tableSettingsCtrl.setStorageTableSettings(normalized); } catch (e) {}
+  }
+
+  async function openStorageTableSettingsDialog() {
+    const next = await openTableSettingsDialog({
+      tableName: 'Entity Explorer Storage Table',
+      sourceInfo: latestTableSourceInfo,
+      columns: buildTableColumnItems(latestTableHeaders, latestTableRows),
+      actions: TABLE_ACTION_ITEMS,
+      settings: storageTableSettings,
+    });
+    if (!next) return;
+    await persistStorageTableSettings(next);
+
+    const manager = String((managerDropdown?.getValue && managerDropdown.getValue()) || initialManager || 'idb');
+    await loadAndRenderManager(manager);
+  }
   // Register as a settings consumer.
   try {
     store?.settings?.registerConsumer?.({
@@ -105,7 +158,9 @@ export function renderEntityExplorer({ store }) {
   const _collapseRec = headerTools.addElement({
     type: 'button', key: 'collapseAll', label: 'Collapse all', title: 'Collapse all JSON viewers'
   });
-
+  const _tableSettingsRec = headerTools.addElement({
+    type: 'button', key: 'tableSettings', label: 'Table', title: 'Storage table settings'
+  });
   function updateCollapseAllBtnState() {
     const collapseAllBtn = headerTools.getControl('collapseAll');
     // enabled only if there exists at least one expanded json-view-wrapper
@@ -113,6 +168,12 @@ export function renderEntityExplorer({ store }) {
     if (collapseAllBtn) collapseAllBtn.disabled = !anyExpanded;
   }
 
+  const tableSettingsBtn = headerTools.getControl('tableSettings');
+  if (tableSettingsBtn) {
+    tableSettingsBtn.addEventListener('click', () => {
+      void openStorageTableSettingsDialog();
+    });
+  }
   const collapseAllBtn = headerTools.getControl('collapseAll');
   if (collapseAllBtn) {
     collapseAllBtn.addEventListener('click', () => {
@@ -147,10 +208,18 @@ export function renderEntityExplorer({ store }) {
           try { arr.__id = k; } catch (e) {}
           return arr;
         });
+        const headers = ['Key', 'Value'];
+        const applied = applyTableColumnSettings({ headers, rows, tableSettings: storageTableSettings });
+        const table = createTable({ store, headers: applied.headers, rows: applied.rows, id: 'ls-table', searchable: true, sortable: true });
+        applyTableColumnStyles({ wrapper: table, tableSettings: storageTableSettings });
+        applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings: storageTableSettings, actionItems: TABLE_ACTION_ITEMS });
+        latestTableHeaders = headers;
+        latestTableRows = rows;
+        latestTableSourceInfo = `localStorage | ${rows.length} keys`;
+
         content.innerHTML = '';
-        content.append(createTable({ store, headers: ['Key', 'Value'], rows, id: 'ls-table', searchable: true, sortable: true }));
-        try { updateCollapseAllBtnState(); } catch (e) {}
-      }
+        content.append(table);
+        try { updateCollapseAllBtnState(); } catch (e) {}      }
     } catch (e) {
       content.innerHTML = '';
       content.append(renderJsonViewer({ error: String(e?.message || e) }));
@@ -231,7 +300,8 @@ export function renderEntityExplorer({ store }) {
   const spacer = document.createElement('div');
   spacer.className = 'qa-header-spacer';
   headerTools.append(left, spacer);
-  // append collapse-all to the right side of header tools
+  // append right-side controls to header tools
+  try { if (_tableSettingsRec && _tableSettingsRec.group) headerTools.append(_tableSettingsRec.group); } catch (e) {}
   try { if (_collapseRec && _collapseRec.group) headerTools.append(_collapseRec.group); } catch (e) {}
 
   // wrap handled per-view inside each JSON viewer component
@@ -360,8 +430,17 @@ export function renderEntityExplorer({ store }) {
         try { arr.__id = key; } catch (e) {}
         return arr;
       }) : [];
+      const headers = ['Key', 'Value'];
+      const applied = applyTableColumnSettings({ headers, rows, tableSettings: storageTableSettings });
+      const table = createTable({ store, headers: applied.headers, rows: applied.rows, id: `idb-${dbName}-${storeName}-table`, searchable: true, sortable: true });
+      applyTableColumnStyles({ wrapper: table, tableSettings: storageTableSettings });
+      applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings: storageTableSettings, actionItems: TABLE_ACTION_ITEMS });
+      latestTableHeaders = headers;
+      latestTableRows = rows;
+      latestTableSourceInfo = `${dbName}/${storeName} | ${rows.length} rows`;
+
       content.innerHTML = '';
-      content.append(createTable({ store, headers: ['Key', 'Value'], rows, id: `idb-${dbName}-${storeName}-table`, searchable: true, sortable: true }));
+      content.append(table);
       try { updateCollapseAllBtnState(); } catch (e) {}
     } catch (e) {
       content.innerHTML = '';
@@ -370,5 +449,22 @@ export function renderEntityExplorer({ store }) {
     }
   }
 
+  const mo = new MutationObserver(() => {
+    if (!document.body.contains(root)) {
+      try { if (tableSettingsCtrl && typeof tableSettingsCtrl.dispose === 'function') tableSettingsCtrl.dispose(); } catch (e) {}
+      mo.disconnect();
+    }
+  });
+  mo.observe(document.body, { childList: true, subtree: true });
   return root;
 }
+
+
+
+
+
+
+
+
+
+

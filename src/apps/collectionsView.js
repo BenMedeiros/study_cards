@@ -5,13 +5,48 @@ import { formatDurationMs, formatIsoShort } from '../utils/helpers.js';
 import collectionSettingsController from '../controllers/collectionSettingsController.js';
 import kanjiStudyController from '../controllers/kanjiStudyController.js';
 import qaCardsController from '../controllers/qaCardsController.js';
+import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
+import collectionsViewController from '../controllers/collectionsViewController.js';
+import {
+  normalizeTableSettings,
+  applyTableColumnSettings,
+  applyTableColumnStyles,
+  applyTableActionSettings,
+  buildTableColumnItems,
+  attachCardTableSettingsButton,
+} from '../utils/tableSettings.js';
 
+const TABLE_ACTION_ITEMS = [
+  { key: 'clear', label: 'Clear' },
+  { key: 'copyJson', label: 'Copy JSON' },
+  { key: 'copyFullJson', label: 'Copy Full JSON' },
+];
 export function renderCollectionsManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
   root.id = 'collections-root';
 
   const collections = store.collections.getAvailableCollections();
 
+  const activeCollection = store?.collections?.getActiveCollection?.();
+  const settingsCollectionKey = String(activeCollection?.key || activeCollection?.path || '').trim();
+  let collectionsCtrl = null;
+  let collectionsTableSettings = collectionsViewController.getDefaultCollectionsTableSettings();
+
+  try {
+    if (settingsCollectionKey) {
+      collectionsCtrl = collectionsViewController.create(settingsCollectionKey);
+      collectionsTableSettings = normalizeTableSettings(collectionsCtrl.getCollectionsTableSettings());
+    }
+  } catch (e) {
+    collectionsCtrl = null;
+    collectionsTableSettings = collectionsViewController.getDefaultCollectionsTableSettings();
+  }
+
+  async function persistCollectionsTableSettings(nextSettings) {
+    const normalized = normalizeTableSettings(nextSettings);
+    collectionsTableSettings = normalized;
+    try { if (collectionsCtrl) await collectionsCtrl.setCollectionsTableSettings(normalized); } catch (e) {}
+  }
   // Build table headers (include additional collection metadata columns)
   const headers = [
     'Name', 
@@ -188,15 +223,19 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     }
   ];
 
+  const applied = applyTableColumnSettings({ headers, rows, tableSettings: collectionsTableSettings });
+
   const table = createTable({
     store,
-    headers,
-    rows,
+    headers: applied.headers,
+    rows: applied.rows,
     id: 'collections-table',
     sortable: true,
     searchable: true,
     rowActions
   });
+  applyTableColumnStyles({ wrapper: table, tableSettings: collectionsTableSettings });
+  applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings: collectionsTableSettings, actionItems: TABLE_ACTION_ITEMS });
 
   const collectionsCard = card({
     id: 'collections-card',
@@ -204,7 +243,35 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     children: [table]
   });
 
+  attachCardTableSettingsButton({
+    cardEl: collectionsCard,
+    onClick: async () => {
+      const next = await openTableSettingsDialog({
+        tableName: 'Collections Table',
+        sourceInfo: settingsCollectionKey ? `${settingsCollectionKey} | ${collections.length} collections` : `${collections.length} collections`,
+        columns: buildTableColumnItems(headers, rows),
+        actions: TABLE_ACTION_ITEMS,
+        settings: collectionsTableSettings,
+      });
+      if (!next) return;
+      await persistCollectionsTableSettings(next);
+      const routePath = String(route?.path || '/collections').trim() || '/collections';
+      const target = routePath.startsWith('/') ? routePath : `/${routePath}`;
+      if (typeof onNavigate === 'function') onNavigate(target);
+      else window.location.hash = `#${target}`;
+    },
+  });
+
   root.append(collectionsCard);
-  
+
+  const mo = new MutationObserver(() => {
+    if (!document.body.contains(root)) {
+      try { if (collectionsCtrl && typeof collectionsCtrl.dispose === 'function') collectionsCtrl.dispose(); } catch (e) {}
+      mo.disconnect();
+    }
+  });
+  mo.observe(document.body, { childList: true, subtree: true });
+
   return root;
 }
+
