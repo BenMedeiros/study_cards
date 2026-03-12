@@ -4264,15 +4264,7 @@
         "anime_ui"
       ]
     },
-    {
-      "kanji": "敗北",
-      "reading": "はいぼく",
-      "meaning": "defeat; loss",
-      "type": "noun",
-      "tags": [
-        "anime_ui"
-      ]
-    },
+    
     {
       "kanji": "秘密",
       "reading": "ひみつ",
@@ -4354,15 +4346,7 @@
         "anime_ui"
       ]
     },
-    {
-      "kanji": "未来",
-      "reading": "みらい",
-      "meaning": "future",
-      "type": "noun",
-      "tags": [
-        "anime_ui"
-      ]
-    },
+   
     {
       "kanji": "勇者",
       "reading": "ゆうしゃ",
@@ -10232,15 +10216,7 @@
         "pokemon-name-root"
       ]
     },
-    {
-      "kanji": "技",
-      "reading": "わざ",
-      "meaning": "technique; skill; move (in fighting/games)",
-      "type": "noun",
-      "tags": [
-        "anime_ui"
-      ]
-    },
+   
     {
       "kanji": "光",
       "reading": "ひかり",
@@ -13262,6 +13238,509 @@
         "seasoning",
         "food"
       ]
-    }
+    },
+    [
+      {
+        "kanji": "参上",
+        "reading": "さんじょう",
+        "meaning": "dramatic appearance; arrival",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "heroic",
+          "written"
+        ]
+      },
+      {
+        "kanji": "必勝",
+        "reading": "ひっしょう",
+        "meaning": "certain victory",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "heroic",
+          "written"
+        ]
+      },
+      {
+        "kanji": "至上最強",
+        "reading": "しじょうさいきょう",
+        "meaning": "supremely strongest; strongest ever",
+        "type": "expression",
+        "lexicalClass": "set-phrase",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "heroic",
+          "emphatic"
+        ]
+      },
+      {
+        "kanji": "完了",
+        "reading": "かんりょう",
+        "meaning": "completion; complete",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written"
+        ]
+      },
+      {
+        "kanji": "連戦連勝",
+        "reading": "れんせんれんしょう",
+        "meaning": "constant fighting and winning; unbroken winning streak",
+        "type": "expression",
+        "lexicalClass": "set-phrase",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "heroic",
+          "written"
+        ]
+      },
+      {
+        "kanji": "圧勝",
+        "reading": "あっしょう",
+        "meaning": "overwhelming victory",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "heroic",
+          "written"
+        ]
+      },
+      {
+        "kanji": "限界",
+        "reading": "げんかい",
+        "meaning": "limit; boundary",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song"
+        ]
+      },
+      {
+        "kanji": "讃える",
+        "reading": "たたえる",
+        "meaning": "to praise; to acclaim",
+        "type": "ichidan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written"
+        ]
+      },
+      {
+        "kanji": "喝采",
+        "reading": "かっさい",
+        "meaning": "applause; cheers",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written"
+        ]
+      },
+      {
+        "kanji": "人知れず",
+        "reading": "ひとしれず",
+        "meaning": "secretly; unnoticed",
+        "type": "adverb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written"
+        ]
+      },
+      {
+        "kanji": "闘う",
+        "reading": "たたかう",
+        "meaning": "to fight; to battle",
+        "type": "godan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "heroic"
+        ]
+      },
+      {
+        "kanji": "押し寄せる",
+        "reading": "おしよせる",
+        "meaning": "to surge toward; to press in",
+        "type": "ichidan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written"
+        ]
+      },
+      {
+        "kanji": "背を向ける",
+        "reading": "せをむける",
+        "meaning": "to turn one's back on",
+        "type": "expression",
+        "lexicalClass": "set-phrase",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song"
+        ]
+      },
+      {
+        "kanji": "揺るぎなき",
+        "reading": "ゆるぎなき",
+        "meaning": "unshakable; unwavering",
+        "type": "expression",
+        "lexicalClass": "set-phrase",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written",
+          "heroic"
+        ]
+      },
+      {
+        "kanji": "覚悟",
+        "reading": "かくご",
+        "meaning": "resolve; readiness",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "heroic"
+        ]
+      },
+      {
+        "kanji": "繰り出す",
+        "reading": "くりだす",
+        "meaning": "to unleash; to send out",
+        "type": "godan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song"
+        ]
+      },
+      {
+        "kanji": "鉄拳",
+        "reading": "てっけん",
+        "meaning": "iron fist",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "heroic"
+        ]
+      },
+      {
+        "kanji": "正々堂々",
+        "reading": "せいせいどうどう",
+        "meaning": "fair and square; openly and honorably",
+        "type": "adverb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "heroic",
+          "written"
+        ]
+      },
+      {
+        "kanji": "執行",
+        "reading": "しっこう",
+        "meaning": "execution; carrying out",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written"
+        ]
+      },
+      {
+        "kanji": "問答無用",
+        "reading": "もんどうむよう",
+        "meaning": "no argument; no questions asked",
+        "type": "expression",
+        "lexicalClass": "set-phrase",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "emphatic",
+          "written"
+        ]
+      },
+      {
+        "kanji": "断つ",
+        "reading": "たつ",
+        "meaning": "to cut off; to put an end to",
+        "type": "godan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written"
+        ]
+      },
+      {
+        "kanji": "合掌",
+        "reading": "がっしょう",
+        "meaning": "prayer with palms together; requiescat",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "buddhist",
+          "written"
+        ]
+      },
+      {
+        "kanji": "溢れ出す",
+        "reading": "あふれだす",
+        "meaning": "to overflow; to pour out",
+        "type": "godan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song"
+        ]
+      },
+      {
+        "kanji": "鍛えた",
+        "reading": "きたえた",
+        "meaning": "trained; forged",
+        "type": "expression",
+        "lexicalClass": "set-phrase",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song"
+        ]
+      },
+      {
+        "kanji": "技",
+        "reading": "わざ",
+        "meaning": "skill; technique; move",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "martial_arts"
+        ]
+      },
+      {
+        "kanji": "ぶちかます",
+        "reading": "ぶちかます",
+        "meaning": "to smash into; to let loose",
+        "type": "godan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "rough",
+          "casual"
+        ]
+      },
+      {
+        "kanji": "己",
+        "reading": "おのれ",
+        "meaning": "oneself",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written"
+        ]
+      },
+      {
+        "kanji": "乗り越える",
+        "reading": "のりこえる",
+        "meaning": "to overcome; to get over",
+        "type": "ichidan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song"
+        ]
+      },
+      {
+        "kanji": "神宿る",
+        "reading": "かみやどる",
+        "meaning": "divinely inhabited; possessed by a god",
+        "type": "expression",
+        "lexicalClass": "set-phrase",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "poetic",
+          "written"
+        ]
+      },
+      {
+        "kanji": "拳",
+        "reading": "こぶし",
+        "meaning": "fist",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "martial_arts"
+        ]
+      },
+      {
+        "kanji": "掲げる",
+        "reading": "かかげる",
+        "meaning": "to raise; to hold up",
+        "type": "ichidan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written"
+        ]
+      },
+      {
+        "kanji": "突き進む",
+        "reading": "つきすすむ",
+        "meaning": "to push ahead; to charge forward",
+        "type": "godan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "heroic"
+        ]
+      },
+      {
+        "kanji": "敗北",
+        "reading": "はいぼく",
+        "meaning": "defeat; loss",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written"
+        ]
+      },
+      {
+        "kanji": "汚泥",
+        "reading": "おでい",
+        "meaning": "mud; mire",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written",
+          "poetic"
+        ]
+      },
+      {
+        "kanji": "汚泥をなめる",
+        "reading": "おでいをなめる",
+        "meaning": "to suffer bitter defeat; to be humbled in the dirt",
+        "type": "expression",
+        "lexicalClass": "set-phrase",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "idiomatic",
+          "written"
+        ]
+      },
+      {
+        "kanji": "諦めない",
+        "reading": "あきらめない",
+        "meaning": "not give up",
+        "type": "expression",
+        "lexicalClass": "set-phrase",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "spoken",
+          "heroic"
+        ]
+      },
+      {
+        "kanji": "未来",
+        "reading": "あす",
+        "meaning": "tomorrow; future",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "poetic",
+          "special_reading"
+        ]
+      },
+      {
+        "kanji": "描く",
+        "reading": "えがく",
+        "meaning": "to描く; to picture; to描く",
+        "type": "godan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song"
+        ]
+      },
+      {
+        "kanji": "目覚め行く",
+        "reading": "めざめゆく",
+        "meaning": "awakening; waking up and moving forward",
+        "type": "expression",
+        "lexicalClass": "set-phrase",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "poetic",
+          "written"
+        ]
+      },
+      {
+        "kanji": "舞い上がる",
+        "reading": "まいあがる",
+        "meaning": "to soar; to rise up",
+        "type": "godan-verb",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "poetic"
+        ]
+      },
+      {
+        "kanji": "孤独",
+        "reading": "こどく",
+        "meaning": "solitude; loneliness",
+        "type": "noun",
+        "lexicalClass": "regular",
+        "tags": [
+          "opm-song-the_hero",
+          "anime_song",
+          "written"
+        ]
+      }
+    ]
   ]
 }
