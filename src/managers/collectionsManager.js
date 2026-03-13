@@ -68,7 +68,9 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       if (!name || !path || !thisKey || !foreignKey) continue;
       if (seen.has(name)) continue;
       seen.add(name);
-      out.push({ name, path, this_key: thisKey, foreign_key: foreignKey });
+      const rel = { ...raw, name, path, this_key: thisKey, foreign_key: foreignKey };
+      if (!Array.isArray(rel.fields)) delete rel.fields;
+      out.push(rel);
     }
     return out;
   }
@@ -1764,6 +1766,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     clearLearnedForCollection,
   };
 }
+
 
 
 

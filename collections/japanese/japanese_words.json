@@ -11,7 +11,27 @@
         "name": "sentences",
         "path": "japanese/japanese_sentences.json",
         "this_key": "kanji",
-        "foreign_key": "chunks[].refs[]"
+        "foreign_key": "chunks[].refs[]",
+        "fields": [
+          { "key": "japanese", "label": "Japanese" },
+          { "key": "english", "label": "English" },
+          { "key": "notes", "label": "Notes" },
+          { "key": "chunks", "label": "Chunks" }
+        ]
+      },
+      {
+        "name": "paragraphs",
+        "path": "japanese/japanese_paragraphs.json",
+        "this_key": "kanji",
+        "foreign_key": "sentences[].chunks[].refs[]",
+        "fields": [
+          { "key": "title", "label": "Title" },
+          { "key": "japanese", "label": "Japanese" },
+          { "key": "english", "label": "English" },
+          { "key": "notes", "label": "Notes" },
+          { "key": "sentences", "label": "Sentences" },
+          { "key": "chunks", "label": "Chunks" }
+        ]
       }
     ],
     "schema": [

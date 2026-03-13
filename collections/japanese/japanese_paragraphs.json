@@ -1,0 +1,337 @@
+{
+  "metadata": {
+    "name": "Japanese Paragraphs",
+    "description": "Learner-friendly multi-sentence Japanese reading passages with sentence-level chunking.",
+    "version": 1,
+    "category": "japanese",
+    "entry_key": "ja",
+    "schema": [
+      {
+        "key": "title",
+        "label": "Title",
+        "jp_label": "タイトル",
+        "type": "string",
+        "required": false,
+        "description": "Short learner-friendly title for the passage."
+      },
+      {
+        "key": "ja",
+        "label": "Japanese",
+        "jp_label": "日本語",
+        "type": "string",
+        "required": true,
+        "description": "Full paragraph or short passage in natural Japanese surface form."
+      },
+      {
+        "key": "en",
+        "label": "English",
+        "jp_label": "英訳",
+        "type": "string",
+        "required": true,
+        "description": "Natural English translation of the full passage."
+      },
+      {
+        "key": "notes",
+        "label": "Notes",
+        "jp_label": "メモ",
+        "type": "array<string>",
+        "required": false,
+        "description": "Passage-level notes about tone, context, or reading strategy."
+      },
+      {
+        "key": "tags",
+        "label": "Tags",
+        "jp_label": "タグ",
+        "type": "array<string>",
+        "required": false,
+        "description": "Optional machine-friendly tags for filtering or grouping."
+      },
+      {
+        "key": "sentences",
+        "label": "Sentences",
+        "jp_label": "文",
+        "type": "array<paragraphSentence>",
+        "required": true,
+        "description": "Ordered sentences composing the passage. Each sentence may have its own chunk list."
+      }
+    ],
+    "schemaTypes": {
+      "paragraphSentence": {
+        "description": "A sentence inside a longer learner reading passage.",
+        "fields": [
+          {
+            "key": "ja",
+            "label": "Sentence Japanese",
+            "jp_label": "文日本語",
+            "type": "string",
+            "required": true,
+            "description": "Japanese sentence exactly as it appears in the passage."
+          },
+          {
+            "key": "en",
+            "label": "Sentence English",
+            "jp_label": "文英訳",
+            "type": "string",
+            "required": true,
+            "description": "Natural English translation of the standalone sentence."
+          },
+          {
+            "key": "notes",
+            "label": "Sentence Notes",
+            "jp_label": "文メモ",
+            "type": "array<string>",
+            "required": false,
+            "description": "Sentence-specific nuance or reading notes."
+          },
+          {
+            "key": "pattern",
+            "label": "Pattern",
+            "jp_label": "文型",
+            "type": "string",
+            "required": false,
+            "description": "Reusable grammar pattern highlighted in the sentence."
+          },
+          {
+            "key": "chunks",
+            "label": "Chunks",
+            "jp_label": "チャンク",
+            "type": "array<sentenceChunk>",
+            "required": true,
+            "description": "Ordered learner chunks inside the sentence."
+          }
+        ]
+      },
+      "sentenceChunk": {
+        "description": "A learner reading unit inside a sentence within a paragraph.",
+        "fields": [
+          {
+            "key": "ja",
+            "label": "Chunk Japanese",
+            "jp_label": "チャンク日本語",
+            "type": "string",
+            "required": true,
+            "description": "Japanese surface text for this chunk exactly as it appears."
+          },
+          {
+            "key": "gloss",
+            "label": "Gloss",
+            "jp_label": "意味",
+            "type": "string",
+            "required": true,
+            "description": "Short learner-friendly meaning or paraphrase."
+          },
+          {
+            "key": "focus",
+            "label": "Grammar Focus",
+            "jp_label": "文型",
+            "type": "string",
+            "required": false,
+            "description": "Canonical grammar or reading focus for this chunk."
+          },
+          {
+            "key": "refs",
+            "label": "References",
+            "jp_label": "参照語",
+            "type": "array<string>",
+            "required": true,
+            "description": "Lookup keys for content words or grammar patterns used in this chunk."
+          }
+        ]
+      }
+    }
+  },
+  "entries": [
+    {
+      "title": "駅へ急ぐ朝",
+      "ja": "山本さんは毎日渋谷で会社まで歩いて行きます。でも今日は遅くなったので、六時十五分の電車に乗ろうと思いました。階段を下りているとき、くつのひもがほどけているのに気づきましたが、電車も来るのが見えました。『走れ！』と思って、転ばないようにくつをぬいで、電車に乗ることができました。",
+      "en": "Mr. Yamamoto walks to his company in Shibuya every day. But today he ended up late, so he decided to try to catch the 6:15 train. While going down the stairs, he noticed his shoelace was untied, but he could also see the train arriving. He thought, 'Run!', took off his shoe so he would not trip, and managed to get on the train.",
+      "notes": [
+        "Built as a short reading passage from familiar daily-life vocabulary and movement verbs.",
+        "The story is slightly playful, but the grammar stays learner-friendly."
+      ],
+      "tags": [
+        "daily_life",
+        "commute",
+        "n4_n3_reading"
+      ],
+      "sentences": [
+        {
+          "ja": "山本さんは毎日渋谷で会社まで歩いて行きます。",
+          "en": "Mr. Yamamoto walks to his company in Shibuya every day.",
+          "pattern": "〜て行く / 毎日〜ます",
+          "chunks": [
+            {
+              "ja": "山本さんは毎日渋谷で",
+              "gloss": "As for Mr. Yamamoto, every day in Shibuya",
+              "refs": ["山本さん", "毎日", "渋谷"]
+            },
+            {
+              "ja": "会社まで歩いて行きます",
+              "gloss": "walks and goes to the company",
+              "focus": "〜まで / 〜て行く",
+              "refs": ["会社", "歩く", "行く"]
+            }
+          ]
+        },
+        {
+          "ja": "でも今日は遅くなったので、六時十五分の電車に乗ろうと思いました。",
+          "en": "But today he ended up late, so he thought he would take the 6:15 train.",
+          "pattern": "〜ので / 〜ようと思う",
+          "chunks": [
+            {
+              "ja": "でも今日は遅くなったので、",
+              "gloss": "but because today he became late,",
+              "focus": "〜ので",
+              "refs": ["今日", "遅くなる"]
+            },
+            {
+              "ja": "六時十五分の電車に",
+              "gloss": "for the 6:15 train",
+              "refs": ["六時十五分", "電車"]
+            },
+            {
+              "ja": "乗ろうと思いました",
+              "gloss": "he thought he would ride it",
+              "focus": "V-ようと思う",
+              "refs": ["乗る", "思う"]
+            }
+          ]
+        },
+        {
+          "ja": "階段を下りているとき、くつのひもがほどけているのに気づきましたが、電車も来るのが見えました。",
+          "en": "While going down the stairs, he noticed his shoelace was untied, but he could also see the train arriving.",
+          "pattern": "〜ているとき / 〜のに気づく / 〜のが見える",
+          "chunks": [
+            {
+              "ja": "階段を下りているとき、",
+              "gloss": "while going down the stairs,",
+              "focus": "〜ているとき",
+              "refs": ["階段", "下りる"]
+            },
+            {
+              "ja": "くつのひもがほどけているのに気づきましたが、",
+              "gloss": "he noticed that his shoelace was untied, but",
+              "focus": "〜のに気づく",
+              "refs": ["くつ", "ひも", "ほどける", "気づく"]
+            },
+            {
+              "ja": "電車も来るのが見えました",
+              "gloss": "he could also see the train coming",
+              "focus": "〜のが見える",
+              "refs": ["電車", "来る", "見える"]
+            }
+          ]
+        },
+        {
+          "ja": "『走れ！』と思って、転ばないようにくつをぬいで、電車に乗ることができました。",
+          "en": "He thought, 'Run!', took off his shoe so he would not trip, and managed to get on the train.",
+          "pattern": "命令形 / 〜ように / 〜ことができる",
+          "chunks": [
+            {
+              "ja": "『走れ！』と思って、",
+              "gloss": "thinking, 'Run!',",
+              "focus": "命令形 / 〜と思って",
+              "refs": ["走る", "思う"]
+            },
+            {
+              "ja": "転ばないようにくつをぬいで、",
+              "gloss": "taking off his shoe so he would not trip,",
+              "focus": "〜ないように / 〜て",
+              "refs": ["転ぶ", "くつ", "ぬぐ"]
+            },
+            {
+              "ja": "電車に乗ることができました",
+              "gloss": "he was able to get on the train",
+              "focus": "〜ことができる",
+              "refs": ["電車", "乗る", "できる"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "雨の日の図書館",
+      "ja": "午後に雨が強くなったので、私は図書館に入りました。窓の近くの静かな席で本を読んでいると、外の音が少し遠く感じられました。時間がゆっくり過ぎて、帰るころには気分も落ち着いていました。",
+      "en": "When the rain got stronger in the afternoon, I went into the library. As I read a book in a quiet seat near the window, the sounds outside felt a little far away. Time passed slowly, and by the time I went home, I felt calm again.",
+      "notes": [
+        "This passage leans into reading-comprehension mood words rather than dialogue."
+      ],
+      "tags": [
+        "weather",
+        "reading",
+        "quiet_scene"
+      ],
+      "sentences": [
+        {
+          "ja": "午後に雨が強くなったので、私は図書館に入りました。",
+          "en": "Because the rain got stronger in the afternoon, I went into the library.",
+          "pattern": "〜ので / Nに入る",
+          "chunks": [
+            {
+              "ja": "午後に雨が強くなったので、",
+              "gloss": "because the rain became stronger in the afternoon,",
+              "focus": "〜ので",
+              "refs": ["午後", "雨", "強い"]
+            },
+            {
+              "ja": "私は図書館に入りました",
+              "gloss": "I entered the library",
+              "focus": "Nに入る",
+              "refs": ["私", "図書館", "入る"]
+            }
+          ]
+        },
+        {
+          "ja": "窓の近くの静かな席で本を読んでいると、外の音が少し遠く感じられました。",
+          "en": "As I was reading a book in a quiet seat near the window, the sounds outside felt a little distant.",
+          "pattern": "〜ていると / 〜く感じられる",
+          "chunks": [
+            {
+              "ja": "窓の近くの静かな席で",
+              "gloss": "in a quiet seat near the window",
+              "refs": ["窓", "近く", "静か", "席"]
+            },
+            {
+              "ja": "本を読んでいると、",
+              "gloss": "while reading a book,",
+              "focus": "〜ていると",
+              "refs": ["本", "読む"]
+            },
+            {
+              "ja": "外の音が少し遠く感じられました",
+              "gloss": "the outside sounds felt a little distant",
+              "focus": "〜く感じられる",
+              "refs": ["外", "音", "少し", "遠い", "感じる"]
+            }
+          ]
+        },
+        {
+          "ja": "時間がゆっくり過ぎて、帰るころには気分も落ち着いていました。",
+          "en": "Time passed slowly, and by the time I went home, my mood had calmed down too.",
+          "pattern": "〜て / 〜ころには / 〜ている",
+          "chunks": [
+            {
+              "ja": "時間がゆっくり過ぎて、",
+              "gloss": "time passed slowly,",
+              "focus": "〜て",
+              "refs": ["時間", "ゆっくり", "過ぎる"]
+            },
+            {
+              "ja": "帰るころには",
+              "gloss": "by the time I went home",
+              "focus": "〜ころには",
+              "refs": ["帰る", "ころ"]
+            },
+            {
+              "ja": "気分も落ち着いていました",
+              "gloss": "my mood had calmed down too",
+              "focus": "〜ている",
+              "refs": ["気分", "落ち着く"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
