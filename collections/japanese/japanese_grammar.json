@@ -111,29 +111,57 @@
         "key": "sectionKey",
         "label": "Section Key",
         "jp_label": "セクションキー",
-        "description": "Machine-friendly section key derived from the source grammar file name.",
-        "type": "string"
+        "description": "Primary grammar section key for this pattern.",
+        "type": "enum",
+        "values": {
+          "aspect_result_state": "Tense, aspect, result-state, completion",
+          "cause_reason_explanation": "Cause, reason, explanation & inference",
+          "change_process_result": "Change, process, outcomes, and trends",
+          "comparison_degree_limit": "Comparison, degree, limitation, evaluation",
+          "conditionals_hypotheticals": "Conditionals & hypotheticals",
+          "contrast_concession": "Contrast, concession, unexpected outcome",
+          "core_particles": "Core particles & basic sentence roles",
+          "discourse_connectors": "Discourse connectors & clause linking",
+          "evidentiality_guess_hearsay": "Evidentiality, appearance, hearsay, certainty",
+          "focus_emphasis_quantifiers": "Focus particles, emphasis, 'even', and scope",
+          "formal_reading_frames": "Formal frames for reading: stance, scope, basis, discourse",
+          "giving_receiving": "Giving, receiving, benefactive actions",
+          "honorific_humble_politeness": "Honorifics, humble forms, and polite set phrases",
+          "mixed": "Mixed combined patterns",
+          "modality_intent_obligation": "Intent, decisions, obligation, permission, norms",
+          "nominalization_packaging": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
+          "purpose_means_method": "Purpose, goals, means, and methods",
+          "time_sequence": "Time, sequence, timing, and 'while'",
+          "voice_passive_causative_potential": "Voice: passive, causative, potential, related forms"
+        }
       },
       {
         "key": "sectionLabel",
         "label": "Section",
         "jp_label": "セクション",
-        "description": "Human-readable section label derived from the source grammar pack.",
-        "type": "string"
-      },
-      {
-        "key": "sectionKeys",
-        "label": "All Section Keys",
-        "jp_label": "全セクションキー",
-        "description": "All source sections that include this pattern after consolidation.",
-        "type": "string[]"
-      },
-      {
-        "key": "sectionLabels",
-        "label": "All Sections",
-        "jp_label": "全セクション",
-        "description": "All source section labels that include this pattern after consolidation.",
-        "type": "string[]"
+        "description": "Primary human-readable grammar section for this pattern.",
+        "type": "enum",
+        "values": {
+          "Tense, aspect, result-state, completion": "Tense, aspect, result-state, completion",
+          "Cause, reason, explanation & inference": "Cause, reason, explanation & inference",
+          "Change, process, outcomes, and trends": "Change, process, outcomes, and trends",
+          "Comparison, degree, limitation, evaluation": "Comparison, degree, limitation, evaluation",
+          "Conditionals & hypotheticals": "Conditionals & hypotheticals",
+          "Contrast, concession, unexpected outcome": "Contrast, concession, unexpected outcome",
+          "Core particles & basic sentence roles": "Core particles & basic sentence roles",
+          "Discourse connectors & clause linking": "Discourse connectors & clause linking",
+          "Evidentiality, appearance, hearsay, certainty": "Evidentiality, appearance, hearsay, certainty",
+          "Focus particles, emphasis, 'even', and scope": "Focus particles, emphasis, 'even', and scope",
+          "Formal frames for reading: stance, scope, basis, discourse": "Formal frames for reading: stance, scope, basis, discourse",
+          "Giving, receiving, benefactive actions": "Giving, receiving, benefactive actions",
+          "Honorifics, humble forms, and polite set phrases": "Honorifics, humble forms, and polite set phrases",
+          "Mixed combined patterns": "Mixed combined patterns",
+          "Intent, decisions, obligation, permission, norms": "Intent, decisions, obligation, permission, norms",
+          "Nominalization & clause packaging (こと/の/わけ/はず etc.)": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
+          "Purpose, goals, means, and methods": "Purpose, goals, means, and methods",
+          "Time, sequence, timing, and 'while'": "Time, sequence, timing, and 'while'",
+          "Voice: passive, causative, potential, related forms": "Voice: passive, causative, potential, related forms"
+        }
       },
       {
         "key": "words",
@@ -150,12 +178,6 @@
       "meaning": "after a long period; in the end (often negative)",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "迷ったあげく、買わなかった。",
       "example_en": "After much hesitation, I didn't buy it.",
       "formations": [
@@ -167,12 +189,6 @@
       "meaning": "after; later",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "会議のあとで話しましょう。",
       "example_en": "Let's talk after the meeting.",
       "formations": [
@@ -185,12 +201,6 @@
       "meaning": "humble 'do' (polite)",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "こちらで確認いたします。",
       "example_en": "I will check here.",
       "formations": [
@@ -202,12 +212,6 @@
       "meaning": "while; before it’s too late",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "熱いうちに食べてください。",
       "example_en": "Please eat it while it's hot.",
       "formations": [
@@ -220,12 +224,6 @@
       "meaning": "thanks to; due to (positive)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "友達のおかげで助かりました。",
       "example_en": "I was saved thanks to my friend.",
       "words": [
@@ -243,12 +241,6 @@
       "meaning": "there is a risk that (formal)",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "台風で停電するおそれがある。",
       "example_en": "There is a risk of a power outage due to the typhoon.",
       "words": [
@@ -267,12 +259,6 @@
       "meaning": "but; though",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome"
-      ],
       "example_jp": "行きたいですが、時間がありません。",
       "example_en": "I want to go, but I don't have time.",
       "words": [
@@ -290,12 +276,6 @@
       "meaning": "hardly; no sooner than",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "家を出るか出ないかのうちに雨が降ってきた。",
       "example_en": "Hardly had I left home when it started raining.",
       "formations": [
@@ -307,12 +287,6 @@
       "meaning": "as long as; while (condition)",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "知っているかぎり、彼は無実です。",
       "example_en": "As far as I know, he is innocent.",
       "words": [
@@ -330,12 +304,6 @@
       "meaning": "might; could (undesirable)",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "その言い方は誤解を招きかねない。",
       "example_en": "That phrasing could lead to misunderstanding.",
       "words": [
@@ -352,12 +320,6 @@
       "meaning": "might; maybe",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "明日は雪かもしれない。",
       "example_en": "It might snow tomorrow.",
       "formations": [
@@ -369,12 +331,6 @@
       "meaning": "because; since (more direct/subjective)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "忙しいから、後で連絡します。",
       "example_en": "Because I'm busy, I'll contact you later.",
       "words": [
@@ -394,12 +350,6 @@
       "meaning": "now that; since (commitment)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "約束したからには守ります。",
       "example_en": "Now that I promised, I will keep it.",
       "words": [
@@ -416,12 +366,6 @@
       "meaning": "as soon as; no sooner than (formal)",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "ベルが鳴るが早いか、学生は飛び出した。",
       "example_en": "As soon as the bell rang, students dashed out.",
       "formations": [
@@ -433,12 +377,6 @@
       "meaning": "even though; despite (blame)",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome"
-      ],
       "example_jp": "知っているくせに教えてくれない。",
       "example_en": "Even though you know, you won't tell me.",
       "words": [
@@ -455,12 +393,6 @@
       "meaning": "and; because (i-adjective connective)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "寒くて窓を閉めた。",
       "example_en": "Because it was cold, I closed the window.",
       "formations": [
@@ -472,12 +404,6 @@
       "meaning": "precisely; exactly; emphasis",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "今こそ始めるべきだ。",
       "example_en": "Now is exactly the time to start.",
       "formations": [
@@ -489,12 +415,6 @@
       "meaning": "it is ... that ... (contrastive focus)",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "必要なのは才能ではなく努力こそが大事だ。",
       "example_en": "What is necessary is not talent, but effort itself.",
       "formations": [
@@ -506,12 +426,6 @@
       "meaning": "there are times when; have experience of",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "電車が遅れることがあります。",
       "example_en": "There are times when trains are delayed.",
       "words": [
@@ -527,12 +441,6 @@
       "meaning": "from the fact that; based on",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "名前に『山』が多いことから、山が多い地域だと分かる。",
       "example_en": "From the fact many names include 'yama', you can tell it's a mountainous region.",
       "words": [
@@ -551,12 +459,6 @@
       "meaning": "since; (given that) (reason + suggestion)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "せっかく来たことだし、ゆっくりしていきなよ。",
       "example_en": "Since you came all this way, stay and relax.",
       "words": [
@@ -575,12 +477,6 @@
       "meaning": "by doing; because of (context)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "少しずつ続けることで、上達します。",
       "example_en": "By continuing little by little, you improve.",
       "formations": [
@@ -592,14 +488,6 @@
       "meaning": "decide to do / decide to",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation",
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms",
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "notes_grammar": [
         "Also grouped under: Intent, decisions, obligation, permission, norms, Nominalization & clause packaging (こと/の/わけ/はず etc.)."
       ],
@@ -621,16 +509,6 @@
       "meaning": "it has been decided that / end up doing / it has been decided that / end up doing / it is decided/it turns out that",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation",
-        "change_process_result",
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms",
-        "Change, process, outcomes, and trends",
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "notes_grammar": [
         "Also grouped under: Intent, decisions, obligation, permission, norms, Change, process, outcomes, and trends, Nominalization & clause packaging (こと/の/わけ/はず etc.)."
       ],
@@ -650,12 +528,6 @@
       "meaning": "by means of; through (formal)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "努力することによって結果が変わる。",
       "example_en": "Through effort, results change.",
       "formations": [
@@ -667,12 +539,6 @@
       "meaning": "even; if only; as long as",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "水さえあれば生きられる。",
       "example_en": "If only you have water, you can live.",
       "formations": [
@@ -685,12 +551,6 @@
       "meaning": "if only; as long as",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "あなたさえ来れば、みんな喜びます。",
       "example_en": "If only you come, everyone will be happy.",
       "words": [
@@ -708,14 +568,6 @@
       "meaning": "humbly be allowed to do (very common business) / humbly be allowed to do",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness",
-        "voice_passive_causative_potential"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases",
-        "Voice: passive, causative, potential, related forms"
-      ],
       "notes_grammar": [
         "Also grouped under: Honorifics, humble forms, and polite set phrases, Voice: passive, causative, potential, related forms."
       ],
@@ -730,12 +582,6 @@
       "meaning": "please let me do",
       "sectionKey": "voice_passive_causative_potential",
       "sectionLabel": "Voice: passive, causative, potential, related forms",
-      "sectionKeys": [
-        "voice_passive_causative_potential"
-      ],
-      "sectionLabels": [
-        "Voice: passive, causative, potential, related forms"
-      ],
       "example_jp": "先に帰らせてください。",
       "example_en": "Please let me go home first.",
       "formations": [
@@ -747,12 +593,6 @@
       "meaning": "have no choice but to",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "電車が止まって、歩かざるをえなかった。",
       "example_en": "The train stopped, so I had no choice but to walk.",
       "words": [
@@ -769,12 +609,6 @@
       "meaning": "there is nothing but to; only option",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "もう待つしかない。",
       "example_en": "There's nothing to do but wait.",
       "words": [
@@ -790,12 +624,6 @@
       "meaning": "without doing",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "朝ご飯を食べずに出かけた。",
       "example_en": "I went out without eating breakfast.",
       "formations": [
@@ -807,12 +635,6 @@
       "meaning": "cannot help but; can't refrain from",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "笑わずにはいられない。",
       "example_en": "I can't help but laugh.",
       "formations": [
@@ -824,12 +646,6 @@
       "meaning": "even (strong; often written)",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "名前すら覚えていない。",
       "example_en": "I don't even remember the name.",
       "formations": [
@@ -841,12 +657,6 @@
       "meaning": "because of; due to (blame/negative)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "雨のせいで試合が中止になった。",
       "example_en": "Because of the rain, the game was canceled.",
       "words": [
@@ -865,12 +675,6 @@
       "meaning": "I heard that / it is said that (reported information)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "明日は寒くなるそうです。",
       "example_en": "I heard that it will be cold tomorrow.",
       "formations": [
@@ -882,12 +686,6 @@
       "meaning": "looks like / appears that (visual impression)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "雨が降りそうです。",
       "example_en": "It looks like it’s going to rain.",
       "formations": [
@@ -900,12 +698,6 @@
       "meaning": "even so",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome"
-      ],
       "example_jp": "失敗した。それでも続ける。",
       "example_en": "I failed. Even so, I'll continue.",
       "words": [
@@ -922,12 +714,6 @@
       "meaning": "plain past; completed action/state",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "昨日、本を読んだ。",
       "example_en": "I read a book yesterday.",
       "formations": [
@@ -941,12 +727,6 @@
       "meaning": "not only... but also",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "英語だけでなく、日本語も勉強しています。",
       "example_en": "I study not only English but also Japanese.",
       "formations": [
@@ -959,12 +739,6 @@
       "meaning": "when; upon doing; discovered result",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "駅に着いたところ、電車が出たあとだった。",
       "example_en": "When I arrived at the station, the train had already left.",
       "words": [
@@ -983,12 +757,6 @@
       "meaning": "even (can't) (very formal)",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "想像だにしなかった。",
       "example_en": "I never even imagined it.",
       "formations": [
@@ -1000,12 +768,6 @@
       "meaning": "every time",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "見るたびに思い出す。",
       "example_en": "Every time I see it, I remember.",
       "formations": [
@@ -1018,12 +780,6 @@
       "meaning": "had better; it is better to do",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "早く寝たほうがいい。",
       "example_en": "You should go to bed early.",
       "formations": [
@@ -1035,12 +791,6 @@
       "meaning": "leave something as is / remain in a resulting state",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "電気をつけたまま寝てしまいました。",
       "example_en": "I fell asleep with the lights left on.",
       "words": [
@@ -1058,12 +808,6 @@
       "meaning": "because; due to / in order to",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "雪のため、電車が止まりました。",
       "example_en": "Due to snow, the train stopped.",
       "words": [
@@ -1081,12 +825,6 @@
       "meaning": "in order to; for the sake of",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "日本語を上達するために毎日勉強しています。",
       "example_en": "I study every day in order to improve my Japanese.",
       "formations": [
@@ -1099,12 +837,6 @@
       "meaning": "if / when (after something happens; flexible conditional)",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "雨が降ったら、家にいます。",
       "example_en": "If it rains, I will stay home.",
       "words": [
@@ -1124,12 +856,6 @@
       "meaning": "while you're at it; on the way",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "買い物のついでに郵便局に寄った。",
       "example_en": "I stopped by the post office while I was out shopping.",
       "formations": [
@@ -1142,12 +868,6 @@
       "meaning": "what was it again? (casual recall)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "明日って何時だっけ？",
       "example_en": "What time was it tomorrow again?",
       "formations": [
@@ -1159,12 +879,6 @@
       "meaning": "be in the process of; be on the way to (formal)",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "notes_grammar": [
         "Written/formal; often used in news/essays."
       ],
@@ -1183,12 +897,6 @@
       "meaning": "leave (something) as is; keep doing",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "ドアを開けっぱなしにしないで。",
       "example_en": "Don't leave the door open.",
       "words": [
@@ -1204,12 +912,6 @@
       "meaning": "seems; -ish; tends to (casual)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "今日は雨っぽいね。",
       "example_en": "It seems rainy today.",
       "formations": [
@@ -1222,12 +924,6 @@
       "meaning": "intend to; plan to",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "今年は毎日走るつもりです。",
       "example_en": "I intend to run every day this year.",
       "words": [
@@ -1245,12 +941,6 @@
       "meaning": "with the intention of; acting as if",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "冗談のつもりで言った。",
       "example_en": "I said it intending it as a joke.",
       "words": [
@@ -1268,14 +958,6 @@
       "meaning": "resulting state (intentional action done) / result state from intentional action",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state",
-        "voice_passive_causative_potential"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion",
-        "Voice: passive, causative, potential, related forms"
-      ],
       "notes_grammar": [
         "Often implies someone intentionally did it; focus on state/result.",
         "Also grouped under: Tense, aspect, result-state, completion, Voice: passive, causative, potential, related forms."
@@ -1297,12 +979,6 @@
       "meaning": "done and left for a purpose",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "飲み物が冷やしてあります。",
       "example_en": "Drinks have been chilled (ready).",
       "words": [
@@ -1318,12 +994,6 @@
       "meaning": "change or movement away from the speaker / continue into the future",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "これからも日本語を勉強していきます。",
       "example_en": "I will continue studying Japanese from now on.",
       "formations": [
@@ -1335,12 +1005,6 @@
       "meaning": "humbly receive action",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "説明していただき、ありがとうございました。",
       "example_en": "Thank you for explaining (to me).",
       "formations": [
@@ -1352,12 +1016,6 @@
       "meaning": "could you please (very polite request)",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "少し待っていただけませんか。",
       "example_en": "Could you please wait a moment?",
       "formations": [
@@ -1369,12 +1027,6 @@
       "meaning": "honorific 'be doing / be'",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "部長は会議中でいらっしゃいます。",
       "example_en": "The manager is in a meeting.",
       "formations": [
@@ -1386,12 +1038,6 @@
       "meaning": "progressive/state; habitual",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "notes_grammar": [
         "Vている = ongoing action OR resulting state depending on verb (e.g., 結婚している)."
       ],
@@ -1411,12 +1057,6 @@
       "meaning": "was just in the middle of",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "ちょうど出かけているところでした。",
       "example_en": "I was just in the middle of going out.",
       "words": [
@@ -1432,12 +1072,6 @@
       "meaning": "do in advance / do beforehand in preparation for something",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "旅行の前にホテルを予約しておきます。",
       "example_en": "I will reserve the hotel in advance before the trip.",
       "words": [
@@ -1455,12 +1089,6 @@
       "meaning": "leave; keep as is for now",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "そのままにしておいてください。",
       "example_en": "Please leave it as it is for now.",
       "words": [
@@ -1478,12 +1106,6 @@
       "meaning": "do in advance; have done",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "明日の会議の資料を印刷しておいた。",
       "example_en": "I printed the meeting materials in advance.",
       "words": [
@@ -1502,12 +1124,6 @@
       "meaning": "finish doing",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "レポートを書き終わりました。",
       "example_en": "I finished writing the report.",
       "words": [
@@ -1524,12 +1140,6 @@
       "meaning": "after doing",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "仕事が終わってから帰ります。",
       "example_en": "I'll go home after work finishes.",
       "formations": [
@@ -1541,12 +1151,6 @@
       "meaning": "please do; polite request",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "静かに待っていてください。",
       "example_en": "Please wait quietly.",
       "formations": [
@@ -1558,12 +1162,6 @@
       "meaning": "honorific 'do for me/us'",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "先生が来てくださいました。",
       "example_en": "The teacher kindly came (for us).",
       "formations": [
@@ -1575,12 +1173,6 @@
       "meaning": "change or movement toward the speaker / something has started or continued up to now",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "だんだん寒くなってきました。",
       "example_en": "It has gradually become cold.",
       "formations": [
@@ -1592,12 +1184,6 @@
       "meaning": "polite copula (very formal)",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "こちらが資料でございます。",
       "example_en": "Here are the materials.",
       "formations": [
@@ -1609,12 +1195,6 @@
       "meaning": "humble/polite 'do for'",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "私がご説明して差し上げます。",
       "example_en": "I will explain (for you).",
       "formations": [
@@ -1626,12 +1206,6 @@
       "meaning": "can't help but; very",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "心配でしかたがない。",
       "example_en": "I can't help but worry.",
       "words": [
@@ -1646,12 +1220,6 @@
       "meaning": "tend to end up doing",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "夜更かししてしまいがちだ。",
       "example_en": "I tend to stay up late.",
       "words": [
@@ -1667,12 +1235,6 @@
       "meaning": "finish completely / unfortunately do / regretful completion",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "notes_grammar": [
         "Can mean completion or regret/undesirable outcome depending on context."
       ],
@@ -1691,12 +1253,6 @@
       "meaning": "end up; be done unintentionally",
       "sectionKey": "voice_passive_causative_potential",
       "sectionLabel": "Voice: passive, causative, potential, related forms",
-      "sectionKeys": [
-        "voice_passive_causative_potential"
-      ],
-      "sectionLabels": [
-        "Voice: passive, causative, potential, related forms"
-      ],
       "example_jp": "大事なデータを消してしまった。",
       "example_en": "I ended up deleting important data.",
       "formations": [
@@ -1708,12 +1264,6 @@
       "meaning": "ended up doing; regrettably did",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "財布を忘れてしまった。",
       "example_en": "I ended up forgetting my wallet.",
       "words": [
@@ -1729,12 +1279,6 @@
       "meaning": "can't help but; extremely (feeling)",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "会いたくてたまらない。",
       "example_en": "I can't stand how much I want to see you.",
       "words": [
@@ -1750,12 +1294,6 @@
       "meaning": "can't help but; very (often written)",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "残念でならない。",
       "example_en": "I can't help but feel it's regrettable.",
       "words": [
@@ -1770,12 +1308,6 @@
       "meaning": "if (repeated negative consequence)",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "こんなに寝ては、疲れが取れない。",
       "example_en": "If you sleep this much, you won't recover.",
       "words": [
@@ -1793,12 +1325,6 @@
       "meaning": "must not; not allowed to",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "ここでタバコを吸ってはいけません。",
       "example_en": "You must not smoke here.",
       "words": [
@@ -1816,12 +1342,6 @@
       "meaning": "want someone to do",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "静かにしてほしいです。",
       "example_en": "I want you to be quiet.",
       "words": [
@@ -1838,12 +1358,6 @@
       "meaning": "try doing; do and see",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "この薬を飲んでみます。",
       "example_en": "I'll try taking this medicine.",
       "words": [
@@ -1859,14 +1373,6 @@
       "meaning": "even if; even though (concessive conditional) / even if; even though",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals",
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals",
-        "Contrast, concession, unexpected outcome"
-      ],
       "notes_grammar": [
         "Also grouped under: Conditionals & hypotheticals, Contrast, concession, unexpected outcome."
       ],
@@ -1889,12 +1395,6 @@
       "meaning": "may; it's okay to",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "ここに座ってもいいですか。",
       "example_en": "May I sit here?",
       "words": [
@@ -1911,12 +1411,6 @@
       "meaning": "would like to have someone do",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "説明してもらいたいことがあります。",
       "example_en": "There is something I'd like you to explain.",
       "words": [
@@ -1935,12 +1429,6 @@
       "meaning": "receive benefit (not passive but related)",
       "sectionKey": "voice_passive_causative_potential",
       "sectionLabel": "Voice: passive, causative, potential, related forms",
-      "sectionKeys": [
-        "voice_passive_causative_potential"
-      ],
-      "sectionLabels": [
-        "Voice: passive, causative, potential, related forms"
-      ],
       "example_jp": "上司に助けてもらった。",
       "example_en": "I got help from my boss.",
       "formations": [
@@ -1952,12 +1440,6 @@
       "meaning": "do for (to someone lower/animals) (rough)",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "犬に水を飲ませてやった。",
       "example_en": "I gave the dog water to drink.",
       "formations": [
@@ -1969,12 +1451,6 @@
       "meaning": "when / whenever / if (natural or automatic result, general truth)",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "notes_grammar": [
         "Often for natural consequence/habit; not for speaker's intention/commands."
       ],
@@ -1995,12 +1471,6 @@
       "meaning": "it would be good if; hope/suggestion",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "明日晴れるといいですね。",
       "example_en": "I hope it will be sunny tomorrow.",
       "words": [
@@ -2017,12 +1487,6 @@
       "meaning": "called; said; that (quotation/label)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "『学び』という言葉が好きです。",
       "example_en": "I like the word 'learning'.",
       "formations": [
@@ -2034,12 +1498,6 @@
       "meaning": "N called; the N that is called",
       "sectionKey": "nominalization_packaging",
       "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-      "sectionKeys": [
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "example_jp": "『和食』という料理が好きです。",
       "example_en": "I like the cuisine called 'washoku'.",
       "formations": [
@@ -2051,12 +1509,6 @@
       "meaning": "the fact that; what it means is",
       "sectionKey": "nominalization_packaging",
       "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-      "sectionKeys": [
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "example_jp": "遅れるということは、連絡が必要です。",
       "example_en": "Being late means you need to contact them.",
       "formations": [
@@ -2068,12 +1520,6 @@
       "meaning": "rather than; more like",
       "sectionKey": "nominalization_packaging",
       "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-      "sectionKeys": [
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "example_jp": "寒いというより、痛い。",
       "example_en": "Rather than cold, it's painful.",
       "formations": [
@@ -2085,12 +1531,6 @@
       "meaning": "that's why; so it follows that",
       "sectionKey": "nominalization_packaging",
       "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-      "sectionKeys": [
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "example_jp": "つまり、来週は休みというわけだ。",
       "example_en": "So that means next week is a holiday.",
       "formations": [
@@ -2102,12 +1542,6 @@
       "meaning": "when; at the time of",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "日本に行ったとき、寿司を食べました。",
       "example_en": "When I went to Japan, I ate sushi.",
       "formations": [
@@ -2121,12 +1555,6 @@
       "meaning": "at the time/point of; when",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "ちょうど出かけるところに電話が来た。",
       "example_en": "Right when I was about to go out, a call came.",
       "formations": [
@@ -2139,12 +1567,6 @@
       "meaning": "however; despite expectations (written)",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome"
-      ],
       "example_jp": "急いだところが、間に合わなかった。",
       "example_en": "Even though I hurried, I didn't make it.",
       "words": [
@@ -2160,12 +1582,6 @@
       "meaning": "far from; not only not..., but...",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome"
-      ],
       "example_jp": "簡単どころか、とても難しい。",
       "example_en": "Far from easy, it's very difficult.",
       "words": [
@@ -2182,12 +1598,6 @@
       "meaning": "about to / in the middle of / just did",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "notes_grammar": [
         "Vるところだ=about to; Vているところだ=in the middle; Vたところだ=just did."
       ],
@@ -2208,12 +1618,6 @@
       "meaning": "was about to; almost did",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "危うく忘れるところだった。",
       "example_en": "I almost forgot.",
       "formations": [
@@ -2225,12 +1629,6 @@
       "meaning": "not in a situation to; cannot afford to",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation"
-      ],
       "example_jp": "忙しくて旅行どころではない。",
       "example_en": "I'm too busy to even think about traveling.",
       "formations": [
@@ -2242,12 +1640,6 @@
       "meaning": "if; assuming",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "もし私が社長だとしたら、制度を変える。",
       "example_en": "If I were the president, I'd change the system.",
       "words": [
@@ -2266,12 +1658,6 @@
       "meaning": "I was told that; (reported)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "先生によると、試験は延期とのことです。",
       "example_en": "According to the teacher, the exam has been postponed.",
       "formations": [
@@ -2283,12 +1669,6 @@
       "meaning": "though; although; that said / though; that said",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome"
-      ],
       "example_jp": "便利とはいえ、料金が高い。",
       "example_en": "Though it's convenient, the fee is high.",
       "words": [
@@ -2307,12 +1687,6 @@
       "meaning": "when it comes to; once it becomes",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "年末ともなると忙しくなる。",
       "example_en": "When it gets to year-end, it gets busy.",
       "words": [
@@ -2329,12 +1703,6 @@
       "meaning": "cannot help but",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "心配しないではいられない。",
       "example_en": "I can't help but worry.",
       "formations": [
@@ -2346,12 +1714,6 @@
       "meaning": "if not; unless (casual warning)",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "急がないと間に合わない。",
       "example_en": "If we don't hurry, we won't make it.",
       "words": [
@@ -2367,12 +1729,6 @@
       "meaning": "isn't there a way to...? (wish)",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "もう少し安くならないものか。",
       "example_en": "Isn't there some way it could get a bit cheaper?",
       "words": [
@@ -2390,12 +1746,6 @@
       "meaning": "although; despite (same subject)",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome"
-      ],
       "example_jp": "知っていながら、黙っていた。",
       "example_en": "Although they knew, they kept silent.",
       "words": [
@@ -2412,12 +1762,6 @@
       "meaning": "don't have to; not necessary",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "急がなくてもいいですよ。",
       "example_en": "You don't have to rush.",
       "words": [
@@ -2433,12 +1777,6 @@
       "meaning": "must; have to",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "明日までに出さなければならない。",
       "example_en": "I must submit it by tomorrow.",
       "words": [
@@ -2456,12 +1794,6 @@
       "meaning": "honorific 'do'",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "先生はもうお帰りなさいます。",
       "example_en": "The teacher will go home soon.",
       "formations": [
@@ -2473,12 +1805,6 @@
       "meaning": "etc.; (lowering/dismissive)",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "そんなことなど気にしないで。",
       "example_en": "Don't worry about things like that.",
       "formations": [
@@ -2491,12 +1817,6 @@
       "meaning": "if it is the case that / given that (based on context or topic)",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "日本に行くなら、京都に行きたいです。",
       "example_en": "If I go to Japan, I want to go to Kyoto.",
       "words": [
@@ -2516,12 +1836,6 @@
       "meaning": "something like; (dismissive/surprised)",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "彼が来ないなんて信じられない。",
       "example_en": "I can't believe he won't come.",
       "formations": [
@@ -2534,12 +1848,6 @@
       "meaning": "on the occasion of; when starting (formal)",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "申し込みにあたって、注意事項を確認してください。",
       "example_en": "When applying, please check the notes.",
       "formations": [
@@ -2552,12 +1860,6 @@
       "meaning": "in; at; regarding (formal)",
       "sectionKey": "nominalization_packaging",
       "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-      "sectionKeys": [
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "example_jp": "教育において大切なのは継続だ。",
       "example_en": "In education, what's important is persistence.",
       "formations": [
@@ -2569,12 +1871,6 @@
       "meaning": "on (a particular day) of all times; ironically",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "こういう日にかぎって雨が降る。",
       "example_en": "It rains on days like this of all times.",
       "words": [
@@ -2592,12 +1888,6 @@
       "meaning": "over; through (range)",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "週末にかけて雪が降る見込みだ。",
       "example_en": "Snow is expected through the weekend.",
       "formations": [
@@ -2609,12 +1899,6 @@
       "meaning": "as; according to (trend)",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "状況が悪化するにしたがって、対策が必要だ。",
       "example_en": "As the situation worsens, measures are needed.",
       "formations": [
@@ -2627,14 +1911,6 @@
       "meaning": "for; considering",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession",
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome",
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "notes_grammar": [
         "Also grouped under: Contrast, concession, unexpected outcome, Formal frames for reading: stance, scope, basis, discourse."
       ],
@@ -2656,12 +1932,6 @@
       "meaning": "even if; even assuming / even if; whether or not",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome"
-      ],
       "example_jp": "行くにしても、連絡してからにしてください。",
       "example_en": "Even if you go, please contact me first.",
       "words": [
@@ -2683,14 +1953,6 @@
       "meaning": "whether... or...; either way",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit",
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation",
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "notes_grammar": [
         "Also grouped under: Comparison, degree, limitation, evaluation, Formal frames for reading: stance, scope, basis, discourse."
       ],
@@ -2705,16 +1967,6 @@
       "meaning": "nothing more than; merely / nothing more than / merely",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit",
-        "nominalization_packaging",
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation",
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "notes_grammar": [
         "Also grouped under: Comparison, degree, limitation, evaluation, Nominalization & clause packaging (こと/の/わけ/はず etc.), Formal frames for reading: stance, scope, basis, discourse."
       ],
@@ -2730,12 +1982,6 @@
       "meaning": "even if; whether or not (formal)",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "結果がどうであれ、やるにせよやらないにせよ、決めよう。",
       "example_en": "Either way, let's decide whether to do it or not.",
       "formations": [
@@ -2748,12 +1994,6 @@
       "meaning": "cannot bear; deeply (emotion) (formal)",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "残念にたえない。",
       "example_en": "I cannot bear how regrettable it is.",
       "formations": [
@@ -2765,12 +2005,6 @@
       "meaning": "about; regarding",
       "sectionKey": "nominalization_packaging",
       "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-      "sectionKeys": [
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "example_jp": "契約について説明します。",
       "example_en": "I will explain about the contract.",
       "formations": [
@@ -2783,12 +2017,6 @@
       "meaning": "due to; because of (very formal signage)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "本日休業につき、ご了承ください。",
       "example_en": "We are closed today; thank you for your understanding.",
       "words": [
@@ -2806,12 +2034,6 @@
       "meaning": "as; in proportion to",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "年を取るにつれて体力が落ちる。",
       "example_en": "As you get older, your stamina declines.",
       "formations": [
@@ -2824,12 +2046,6 @@
       "meaning": "along with; as a result of",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "値上げにともない、サービスが変わった。",
       "example_en": "Along with the price increase, the service changed.",
       "formations": [
@@ -2841,12 +2057,6 @@
       "meaning": "polite phrase often used in service (sometimes overused)",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "こちらがメニューになります。",
       "example_en": "Here is the menu.",
       "formations": [
@@ -2858,12 +2068,6 @@
       "meaning": "become; come to be (となる more formal)",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "大人になると、時間が早く感じる。",
       "example_en": "When you become an adult, time feels faster.",
       "formations": [
@@ -2877,16 +2081,6 @@
       "meaning": "nothing other than; precisely / nothing other than",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit",
-        "nominalization_packaging",
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation",
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "notes_grammar": [
         "Also grouped under: Comparison, degree, limitation, evaluation, Nominalization & clause packaging (こと/の/わけ/はず etc.), Formal frames for reading: stance, scope, basis, discourse."
       ],
@@ -2902,12 +2096,6 @@
       "meaning": "despite; in spite of (formal)",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome"
-      ],
       "example_jp": "雨にもかかわらず、多くの人が来た。",
       "example_en": "Despite the rain, many people came.",
       "words": [
@@ -2926,12 +2114,6 @@
       "meaning": "depending on; due to; by means of",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "天気によって予定を変えます。",
       "example_en": "I change plans depending on the weather.",
       "words": [
@@ -2949,12 +2131,6 @@
       "meaning": "due to; by (formal)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "システム障害により遅延しております。",
       "example_en": "There is a delay due to a system issue.",
       "words": [
@@ -2972,12 +2148,6 @@
       "meaning": "divide into",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "問題を三つに分けて考える。",
       "example_en": "Think of the problem by dividing it into three parts.",
       "formations": [
@@ -2989,12 +2159,6 @@
       "meaning": "over; spanning (time/space)",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "三日にわたって会議が行われた。",
       "example_en": "The conference was held over three days.",
       "formations": [
@@ -3006,14 +2170,6 @@
       "meaning": "must be; no doubt / must be",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay",
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty",
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "notes_grammar": [
         "Also grouped under: Evidentiality, appearance, hearsay, certainty, Formal frames for reading: stance, scope, basis, discourse."
       ],
@@ -3028,12 +2184,6 @@
       "meaning": "certain; no doubt (formal variant)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "その判断は正しいに相違ない。",
       "example_en": "That judgment is certainly correct.",
       "formations": [
@@ -3046,14 +2196,6 @@
       "meaning": "there is nothing better than; best to / best to; nothing better than",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation",
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms",
-        "Comparison, degree, limitation, evaluation"
-      ],
       "notes_grammar": [
         "Also grouped under: Intent, decisions, obligation, permission, norms, Comparison, degree, limitation, evaluation."
       ],
@@ -3076,12 +2218,6 @@
       "meaning": "along; according to (policy/plan)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "計画に沿って進めます。",
       "example_en": "We will proceed according to the plan.",
       "formations": [
@@ -3093,12 +2229,6 @@
       "meaning": "according to; depending on",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "状況に応じて対応します。",
       "example_en": "We will respond according to the situation.",
       "words": [
@@ -3116,12 +2246,6 @@
       "meaning": "as for; regarding (topic narrowing)",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "費用に関しては心配いりません。",
       "example_en": "As for costs, there's no need to worry.",
       "formations": [
@@ -3133,12 +2257,6 @@
       "meaning": "based on",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "データに基づいて判断する。",
       "example_en": "Judge based on data.",
       "formations": [
@@ -3150,12 +2268,6 @@
       "meaning": "surely; bound to (often strong/casual)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "そんなの失敗に決まってる。",
       "example_en": "That is bound to fail.",
       "formations": [
@@ -3167,12 +2279,6 @@
       "meaning": "only when; just on that occasion",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "忙しい日に限って電話が来る。",
       "example_en": "Calls come only on busy days.",
       "formations": [
@@ -3184,12 +2290,6 @@
       "meaning": "never when it comes to; (someone) doesn't",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "彼に限って嘘をつくことはない。",
       "example_en": "He, of all people, would never lie.",
       "formations": [
@@ -3201,12 +2301,6 @@
       "meaning": "not limited to; regardless of",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "年齢に限らず参加できます。",
       "example_en": "You can participate regardless of age.",
       "formations": [
@@ -3218,12 +2312,6 @@
       "meaning": "toward; for (a goal)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "試験に向けて勉強しています。",
       "example_en": "I'm studying toward the exam.",
       "formations": [
@@ -3235,12 +2323,6 @@
       "meaning": "on the occasion of; when (formal)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "入学に際して、書類を提出してください。",
       "example_en": "On the occasion of enrollment, please submit the documents.",
       "formations": [
@@ -3252,12 +2334,6 @@
       "meaning": "to reach; result in (formal)",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "議論の末、合意に至った。",
       "example_en": "After discussion, we reached an agreement.",
       "formations": [
@@ -3269,12 +2345,6 @@
       "meaning": "prior to; before (formal)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "開始に先立って説明します。",
       "example_en": "Before starting, I'll explain.",
       "formations": [
@@ -3286,12 +2356,6 @@
       "meaning": "surely; no mistake (formal)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "これは名作に相違ない。",
       "example_en": "This is surely a masterpiece.",
       "formations": [
@@ -3303,12 +2367,6 @@
       "meaning": "toward; against; in response to",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "質問に対して答えます。",
       "example_en": "I will answer in response to the question.",
       "formations": [
@@ -3320,12 +2378,6 @@
       "meaning": "as; along with (change)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "制度変更に伴って手続きが必要です。",
       "example_en": "Procedures are required along with the policy change.",
       "words": [
@@ -3344,12 +2396,6 @@
       "meaning": "because; since (softer/more objective)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "雨なので、家にいます。",
       "example_en": "Because it's raining, I'm staying home.",
       "words": [
@@ -3368,12 +2414,6 @@
       "meaning": "probably because; explanatory conjecture",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "疲れているのでしょう、すぐ寝てしまった。",
       "example_en": "They must have been tired, and fell asleep quickly.",
       "words": [
@@ -3392,12 +2432,6 @@
       "meaning": "although / even though",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome"
-      ],
       "example_jp": "雨なのに出かけました。",
       "example_en": "Even though it was raining, I went out.",
       "words": [
@@ -3413,12 +2447,6 @@
       "meaning": "if (formal, logical conditional; focuses on condition)",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "時間があれば、映画を見ます。",
       "example_en": "If I have time, I will watch a movie.",
       "words": [
@@ -3438,12 +2466,6 @@
       "meaning": "only continue to; do nothing but (often negative trend)",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": [
-        "aspect_result_state"
-      ],
-      "sectionLabels": [
-        "Tense, aspect, result-state, completion"
-      ],
       "example_jp": "物価は上がるばかりだ。",
       "example_en": "Prices keep rising.",
       "words": [
@@ -3459,14 +2481,6 @@
       "meaning": "should; expected to; it stands to reason / should; expected; logical conclusion",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay",
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty",
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "notes_grammar": [
         "Also grouped under: Evidentiality, appearance, hearsay, certainty, Nominalization & clause packaging (こと/の/わけ/はず etc.)."
       ],
@@ -3481,12 +2495,6 @@
       "meaning": "needless to say",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "彼は日本語はもちろん、英語も話せる。",
       "example_en": "He can speak English as well as Japanese, needless to say.",
       "formations": [
@@ -3498,12 +2506,6 @@
       "meaning": "should have; regret",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "もっと早く聞けばよかった。",
       "example_en": "I should have asked earlier.",
       "words": [
@@ -3521,12 +2523,6 @@
       "meaning": "should; ought to",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "約束は守るべきです。",
       "example_en": "You should keep promises.",
       "words": [
@@ -3542,12 +2538,6 @@
       "meaning": "in order to (formal)",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "問題を解決すべく、話し合いを続けた。",
       "example_en": "We continued discussions in order to solve the problem.",
       "words": [
@@ -3566,12 +2556,6 @@
       "meaning": "not to the extent of; not that much",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation"
-      ],
       "example_jp": "心配するほどではありません。",
       "example_en": "It's not something to worry that much about.",
       "formations": [
@@ -3583,12 +2567,6 @@
       "meaning": "not that serious",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation"
-      ],
       "example_jp": "謝るほどのことではありません。",
       "example_en": "It's not something you need to apologize for.",
       "formations": [
@@ -3600,12 +2578,6 @@
       "meaning": "will not; probably not (formal, volitional neg.)",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "二度と同じ失敗はするまい。",
       "example_en": "I will not make the same mistake again.",
       "words": [
@@ -3623,12 +2595,6 @@
       "meaning": "even; to the point of",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "泣くまで怒られた。",
       "example_en": "I was scolded to the point of crying.",
       "formations": [
@@ -3641,12 +2607,6 @@
       "meaning": "seems; appears (often written)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "遠くに山が見える。",
       "example_en": "Mountains can be seen in the distance.",
       "formations": [
@@ -3658,12 +2618,6 @@
       "meaning": "seems like / looks like (casual, subjective impression)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "あの人は先生みたいです。",
       "example_en": "That person seems like a teacher.",
       "formations": [
@@ -3676,12 +2630,6 @@
       "meaning": "because; also 'things that...' (noun)",
       "sectionKey": "nominalization_packaging",
       "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-      "sectionKeys": [
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "example_jp": "子どもだもの、仕方ない。",
       "example_en": "Because they're a child, it can't be helped.",
       "formations": [
@@ -3694,12 +2642,6 @@
       "meaning": "it is natural/expected to; used to (reminiscence)",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "子どものころはよく川で遊んだものだ。",
       "example_en": "When I was a kid, I used to play in the river a lot.",
       "words": [
@@ -3719,12 +2661,6 @@
       "meaning": "because (excuse; casual)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "寝坊したものだから、間に合わなかった。",
       "example_en": "Because I overslept, I didn't make it.",
       "words": [
@@ -3741,12 +2677,6 @@
       "meaning": "if (but it's unlikely); if you were to",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "今そんなことを言おうものなら、怒られる。",
       "example_en": "If you were to say that now, you'd get scolded.",
       "words": [
@@ -3765,12 +2695,6 @@
       "meaning": "although; but (written)",
       "sectionKey": "contrast_concession",
       "sectionLabel": "Contrast, concession, unexpected outcome",
-      "sectionKeys": [
-        "contrast_concession"
-      ],
-      "sectionLabels": [
-        "Contrast, concession, unexpected outcome"
-      ],
       "example_jp": "努力したものの、結果は出なかった。",
       "example_en": "Although I tried hard, I got no results.",
       "words": [
@@ -3788,12 +2712,6 @@
       "meaning": "it seems that / it appears that (reasoned or indirect evidence)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "外は静かなようです。",
       "example_en": "It seems quiet outside.",
       "formations": [
@@ -3806,12 +2724,6 @@
       "meaning": "it turns out that; end up (contextual)",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "探したが、見つからないようだ。",
       "example_en": "I searched, but it seems I can't find it (it turns out).",
       "formations": [
@@ -3823,12 +2735,6 @@
       "meaning": "thinking of doing; intend (softer)",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "早く寝ようと思います。",
       "example_en": "I think I'll go to bed early.",
       "words": [
@@ -3845,12 +2751,6 @@
       "meaning": "so that; in order that (goal)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "忘れないようにメモします。",
       "example_en": "I take notes so that I won't forget.",
       "formations": [
@@ -3863,16 +2763,6 @@
       "meaning": "try to / make an effort to / make it a habit to; try to / try to / make an effort to",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation",
-        "purpose_means_method",
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms",
-        "Purpose, goals, means, and methods",
-        "Change, process, outcomes, and trends"
-      ],
       "notes_grammar": [
         "Also grouped under: Intent, decisions, obligation, permission, norms, Purpose, goals, means, and methods, Change, process, outcomes, and trends."
       ],
@@ -3894,12 +2784,6 @@
       "meaning": "come to be able to / reach a new state or habit over time",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "毎日練習して、日本語が話せるようになりました。",
       "example_en": "By practicing every day, I became able to speak Japanese.",
       "formations": [
@@ -3912,12 +2796,6 @@
       "meaning": "tell (someone) to; instruct",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "先生に早く来るように言われた。",
       "example_en": "The teacher told me to come early.",
       "words": [
@@ -3936,12 +2814,6 @@
       "meaning": "ask/request someone to",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "友達に手伝ってくれるように頼んだ。",
       "example_en": "I asked my friend to help.",
       "words": [
@@ -3960,12 +2832,6 @@
       "meaning": "apparently / I heard that / typical of (based on info or reputation)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "彼は来ないらしいです。",
       "example_en": "Apparently, he isn’t coming.",
       "formations": [
@@ -3978,12 +2844,6 @@
       "meaning": "typical of; characteristic of",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "彼は彼らしいやり方で解決した。",
       "example_en": "He solved it in a way that's typical of him.",
       "formations": [
@@ -3995,12 +2855,6 @@
       "meaning": "honorific passive-like",
       "sectionKey": "voice_passive_causative_potential",
       "sectionLabel": "Voice: passive, causative, potential, related forms",
-      "sectionKeys": [
-        "voice_passive_causative_potential"
-      ],
-      "sectionLabels": [
-        "Voice: passive, causative, potential, related forms"
-      ],
       "example_jp": "先生はもう帰られました。",
       "example_en": "The teacher has already gone home.",
       "formations": [
@@ -4012,12 +2866,6 @@
       "meaning": "do not do; plain prohibitive command",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "そこに入るな。",
       "example_en": "Do not enter there.",
       "formations": [
@@ -4029,12 +2877,6 @@
       "meaning": "cannot be; impossible",
       "sectionKey": "nominalization_packaging",
       "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-      "sectionKeys": [
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "example_jp": "彼がそんなことをするわけがない。",
       "example_en": "There's no way he would do that.",
       "formations": [
@@ -4046,14 +2888,6 @@
       "meaning": "that's why; it makes sense that / that explains; no wonder",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation",
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference",
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "notes_grammar": [
         "Also grouped under: Cause, reason, explanation & inference, Nominalization & clause packaging (こと/の/わけ/はず etc.)."
       ],
@@ -4073,12 +2907,6 @@
       "meaning": "it's not that... (partial negation)",
       "sectionKey": "nominalization_packaging",
       "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-      "sectionKeys": [
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "example_jp": "嫌いなわけではないが、今日は食べたくない。",
       "example_en": "It's not that I dislike it, but I don't want to eat it today.",
       "formations": [
@@ -4090,14 +2918,6 @@
       "meaning": "cannot (due to social/moral reasons) / cannot (social reasons)",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation",
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms",
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "notes_grammar": [
         "Also grouped under: Intent, decisions, obligation, permission, norms, Nominalization & clause packaging (こと/の/わけ/はず etc.)."
       ],
@@ -4118,12 +2938,6 @@
       "meaning": "triggered by; as a turning point",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "留学をきっかけに視野が広がった。",
       "example_en": "Studying abroad broadened my perspective as a turning point.",
       "formations": [
@@ -4135,12 +2949,6 @@
       "meaning": "concerning; over (often dispute)",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "税金をめぐって議論が続いている。",
       "example_en": "Debate continues over taxes.",
       "formations": [
@@ -4152,12 +2960,6 @@
       "meaning": "based on; using as a basis",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "アンケート結果をもとに改善する。",
       "example_en": "We will improve based on survey results.",
       "formations": [
@@ -4169,12 +2971,6 @@
       "meaning": "cannot help but (formal)",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "同情を禁じ得ない。",
       "example_en": "I cannot help but feel sympathy.",
       "formations": [
@@ -4186,12 +2982,6 @@
       "meaning": "on the premise that",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "安全を前提に計画を立てる。",
       "example_en": "Make plans on the premise of safety.",
       "formations": [
@@ -4203,12 +2993,6 @@
       "meaning": "throughout; through (process)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "一年を通して暖かい。",
       "example_en": "It is warm throughout the year.",
       "formations": [
@@ -4220,12 +3004,6 @@
       "meaning": "through; via; throughout",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "一年を通して人気がある。",
       "example_en": "It is popular throughout the year.",
       "formations": [
@@ -4238,12 +3016,6 @@
       "meaning": "based on; taking into account",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "状況を踏まえて判断する。",
       "example_en": "Decide taking the situation into account.",
       "formations": [
@@ -4255,12 +3027,6 @@
       "meaning": "starting with; as a beginning (formal)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "東京を皮切りに全国で開催される。",
       "example_en": "Starting with Tokyo, it will be held nationwide.",
       "formations": [
@@ -4272,12 +3038,6 @@
       "meaning": "regardless of; irrespective of",
       "sectionKey": "formal_reading_frames",
       "sectionLabel": "Formal frames for reading: stance, scope, basis, discourse",
-      "sectionKeys": [
-        "formal_reading_frames"
-      ],
-      "sectionLabels": [
-        "Formal frames for reading: stance, scope, basis, discourse"
-      ],
       "example_jp": "経験を問わず応募できます。",
       "example_en": "You can apply regardless of experience.",
       "formations": [
@@ -4289,12 +3049,6 @@
       "meaning": "be forced to (formal)",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "事故で計画の変更を余儀なくされた。",
       "example_en": "We were forced to change plans due to the accident.",
       "formations": [
@@ -4306,12 +3060,6 @@
       "meaning": "since; now that (strong)",
       "sectionKey": "cause_reason_explanation",
       "sectionLabel": "Cause, reason, explanation & inference",
-      "sectionKeys": [
-        "cause_reason_explanation"
-      ],
-      "sectionLabels": [
-        "Cause, reason, explanation & inference"
-      ],
       "example_jp": "引き受けた以上、最後までやる。",
       "example_en": "Since I accepted it, I'll do it to the end.",
       "words": [
@@ -4328,12 +3076,6 @@
       "meaning": "while; during (continuous period)",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "夏休みの間、毎日泳いだ。",
       "example_en": "During summer vacation, I swam every day.",
       "formations": [
@@ -4346,12 +3088,6 @@
       "meaning": "while (during), in the middle of (one-time event occurs)",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "留守の間に荷物が届いた。",
       "example_en": "A package arrived while I was away.",
       "formations": [
@@ -4364,12 +3100,6 @@
       "meaning": "feel like; have a sense that",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": [
-        "evidentiality_guess_hearsay"
-      ],
-      "sectionLabels": [
-        "Evidentiality, appearance, hearsay, certainty"
-      ],
       "example_jp": "今日はうまくいく気がする。",
       "example_en": "I have a feeling things will go well today.",
       "formations": [
@@ -4381,12 +3111,6 @@
       "meaning": "as a result (noun)",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "努力した結果、合格できた。",
       "example_en": "As a result of effort, I passed.",
       "formations": [
@@ -4398,12 +3122,6 @@
       "meaning": "in the middle of",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "会議の最中に電話が鳴った。",
       "example_en": "The phone rang in the middle of the meeting.",
       "formations": [
@@ -4416,12 +3134,6 @@
       "meaning": "as soon as; depending on (formal)",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "準備ができ次第、出発します。",
       "example_en": "We will depart as soon as preparations are ready.",
       "formations": [
@@ -4433,12 +3145,6 @@
       "meaning": "humble 'say'",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "お礼を申し上げます。",
       "example_en": "I would like to express my thanks.",
       "formations": [
@@ -4450,12 +3156,6 @@
       "meaning": "on the occasion; when (formal)",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "お近くにお越しの折にお立ち寄りください。",
       "example_en": "Please stop by when you are in the area.",
       "formations": [
@@ -4468,12 +3168,6 @@
       "meaning": "before doing",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": [
-        "time_sequence"
-      ],
-      "sectionLabels": [
-        "Time, sequence, timing, and 'while'"
-      ],
       "example_jp": "寝る前に歯をみがきます。",
       "example_en": "I brush my teeth before sleeping.",
       "formations": [
@@ -4486,12 +3180,6 @@
       "meaning": "after; at the end of (often effort)",
       "sectionKey": "change_process_result",
       "sectionLabel": "Change, process, outcomes, and trends",
-      "sectionKeys": [
-        "change_process_result"
-      ],
-      "sectionLabels": [
-        "Change, process, outcomes, and trends"
-      ],
       "example_jp": "話し合いの末、解決した。",
       "example_en": "After discussions, it was resolved.",
       "formations": [
@@ -4504,12 +3192,6 @@
       "meaning": "scheduled to; plan (objective)",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": [
-        "modality_intent_obligation"
-      ],
-      "sectionLabels": [
-        "Intent, decisions, obligation, permission, norms"
-      ],
       "example_jp": "来週出張の予定です。",
       "example_en": "I'm scheduled for a business trip next week.",
       "words": [
@@ -4526,12 +3208,6 @@
       "meaning": "subject marker; identifies/introduces subject",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "雨が降っています。",
       "example_en": "It is raining.",
       "words": [
@@ -4547,12 +3223,6 @@
       "meaning": "from; starting point; because (informal with clause)",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "東京から来ました。",
       "example_en": "I came from Tokyo.",
       "words": [
@@ -4568,12 +3238,6 @@
       "meaning": "approximately; about; to the extent that",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "一時間ぐらい待ちました。",
       "example_en": "I waited about an hour.",
       "words": [
@@ -4590,12 +3254,6 @@
       "meaning": "only N (and nothing else); negative required",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "水しかありません。",
       "example_en": "There is only water.",
       "words": [
@@ -4611,12 +3269,6 @@
       "meaning": "only; just",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "今日は一つだけ買いました。",
       "example_en": "I bought only one today.",
       "words": [
@@ -4633,12 +3285,6 @@
       "meaning": "location of action; means/cause",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "家で勉強します。",
       "example_en": "I study at home.",
       "words": [
@@ -4654,12 +3300,6 @@
       "meaning": "as for/in the context of N; topic or setting marker",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "この店では現金が使えません。",
       "example_en": "At this shop, cash cannot be used.",
       "formations": [
@@ -4671,12 +3311,6 @@
       "meaning": "even N; even a minimal example",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "子どもでも分かります。",
       "example_en": "Even a child can understand.",
       "formations": [
@@ -4688,12 +3322,6 @@
       "meaning": "with; and; quote",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "友達と話しました。",
       "example_en": "I talked with a friend.",
       "words": [
@@ -4709,14 +3337,6 @@
       "meaning": "as; in the capacity of / as; in the role of",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles",
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles",
-        "Comparison, degree, limitation, evaluation"
-      ],
       "notes_grammar": [
         "Also grouped under: Core particles & basic sentence roles, Comparison, degree, limitation, evaluation."
       ],
@@ -4736,12 +3356,6 @@
       "meaning": "target/time/location of arrival; indirect object",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "駅に着きました。",
       "example_en": "I arrived at the station.",
       "words": [
@@ -4757,12 +3371,6 @@
       "meaning": "give (from speaker to others)",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "友達に本をあげました。",
       "example_en": "I gave my friend a book.",
       "formations": [
@@ -4774,12 +3382,6 @@
       "meaning": "give (to speaker/in-group)",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "友達が私に本をくれました。",
       "example_en": "My friend gave me a book.",
       "formations": [
@@ -4791,12 +3393,6 @@
       "meaning": "receive",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "友達に本をもらいました。",
       "example_en": "I received a book from my friend.",
       "formations": [
@@ -4808,12 +3404,6 @@
       "meaning": "N in; within (formal)",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "日本における人口の変化",
       "example_en": "Changes in population in Japan.",
       "words": [
@@ -4830,12 +3420,6 @@
       "meaning": "considering N; for N",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation"
-      ],
       "example_jp": "初心者にしては上手ですね。",
       "example_en": "You're good for a beginner.",
       "formations": [
@@ -4847,12 +3431,6 @@
       "meaning": "for; from N's standpoint",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "私にとって日本語は大切です。",
       "example_en": "For me, Japanese is important.",
       "words": [
@@ -4869,12 +3447,6 @@
       "meaning": "N by; caused by; due to",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "地震による被害が広がった。",
       "example_en": "Damage caused by the earthquake spread.",
       "words": [
@@ -4891,12 +3463,6 @@
       "meaning": "in contrast to; towards; against",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation"
-      ],
       "example_jp": "兄は社交的なのに対して、私は人見知りだ。",
       "example_en": "In contrast to my outgoing brother, I'm shy.",
       "formations": [
@@ -4908,12 +3474,6 @@
       "meaning": "N toward; in response to (formal)",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "質問に対する答え",
       "example_en": "An answer to the question.",
       "words": [
@@ -4929,12 +3489,6 @@
       "meaning": "compared to",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation"
-      ],
       "example_jp": "去年に比べて売り上げが増えた。",
       "example_en": "Sales increased compared to last year.",
       "formations": [
@@ -4947,12 +3501,6 @@
       "meaning": "possession/modification; of",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "山本さんの本です。",
       "example_en": "It is Mr. Yamamoto's book.",
       "words": [
@@ -4968,12 +3516,6 @@
       "meaning": "topic marker; as for N",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "私は今、仕事中です。",
       "example_en": "As for me, I'm working now.",
       "words": [
@@ -4990,12 +3532,6 @@
       "meaning": "only; nothing but (often criticism)",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
-      "sectionKeys": [
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "example_jp": "文句ばかり言っている。",
       "example_en": "They do nothing but complain.",
       "formations": [
@@ -5007,12 +3543,6 @@
       "meaning": "direction (toward)",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "学校へ行きます。",
       "example_en": "I go to school.",
       "words": [
@@ -5028,14 +3558,6 @@
       "meaning": "to the extent of; about (degree) / as... as; to the extent",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles",
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles",
-        "Comparison, degree, limitation, evaluation"
-      ],
       "notes_grammar": [
         "Also grouped under: Core particles & basic sentence roles, Comparison, degree, limitation, evaluation."
       ],
@@ -5054,12 +3576,6 @@
       "meaning": "not as... as",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation"
-      ],
       "example_jp": "今年は去年ほど暑くない。",
       "example_en": "This year is not as hot as last year.",
       "formations": [
@@ -5071,12 +3587,6 @@
       "meaning": "N of such degree; enough to be N",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation"
-      ],
       "example_jp": "驚くほどの速さだった。",
       "example_en": "It was a speed that was surprising.",
       "formations": [
@@ -5088,12 +3598,6 @@
       "meaning": "until; as far as",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "駅まで歩きます。",
       "example_en": "I walk to the station.",
       "words": [
@@ -5109,14 +3613,6 @@
       "meaning": "also; too; even (emphasis)",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles",
-        "focus_emphasis_quantifiers"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles",
-        "Focus particles, emphasis, 'even', and scope"
-      ],
       "notes_grammar": [
         "In negative sentences, 'Nも〜ない' often means 'not even one'.",
         "Also grouped under: Core particles & basic sentence roles, Focus particles, emphasis, 'even', and scope."
@@ -5136,12 +3632,6 @@
       "meaning": "non-exhaustive list; etc.",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "果物や野菜などを買いました。",
       "example_en": "I bought fruits, vegetables, etc.",
       "words": [
@@ -5158,12 +3648,6 @@
       "meaning": "than (comparison)",
       "sectionKey": "comparison_degree_limit",
       "sectionLabel": "Comparison, degree, limitation, evaluation",
-      "sectionKeys": [
-        "comparison_degree_limit"
-      ],
-      "sectionLabels": [
-        "Comparison, degree, limitation, evaluation"
-      ],
       "example_jp": "電車よりバスのほうが安い。",
       "example_en": "Buses are cheaper than trains.",
       "formations": [
@@ -5175,12 +3659,6 @@
       "meaning": "direct object marker",
       "sectionKey": "core_particles",
       "sectionLabel": "Core particles & basic sentence roles",
-      "sectionKeys": [
-        "core_particles"
-      ],
-      "sectionLabels": [
-        "Core particles & basic sentence roles"
-      ],
       "example_jp": "本を読みます。",
       "example_en": "I read a book.",
       "words": [
@@ -5196,12 +3674,6 @@
       "meaning": "through; via (medium)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "映画を通じて日本語を学びました。",
       "example_en": "I learned Japanese through movies.",
       "formations": [
@@ -5214,12 +3686,6 @@
       "meaning": "using; taking advantage of",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "アプリを利用して単語を覚えます。",
       "example_en": "I memorize words using an app.",
       "formations": [
@@ -5231,12 +3697,6 @@
       "meaning": "causative-passive; be made to",
       "sectionKey": "voice_passive_causative_potential",
       "sectionLabel": "Voice: passive, causative, potential, related forms",
-      "sectionKeys": [
-        "voice_passive_causative_potential"
-      ],
-      "sectionLabels": [
-        "Voice: passive, causative, potential, related forms"
-      ],
       "example_jp": "残業させられました。",
       "example_en": "I was made to work overtime.",
       "formations": [
@@ -5248,12 +3708,6 @@
       "meaning": "causative; make/let do",
       "sectionKey": "voice_passive_causative_potential",
       "sectionLabel": "Voice: passive, causative, potential, related forms",
-      "sectionKeys": [
-        "voice_passive_causative_potential"
-      ],
-      "sectionLabels": [
-        "Voice: passive, causative, potential, related forms"
-      ],
       "example_jp": "母は子どもに野菜を食べさせた。",
       "example_en": "The mother made the child eat vegetables.",
       "formations": [
@@ -5265,12 +3719,6 @@
       "meaning": "by doing; and then (means/sequence)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": [
-        "purpose_means_method"
-      ],
-      "sectionLabels": [
-        "Purpose, goals, means, and methods"
-      ],
       "example_jp": "電車に乗って行きます。",
       "example_en": "I go by taking the train.",
       "formations": [
@@ -5282,12 +3730,6 @@
       "meaning": "do for someone (speaker as giver)",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "妹に宿題を手伝ってあげた。",
       "example_en": "I helped my younger sister with her homework.",
       "formations": [
@@ -5299,12 +3741,6 @@
       "meaning": "someone does for me (benefit)",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "友達が駅まで送ってくれた。",
       "example_en": "My friend took me to the station.",
       "formations": [
@@ -5316,12 +3752,6 @@
       "meaning": "have someone do for me",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "先生に作文を見てもらった。",
       "example_en": "I had the teacher look over my composition.",
       "formations": [
@@ -5333,12 +3763,6 @@
       "meaning": "can; be able to (potential)",
       "sectionKey": "voice_passive_causative_potential",
       "sectionLabel": "Voice: passive, causative, potential, related forms",
-      "sectionKeys": [
-        "voice_passive_causative_potential"
-      ],
-      "sectionLabels": [
-        "Voice: passive, causative, potential, related forms"
-      ],
       "notes_grammar": [
         "Potential for ichidan: 食べられる; godan: 書ける (more common than 書かれる)."
       ],
@@ -5353,12 +3777,6 @@
       "meaning": "passive; be done to",
       "sectionKey": "voice_passive_causative_potential",
       "sectionLabel": "Voice: passive, causative, potential, related forms",
-      "sectionKeys": [
-        "voice_passive_causative_potential"
-      ],
-      "sectionLabels": [
-        "Voice: passive, causative, potential, related forms"
-      ],
       "example_jp": "犬にかまれました。",
       "example_en": "I was bitten by a dog.",
       "formations": [
@@ -5370,12 +3788,6 @@
       "meaning": "nominalize action; 'the act of V-ing'",
       "sectionKey": "nominalization_packaging",
       "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-      "sectionKeys": [
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "example_jp": "走ることが好きです。",
       "example_en": "I like running.",
       "formations": [
@@ -5387,12 +3799,6 @@
       "meaning": "nominalize (colloquial); also explanation",
       "sectionKey": "nominalization_packaging",
       "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
-      "sectionKeys": [
-        "nominalization_packaging"
-      ],
-      "sectionLabels": [
-        "Nominalization & clause packaging (こと/の/わけ/はず etc.)"
-      ],
       "example_jp": "食べるのが早いですね。",
       "example_en": "You eat fast, don't you.",
       "formations": [
@@ -5404,12 +3810,6 @@
       "meaning": "do (honorific noun) for someone (polite)",
       "sectionKey": "giving_receiving",
       "sectionLabel": "Giving, receiving, benefactive actions",
-      "sectionKeys": [
-        "giving_receiving"
-      ],
-      "sectionLabels": [
-        "Giving, receiving, benefactive actions"
-      ],
       "example_jp": "荷物をお持ちしてあげます。",
       "example_en": "I'll carry your luggage for you.",
       "formations": [
@@ -5422,12 +3822,6 @@
       "meaning": "humble 'do' (speaker)",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "私がご案内します。",
       "example_en": "I will guide you.",
       "formations": [
@@ -5439,12 +3833,6 @@
       "meaning": "honorific verb; subject (respected person) does",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "社長がお帰りになりました。",
       "example_en": "The president has gone home.",
       "formations": [
@@ -5456,12 +3844,6 @@
       "meaning": "honorific prefix (polite)",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "お名前を教えてください。",
       "example_en": "Please tell me your name.",
       "formations": [
@@ -5474,12 +3856,6 @@
       "meaning": "certainly; understood (service)",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "かしこまりました。少々お待ちください。",
       "example_en": "Certainly. Please wait a moment.",
       "formations": [
@@ -5491,12 +3867,6 @@
       "meaning": "furthermore",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "さらに詳しく説明します。",
       "example_en": "I'll explain in more detail.",
       "words": [
@@ -5513,12 +3883,6 @@
       "meaning": "however; but",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "行きたいです。しかし時間がありません。",
       "example_en": "I want to go. However, I don't have time.",
       "words": [
@@ -5535,12 +3899,6 @@
       "meaning": "and then; and",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "朝ご飯を食べて、そして会社へ行きました。",
       "example_en": "I ate breakfast, and then went to work.",
       "words": [
@@ -5558,12 +3916,6 @@
       "meaning": "after that; then",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "宿題をして、それから寝ました。",
       "example_en": "I did homework, then went to bed.",
       "words": [
@@ -5580,12 +3932,6 @@
       "meaning": "and so; as a result",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "道に迷いました。それで遅れました。",
       "example_en": "I got lost, and so I was late.",
       "words": [
@@ -5602,12 +3948,6 @@
       "meaning": "even so; despite that",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "早く出た。それなのに遅刻した。",
       "example_en": "I left early. Even so, I was late.",
       "words": [
@@ -5625,12 +3965,6 @@
       "meaning": "besides; moreover",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "安い。それに近い。",
       "example_en": "It's cheap. Besides, it's close.",
       "words": [
@@ -5646,12 +3980,6 @@
       "meaning": "so; therefore (casual)",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "雨です。だから出かけません。",
       "example_en": "It's raining, so I won't go out.",
       "words": [
@@ -5667,12 +3995,6 @@
       "meaning": "that said; just because... doesn't mean...",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "忙しい。だからといって、あきらめるわけではない。",
       "example_en": "I'm busy, but that doesn't mean I'll give up.",
       "words": [
@@ -5690,12 +4012,6 @@
       "meaning": "by the way; incidentally",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "ちなみに、その店は現金だけです。",
       "example_en": "By the way, that store is cash only.",
       "words": [
@@ -5712,12 +4028,6 @@
       "meaning": "in other words",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "つまり、今日は休みということです。",
       "example_en": "In other words, it means today is a holiday.",
       "words": [
@@ -5735,12 +4045,6 @@
       "meaning": "but (casual)",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "行きたい。でもお金がない。",
       "example_en": "I want to go, but I have no money.",
       "words": [
@@ -5757,12 +4061,6 @@
       "meaning": "by the way (topic shift)",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "ところで、明日の予定は？",
       "example_en": "By the way, what are your plans for tomorrow?",
       "words": [
@@ -5778,12 +4076,6 @@
       "meaning": "that said; though",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "忙しいとはいえ、少しは休んだほうがいい。",
       "example_en": "That said, even if you're busy, you should rest a bit.",
       "words": [
@@ -5802,12 +4094,6 @@
       "meaning": "rather; instead",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "安いどころか、むしろ高い。",
       "example_en": "Far from cheap, it's rather expensive.",
       "words": [
@@ -5823,12 +4109,6 @@
       "meaning": "if (hypothetical)",
       "sectionKey": "conditionals_hypotheticals",
       "sectionLabel": "Conditionals & hypotheticals",
-      "sectionKeys": [
-        "conditionals_hypotheticals"
-      ],
-      "sectionLabels": [
-        "Conditionals & hypotheticals"
-      ],
       "example_jp": "もし時間があるなら、一緒に行きませんか。",
       "example_en": "If you have time, would you like to go together?",
       "words": [
@@ -5846,12 +4126,6 @@
       "meaning": "on the other hand; whereas",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "兄は外で働いている。一方、私は家で勉強している。",
       "example_en": "My older brother works outside; on the other hand, I study at home.",
       "words": [
@@ -5872,12 +4146,6 @@
       "meaning": "polite preface; I'm sorry but...",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "恐れ入りますが、もう一度お願いします。",
       "example_en": "I'm sorry, but could you please say it once more?",
       "formations": [
@@ -5889,12 +4157,6 @@
       "meaning": "excuse me; (formal)",
       "sectionKey": "honorific_humble_politeness",
       "sectionLabel": "Honorifics, humble forms, and polite set phrases",
-      "sectionKeys": [
-        "honorific_humble_politeness"
-      ],
-      "sectionLabels": [
-        "Honorifics, humble forms, and polite set phrases"
-      ],
       "example_jp": "先に失礼いたします。",
       "example_en": "Excuse me, I'll leave first.",
       "formations": [
@@ -5906,12 +4168,6 @@
       "meaning": "in short",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "要するに、準備が足りないということだ。",
       "example_en": "In short, it means we're not prepared enough.",
       "words": [
@@ -5930,12 +4186,6 @@
       "meaning": "for example",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "例えば、通勤時間を短くできます。",
       "example_en": "For example, you can shorten commuting time.",
       "words": [
@@ -5953,12 +4203,6 @@
       "meaning": "for example (non-exhaustive)",
       "sectionKey": "discourse_connectors",
       "sectionLabel": "Discourse connectors & clause linking",
-      "sectionKeys": [
-        "discourse_connectors"
-      ],
-      "sectionLabels": [
-        "Discourse connectors & clause linking"
-      ],
       "example_jp": "例えば映画などで勉強すると続きやすい。",
       "example_en": "For example, if you study with movies, it's easier to keep going.",
       "words": [
@@ -5971,216 +4215,221 @@
       "formations": [
         "例えば〜など"
       ]
-    }
-    ,
+    },
     {
       "pattern": "〜ず",
       "meaning": "without doing (classical/negative connective)",
       "sectionKey": "purpose_means_method",
       "sectionLabel": "Purpose, goals, means, and methods",
-      "sectionKeys": ["purpose_means_method"],
-      "sectionLabels": ["Purpose, goals, means, and methods"],
       "example_jp": "朝ご飯を食べずに出かけた。",
       "example_en": "I went out without eating breakfast.",
-      "formations": ["Vない-stem + ず"]
+      "formations": [
+        "Vない-stem + ず"
+      ]
     },
     {
       "pattern": "〜ないように",
       "meaning": "so that not; in order to avoid",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": ["modality_intent_obligation"],
-      "sectionLabels": ["Intent, decisions, obligation, permission, norms"],
       "example_jp": "忘れないようにメモしました。",
       "example_en": "I took a note so I wouldn't forget.",
-      "formations": ["Plain clause + ように"]
+      "formations": [
+        "Plain clause + ように"
+      ]
     },
     {
       "pattern": "〜て",
       "meaning": "and; connective (continuation/reason)",
       "sectionKey": "aspect_result_state",
       "sectionLabel": "Tense, aspect, result-state, completion",
-      "sectionKeys": ["aspect_result_state"],
-      "sectionLabels": ["Tense, aspect, result-state, completion"],
       "example_jp": "寒くて窓を閉めた。",
       "example_en": "It was cold, so I closed the window.",
-      "formations": ["i-adj stem + くて", "Vて form"]
+      "formations": [
+        "i-adj stem + くて",
+        "Vて form"
+      ]
     },
     {
       "pattern": "〜ていると",
       "meaning": "when/while (temporal frame leading to an observation or result)",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": ["time_sequence"],
-      "sectionLabels": ["Time, sequence, timing, and 'while'"],
       "example_jp": "本を読んでいると眠くなった。",
       "example_en": "While reading, I became sleepy.",
-      "formations": ["Vている + と"]
+      "formations": [
+        "Vている + と"
+      ]
     },
     {
       "pattern": "〜ているとき",
       "meaning": "when/while (at the time of an ongoing action)",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": ["time_sequence"],
-      "sectionLabels": ["Time, sequence, timing, and 'while'"],
       "example_jp": "階段を下りているとき、電話が鳴った。",
       "example_en": "While I was going down the stairs, the phone rang.",
-      "formations": ["Vている + とき"]
+      "formations": [
+        "Vている + とき"
+      ]
     },
     {
       "pattern": "〜のに気づく",
       "meaning": "to notice that; to realize",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": ["evidentiality_guess_hearsay"],
-      "sectionLabels": ["Evidentiality, appearance, hearsay, certainty"],
       "example_jp": "靴のひもがほどけているのに気づいた。",
       "example_en": "I noticed my shoelace was untied.",
-      "formations": ["Clause + のに気づく"]
+      "formations": [
+        "Clause + のに気づく"
+      ]
     },
     {
       "pattern": "〜のが見える",
       "meaning": "to be able to see that; visible",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": ["evidentiality_guess_hearsay"],
-      "sectionLabels": ["Evidentiality, appearance, hearsay, certainty"],
       "example_jp": "遠くに富士山の頂上が見える。",
       "example_en": "You can see the top of Mt. Fuji in the distance.",
-      "formations": ["N/Clause + のが見える"]
+      "formations": [
+        "N/Clause + のが見える"
+      ]
     },
     {
       "pattern": "〜く感じられる",
       "meaning": "to feel; to seem (subjective impression)",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": ["evidentiality_guess_hearsay"],
-      "sectionLabels": ["Evidentiality, appearance, hearsay, certainty"],
       "example_jp": "時間がゆっくり感じられた。",
       "example_en": "Time felt slow.",
-      "formations": ["Clause + と感じられる", "Adj-stem + く感じられる"]
+      "formations": [
+        "Clause + と感じられる",
+        "Adj-stem + く感じられる"
+      ]
     },
     {
       "pattern": "〜ことができる",
       "meaning": "can; be able to",
       "sectionKey": "voice_passive_causative_potential",
       "sectionLabel": "Voice: passive, causative, potential, related forms",
-      "sectionKeys": ["voice_passive_causative_potential"],
-      "sectionLabels": ["Voice: passive, causative, potential, related forms"],
       "example_jp": "漢字を読むことができる。",
       "example_en": "I can read kanji.",
-      "formations": ["V-dictionary + ことができる"]
+      "formations": [
+        "V-dictionary + ことができる"
+      ]
     },
     {
       "pattern": "〜ころには",
       "meaning": "by the time; around the time",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": ["time_sequence"],
-      "sectionLabels": ["Time, sequence, timing, and 'while'"],
       "example_jp": "帰るころには雨がやんでいた。",
       "example_en": "By the time I went home, the rain had stopped.",
-      "formations": ["N/Time + ころには"]
+      "formations": [
+        "N/Time + ころには"
+      ]
     },
     {
       "pattern": "〜まで",
       "meaning": "until; as far as",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": ["time_sequence"],
-      "sectionLabels": ["Time, sequence, timing, and 'while'"],
       "example_jp": "五時まで勉強した。",
       "example_en": "I studied until five o'clock.",
-      "formations": ["Nまで", "Vるまで"]
+      "formations": [
+        "Nまで",
+        "Vるまで"
+      ]
     },
     {
       "pattern": "〜て行く",
       "meaning": "to go on doing; to proceed (with change over time)",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": ["time_sequence"],
-      "sectionLabels": ["Time, sequence, timing, and 'while'"],
       "example_jp": "寒くなっていく。",
       "example_en": "It will continue to get colder.",
-      "formations": ["Vて + いく"]
+      "formations": [
+        "Vて + いく"
+      ]
     },
     {
       "pattern": "Nに入る",
       "meaning": "to enter into N; reach N (time/state)",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": ["time_sequence"],
-      "sectionLabels": ["Time, sequence, timing, and 'while'"],
       "example_jp": "九月に入ると涼しくなる。",
       "example_en": "When September comes, it gets cooler.",
-      "formations": ["Nに入る"]
+      "formations": [
+        "Nに入る"
+      ]
     },
     {
       "pattern": "V-ようと思う",
       "meaning": "to intend to; to think of doing",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": ["modality_intent_obligation"],
-      "sectionLabels": ["Intent, decisions, obligation, permission, norms"],
       "example_jp": "明日早く起きようと思う。",
       "example_en": "I intend to wake up early tomorrow.",
-      "formations": ["V-volitional + と思う"]
+      "formations": [
+        "V-volitional + と思う"
+      ]
     },
     {
       "pattern": "命令形",
       "meaning": "imperative form (command)",
       "sectionKey": "modality_intent_obligation",
       "sectionLabel": "Intent, decisions, obligation, permission, norms",
-      "sectionKeys": ["modality_intent_obligation"],
-      "sectionLabels": ["Intent, decisions, obligation, permission, norms"],
       "example_jp": "早く行け！",
       "example_en": "Go quickly!",
-      "formations": ["Verb imperative forms"]
+      "formations": [
+        "Verb imperative forms"
+      ]
     },
     {
       "pattern": "〜と思って",
       "meaning": "thinking that; with the thought of",
       "sectionKey": "evidentiality_guess_hearsay",
       "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
-      "sectionKeys": ["evidentiality_guess_hearsay"],
-      "sectionLabels": ["Evidentiality, appearance, hearsay, certainty"],
       "example_jp": "行こうと思っていたが、用事ができた。",
       "example_en": "I was planning to go, but something came up.",
-      "formations": ["V-dictionary + と思って"]
+      "formations": [
+        "V-dictionary + と思って"
+      ]
     },
     {
       "pattern": "〜ないように / 〜て",
       "meaning": "combined pattern: 'so that not / and' (used together in chunking)",
       "sectionKey": "mixed",
       "sectionLabel": "Mixed combined patterns",
-      "sectionKeys": ["mixed"],
-      "sectionLabels": ["Mixed combined patterns"],
       "example_jp": "〜ないように / 〜て",
       "example_en": "(combined pattern placeholder)",
-      "formations": ["〜ないように", "〜て"]
+      "formations": [
+        "〜ないように",
+        "〜て"
+      ]
     },
     {
       "pattern": "〜まで / 〜て行く",
       "meaning": "combined pattern: 'until / continue to' (chunk grouping)",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
-      "sectionKeys": ["time_sequence"],
-      "sectionLabels": ["Time, sequence, timing, and 'while'"],
       "example_jp": "〜まで / 〜て行く",
       "example_en": "(combined pattern placeholder)",
-      "formations": ["〜まで", "〜て行く"]
+      "formations": [
+        "〜まで",
+        "〜て行く"
+      ]
     },
     {
       "pattern": "命令形 / 〜と思って",
       "meaning": "combined pattern: 'imperative / thinking that' (chunk grouping)",
       "sectionKey": "mixed",
       "sectionLabel": "Mixed combined patterns",
-      "sectionKeys": ["mixed"],
-      "sectionLabels": ["Mixed combined patterns"],
       "example_jp": "命令形 / 〜と思って",
       "example_en": "(combined pattern placeholder)",
-      "formations": ["命令形", "〜と思って"]
+      "formations": [
+        "命令形",
+        "〜と思って"
+      ]
     }
   ]
 }
