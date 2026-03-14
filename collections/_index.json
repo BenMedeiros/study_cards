@@ -39,6 +39,25 @@
       "schemaSource": "inline"
     },
     {
+      "path": "japanese/japanese_grammar.json",
+      "modifiedAt": "2026-03-13T14:55:51.649Z",
+      "name": "Japanese Grammar",
+      "description": "Consolidated Japanese grammar patterns with quick examples and links to sentence and paragraph usage.",
+      "entriesCount": 290,
+      "valid": true,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "schemaSource": "inline"
+    },
+    {
       "path": "japanese/japanese_paragraphs.json",
       "modifiedAt": "2026-03-13T02:11:48.983Z",
       "name": "Japanese Paragraphs",
@@ -63,7 +82,7 @@
     },
     {
       "path": "japanese/japanese_sentences.json",
-      "modifiedAt": "2026-03-06T15:47:35.657Z",
+      "modifiedAt": "2026-03-13T14:45:17.431Z",
       "name": "Japanese Sentences",
       "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
       "entriesCount": 138,

@@ -949,7 +949,7 @@
         {
           "ja": "泳いでいました",
           "gloss": "was swimming",
-          "focus": "Vていました",
+          "focus": "〜ている",
           "refs": [
             "泳ぐ"
           ]
@@ -973,7 +973,7 @@
         {
           "ja": "急がなければなりません",
           "gloss": "must hurry",
-          "focus": "Vなければなりません",
+          "focus": "〜なければならない / 〜なくてはいけない",
           "refs": [
             "急ぐ"
           ]
@@ -991,7 +991,7 @@
         {
           "ja": "家に入ったら",
           "gloss": "when entering the house",
-          "focus": "Vたら",
+          "focus": "〜たら",
           "refs": [
             "家",
             "入る"
@@ -1007,7 +1007,7 @@
         {
           "ja": "コートを脱いでください",
           "gloss": "please take off your coat",
-          "focus": "Vてください",
+          "focus": "〜てください",
           "refs": [
             "コート",
             "脱ぐ"
@@ -1032,7 +1032,7 @@
         {
           "ja": "ウイルスを防げます",
           "gloss": "can prevent viruses",
-          "focus": "Potential",
+          "focus": "Vられる（可能）",
           "refs": [
             "ウイルス",
             "防ぐ"
@@ -1058,7 +1058,7 @@
         {
           "ja": "たくさんお金を稼いだ",
           "gloss": "earned a lot of money",
-          "focus": "Vた",
+          "focus": "〜た",
           "refs": [
             "たくさん",
             "お金",
@@ -1092,7 +1092,7 @@
         {
           "ja": "騒いでいる",
           "gloss": "are being noisy",
-          "focus": "Vている",
+          "focus": "〜ている",
           "refs": [
             "騒ぐ"
           ]
@@ -1109,7 +1109,7 @@
         {
           "ja": "Wi-Fiにスマホを繋げば",
           "gloss": "if you connect your phone to Wi-Fi",
-          "focus": "Vば",
+          "focus": "〜ば",
           "refs": [
             "Wi-Fi",
             "スマホ",
@@ -1145,7 +1145,7 @@
         {
           "ja": "コーヒーを注いでいた",
           "gloss": "was pouring coffee",
-          "focus": "Vていた",
+          "focus": "〜ている",
           "refs": [
             "コーヒー",
             "注ぐ"
@@ -1163,7 +1163,7 @@
         {
           "ja": "朝、包丁を研いでから",
           "gloss": "in the morning, after sharpening the knife",
-          "focus": "Vてから",
+          "focus": "〜てから",
           "refs": [
             "朝",
             "包丁",
@@ -1197,7 +1197,7 @@
         {
           "ja": "手で濯いだほうがいい",
           "gloss": "it’s better to rinse by hand",
-          "focus": "Vたほうがいい",
+          "focus": "〜たほうがいい",
           "refs": [
             "手",
             "濯ぐ"
@@ -1231,7 +1231,7 @@
         {
           "ja": "嗅いでいる",
           "gloss": "is sniffing",
-          "focus": "Vている",
+          "focus": "〜ている",
           "refs": [
             "嗅ぐ"
           ]
@@ -1282,7 +1282,7 @@
         {
           "ja": "泳ぐように",
           "gloss": "as if swimming",
-          "focus": "Vるように",
+          "focus": "〜ように",
           "refs": [
             "泳ぐ",
             "ように"
@@ -1373,7 +1373,7 @@
         {
           "ja": "急ぐべきではない",
           "gloss": "should not rush",
-          "focus": "Vるべきではない",
+          "focus": "〜べきだ",
           "refs": [
             "急ぐ",
             "べき"
@@ -1399,7 +1399,7 @@
         {
           "ja": "脱いでください",
           "gloss": "please take off",
-          "focus": "Vてください",
+          "focus": "〜てください",
           "refs": [
             "脱ぐ"
           ]
@@ -1451,7 +1451,7 @@
         {
           "ja": "防ぐために",
           "gloss": "to prevent",
-          "focus": "Vるために",
+          "focus": "〜ために",
           "refs": [
             "防ぐ",
             "ため"
@@ -1511,7 +1511,7 @@
         {
           "ja": "お金を稼いでいる",
           "gloss": "is earning money",
-          "focus": "Vている",
+          "focus": "〜ている",
           "refs": [
             "お金",
             "稼ぐ"
@@ -1569,7 +1569,7 @@
         {
           "ja": "騒いでいる",
           "gloss": "are making noise",
-          "focus": "Vている",
+          "focus": "〜ている",
           "refs": [
             "騒ぐ"
           ]
@@ -1595,7 +1595,7 @@
         {
           "ja": "騒ぐな",
           "gloss": "don't make a fuss",
-          "focus": "Vるな",
+          "focus": "〜るな",
           "refs": [
             "騒ぐ"
           ]
@@ -1775,7 +1775,7 @@
         {
           "ja": "注いでいる",
           "gloss": "is streaming in",
-          "focus": "Vている",
+          "focus": "〜ている",
           "refs": [
             "注ぐ"
           ]
@@ -2101,7 +2101,7 @@
         {
           "ja": "悲しくて",
           "gloss": "because I was sad",
-          "focus": "Aくて",
+          "focus": "〜くて",
           "refs": [
             "悲しい"
           ]
@@ -2164,7 +2164,7 @@
         {
           "ja": "担がれた",
           "gloss": "was tricked/hoaxed",
-          "focus": "受け身",
+          "focus": "Vられる（受身）",
           "refs": [
             "担ぐ"
           ]
@@ -2437,7 +2437,7 @@
         {
           "ja": "お金を貢いでいる",
           "gloss": "is giving him money (supporting)",
-          "focus": "Vている",
+          "focus": "〜ている",
           "refs": [
             "お金",
             "貢ぐ"
@@ -2585,7 +2585,7 @@
         {
           "ja": "庭で蜂を見たので、",
           "gloss": "because I saw a bee in the yard,",
-          "focus": "AのでB",
+          "focus": "〜ので",
           "refs": [
             "庭",
             "蜂",
@@ -2617,7 +2617,7 @@
         {
           "ja": "夏は蜂が多いから、",
           "gloss": "because there are many bees in summer,",
-          "focus": "AからB",
+          "focus": "〜から",
           "refs": [
             "夏",
             "蜂",
@@ -2670,7 +2670,7 @@
         {
           "ja": "集まっています。",
           "gloss": "are gathering",
-          "focus": "Vている",
+          "focus": "〜ている",
           "refs": [
             "集まる",
             "ている"
@@ -2692,7 +2692,7 @@
         {
           "ja": "蜜蜂は花粉を運ぶので、",
           "gloss": "because honeybees carry pollen,",
-          "focus": "AのでB",
+          "focus": "〜ので",
           "refs": [
             "蜜蜂",
             "花粉",
@@ -2729,7 +2729,7 @@
         {
           "ja": "のどが痛いとき、",
           "gloss": "when my throat hurts,",
-          "focus": "Aとき",
+          "focus": "〜とき",
           "refs": [
             "のど",
             "痛い",
@@ -2768,7 +2768,7 @@
         {
           "ja": "ヨーグルトに蜂蜜をかけると",
           "gloss": "if you drizzle honey on yogurt,",
-          "focus": "Vると",
+          "focus": "〜と",
           "refs": [
             "ヨーグルト",
             "蜂蜜",
@@ -2800,7 +2800,7 @@
         {
           "ja": "山で雀蜂を見かけたら、",
           "gloss": "if you spot a hornet in the mountains,",
-          "focus": "Vたら",
+          "focus": "〜たら",
           "refs": [
             "山",
             "雀蜂",
@@ -2811,7 +2811,7 @@
         {
           "ja": "走らずに",
           "gloss": "without running",
-          "focus": "Vずに",
+          "focus": "〜ずに",
           "refs": [
             "走る",
             "ずに"
@@ -2841,7 +2841,7 @@
         {
           "ja": "雀蜂は危ないので、",
           "gloss": "because hornets are dangerous,",
-          "focus": "AのでB",
+          "focus": "〜ので",
           "refs": [
             "雀蜂",
             "危ない",
@@ -2851,7 +2851,7 @@
         {
           "ja": "巣を見つけたら",
           "gloss": "if I find a nest",
-          "focus": "Vたら",
+          "focus": "〜たら",
           "refs": [
             "巣",
             "見つける",
@@ -2882,7 +2882,7 @@
         {
           "ja": "ベランダに蜂の巣ができていて、",
           "gloss": "there being a wasp nest on the balcony,",
-          "focus": "Vていて",
+          "focus": "〜ている",
           "refs": [
             "ベランダ",
             "蜂の巣",
@@ -2914,7 +2914,7 @@
         {
           "ja": "蜂の巣が近いと危ないから、",
           "gloss": "because it’s dangerous if a nest is nearby,",
-          "focus": "AとB",
+          "focus": "〜と",
           "refs": [
             "蜂の巣",
             "近い",
@@ -2933,7 +2933,7 @@
         {
           "ja": "近づかないように言った。",
           "gloss": "I told them not to go near it.",
-          "focus": "Vないように言う",
+          "focus": "〜ように言う",
           "refs": [
             "近づく",
             "言う",
@@ -3169,7 +3169,7 @@
         {
           "ja": "洗うと縮む",
           "gloss": "shrinks when washed",
-          "focus": "Vると",
+          "focus": "〜と",
           "refs": [
             "洗う",
             "縮む",
@@ -3667,7 +3667,7 @@
         {
           "ja": "蜂が飛んでいるので",
           "gloss": "because a bee is flying",
-          "focus": "Vている + ので",
+          "focus": "〜ので",
           "refs": [
             "蜂",
             "飛ぶ",
@@ -3678,7 +3678,7 @@
         {
           "ja": "気をつけてください",
           "gloss": "please be careful",
-          "focus": "Vてください",
+          "focus": "〜てください",
           "refs": [
             "気をつける",
             "ください"
@@ -3708,7 +3708,7 @@
         {
           "ja": "蜂に刺されたことがあります",
           "gloss": "I have been stung by a bee (before)",
-          "focus": "Passive + Vたことがある",
+          "focus": "〜ことがある",
           "refs": [
             "蜂",
             "刺す",
@@ -3731,7 +3731,7 @@
         {
           "ja": "この店では",
           "gloss": "at this shop",
-          "focus": "〜では (context/topic)",
+          "focus": "Nでは",
           "refs": [
             "この",
             "店"
@@ -3749,7 +3749,7 @@
         {
           "ja": "売っています",
           "gloss": "sell (as a regular offering)",
-          "focus": "Vている (habitual/ongoing)",
+          "focus": "〜ている",
           "refs": [
             "売る",
             "ている"
