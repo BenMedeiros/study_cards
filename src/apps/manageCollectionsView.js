@@ -2,7 +2,7 @@ import { createTable } from '../components/table.js';
 import { card, el } from '../components/ui.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createJsonViewer } from '../components/jsonViewer.js';
-import { validateEntriesAgainstSchema } from '../utils/common/validation.js';
+import { validateEntriesAgainstSchema } from '../utils/common/validation.mjs';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import manageCollectionsViewController from '../controllers/manageCollectionsViewController.js';
 import {
@@ -223,7 +223,7 @@ function tryParseJsonLoose(raw) {
   return null;
 }
 
-// Schema/entries validation provided by ../utils/validation.js
+// Schema/entries validation provided by ../utils/common/validation.mjs
 
 // Deep equality that ignores object key ordering. Handles primitives, arrays, and plain objects.
 function deepEqual(a, b) {

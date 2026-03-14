@@ -1,5 +1,5 @@
 import { nowMs } from '../utils/browser/helpers.js';
-import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } from '../utils/common/japanese.js';
+import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } from '../utils/common/japanese.mjs';
 import { createDropdown } from '../components/dropdown.js';
 import { createSpeakerButton } from '../components/ui.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';

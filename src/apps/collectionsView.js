@@ -1,6 +1,6 @@
 import { createTable } from '../components/table.js';
 import { card } from '../components/ui.js';
-import { validateCollection } from '../utils/common/validation.js';
+import { validateCollection } from '../utils/common/validation.mjs';
 import { formatDurationMs, formatIsoShort } from '../utils/browser/helpers.js';
 import collectionSettingsController from '../controllers/collectionSettingsController.js';
 import kanjiStudyController from '../controllers/kanjiStudyController.js';

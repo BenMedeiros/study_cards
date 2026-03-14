@@ -2,23 +2,14 @@
  * Japanese text utilities: romaji conversion, kana detection, normalization
  */
 
-/**
- * Check if character is a vowel
- */
 export function isVowel(ch) {
   return ch === 'a' || ch === 'i' || ch === 'u' || ch === 'e' || ch === 'o';
 }
 
-/**
- * Check if character is hiragana or katakana
- */
 export function isHiraganaOrKatakana(ch) {
   return /[\u3040-\u30ff]/.test(ch);
 }
 
-/**
- * Romaji to hiragana mapping
- */
 export const ROMAJI_MAP = {
   a: 'あ', i: 'い', u: 'う', e: 'え', o: 'お',
 
@@ -61,11 +52,6 @@ export const ROMAJI_MAP = {
   '-': 'ー',
 };
 
-/**
- * Convert romaji to hiragana incrementally
- * Returns { kana: string, rest: string }
- * Keeps incomplete tails like "k" or "n" as rest
- */
 export function convertRomajiIncremental(buffer) {
   let i = 0;
   let out = '';
@@ -81,17 +67,13 @@ export function convertRomajiIncremental(buffer) {
 
     if (ch === 'n') {
       const next = s[i + 1];
-      if (!next) {
-        return { kana: out, rest: s.slice(i) };
-      }
+      if (!next) return { kana: out, rest: s.slice(i) };
       if (next === 'n') {
         out += 'ん';
         i += 2;
         continue;
       }
-      if (isVowel(next) || next === 'y') {
-        // Part of syllable
-      } else {
+      if (!isVowel(next) && next !== 'y') {
         out += 'ん';
         i += 1;
         continue;
@@ -131,13 +113,9 @@ export function convertRomajiIncremental(buffer) {
   return { kana: out, rest: '' };
 }
 
-/**
- * Normalize Japanese text for comparison (convert katakana to hiragana)
- */
 export function normalizeJapanese(text) {
   return String(text).split('').map(ch => {
     const code = ch.charCodeAt(0);
-    // Convert katakana (30A0-30FF) to hiragana (3040-309F)
     if (code >= 0x30A0 && code <= 0x30FF) {
       return String.fromCharCode(code - 0x60);
     }
@@ -145,9 +123,6 @@ export function normalizeJapanese(text) {
   }).join('').toLowerCase();
 }
 
-/**
- * Split Japanese text into kana units, combining yōon (e.g. きょ, しゅ)
- */
 export function splitKana(str) {
   const raw = Array.from(String(str ?? '').trim());
   const out = [];
@@ -170,10 +145,6 @@ export function splitKana(str) {
 
   return out;
 }
-
-// ============================================
-// Morphology: Adjective inflection helpers
-// ============================================
 
 export function stripTrailingCopulaNa(text) {
   const t = String(text || '').trim();
@@ -200,7 +171,6 @@ export function inflectNaAdjective(text, form) {
 function iAdjStem(text) {
   const t = String(text || '').trim();
   if (!t) return '';
-  // Special: いい (good) conjugates from よい
   if (t === 'いい') return 'よ';
   if (t.endsWith('い')) return t.slice(0, -1);
   return '';
@@ -211,7 +181,6 @@ export function inflectIAdjective(text, form) {
   if (!t) return String(text || '');
   if (String(form || '') === 'plain') return t;
 
-  // Special-case reading for いい.
   if (t === 'いい') {
     switch (String(form || '')) {
       case 'negative': return 'よくない';

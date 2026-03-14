@@ -1,13 +1,10 @@
 {
-  "generatedAt": "2026-03-14T16:39:58.380Z",
-  "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
-  "outputPath": "scripts/report_missing_related_collection_data_output.json",
+  "generatedAt": "2026-03-14T17:43:49.633Z",
   "scannedCollections": 11,
   "collectionsWithRelations": 2,
   "relationCount": 4,
   "missingRelationCount": 0,
   "missingRefTotal": 0,
-  "parseErrors": [],
   "reports": [
     {
       "sourceName": "Japanese Grammar",
@@ -53,5 +50,8 @@
         }
       ]
     }
-  ]
+  ],
+  "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
+  "outputPath": "scripts/report_missing_related_collection_data_output.json",
+  "parseErrors": []
 }

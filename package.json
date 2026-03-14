@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "npm run validate:common-utils && node scripts/rebuild_index.js && npx http-server -p 3000 -c-1",
+    "dev": "npm run validate:common-shared && node scripts/rebuild_index.js && npx http-server -p 3000 -c-1",
     "build": "node scripts/rebuild_index.js",
     
-    "validate:common-utils": "node scripts/build/enforce_commonjs.js",
+    "validate:common-shared": "node scripts/build/validate_common_shared.js",
+    "report:duplicated-keys": "node scripts/report_duplicated_keys.mjs",
+    "report:missing-related": "node scripts/report_missing_related_collection_data.mjs",
     "zip:backup": "node scripts/backup_zips.js --clean --openDistFolder",
     "zip:applyUpdatedZips": "node scripts/apply_updated_zips.js"
   },

@@ -2,8 +2,17 @@ import { idbGet, idbPut, idbGetAll, idbGetAllByIndex } from '../utils/browser/id
 import { timed } from '../utils/browser/timing.js';
 import { normalizeFolderPath } from '../utils/browser/helpers.js';
 import { getGlobalSettingsManager } from './settingsManager.js';
-import { computePatchFromInput, applyPatchToCollection } from '../utils/common/collectionDiff.js';
-import { validateCollection } from '../utils/common/validation.js';
+import { computePatchFromInput, applyPatchToCollection } from '../utils/common/collectionDiff.mjs';
+import {
+  attachRelatedCollections,
+  normalizeCollectionBlob,
+  normalizeRelatedCollectionsConfig,
+} from '../utils/common/collectionParser.mjs';
+import { validateCollection } from '../utils/common/validation.mjs';
+import {
+  validateDuplicatedKeys,
+  validateMissingRelatedCollectionData,
+} from '../utils/common/collectionValidations.mjs';
 
 function normalizeIndexRelativePath(p) {
   let s = String(p || '').trim();
@@ -72,96 +81,6 @@ function _appendFetchHistory(history, row, { limit = 100 } = {}) {
   return base;
 }
 
-function normalizeRelatedCollectionsConfig(v) {
-  const arr = Array.isArray(v) ? v : [];
-  const out = [];
-  const seen = new Set();
-  for (const raw of arr) {
-    if (!raw || typeof raw !== 'object') continue;
-    const name = String(raw.name || '').trim();
-    const path = String(raw.path || '').trim();
-    const thisKey = String(raw.this_key || '').trim();
-    const foreignKey = String(raw.foreign_key || '').trim();
-    if (!name || !path || !thisKey || !foreignKey) continue;
-    if (seen.has(name)) continue;
-    seen.add(name);
-    const rel = { ...raw, name, path, this_key: thisKey, foreign_key: foreignKey };
-    if (!Array.isArray(rel.fields)) delete rel.fields;
-    out.push(rel);
-  }
-  return out;
-}
-
-function parsePathExpression(expr) {
-  const raw = String(expr || '').trim();
-  if (!raw) return [];
-  return raw
-    .split('.')
-    .map(part => String(part || '').trim())
-    .filter(Boolean)
-    .map(part => {
-      const many = part.endsWith('[]');
-      const key = many ? part.slice(0, -2) : part;
-      return { key, many };
-    })
-    .filter(t => !!t.key);
-}
-
-function extractPathValues(obj, expr) {
-  const tokens = parsePathExpression(expr);
-  if (!obj || typeof obj !== 'object') return [];
-  if (!tokens.length) return [];
-  let nodes = [obj];
-  for (const token of tokens) {
-    const next = [];
-    for (const node of nodes) {
-      if (node == null) continue;
-      const value = node[token.key];
-      if (token.many) {
-        if (Array.isArray(value)) {
-          for (const item of value) next.push(item);
-        }
-      } else {
-        next.push(value);
-      }
-    }
-    nodes = next;
-    if (!nodes.length) break;
-  }
-  return nodes;
-}
-
-function normalizeRelatedLookupValues(values) {
-  const out = [];
-  const seen = new Set();
-  for (const raw of (Array.isArray(values) ? values : [values])) {
-    if (raw == null) continue;
-    const s = String(raw).trim();
-    if (!s || seen.has(s)) continue;
-    seen.add(s);
-    out.push(s);
-  }
-  return out;
-}
-
-function resolveRelatedCollectionPath(baseCollectionKey, relPath) {
-  let p = String(relPath || '').trim();
-  if (!p) return '';
-  p = p.replace(/^\.\//, '').replace(/^collections\//, '');
-  if (p.includes('/')) return p;
-  const folder = normalizeFolderPath((typeof baseCollectionKey === 'string' && baseCollectionKey.includes('/'))
-    ? baseCollectionKey.slice(0, baseCollectionKey.lastIndexOf('/'))
-    : '');
-  return folder ? `${folder}/${p}` : p;
-}
-
-function extractCollectionRecords(blob) {
-  if (Array.isArray(blob)) return blob;
-  if (blob && Array.isArray(blob.entries)) return blob.entries;
-  if (blob && Array.isArray(blob.sentences)) return blob.sentences;
-  return [];
-}
-
 export function createCollectionDatabaseManager({ log = false } = {}) {
   let logEnabled = !!log;
   let logReturningCached = false;
@@ -196,6 +115,106 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
 
   // In-memory cache of index entries keyed by path
   let availableIndexMap = new Map();
+  let validationRunPromise = null;
+  let validationRerunRequested = false;
+  let validationRunCounter = 0;
+
+  const validations = {
+    duplicated_keys: { status: 'idle', startedAt: null, finishedAt: null, error: null, result: null, loadErrors: [] },
+    missing_related_collection_data: { status: 'idle', startedAt: null, finishedAt: null, error: null, result: null, loadErrors: [] },
+    runAll: async function() {
+      return _scheduleValidationRun({ reason: 'manual' });
+    },
+    getSnapshot: function() {
+      return _safeClone({
+        duplicated_keys: validations.duplicated_keys,
+        missing_related_collection_data: validations.missing_related_collection_data,
+      });
+    },
+  };
+
+  function _markValidationRunning(state) {
+    state.status = 'running';
+    state.startedAt = _nowIso();
+    state.finishedAt = null;
+    state.error = null;
+  }
+
+  function _markValidationReady(state, result, loadErrors) {
+    state.status = 'ready';
+    state.result = result;
+    state.loadErrors = Array.isArray(loadErrors) ? loadErrors.slice() : [];
+    state.error = null;
+    state.finishedAt = _nowIso();
+  }
+
+  function _markValidationError(state, error, loadErrors) {
+    state.status = 'error';
+    state.error = error ? String(error) : 'Unknown validation error';
+    state.loadErrors = Array.isArray(loadErrors) ? loadErrors.slice() : [];
+    state.finishedAt = _nowIso();
+  }
+
+  async function _loadCollectionsForValidation() {
+    const rows = await listAvailableCollections();
+    const records = [];
+    const loadErrors = [];
+    for (const row of rows) {
+      const key = String(row?.key || row?.path || '').trim();
+      if (!key) continue;
+      try {
+        const collection = await _resolveCollectionBase(key, { force: false, systemOnly: false });
+        if (!collection || typeof collection !== 'object') throw new Error('collection not found');
+        records.push({ key, path: key, collection: _safeClone(collection) || collection });
+      } catch (e) {
+        loadErrors.push({ key, error: e?.message || String(e) });
+      }
+    }
+    return { records, loadErrors };
+  }
+
+  async function _runAllValidationsNow() {
+    const runId = ++validationRunCounter;
+    _markValidationRunning(validations.duplicated_keys);
+    _markValidationRunning(validations.missing_related_collection_data);
+
+    const { records, loadErrors } = await _loadCollectionsForValidation();
+
+    try {
+      const duplicatedKeysResult = validateDuplicatedKeys(records);
+      duplicatedKeysResult.loadErrors = loadErrors.slice();
+      if (runId === validationRunCounter) _markValidationReady(validations.duplicated_keys, duplicatedKeysResult, loadErrors);
+    } catch (e) {
+      if (runId === validationRunCounter) _markValidationError(validations.duplicated_keys, e?.message || e, loadErrors);
+    }
+
+    try {
+      const missingRelatedResult = validateMissingRelatedCollectionData(records);
+      missingRelatedResult.loadErrors = loadErrors.slice();
+      if (runId === validationRunCounter) _markValidationReady(validations.missing_related_collection_data, missingRelatedResult, loadErrors);
+    } catch (e) {
+      if (runId === validationRunCounter) _markValidationError(validations.missing_related_collection_data, e?.message || e, loadErrors);
+    }
+  }
+
+  function _scheduleValidationRun({ reason = 'unknown' } = {}) {
+    logger('validations: schedule', reason);
+    if (validationRunPromise) {
+      validationRerunRequested = true;
+      return validationRunPromise;
+    }
+
+    validationRunPromise = (async () => {
+      do {
+        validationRerunRequested = false;
+        await _runAllValidationsNow();
+      } while (validationRerunRequested);
+    })().finally(() => {
+      validationRunPromise = null;
+    });
+
+    return validationRunPromise;
+  }
 
   async function _resolveCollectionBase(key, { force = false, systemOnly = false } = {}) {
     if (!key) throw new Error('key required');
@@ -227,15 +246,16 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
   async function _compileCollectionRelated(collection, key, { force = false } = {}) {
     const coll = (collection && typeof collection === 'object') ? collection : null;
     if (!coll) return coll;
-    if (!Array.isArray(coll.entries) || !coll.entries.length) return coll;
+    const normalized = normalizeCollectionBlob(coll);
+    if (!Array.isArray(normalized.entries) || !normalized.entries.length) return normalized;
 
-    if (!coll.metadata || typeof coll.metadata !== 'object') coll.metadata = {};
-    if (!Array.isArray(coll.metadata.relatedCollections) || !coll.metadata.relatedCollections.length) {
+    if (!normalized.metadata || typeof normalized.metadata !== 'object') normalized.metadata = {};
+    if (!Array.isArray(normalized.metadata.relatedCollections) || !normalized.metadata.relatedCollections.length) {
       try {
         const sys = await getSystemCollection(key, { force: true });
         const rel = Array.isArray(sys?.metadata?.relatedCollections) ? sys.metadata.relatedCollections : [];
         if (rel.length) {
-          coll.metadata.relatedCollections = rel.map(r => ({ ...r }));
+          normalized.metadata.relatedCollections = rel.map(r => ({ ...r }));
           try {
             console.debug('[CollectionDB] recovered relatedCollections metadata', {
               key,
@@ -247,55 +267,14 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
       } catch (e) {}
     }
 
-    const relations = normalizeRelatedCollectionsConfig(coll?.metadata?.relatedCollections);
-    if (!relations.length) return coll;
+    const relations = normalizeRelatedCollectionsConfig(normalized?.metadata?.relatedCollections);
+    if (!relations.length) return normalized;
 
-    for (const relation of relations) {
-      const relName = relation.name;
-      const relPath = resolveRelatedCollectionPath(key, relation.path);
-      let foreign = null;
-      if (relPath) {
-        try {
-          foreign = await _resolveCollectionBase(relPath, { force: false, systemOnly: false });
-        } catch (e) {
-          foreign = null;
-        }
-      }
+    await attachRelatedCollections(normalized, key, {
+      resolveCollection: async (relPath) => _resolveCollectionBase(relPath, { force: false, systemOnly: false })
+    });
 
-      const foreignRecords = extractCollectionRecords(foreign);
-      const foreignIndex = new Map();
-      for (const rec of foreignRecords) {
-        if (!rec || typeof rec !== 'object') continue;
-        const values = normalizeRelatedLookupValues(extractPathValues(rec, relation.foreign_key));
-        for (const value of values) {
-          const arr = foreignIndex.get(value) || [];
-          arr.push(rec);
-          foreignIndex.set(value, arr);
-        }
-      }
-
-      for (const entry of coll.entries) {
-        if (!entry || typeof entry !== 'object') continue;
-        if (!entry.relatedCollections || typeof entry.relatedCollections !== 'object') entry.relatedCollections = {};
-
-        const localValues = normalizeRelatedLookupValues(extractPathValues(entry, relation.this_key));
-        const matches = [];
-        const seen = new Set();
-        for (const value of localValues) {
-          const rows = foreignIndex.get(value) || [];
-          for (const rec of rows) {
-            if (!rec || typeof rec !== 'object') continue;
-            if (seen.has(rec)) continue;
-            seen.add(rec);
-            matches.push(rec);
-          }
-        }
-
-        entry.relatedCollections[relName] = matches;
-      }
-    }
-    // compute counts on demand via `entry.relatedCollections[relName].length` — no legacy caches
-    return coll;
+    return normalized;
   }
 
   function _getSettings() {
@@ -402,6 +381,8 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
           }
         } catch (e) {}
 
+        void _scheduleValidationRun({ reason: 'initialize-fallback' }).catch(() => {});
+
         return { paths: Array.from(availableIndexMap.keys()), folderMetadataMap: new Map(), rawIndex: null };
       }
 
@@ -452,6 +433,8 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
           }
         }
       } catch (e) {}
+
+      void _scheduleValidationRun({ reason: 'initialize' }).catch(() => {});
 
       return { paths: Array.from(availableIndexMap.keys()), folderMetadataMap, rawIndex: index };
     });
@@ -534,10 +517,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
         throw new Error(`Invalid JSON in collection ${key}: ${err?.message || err}`);
       }
 
-      if (Array.isArray(data)) data = { metadata: {}, entries: data };
-
-      // Ensure metadata object exists
-      if (!data.metadata || typeof data.metadata !== 'object') data.metadata = {};
+      data = normalizeCollectionBlob(data);
 
       // Support metadata.schema as a string pointing to a separate JSON schema file.
       // Resolve relative paths against the collection's folder and attempt to fetch
@@ -748,6 +728,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
     };
     await idbPut('user_collections', rec);
     _setActiveRevisionId(key, id);
+    void _scheduleValidationRun({ reason: 'commitPatch' }).catch(() => {});
     return rec;
   }
 
@@ -772,6 +753,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
     };
     await idbPut('user_collections', rec);
     _setActiveRevisionId(key, id);
+    void _scheduleValidationRun({ reason: 'commitSnapshot' }).catch(() => {});
     return rec;
   }
 
@@ -781,6 +763,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
 
   function setActiveRevisionId(collectionKey, revisionId) {
     _setActiveRevisionId(collectionKey, revisionId);
+    void _scheduleValidationRun({ reason: 'setActiveRevisionId' }).catch(() => {});
   }
 
   return {
@@ -811,6 +794,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
     previewInputChanges,
     commitPatch,
     commitSnapshot,
+    validations,
 
     // internal map exposed for debugging
     _availableIndexMap: availableIndexMap,

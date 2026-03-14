@@ -11,7 +11,6 @@ export function detectCollectionArrayKey(collection) {
     if (Array.isArray(c[k])) return { key: k, arr: c[k] };
   }
 
-  // Fallback: first top-level array prop (excluding metadata-like keys)
   for (const [k, v] of Object.entries(c)) {
     if (k === 'metadata' || k === 'schema') continue;
     if (Array.isArray(v)) return { key: k, arr: v };
@@ -29,21 +28,18 @@ export function inferEntryKeyField({ collection = null, arrayKey = null, entries
   const sample = Array.isArray(arr) && arr.length ? arr.find(x => x && typeof x === 'object') : null;
   if (!sample || typeof sample !== 'object') return '';
 
-  // Common conventions
   if ('id' in sample) return 'id';
   if ('key' in sample) return 'key';
   if (arrKey === 'sentences' && 'ja' in sample) return 'ja';
   if (arrKey === 'entries' && 'kanji' in sample) return 'kanji';
   if ('name' in sample) return 'name';
 
-  // Try schema order if present
   const schema = Array.isArray(meta?.schema) ? meta.schema : (Array.isArray(collection?.schema) ? collection.schema : null);
   if (Array.isArray(schema) && schema.length) {
     const firstKey = schema.find(f => f && typeof f.key === 'string' && f.key.trim());
     if (firstKey && firstKey.key) return String(firstKey.key);
   }
 
-  // Last resort: first string field on sample
   for (const [k, v] of Object.entries(sample)) {
     if (typeof v === 'string' && String(v).trim()) return k;
   }
@@ -210,7 +206,6 @@ export function computePatchFromInput({ baseCollection, input, treatFullAsReplac
     _inputKind: kind,
   };
 
-  // Metadata changes: for metadata-only and full collection
   const baseMeta = (base.metadata && typeof base.metadata === 'object') ? base.metadata : {};
   if (inputMeta) {
     const md = diffObjectsShallow(baseMeta, inputMeta);
@@ -220,7 +215,6 @@ export function computePatchFromInput({ baseCollection, input, treatFullAsReplac
     }
   }
 
-  // Schema changes
   if (inputSchema) {
     const sd = diffSchema(baseSchema || [], inputSchema || []);
     for (const a of sd.added) patch.schema.upsert.push(a.after);
@@ -228,7 +222,6 @@ export function computePatchFromInput({ baseCollection, input, treatFullAsReplac
     for (const r of sd.removed) patch.schema.removeKeys.push(r.key);
   }
 
-  // Entry upserts and (optional) removals
   const baseEntries = Array.isArray(base?.[targetArrKey]) ? base[targetArrKey] : (Array.isArray(baseArr) ? baseArr : []);
   if (Array.isArray(inputEntries)) {
     if (!targetEntryKeyField) warnings.push('No unique entry key detected (metadata.entry_key). Edits will be best-effort and may not match existing records correctly.');
@@ -236,24 +229,20 @@ export function computePatchFromInput({ baseCollection, input, treatFullAsReplac
     const baseMap = buildEntryMap(baseEntries, targetEntryKeyField);
     const inputMap = buildEntryMap(inputEntries, targetEntryKeyField);
 
-    // For incremental updates, only consider provided entries.
     for (const [k, incoming] of inputMap.entries()) {
       const existing = baseMap.get(k);
       if (!existing) {
         patch.entries.upsert.push(incoming);
-        // for new entries, minimal = full object (useful for export/preview)
         patch.entries.upsertMinimal.push(safeClone(incoming) || incoming);
         continue;
       }
       const fields = diffEntry(existing, incoming);
       if (fields.length) {
         patch.entries.upsert.push(incoming);
-        // build minimal diff containing only changed fields + the entry key
         const minimal = {};
         for (const f of fields) {
           try { minimal[f.key] = incoming[f.key]; } catch (e) {}
         }
-        // ensure key present so minimal can be mapped later
         if (targetEntryKeyField && !(targetEntryKeyField in minimal)) {
           try { minimal[targetEntryKeyField] = incoming[targetEntryKeyField]; } catch (e) {}
         }
@@ -261,7 +250,6 @@ export function computePatchFromInput({ baseCollection, input, treatFullAsReplac
       }
     }
 
-    // If input is full and caller wants replacement semantics, compute removals.
     if (kind === 'full' && treatFullAsReplace) {
       for (const [k] of baseMap.entries()) {
         if (!inputMap.has(k)) patch.entries.removeKeys.push(k);
@@ -282,7 +270,6 @@ export function applyPatchToCollection({ baseCollection, patch } = {}) {
   const arrayKey = String(p.targetArrayKey || detectCollectionArrayKey(base).key || 'entries');
   const entryKeyField = String(p.entryKeyField || inferEntryKeyField({ collection: base, arrayKey }) || '').trim();
 
-  // metadata
   if (!base.metadata || typeof base.metadata !== 'object') base.metadata = {};
   try {
     const set = p.metadata?.set && typeof p.metadata.set === 'object' ? p.metadata.set : {};
@@ -295,7 +282,6 @@ export function applyPatchToCollection({ baseCollection, patch } = {}) {
     }
   } catch (e) {}
 
-  // schema lives under metadata.schema (preferred)
   try {
     const schema = Array.isArray(base.metadata.schema) ? base.metadata.schema.slice() : (Array.isArray(base.schema) ? base.schema.slice() : []);
     const map = schemaToMap(schema);
@@ -311,7 +297,6 @@ export function applyPatchToCollection({ baseCollection, patch } = {}) {
       map.set(k, f);
     }
 
-    // preserve order: existing order first, then any new keys appended
     const existingOrder = schema.map(f => (f && typeof f.key === 'string') ? f.key.trim() : '').filter(Boolean);
     const newKeys = Array.from(map.keys()).filter(k => !existingOrder.includes(k));
     const out = [];
@@ -328,7 +313,6 @@ export function applyPatchToCollection({ baseCollection, patch } = {}) {
     if ('schema' in base) delete base.schema;
   } catch (e) {}
 
-  // entries
   try {
     const arr = Array.isArray(base[arrayKey]) ? base[arrayKey].slice() : [];
     const indexByKey = new Map();
@@ -342,7 +326,6 @@ export function applyPatchToCollection({ baseCollection, patch } = {}) {
       }
     }
 
-    // removals
     const removeKeys = Array.isArray(p.entries?.removeKeys) ? p.entries.removeKeys : [];
     if (entryKeyField && removeKeys.length) {
       const removeSet = new Set(removeKeys.map(k => String(k)));
@@ -353,7 +336,6 @@ export function applyPatchToCollection({ baseCollection, patch } = {}) {
       }
     }
 
-    // upserts (merge into existing; append new)
     const upsert = Array.isArray(p.entries?.upsert) ? p.entries.upsert : [];
     for (const incoming of upsert) {
       if (!incoming || typeof incoming !== 'object') continue;
@@ -377,7 +359,6 @@ export function applyPatchToCollection({ baseCollection, patch } = {}) {
         arr[idx] = incoming;
         continue;
       }
-      // shallow merge to support partial updates
       arr[idx] = { ...existing, ...incoming };
     }
 
@@ -417,7 +398,6 @@ export function summarizePatchAgainstBase({ baseCollection, patch } = {}) {
       else editedEntries++;
     }
   } else {
-    // unknown keys: treat all upserts as new
     newEntries = upsert.length;
   }
 

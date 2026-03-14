@@ -1,4 +1,4 @@
-import { detectCollectionArrayKey, inferEntryKeyField } from './collectionDiff.js';
+import { detectCollectionArrayKey, inferEntryKeyField } from './collectionDiff.mjs';
 
 function safeJsonStringify(v) {
   try { return JSON.parse(JSON.stringify(v)); } catch { return null; }
@@ -22,11 +22,11 @@ export function validateSchemaArray(schemaArr) {
     let t = f.type && typeof f.type === 'string' ? f.type.trim() : '';
     const isArrayType = t.endsWith('[]');
     const baseType = isArrayType ? t.slice(0, -2) : t;
-    if (t && !allowedTypes.has(baseType)) out.warnings.push(`Field '${key || ('#'+i)}' has unknown type '${t}'.`);
+    if (t && !allowedTypes.has(baseType)) out.warnings.push(`Field '${key || (`#${i}`)}' has unknown type '${t}'.`);
     if (baseType === 'enum') {
       const vals = f.values;
       if (!vals || typeof vals !== 'object' || Array.isArray(vals) || Object.keys(vals).length === 0) {
-        out.errors.push(`Enum field '${key || ('#'+i)}' must provide a non-empty 'values' object.`);
+        out.errors.push(`Enum field '${key || (`#${i}`)}' must provide a non-empty 'values' object.`);
         continue;
       }
       for (const [vk, vv] of Object.entries(vals)) {
@@ -44,7 +44,6 @@ export function validateSchemaFile(obj, { path = '' } = {}) {
     out.errors.push('Schema file must be a JSON object.');
     return out;
   }
-  // required top-level fields for a schema file
   const need = ['category', 'description', 'schema'];
   for (const k of need) {
     if (typeof obj[k] === 'undefined' || obj[k] === null) out.errors.push(`Schema file missing required field '${k}'.`);
@@ -73,7 +72,6 @@ export function validateEntriesAgainstSchema(entries, schemaArr, { entryKeyField
   }
 
   if (verbose) console.group(`validateEntriesAgainstSchema: fields=${schemaMap.size} entries=${entries.length}`);
-  // diagnostics for developer visibility
   out.diagnostics = { enumChecks: 0, enumInvalid: 0, arrayChecks: 0, arrayInvalid: 0 };
   for (let i = 0; i < entries.length; i++) {
     const e = entries[i];
@@ -110,44 +108,38 @@ export function validateEntriesAgainstSchema(entries, schemaArr, { entryKeyField
                 }
               }
             }
+          } else if (v == null || (typeof v !== 'string' && typeof v !== 'number')) {
+            const msg = `Entry ${id}: field '${k}' must be one of: ${vals.join(', ')}.`;
+            out.entryErrors.push({ id, index: i, field: k, message: msg });
+            out.diagnostics.enumInvalid++;
           } else {
-            if (v == null || (typeof v !== 'string' && typeof v !== 'number')) {
-              const msg = `Entry ${id}: field '${k}' must be one of: ${vals.join(', ')}.`;
+            const vs = String(v);
+            if (!vals.includes(vs)) {
+              const msg = `Entry ${id}: invalid value '${vs}' for enum '${k}'. Allowed: ${vals.join(', ')}.`;
               out.entryErrors.push({ id, index: i, field: k, message: msg });
               out.diagnostics.enumInvalid++;
-            } else {
-              const vs = String(v);
-              if (!vals.includes(vs)) {
-                const msg = `Entry ${id}: invalid value '${vs}' for enum '${k}'. Allowed: ${vals.join(', ')}.`;
-                out.entryErrors.push({ id, index: i, field: k, message: msg });
-                out.diagnostics.enumInvalid++;
-              }
             }
           }
         }
-      } else if (isArrayType) {
-        // validate array-typed fields (string[], number[], boolean[])
-        if (k in e) {
-          if (verbose && i < Math.max(5, logLimit)) console.log(`validateEntriesAgainstSchema: checking array field '${k}' for entry ${id}`);
-          out.diagnostics.arrayChecks++;
-          const v = e[k];
-          if (!Array.isArray(v)) {
-            out.entryErrors.push({ id, index: i, field: k, message: `Entry ${id}: field '${k}' should be an array.` });
-            out.diagnostics.arrayInvalid++;
-          } else {
-            for (const item of v) {
-              if (baseType === 'string' || baseType === 'text' || baseType === 'kanji' || baseType === 'reading') {
-                if (item != null && typeof item !== 'string') { out.entryErrors.push({ id, index: i, field: k, message: `Entry ${id}: array item for '${k}' should be a string.` }); out.diagnostics.arrayInvalid++; }
-              } else if (baseType === 'number' || baseType === 'integer') {
-                if (item != null && typeof item !== 'number') { out.entryErrors.push({ id, index: i, field: k, message: `Entry ${id}: array item for '${k}' should be a number.` }); out.diagnostics.arrayInvalid++; }
-              } else if (baseType === 'boolean') {
-                if (item != null && typeof item !== 'boolean') { out.entryErrors.push({ id, index: i, field: k, message: `Entry ${id}: array item for '${k}' should be boolean.` }); out.diagnostics.arrayInvalid++; }
-              }
+      } else if (isArrayType && (k in e)) {
+        if (verbose && i < Math.max(5, logLimit)) console.log(`validateEntriesAgainstSchema: checking array field '${k}' for entry ${id}`);
+        out.diagnostics.arrayChecks++;
+        const v = e[k];
+        if (!Array.isArray(v)) {
+          out.entryErrors.push({ id, index: i, field: k, message: `Entry ${id}: field '${k}' should be an array.` });
+          out.diagnostics.arrayInvalid++;
+        } else {
+          for (const item of v) {
+            if (baseType === 'string' || baseType === 'text' || baseType === 'kanji' || baseType === 'reading') {
+              if (item != null && typeof item !== 'string') { out.entryErrors.push({ id, index: i, field: k, message: `Entry ${id}: array item for '${k}' should be a string.` }); out.diagnostics.arrayInvalid++; }
+            } else if (baseType === 'number' || baseType === 'integer') {
+              if (item != null && typeof item !== 'number') { out.entryErrors.push({ id, index: i, field: k, message: `Entry ${id}: array item for '${k}' should be a number.` }); out.diagnostics.arrayInvalid++; }
+            } else if (baseType === 'boolean') {
+              if (item != null && typeof item !== 'boolean') { out.entryErrors.push({ id, index: i, field: k, message: `Entry ${id}: array item for '${k}' should be boolean.` }); out.diagnostics.arrayInvalid++; }
             }
           }
         }
       }
-      // future: add other type checks (tags arrays, number ranges, etc.)
     }
   }
 
@@ -186,7 +178,6 @@ export function validateCollection(collection, { entryArrayKey = null, verbose =
   }
   if (verbose) console.groupEnd();
 
-  // detect duplicate entry keys within this collection when an entryKeyField is declared
   entriesValidation.duplicates = [];
   try {
     if (entryKeyField && Array.isArray(entries) && entries.length) {
@@ -211,9 +202,7 @@ export function validateCollection(collection, { entryArrayKey = null, verbose =
         }
       }
     }
-  } catch (e) {
-    // don't fail validation on duplicate-detection code errors
-  }
+  } catch (e) {}
 
   if (verbose) {
     if (entriesValidation.duplicates && entriesValidation.duplicates.length) {
