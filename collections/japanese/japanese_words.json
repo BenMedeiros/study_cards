@@ -1804,7 +1804,7 @@
       "lexicalClass": "regular"
     },
     {
-      "kanji": "開く",
+      "kanji": "開く（あく）",
       "reading": "あく",
       "meaning": "to open; to become open (intransitive)",
       "type": "godan-verb",
@@ -1825,7 +1825,7 @@
       "lexicalClass": "regular"
     },
     {
-      "kanji": "開く",
+      "kanji": "開く（ひらく）",
       "reading": "ひらく",
       "meaning": "to open; to hold (an event)",
       "type": "godan-verb",
@@ -2211,8 +2211,9 @@
     {
       "kanji": "大きい",
       "reading": "おおきい",
-      "meaning": "big",
-      "type": "i-adjective"
+      "meaning": "big; large",
+      "type": "i-adjective",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "小さい",
@@ -2578,14 +2579,24 @@
     {
       "kanji": "硬い",
       "reading": "かたい",
-      "meaning": "hard",
-      "type": "i-adjective"
+      "meaning": "hard (solid/firm)",
+      "type": "i-adjective",
+      "lexicalClass": "regular",
+      "tags": [
+        "texture",
+        "touch_property"
+      ]
     },
     {
       "kanji": "柔らかい",
       "reading": "やわらかい",
       "meaning": "soft",
-      "type": "i-adjective"
+      "type": "i-adjective",
+      "lexicalClass": "regular",
+      "tags": [
+        "texture",
+        "touch_property"
+      ]
     },
     {
       "kanji": "固い",
@@ -2690,7 +2701,9 @@
       "type": "na-adjective",
       "lexicalClass": "regular",
       "tags": [
-        "jlpt_n3"
+        "jlpt_n3",
+        "texture",
+        "surface_property"
       ]
     },
     {
@@ -2995,8 +3008,13 @@
     {
       "kanji": "伸びる",
       "reading": "のびる",
-      "meaning": "to grow; to stretch; to improve",
-      "type": "ichidan-verb"
+      "meaning": "to grow; to stretch; to improve; to extend",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "action",
+        "movement"
+      ]
     },
     {
       "kanji": "信じる",
@@ -3351,9 +3369,10 @@
     },
     {
       "kanji": "長",
-      "reading": "チョウ",
-      "meaning": "long; leader; head",
-      "type": "morpheme"
+      "reading": "ちょう",
+      "meaning": "chief; head; long (bound morpheme)",
+      "type": "morpheme",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "社",
@@ -3575,8 +3594,9 @@
     {
       "kanji": "元気",
       "reading": "げんき",
-      "meaning": "healthy; energetic; fine",
-      "type": "na-adjective"
+      "meaning": "healthy; energetic; fine; well",
+      "type": "na-adjective",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "静か",
@@ -3587,17 +3607,19 @@
     {
       "kanji": "安全",
       "reading": "あんぜん",
-      "meaning": "safe; secure",
+      "meaning": "safe; secure; safety",
       "type": "na-adjective",
       "tags": [
         "phone_settings"
-      ]
+      ],
+      "lexicalClass": "regular"
     },
     {
       "kanji": "危険",
       "reading": "きけん",
-      "meaning": "dangerous; risky",
-      "type": "na-adjective"
+      "meaning": "dangerous; risky; danger",
+      "type": "na-adjective",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "必要",
@@ -3961,8 +3983,12 @@
       "kanji": "林檎",
       "reading": "りんご",
       "meaning": "apple",
+      "type": "noun",
       "lexicalClass": "regular",
-      "type": "noun"
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
     },
     {
       "kanji": "おすすめ",
@@ -5411,7 +5437,8 @@
       "kanji": "予定",
       "reading": "よてい",
       "meaning": "plan; schedule",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "時間",
@@ -5676,25 +5703,41 @@
       "kanji": "犬",
       "reading": "いぬ",
       "meaning": "dog",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "common_animal"
+      ]
     },
     {
       "kanji": "猫",
       "reading": "ねこ",
       "meaning": "cat",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "common_animal"
+      ]
     },
     {
       "kanji": "鳥",
       "reading": "とり",
       "meaning": "bird",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "common_animal"
+      ]
     },
     {
       "kanji": "魚",
       "reading": "さかな",
       "meaning": "fish",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "common_animal"
+      ]
     },
     {
       "kanji": "虫",
@@ -5709,19 +5752,31 @@
       "kanji": "牛",
       "reading": "うし",
       "meaning": "cow; cattle",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "common_animal"
+      ]
     },
     {
       "kanji": "馬",
       "reading": "うま",
       "meaning": "horse",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "common_animal"
+      ]
     },
     {
       "kanji": "羊",
       "reading": "ひつじ",
       "meaning": "sheep",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "common_animal"
+      ]
     },
     {
       "kanji": "肉",
@@ -5752,15 +5807,23 @@
       "reading": "みず",
       "meaning": "water",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "pokemon-type"
+        "pokemon-type",
+        "drink",
+        "refrigerator_common"
       ]
     },
     {
       "kanji": "牛乳",
       "reading": "ぎゅうにゅう",
       "meaning": "milk",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "food",
+        "refrigerator_common"
+      ]
     },
     {
       "kanji": "砂糖",
@@ -5856,7 +5919,8 @@
       "kanji": "家",
       "reading": "いえ",
       "meaning": "house; home",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "玄関",
@@ -5904,13 +5968,22 @@
       "kanji": "本棚",
       "reading": "ほんだな",
       "meaning": "bookshelf",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "object",
+        "books"
+      ]
     },
     {
       "kanji": "本",
       "reading": "ほん",
       "meaning": "book",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "core_vocab"
+      ]
     },
     {
       "kanji": "新聞",
@@ -5922,7 +5995,11 @@
       "kanji": "雑誌",
       "reading": "ざっし",
       "meaning": "magazine",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "publishing"
+      ]
     },
     {
       "kanji": "手紙",
@@ -6060,21 +6137,6 @@
       "kanji": "注意",
       "reading": "ちゅうい",
       "meaning": "attention; caution",
-      "type": "noun"
-    },
-    {
-      "kanji": "安全",
-      "reading": "あんぜん",
-      "meaning": "safety",
-      "type": "noun",
-      "tags": [
-        "phone_settings"
-      ]
-    },
-    {
-      "kanji": "危険",
-      "reading": "きけん",
-      "meaning": "danger",
       "type": "noun"
     },
     {
@@ -6255,7 +6317,8 @@
       "kanji": "料理",
       "reading": "りょうり",
       "meaning": "cooking; cuisine",
-      "type": "noun"
+      "type": "noun",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "朝食",
@@ -7341,8 +7404,9 @@
     {
       "kanji": "男",
       "reading": "おとこ",
-      "meaning": "man",
-      "type": "noun"
+      "meaning": "man; male",
+      "type": "noun",
+      "lexicalClass": "regular"
     },
     {
       "kanji": "天",
@@ -7586,9 +7650,11 @@
       "reading": "カンガルー",
       "meaning": "kangaroo",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
         "origin:English",
-        "pokemon-name-root"
+        "pokemon-name-root",
+        "common_animal"
       ]
     },
     {
@@ -8302,8 +8368,12 @@
       "reading": "ジュース",
       "meaning": "juice",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "origin:English"
+        "origin:English",
+        "drink",
+        "refrigerator_common",
+        "loanword"
       ]
     },
     {
@@ -8320,8 +8390,12 @@
       "reading": "バター",
       "meaning": "butter",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "origin:English"
+        "origin:English",
+        "food",
+        "refrigerator_common",
+        "loanword"
       ]
     },
     {
@@ -8329,8 +8403,12 @@
       "reading": "チーズ",
       "meaning": "cheese",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "origin:English"
+        "origin:English",
+        "food",
+        "refrigerator_common",
+        "loanword"
       ]
     },
     {
@@ -8927,8 +9005,12 @@
       "reading": "ソーセージ",
       "meaning": "sausage",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "origin:English"
+        "origin:English",
+        "food",
+        "refrigerator_common",
+        "loanword"
       ]
     },
     {
@@ -8936,8 +9018,12 @@
       "reading": "ハム",
       "meaning": "ham",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "origin:English"
+        "origin:English",
+        "food",
+        "refrigerator_common",
+        "loanword"
       ]
     },
     {
@@ -8945,8 +9031,12 @@
       "reading": "ヨーグルト",
       "meaning": "yogurt",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "origin:English"
+        "origin:English",
+        "food",
+        "refrigerator_common",
+        "loanword"
       ]
     },
     {
@@ -8990,8 +9080,12 @@
       "reading": "トマト",
       "meaning": "tomato",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "origin:English"
+        "origin:English",
+        "food",
+        "refrigerator_common",
+        "loanword"
       ]
     },
     {
@@ -8999,8 +9093,12 @@
       "reading": "レモン",
       "meaning": "lemon",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "origin:English"
+        "origin:English",
+        "food",
+        "refrigerator_common",
+        "loanword"
       ]
     },
     {
@@ -9008,8 +9106,12 @@
       "reading": "オレンジ",
       "meaning": "orange",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "origin:English"
+        "origin:English",
+        "food",
+        "refrigerator_common",
+        "loanword"
       ]
     },
     {
@@ -10168,8 +10270,10 @@
       "reading": "とかげ",
       "meaning": "lizard",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "pokemon-name-root"
+        "pokemon-name-root",
+        "common_animal"
       ]
     },
     {
@@ -10196,8 +10300,10 @@
       "reading": "かめ",
       "meaning": "turtle; tortoise",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "pokemon-name-root"
+        "pokemon-name-root",
+        "common_animal"
       ]
     },
     {
@@ -10416,8 +10522,10 @@
       "reading": "さる",
       "meaning": "monkey",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "pokemon-name-root"
+        "pokemon-name-root",
+        "common_animal"
       ]
     },
     {
@@ -10452,6 +10560,7 @@
       "reading": "おに",
       "meaning": "oni; demon ogre",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
         "pokemon-name-root"
       ]
@@ -10468,10 +10577,14 @@
     {
       "kanji": "狐",
       "reading": "きつね",
-      "meaning": "fox",
+      "meaning": "fox; fox spirit (kitsune)",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "pokemon-name-root"
+        "pokemon-name-root",
+        "common_animal",
+        "yokai",
+        "animal_spirit"
       ]
     },
     {
@@ -10497,8 +10610,10 @@
       "reading": "へび",
       "meaning": "snake",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "pokemon-name-root"
+        "pokemon-name-root",
+        "common_animal"
       ]
     },
     {
@@ -10542,8 +10657,11 @@
       "reading": "しろ",
       "meaning": "white",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "pokemon-name-root"
+        "pokemon-name-root",
+        "color",
+        "common_descriptor"
       ]
     },
     {
@@ -10551,8 +10669,10 @@
       "reading": "はと",
       "meaning": "pigeon; dove",
       "type": "noun",
+      "lexicalClass": "regular",
       "tags": [
-        "pokemon-name-root"
+        "pokemon-name-root",
+        "common_animal"
       ]
     },
     {
@@ -10714,8 +10834,9 @@
     {
       "kanji": "びっくり",
       "reading": "びっくり",
-      "meaning": "to be surprised; surprise (onomatopoeic/adverb)",
-      "type": "adverb"
+      "meaning": "surprised; with surprise (onomatopoeia)",
+      "type": "adverb",
+      "lexicalClass": "onomatopoeia"
     },
     {
       "kanji": "僕",
@@ -10790,79 +10911,9 @@
       "type": "adverb"
     },
     {
-      "kanji": "犬",
-      "reading": "いぬ",
-      "meaning": "dog",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
-      "kanji": "猫",
-      "reading": "ねこ",
-      "meaning": "cat",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
-      "kanji": "鳥",
-      "reading": "とり",
-      "meaning": "bird",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
-      "kanji": "魚",
-      "reading": "さかな",
-      "meaning": "fish",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
-      "kanji": "馬",
-      "reading": "うま",
-      "meaning": "horse",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
-      "kanji": "牛",
-      "reading": "うし",
-      "meaning": "cow",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
       "kanji": "豚",
       "reading": "ぶた",
       "meaning": "pig",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
-      "kanji": "羊",
-      "reading": "ひつじ",
-      "meaning": "sheep",
       "type": "noun",
       "lexicalClass": "regular",
       "tags": [
@@ -10900,29 +10951,9 @@
       ]
     },
     {
-      "kanji": "亀",
-      "reading": "かめ",
-      "meaning": "turtle",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
       "kanji": "蛙",
       "reading": "かえる",
       "meaning": "frog",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
-      "kanji": "猿",
-      "reading": "さる",
-      "meaning": "monkey",
       "type": "noun",
       "lexicalClass": "regular",
       "tags": [
@@ -10983,16 +11014,6 @@
       "kanji": "狼",
       "reading": "おおかみ",
       "meaning": "wolf",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
-      "kanji": "狐",
-      "reading": "きつね",
-      "meaning": "fox",
       "type": "noun",
       "lexicalClass": "regular",
       "tags": [
@@ -11498,16 +11519,6 @@
       ]
     },
     {
-      "kanji": "カンガルー",
-      "reading": "カンガルー",
-      "meaning": "kangaroo",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
       "kanji": "イルカ",
       "reading": "イルカ",
       "meaning": "dolphin",
@@ -11561,26 +11572,6 @@
       "kanji": "蟹",
       "reading": "かに",
       "meaning": "crab",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
-      "kanji": "蛇",
-      "reading": "へび",
-      "meaning": "snake",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
-      "kanji": "蜥蜴",
-      "reading": "とかげ",
-      "meaning": "lizard",
       "type": "noun",
       "lexicalClass": "regular",
       "tags": [
@@ -11691,16 +11682,6 @@
       ]
     },
     {
-      "kanji": "鳩",
-      "reading": "はと",
-      "meaning": "pigeon; dove",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "common_animal"
-      ]
-    },
-    {
       "kanji": "孔雀",
       "reading": "くじゃく",
       "meaning": "peacock",
@@ -11743,17 +11724,6 @@
       ]
     },
     {
-      "kanji": "牛乳",
-      "reading": "ぎゅうにゅう",
-      "meaning": "milk",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "food",
-        "refrigerator_common"
-      ]
-    },
-    {
       "kanji": "卵",
       "reading": "たまご",
       "meaning": "eggs",
@@ -11762,42 +11732,6 @@
       "tags": [
         "food",
         "refrigerator_common"
-      ]
-    },
-    {
-      "kanji": "バター",
-      "reading": "バター",
-      "meaning": "butter",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "food",
-        "refrigerator_common",
-        "loanword"
-      ]
-    },
-    {
-      "kanji": "チーズ",
-      "reading": "チーズ",
-      "meaning": "cheese",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "food",
-        "refrigerator_common",
-        "loanword"
-      ]
-    },
-    {
-      "kanji": "ヨーグルト",
-      "reading": "ヨーグルト",
-      "meaning": "yogurt",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "food",
-        "refrigerator_common",
-        "loanword"
       ]
     },
     {
@@ -11834,33 +11768,9 @@
       ]
     },
     {
-      "kanji": "ハム",
-      "reading": "ハム",
-      "meaning": "ham",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "food",
-        "refrigerator_common",
-        "loanword"
-      ]
-    },
-    {
       "kanji": "ベーコン",
       "reading": "ベーコン",
       "meaning": "bacon",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "food",
-        "refrigerator_common",
-        "loanword"
-      ]
-    },
-    {
-      "kanji": "ソーセージ",
-      "reading": "ソーセージ",
-      "meaning": "sausage",
       "type": "noun",
       "lexicalClass": "regular",
       "tags": [
@@ -11949,32 +11859,9 @@
       ]
     },
     {
-      "kanji": "トマト",
-      "reading": "トマト",
-      "meaning": "tomato",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "food",
-        "refrigerator_common",
-        "loanword"
-      ]
-    },
-    {
       "kanji": "胡瓜",
       "reading": "きゅうり",
       "meaning": "cucumber",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "food",
-        "refrigerator_common"
-      ]
-    },
-    {
-      "kanji": "林檎",
-      "reading": "りんご",
-      "meaning": "apple",
       "type": "noun",
       "lexicalClass": "regular",
       "tags": [
@@ -12001,53 +11888,6 @@
       "lexicalClass": "regular",
       "tags": [
         "food",
-        "refrigerator_common"
-      ]
-    },
-    {
-      "kanji": "オレンジ",
-      "reading": "オレンジ",
-      "meaning": "orange",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "food",
-        "refrigerator_common",
-        "loanword"
-      ]
-    },
-    {
-      "kanji": "レモン",
-      "reading": "レモン",
-      "meaning": "lemon",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "food",
-        "refrigerator_common",
-        "loanword"
-      ]
-    },
-    {
-      "kanji": "ジュース",
-      "reading": "ジュース",
-      "meaning": "juice",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "drink",
-        "refrigerator_common",
-        "loanword"
-      ]
-    },
-    {
-      "kanji": "水",
-      "reading": "みず",
-      "meaning": "water",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "drink",
         "refrigerator_common"
       ]
     },
@@ -12123,17 +11963,6 @@
       "kanji": "緑",
       "reading": "みどり",
       "meaning": "green",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "color",
-        "common_descriptor"
-      ]
-    },
-    {
-      "kanji": "白",
-      "reading": "しろ",
-      "meaning": "white",
       "type": "noun",
       "lexicalClass": "regular",
       "tags": [
@@ -12285,39 +12114,6 @@
       ]
     },
     {
-      "kanji": "滑らか",
-      "reading": "なめらか",
-      "meaning": "smooth",
-      "type": "na-adjective",
-      "lexicalClass": "regular",
-      "tags": [
-        "texture",
-        "surface_property"
-      ]
-    },
-    {
-      "kanji": "柔らかい",
-      "reading": "やわらかい",
-      "meaning": "soft",
-      "type": "i-adjective",
-      "lexicalClass": "regular",
-      "tags": [
-        "texture",
-        "touch_property"
-      ]
-    },
-    {
-      "kanji": "硬い",
-      "reading": "かたい",
-      "meaning": "hard (solid/firm)",
-      "type": "i-adjective",
-      "lexicalClass": "regular",
-      "tags": [
-        "texture",
-        "touch_property"
-      ]
-    },
-    {
       "kanji": "ふわふわ",
       "reading": "ふわふわ",
       "meaning": "fluffy; soft and airy",
@@ -12458,16 +12254,6 @@
       ]
     },
     {
-      "kanji": "雑誌",
-      "reading": "ざっし",
-      "meaning": "magazine",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "publishing"
-      ]
-    },
-    {
       "kanji": "ジャンプ",
       "reading": "ジャンプ",
       "meaning": "Jump (publisher brand name)",
@@ -12534,17 +12320,6 @@
       ]
     },
     {
-      "kanji": "本棚",
-      "reading": "ほんだな",
-      "meaning": "bookshelf",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "object",
-        "books"
-      ]
-    },
-    {
       "kanji": "花屋",
       "reading": "はなや",
       "meaning": "flower shop",
@@ -12575,16 +12350,6 @@
       ]
     },
     {
-      "kanji": "本",
-      "reading": "ほん",
-      "meaning": "book",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "core_vocab"
-      ]
-    },
-    {
       "kanji": "屋",
       "reading": "や",
       "meaning": "shop; store; seller (suffix)",
@@ -12602,17 +12367,6 @@
       "lexicalClass": "regular",
       "tags": [
         "books"
-      ]
-    },
-    {
-      "kanji": "伸びる",
-      "reading": "のびる",
-      "meaning": "to stretch; to extend; to grow",
-      "type": "ichidan-verb",
-      "lexicalClass": "regular",
-      "tags": [
-        "action",
-        "movement"
       ]
     },
     {
@@ -12785,13 +12539,6 @@
       ]
     },
     {
-      "kanji": "鬼",
-      "reading": "おに",
-      "meaning": "demon; ogre",
-      "type": "noun",
-      "lexicalClass": "regular"
-    },
-    {
       "kanji": "太郎",
       "reading": "たろう",
       "meaning": "Taro (male given name)",
@@ -12820,20 +12567,6 @@
       "lexicalClass": "regular"
     },
     {
-      "kanji": "長",
-      "reading": "ちょう",
-      "meaning": "chief; head; long (bound morpheme)",
-      "type": "morpheme",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "男",
-      "reading": "おとこ",
-      "meaning": "man; male",
-      "type": "noun",
-      "lexicalClass": "regular"
-    },
-    {
       "kanji": "長女",
       "reading": "ちょうじょ",
       "meaning": "eldest daughter",
@@ -12851,13 +12584,6 @@
       "kanji": "三男",
       "reading": "さんなん",
       "meaning": "third son",
-      "type": "noun",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "子供",
-      "reading": "こども",
-      "meaning": "child; children",
       "type": "noun",
       "lexicalClass": "regular"
     },
@@ -12883,44 +12609,9 @@
       "lexicalClass": "regular"
     },
     {
-      "kanji": "家",
-      "reading": "いえ",
-      "meaning": "house; home",
-      "type": "noun",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "元気",
-      "reading": "げんき",
-      "meaning": "healthy; well; energetic",
-      "type": "na-adjective",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "びっくり",
-      "reading": "びっくり",
-      "meaning": "surprise; be surprised (onomatopoeia)",
-      "type": "adverb",
-      "lexicalClass": "onomatopoeia"
-    },
-    {
-      "kanji": "大きい",
-      "reading": "おおきい",
-      "meaning": "big; large",
-      "type": "i-adjective",
-      "lexicalClass": "regular"
-    },
-    {
       "kanji": "内",
       "reading": "うち",
       "meaning": "home; my house; inside",
-      "type": "noun",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "料理",
-      "reading": "りょうり",
-      "meaning": "cooking; cuisine",
       "type": "noun",
       "lexicalClass": "regular"
     },
@@ -12929,20 +12620,6 @@
       "reading": "すき",
       "meaning": "fond of; to like",
       "type": "na-adjective",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "彼",
-      "reading": "かれ",
-      "meaning": "he; boyfriend",
-      "type": "noun",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "予定",
-      "reading": "よてい",
-      "meaning": "plan; schedule",
-      "type": "noun",
       "lexicalClass": "regular"
     },
     {
@@ -12957,13 +12634,6 @@
       "reading": "とうきょう",
       "meaning": "Tokyo (capital city)",
       "type": "proper-noun",
-      "lexicalClass": "regular"
-    },
-    {
-      "kanji": "働く",
-      "reading": "はたらく",
-      "meaning": "to work",
-      "type": "godan-verb",
       "lexicalClass": "regular"
     },
     {
@@ -13014,17 +12684,6 @@
       "meaning": "because; so (conjunctive)",
       "type": "conjunction",
       "lexicalClass": "regular"
-    },
-    {
-      "kanji": "狐",
-      "reading": "きつね",
-      "meaning": "fox; fox spirit (kitsune)",
-      "type": "noun",
-      "lexicalClass": "regular",
-      "tags": [
-        "yokai",
-        "animal_spirit"
-      ]
     },
     {
       "kanji": "狸",
@@ -13286,509 +12945,507 @@
         "food"
       ]
     },
-    [
-      {
-        "kanji": "参上",
-        "reading": "さんじょう",
-        "meaning": "dramatic appearance; arrival",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "heroic",
-          "written"
-        ]
-      },
-      {
-        "kanji": "必勝",
-        "reading": "ひっしょう",
-        "meaning": "certain victory",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "heroic",
-          "written"
-        ]
-      },
-      {
-        "kanji": "至上最強",
-        "reading": "しじょうさいきょう",
-        "meaning": "supremely strongest; strongest ever",
-        "type": "expression",
-        "lexicalClass": "set-phrase",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "heroic",
-          "emphatic"
-        ]
-      },
-      {
-        "kanji": "完了",
-        "reading": "かんりょう",
-        "meaning": "completion; complete",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written"
-        ]
-      },
-      {
-        "kanji": "連戦連勝",
-        "reading": "れんせんれんしょう",
-        "meaning": "constant fighting and winning; unbroken winning streak",
-        "type": "expression",
-        "lexicalClass": "set-phrase",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "heroic",
-          "written"
-        ]
-      },
-      {
-        "kanji": "圧勝",
-        "reading": "あっしょう",
-        "meaning": "overwhelming victory",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "heroic",
-          "written"
-        ]
-      },
-      {
-        "kanji": "限界",
-        "reading": "げんかい",
-        "meaning": "limit; boundary",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song"
-        ]
-      },
-      {
-        "kanji": "讃える",
-        "reading": "たたえる",
-        "meaning": "to praise; to acclaim",
-        "type": "ichidan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written"
-        ]
-      },
-      {
-        "kanji": "喝采",
-        "reading": "かっさい",
-        "meaning": "applause; cheers",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written"
-        ]
-      },
-      {
-        "kanji": "人知れず",
-        "reading": "ひとしれず",
-        "meaning": "secretly; unnoticed",
-        "type": "adverb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written"
-        ]
-      },
-      {
-        "kanji": "闘う",
-        "reading": "たたかう",
-        "meaning": "to fight; to battle",
-        "type": "godan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "heroic"
-        ]
-      },
-      {
-        "kanji": "押し寄せる",
-        "reading": "おしよせる",
-        "meaning": "to surge toward; to press in",
-        "type": "ichidan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written"
-        ]
-      },
-      {
-        "kanji": "背を向ける",
-        "reading": "せをむける",
-        "meaning": "to turn one's back on",
-        "type": "expression",
-        "lexicalClass": "set-phrase",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song"
-        ]
-      },
-      {
-        "kanji": "揺るぎなき",
-        "reading": "ゆるぎなき",
-        "meaning": "unshakable; unwavering",
-        "type": "expression",
-        "lexicalClass": "set-phrase",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written",
-          "heroic"
-        ]
-      },
-      {
-        "kanji": "覚悟",
-        "reading": "かくご",
-        "meaning": "resolve; readiness",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "heroic"
-        ]
-      },
-      {
-        "kanji": "繰り出す",
-        "reading": "くりだす",
-        "meaning": "to unleash; to send out",
-        "type": "godan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song"
-        ]
-      },
-      {
-        "kanji": "鉄拳",
-        "reading": "てっけん",
-        "meaning": "iron fist",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "heroic"
-        ]
-      },
-      {
-        "kanji": "正々堂々",
-        "reading": "せいせいどうどう",
-        "meaning": "fair and square; openly and honorably",
-        "type": "adverb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "heroic",
-          "written"
-        ]
-      },
-      {
-        "kanji": "執行",
-        "reading": "しっこう",
-        "meaning": "execution; carrying out",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written"
-        ]
-      },
-      {
-        "kanji": "問答無用",
-        "reading": "もんどうむよう",
-        "meaning": "no argument; no questions asked",
-        "type": "expression",
-        "lexicalClass": "set-phrase",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "emphatic",
-          "written"
-        ]
-      },
-      {
-        "kanji": "断つ",
-        "reading": "たつ",
-        "meaning": "to cut off; to put an end to",
-        "type": "godan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written"
-        ]
-      },
-      {
-        "kanji": "合掌",
-        "reading": "がっしょう",
-        "meaning": "prayer with palms together; requiescat",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "buddhist",
-          "written"
-        ]
-      },
-      {
-        "kanji": "溢れ出す",
-        "reading": "あふれだす",
-        "meaning": "to overflow; to pour out",
-        "type": "godan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song"
-        ]
-      },
-      {
-        "kanji": "鍛えた",
-        "reading": "きたえた",
-        "meaning": "trained; forged",
-        "type": "expression",
-        "lexicalClass": "set-phrase",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song"
-        ]
-      },
-      {
-        "kanji": "技",
-        "reading": "わざ",
-        "meaning": "skill; technique; move",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "martial_arts"
-        ]
-      },
-      {
-        "kanji": "ぶちかます",
-        "reading": "ぶちかます",
-        "meaning": "to smash into; to let loose",
-        "type": "godan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "rough",
-          "casual"
-        ]
-      },
-      {
-        "kanji": "己",
-        "reading": "おのれ",
-        "meaning": "oneself",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written"
-        ]
-      },
-      {
-        "kanji": "乗り越える",
-        "reading": "のりこえる",
-        "meaning": "to overcome; to get over",
-        "type": "ichidan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song"
-        ]
-      },
-      {
-        "kanji": "神宿る",
-        "reading": "かみやどる",
-        "meaning": "divinely inhabited; possessed by a god",
-        "type": "expression",
-        "lexicalClass": "set-phrase",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "poetic",
-          "written"
-        ]
-      },
-      {
-        "kanji": "拳",
-        "reading": "こぶし",
-        "meaning": "fist",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "martial_arts"
-        ]
-      },
-      {
-        "kanji": "掲げる",
-        "reading": "かかげる",
-        "meaning": "to raise; to hold up",
-        "type": "ichidan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written"
-        ]
-      },
-      {
-        "kanji": "突き進む",
-        "reading": "つきすすむ",
-        "meaning": "to push ahead; to charge forward",
-        "type": "godan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "heroic"
-        ]
-      },
-      {
-        "kanji": "敗北",
-        "reading": "はいぼく",
-        "meaning": "defeat; loss",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written"
-        ]
-      },
-      {
-        "kanji": "汚泥",
-        "reading": "おでい",
-        "meaning": "mud; mire",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written",
-          "poetic"
-        ]
-      },
-      {
-        "kanji": "汚泥をなめる",
-        "reading": "おでいをなめる",
-        "meaning": "to suffer bitter defeat; to be humbled in the dirt",
-        "type": "expression",
-        "lexicalClass": "set-phrase",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "idiomatic",
-          "written"
-        ]
-      },
-      {
-        "kanji": "諦めない",
-        "reading": "あきらめない",
-        "meaning": "not give up",
-        "type": "expression",
-        "lexicalClass": "set-phrase",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "spoken",
-          "heroic"
-        ]
-      },
-      {
-        "kanji": "未来",
-        "reading": "あす",
-        "meaning": "tomorrow; future",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "poetic",
-          "special_reading"
-        ]
-      },
-      {
-        "kanji": "描く",
-        "reading": "えがく",
-        "meaning": "to描く; to picture; to描く",
-        "type": "godan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song"
-        ]
-      },
-      {
-        "kanji": "目覚め行く",
-        "reading": "めざめゆく",
-        "meaning": "awakening; waking up and moving forward",
-        "type": "expression",
-        "lexicalClass": "set-phrase",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "poetic",
-          "written"
-        ]
-      },
-      {
-        "kanji": "舞い上がる",
-        "reading": "まいあがる",
-        "meaning": "to soar; to rise up",
-        "type": "godan-verb",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "poetic"
-        ]
-      },
-      {
-        "kanji": "孤独",
-        "reading": "こどく",
-        "meaning": "solitude; loneliness",
-        "type": "noun",
-        "lexicalClass": "regular",
-        "tags": [
-          "opm-song-the_hero",
-          "anime_song",
-          "written"
-        ]
-      }
-    ],
+    {
+      "kanji": "参上",
+      "reading": "さんじょう",
+      "meaning": "dramatic appearance; arrival",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic",
+        "written"
+      ]
+    },
+    {
+      "kanji": "必勝",
+      "reading": "ひっしょう",
+      "meaning": "certain victory",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic",
+        "written"
+      ]
+    },
+    {
+      "kanji": "至上最強",
+      "reading": "しじょうさいきょう",
+      "meaning": "supremely strongest; strongest ever",
+      "type": "expression",
+      "lexicalClass": "set-phrase",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic",
+        "emphatic"
+      ]
+    },
+    {
+      "kanji": "完了",
+      "reading": "かんりょう",
+      "meaning": "completion; complete",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
+    {
+      "kanji": "連戦連勝",
+      "reading": "れんせんれんしょう",
+      "meaning": "constant fighting and winning; unbroken winning streak",
+      "type": "expression",
+      "lexicalClass": "set-phrase",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic",
+        "written"
+      ]
+    },
+    {
+      "kanji": "圧勝",
+      "reading": "あっしょう",
+      "meaning": "overwhelming victory",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic",
+        "written"
+      ]
+    },
+    {
+      "kanji": "限界",
+      "reading": "げんかい",
+      "meaning": "limit; boundary",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "讃える",
+      "reading": "たたえる",
+      "meaning": "to praise; to acclaim",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
+    {
+      "kanji": "喝采",
+      "reading": "かっさい",
+      "meaning": "applause; cheers",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
+    {
+      "kanji": "人知れず",
+      "reading": "ひとしれず",
+      "meaning": "secretly; unnoticed",
+      "type": "adverb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
+    {
+      "kanji": "闘う",
+      "reading": "たたかう",
+      "meaning": "to fight; to battle",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic"
+      ]
+    },
+    {
+      "kanji": "押し寄せる",
+      "reading": "おしよせる",
+      "meaning": "to surge toward; to press in",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
+    {
+      "kanji": "背を向ける",
+      "reading": "せをむける",
+      "meaning": "to turn one's back on",
+      "type": "expression",
+      "lexicalClass": "set-phrase",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "揺るぎなき",
+      "reading": "ゆるぎなき",
+      "meaning": "unshakable; unwavering",
+      "type": "expression",
+      "lexicalClass": "set-phrase",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written",
+        "heroic"
+      ]
+    },
+    {
+      "kanji": "覚悟",
+      "reading": "かくご",
+      "meaning": "resolve; readiness",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic"
+      ]
+    },
+    {
+      "kanji": "繰り出す",
+      "reading": "くりだす",
+      "meaning": "to unleash; to send out",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "鉄拳",
+      "reading": "てっけん",
+      "meaning": "iron fist",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic"
+      ]
+    },
+    {
+      "kanji": "正々堂々",
+      "reading": "せいせいどうどう",
+      "meaning": "fair and square; openly and honorably",
+      "type": "adverb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic",
+        "written"
+      ]
+    },
+    {
+      "kanji": "執行",
+      "reading": "しっこう",
+      "meaning": "execution; carrying out",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
+    {
+      "kanji": "問答無用",
+      "reading": "もんどうむよう",
+      "meaning": "no argument; no questions asked",
+      "type": "expression",
+      "lexicalClass": "set-phrase",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "emphatic",
+        "written"
+      ]
+    },
+    {
+      "kanji": "断つ",
+      "reading": "たつ",
+      "meaning": "to cut off; to put an end to",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
+    {
+      "kanji": "合掌",
+      "reading": "がっしょう",
+      "meaning": "prayer with palms together; requiescat",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "buddhist",
+        "written"
+      ]
+    },
+    {
+      "kanji": "溢れ出す",
+      "reading": "あふれだす",
+      "meaning": "to overflow; to pour out",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "鍛えた",
+      "reading": "きたえた",
+      "meaning": "trained; forged",
+      "type": "expression",
+      "lexicalClass": "set-phrase",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "技",
+      "reading": "わざ",
+      "meaning": "skill; technique; move",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "martial_arts"
+      ]
+    },
+    {
+      "kanji": "ぶちかます",
+      "reading": "ぶちかます",
+      "meaning": "to smash into; to let loose",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "rough",
+        "casual"
+      ]
+    },
+    {
+      "kanji": "己",
+      "reading": "おのれ",
+      "meaning": "oneself",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
+    {
+      "kanji": "乗り越える",
+      "reading": "のりこえる",
+      "meaning": "to overcome; to get over",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "神宿る",
+      "reading": "かみやどる",
+      "meaning": "divinely inhabited; possessed by a god",
+      "type": "expression",
+      "lexicalClass": "set-phrase",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "poetic",
+        "written"
+      ]
+    },
+    {
+      "kanji": "拳",
+      "reading": "こぶし",
+      "meaning": "fist",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "martial_arts"
+      ]
+    },
+    {
+      "kanji": "掲げる",
+      "reading": "かかげる",
+      "meaning": "to raise; to hold up",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
+    {
+      "kanji": "突き進む",
+      "reading": "つきすすむ",
+      "meaning": "to push ahead; to charge forward",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic"
+      ]
+    },
+    {
+      "kanji": "敗北",
+      "reading": "はいぼく",
+      "meaning": "defeat; loss",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
+    {
+      "kanji": "汚泥",
+      "reading": "おでい",
+      "meaning": "mud; mire",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written",
+        "poetic"
+      ]
+    },
+    {
+      "kanji": "汚泥をなめる",
+      "reading": "おでいをなめる",
+      "meaning": "to suffer bitter defeat; to be humbled in the dirt",
+      "type": "expression",
+      "lexicalClass": "set-phrase",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "idiomatic",
+        "written"
+      ]
+    },
+    {
+      "kanji": "諦めない",
+      "reading": "あきらめない",
+      "meaning": "not give up",
+      "type": "expression",
+      "lexicalClass": "set-phrase",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "spoken",
+        "heroic"
+      ]
+    },
+    {
+      "kanji": "明日（あす）",
+      "reading": "あす",
+      "meaning": "tomorrow (poetic reading あす)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "poetic",
+        "special_reading"
+      ]
+    },
+    {
+      "kanji": "描く",
+      "reading": "えがく",
+      "meaning": "to draw; to depict; to picture",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "目覚め行く",
+      "reading": "めざめゆく",
+      "meaning": "awakening; waking up and moving forward",
+      "type": "expression",
+      "lexicalClass": "set-phrase",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "poetic",
+        "written"
+      ]
+    },
+    {
+      "kanji": "舞い上がる",
+      "reading": "まいあがる",
+      "meaning": "to soar; to rise up",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "poetic"
+      ]
+    },
+    {
+      "kanji": "孤独",
+      "reading": "こどく",
+      "meaning": "solitude; loneliness",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
     {
       "kanji": "昔",
       "reading": "むかし",

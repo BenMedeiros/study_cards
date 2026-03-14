@@ -136,7 +136,8 @@ function inspectCollection(collection, filePath) {
 function main() {
   const collectionFiles = findCollectionFiles(collectionsRoot);
   const parseErrors = [];
-  const reports = [];
+  const reports_clean = [];
+  const reports_review = [];
 
   let collectionsWithProblems = 0;
   let collectionsWithInvalidEntryKey = 0;
@@ -148,7 +149,6 @@ function main() {
   for (const filePath of collectionFiles) {
     try {
       const report = inspectCollection(readJson(filePath), filePath);
-      reports.push(report);
 
       const hasProblem =
         !report.hasValidEntryKeyMetadata ||
@@ -156,7 +156,13 @@ function main() {
         report.invalidEntryCount > 0 ||
         report.duplicateValueCount > 0;
 
-      if (hasProblem) collectionsWithProblems += 1;
+      if (hasProblem) {
+        reports_review.push(report);
+        collectionsWithProblems += 1;
+      } else {
+        reports_clean.push(report);
+      }
+
       if (!report.hasValidEntryKeyMetadata) collectionsWithInvalidEntryKey += 1;
       if (report.hasValidEntryKeyMetadata && !report.schemaHasEntryKey) {
         collectionsWithSchemaMismatch += 1;
@@ -184,7 +190,8 @@ function main() {
     totalDuplicateValues,
     totalDuplicateEntries,
     parseErrors,
-    reports
+    reports_clean,
+    reports_review
   };
 
   fs.writeFileSync(outputPath, JSON.stringify(output, null, 2) + '\n');
