@@ -1194,6 +1194,19 @@ input[type="number"].button::-webkit-inner-spin-button {
   overflow-y: auto;
 }
 
+/* Compact style for empty diff cards to reduce vertical space */
+.mc-card.mc-card-empty {
+  padding: 0.4rem 0.6rem;
+  max-height: 3.2rem;
+  overflow: visible;
+}
+.mc-card.mc-card-empty .hint {
+  display: none;
+}
+.mc-card.mc-card-empty .card-corner-caption {
+  font-size: 0.85rem;
+}
+
 #collections-card {
   max-height: 34rem;
 }
@@ -3536,7 +3549,8 @@ h2 {
 
 .table-settings-row-left .hint {
   font-size: 0.7rem;
-}.table-settings-name-row {
+}
+.table-settings-name-row {
   display: flex;
   align-items: center;
   gap: 0.28rem;

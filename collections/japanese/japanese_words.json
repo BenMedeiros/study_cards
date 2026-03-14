@@ -13,10 +13,22 @@
         "this_key": "kanji",
         "foreign_key": "chunks[].refs[]",
         "fields": [
-          { "key": "japanese", "label": "Japanese" },
-          { "key": "english", "label": "English" },
-          { "key": "notes", "label": "Notes" },
-          { "key": "chunks", "label": "Chunks" }
+          {
+            "key": "japanese",
+            "label": "Japanese"
+          },
+          {
+            "key": "english",
+            "label": "English"
+          },
+          {
+            "key": "notes",
+            "label": "Notes"
+          },
+          {
+            "key": "chunks",
+            "label": "Chunks"
+          }
         ]
       },
       {
@@ -25,12 +37,30 @@
         "this_key": "kanji",
         "foreign_key": "sentences[].chunks[].refs[]",
         "fields": [
-          { "key": "title", "label": "Title" },
-          { "key": "japanese", "label": "Japanese" },
-          { "key": "english", "label": "English" },
-          { "key": "notes", "label": "Notes" },
-          { "key": "sentences", "label": "Sentences" },
-          { "key": "chunks", "label": "Chunks" }
+          {
+            "key": "title",
+            "label": "Title"
+          },
+          {
+            "key": "japanese",
+            "label": "Japanese"
+          },
+          {
+            "key": "english",
+            "label": "English"
+          },
+          {
+            "key": "notes",
+            "label": "Notes"
+          },
+          {
+            "key": "sentences",
+            "label": "Sentences"
+          },
+          {
+            "key": "chunks",
+            "label": "Chunks"
+          }
         ]
       }
     ],
@@ -4284,7 +4314,6 @@
         "anime_ui"
       ]
     },
-    
     {
       "kanji": "秘密",
       "reading": "ひみつ",
@@ -4366,7 +4395,6 @@
         "anime_ui"
       ]
     },
-   
     {
       "kanji": "勇者",
       "reading": "ゆうしゃ",
@@ -10236,7 +10264,6 @@
         "pokemon-name-root"
       ]
     },
-   
     {
       "kanji": "光",
       "reading": "ひかり",
@@ -13761,6 +13788,979 @@
           "written"
         ]
       }
-    ]
+    ],
+    {
+      "kanji": "昔",
+      "reading": "むかし",
+      "meaning": "old times; long ago",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "なる",
+      "reading": "なる",
+      "meaning": "to become",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "狐の霊",
+      "reading": "きつねのれい",
+      "meaning": "fox spirit",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ある",
+      "reading": "ある",
+      "meaning": "to exist; there is",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "たくさん",
+      "reading": "たくさん",
+      "meaning": "a lot; many; much",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "びっくりする",
+      "reading": "びっくりする",
+      "meaning": "to be surprised",
+      "type": "irregular-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "よく",
+      "reading": "よく",
+      "meaning": "often; well",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "化ける",
+      "reading": "ばける",
+      "meaning": "to transform; to disguise oneself",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "気をつける",
+      "reading": "きをつける",
+      "meaning": "to be careful",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "近づく",
+      "reading": "ちかづく",
+      "meaning": "to approach; to get near",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "言われている",
+      "reading": "いわれている",
+      "meaning": "is said; is believed",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "少し",
+      "reading": "すこし",
+      "meaning": "a little; a bit",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "進む",
+      "reading": "すすむ",
+      "meaning": "to go forward; to advance",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "毎朝",
+      "reading": "まいあさ",
+      "meaning": "every morning",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "うち",
+      "reading": "うち",
+      "meaning": "home; our place",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "かける",
+      "reading": "かける",
+      "meaning": "to pour; to sprinkle; to hang",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "きれい",
+      "reading": "きれい",
+      "meaning": "pretty; beautiful; clean",
+      "type": "na-adjective",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "コップ",
+      "reading": "コップ",
+      "meaning": "cup; glass",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "こと",
+      "reading": "こと",
+      "meaning": "thing; matter",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "この",
+      "reading": "この",
+      "meaning": "this",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ころ",
+      "reading": "ころ",
+      "meaning": "around; about that time",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "こわがる",
+      "reading": "こわがる",
+      "meaning": "to be afraid of",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "じっと",
+      "reading": "じっと",
+      "meaning": "still; motionlessly; intently",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "じゃがいも",
+      "reading": "じゃがいも",
+      "meaning": "potato",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "しょげる",
+      "reading": "しょげる",
+      "meaning": "to feel down; to be dejected",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "すぐ",
+      "reading": "すぐ",
+      "meaning": "immediately; soon",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "そんな",
+      "reading": "そんな",
+      "meaning": "such; that kind of",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "とき",
+      "reading": "とき",
+      "meaning": "time; when",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ノート",
+      "reading": "ノート",
+      "meaning": "notebook",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "のど",
+      "reading": "のど",
+      "meaning": "throat",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "プール",
+      "reading": "プール",
+      "meaning": "pool",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "プレゼント",
+      "reading": "プレゼント",
+      "meaning": "present; gift",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ベランダ",
+      "reading": "ベランダ",
+      "meaning": "veranda; balcony",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ボート",
+      "reading": "ボート",
+      "meaning": "boat",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "マフラー",
+      "reading": "マフラー",
+      "meaning": "scarf",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "みんな",
+      "reading": "みんな",
+      "meaning": "everyone",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "もう",
+      "reading": "もう",
+      "meaning": "already; any more",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "やる気",
+      "reading": "やるき",
+      "meaning": "motivation; willingness",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ゆっくり",
+      "reading": "ゆっくり",
+      "meaning": "slowly; leisurely",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "りんご",
+      "reading": "りんご",
+      "meaning": "apple",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "仮面",
+      "reading": "かめん",
+      "meaning": "mask",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "家業",
+      "reading": "かぎょう",
+      "meaning": "family business",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "河",
+      "reading": "かわ",
+      "meaning": "river",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "花粉",
+      "reading": "かふん",
+      "meaning": "pollen",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "海外",
+      "reading": "かいがい",
+      "meaning": "overseas; abroad",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "機械",
+      "reading": "きかい",
+      "meaning": "machine",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "技術",
+      "reading": "ぎじゅつ",
+      "meaning": "technology; skill",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "胸",
+      "reading": "むね",
+      "meaning": "chest",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "穴",
+      "reading": "あな",
+      "meaning": "hole",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "結論",
+      "reading": "けつろん",
+      "meaning": "conclusion",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "健太",
+      "reading": "けんた",
+      "meaning": "Kenta",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "見かける",
+      "reading": "みかける",
+      "meaning": "to notice; to catch sight of",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "言う",
+      "reading": "いう",
+      "meaning": "to say",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "午後",
+      "reading": "ごご",
+      "meaning": "afternoon",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "後",
+      "reading": "あと",
+      "meaning": "after; behind",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "広告",
+      "reading": "こうこく",
+      "meaning": "advertisement",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "香り",
+      "reading": "かおり",
+      "meaning": "scent; fragrance",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "今でも",
+      "reading": "いまでも",
+      "meaning": "even now; still",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "困難",
+      "reading": "こんなん",
+      "meaning": "difficulty; hardship",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "佐藤",
+      "reading": "さとう",
+      "meaning": "Sato",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "作家",
+      "reading": "さっか",
+      "meaning": "writer; author",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "山口",
+      "reading": "やまぐち",
+      "meaning": "Yamaguchi",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "山田",
+      "reading": "やまだ",
+      "meaning": "Yamada",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "使う",
+      "reading": "つかう",
+      "meaning": "to use",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "刺される",
+      "reading": "さされる",
+      "meaning": "to be stung; to be stabbed",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "刺す",
+      "reading": "さす",
+      "meaning": "to sting; to stab",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "市役所",
+      "reading": "しやくしょ",
+      "meaning": "city hall",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "師",
+      "reading": "し",
+      "meaning": "master; teacher",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "糸",
+      "reading": "いと",
+      "meaning": "thread",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "紙",
+      "reading": "かみ",
+      "meaning": "paper",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "字",
+      "reading": "じ",
+      "meaning": "letter; character; handwriting",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "失敗",
+      "reading": "しっぱい",
+      "meaning": "failure; mistake",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "終わらせる",
+      "reading": "おわらせる",
+      "meaning": "to finish; to bring to an end",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "助け",
+      "reading": "たすけ",
+      "meaning": "help; assistance",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "上司",
+      "reading": "じょうし",
+      "meaning": "boss; supervisor",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "上野動物園",
+      "reading": "うえのどうぶつえん",
+      "meaning": "Ueno Zoo",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "食べやすい",
+      "reading": "たべやすい",
+      "meaning": "easy to eat",
+      "type": "i-adjective",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "食後",
+      "reading": "しょくご",
+      "meaning": "after a meal",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "神社",
+      "reading": "じんじゃ",
+      "meaning": "shrine",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "神輿",
+      "reading": "みこし",
+      "meaning": "portable shrine",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "進路",
+      "reading": "しんろ",
+      "meaning": "course; future path",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "人々",
+      "reading": "ひとびと",
+      "meaning": "people",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "人混み",
+      "reading": "ひとごみ",
+      "meaning": "crowd",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "人生",
+      "reading": "じんせい",
+      "meaning": "life",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "昔から",
+      "reading": "むかしから",
+      "meaning": "from long ago; since old times",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "洗う",
+      "reading": "あらう",
+      "meaning": "to wash",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "祖母",
+      "reading": "そぼ",
+      "meaning": "grandmother",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "巣",
+      "reading": "す",
+      "meaning": "nest",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "走る",
+      "reading": "はしる",
+      "meaning": "to run",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "大阪",
+      "reading": "おおさか",
+      "meaning": "Osaka",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "誰か",
+      "reading": "だれか",
+      "meaning": "someone",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "地元",
+      "reading": "じもと",
+      "meaning": "local area; hometown",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "中村",
+      "reading": "なかむら",
+      "meaning": "Nakamura",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "注意する",
+      "reading": "ちゅういする",
+      "meaning": "to be careful; to pay attention",
+      "type": "irregular-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "伝統",
+      "reading": "でんとう",
+      "meaning": "tradition",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "田村",
+      "reading": "たむら",
+      "meaning": "Tamura",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "田中",
+      "reading": "たなか",
+      "meaning": "Tanaka",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "頭",
+      "reading": "あたま",
+      "meaning": "head",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "童",
+      "reading": "わらべ",
+      "meaning": "child",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "日本",
+      "reading": "にほん",
+      "meaning": "Japan",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "日曜日",
+      "reading": "にちようび",
+      "meaning": "Sunday",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "入れる",
+      "reading": "いれる",
+      "meaning": "to put in; to add",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "農業",
+      "reading": "のうぎょう",
+      "meaning": "agriculture",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "売る",
+      "reading": "うる",
+      "meaning": "to sell",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "箱",
+      "reading": "はこ",
+      "meaning": "box",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "発言",
+      "reading": "はつげん",
+      "meaning": "remark; statement",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "表面",
+      "reading": "ひょうめん",
+      "meaning": "surface",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "布",
+      "reading": "ぬの",
+      "meaning": "cloth",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "福岡",
+      "reading": "ふくおか",
+      "meaning": "Fukuoka",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "物",
+      "reading": "もの",
+      "meaning": "thing",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "物語",
+      "reading": "ものがたり",
+      "meaning": "story",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "米袋",
+      "reading": "こめぶくろ",
+      "meaning": "rice sack",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "未来",
+      "reading": "みらい",
+      "meaning": "future",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "眠る",
+      "reading": "ねむる",
+      "meaning": "to sleep",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "友だち",
+      "reading": "ともだち",
+      "meaning": "friend",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "妖狐",
+      "reading": "ようこ",
+      "meaning": "fox spirit",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "離れる",
+      "reading": "はなれる",
+      "meaning": "to move away; to leave",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "鈴木",
+      "reading": "すずき",
+      "meaning": "Suzuki",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "連絡する",
+      "reading": "れんらくする",
+      "meaning": "to contact; to get in touch",
+      "type": "irregular-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "話題",
+      "reading": "わだい",
+      "meaning": "topic",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "くつ",
+      "reading": "くつ",
+      "meaning": "shoes",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "思う",
+      "reading": "おもう",
+      "meaning": "to think",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "乗る",
+      "reading": "のる",
+      "meaning": "to ride; to get on",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ぬぐ",
+      "reading": "ぬぐ",
+      "meaning": "to take off; to remove",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ひも",
+      "reading": "ひも",
+      "meaning": "string; cord; lace",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ほどける",
+      "reading": "ほどける",
+      "meaning": "to come undone; to get untied",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "下りる",
+      "reading": "おりる",
+      "meaning": "to go down; to descend",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "帰る",
+      "reading": "かえる",
+      "meaning": "to return; to go home",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "気づく",
+      "reading": "きづく",
+      "meaning": "to notice; to realize",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "気分",
+      "reading": "きぶん",
+      "meaning": "feeling; mood",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "見える",
+      "reading": "みえる",
+      "meaning": "to be visible; to be able to see",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "山本さん",
+      "reading": "やまもとさん",
+      "meaning": "Mr. Yamamoto",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "渋谷",
+      "reading": "しぶや",
+      "meaning": "Shibuya",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "席",
+      "reading": "せき",
+      "meaning": "seat",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "遅くなる",
+      "reading": "おそくなる",
+      "meaning": "to become late",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "転ぶ",
+      "reading": "ころぶ",
+      "meaning": "to fall down; to trip",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "来る",
+      "reading": "くる",
+      "meaning": "to come",
+      "type": "irregular-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "落ち着く",
+      "reading": "おちつく",
+      "meaning": "to calm down; to settle down",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "六時十五分",
+      "reading": "ろくじじゅうごふん",
+      "meaning": "6:15",
+      "type": "expression",
+      "lexicalClass": "regular"
+    }
   ]
 }

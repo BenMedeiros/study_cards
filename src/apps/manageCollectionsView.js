@@ -703,7 +703,8 @@ export function renderManageCollections({ store, onNavigate }) {
     renderHistory();
   }
 
-  // last parsed raw text (trimmed). Used to disable Parse when unchanged.  let lastParsedRaw = null;
+  // last parsed raw text (trimmed). Used to disable Parse when unchanged.
+  let lastParsedRaw = null;
 
   function updateActionButtons() {
     try {
@@ -873,6 +874,24 @@ export function renderManageCollections({ store, onNavigate }) {
       setCorner(editedCard, '');
       setCorner(newCard, '');
       setCorner(removedCard, '');
+      // mark persistent cards as empty so they collapse visually
+      try {
+        const pairs = [
+          { card: metadataCard, body: metadataBody },
+          { card: schemaCard, body: schemaBody },
+          { card: editedCard, body: editedBody },
+          { card: newCard, body: newBody },
+          { card: removedCard, body: removedBody },
+          { card: invalidCard, body: invalidBody },
+          { card: unchangedCard, body: unchangedBody },
+        ];
+        for (const p of pairs) {
+          try {
+            if (p.body && p.body.children && p.body.children.length) p.card.classList.remove('mc-card-empty');
+            else p.card.classList.add('mc-card-empty');
+          } catch (e) {}
+        }
+      } catch (e) {}
       return;
     }
 
@@ -1306,6 +1325,24 @@ export function renderManageCollections({ store, onNavigate }) {
       setCorner(removedCard, '');
       // leave removedBody empty; the static hint lives in the card header
     }
+    // toggle compact class for persistent diff cards based on whether they have content
+    try {
+      const pairs = [
+        { card: metadataCard, body: metadataBody },
+        { card: schemaCard, body: schemaBody },
+        { card: editedCard, body: editedBody },
+        { card: newCard, body: newBody },
+        { card: removedCard, body: removedBody },
+        { card: invalidCard, body: invalidBody },
+        { card: unchangedCard, body: unchangedBody },
+      ];
+      for (const p of pairs) {
+        try {
+          if (p.body && p.body.children && p.body.children.length) p.card.classList.remove('mc-card-empty');
+          else p.card.classList.add('mc-card-empty');
+        } catch (e) {}
+      }
+    } catch (e) {}
     // If schema changes exist, surface a warning so schema is reviewed first.
     try {
       const warn = Array.isArray(previewResult?.warnings) ? previewResult.warnings.slice() : [];

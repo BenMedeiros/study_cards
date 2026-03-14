@@ -49,7 +49,7 @@
     ],
     "schemaTypes": {
       "sentenceChunk": {
-        "description": "A learner reading unit inside a sentence. Every chunk must link to at least one non-particle reference (content word or grammar pattern). Do not include particles in refs.",
+        "description": "A learner reading unit inside a sentence. Every chunk must link to at least one non-particle content-word reference. Put grammar/pattern labels in focus, not refs. Do not include particles in refs.",
         "fields": [
           {
             "key": "ja",
@@ -81,7 +81,7 @@
             "jp_label": "参照語",
             "type": "array<string>",
             "required": true,
-            "description": "REQUIRED, NON-EMPTY. Must include at least one lookup key for a content word or grammar pattern used in this chunk. Do NOT include particles (は/が/を/に/で/と/へ/も/や/の/ね/よ/か etc.). Authoring rule: do not create particle-only chunks; attach particles to an adjacent chunk that contains a referencable item."
+            "description": "REQUIRED, NON-EMPTY. Must include at least one lookup key for a content word used in this chunk. Put grammar/pattern labels in focus instead of refs. Do NOT include particles (は/が/を/に/で/と/へ/も/や/の/ね/よ/か etc.). Authoring rule: do not create particle-only chunks; attach particles to an adjacent chunk that contains a referencable item."
           }
         ]
       }
@@ -756,9 +756,9 @@
           "refs": [
             "子ども",
             "川",
-            "近づく",
-            "ように"
-          ]
+            "近づく"
+          ],
+          "focus": "〜ないように"
         },
         {
           "ja": "河童の話をしました",
@@ -910,9 +910,9 @@
           "refs": [
             "狐の霊",
             "人",
-            "化ける",
-            "という"
-          ]
+            "化ける"
+          ],
+          "focus": "〜という"
         },
         {
           "ja": "伝説があります",
@@ -1284,8 +1284,7 @@
           "gloss": "as if swimming",
           "focus": "〜ように",
           "refs": [
-            "泳ぐ",
-            "ように"
+            "泳ぐ"
           ]
         },
         {
@@ -1375,8 +1374,7 @@
           "gloss": "should not rush",
           "focus": "〜べきだ",
           "refs": [
-            "急ぐ",
-            "べき"
+            "急ぐ"
           ]
         }
       ],
@@ -1453,8 +1451,7 @@
           "gloss": "to prevent",
           "focus": "〜ために",
           "refs": [
-            "防ぐ",
-            "ため"
+            "防ぐ"
           ]
         },
         {
@@ -2589,8 +2586,7 @@
           "refs": [
             "庭",
             "蜂",
-            "見る",
-            "ので"
+            "見る"
           ]
         },
         {
@@ -2621,8 +2617,7 @@
           "refs": [
             "夏",
             "蜂",
-            "多い",
-            "から"
+            "多い"
           ]
         },
         {
@@ -2672,8 +2667,7 @@
           "gloss": "are gathering",
           "focus": "〜ている",
           "refs": [
-            "集まる",
-            "ている"
+            "集まる"
           ]
         }
       ]
@@ -2696,8 +2690,7 @@
           "refs": [
             "蜜蜂",
             "花粉",
-            "運ぶ",
-            "ので"
+            "運ぶ"
           ]
         },
         {
@@ -2772,8 +2765,7 @@
           "refs": [
             "ヨーグルト",
             "蜂蜜",
-            "かける",
-            "と"
+            "かける"
           ]
         },
         {
@@ -2804,8 +2796,7 @@
           "refs": [
             "山",
             "雀蜂",
-            "見かける",
-            "たら"
+            "見かける"
           ]
         },
         {
@@ -2813,8 +2804,7 @@
           "gloss": "without running",
           "focus": "〜ずに",
           "refs": [
-            "走る",
-            "ずに"
+            "走る"
           ]
         },
         {
@@ -2844,8 +2834,7 @@
           "focus": "〜ので",
           "refs": [
             "雀蜂",
-            "危ない",
-            "ので"
+            "危ない"
           ]
         },
         {
@@ -2854,8 +2843,7 @@
           "focus": "〜たら",
           "refs": [
             "巣",
-            "見つける",
-            "たら"
+            "見つける"
           ]
         },
         {
@@ -2886,8 +2874,7 @@
           "refs": [
             "ベランダ",
             "蜂の巣",
-            "できる",
-            "ている"
+            "できる"
           ]
         },
         {
@@ -2918,9 +2905,7 @@
           "refs": [
             "蜂の巣",
             "近い",
-            "危ない",
-            "と",
-            "から"
+            "危ない"
           ]
         },
         {
@@ -2936,8 +2921,7 @@
           "focus": "〜ように言う",
           "refs": [
             "近づく",
-            "言う",
-            "ないように"
+            "言う"
           ]
         }
       ]
@@ -3172,8 +3156,7 @@
           "focus": "〜と",
           "refs": [
             "洗う",
-            "縮む",
-            "Vると"
+            "縮む"
           ]
         }
       ]
@@ -3330,9 +3313,9 @@
           "refs": [
             "彼",
             "質問",
-            "答える",
-            "ず"
-          ]
+            "答える"
+          ],
+          "focus": "〜ず"
         },
         {
           "ja": "口を噤んだ",
@@ -3639,9 +3622,9 @@
           "ja": "踏んでしまった",
           "gloss": "accidentally stepped on",
           "refs": [
-            "踏む",
-            "Vてしまう"
-          ]
+            "踏む"
+          ],
+          "focus": "〜てしまう"
         }
       ]
     },
@@ -3670,9 +3653,7 @@
           "focus": "〜ので",
           "refs": [
             "蜂",
-            "飛ぶ",
-            "ている",
-            "ので"
+            "飛ぶ"
           ]
         },
         {
@@ -3680,8 +3661,7 @@
           "gloss": "please be careful",
           "focus": "〜てください",
           "refs": [
-            "気をつける",
-            "ください"
+            "気をつける"
           ]
         }
       ]
@@ -3712,8 +3692,7 @@
           "refs": [
             "蜂",
             "刺す",
-            "刺される",
-            "たことがある"
+            "刺される"
           ]
         }
       ]
@@ -3751,11 +3730,11 @@
           "gloss": "sell (as a regular offering)",
           "focus": "〜ている",
           "refs": [
-            "売る",
-            "ている"
+            "売る"
           ]
         }
       ]
     }
   ]
 }
+
