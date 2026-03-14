@@ -2,7 +2,7 @@ import { createTable } from '../components/table.js';
 import { card, el } from '../components/ui.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
-import { formatDurationMs, formatIsoShort, formatRelativeFromIso } from '../utils/helpers.js';
+import { formatDurationMs, formatIsoShort, formatRelativeFromIso } from '../utils/browser/helpers.js';
 import studyManagerController from '../controllers/studyManagerController.js';
 import studyManagerViewController from '../controllers/studyManagerViewController.js';
 import {
@@ -12,7 +12,7 @@ import {
   applyTableActionSettings,
   buildTableColumnItems,
   attachCardTableSettingsButton,
-} from '../utils/tableSettings.js';
+} from '../utils/browser/tableSettings.js';
 
 const TABLE_ACTION_ITEMS = [
   { key: 'clear', label: 'Clear' },

@@ -1,4 +1,4 @@
-import { getGlobalSettingsManager } from '../managers/settingsManager.js';
+import { getGlobalSettingsManager } from '../../managers/settingsManager.js';
 
 // --- Table-query parsing utilities (moved from helpers.js so table search
 // logic is colocated) ----------------------------------------------------

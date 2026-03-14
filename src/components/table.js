@@ -1,9 +1,9 @@
 let _tableGlobalResizeHookInstalled = false;
 
-import { timed } from '../utils/timing.js';
+import { timed } from '../utils/browser/timing.js';
 import { openRightClickMenu, registerRightClickContext } from './rightClickMenu.js';
 import { createJsonViewer } from './jsonViewer.js';
-import { cleanSearchQuery, compileTableSearchQuery, matchesTableSearch, buildAddToSearchColumnAnalyses } from '../utils/tableSearch.js';
+import { cleanSearchQuery, compileTableSearchQuery, matchesTableSearch, buildAddToSearchColumnAnalyses } from '../utils/browser/tableSearch.js';
 
 // register the table context class so CSS and code searches can find it
 try { registerRightClickContext('table-context-menu'); } catch (e) {}

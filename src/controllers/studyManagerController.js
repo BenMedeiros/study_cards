@@ -1,4 +1,4 @@
-import { cleanSearchQuery, splitTopLevel } from '../utils/tableSearch.js';
+import { cleanSearchQuery, splitTopLevel } from '../utils/browser/tableSearch.js';
 
 const STUDY_STATES = ['null', 'focus', 'learned'];
 const MAX_RECENT_SESSIONS_PER_COLLECTION = 1000;

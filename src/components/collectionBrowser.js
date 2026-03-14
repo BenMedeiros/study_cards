@@ -5,7 +5,7 @@
  * because this needs hierarchical navigation (folders + up-dir).
  */
 
-import { basename, dirname, titleFromFilename } from '../utils/helpers.js';
+import { basename, dirname, titleFromFilename } from '../utils/browser/helpers.js';
 
 function isCollectionSetsFileKey(key) {
   return basename(key) === '_collectionSets.json';

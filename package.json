@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/rebuild_index.js && npx http-server -p 3000 -c-1",
-    "test": "echo \"No tests yet\"",
+    "dev": "npm run validate:common-utils && node scripts/rebuild_index.js && npx http-server -p 3000 -c-1",
     "build": "node scripts/rebuild_index.js",
-    "backup": "node scripts/backup_zips.js --clean --openDistFolder",
-    "applyUpdatedZips": "node scripts/apply_updated_zips.js"
+    
+    "validate:common-utils": "node scripts/build/enforce_commonjs.js",
+    "zip:backup": "node scripts/backup_zips.js --clean --openDistFolder",
+    "zip:applyUpdatedZips": "node scripts/apply_updated_zips.js"
   },
   "keywords": [],
   "author": "",

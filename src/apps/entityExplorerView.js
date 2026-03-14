@@ -1,5 +1,5 @@
 import { el } from '../components/ui.js';
-import * as idb from '../utils/idb.js';
+import * as idb from '../utils/browser/idb.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createTable } from '../components/table.js';
@@ -12,7 +12,7 @@ import {
   applyTableColumnStyles,
   applyTableActionSettings,
   buildTableColumnItems,
-} from '../utils/tableSettings.js';
+} from '../utils/browser/tableSettings.js';
 
 const TABLE_ACTION_ITEMS = [
   { key: 'clear', label: 'Clear' },

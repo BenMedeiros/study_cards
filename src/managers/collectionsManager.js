@@ -1,7 +1,7 @@
-import { basename, dirname, normalizeFolderPath, titleFromFilename } from '../utils/helpers.js';
-import { buildHashRoute, parseHashRoute } from '../utils/helpers.js';
-import { timed } from '../utils/timing.js';
-import { compileTableSearchQuery, matchesTableSearch, filterRecordsAndIndicesByTableSearch } from '../utils/tableSearch.js';
+import { basename, dirname, normalizeFolderPath, titleFromFilename } from '../utils/browser/helpers.js';
+import { buildHashRoute, parseHashRoute } from '../utils/browser/helpers.js';
+import { timed } from '../utils/browser/timing.js';
+import { compileTableSearchQuery, matchesTableSearch, filterRecordsAndIndicesByTableSearch } from '../utils/browser/tableSearch.js';
 import {
   collectionUsesJapaneseExpansion,
   getJapaneseExpansionControlConfig,

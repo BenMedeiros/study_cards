@@ -3,7 +3,7 @@ import { renderQaCards } from './apps/qaCardsView.js';
 import { renderCollectionsManager } from './apps/collectionsView.js';
 import { renderManageCollections } from './apps/manageCollectionsView.js';
 import { renderStudyManager } from './apps/studyManagerView.js';
-import { parseHashRoute } from './utils/helpers.js';
+import { parseHashRoute } from './utils/browser/helpers.js';
 import { renderData } from './apps/dataView.js';
 import { renderKanjiStudyCard } from './apps/kanjiStudyCardView.js';
 import { renderEntityExplorer } from './apps/entityExplorerView.js';
@@ -11,9 +11,9 @@ import { createCollectionBrowserDropdown } from './components/collectionBrowser.
 import { openRightClickMenu, registerRightClickContext } from './components/rightClickMenu.js';
 import { createShellTitleContextMenu } from './components/shellTitleContextMenu.js';
 import { createShellFooter } from './components/shellFooter.js';
-import { speak } from './utils/speech.js';
+import { speak } from './utils/browser/speech.js';
 import { createDropdown } from './components/dropdown.js';
-import { timed } from './utils/timing.js';
+import { timed } from './utils/browser/timing.js';
 import collectionSettingsController from './controllers/collectionSettingsController.js';
 import studyManagerController from './controllers/studyManagerController.js';
 

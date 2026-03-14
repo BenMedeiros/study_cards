@@ -1,4 +1,4 @@
-import { parseHashRoute } from './utils/helpers.js';
+import { parseHashRoute } from './utils/browser/helpers.js';
 
 const listeners = new Set();
 

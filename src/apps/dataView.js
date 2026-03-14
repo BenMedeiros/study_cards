@@ -9,8 +9,8 @@ import { createDropdown } from '../components/dropdown.js';
 import { confirmDialog } from '../components/dialogs/confirmDialog.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import dataViewController from '../controllers/dataViewController.js';
-import { parseHashRoute, buildHashRoute } from '../utils/helpers.js';
-import { buildTableColumnItems } from '../utils/tableSettings.js';
+import { parseHashRoute, buildHashRoute } from '../utils/browser/helpers.js';
+import { buildTableColumnItems } from '../utils/browser/tableSettings.js';
 
 export function renderData({ store }) {
   const root = document.createElement('div');

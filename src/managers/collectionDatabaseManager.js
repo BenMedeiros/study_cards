@@ -1,9 +1,9 @@
-import { idbGet, idbPut, idbGetAll, idbGetAllByIndex } from '../utils/idb.js';
-import { timed } from '../utils/timing.js';
-import { normalizeFolderPath } from '../utils/helpers.js';
+import { idbGet, idbPut, idbGetAll, idbGetAllByIndex } from '../utils/browser/idb.js';
+import { timed } from '../utils/browser/timing.js';
+import { normalizeFolderPath } from '../utils/browser/helpers.js';
 import { getGlobalSettingsManager } from './settingsManager.js';
-import { computePatchFromInput, applyPatchToCollection } from '../utils/collectionDiff.js';
-import { validateCollection } from '../utils/validation.js';
+import { computePatchFromInput, applyPatchToCollection } from '../utils/common/collectionDiff.js';
+import { validateCollection } from '../utils/common/validation.js';
 
 function normalizeIndexRelativePath(p) {
   let s = String(p || '').trim();

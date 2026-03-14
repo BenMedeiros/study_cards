@@ -1,5 +1,5 @@
-import { nowMs } from '../utils/helpers.js';
-import { speak, getLanguageCode } from '../utils/speech.js';
+import { nowMs } from '../utils/browser/helpers.js';
+import { speak, getLanguageCode } from '../utils/browser/speech.js';
 
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { createViewFooterControls } from '../components/viewFooterControls.js';

@@ -1,5 +1,5 @@
 import { card, el } from '../components/ui.js';
-import { formatDurationMs, formatIsoShort, formatRelativeFromIso } from '../utils/helpers.js';
+import { formatDurationMs, formatIsoShort, formatRelativeFromIso } from '../utils/browser/helpers.js';
 import collectionSettingsController from '../controllers/collectionSettingsController.js';
 
 const APP_META = {

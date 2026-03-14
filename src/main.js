@@ -1,8 +1,8 @@
 import { createAppShell } from './shell.js';
 import { installHashRouter, navigateTo } from './router.js';
 import { createStore } from './store.js';
-import { setVoiceSettingsGetter } from './utils/speech.js';
-import { isTimingEnabled, setTimingEnabled, timed } from './utils/timing.js';
+import { setVoiceSettingsGetter } from './utils/browser/speech.js';
+import { isTimingEnabled, setTimingEnabled, timed } from './utils/browser/timing.js';
 
 const root = document.getElementById('app');
 if (!root) throw new Error('Missing #app');

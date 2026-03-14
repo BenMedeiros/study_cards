@@ -1,5 +1,5 @@
 import controllerFactory from './controller.js';
-import { normalizeTableSettings, createDefaultTableSettings, cloneTableSettings } from '../utils/tableSettings.js';
+import { normalizeTableSettings, createDefaultTableSettings, cloneTableSettings } from '../utils/browser/tableSettings.js';
 
 const VIEW = 'entityExplorerView';
 const DEFAULT_ACTION_ORDER = ['clear', 'copyJson', 'copyFullJson'];

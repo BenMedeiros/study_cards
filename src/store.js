@@ -1,4 +1,4 @@
-import { createEmitter } from './utils/emitter.js';
+import { createEmitter } from './utils/browser/emitter.js';
 import { createPersistenceManager } from './managers/persistenceManager.js';
 import { createUIStateManager } from './managers/uiStateManager.js';
 import { createStudyProgressManager } from './managers/studyProgressManager.js';

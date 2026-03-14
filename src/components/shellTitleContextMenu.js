@@ -1,6 +1,6 @@
 import { openRightClickMenu, registerRightClickContext } from './rightClickMenu.js';
-import { isTimingEnabled, setTimingEnabled } from '../utils/timing.js';
-import * as idb from '../utils/idb.js';
+import { isTimingEnabled, setTimingEnabled } from '../utils/browser/timing.js';
+import * as idb from '../utils/browser/idb.js';
 
 export function createShellTitleContextMenu({
   store = null,

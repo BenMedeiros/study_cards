@@ -2,7 +2,7 @@ import { createTable } from '../components/table.js';
 import { card, el } from '../components/ui.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createJsonViewer } from '../components/jsonViewer.js';
-import { validateSchemaArray, validateEntriesAgainstSchema } from '../utils/validation.js';
+import { validateSchemaArray, validateEntriesAgainstSchema } from '../utils/common/validation.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import manageCollectionsViewController from '../controllers/manageCollectionsViewController.js';
 import {
@@ -12,7 +12,7 @@ import {
   applyTableActionSettings,
   buildTableColumnItems,
   attachCardTableSettingsButton,
-} from '../utils/tableSettings.js';
+} from '../utils/browser/tableSettings.js';
 
 const TABLE_ACTION_ITEMS = [
   { key: 'clear', label: 'Clear' },

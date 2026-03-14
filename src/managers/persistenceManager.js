@@ -1,4 +1,4 @@
-import * as idb from '../utils/idb.js';
+import * as idb from '../utils/browser/idb.js';
 
 // Namespaced localStorage key for shell UI state
 const SHELL_LS_KEY = 'study_cards:v1';
