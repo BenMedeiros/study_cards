@@ -2,7 +2,7 @@ import { createTable } from '../components/table.js';
 import { card, el } from '../components/ui.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createJsonViewer } from '../components/jsonViewer.js';
-import { validateSchemaArray, validateEntriesAgainstSchema } from '../utils/common/validation.js';
+import { validateEntriesAgainstSchema } from '../utils/common/validation.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import manageCollectionsViewController from '../controllers/manageCollectionsViewController.js';
 import {
@@ -558,7 +558,7 @@ export function renderManageCollections({ store, onNavigate }) {
 
   const importArea = document.createElement('textarea');
   importArea.className = 'mc-import';
-  importArea.placeholder = 'Paste JSON here (full collection, entries array, metadata object, or schema array)…';
+  importArea.placeholder = 'Paste entry JSON here (entries array, entries object, or entry patch payload)…';
   importArea.spellcheck = false;
   importArea.title = 'Paste JSON or drag and drop a file here';
 
@@ -572,13 +572,6 @@ export function renderManageCollections({ store, onNavigate }) {
   parseBtn.type = 'button';
   parseBtn.className = 'btn';
   parseBtn.textContent = 'Parse & Diff';
-
-  
-
-  const importHelpBtn = document.createElement('button');
-  importHelpBtn.type = 'button';
-  importHelpBtn.className = 'btn';
-  importHelpBtn.textContent = 'Import Help';
 
   const clearBtn = document.createElement('button');
   clearBtn.type = 'button';
@@ -601,7 +594,7 @@ export function renderManageCollections({ store, onNavigate }) {
   const actionsRow = document.createElement('div');
   actionsRow.className = 'mc-actions-row';
   // place the label input inline with the action buttons so they read as a group
-  actionsRow.append(parseBtn, importHelpBtn, clearBtn, labelInput, saveDiffBtn, saveSnapshotBtn);
+  actionsRow.append(parseBtn, clearBtn, labelInput, saveDiffBtn, saveSnapshotBtn);
 
   const statusEl = document.createElement('div');
   statusEl.className = 'mc-status';
@@ -617,16 +610,6 @@ export function renderManageCollections({ store, onNavigate }) {
   historyMount.className = 'mc-history';
 
   // --- persistent diff cards (always present, initially empty) ---
-  
-
-  const metadataBody = el('div', { id: 'mc-diff-metadata-body', className: 'mc-diff-list' });
-  const metadataHint = el('p', { className: 'hint', text: 'Metadata changes affect collection-level properties like name and description.' });
-  const metadataCard = card({ id: 'mc-diff-metadata', title: 'Metadata', cornerCaption: '', className: 'mc-card', children: [metadataHint, metadataBody] });
-
-  const schemaBody = el('div', { id: 'mc-diff-schema-body', className: 'mc-diff-list' });
-  const schemaHint = el('p', { className: 'hint', text: 'Schema changes modify field definitions used for entry validation and UI.' });
-  const schemaCard = card({ id: 'mc-diff-schema', title: 'Schema', cornerCaption: '', className: 'mc-card', children: [schemaHint, schemaBody] });
-
   const editedBody = el('div', { id: 'mc-diff-edited-body', className: 'mc-diff-list' });
   const editedHint = el('p', { className: 'hint', text: 'Entries listed here will be updated with the shown changes.' });
   const editedCard = card({ id: 'mc-diff-edited', title: 'Edited Entries', cornerCaption: '', className: 'mc-card', children: [editedHint, editedBody] });
@@ -654,10 +637,7 @@ export function renderManageCollections({ store, onNavigate }) {
   left.append(historyMount);
 
   right.append(
-  card({ title: 'Import', className: 'mc-card', children: [el('p', { className: 'hint', text: 'Paste JSON here (full collection, entries array, metadata object, or schema array).' }), importArea, actionsRow, statusEl, warningsEl] }),
-    
-    metadataCard,
-    schemaCard,
+  card({ title: 'Import', className: 'mc-card', children: [el('p', { className: 'hint', text: 'Paste entry JSON only. Metadata and schema are managed in code and ignored here.' }), importArea, actionsRow, statusEl, warningsEl] }),
     unchangedCard,
     editedCard,
     newCard,
@@ -851,16 +831,11 @@ export function renderManageCollections({ store, onNavigate }) {
 
   function renderDiffPanels() {
     // clear persistent bodies
-    
-    metadataBody.innerHTML = '';
-    schemaBody.innerHTML = '';
     editedBody.innerHTML = '';
     newBody.innerHTML = '';
     removedBody.innerHTML = '';
     unchangedBody.innerHTML = '';
     invalidBody.innerHTML = '';
-    unchangedBody.innerHTML = '';
-    unchangedBody.innerHTML = '';
 
     // helper to set corner caption for a card
     function setCorner(cardEl, text) {
@@ -869,16 +844,14 @@ export function renderManageCollections({ store, onNavigate }) {
 
     if (!previewResult) {
       // no preview: clear corner captions and leave card bodies to their static hints
-      setCorner(metadataCard, '');
-      setCorner(schemaCard, '');
       setCorner(editedCard, '');
       setCorner(newCard, '');
       setCorner(removedCard, '');
+      setCorner(invalidCard, '');
+      setCorner(unchangedCard, '');
       // mark persistent cards as empty so they collapse visually
       try {
         const pairs = [
-          { card: metadataCard, body: metadataBody },
-          { card: schemaCard, body: schemaBody },
           { card: editedCard, body: editedBody },
           { card: newCard, body: newBody },
           { card: removedCard, body: removedBody },
@@ -896,7 +869,6 @@ export function renderManageCollections({ store, onNavigate }) {
     }
 
     const { patch, diffs, merged } = previewResult;
-    const summary = `metadata: ${diffs?.metadataChanges ?? 0} • schema: ${diffs?.schemaChanges ?? 0} • new: ${diffs?.newEntries ?? 0} • edited: ${diffs?.editedEntries ?? 0} • removed: ${diffs?.entriesRemove ?? 0}`;
     
 
     // ---- base + merged helpers ----
@@ -919,97 +891,6 @@ export function renderManageCollections({ store, onNavigate }) {
         if (k && !mergedMap.has(k)) mergedMap.set(k, e);
       }
     }
-
-    // ---- Metadata diff ----
-    const metaSet = patch?.metadata?.set && typeof patch.metadata.set === 'object' ? patch.metadata.set : {};
-    const metaUnset = Array.isArray(patch?.metadata?.unset) ? patch.metadata.unset : [];
-    const metaChanges = [];
-    const baseMeta = (currentCollection?.metadata && typeof currentCollection.metadata === 'object') ? currentCollection.metadata : {};
-    for (const [k, v] of Object.entries(metaSet)) {
-      metaChanges.push({ op: 'set', key: k, before: baseMeta?.[k], after: v });
-    }
-    for (const k of metaUnset) {
-      metaChanges.push({ op: 'unset', key: String(k), before: baseMeta?.[k], after: undefined });
-    }
-    if (metaChanges.length) {
-      setCorner(metadataCard, `${metaChanges.length} change(s)`);
-      const list = el('div', { className: 'mc-diff-list' });
-      for (const c of metaChanges.sort((a, b) => String(a.key).localeCompare(String(b.key)))) {
-        const body = el('div', {
-          className: 'mc-diff-body',
-          children: [
-            el('div', { className: 'mc-diff-cols', children: [
-              el('div', { className: 'mc-diff-col', children: [el('div', { className: 'mc-diff-col-title', text: 'Before' }), preJson(c.before, '10rem')] }),
-              el('div', { className: 'mc-diff-col', children: [el('div', { className: 'mc-diff-col-title', text: c.op === 'unset' ? 'After (removed)' : 'After' }), preJson(c.after, '10rem')] }),
-            ]})
-          ]
-        });
-        list.append(makeDetailsItem({ summaryLeft: c.key, summaryRight: c.op, children: [body] }));
-      }
-      metadataBody.append(list);
-    } else {
-      setCorner(metadataCard, '');
-      // leave metadataBody empty; the static hint lives in the card header
-    }
-
-    // ---- Schema diff ----
-    const baseSchema = Array.isArray(currentCollection?.metadata?.schema)
-      ? currentCollection.metadata.schema
-      : (Array.isArray(currentCollection?.schema) ? currentCollection.schema : []);
-    const mergedSchema = Array.isArray(merged?.metadata?.schema)
-      ? merged.metadata.schema
-      : (Array.isArray(merged?.schema) ? merged.schema : []);
-
-    const baseSchemaMap = new Map();
-    for (const f of (Array.isArray(baseSchema) ? baseSchema : [])) {
-      const k = f && typeof f === 'object' && typeof f.key === 'string' ? f.key.trim() : '';
-      if (k && !baseSchemaMap.has(k)) baseSchemaMap.set(k, f);
-    }
-    const mergedSchemaMap = new Map();
-    for (const f of (Array.isArray(mergedSchema) ? mergedSchema : [])) {
-      const k = f && typeof f === 'object' && typeof f.key === 'string' ? f.key.trim() : '';
-      if (k && !mergedSchemaMap.has(k)) mergedSchemaMap.set(k, f);
-    }
-
-    const schemaAdded = [];
-    const schemaChanged = [];
-    const schemaRemoved = [];
-    for (const [k, nf] of mergedSchemaMap.entries()) {
-      if (!baseSchemaMap.has(k)) schemaAdded.push({ key: k, after: nf });
-      else {
-        const bf = baseSchemaMap.get(k);
-        if (!jsonEqual(bf, nf)) schemaChanged.push({ key: k, before: bf, after: nf });
-      }
-    }
-    for (const [k, bf] of baseSchemaMap.entries()) {
-      if (!mergedSchemaMap.has(k)) schemaRemoved.push({ key: k, before: bf });
-    }
-    if (schemaAdded.length || schemaChanged.length || schemaRemoved.length) {
-      setCorner(schemaCard, `+${schemaAdded.length} • ~${schemaChanged.length} • -${schemaRemoved.length}`);
-      const list = el('div', { className: 'mc-diff-list' });
-      const all = [
-        ...schemaAdded.map(x => ({ op: 'add', ...x })),
-        ...schemaChanged.map(x => ({ op: 'change', ...x })),
-        ...schemaRemoved.map(x => ({ op: 'remove', ...x })),
-      ].sort((a, b) => String(a.key).localeCompare(String(b.key)));
-      for (const c of all) {
-        const body = el('div', {
-          className: 'mc-diff-body',
-          children: [
-            el('div', { className: 'mc-diff-cols', children: [
-              el('div', { className: 'mc-diff-col', children: [el('div', { className: 'mc-diff-col-title', text: 'Before' }), preJson(c.before, '10rem')] }),
-              el('div', { className: 'mc-diff-col', children: [el('div', { className: 'mc-diff-col-title', text: c.op === 'remove' ? 'After (removed)' : 'After' }), preJson(c.after, '10rem')] }),
-            ]})
-          ]
-        });
-        list.append(makeDetailsItem({ summaryLeft: c.key, summaryRight: c.op, children: [body] }));
-      }
-      schemaBody.append(list);
-    } else {
-      setCorner(schemaCard, '');
-      // leave schemaBody empty; the static hint lives in the card header
-    }
-
     // ---- Entries: edited vs new vs unchanged ----
     // Prepare entry validation maps (by id and by index) so we can surface per-entry schema errors
     const entryValidation = previewResult?._entryValidation || { entryErrors: [], entryWarnings: [], warnings: [] };
@@ -1328,8 +1209,6 @@ export function renderManageCollections({ store, onNavigate }) {
     // toggle compact class for persistent diff cards based on whether they have content
     try {
       const pairs = [
-        { card: metadataCard, body: metadataBody },
-        { card: schemaCard, body: schemaBody },
         { card: editedCard, body: editedBody },
         { card: newCard, body: newBody },
         { card: removedCard, body: removedBody },
@@ -1343,24 +1222,16 @@ export function renderManageCollections({ store, onNavigate }) {
         } catch (e) {}
       }
     } catch (e) {}
-    // If schema changes exist, surface a warning so schema is reviewed first.
     try {
-      const warn = Array.isArray(previewResult?.warnings) ? previewResult.warnings.slice() : [];
-      if (schemaAdded.length || schemaChanged.length || schemaRemoved.length) {
-        if ((upsert && upsert.length)) warn.unshift('Schema changes detected — review schema before entries.');
-        else warn.unshift('Schema changes detected.');
-      }
-      setWarnings(warn);
+      setWarnings(Array.isArray(previewResult?.warnings) ? previewResult.warnings.slice() : []);
     } catch (e) {}
 
     // Enable/disable Save Diff depending on whether there are meaningful changes
     try {
-      const md = Number(diffs?.metadataChanges || 0);
-      const sd = Number(diffs?.schemaChanges || 0);
       const ne = Number(diffs?.newEntries || 0);
       const ed = Number(diffs?.editedEntries || 0);
       const rm = Number(diffs?.entriesRemove || 0);
-      const meaningful = (md + sd + ne + ed + rm) > 0;
+      const meaningful = (ne + ed + rm) > 0;
       const hasInvalid = (invalidItems && invalidItems.length) ? true : false;
       saveDiffBtn.disabled = !meaningful || hasInvalid || !previewResult?.patch;
       // visually indicate error state by toggling a scoped class
@@ -1411,7 +1282,7 @@ export function renderManageCollections({ store, onNavigate }) {
         } catch (e) { pSummary = '' }
       } else {
         pSummary = (patch && typeof patch === 'object')
-          ? `${(patch.metadata?.unset?.length || 0) + Object.keys(patch.metadata?.set || {}).length}m / ${(patch.schema?.removeKeys?.length || 0) + (patch.schema?.upsert?.length || 0)}s / ${(patch.entries?.upsert?.length || 0)}u / ${(patch.entries?.removeKeys?.length || 0)}r`
+          ? `${(patch.entries?.upsert?.length || 0)}u / ${(patch.entries?.removeKeys?.length || 0)}r`
           : '';
       }
       const arr = [active, kind, created, shortId(r.id, 12), label, parent, pSummary];
@@ -1621,15 +1492,6 @@ export function renderManageCollections({ store, onNavigate }) {
   // copy full JSON control removed
   // copyMeta/copySchema/copyTemplate controls removed from header.
 
-  importHelpBtn.addEventListener('click', async () => {
-    try {
-      const mod = await import('../components/dialogs/manageCollectionsImportHelpDialog.js');
-      if (mod && typeof mod.showManageCollectionsImportHelpDialog === 'function') await mod.showManageCollectionsImportHelpDialog();
-    } catch (e) {
-      setStatus(`Failed to open help: ${e?.message || e}`);
-    }
-  });
-
   clearBtn.addEventListener('click', () => {
     importArea.value = '';
     labelInput.value = '';
@@ -1638,8 +1500,6 @@ export function renderManageCollections({ store, onNavigate }) {
     saveSnapshotBtn.disabled = true;
     saveSnapshotBtn.style.display = 'none';
     // clear diff card bodies
-    metadataBody.innerHTML = '';
-    schemaBody.innerHTML = '';
     editedBody.innerHTML = '';
     newBody.innerHTML = '';
     removedBody.innerHTML = '';
@@ -1661,12 +1521,9 @@ export function renderManageCollections({ store, onNavigate }) {
     saveSnapshotBtn.style.display = 'none';
     // hold per-entry validation results here so we can attach to previewResult
     let entryValidation = null;
-    let patchSchemaDetected = false;
+    let patchPayloadDetected = false;
     let patchTargetCollectionKey = '';
-    // clear diff card bodies
-    metadataBody.innerHTML = '';
-    schemaBody.innerHTML = '';
-    editedBody.innerHTML = '';
+    // clear diff card bodies    editedBody.innerHTML = '';
     newBody.innerHTML = '';
     removedBody.innerHTML = '';
 
@@ -1682,10 +1539,10 @@ export function renderManageCollections({ store, onNavigate }) {
         return;
       }
 
-      // Accept copied "Copy Patch" payloads by unwrapping to entries.upsert only.
+      // Accept copied patch payloads by unwrapping to entries only.
       // Supported shapes:
       // - full revision wrapper: { id, kind, parentId, label, patch: { ... } }
-      // - raw patch object: { targetArrayKey, entryKeyField, metadata, schema, entries }
+      // - raw patch object: { targetArrayKey, entryKeyField, entries }
       try {
         const root = (parsed && typeof parsed === 'object') ? parsed : null;
         const candidate = (root && root.patch && typeof root.patch === 'object') ? root.patch : root;
@@ -1703,7 +1560,7 @@ export function renderManageCollections({ store, onNavigate }) {
           candidate?.collectionKey || candidate?.targetCollectionKey || candidate?.collection || candidate?.path
         );
 
-        const looksLikePatchSchema = !!(
+        const looksLikePatchPayload = !!(
           candidate &&
           typeof candidate === 'object' &&
           candidate.entries &&
@@ -1715,17 +1572,15 @@ export function renderManageCollections({ store, onNavigate }) {
           ) &&
           (
             typeof candidate.targetArrayKey === 'string' ||
-            typeof candidate.entryKeyField === 'string' ||
-            'metadata' in candidate ||
-            'schema' in candidate
+            typeof candidate.entryKeyField === 'string'
           )
         );
 
-        if (looksLikePatchSchema) {
+        if (looksLikePatchPayload) {
           patchTargetCollectionKey = detectedTarget;
           const activeCollectionKey = normalizeCollectionRef(collectionKey);
           if (patchTargetCollectionKey && activeCollectionKey && patchTargetCollectionKey !== activeCollectionKey) {
-            setStatus(`Patch schema detected. Target collection mismatch: ${patchTargetCollectionKey} (patch) vs ${activeCollectionKey} (active).`);
+            setStatus(`Patch payload target mismatch: ${patchTargetCollectionKey} (patch) vs ${activeCollectionKey} (active).`);
             return;
           }
           const arrayKey = (typeof candidate.targetArrayKey === 'string' && candidate.targetArrayKey.trim())
@@ -1733,7 +1588,7 @@ export function renderManageCollections({ store, onNavigate }) {
             : (detectArrayKey(currentCollection || {}) || 'entries');
           const upsert = Array.isArray(candidate?.entries?.upsert) ? candidate.entries.upsert : [];
           parsed = { [arrayKey]: upsert };
-          patchSchemaDetected = true;
+          patchPayloadDetected = true;
         }
       } catch (e) {}
 
@@ -1772,25 +1627,21 @@ export function renderManageCollections({ store, onNavigate }) {
     }
 
     try {
-      // Normalize input to be explicit about schema vs entries.
+      // Normalize input to entries only.
       // Rules:
-      // - Schema update is only allowed if the input is { schema: [...] } or { metadata: { schema: [...] } }
       // - A bare array is interpreted as an entries array.
-      // - A single object without schema/metadata is interpreted as a single entry (wrapped in entries array).
+      // - A single object without an entry-array key is interpreted as a single entry (wrapped in entries array).
       // - Keys accepted as entry arrays/objects: entries, entry, sentences, paragraphs, items, cards
       let inputForPreview = parsed;
       try {
         const isArr = Array.isArray(parsed);
         const isObj = parsed && typeof parsed === 'object' && !isArr;
-        const hasTopSchema = isObj && Array.isArray(parsed.schema);
-        const hasMetaSchema = isObj && parsed.metadata && Array.isArray(parsed.metadata.schema);
         const entryKeys = ['entries', 'entry', 'sentences', 'paragraphs', 'items', 'cards'];
         const hasEntryKey = isObj && entryKeys.some(k => k in parsed);
+        const hasTopLevelMetadata = isObj && Object.prototype.hasOwnProperty.call(parsed, 'metadata');
+        const hasTopLevelSchema = isObj && Object.prototype.hasOwnProperty.call(parsed, 'schema');
 
-        if (hasTopSchema || hasMetaSchema) {
-          // explicit schema update — pass through as-is
-          inputForPreview = parsed;
-        } else if (isArr) {
+        if (isArr) {
           // bare array -> treat as entries
           const arrayKey = detectArrayKey(currentCollection || {}) || 'entries';
           inputForPreview = { [arrayKey]: parsed };
@@ -1798,6 +1649,8 @@ export function renderManageCollections({ store, onNavigate }) {
           if (hasEntryKey) {
             // ensure entry key values are arrays (wrap single-object into array)
             const copy = { ...parsed };
+            delete copy.metadata;
+            delete copy.schema;
             for (const k of entryKeys) {
               if (k in copy) {
                 if (Array.isArray(copy[k])) {
@@ -1810,6 +1663,10 @@ export function renderManageCollections({ store, onNavigate }) {
             }
             inputForPreview = copy;
           } else {
+            if (hasTopLevelMetadata || hasTopLevelSchema) {
+              setStatus('Import only supports entries now. Metadata and schema changes must be made in the codebase.');
+              return;
+            }
             // simple object -> treat as single entry
             const arrayKey = detectArrayKey(currentCollection || {}) || 'entries';
             inputForPreview = { [arrayKey]: [parsed] };
@@ -1818,34 +1675,14 @@ export function renderManageCollections({ store, onNavigate }) {
       } catch (e) {
         inputForPreview = parsed;
       }
-
-      // If the input contains a schema update, validate it before previewing.
-      try {
-        const schemaArr = Array.isArray(inputForPreview?.schema)
-          ? inputForPreview.schema
-          : (Array.isArray(inputForPreview?.metadata?.schema) ? inputForPreview.metadata.schema : null);
-        if (schemaArr) {
-          const sv = validateSchemaArray(schemaArr);
-          if (Array.isArray(sv.errors) && sv.errors.length) {
-            setStatus(`Schema error: ${sv.errors[0]}`);
-            if (sv.warnings && sv.warnings.length) setWarnings(sv.warnings);
-            return;
-          }
-          if (Array.isArray(sv.warnings) && sv.warnings.length) setWarnings(sv.warnings);
-        }
-      } catch (e) {}
-
-      // Validate entries against the effective schema (input schema if present, otherwise base schema)
+      // Validate entries against the current collection schema.
       try {
         const ik = detectArrayKey(inputForPreview || {}) || 'entries';
         const inputEntries = Array.isArray(inputForPreview?.[ik]) ? inputForPreview[ik] : (Array.isArray(inputForPreview) ? inputForPreview : []);
-        const inputSchemaArr = Array.isArray(inputForPreview?.schema)
-          ? inputForPreview.schema
-          : (Array.isArray(inputForPreview?.metadata?.schema) ? inputForPreview.metadata.schema : null);
         const baseSchemaArr = Array.isArray(currentCollection?.metadata?.schema)
           ? currentCollection.metadata.schema
           : (Array.isArray(currentCollection?.schema) ? currentCollection.schema : null);
-        const schemaToUse = inputSchemaArr || baseSchemaArr || null;
+        const schemaToUse = baseSchemaArr || null;
         if (schemaToUse && inputEntries && inputEntries.length) {
           // validate entries but don't abort — surface per-entry errors in the Invalid card
           try {
@@ -1891,9 +1728,9 @@ export function renderManageCollections({ store, onNavigate }) {
       renderDiffPanels();
       currentJsonMode = 'preview';
       renderJson('preview');
-      if (patchSchemaDetected) setStatus('Patch schema detected. Diff computed. Review changes, then save.');
+      if (patchPayloadDetected) setStatus('Patch payload detected. Entry diff computed. Review changes, then save.');
       else setStatus('Diff computed. Review changes, then save.');
-      try { metadataCard.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+      try { unchangedCard.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
     } catch (e) {
       setStatus(`Failed to diff: ${e?.message || e}`);
     }
@@ -1907,8 +1744,6 @@ export function renderManageCollections({ store, onNavigate }) {
       await store.collectionDB.commitPatch(collectionKey, previewResult.patch, { label });
       setStatus('Saved diff revision.');
       previewResult = null;
-      metadataBody.innerHTML = '';
-      schemaBody.innerHTML = '';
       editedBody.innerHTML = '';
       newBody.innerHTML = '';
       removedBody.innerHTML = '';
@@ -1933,11 +1768,11 @@ export function renderManageCollections({ store, onNavigate }) {
       await store.collectionDB.commitSnapshot(collectionKey, previewResult.merged, { label });
       setStatus('Saved snapshot revision.');
       previewResult = null;
-      metadataBody.innerHTML = '';
-      schemaBody.innerHTML = '';
       editedBody.innerHTML = '';
       newBody.innerHTML = '';
       removedBody.innerHTML = '';
+      unchangedBody.innerHTML = '';
+      invalidBody.innerHTML = '';
       importArea.value = '';
       labelInput.value = '';
       lastParsedRaw = null;
