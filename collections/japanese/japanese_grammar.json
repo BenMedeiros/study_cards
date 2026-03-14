@@ -5972,5 +5972,215 @@
         "例えば〜など"
       ]
     }
+    ,
+    {
+      "pattern": "〜ず",
+      "meaning": "without doing (classical/negative connective)",
+      "sectionKey": "purpose_means_method",
+      "sectionLabel": "Purpose, goals, means, and methods",
+      "sectionKeys": ["purpose_means_method"],
+      "sectionLabels": ["Purpose, goals, means, and methods"],
+      "example_jp": "朝ご飯を食べずに出かけた。",
+      "example_en": "I went out without eating breakfast.",
+      "formations": ["Vない-stem + ず"]
+    },
+    {
+      "pattern": "〜ないように",
+      "meaning": "so that not; in order to avoid",
+      "sectionKey": "modality_intent_obligation",
+      "sectionLabel": "Intent, decisions, obligation, permission, norms",
+      "sectionKeys": ["modality_intent_obligation"],
+      "sectionLabels": ["Intent, decisions, obligation, permission, norms"],
+      "example_jp": "忘れないようにメモしました。",
+      "example_en": "I took a note so I wouldn't forget.",
+      "formations": ["Plain clause + ように"]
+    },
+    {
+      "pattern": "〜て",
+      "meaning": "and; connective (continuation/reason)",
+      "sectionKey": "aspect_result_state",
+      "sectionLabel": "Tense, aspect, result-state, completion",
+      "sectionKeys": ["aspect_result_state"],
+      "sectionLabels": ["Tense, aspect, result-state, completion"],
+      "example_jp": "寒くて窓を閉めた。",
+      "example_en": "It was cold, so I closed the window.",
+      "formations": ["i-adj stem + くて", "Vて form"]
+    },
+    {
+      "pattern": "〜ていると",
+      "meaning": "when/while (temporal frame leading to an observation or result)",
+      "sectionKey": "time_sequence",
+      "sectionLabel": "Time, sequence, timing, and 'while'",
+      "sectionKeys": ["time_sequence"],
+      "sectionLabels": ["Time, sequence, timing, and 'while'"],
+      "example_jp": "本を読んでいると眠くなった。",
+      "example_en": "While reading, I became sleepy.",
+      "formations": ["Vている + と"]
+    },
+    {
+      "pattern": "〜ているとき",
+      "meaning": "when/while (at the time of an ongoing action)",
+      "sectionKey": "time_sequence",
+      "sectionLabel": "Time, sequence, timing, and 'while'",
+      "sectionKeys": ["time_sequence"],
+      "sectionLabels": ["Time, sequence, timing, and 'while'"],
+      "example_jp": "階段を下りているとき、電話が鳴った。",
+      "example_en": "While I was going down the stairs, the phone rang.",
+      "formations": ["Vている + とき"]
+    },
+    {
+      "pattern": "〜のに気づく",
+      "meaning": "to notice that; to realize",
+      "sectionKey": "evidentiality_guess_hearsay",
+      "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
+      "sectionKeys": ["evidentiality_guess_hearsay"],
+      "sectionLabels": ["Evidentiality, appearance, hearsay, certainty"],
+      "example_jp": "靴のひもがほどけているのに気づいた。",
+      "example_en": "I noticed my shoelace was untied.",
+      "formations": ["Clause + のに気づく"]
+    },
+    {
+      "pattern": "〜のが見える",
+      "meaning": "to be able to see that; visible",
+      "sectionKey": "evidentiality_guess_hearsay",
+      "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
+      "sectionKeys": ["evidentiality_guess_hearsay"],
+      "sectionLabels": ["Evidentiality, appearance, hearsay, certainty"],
+      "example_jp": "遠くに富士山の頂上が見える。",
+      "example_en": "You can see the top of Mt. Fuji in the distance.",
+      "formations": ["N/Clause + のが見える"]
+    },
+    {
+      "pattern": "〜く感じられる",
+      "meaning": "to feel; to seem (subjective impression)",
+      "sectionKey": "evidentiality_guess_hearsay",
+      "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
+      "sectionKeys": ["evidentiality_guess_hearsay"],
+      "sectionLabels": ["Evidentiality, appearance, hearsay, certainty"],
+      "example_jp": "時間がゆっくり感じられた。",
+      "example_en": "Time felt slow.",
+      "formations": ["Clause + と感じられる", "Adj-stem + く感じられる"]
+    },
+    {
+      "pattern": "〜ことができる",
+      "meaning": "can; be able to",
+      "sectionKey": "voice_passive_causative_potential",
+      "sectionLabel": "Voice: passive, causative, potential, related forms",
+      "sectionKeys": ["voice_passive_causative_potential"],
+      "sectionLabels": ["Voice: passive, causative, potential, related forms"],
+      "example_jp": "漢字を読むことができる。",
+      "example_en": "I can read kanji.",
+      "formations": ["V-dictionary + ことができる"]
+    },
+    {
+      "pattern": "〜ころには",
+      "meaning": "by the time; around the time",
+      "sectionKey": "time_sequence",
+      "sectionLabel": "Time, sequence, timing, and 'while'",
+      "sectionKeys": ["time_sequence"],
+      "sectionLabels": ["Time, sequence, timing, and 'while'"],
+      "example_jp": "帰るころには雨がやんでいた。",
+      "example_en": "By the time I went home, the rain had stopped.",
+      "formations": ["N/Time + ころには"]
+    },
+    {
+      "pattern": "〜まで",
+      "meaning": "until; as far as",
+      "sectionKey": "time_sequence",
+      "sectionLabel": "Time, sequence, timing, and 'while'",
+      "sectionKeys": ["time_sequence"],
+      "sectionLabels": ["Time, sequence, timing, and 'while'"],
+      "example_jp": "五時まで勉強した。",
+      "example_en": "I studied until five o'clock.",
+      "formations": ["Nまで", "Vるまで"]
+    },
+    {
+      "pattern": "〜て行く",
+      "meaning": "to go on doing; to proceed (with change over time)",
+      "sectionKey": "time_sequence",
+      "sectionLabel": "Time, sequence, timing, and 'while'",
+      "sectionKeys": ["time_sequence"],
+      "sectionLabels": ["Time, sequence, timing, and 'while'"],
+      "example_jp": "寒くなっていく。",
+      "example_en": "It will continue to get colder.",
+      "formations": ["Vて + いく"]
+    },
+    {
+      "pattern": "Nに入る",
+      "meaning": "to enter into N; reach N (time/state)",
+      "sectionKey": "time_sequence",
+      "sectionLabel": "Time, sequence, timing, and 'while'",
+      "sectionKeys": ["time_sequence"],
+      "sectionLabels": ["Time, sequence, timing, and 'while'"],
+      "example_jp": "九月に入ると涼しくなる。",
+      "example_en": "When September comes, it gets cooler.",
+      "formations": ["Nに入る"]
+    },
+    {
+      "pattern": "V-ようと思う",
+      "meaning": "to intend to; to think of doing",
+      "sectionKey": "modality_intent_obligation",
+      "sectionLabel": "Intent, decisions, obligation, permission, norms",
+      "sectionKeys": ["modality_intent_obligation"],
+      "sectionLabels": ["Intent, decisions, obligation, permission, norms"],
+      "example_jp": "明日早く起きようと思う。",
+      "example_en": "I intend to wake up early tomorrow.",
+      "formations": ["V-volitional + と思う"]
+    },
+    {
+      "pattern": "命令形",
+      "meaning": "imperative form (command)",
+      "sectionKey": "modality_intent_obligation",
+      "sectionLabel": "Intent, decisions, obligation, permission, norms",
+      "sectionKeys": ["modality_intent_obligation"],
+      "sectionLabels": ["Intent, decisions, obligation, permission, norms"],
+      "example_jp": "早く行け！",
+      "example_en": "Go quickly!",
+      "formations": ["Verb imperative forms"]
+    },
+    {
+      "pattern": "〜と思って",
+      "meaning": "thinking that; with the thought of",
+      "sectionKey": "evidentiality_guess_hearsay",
+      "sectionLabel": "Evidentiality, appearance, hearsay, certainty",
+      "sectionKeys": ["evidentiality_guess_hearsay"],
+      "sectionLabels": ["Evidentiality, appearance, hearsay, certainty"],
+      "example_jp": "行こうと思っていたが、用事ができた。",
+      "example_en": "I was planning to go, but something came up.",
+      "formations": ["V-dictionary + と思って"]
+    },
+    {
+      "pattern": "〜ないように / 〜て",
+      "meaning": "combined pattern: 'so that not / and' (used together in chunking)",
+      "sectionKey": "mixed",
+      "sectionLabel": "Mixed combined patterns",
+      "sectionKeys": ["mixed"],
+      "sectionLabels": ["Mixed combined patterns"],
+      "example_jp": "〜ないように / 〜て",
+      "example_en": "(combined pattern placeholder)",
+      "formations": ["〜ないように", "〜て"]
+    },
+    {
+      "pattern": "〜まで / 〜て行く",
+      "meaning": "combined pattern: 'until / continue to' (chunk grouping)",
+      "sectionKey": "time_sequence",
+      "sectionLabel": "Time, sequence, timing, and 'while'",
+      "sectionKeys": ["time_sequence"],
+      "sectionLabels": ["Time, sequence, timing, and 'while'"],
+      "example_jp": "〜まで / 〜て行く",
+      "example_en": "(combined pattern placeholder)",
+      "formations": ["〜まで", "〜て行く"]
+    },
+    {
+      "pattern": "命令形 / 〜と思って",
+      "meaning": "combined pattern: 'imperative / thinking that' (chunk grouping)",
+      "sectionKey": "mixed",
+      "sectionLabel": "Mixed combined patterns",
+      "sectionKeys": ["mixed"],
+      "sectionLabels": ["Mixed combined patterns"],
+      "example_jp": "命令形 / 〜と思って",
+      "example_en": "(combined pattern placeholder)",
+      "formations": ["命令形", "〜と思って"]
+    }
   ]
 }
