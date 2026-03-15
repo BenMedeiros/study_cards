@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./_collections.schema.json",
+  "title": "Study Cards Collection Contract",
+  "description": "Shared contract for collection JSON files under /collections. This documents the common file shape used by the generic collection loader and validators. Metadata keys starting with '_' are treated as extension keys and are intentionally allowed.",
+  "type": "object",
+  "required": [
+    "metadata",
+    "entries"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "version",
+        "category",
+        "entry_key",
+        "schema"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display name for the collection as shown in the UI."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Short summary of what the collection contains and how it should be interpreted."
+        },
+        "version": {
+          "type": "number",
+          "description": "Collection content/schema revision number maintained by the collection author."
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Top-level category or domain used for grouping collections."
+        },
+        "source": {
+          "type": "string",
+          "description": "Optional provenance note describing where the data came from."
+        },
+        "entry_key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Primary field key used to uniquely identify entries within the collection."
+        },
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/schemaField"
+          },
+          "description": "Inline collection field schema describing the entry object shape used by collection tooling."
+        },
+        "schemaTypes": {
+          "type": "object",
+          "description": "Optional nested object type definitions used by collections with structured schema fields.",
+          "additionalProperties": true
+        },
+        "relatedCollections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relatedCollection"
+          },
+          "description": "Optional relation definitions used to attach data from other collections by matching keys or nested references."
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/schemaField"
+          },
+          "description": "Legacy alias for schema-like field definitions. Prefer metadata.schema for new collections."
+        }
+      },
+      "patternProperties": {
+        "^_": true
+      },
+      "additionalProperties": false,
+      "description": "Shared metadata block that defines collection identity, entry keying, field schema, and optional relation/nested-type helpers."
+    },
+    "schemaField": {
+      "type": "object",
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Machine-readable field id used by entry objects and UI code. This should match the property name on each entry."
+        },
+        "label": {
+          "type": "string",
+          "description": "Primary human-readable label for the field in the UI."
+        },
+        "jp_label": {
+          "type": "string",
+          "description": "Optional Japanese label for bilingual displays."
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional field-level help text explaining semantics, usage, or normalization rules."
+        },
+        "type": {
+          "type": "string",
+          "description": "Logical field type used by the collection tooling. This is the custom collection-schema type, not a full JSON Schema type."
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Optional hint that the field is expected to be present for normal authoring or import flows."
+        },
+        "values": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Allowed value map for enum-like fields. This is intended for type='enum' or 'enum[]' fields and maps each stored value to a human-readable explanation."
+        }
+      },
+      "additionalProperties": true
+    },
+    "relatedCollection": {
+      "type": "object",
+      "required": [
+        "name",
+        "path",
+        "this_key",
+        "foreign_key"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable relation name used as the key under entry.relatedCollections."
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Relative path from /collections to the related collection file."
+        },
+        "this_key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Path expression on the current collection entry used as the local lookup key."
+        },
+        "foreign_key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Path expression on the related collection entry used to find references back to the current collection."
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relatedCollectionField"
+          },
+          "description": "Optional list of related-entry fields that are especially useful to surface in the UI."
+        }
+      },
+      "additionalProperties": true,
+      "description": "Definition for a related collection that can be joined onto entries at runtime."
+    },
+    "relatedCollectionField": {
+      "type": "object",
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Field key to expose from the related collection entry."
+        },
+        "label": {
+          "type": "string",
+          "description": "Optional UI label for the related field."
+        }
+      },
+      "additionalProperties": true,
+      "description": "Field descriptor for a related collection preview."
+    }
+  }
+}

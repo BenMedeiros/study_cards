@@ -505,46 +505,6 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
 
       data = normalizeCollectionBlob(data);
 
-      // Support metadata.schema as a string pointing to a separate JSON schema file.
-      // Resolve relative paths against the collection's folder and attempt to fetch
-      // and inline the schema array. If not present, try a folder-level _metadata.json
-      // as a fallback source for schema.
-      try {
-        const schemaRef = data.metadata.schema;
-        const folder = (typeof key === 'string' && key.includes('/')) ? key.substring(0, key.lastIndexOf('/')) : '';
-
-        if (typeof schemaRef === 'string' && schemaRef.trim()) {
-          let rel = String(schemaRef).trim().replace(/^\.\//, '');
-          if (!rel.includes('/') && folder) rel = `${folder}/${rel}`;
-          const schemaUrl = `./collections/${rel}`;
-          try {
-            const sres = await fetch(schemaUrl);
-            if (sres && sres.ok) {
-              const stxt = await sres.text();
-              const parsed = JSON.parse(stxt);
-              if (Array.isArray(parsed)) data.metadata.schema = parsed;
-            }
-          } catch (e) {
-            logger('getCollection: failed to fetch schema at', schemaUrl, e?.message || e);
-          }
-        } else if (!Array.isArray(data.metadata.schema) && folder) {
-          // try folder-level _metadata.json
-          const metaUrl = `./collections/${folder}/_metadata.json`;
-          try {
-            const mres = await fetch(metaUrl);
-            if (mres && mres.ok) {
-              const mtxt = await mres.text();
-              const pm = JSON.parse(mtxt);
-              if (pm && pm.metadata && Array.isArray(pm.metadata.schema)) data.metadata.schema = pm.metadata.schema;
-            }
-          } catch (e) {
-            // ignore
-          }
-        }
-      } catch (e) {
-        // don't block collection load on schema resolution
-      }
-
       const now = (new Date()).toISOString();
       const modifiedAt = idxModified || now;
 
@@ -561,7 +521,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
       // Validate collection schema and entries where possible and mark validation date.
       let validatedAt = null;
       try {
-        const v = validateCollection(data, {});
+        const v = await validateCollection(data, {});
         if (v && v.valid) validatedAt = now;
       } catch (e) {
         // ignore validation errors
@@ -711,7 +671,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
       try {
         const coll = await _resolveCollectionBase(collectionKey, { force, systemOnly: false });
         if (!coll) return { valid: false, error: 'collection not found' };
-        const res = validateCollection(coll, { entryArrayKey: null, verbose, logLimit });
+        const res = await validateCollection(coll, { entryArrayKey: null, verbose, logLimit });
         return res;
       } catch (e) {
         return { valid: false, error: e?.message || String(e) };
@@ -734,4 +694,7 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
 }
 
 export default createCollectionDatabaseManager;
+
+
+
 

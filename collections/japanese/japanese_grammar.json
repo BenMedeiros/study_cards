@@ -2591,7 +2591,7 @@
       ]
     },
     {
-      "pattern": "〜まで",
+      "pattern": "〜まで（程度）",
       "meaning": "even; to the point of",
       "sectionKey": "focus_emphasis_quantifiers",
       "sectionLabel": "Focus particles, emphasis, 'even', and scope",
@@ -4329,7 +4329,7 @@
       ]
     },
     {
-      "pattern": "〜まで",
+      "pattern": "〜まで（期限・範囲）",
       "meaning": "until; as far as",
       "sectionKey": "time_sequence",
       "sectionLabel": "Time, sequence, timing, and 'while'",
@@ -4545,4 +4545,3 @@
     }
   ]
 }
-

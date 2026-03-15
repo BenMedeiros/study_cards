@@ -1,0 +1,174 @@
+{
+  "generatedAt": "2026-03-15T16:23:30.966Z",
+  "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
+  "outputPath": "scripts/report_collection_contract_output.json",
+  "scannedCollections": 11,
+  "collectionsWithProblems": 0,
+  "parseErrors": [],
+  "reports_clean": [
+    {
+      "collectionPath": "collections/greek/greek_alphabet.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "lowercase",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/greek/greek_mythology.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "englishName",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/japanese/japanese_grammar.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "pattern",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/japanese/japanese_paragraphs.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "id",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [
+        {
+          "message": "Field 'notes' has unknown type 'array<string>'."
+        },
+        {
+          "message": "Field 'tags' has unknown type 'array<string>'."
+        },
+        {
+          "message": "Field 'sentences' has unknown type 'array<paragraphSentence>'."
+        }
+      ],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/japanese/japanese_sentences.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "ja",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [
+        {
+          "message": "Field 'notes' has unknown type 'array<string>'."
+        },
+        {
+          "message": "Field 'grammarNotes' has unknown type 'array<string>'."
+        },
+        {
+          "message": "Field 'chunks' has unknown type 'array<sentenceChunk>'."
+        }
+      ],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/japanese/japanese_words.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "kanji",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/languageHistory.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "stage",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/numbers.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "letter",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/periodic_table.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "atomicNumber",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/pokemon.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "pokedexNumber",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/programming.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "language",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    }
+  ],
+  "reports_review": []
+}

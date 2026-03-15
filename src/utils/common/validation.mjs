@@ -2,14 +2,169 @@
  * Shared schema and entry validation helpers for a single collection.
  *
  * Works on parsed collection objects after `JSON.parse`, not on raw JSON text.
- * Validates schema shape, validates entries against schema fields, and reports
+ * Validates collection contract from collections/_collections.schema.json,
+ * validates schema shape, validates entries against schema fields, and reports
  * duplicate entry keys inside the parsed collection object.
  */
 
 import { detectCollectionArrayKey, inferEntryKeyField } from './collectionDiff.mjs';
 
+const COLLECTION_CONTRACT_SCHEMA_URL = new URL('../../../collections/_collections.schema.json', import.meta.url);
+let collectionContractSchemaPromise = null;
+
 function safeJsonStringify(v) {
   try { return JSON.parse(JSON.stringify(v)); } catch { return null; }
+}
+
+function isObjectLike(value) {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function makePath(pathParts) {
+  if (!pathParts.length) return '$';
+  return '$' + pathParts.map((part) => (typeof part === 'number' ? `[${part}]` : `.${part}`)).join('');
+}
+
+function resolveSchemaRef(rootSchema, ref) {
+  if (typeof ref !== 'string' || !ref.startsWith('#/')) return null;
+  const parts = ref.slice(2).split('/').map((part) => part.replace(/~1/g, '/').replace(/~0/g, '~'));
+  let current = rootSchema;
+  for (const part of parts) {
+    if (!current || typeof current !== 'object' || !(part in current)) return null;
+    current = current[part];
+  }
+  return current;
+}
+
+function addTypeError(errors, path, expected, actualValue) {
+  const actual = Array.isArray(actualValue) ? 'array' : (actualValue === null ? 'null' : typeof actualValue);
+  errors.push(`${path} must be ${expected}; received ${actual}.`);
+}
+
+function validateBySchema(value, schema, rootSchema, pathParts, errors) {
+  if (!schema || typeof schema !== 'object') return;
+
+  if (typeof schema.$ref === 'string') {
+    const resolved = resolveSchemaRef(rootSchema, schema.$ref);
+    if (!resolved) {
+      errors.push(`${makePath(pathParts)} references unresolved schema ref '${schema.$ref}'.`);
+      return;
+    }
+    validateBySchema(value, resolved, rootSchema, pathParts, errors);
+    return;
+  }
+
+  if (Array.isArray(schema.oneOf) && schema.oneOf.length) {
+    const branchErrors = [];
+    for (const branch of schema.oneOf) {
+      const candidateErrors = [];
+      validateBySchema(value, branch, rootSchema, pathParts, candidateErrors);
+      if (!candidateErrors.length) return;
+      branchErrors.push(candidateErrors);
+    }
+    errors.push(`${makePath(pathParts)} does not match any allowed schema variant.`);
+    return;
+  }
+
+  if (schema.type) {
+    const types = Array.isArray(schema.type) ? schema.type : [schema.type];
+    const matchesType = types.some((type) => {
+      if (type === 'array') return Array.isArray(value);
+      if (type === 'object') return isObjectLike(value);
+      if (type === 'number') return typeof value === 'number' && Number.isFinite(value);
+      if (type === 'string') return typeof value === 'string';
+      if (type === 'boolean') return typeof value === 'boolean';
+      if (type === 'null') return value === null;
+      return typeof value === type;
+    });
+    if (!matchesType) {
+      addTypeError(errors, makePath(pathParts), types.join(' or '), value);
+      return;
+    }
+  }
+
+  if (typeof schema.minLength === 'number' && typeof value === 'string' && value.length < schema.minLength) {
+    errors.push(`${makePath(pathParts)} must have length >= ${schema.minLength}.`);
+  }
+
+  if (typeof schema.minProperties === 'number' && isObjectLike(value) && Object.keys(value).length < schema.minProperties) {
+    errors.push(`${makePath(pathParts)} must have at least ${schema.minProperties} properties.`);
+  }
+
+  if (schema.type === 'array' && Array.isArray(value) && schema.items) {
+    for (let i = 0; i < value.length; i++) {
+      validateBySchema(value[i], schema.items, rootSchema, [...pathParts, i], errors);
+    }
+  }
+
+  if (schema.type === 'object' && isObjectLike(value)) {
+    const props = isObjectLike(schema.properties) ? schema.properties : {};
+    const patternProps = isObjectLike(schema.patternProperties) ? schema.patternProperties : {};
+
+    if (Array.isArray(schema.required)) {
+      for (const key of schema.required) {
+        if (!(key in value)) errors.push(`${makePath([...pathParts, key])} is required.`);
+      }
+    }
+
+    for (const [key, propSchema] of Object.entries(props)) {
+      if (key in value) validateBySchema(value[key], propSchema, rootSchema, [...pathParts, key], errors);
+    }
+
+    for (const [key, propValue] of Object.entries(value)) {
+      let handled = false;
+      if (key in props) handled = true;
+      for (const [pattern, patternSchema] of Object.entries(patternProps)) {
+        const re = new RegExp(pattern);
+        if (re.test(key)) {
+          handled = true;
+          if (patternSchema !== true) validateBySchema(propValue, patternSchema, rootSchema, [...pathParts, key], errors);
+        }
+      }
+      if (handled) continue;
+
+      if (schema.additionalProperties === false) {
+        errors.push(`${makePath([...pathParts, key])} is not allowed by the collection contract.`);
+      } else if (schema.additionalProperties && schema.additionalProperties !== true) {
+        validateBySchema(propValue, schema.additionalProperties, rootSchema, [...pathParts, key], errors);
+      }
+    }
+  }
+}
+
+async function loadCollectionContractSchema() {
+  if (!collectionContractSchemaPromise) {
+    collectionContractSchemaPromise = (async () => {
+      if (typeof window === 'undefined') {
+        const [{ readFile }, { fileURLToPath }] = await Promise.all([
+          import('node:fs/promises'),
+          import('node:url')
+        ]);
+        const filePath = fileURLToPath(COLLECTION_CONTRACT_SCHEMA_URL);
+        const text = await readFile(filePath, 'utf8');
+        return JSON.parse(text);
+      }
+      const res = await fetch(COLLECTION_CONTRACT_SCHEMA_URL);
+      if (!res.ok) throw new Error(`Failed to load collection contract schema (status ${res.status})`);
+      return res.json();
+    })();
+  }
+  return collectionContractSchemaPromise;
+}
+
+export async function validateCollectionContract(collection, { entryArrayKey = null } = {}) {
+  const out = { errors: [], warnings: [] };
+  try {
+    const contractSchema = await loadCollectionContractSchema();
+    const normalized = collection && typeof collection === 'object' ? { ...collection } : collection;
+    if (entryArrayKey && entryArrayKey !== 'entries' && normalized && typeof normalized === 'object' && !(normalized.entries)) {
+      normalized.entries = normalized[entryArrayKey];
+    }
+    validateBySchema(normalized, contractSchema, contractSchema, [], out.errors);
+  } catch (error) {
+    out.errors.push(`Failed to validate collection contract: ${error?.message || error}`);
+  }
+  return out;
 }
 
 export function validateSchemaArray(schemaArr) {
@@ -158,7 +313,7 @@ export function validateEntriesAgainstSchema(entries, schemaArr, { entryKeyField
   return out;
 }
 
-export function validateCollection(collection, { entryArrayKey = null, verbose = false, logLimit = 5 } = {}) {
+export async function validateCollection(collection, { entryArrayKey = null, verbose = false, logLimit = 5 } = {}) {
   const coll = collection && typeof collection === 'object' ? collection : { metadata: {} };
   const meta = coll.metadata && typeof coll.metadata === 'object' ? coll.metadata : {};
   const schemaArr = Array.isArray(meta.schema) ? meta.schema : (Array.isArray(coll.schema) ? coll.schema : null);
@@ -168,6 +323,14 @@ export function validateCollection(collection, { entryArrayKey = null, verbose =
 
   if (verbose) console.groupCollapsed(`validateCollection: ${meta.name || meta.title || coll.name || coll.path || 'collection'}`);
   if (verbose) console.log('detected arrayKey:', arrayKey, 'entryKeyField:', entryKeyField, 'entriesCount:', entries.length);
+
+  if (verbose) console.group('collection contract validation');
+  const collectionValidation = await validateCollectionContract(coll, { entryArrayKey });
+  if (verbose) {
+    if (collectionValidation.errors && collectionValidation.errors.length) console.error('collection errors:', collectionValidation.errors);
+    if (collectionValidation.warnings && collectionValidation.warnings.length) console.warn('collection warnings:', collectionValidation.warnings);
+  }
+  if (verbose) console.groupEnd();
 
   if (verbose) console.group('schema validation');
   const schemaValidation = schemaArr ? validateSchemaArray(schemaArr) : { errors: [], warnings: [] };
@@ -226,15 +389,18 @@ export function validateCollection(collection, { entryArrayKey = null, verbose =
     }
   }
 
-  const valid = (!schemaValidation.errors.length) && (!(entriesValidation.entryErrors && entriesValidation.entryErrors.length));
+  const valid = (!collectionValidation.errors.length) && (!schemaValidation.errors.length) && (!(entriesValidation.entryErrors && entriesValidation.entryErrors.length));
 
   return {
     arrayKey,
     entryKeyField,
+    collectionValidation,
     schemaValidation,
     entriesValidation,
     valid,
   };
 }
 
-export default { validateSchemaArray, validateEntriesAgainstSchema, validateCollection };
+export default { validateCollectionContract, validateSchemaArray, validateEntriesAgainstSchema, validateCollection };
+
+

@@ -274,7 +274,7 @@
       "japaneseName": "キャタピー",
       "pokedexNumber": 10,
       "type": [
-        "虫"
+        "むし"
       ],
       "japaneseNameRoots": [
         "キャタピラー"
@@ -285,7 +285,7 @@
       "japaneseName": "トランセル",
       "pokedexNumber": 11,
       "type": [
-        "虫"
+        "むし"
       ],
       "japaneseNameRoots": [
         "トランス",
@@ -297,8 +297,8 @@
       "japaneseName": "バタフリー",
       "pokedexNumber": 12,
       "type": [
-        "虫",
-        "飛行"
+        "むし",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "バタフライ"
@@ -309,8 +309,8 @@
       "japaneseName": "ビードル",
       "pokedexNumber": 13,
       "type": [
-        "虫",
-        "毒"
+        "むし",
+        "どく"
       ],
       "japaneseNameRoots": [
         "ビートル"
@@ -321,8 +321,8 @@
       "japaneseName": "コクーン",
       "pokedexNumber": 14,
       "type": [
-        "虫",
-        "毒"
+        "むし",
+        "どく"
       ],
       "japaneseNameRoots": [
         "コクーン"
@@ -333,8 +333,8 @@
       "japaneseName": "スピアー",
       "pokedexNumber": 15,
       "type": [
-        "虫",
-        "毒"
+        "むし",
+        "どく"
       ],
       "japaneseNameRoots": [
         "スピア"
@@ -345,8 +345,8 @@
       "japaneseName": "ポッポ",
       "pokedexNumber": 16,
       "type": [
-        "通常",
-        "飛行"
+        "ノーマル",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "鳩"
@@ -357,8 +357,8 @@
       "japaneseName": "ピジョン",
       "pokedexNumber": 17,
       "type": [
-        "通常",
-        "飛行"
+        "ノーマル",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "鳩"
@@ -369,8 +369,8 @@
       "japaneseName": "ピジョット",
       "pokedexNumber": 18,
       "type": [
-        "通常",
-        "飛行"
+        "ノーマル",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "鳩"
@@ -381,7 +381,7 @@
       "japaneseName": "コラッタ",
       "pokedexNumber": 19,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "ラット"
@@ -392,7 +392,7 @@
       "japaneseName": "ラッタ",
       "pokedexNumber": 20,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "ラット"
@@ -403,8 +403,8 @@
       "japaneseName": "オニスズメ",
       "pokedexNumber": 21,
       "type": [
-        "通常",
-        "飛行"
+        "ノーマル",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "鬼",
@@ -416,8 +416,8 @@
       "japaneseName": "オニドリル",
       "pokedexNumber": 22,
       "type": [
-        "通常",
-        "飛行"
+        "ノーマル",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "鬼",
@@ -429,7 +429,7 @@
       "japaneseName": "アーボ",
       "pokedexNumber": 23,
       "type": [
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "蛇"
@@ -440,7 +440,7 @@
       "japaneseName": "アーボック",
       "pokedexNumber": 24,
       "type": [
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "蛇"
@@ -451,7 +451,7 @@
       "japaneseName": "ピカチュウ",
       "pokedexNumber": 25,
       "type": [
-        "電気"
+        "でんき"
       ],
       "japaneseNameRoots": [
         "ピカ",
@@ -463,7 +463,7 @@
       "japaneseName": "ライチュウ",
       "pokedexNumber": 26,
       "type": [
-        "電気"
+        "でんき"
       ],
       "japaneseNameRoots": [
         "雷",
@@ -475,7 +475,7 @@
       "japaneseName": "サンド",
       "pokedexNumber": 27,
       "type": [
-        "地面"
+        "じめん"
       ],
       "japaneseNameRoots": [
         "サンド"
@@ -486,7 +486,7 @@
       "japaneseName": "サンドパン",
       "pokedexNumber": 28,
       "type": [
-        "地面"
+        "じめん"
       ],
       "japaneseNameRoots": [
         "サンド",
@@ -498,7 +498,7 @@
       "japaneseName": "ニドラン♀",
       "pokedexNumber": 29,
       "type": [
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "ニードル"
@@ -509,7 +509,7 @@
       "japaneseName": "ニドリーナ",
       "pokedexNumber": 30,
       "type": [
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "ニードル",
@@ -521,8 +521,8 @@
       "japaneseName": "ニドクイン",
       "pokedexNumber": 31,
       "type": [
-        "毒",
-        "地面"
+        "どく",
+        "じめん"
       ],
       "japaneseNameRoots": [
         "ニードル",
@@ -534,7 +534,7 @@
       "japaneseName": "ニドラン♂",
       "pokedexNumber": 32,
       "type": [
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "ニードル"
@@ -545,7 +545,7 @@
       "japaneseName": "ニドリーノ",
       "pokedexNumber": 33,
       "type": [
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "ニードル",
@@ -557,8 +557,8 @@
       "japaneseName": "ニドキング",
       "pokedexNumber": 34,
       "type": [
-        "毒",
-        "地面"
+        "どく",
+        "じめん"
       ],
       "japaneseNameRoots": [
         "ニードル",
@@ -570,7 +570,7 @@
       "japaneseName": "ピッピ",
       "pokedexNumber": 35,
       "type": [
-        "妖精"
+        "フェアリー"
       ],
       "japaneseNameRoots": [
         "ピッ"
@@ -581,7 +581,7 @@
       "japaneseName": "ピクシー",
       "pokedexNumber": 36,
       "type": [
-        "妖精"
+        "フェアリー"
       ],
       "japaneseNameRoots": [
         "ピクシー"
@@ -592,7 +592,7 @@
       "japaneseName": "ロコン",
       "pokedexNumber": 37,
       "type": [
-        "炎"
+        "ほのお"
       ],
       "japaneseNameRoots": [
         "六",
@@ -604,7 +604,7 @@
       "japaneseName": "キュウコン",
       "pokedexNumber": 38,
       "type": [
-        "炎"
+        "ほのお"
       ],
       "japaneseNameRoots": [
         "九",
@@ -616,8 +616,8 @@
       "japaneseName": "プリン",
       "pokedexNumber": 39,
       "type": [
-        "通常",
-        "妖精"
+        "ノーマル",
+        "フェアリー"
       ],
       "japaneseNameRoots": [
         "プリン"
@@ -628,8 +628,8 @@
       "japaneseName": "プクリン",
       "pokedexNumber": 40,
       "type": [
-        "通常",
-        "妖精"
+        "ノーマル",
+        "フェアリー"
       ],
       "japaneseNameRoots": [
         "プク"
@@ -640,8 +640,8 @@
       "japaneseName": "ズバット",
       "pokedexNumber": 41,
       "type": [
-        "毒",
-        "飛行"
+        "どく",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "ズバ"
@@ -652,8 +652,8 @@
       "japaneseName": "ゴルバット",
       "pokedexNumber": 42,
       "type": [
-        "毒",
-        "飛行"
+        "どく",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "ゴール",
@@ -665,8 +665,8 @@
       "japaneseName": "ナゾノクサ",
       "pokedexNumber": 43,
       "type": [
-        "草",
-        "毒"
+        "くさ",
+        "どく"
       ],
       "japaneseNameRoots": [
         "謎",
@@ -678,8 +678,8 @@
       "japaneseName": "クサイハナ",
       "pokedexNumber": 44,
       "type": [
-        "草",
-        "毒"
+        "くさ",
+        "どく"
       ],
       "japaneseNameRoots": [
         "臭い",
@@ -691,8 +691,8 @@
       "japaneseName": "ラフレシア",
       "pokedexNumber": 45,
       "type": [
-        "草",
-        "毒"
+        "くさ",
+        "どく"
       ],
       "japaneseNameRoots": [
         "ラフレシア"
@@ -703,8 +703,8 @@
       "japaneseName": "パラス",
       "pokedexNumber": 46,
       "type": [
-        "虫",
-        "草"
+        "むし",
+        "くさ"
       ],
       "japaneseNameRoots": [
         "パラサイト"
@@ -715,8 +715,8 @@
       "japaneseName": "パラセクト",
       "pokedexNumber": 47,
       "type": [
-        "虫",
-        "草"
+        "むし",
+        "くさ"
       ],
       "japaneseNameRoots": [
         "パラサイト",
@@ -728,8 +728,8 @@
       "japaneseName": "コンパン",
       "pokedexNumber": 48,
       "type": [
-        "虫",
-        "毒"
+        "むし",
+        "どく"
       ],
       "japaneseNameRoots": [
         "紺",
@@ -741,8 +741,8 @@
       "japaneseName": "モルフォン",
       "pokedexNumber": 49,
       "type": [
-        "虫",
-        "毒"
+        "むし",
+        "どく"
       ],
       "japaneseNameRoots": [
         "モルフォ"
@@ -753,7 +753,7 @@
       "japaneseName": "ディグダ",
       "pokedexNumber": 50,
       "type": [
-        "地面"
+        "じめん"
       ],
       "japaneseNameRoots": [
         "ディグ"
@@ -764,7 +764,7 @@
       "japaneseName": "ダグトリオ",
       "pokedexNumber": 51,
       "type": [
-        "地面"
+        "じめん"
       ],
       "japaneseNameRoots": [
         "ダグ",
@@ -776,7 +776,7 @@
       "japaneseName": "ニャース",
       "pokedexNumber": 52,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "ニャー"
@@ -787,7 +787,7 @@
       "japaneseName": "ペルシアン",
       "pokedexNumber": 53,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "ペルシャ"
@@ -798,7 +798,7 @@
       "japaneseName": "コダック",
       "pokedexNumber": 54,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "子",
@@ -810,7 +810,7 @@
       "japaneseName": "ゴルダック",
       "pokedexNumber": 55,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "ゴールド",
@@ -822,7 +822,7 @@
       "japaneseName": "マンキー",
       "pokedexNumber": 56,
       "type": [
-        "格闘"
+        "かくとう"
       ],
       "japaneseNameRoots": [
         "モンキー"
@@ -833,7 +833,7 @@
       "japaneseName": "オコリザル",
       "pokedexNumber": 57,
       "type": [
-        "格闘"
+        "かくとう"
       ],
       "japaneseNameRoots": [
         "怒り",
@@ -845,7 +845,7 @@
       "japaneseName": "ガーディ",
       "pokedexNumber": 58,
       "type": [
-        "炎"
+        "ほのお"
       ],
       "japaneseNameRoots": [
         "ガード"
@@ -856,7 +856,7 @@
       "japaneseName": "ウインディ",
       "pokedexNumber": 59,
       "type": [
-        "炎"
+        "ほのお"
       ],
       "japaneseNameRoots": [
         "ウインド"
@@ -867,7 +867,7 @@
       "japaneseName": "ニョロモ",
       "pokedexNumber": 60,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "ニョロ"
@@ -878,7 +878,7 @@
       "japaneseName": "ニョロゾ",
       "pokedexNumber": 61,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "ニョロ"
@@ -889,8 +889,8 @@
       "japaneseName": "ニョロボン",
       "pokedexNumber": 62,
       "type": [
-        "水",
-        "格闘"
+        "みず",
+        "かくとう"
       ],
       "japaneseNameRoots": [
         "ニョロ"
@@ -901,7 +901,7 @@
       "japaneseName": "ケーシィ",
       "pokedexNumber": 63,
       "type": [
-        "超能力"
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "ケーシー"
@@ -912,7 +912,7 @@
       "japaneseName": "ユンゲラー",
       "pokedexNumber": 64,
       "type": [
-        "超能力"
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "ユンゲラー"
@@ -923,7 +923,7 @@
       "japaneseName": "フーディン",
       "pokedexNumber": 65,
       "type": [
-        "超能力"
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "フーディーニ"
@@ -934,7 +934,7 @@
       "japaneseName": "ワンリキー",
       "pokedexNumber": 66,
       "type": [
-        "格闘"
+        "かくとう"
       ],
       "japaneseNameRoots": [
         "ワン",
@@ -946,7 +946,7 @@
       "japaneseName": "ゴーリキー",
       "pokedexNumber": 67,
       "type": [
-        "格闘"
+        "かくとう"
       ],
       "japaneseNameRoots": [
         "ゴー",
@@ -958,7 +958,7 @@
       "japaneseName": "カイリキー",
       "pokedexNumber": 68,
       "type": [
-        "格闘"
+        "かくとう"
       ],
       "japaneseNameRoots": [
         "怪力"
@@ -969,8 +969,8 @@
       "japaneseName": "マダツボミ",
       "pokedexNumber": 69,
       "type": [
-        "草",
-        "毒"
+        "くさ",
+        "どく"
       ],
       "japaneseNameRoots": [
         "未だ",
@@ -982,8 +982,8 @@
       "japaneseName": "ウツドン",
       "pokedexNumber": 70,
       "type": [
-        "草",
-        "毒"
+        "くさ",
+        "どく"
       ],
       "japaneseNameRoots": [
         "鬱",
@@ -995,8 +995,8 @@
       "japaneseName": "ウツボット",
       "pokedexNumber": 71,
       "type": [
-        "草",
-        "毒"
+        "くさ",
+        "どく"
       ],
       "japaneseNameRoots": [
         "鬱",
@@ -1008,8 +1008,8 @@
       "japaneseName": "メノクラゲ",
       "pokedexNumber": 72,
       "type": [
-        "水",
-        "毒"
+        "みず",
+        "どく"
       ],
       "japaneseNameRoots": [
         "目",
@@ -1021,8 +1021,8 @@
       "japaneseName": "ドククラゲ",
       "pokedexNumber": 73,
       "type": [
-        "水",
-        "毒"
+        "みず",
+        "どく"
       ],
       "japaneseNameRoots": [
         "毒",
@@ -1034,8 +1034,8 @@
       "japaneseName": "イシツブテ",
       "pokedexNumber": 74,
       "type": [
-        "岩",
-        "地面"
+        "いわ",
+        "じめん"
       ],
       "japaneseNameRoots": [
         "石",
@@ -1047,8 +1047,8 @@
       "japaneseName": "ゴローン",
       "pokedexNumber": 75,
       "type": [
-        "岩",
-        "地面"
+        "いわ",
+        "じめん"
       ],
       "japaneseNameRoots": [
         "ゴロゴロ"
@@ -1059,8 +1059,8 @@
       "japaneseName": "ゴローニャ",
       "pokedexNumber": 76,
       "type": [
-        "岩",
-        "地面"
+        "いわ",
+        "じめん"
       ],
       "japaneseNameRoots": [
         "ゴーレム"
@@ -1071,7 +1071,7 @@
       "japaneseName": "ポニータ",
       "pokedexNumber": 77,
       "type": [
-        "炎"
+        "ほのお"
       ],
       "japaneseNameRoots": [
         "ポニー"
@@ -1082,7 +1082,7 @@
       "japaneseName": "ギャロップ",
       "pokedexNumber": 78,
       "type": [
-        "炎"
+        "ほのお"
       ],
       "japaneseNameRoots": [
         "ギャロップ"
@@ -1093,8 +1093,8 @@
       "japaneseName": "ヤドン",
       "pokedexNumber": 79,
       "type": [
-        "水",
-        "超能力"
+        "みず",
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "宿"
@@ -1105,8 +1105,8 @@
       "japaneseName": "ヤドラン",
       "pokedexNumber": 80,
       "type": [
-        "水",
-        "超能力"
+        "みず",
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "宿"
@@ -1117,8 +1117,8 @@
       "japaneseName": "コイル",
       "pokedexNumber": 81,
       "type": [
-        "電気",
-        "鋼"
+        "でんき",
+        "はがね"
       ],
       "japaneseNameRoots": [
         "コイル"
@@ -1129,8 +1129,8 @@
       "japaneseName": "レアコイル",
       "pokedexNumber": 82,
       "type": [
-        "電気",
-        "鋼"
+        "でんき",
+        "はがね"
       ],
       "japaneseNameRoots": [
         "レア",
@@ -1142,8 +1142,8 @@
       "japaneseName": "カモネギ",
       "pokedexNumber": 83,
       "type": [
-        "通常",
-        "飛行"
+        "ノーマル",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "鴨",
@@ -1155,8 +1155,8 @@
       "japaneseName": "ドードー",
       "pokedexNumber": 84,
       "type": [
-        "通常",
-        "飛行"
+        "ノーマル",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "ドードー"
@@ -1167,8 +1167,8 @@
       "japaneseName": "ドードリオ",
       "pokedexNumber": 85,
       "type": [
-        "通常",
-        "飛行"
+        "ノーマル",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "ドードー",
@@ -1180,7 +1180,7 @@
       "japaneseName": "パウワウ",
       "pokedexNumber": 86,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "パウ"
@@ -1191,8 +1191,8 @@
       "japaneseName": "ジュゴン",
       "pokedexNumber": 87,
       "type": [
-        "水",
-        "氷"
+        "みず",
+        "こおり"
       ],
       "japaneseNameRoots": [
         "ジュゴン"
@@ -1203,7 +1203,7 @@
       "japaneseName": "ベトベター",
       "pokedexNumber": 88,
       "type": [
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "ベトベト"
@@ -1214,7 +1214,7 @@
       "japaneseName": "ベトベトン",
       "pokedexNumber": 89,
       "type": [
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "ベトベト"
@@ -1225,7 +1225,7 @@
       "japaneseName": "シェルダー",
       "pokedexNumber": 90,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "シェル"
@@ -1236,8 +1236,8 @@
       "japaneseName": "パルシェン",
       "pokedexNumber": 91,
       "type": [
-        "水",
-        "氷"
+        "みず",
+        "こおり"
       ],
       "japaneseNameRoots": [
         "パール",
@@ -1250,7 +1250,7 @@
       "pokedexNumber": 92,
       "type": [
         "ゴースト",
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "ゴースト"
@@ -1262,7 +1262,7 @@
       "pokedexNumber": 93,
       "type": [
         "ゴースト",
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "ゴースト"
@@ -1274,7 +1274,7 @@
       "pokedexNumber": 94,
       "type": [
         "ゴースト",
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "ゲンガー"
@@ -1285,8 +1285,8 @@
       "japaneseName": "イワーク",
       "pokedexNumber": 95,
       "type": [
-        "岩",
-        "地面"
+        "いわ",
+        "じめん"
       ],
       "japaneseNameRoots": [
         "岩"
@@ -1297,7 +1297,7 @@
       "japaneseName": "スリープ",
       "pokedexNumber": 96,
       "type": [
-        "超能力"
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "スリープ"
@@ -1308,7 +1308,7 @@
       "japaneseName": "スリーパー",
       "pokedexNumber": 97,
       "type": [
-        "超能力"
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "スリープ"
@@ -1319,7 +1319,7 @@
       "japaneseName": "クラブ",
       "pokedexNumber": 98,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "クラブ"
@@ -1330,7 +1330,7 @@
       "japaneseName": "キングラー",
       "pokedexNumber": 99,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "キング"
@@ -1341,7 +1341,7 @@
       "japaneseName": "ビリリダマ",
       "pokedexNumber": 100,
       "type": [
-        "電気"
+        "でんき"
       ],
       "japaneseNameRoots": [
         "ビリビリ",
@@ -1353,7 +1353,7 @@
       "japaneseName": "マルマイン",
       "pokedexNumber": 101,
       "type": [
-        "電気"
+        "でんき"
       ],
       "japaneseNameRoots": [
         "丸",
@@ -1365,8 +1365,8 @@
       "japaneseName": "タマタマ",
       "pokedexNumber": 102,
       "type": [
-        "草",
-        "超能力"
+        "くさ",
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "玉"
@@ -1377,8 +1377,8 @@
       "japaneseName": "ナッシー",
       "pokedexNumber": 103,
       "type": [
-        "草",
-        "超能力"
+        "くさ",
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "ナッツ"
@@ -1389,7 +1389,7 @@
       "japaneseName": "カラカラ",
       "pokedexNumber": 104,
       "type": [
-        "地面"
+        "じめん"
       ],
       "japaneseNameRoots": [
         "カラ"
@@ -1400,7 +1400,7 @@
       "japaneseName": "ガラガラ",
       "pokedexNumber": 105,
       "type": [
-        "地面"
+        "じめん"
       ],
       "japaneseNameRoots": [
         "ガラ"
@@ -1411,7 +1411,7 @@
       "japaneseName": "サワムラー",
       "pokedexNumber": 106,
       "type": [
-        "格闘"
+        "かくとう"
       ],
       "japaneseNameRoots": [
         "沢村"
@@ -1422,7 +1422,7 @@
       "japaneseName": "エビワラー",
       "pokedexNumber": 107,
       "type": [
-        "格闘"
+        "かくとう"
       ],
       "japaneseNameRoots": [
         "海老原"
@@ -1433,7 +1433,7 @@
       "japaneseName": "ベロリンガ",
       "pokedexNumber": 108,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "ベロ"
@@ -1444,7 +1444,7 @@
       "japaneseName": "ドガース",
       "pokedexNumber": 109,
       "type": [
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "毒ガス"
@@ -1455,7 +1455,7 @@
       "japaneseName": "マタドガス",
       "pokedexNumber": 110,
       "type": [
-        "毒"
+        "どく"
       ],
       "japaneseNameRoots": [
         "また",
@@ -1467,8 +1467,8 @@
       "japaneseName": "サイホーン",
       "pokedexNumber": 111,
       "type": [
-        "地面",
-        "岩"
+        "じめん",
+        "いわ"
       ],
       "japaneseNameRoots": [
         "サイ",
@@ -1480,8 +1480,8 @@
       "japaneseName": "サイドン",
       "pokedexNumber": 112,
       "type": [
-        "地面",
-        "岩"
+        "じめん",
+        "いわ"
       ],
       "japaneseNameRoots": [
         "サイ"
@@ -1492,7 +1492,7 @@
       "japaneseName": "ラッキー",
       "pokedexNumber": 113,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "ラッキー"
@@ -1503,7 +1503,7 @@
       "japaneseName": "モンジャラ",
       "pokedexNumber": 114,
       "type": [
-        "草"
+        "くさ"
       ],
       "japaneseNameRoots": [
         "もんじゃ"
@@ -1514,7 +1514,7 @@
       "japaneseName": "ガルーラ",
       "pokedexNumber": 115,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "カンガルー"
@@ -1525,7 +1525,7 @@
       "japaneseName": "タッツー",
       "pokedexNumber": 116,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "竜"
@@ -1536,7 +1536,7 @@
       "japaneseName": "シードラ",
       "pokedexNumber": 117,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "シー",
@@ -1548,7 +1548,7 @@
       "japaneseName": "トサキント",
       "pokedexNumber": 118,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "土佐金"
@@ -1559,7 +1559,7 @@
       "japaneseName": "アズマオウ",
       "pokedexNumber": 119,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "東",
@@ -1571,7 +1571,7 @@
       "japaneseName": "ヒトデマン",
       "pokedexNumber": 120,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "人手",
@@ -1583,8 +1583,8 @@
       "japaneseName": "スターミー",
       "pokedexNumber": 121,
       "type": [
-        "水",
-        "超能力"
+        "みず",
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "スター"
@@ -1595,8 +1595,8 @@
       "japaneseName": "バリヤード",
       "pokedexNumber": 122,
       "type": [
-        "超能力",
-        "妖精"
+        "エスパー",
+        "フェアリー"
       ],
       "japaneseNameRoots": [
         "バリア"
@@ -1607,8 +1607,8 @@
       "japaneseName": "ストライク",
       "pokedexNumber": 123,
       "type": [
-        "虫",
-        "飛行"
+        "むし",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "ストライク"
@@ -1619,8 +1619,8 @@
       "japaneseName": "ルージュラ",
       "pokedexNumber": 124,
       "type": [
-        "氷",
-        "超能力"
+        "こおり",
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "ルージュ"
@@ -1631,7 +1631,7 @@
       "japaneseName": "エレブー",
       "pokedexNumber": 125,
       "type": [
-        "電気"
+        "でんき"
       ],
       "japaneseNameRoots": [
         "エレクトリック"
@@ -1642,7 +1642,7 @@
       "japaneseName": "ブーバー",
       "pokedexNumber": 126,
       "type": [
-        "炎"
+        "ほのお"
       ],
       "japaneseNameRoots": [
         "ブー"
@@ -1653,7 +1653,7 @@
       "japaneseName": "カイロス",
       "pokedexNumber": 127,
       "type": [
-        "虫"
+        "むし"
       ],
       "japaneseNameRoots": [
         "カイロス"
@@ -1664,7 +1664,7 @@
       "japaneseName": "ケンタロス",
       "pokedexNumber": 128,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "ケンタウロス"
@@ -1675,7 +1675,7 @@
       "japaneseName": "コイキング",
       "pokedexNumber": 129,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "鯉",
@@ -1687,8 +1687,8 @@
       "japaneseName": "ギャラドス",
       "pokedexNumber": 130,
       "type": [
-        "水",
-        "飛行"
+        "みず",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "逆鱗",
@@ -1700,8 +1700,8 @@
       "japaneseName": "ラプラス",
       "pokedexNumber": 131,
       "type": [
-        "水",
-        "氷"
+        "みず",
+        "こおり"
       ],
       "japaneseNameRoots": [
         "ラプラス"
@@ -1712,7 +1712,7 @@
       "japaneseName": "メタモン",
       "pokedexNumber": 132,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "メタモルフォーゼ"
@@ -1723,7 +1723,7 @@
       "japaneseName": "イーブイ",
       "pokedexNumber": 133,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "EV"
@@ -1734,7 +1734,7 @@
       "japaneseName": "シャワーズ",
       "pokedexNumber": 134,
       "type": [
-        "水"
+        "みず"
       ],
       "japaneseNameRoots": [
         "シャワー"
@@ -1745,7 +1745,7 @@
       "japaneseName": "サンダース",
       "pokedexNumber": 135,
       "type": [
-        "電気"
+        "でんき"
       ],
       "japaneseNameRoots": [
         "サンダー"
@@ -1756,7 +1756,7 @@
       "japaneseName": "ブースター",
       "pokedexNumber": 136,
       "type": [
-        "炎"
+        "ほのお"
       ],
       "japaneseNameRoots": [
         "ブースト"
@@ -1767,7 +1767,7 @@
       "japaneseName": "ポリゴン",
       "pokedexNumber": 137,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "ポリゴン"
@@ -1778,8 +1778,8 @@
       "japaneseName": "オムナイト",
       "pokedexNumber": 138,
       "type": [
-        "岩",
-        "水"
+        "いわ",
+        "みず"
       ],
       "japaneseNameRoots": [
         "オウムガイ"
@@ -1790,8 +1790,8 @@
       "japaneseName": "オムスター",
       "pokedexNumber": 139,
       "type": [
-        "岩",
-        "水"
+        "いわ",
+        "みず"
       ],
       "japaneseNameRoots": [
         "オウム",
@@ -1803,8 +1803,8 @@
       "japaneseName": "カブト",
       "pokedexNumber": 140,
       "type": [
-        "岩",
-        "水"
+        "いわ",
+        "みず"
       ],
       "japaneseNameRoots": [
         "兜"
@@ -1815,8 +1815,8 @@
       "japaneseName": "カブトプス",
       "pokedexNumber": 141,
       "type": [
-        "岩",
-        "水"
+        "いわ",
+        "みず"
       ],
       "japaneseNameRoots": [
         "兜",
@@ -1828,8 +1828,8 @@
       "japaneseName": "プテラ",
       "pokedexNumber": 142,
       "type": [
-        "岩",
-        "飛行"
+        "いわ",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "プテラノドン"
@@ -1840,7 +1840,7 @@
       "japaneseName": "カビゴン",
       "pokedexNumber": 143,
       "type": [
-        "通常"
+        "ノーマル"
       ],
       "japaneseNameRoots": [
         "黴"
@@ -1851,8 +1851,8 @@
       "japaneseName": "フリーザー",
       "pokedexNumber": 144,
       "type": [
-        "氷",
-        "飛行"
+        "こおり",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "フリーズ"
@@ -1863,8 +1863,8 @@
       "japaneseName": "サンダー",
       "pokedexNumber": 145,
       "type": [
-        "電気",
-        "飛行"
+        "でんき",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "サンダー"
@@ -1875,8 +1875,8 @@
       "japaneseName": "ファイヤー",
       "pokedexNumber": 146,
       "type": [
-        "炎",
-        "飛行"
+        "ほのお",
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "ファイヤー"
@@ -1912,7 +1912,7 @@
       "pokedexNumber": 149,
       "type": [
         "ドラゴン",
-        "飛行"
+        "ひこう"
       ],
       "japaneseNameRoots": [
         "怪竜"
@@ -1923,7 +1923,7 @@
       "japaneseName": "ミュウツー",
       "pokedexNumber": 150,
       "type": [
-        "超能力"
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "ミュー",
@@ -1935,7 +1935,7 @@
       "japaneseName": "ミュウ",
       "pokedexNumber": 151,
       "type": [
-        "超能力"
+        "エスパー"
       ],
       "japaneseNameRoots": [
         "ミュー"

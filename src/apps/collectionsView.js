@@ -152,7 +152,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
             }
           } catch (e) { /* ignore */ }
           // fallback: validate local object if manager helper not available or failed
-          if (!res) res = validateCollection(collObj, { verbose: true, logLimit: 20 });
+          if (!res) res = await validateCollection(collObj, { verbose: true, logLimit: 20 });
           console.group(`Collection validation: ${col.path || col.id || col.name || id}`);
           console.log('Valid:', !!res.valid);
           if (res.schemaValidation) {
@@ -276,6 +276,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
 
   return root;
 }
+
 
 
 

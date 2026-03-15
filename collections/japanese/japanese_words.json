@@ -104,7 +104,11 @@
           "particle": "Particle / function word (e.g., は, が, を, に, で, から, まで).",
           "adverb": "Adverb (副詞) or adverb-like word used to modify verbs/clauses (e.g., すぐ, ゆっくり). Many mimetics belong here (ドキドキ(と)する, キラキラ(と)光る) — mark those with lexicalClass='onomatopoeia'.",
           "counter": "Counter word used with numerals (e.g., 〜人, 〜枚, 〜つ).",
-          "expression": "Fixed conventional phrase (often multi-word) that is used as a unit (e.g., おつかれさま, しょうがない). Not a full sentence unless it clearly contains its own predicate."
+          "expression": "Fixed conventional phrase (often multi-word) that is used as a unit (e.g., おつかれさま, しょうがない). Not a full sentence unless it clearly contains its own predicate.",
+          "numeral": "Numeral / number-word entry used as a standalone numeric form or numeric symbol (e.g., 一, 二, 三, 百, 千, 万).",
+          "descriptive-phrase": "Descriptive lexicalized phrase or quantified descriptive chunk that behaves as a fixed expression rather than a single simple lexical item.",
+          "phrase-sentence": "Multi-word phrase or sentence-like chunk learned as a unit, often containing its own predicate or argument structure.",
+          "conjunction": "Clause-linking connective/conjunction used to connect statements or explain consequence (e.g., なので)."
         }
       },
       {
