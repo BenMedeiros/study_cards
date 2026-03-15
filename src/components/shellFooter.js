@@ -204,12 +204,29 @@ export function createShellFooter({ store, captionsVisible = false } = {}) {
 
   // Left area helpers: status + warnings API for other components
   let footerLeftStatusPrev = '';
+  let footerLeftPersistentPrev = '';
   let footerLeftWarningsPrev = null; // array or null
+  let footerLeftRevisionRequestToken = 0;
+
+  function shortId(value, n = 16) {
+    const text = String(value || '').trim();
+    if (!text) return '';
+    if (text.length <= n) return text;
+    return `${text.slice(0, n)}…`;
+  }
+
+  function compareIsoLikeAsc(a, b) {
+    const left = String(a?.createdAt || '');
+    const right = String(b?.createdAt || '');
+    if (left !== right) return left.localeCompare(right);
+    return String(a?.id || '').localeCompare(String(b?.id || ''));
+  }
 
   function renderFooterLeft() {
     try {
       const parts = [];
       if (footerLeftStatusPrev) parts.push(String(footerLeftStatusPrev));
+      if (footerLeftPersistentPrev) parts.push(String(footerLeftPersistentPrev));
       if (Array.isArray(footerLeftWarningsPrev) && footerLeftWarningsPrev.length) {
         const w = footerLeftWarningsPrev.filter(Boolean).map(String).join(' • ');
         if (w) parts.push(w);
@@ -220,6 +237,11 @@ export function createShellFooter({ store, captionsVisible = false } = {}) {
 
   function setLeftStatus(text) {
     footerLeftStatusPrev = (text == null) ? '' : String(text || '');
+    renderFooterLeft();
+  }
+
+  function setLeftPersistentStatus(text) {
+    footerLeftPersistentPrev = (text == null) ? '' : String(text || '');
     renderFooterLeft();
   }
 
@@ -237,9 +259,74 @@ export function createShellFooter({ store, captionsVisible = false } = {}) {
     setLeftWarnings(warnings);
   }
 
+  async function updateFooterLeftRevisionStatus({ activeCollection = null, activeId = null } = {}) {
+    const requestToken = ++footerLeftRevisionRequestToken;
+    const collectionKey = String(activeId || activeCollection?.key || '').trim();
+    const collectionDB = store?.collectionDB;
+    if (!collectionKey || !collectionDB) {
+      setLeftPersistentStatus('');
+      return;
+    }
+    if (
+      typeof collectionDB.getActiveRevisionId !== 'function' ||
+      typeof collectionDB.listUserRevisions !== 'function' ||
+      typeof collectionDB.listAvailableCollections !== 'function'
+    ) {
+      setLeftPersistentStatus('');
+      return;
+    }
+
+    try {
+      const activeRevisionId = String(collectionDB.getActiveRevisionId(collectionKey) || '').trim();
+      const [revisionRows, availableRows] = await Promise.all([
+        collectionDB.listUserRevisions(collectionKey).catch(() => []),
+        collectionDB.listAvailableCollections().catch(() => []),
+      ]);
+      if (requestToken !== footerLeftRevisionRequestToken) return;
+
+      const available = Array.isArray(availableRows) ? availableRows : [];
+      const systemRow = available.find((row) => String(row?.key || row?.path || '').trim() === collectionKey) || null;
+      const candidates = [];
+
+      candidates.push({
+        id: '__system__',
+        createdAt: String(systemRow?.modifiedAt || ''),
+        label: 'system base',
+      });
+
+      for (const row of Array.isArray(revisionRows) ? revisionRows : []) {
+        if (!row || typeof row !== 'object') continue;
+        const id = String(row.id || '').trim();
+        if (!id) continue;
+        candidates.push({
+          id,
+          createdAt: String(row.createdAt || ''),
+          label: id,
+        });
+      }
+
+      const sorted = candidates.slice().sort(compareIsoLikeAsc);
+      const latest = sorted.length ? sorted[sorted.length - 1] : null;
+      const activeIdNormalized = activeRevisionId || '__system__';
+      if (!latest || latest.id === activeIdNormalized) {
+        setLeftPersistentStatus('');
+        return;
+      }
+
+      const activeLabel = activeIdNormalized === '__system__'
+        ? 'system base'
+        : shortId(activeIdNormalized, 18);
+      setLeftPersistentStatus(`(non-latest) ${activeLabel}`);
+    } catch (e) {
+      if (requestToken !== footerLeftRevisionRequestToken) return;
+      setLeftPersistentStatus('');
+    }
+  }
+
   function renderFromStore({ activeCollection = null, activeId = null } = {}) {
     renderFooterCenterStudyProgress();
     updateFooterRight({ activeCollection, activeId });
+    void updateFooterLeftRevisionStatus({ activeCollection, activeId });
   }
 
   renderFooterCenterStudyProgress();

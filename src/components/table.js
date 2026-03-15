@@ -46,7 +46,7 @@ function _installGlobalTableResizeHook() {
  * @param {string} [options.collection] - Optional collection name the table was populated from
  * @returns {HTMLTableElement}
  */
-export function createTable({ store = null, headers, rows, className = '', id, collection, sourceMetadata = null, sortable = false, searchable = false, rowActions = [], initialSortKey = null, initialSortDir = 'asc', columnRenderSettings = {}, tableRenderSettings = {} } = {}) {
+export function createTable({ store = null, headers, rows, className = '', id, collection, sourceMetadata = null, sortable = false, searchable = false, rowActions = [], initialSortKey = null, initialSortDir = 'asc', columnRenderSettings = {}, tableRenderSettings = {}, getRowClassName = null } = {}) {
   const __tableLabel = (() => {
     const parts = [];
     if (id) parts.push(String(id));
@@ -346,6 +346,12 @@ export function createTable({ store = null, headers, rows, className = '', id, c
 
   function createRowTr(rowData, rowIndex) {
     const tr = document.createElement('tr');
+    try {
+      if (typeof getRowClassName === 'function') {
+        const className = String(getRowClassName(rowData, rowIndex) || '').trim();
+        if (className) tr.className = className;
+      }
+    } catch (e) {}
 
     for (let i = 0; i < rowData.length; i++) {
       const cellData = rowData[i];

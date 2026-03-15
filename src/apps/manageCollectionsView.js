@@ -448,10 +448,6 @@ export function renderManageCollections({ store, onNavigate }) {
   const newHint = el('p', { className: 'hint', text: 'These entries will be added to the collection.' });
   const newCard = card({ id: 'mc-diff-new', title: 'New Entries', cornerCaption: '', className: 'mc-card', children: [newHint, newBody] });
 
-  const removedBody = el('div', { id: 'mc-diff-removed-body', className: 'mc-diff-list' });
-  const removedHint = el('p', { className: 'hint', text: 'These entries will be removed from the collection.' });
-  const removedCard = card({ id: 'mc-diff-removed', title: 'Entry Removals', cornerCaption: '', className: 'mc-card', children: [removedHint, removedBody] });
-
   const invalidBody = el('div', { id: 'mc-diff-invalid-body', className: 'mc-diff-list' });
   const invalidHint = el('p', { className: 'hint', text: 'Entries with missing or invalid keys/fields — will not be applied.' });
   const invalidCard = card({ id: 'mc-diff-invalid', title: 'Invalid Entries', cornerCaption: '', className: 'mc-card', children: [invalidHint, invalidBody] });
@@ -471,7 +467,6 @@ export function renderManageCollections({ store, onNavigate }) {
     unchangedCard,
     editedCard,
     newCard,
-    removedCard,
     invalidCard,
   );
 
@@ -663,7 +658,6 @@ export function renderManageCollections({ store, onNavigate }) {
     // clear persistent bodies
     editedBody.innerHTML = '';
     newBody.innerHTML = '';
-    removedBody.innerHTML = '';
     unchangedBody.innerHTML = '';
     invalidBody.innerHTML = '';
 
@@ -676,7 +670,6 @@ export function renderManageCollections({ store, onNavigate }) {
       // no preview: clear corner captions and leave card bodies to their static hints
       setCorner(editedCard, '');
       setCorner(newCard, '');
-      setCorner(removedCard, '');
       setCorner(invalidCard, '');
       setCorner(unchangedCard, '');
       // mark persistent cards as empty so they collapse visually
@@ -684,7 +677,6 @@ export function renderManageCollections({ store, onNavigate }) {
         const pairs = [
           { card: editedCard, body: editedBody },
           { card: newCard, body: newBody },
-          { card: removedCard, body: removedBody },
           { card: invalidCard, body: invalidBody },
           { card: unchangedCard, body: unchangedBody },
         ];
@@ -802,8 +794,6 @@ export function renderManageCollections({ store, onNavigate }) {
       });
       return { key: label, node: makeDetailsItem({ summaryLeft: label, summaryRight: `invalid • ${reasons.length ? reasons.join('; ') : 'invalid'}`, children: [body] }) };
     });
-    const removalItems = Array.isArray(feedback?.removals) ? feedback.removals : [];
-
     if (editedItems.length) {
       setCorner(editedCard, `${editedItems.length}`);
       const list = el('div', { className: 'mc-diff-list', children: editedItems.sort((a, b) => String(a.key).localeCompare(String(b.key))).map(x => x.node) });
@@ -839,27 +829,11 @@ export function renderManageCollections({ store, onNavigate }) {
       setCorner(invalidCard, '');
       // leave invalidBody empty; the static hint lives in the card header
     }
-
-    if (removalItems.length) {
-      setCorner(removedCard, `${removalItems.length}`);
-      const list = el('div', { className: 'mc-diff-list' });
-      for (const item of removalItems) {
-        const label = String(item?.key || '(no key)');
-        const before = item?.before ?? null;
-        const body = el('div', { className: 'mc-diff-body', children: [before ? preJson(before, '18rem') : el('div', { className: 'hint', text: 'No base entry found.' })] });
-        list.append(makeDetailsItem({ summaryLeft: label, summaryRight: 'remove', children: [body] }));
-      }
-      removedBody.append(list);
-    } else {
-      setCorner(removedCard, '');
-      // leave removedBody empty; the static hint lives in the card header
-    }
     // toggle compact class for persistent diff cards based on whether they have content
     try {
       const pairs = [
         { card: editedCard, body: editedBody },
         { card: newCard, body: newBody },
-        { card: removedCard, body: removedBody },
         { card: invalidCard, body: invalidBody },
         { card: unchangedCard, body: unchangedBody },
       ];
@@ -878,10 +852,10 @@ export function renderManageCollections({ store, onNavigate }) {
     try {
       const ne = Number(feedback?.summary?.added || diffs?.newEntries || 0);
       const ed = Number(feedback?.summary?.edited || diffs?.editedEntries || 0);
-      const rm = Number(feedback?.summary?.removals || diffs?.entriesRemove || 0);
-      const meaningful = (ne + ed + rm) > 0;
+      const meaningful = (ne + ed) > 0;
       const hasInvalid = !!(invalidItems && invalidItems.length);
-      saveDiffBtn.disabled = !meaningful || hasInvalid || !previewResult?.patch;
+      const readOnlyPatchView = !!previewResult?._readOnlyPatchView;
+      saveDiffBtn.disabled = readOnlyPatchView || !meaningful || hasInvalid || !previewResult?.patch;
       // visually indicate error state by toggling a scoped class
       try {
         if (hasInvalid) saveDiffBtn.classList.add('mc-save-invalid');
@@ -889,6 +863,74 @@ export function renderManageCollections({ store, onNavigate }) {
       } catch (e) {}
     } catch (e) {
       try { saveDiffBtn.disabled = true; } catch (err) {}
+    }
+  }
+
+  function clearDiffPanels() {
+    editedBody.innerHTML = '';
+    newBody.innerHTML = '';
+    unchangedBody.innerHTML = '';
+    invalidBody.innerHTML = '';
+  }
+
+  async function viewRevisionPatch(revisionId) {
+    const rid = String(revisionId || '').trim();
+    if (!rid) return;
+    const rec = (Array.isArray(revisions) ? revisions.find(x => x && x.id === rid) : null);
+    if (!rec) return;
+    if (rec.kind !== 'diff' || !rec.patch || typeof rec.patch !== 'object') {
+      clearDiffPanels();
+      previewResult = null;
+      setWarnings([]);
+      setStatus('This revision does not have a patch to view.');
+      return;
+    }
+
+    try {
+      let base = null;
+      if (rec.parentId) {
+        base = await store.collectionDB.resolveCollectionAtRevision(collectionKey, rec.parentId).catch(() => null);
+      } else {
+        base = await store.collectionDB.getSystemCollection(collectionKey).catch(() => null);
+      }
+      const merged = await store.collectionDB.resolveCollectionAtRevision(collectionKey, rid).catch(() => null);
+      const arrayKey = String(rec.patch?.targetArrayKey || detectArrayKey(base || merged || {}) || 'entries');
+      const importInput = { [arrayKey]: Array.isArray(rec.patch?.entries?.upsert) ? rec.patch.entries.upsert.slice() : [] };
+      const diffs = {
+        arrayKey,
+        entryKeyField: rec.patch?.entryKeyField || '',
+        metadataChanges: 0,
+        schemaChanges: 0,
+        entriesUpsert: Number(Array.isArray(rec.patch?.entries?.upsert) ? rec.patch.entries.upsert.length : 0),
+        entriesRemove: 0,
+        newEntries: 0,
+        editedEntries: 0,
+      };
+
+      previewResult = {
+        patch: rec.patch,
+        diffs,
+        merged,
+        warnings: [],
+        _importInput: importInput,
+        _readOnlyPatchView: true,
+      };
+      previewResult._importFeedback = buildImportFeedback({
+        collectionKey,
+        baseCollection: base,
+        input: importInput,
+        previewResult,
+        entryValidation: { entryErrors: [], entryWarnings: [], warnings: [] },
+        patchPayloadDetected: true,
+      });
+
+      clearDiffPanels();
+      renderDiffPanels();
+      setWarnings([]);
+      setStatus(`Viewing patch for revision ${shortId(rid, 16)}.`);
+      try { editedCard.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+    } catch (e) {
+      setStatus(`Failed to view patch: ${e?.message || e}`);
     }
   }
 
@@ -930,7 +972,7 @@ export function renderManageCollections({ store, onNavigate }) {
         } catch (e) { pSummary = '' }
       } else {
         pSummary = (patch && typeof patch === 'object')
-          ? `${(patch.entries?.upsert?.length || 0)}u / ${(patch.entries?.removeKeys?.length || 0)}r`
+          ? `${(patch.entries?.upsert?.length || 0)}u`
           : '';
       }
       const arr = [active, kind, created, shortId(r.id, 12), label, parent, pSummary];
@@ -947,42 +989,31 @@ export function renderManageCollections({ store, onNavigate }) {
           const rid = tr?.dataset?.rowId || rowData.__id;
           if (!rid) return;
           try {
-            // If user selected the system/base row, clear active revision so
-            // the system collection becomes the active base.
             if (rid === '__system__') {
               store.collectionDB.setActiveRevisionId(collectionKey, null);
             } else {
               store.collectionDB.setActiveRevisionId(collectionKey, rid);
             }
+
+            if (store?.collections?.getActiveCollectionId?.() === collectionKey && typeof store?.collections?.loadCollection === 'function') {
+              await store.collections.loadCollection(collectionKey, { force: true });
+            }
+
             await loadCurrent();
+            setStatus(`Activated revision ${shortId(rid, 16)}.`);
           } catch (e) {
             setStatus(`Failed to activate revision: ${e?.message || e}`);
           }
         }
       },
       {
-        label: 'Preview',
-        title: 'Load and preview snapshot at this revision (does not activate)',
+        label: 'View Patch',
+        title: 'Populate edited/new entries from this saved patch',
         className: 'btn small',
         onClick: async (rowData, rowIndex, { tr }) => {
           const rid = tr?.dataset?.rowId || rowData.__id;
           if (!rid) return;
-          try {
-            let snap = null;
-            if (rid === '__system__') {
-              snap = await store.collectionDB.getSystemCollection(collectionKey).catch(() => null);
-            } else {
-              snap = await store.collectionDB.resolveCollectionAtRevision(collectionKey, rid);
-            }
-            previewResult = { patch: null, diffs: null, merged: snap, warnings: [] };
-            currentJsonMode = 'preview';
-            renderJson('preview');
-            snapshotToggleBtn.disabled = false;
-            snapshotToggleBtn.textContent = 'Show Current';
-            setStatus(`Previewing revision ${shortId(rid, 16)}`);
-          } catch (e) {
-            setStatus(`Failed to preview revision: ${e?.message || e}`);
-          }
+          await viewRevisionPatch(rid);
         }
       },
       {
@@ -1026,6 +1057,13 @@ export function renderManageCollections({ store, onNavigate }) {
       sortable: true,
       searchable: true,
       rowActions,
+      getRowClassName: (rowData) => {
+        const rid = String(rowData?.__id || '').trim();
+        if (!rid) return '';
+        if (rid === '__system__' && !activeRevisionId) return 'mc-history-row-active';
+        if (activeRevisionId && rid === activeRevisionId) return 'mc-history-row-active';
+        return '';
+      },
     });
     applyTableColumnStyles({ wrapper: table, tableSettings: historyTableSettings });
     applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings: historyTableSettings, actionItems: TABLE_ACTION_ITEMS });
@@ -1034,7 +1072,7 @@ export function renderManageCollections({ store, onNavigate }) {
       title: 'History',
       cornerCaption: `${revisions.length} revisions`,
       className: 'mc-card',
-      children: [el('p', { className: 'hint', text: 'List of saved revisions — preview or activate a revision from here.' }), table]
+      children: [el('p', { className: 'hint', text: 'List of saved revisions — activate a revision or inspect its saved patch from here.' }), table]
     });
 
     attachCardTableSettingsButton({
@@ -1098,7 +1136,7 @@ export function renderManageCollections({ store, onNavigate }) {
     activeRevisionId = store.collectionDB.getActiveRevisionId(collectionKey);
 
     try {
-      currentCollection = await store.collectionDB.getCollection(collectionKey);
+      currentCollection = await store.collectionDB.getCollection(collectionKey, { force: true });
       currentJsonMode = 'current';
       renderJson('current');
     } catch (e) {
@@ -1147,12 +1185,7 @@ export function renderManageCollections({ store, onNavigate }) {
     saveDiffBtn.disabled = true;
     saveSnapshotBtn.disabled = true;
     saveSnapshotBtn.style.display = 'none';
-    // clear diff card bodies
-    editedBody.innerHTML = '';
-    newBody.innerHTML = '';
-    removedBody.innerHTML = '';
-    unchangedBody.innerHTML = '';
-    invalidBody.innerHTML = '';
+    clearDiffPanels();
     setStatus('');
     setWarnings([]);
     currentJsonMode = 'current';
@@ -1170,9 +1203,7 @@ export function renderManageCollections({ store, onNavigate }) {
     // hold per-entry validation results here so we can attach to previewResult
     let entryValidation = null;
     let patchPayloadDetected = false;
-    // clear diff card bodies    editedBody.innerHTML = '';
-    newBody.innerHTML = '';
-    removedBody.innerHTML = '';
+    clearDiffPanels();
 
     const raw = String(importArea.value || '').trim();
     if (!raw) return;
@@ -1237,7 +1268,7 @@ export function renderManageCollections({ store, onNavigate }) {
       updateActionButtons();
 
       // If this looks like a full snapshot and we can't load system base, allow snapshot save.
-      const canSnapshot = (res?.patch?._inputKind === 'full') && !currentCollection;
+      const canSnapshot = (res?.patch?.inputKind === 'full') && !currentCollection;
       if (canSnapshot) {
         saveSnapshotBtn.style.display = '';
         saveSnapshotBtn.disabled = false;
@@ -1262,11 +1293,7 @@ export function renderManageCollections({ store, onNavigate }) {
       await store.collectionDB.commitPatch(collectionKey, previewResult.patch, { label });
       setStatus('Saved diff revision.');
       previewResult = null;
-      editedBody.innerHTML = '';
-      newBody.innerHTML = '';
-      removedBody.innerHTML = '';
-      unchangedBody.innerHTML = '';
-      invalidBody.innerHTML = '';
+      clearDiffPanels();
       importArea.value = '';
       labelInput.value = '';
       lastParsedRaw = null;
@@ -1286,11 +1313,7 @@ export function renderManageCollections({ store, onNavigate }) {
       await store.collectionDB.commitSnapshot(collectionKey, previewResult.merged, { label });
       setStatus('Saved snapshot revision.');
       previewResult = null;
-      editedBody.innerHTML = '';
-      newBody.innerHTML = '';
-      removedBody.innerHTML = '';
-      unchangedBody.innerHTML = '';
-      invalidBody.innerHTML = '';
+      clearDiffPanels();
       importArea.value = '';
       labelInput.value = '';
       lastParsedRaw = null;

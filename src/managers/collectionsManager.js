@@ -779,15 +779,15 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     return state._availableCollectionPaths.map(p => availableCollectionsMap.get(p) || { path: p, name: null, description: null, entries: null });
   }
 
-  async function loadCollection(key) {
-    return loadCollectionInternal(key, { notify: true });
+  async function loadCollection(key, opts = {}) {
+    return loadCollectionInternal(key, { notify: true, ...(opts || {}) });
   }
 
   async function loadCollectionInternal(key, opts = { notify: true }) {
     if (!key) throw new Error('collection key required');
     const existing = state.collections.find(c => c.key === key);
-    if (existing) return existing;
-    if (pendingLoads.has(key)) return pendingLoads.get(key);
+    if (existing && !opts.force) return existing;
+    if (pendingLoads.has(key) && !opts.force) return pendingLoads.get(key);
 
     const p = timed(`collections.loadCollection ${key}`, async () => {
       const virtual = parseCollectionSetVirtualKey(key);
@@ -803,7 +803,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       if (!collectionDB || typeof collectionDB.getCollection !== 'function') {
         throw new Error('collectionDB.getCollection is required to load collections');
       }
-      data = await collectionDB.getCollection(key);
+      data = await collectionDB.getCollection(key, { force: !!opts.force });
       console.debug(`[CollectionsManager] Loaded collection data for key: ${key}`, { raw: data });
 
 

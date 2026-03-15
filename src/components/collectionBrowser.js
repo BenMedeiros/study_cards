@@ -7,6 +7,20 @@
 
 import { basename, dirname, titleFromFilename } from '../utils/browser/helpers.js';
 
+function shortId(value, n = 18) {
+  const text = String(value || '').trim();
+  if (!text) return '';
+  if (text.length <= n) return text;
+  return `${text.slice(0, n)}…`;
+}
+
+function compareIsoLikeAsc(a, b) {
+  const left = String(a?.createdAt || '');
+  const right = String(b?.createdAt || '');
+  if (left !== right) return left.localeCompare(right);
+  return String(a?.id || '').localeCompare(String(b?.id || ''));
+}
+
 function isCollectionSetsFileKey(key) {
   return basename(key) === '_collectionSets.json';
 }
@@ -29,6 +43,11 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'custom-dropdown-button';
+  const buttonMain = document.createElement('span');
+  buttonMain.className = 'collection-browser-button-main';
+  const buttonCaption = document.createElement('span');
+  buttonCaption.className = 'collection-browser-button-caption';
+  button.append(buttonMain, buttonCaption);
 
   const menu = document.createElement('div');
   menu.className = 'custom-dropdown-menu';
@@ -46,6 +65,64 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     if (active?.metadata?.name) return active.metadata.name;
     if (active?.key) return titleFromFilename(basename(active.key));
     return 'Select…';
+  }
+
+  let activeRevisionCaption = '';
+  let revisionCaptionRequestToken = 0;
+
+  function renderButtonLabel() {
+    buttonMain.textContent = getButtonLabel();
+    buttonCaption.textContent = activeRevisionCaption;
+    button.classList.toggle('custom-dropdown-button-has-caption', !!activeRevisionCaption);
+    buttonCaption.style.display = activeRevisionCaption ? 'block' : 'none';
+  }
+
+  async function computeActiveRevisionCaption(activeCollectionKey) {
+    const collectionKey = String(activeCollectionKey || '').trim();
+    const collectionDB = store?.collectionDB;
+    if (!collectionKey || !collectionDB) return '';
+    if (
+      typeof collectionDB.getActiveRevisionId !== 'function' ||
+      typeof collectionDB.listUserRevisions !== 'function' ||
+      typeof collectionDB.listAvailableCollections !== 'function'
+    ) return '';
+
+    try {
+      const activeRevisionId = String(collectionDB.getActiveRevisionId(collectionKey) || '').trim();
+      const [revisionRows, availableRows] = await Promise.all([
+        collectionDB.listUserRevisions(collectionKey).catch(() => []),
+        collectionDB.listAvailableCollections().catch(() => []),
+      ]);
+
+      const available = Array.isArray(availableRows) ? availableRows : [];
+      const systemRow = available.find((row) => String(row?.key || row?.path || '').trim() === collectionKey) || null;
+      const candidates = [
+        { id: '__system__', createdAt: String(systemRow?.modifiedAt || '') },
+      ];
+      for (const row of Array.isArray(revisionRows) ? revisionRows : []) {
+        if (!row || typeof row !== 'object') continue;
+        const id = String(row.id || '').trim();
+        if (!id) continue;
+        candidates.push({ id, createdAt: String(row.createdAt || '') });
+      }
+      const sorted = candidates.slice().sort(compareIsoLikeAsc);
+      const latest = sorted.length ? sorted[sorted.length - 1] : null;
+      const activeIdNormalized = activeRevisionId || '__system__';
+      if (!latest || latest.id === activeIdNormalized) return '';
+      const activeLabel = activeIdNormalized === '__system__' ? 'system base' : shortId(activeIdNormalized, 18);
+      return `(non-latest) ${activeLabel}`;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  async function refreshActiveRevisionCaption() {
+    const requestToken = ++revisionCaptionRequestToken;
+    const activeId = store.collections.getActiveCollectionId?.();
+    const nextCaption = await computeActiveRevisionCaption(activeId);
+    if (requestToken !== revisionCaptionRequestToken) return;
+    activeRevisionCaption = nextCaption;
+    renderButtonLabel();
   }
 
   let currentDir = '';
@@ -74,12 +151,24 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     menu.innerHTML = '';
   }
 
-  function addOption({ label, kind, value, disabled = false }) {
+  function addOption({ label, kind, value, disabled = false, caption = '' }) {
     const option = document.createElement('div');
     option.className = 'custom-dropdown-option';
-    option.textContent = label;
     option.dataset.kind = kind;
     option.dataset.value = value ?? '';
+
+    const labelEl = document.createElement('span');
+    labelEl.className = 'collection-browser-option-label';
+    labelEl.textContent = label;
+    option.append(labelEl);
+
+    if (caption) {
+      option.classList.add('collection-browser-option-with-caption');
+      const captionEl = document.createElement('span');
+      captionEl.className = 'collection-browser-option-caption';
+      captionEl.textContent = caption;
+      option.append(captionEl);
+    }
 
     if (disabled) {
       option.style.opacity = '0.6';
@@ -128,10 +217,11 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
     menu.append(option);
   }
 
-  function renderMenu() {
+  async function renderMenu() {
     clearMenu();
 
     const activeId = store.collections.getActiveCollectionId?.();
+    const activeCaption = await computeActiveRevisionCaption(activeId);
 
     const listing = store.collections.listCollectionDir
       ? store.collections.listCollectionDir(currentDir)
@@ -152,7 +242,8 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
         throw new Error('Deprecated feature detected: collection sets are no longer supported.');
       }
       const label = file.label || titleFromFilename(basename(file.key));
-      addOption({ label, kind: 'file', value: file.key });
+      const isActiveFile = !!(file.key && file.key === activeId);
+      addOption({ label, kind: 'file', value: file.key, caption: isActiveFile ? activeCaption : '' });
       if (file.key && file.key === activeId) {
         // highlight selected file
         const last = menu.lastElementChild;
@@ -205,8 +296,8 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
 
   function open() {
     syncDirFromState();
-    button.textContent = getButtonLabel();
-    renderMenu();
+    renderButtonLabel();
+    void renderMenu();
     container.classList.add('open');
     document.addEventListener('ui:closeOverlays', onCloseOverlaysEvent);
 
@@ -354,7 +445,8 @@ export function createCollectionBrowserDropdown({ store, className = '', onSelec
   }, 0);
 
   // initial label
-  button.textContent = getButtonLabel();
+  renderButtonLabel();
+  void refreshActiveRevisionCaption();
 
   container.append(button, menu);
   return container;

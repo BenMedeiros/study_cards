@@ -134,11 +134,7 @@ export function unwrapPatchPayload({ parsed, collectionKey = '', defaultArrayKey
     typeof candidate === 'object' &&
     candidate.entries &&
     typeof candidate.entries === 'object' &&
-    (
-      Array.isArray(candidate.entries.upsert) ||
-      Array.isArray(candidate.entries.upsertMinimal) ||
-      Array.isArray(candidate.entries.removeKeys)
-    ) &&
+    Array.isArray(candidate.entries.upsert) &&
     (
       typeof candidate.targetArrayKey === 'string' ||
       typeof candidate.entryKeyField === 'string'
@@ -254,10 +250,6 @@ export function parseCollectionImportInput({
 
   const unwrapped = unwrapPatchPayload({ parsed, collectionKey, defaultArrayKey });
   const feedbackUnwrapped = unwrapImportFeedbackPayload({ parsed: unwrapped.parsed, defaultArrayKey });
-  if (hasRelatedCollections(feedbackUnwrapped.parsed)) {
-    throw new Error('Import contains relatedCollections — not supported yet (TODO).');
-  }
-
   return {
     parsed: feedbackUnwrapped.parsed,
     input: normalizeImportJson({

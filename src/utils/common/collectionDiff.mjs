@@ -10,6 +10,79 @@ function safeClone(v) {
   try { return JSON.parse(JSON.stringify(v)); } catch { return null; }
 }
 
+function jsonEqual(a, b) {
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch { return a === b; }
+}
+
+function mergeUniqueArray(existing = [], incoming = []) {
+  const out = [];
+  const seen = new Set();
+  const pushUnique = (value) => {
+    const key = (() => {
+      try { return JSON.stringify(value); } catch { return String(value); }
+    })();
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push(value);
+  };
+
+  for (const value of Array.isArray(existing) ? existing : []) pushUnique(value);
+  for (const value of Array.isArray(incoming) ? incoming : []) pushUnique(value);
+  return out;
+}
+
+function hasOwn(obj, key) {
+  return !!obj && Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+function mergeRelatedCollectionsValue(existingValue, incomingValue) {
+  const hasExisting = existingValue && typeof existingValue === 'object';
+  const hasIncoming = incomingValue && typeof incomingValue === 'object';
+  if (!hasIncoming) return hasExisting ? safeClone(existingValue) || existingValue : incomingValue;
+
+  const merged = hasExisting ? { ...existingValue } : {};
+  for (const [key, value] of Object.entries(incomingValue)) {
+    if (!Array.isArray(value)) {
+      if (!hasOwn(merged, key)) merged[key] = value;
+      else if (!jsonEqual(merged[key], value)) merged[key] = value;
+      continue;
+    }
+
+    const current = Array.isArray(merged[key]) ? merged[key] : [];
+    const next = mergeUniqueArray(current, value);
+    if (next.length) merged[key] = next;
+    else if (!current.length && hasOwn(merged, key)) delete merged[key];
+  }
+  return Object.keys(merged).length ? merged : undefined;
+}
+
+export function mergeEntryForPatch(existingEntry, incomingEntry) {
+  const existing = existingEntry && typeof existingEntry === 'object' ? existingEntry : {};
+  const incoming = incomingEntry && typeof incomingEntry === 'object' ? incomingEntry : {};
+  const merged = { ...existing };
+
+  for (const [key, value] of Object.entries(incoming)) {
+    if (key === 'tags' && Array.isArray(value)) {
+      const current = Array.isArray(existing.tags) ? existing.tags : [];
+      const next = mergeUniqueArray(current, value);
+      if (next.length) merged.tags = next;
+      else if (!current.length) delete merged.tags;
+      continue;
+    }
+
+    if (key === 'relatedCollections' && value && typeof value === 'object' && !Array.isArray(value)) {
+      const next = mergeRelatedCollectionsValue(existing.relatedCollections, value);
+      if (typeof next === 'undefined') delete merged.relatedCollections;
+      else merged.relatedCollections = next;
+      continue;
+    }
+
+    merged[key] = value;
+  }
+
+  return merged;
+}
+
 export function detectCollectionArrayKey(collection) {
   const c = collection && typeof collection === 'object' ? collection : null;
   if (!c) return { key: null, arr: null };
@@ -169,24 +242,15 @@ export function computePatchFromInput({ baseCollection, input, treatFullAsReplac
   const warnings = [];
 
   const { key: baseArrKey, arr: baseArr } = detectCollectionArrayKey(base);
-  const baseSchema = normalizeSchemaFromCollection(base);
   const entryKeyField = inferEntryKeyField({ collection: base, arrayKey: baseArrKey, entries: baseArr });
 
-  let inputMeta = null;
-  let inputSchema = null;
   let inputArrKey = null;
   let inputEntries = null;
 
   if (kind === 'full') {
-    inputMeta = (input?.metadata && typeof input.metadata === 'object') ? input.metadata : null;
-    inputSchema = Array.isArray(input?.metadata?.schema) ? input.metadata.schema : (Array.isArray(input?.schema) ? input.schema : null);
     const det = detectCollectionArrayKey(input);
     inputArrKey = det.key;
     inputEntries = det.arr;
-  } else if (kind === 'metadata') {
-    inputMeta = input;
-  } else if (kind === 'schema') {
-    inputSchema = Array.isArray(input) ? input : (Array.isArray(input?.schema) ? input.schema : (Array.isArray(input?.metadata?.schema) ? input.metadata.schema : null));
   } else if (kind === 'entries') {
     inputEntries = input;
   } else if (kind === 'entries-object') {
@@ -199,8 +263,6 @@ export function computePatchFromInput({ baseCollection, input, treatFullAsReplac
 
   const targetArrKey = inputArrKey || baseArrKey || 'entries';
   const targetEntryKeyField = (() => {
-    const metaEk = (inputMeta && typeof inputMeta.entry_key === 'string') ? inputMeta.entry_key.trim() : '';
-    if (metaEk) return metaEk;
     const inferred = inferEntryKeyField({ collection: base, arrayKey: targetArrKey, entries: inputEntries || baseArr });
     return inferred || entryKeyField || '';
   })();
@@ -208,27 +270,9 @@ export function computePatchFromInput({ baseCollection, input, treatFullAsReplac
   const patch = {
     targetArrayKey: targetArrKey,
     entryKeyField: targetEntryKeyField,
-    metadata: { set: {}, unset: [] },
-    schema: { upsert: [], removeKeys: [] },
-    entries: { upsert: [], upsertMinimal: [], removeKeys: [] },
-    _inputKind: kind,
+    inputKind: kind,
+    entries: { upsert: [] },
   };
-
-  const baseMeta = (base.metadata && typeof base.metadata === 'object') ? base.metadata : {};
-  if (inputMeta) {
-    const md = diffObjectsShallow(baseMeta, inputMeta);
-    for (const d of md) {
-      if (d.after === undefined) patch.metadata.unset.push(d.key);
-      else patch.metadata.set[d.key] = d.after;
-    }
-  }
-
-  if (inputSchema) {
-    const sd = diffSchema(baseSchema || [], inputSchema || []);
-    for (const a of sd.added) patch.schema.upsert.push(a.after);
-    for (const c of sd.changes) patch.schema.upsert.push(c.after);
-    for (const r of sd.removed) patch.schema.removeKeys.push(r.key);
-  }
 
   const baseEntries = Array.isArray(base?.[targetArrKey]) ? base[targetArrKey] : (Array.isArray(baseArr) ? baseArr : []);
   if (Array.isArray(inputEntries)) {
@@ -241,26 +285,12 @@ export function computePatchFromInput({ baseCollection, input, treatFullAsReplac
       const existing = baseMap.get(k);
       if (!existing) {
         patch.entries.upsert.push(incoming);
-        patch.entries.upsertMinimal.push(safeClone(incoming) || incoming);
         continue;
       }
-      const fields = diffEntry(existing, incoming);
+      const mergedIncoming = mergeEntryForPatch(existing, incoming);
+      const fields = diffEntry(existing, mergedIncoming);
       if (fields.length) {
         patch.entries.upsert.push(incoming);
-        const minimal = {};
-        for (const f of fields) {
-          try { minimal[f.key] = incoming[f.key]; } catch (e) {}
-        }
-        if (targetEntryKeyField && !(targetEntryKeyField in minimal)) {
-          try { minimal[targetEntryKeyField] = incoming[targetEntryKeyField]; } catch (e) {}
-        }
-        patch.entries.upsertMinimal.push(minimal);
-      }
-    }
-
-    if (kind === 'full' && treatFullAsReplace) {
-      for (const [k] of baseMap.entries()) {
-        if (!inputMap.has(k)) patch.entries.removeKeys.push(k);
       }
     }
   }
@@ -278,49 +308,6 @@ export function applyPatchToCollection({ baseCollection, patch } = {}) {
   const arrayKey = String(p.targetArrayKey || detectCollectionArrayKey(base).key || 'entries');
   const entryKeyField = String(p.entryKeyField || inferEntryKeyField({ collection: base, arrayKey }) || '').trim();
 
-  if (!base.metadata || typeof base.metadata !== 'object') base.metadata = {};
-  try {
-    const set = p.metadata?.set && typeof p.metadata.set === 'object' ? p.metadata.set : {};
-    for (const [k, v] of Object.entries(set)) {
-      base.metadata[k] = v;
-    }
-    const unset = Array.isArray(p.metadata?.unset) ? p.metadata.unset : [];
-    for (const k of unset) {
-      try { delete base.metadata[String(k)]; } catch (e) {}
-    }
-  } catch (e) {}
-
-  try {
-    const schema = Array.isArray(base.metadata.schema) ? base.metadata.schema.slice() : (Array.isArray(base.schema) ? base.schema.slice() : []);
-    const map = schemaToMap(schema);
-
-    const remove = Array.isArray(p.schema?.removeKeys) ? p.schema.removeKeys : [];
-    for (const k of remove) map.delete(String(k));
-
-    const upsert = Array.isArray(p.schema?.upsert) ? p.schema.upsert : [];
-    for (const f of upsert) {
-      if (!f || typeof f !== 'object') continue;
-      const k = typeof f.key === 'string' ? f.key.trim() : '';
-      if (!k) continue;
-      map.set(k, f);
-    }
-
-    const existingOrder = schema.map(f => (f && typeof f.key === 'string') ? f.key.trim() : '').filter(Boolean);
-    const newKeys = Array.from(map.keys()).filter(k => !existingOrder.includes(k));
-    const out = [];
-    for (const k of existingOrder) {
-      const f = map.get(k);
-      if (f) out.push(f);
-    }
-    for (const k of newKeys) {
-      const f = map.get(k);
-      if (f) out.push(f);
-    }
-
-    base.metadata.schema = out;
-    if ('schema' in base) delete base.schema;
-  } catch (e) {}
-
   try {
     const arr = Array.isArray(base[arrayKey]) ? base[arrayKey].slice() : [];
     const indexByKey = new Map();
@@ -331,16 +318,6 @@ export function applyPatchToCollection({ baseCollection, patch } = {}) {
         const k = e[entryKeyField] != null ? String(e[entryKeyField]).trim() : '';
         if (!k) continue;
         if (!indexByKey.has(k)) indexByKey.set(k, i);
-      }
-    }
-
-    const removeKeys = Array.isArray(p.entries?.removeKeys) ? p.entries.removeKeys : [];
-    if (entryKeyField && removeKeys.length) {
-      const removeSet = new Set(removeKeys.map(k => String(k)));
-      for (let i = arr.length - 1; i >= 0; i--) {
-        const e = arr[i];
-        const k = (e && typeof e === 'object' && e[entryKeyField] != null) ? String(e[entryKeyField]).trim() : '';
-        if (k && removeSet.has(k)) arr.splice(i, 1);
       }
     }
 
@@ -367,7 +344,7 @@ export function applyPatchToCollection({ baseCollection, patch } = {}) {
         arr[idx] = incoming;
         continue;
       }
-      arr[idx] = { ...existing, ...incoming };
+      arr[idx] = mergeEntryForPatch(existing, incoming);
     }
 
     base[arrayKey] = arr;
@@ -380,21 +357,12 @@ export function summarizePatchAgainstBase({ baseCollection, patch } = {}) {
   const base = baseCollection && typeof baseCollection === 'object' ? baseCollection : { metadata: {} };
   const p = patch && typeof patch === 'object' ? patch : {};
 
-  const metaSet = p.metadata?.set && typeof p.metadata.set === 'object' ? p.metadata.set : {};
-  const metaUnset = Array.isArray(p.metadata?.unset) ? p.metadata.unset : [];
-  const metadataChanges = Object.keys(metaSet).length + metaUnset.length;
-
-  const schemaUpsert = Array.isArray(p.schema?.upsert) ? p.schema.upsert : [];
-  const schemaRemove = Array.isArray(p.schema?.removeKeys) ? p.schema.removeKeys : [];
-  const schemaChanges = schemaUpsert.length + schemaRemove.length;
-
   const arrayKey = String(p.targetArrayKey || detectCollectionArrayKey(base).key || 'entries');
   const entryKeyField = String(p.entryKeyField || inferEntryKeyField({ collection: base, arrayKey }) || '').trim();
   const baseEntries = Array.isArray(base?.[arrayKey]) ? base[arrayKey] : [];
   const baseMap = buildEntryMap(baseEntries, entryKeyField);
 
   const upsert = Array.isArray(p.entries?.upsert) ? p.entries.upsert : [];
-  const removeKeys = Array.isArray(p.entries?.removeKeys) ? p.entries.removeKeys : [];
 
   let newEntries = 0;
   let editedEntries = 0;
@@ -412,10 +380,10 @@ export function summarizePatchAgainstBase({ baseCollection, patch } = {}) {
   return {
     arrayKey,
     entryKeyField,
-    metadataChanges,
-    schemaChanges,
+    metadataChanges: 0,
+    schemaChanges: 0,
     entriesUpsert: upsert.length,
-    entriesRemove: removeKeys.length,
+    entriesRemove: 0,
     newEntries,
     editedEntries,
   };

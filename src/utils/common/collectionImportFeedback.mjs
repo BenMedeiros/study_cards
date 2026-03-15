@@ -5,7 +5,7 @@
  * input, computed preview result, and optional schema validation output.
  */
 
-import { detectCollectionArrayKey, inferEntryKeyField } from './collectionDiff.mjs';
+import { detectCollectionArrayKey, inferEntryKeyField, mergeEntryForPatch } from './collectionDiff.mjs';
 
 function safeClone(value) {
   try { return JSON.parse(JSON.stringify(value)); } catch { return null; }
@@ -190,9 +190,6 @@ export function buildImportFeedback({
 
   const baseMap = buildEntryMap(baseEntries, entryKeyField);
   const mergedMap = buildEntryMap(mergedEntries, entryKeyField);
-  const minimalMap = buildEntryMap(Array.isArray(patch?.entries?.upsertMinimal) ? patch.entries.upsertMinimal : [], entryKeyField);
-  const removeKeys = Array.isArray(patch?.entries?.removeKeys) ? patch.entries.removeKeys.map((value) => String(value)) : [];
-
   const { errorsById, errorsByIndex } = buildValidationMaps(entryValidation);
   const duplicateImportKeys = buildImportDuplicateSet(inputEntries, entryKeyField);
 
@@ -200,7 +197,6 @@ export function buildImportFeedback({
   const added = [];
   const unchanged = [];
   const invalid = [];
-  const removals = [];
 
   for (const [index, incoming] of inputEntries.entries()) {
     if (!incoming || typeof incoming !== 'object') {
@@ -253,25 +249,26 @@ export function buildImportFeedback({
       isNew = !before;
     }
 
-    const changedFields = before ? diffEntryFields(before, after) : [];
-    if (before && (deepEqual(before, after) || !changedFields.length)) {
+    const comparableAfter = before ? mergeEntryForPatch(before, after) : after;
+    const changedFields = before ? diffEntryFields(before, comparableAfter) : [];
+    if (before && (deepEqual(before, comparableAfter) || !changedFields.length)) {
       unchanged.push({
         key: key || `#${index}`,
         summary,
-        entry: safeClone(after) || after,
+        entry: safeClone(comparableAfter) || comparableAfter,
       });
       continue;
     }
 
-    const minimalAfter = key && minimalMap.has(key)
-      ? minimalMap.get(key)
-      : (!isNew && changedFields.length ? pickFields(after, changedFields) : (isNew ? (safeClone(incoming) || incoming) : null));
+    const minimalAfter = !isNew && changedFields.length
+      ? pickFields(after, changedFields)
+      : (isNew ? (safeClone(incoming) || incoming) : null);
 
     const item = {
       key: key || `#${index}`,
       summary,
       before: before ? (safeClone(before) || before) : null,
-      after: safeClone(after) || after,
+      after: safeClone(comparableAfter) || comparableAfter,
       changedFields: changedFields.slice(),
       minimalBefore: before && changedFields.length ? pickFields(before, changedFields) : null,
       minimalAfter: minimalAfter ? (safeClone(minimalAfter) || minimalAfter) : null,
@@ -280,18 +277,10 @@ export function buildImportFeedback({
     else edited.push(item);
   }
 
-  for (const key of removeKeys) {
-    removals.push({
-      key,
-      before: baseMap.get(key) ? (safeClone(baseMap.get(key)) || baseMap.get(key)) : null,
-    });
-  }
-
   edited.sort((a, b) => String(a.key).localeCompare(String(b.key), 'ja'));
   added.sort((a, b) => String(a.key).localeCompare(String(b.key), 'ja'));
   unchanged.sort((a, b) => String(a.key).localeCompare(String(b.key), 'ja'));
   invalid.sort((a, b) => String(a.key).localeCompare(String(b.key), 'ja'));
-  removals.sort((a, b) => String(a.key).localeCompare(String(b.key), 'ja'));
 
   const messages = normalizeMessages({ previewWarnings: preview.warnings, entryValidation });
 
@@ -306,7 +295,6 @@ export function buildImportFeedback({
       added: added.length,
       unchanged: unchanged.length,
       invalid: invalid.length,
-      removals: removals.length,
       metadataChanges: Number(diffs.metadataChanges || 0),
       schemaChanges: Number(diffs.schemaChanges || 0),
     },
@@ -314,7 +302,6 @@ export function buildImportFeedback({
     added,
     unchanged,
     invalid,
-    removals,
     validation: safeClone(entryValidation) || { entryErrors: [], entryWarnings: [], warnings: [] },
   };
 }
