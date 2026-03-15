@@ -1,0 +1,1692 @@
+{
+  "id": "rev_1773538483487_7b0b1c76f76dcaa4",
+  "collectionKey": "japanese/japanese_words.json",
+  "kind": "diff",
+  "createdAt": "2026-03-15T01:34:43.489Z",
+  "parentId": null,
+  "label": "editedimprots.json",
+  "patch": {
+    "targetArrayKey": "entries",
+    "entryKeyField": "kanji",
+    "metadata": {
+      "set": {},
+      "unset": []
+    },
+    "schema": {
+      "upsert": [],
+      "removeKeys": []
+    },
+    "entries": {
+      "upsert": [
+        {
+          "kanji": "カレー",
+          "reading": "カレー",
+          "meaning": "curry",
+          "type": "noun",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana"
+        },
+        {
+          "kanji": "ゲーム",
+          "reading": "ゲーム",
+          "meaning": "game",
+          "type": "noun",
+          "tags": [
+            "game-center-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana"
+        },
+        {
+          "kanji": "サラダ",
+          "reading": "サラダ",
+          "meaning": "salad",
+          "type": "noun",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana"
+        },
+        {
+          "kanji": "じゃがいも",
+          "reading": "じゃがいも",
+          "meaning": "potato",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "スーパー",
+          "reading": "スーパー",
+          "meaning": "supermarket",
+          "type": "noun",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana"
+        },
+        {
+          "kanji": "すぐ",
+          "reading": "すぐ",
+          "meaning": "immediately",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "ずっと",
+          "reading": "ずっと",
+          "meaning": "all the time; continuously; much more",
+          "lexicalClass": "regular",
+          "type": "adverb",
+          "tags": [
+            "duration",
+            "comparison",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ],
+          "orthography": "hiragana"
+        },
+        {
+          "kanji": "チェック",
+          "reading": "チェック",
+          "meaning": "check; checking",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "チョコレート",
+          "reading": "チョコレート",
+          "meaning": "chocolate",
+          "type": "noun",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana"
+        },
+        {
+          "kanji": "テレビ",
+          "reading": "テレビ",
+          "meaning": "television; TV",
+          "type": "noun",
+          "tags": [
+            "origin:english",
+            "device",
+            "media"
+          ],
+          "lexicalClass": "regular"
+        },
+        {
+          "kanji": "ビデオ",
+          "reading": "ビデオ",
+          "meaning": "video",
+          "type": "noun",
+          "tags": [
+            "origin:english",
+            "media"
+          ],
+          "lexicalClass": "regular"
+        },
+        {
+          "kanji": "ボタン",
+          "reading": "ボタン",
+          "meaning": "button",
+          "type": "noun",
+          "tags": [
+            "game-center-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana"
+        },
+        {
+          "kanji": "みんな",
+          "reading": "みんな",
+          "meaning": "everyone",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "ゆっくり",
+          "reading": "ゆっくり",
+          "meaning": "slowly; at ease",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "origin:Japanese",
+            "spoken"
+          ]
+        },
+        {
+          "kanji": "一つ",
+          "reading": "ひとつ",
+          "meaning": "one (thing)",
+          "type": "counter",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "飲む",
+          "reading": "のむ",
+          "meaning": "to drink",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "駅",
+          "reading": "えき",
+          "meaning": "station",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "可愛い",
+          "reading": "かわいい",
+          "meaning": "cute",
+          "type": "i-adjective",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "家族",
+          "reading": "かぞく",
+          "meaning": "family",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "灰色",
+          "reading": "はいいろ",
+          "meaning": "gray",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "外",
+          "reading": "そと",
+          "meaning": "outside; exterior",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n5"
+          ]
+        },
+        {
+          "kanji": "外す",
+          "reading": "はずす",
+          "meaning": "to remove; to take off; to unfasten",
+          "ending": "su",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n4"
+          ]
+        },
+        {
+          "kanji": "楽しい",
+          "reading": "たのしい",
+          "meaning": "fun; enjoyable",
+          "type": "i-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "帰る",
+          "reading": "かえる",
+          "meaning": "to return home",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "技",
+          "reading": "わざ",
+          "meaning": "technique; skill; move (in fighting/games)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "anime_ui"
+          ]
+        },
+        {
+          "kanji": "近く",
+          "reading": "ちかく",
+          "meaning": "nearby; vicinity",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "金色",
+          "reading": "きんいろ",
+          "meaning": "gold",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "銀色",
+          "reading": "ぎんいろ",
+          "meaning": "silver",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "決める",
+          "reading": "きめる",
+          "meaning": "to decide",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "健太",
+          "reading": "けんた",
+          "meaning": "Kenta (given name)",
+          "type": "proper-noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "見る",
+          "reading": "みる",
+          "meaning": "to see; to look",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "言う",
+          "reading": "いう",
+          "meaning": "to say",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "午後",
+          "reading": "ごご",
+          "meaning": "afternoon (p.m.)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "後",
+          "reading": "あと",
+          "meaning": "after; later",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "行く",
+          "reading": "いく",
+          "meaning": "to go",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "鋼",
+          "reading": "はがね",
+          "meaning": "steel",
+          "type": "noun",
+          "tags": [
+            "material",
+            "metal",
+            "jlpt_n1",
+            "written",
+            "spoken"
+          ],
+          "lexicalClass": "regular"
+        },
+        {
+          "kanji": "今日",
+          "reading": "きょう",
+          "meaning": "today",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "使う",
+          "reading": "つかう",
+          "meaning": "to use",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "始める",
+          "reading": "はじめる",
+          "meaning": "to begin",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "紫",
+          "reading": "むらさき",
+          "meaning": "purple",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "次",
+          "reading": "つぎ",
+          "meaning": "next",
+          "type": "noun",
+          "tags": [
+            "game-center-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "重い",
+          "reading": "おもい",
+          "meaning": "heavy",
+          "type": "i-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "準備",
+          "reading": "じゅんび",
+          "meaning": "preparation",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "書店",
+          "reading": "しょてん",
+          "meaning": "bookstore",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "manga-overview"
+          ],
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "少し",
+          "reading": "すこし",
+          "meaning": "a little",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "食べる",
+          "reading": "たべる",
+          "meaning": "to eat",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "真実",
+          "reading": "しんじつ",
+          "meaning": "truth; reality",
+          "type": "noun",
+          "tags": [
+            "gidk48",
+            "origin:Japanese"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "真面目",
+          "reading": "まじめ",
+          "meaning": "serious; earnest; diligent",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "gidk48",
+            "jlpt_n3",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "雀蜂",
+          "reading": "すずめばち",
+          "meaning": "hornet",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "animal",
+            "dangerous_insect"
+          ],
+          "status": "",
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "絶対",
+          "reading": "ぜったい",
+          "meaning": "absolutely; definitely",
+          "lexicalClass": "regular",
+          "type": "adverb",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "前",
+          "reading": "まえ",
+          "meaning": "front; before",
+          "type": "noun",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "走る",
+          "reading": "はしる",
+          "meaning": "to run",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "探し回る",
+          "reading": "さがしまわる",
+          "meaning": "to search all over",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "search",
+            "compound_verb",
+            "common"
+          ]
+        },
+        {
+          "kanji": "探り回る",
+          "reading": "さぐりまわる",
+          "meaning": "to probe around; to snoop around",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "search",
+            "investigation",
+            "compound_verb"
+          ]
+        },
+        {
+          "kanji": "着く",
+          "reading": "つく",
+          "meaning": "to arrive",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "中",
+          "reading": "なか",
+          "meaning": "inside",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "朝",
+          "reading": "あさ",
+          "meaning": "morning",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "直ぐ",
+          "reading": "すぐ",
+          "meaning": "right away; immediately",
+          "lexicalClass": "regular",
+          "type": "adverb",
+          "tags": [
+            "game-center-story"
+          ],
+          "orthography": "hiragana"
+        },
+        {
+          "kanji": "弟",
+          "reading": "おとうと",
+          "meaning": "younger brother",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "店",
+          "reading": "みせ",
+          "meaning": "store",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "登録",
+          "reading": "とうろく",
+          "meaning": "registration; subscription",
+          "type": "noun",
+          "tags": [
+            "digital",
+            "account",
+            "common"
+          ],
+          "lexicalClass": "regular"
+        },
+        {
+          "kanji": "桃色",
+          "reading": "ももいろ",
+          "meaning": "peach pink",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "透明",
+          "reading": "とうめい",
+          "meaning": "transparent",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "入る",
+          "reading": "はいる",
+          "meaning": "to enter; to go in",
+          "lexicalClass": "regular",
+          "type": "godan-verb",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "入れる",
+          "reading": "いれる",
+          "meaning": "to put in",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "認証",
+          "reading": "にんしょう",
+          "meaning": "authentication; verification",
+          "type": "noun",
+          "tags": [
+            "digital",
+            "security",
+            "formal"
+          ],
+          "lexicalClass": "regular"
+        },
+        {
+          "kanji": "敗北",
+          "reading": "はいぼく",
+          "meaning": "defeat; loss",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "anime_ui"
+          ]
+        },
+        {
+          "kanji": "買い物",
+          "reading": "かいもの",
+          "meaning": "shopping",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "父",
+          "reading": "ちち",
+          "meaning": "father",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "物",
+          "reading": "もの",
+          "meaning": "thing; item",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "聞く",
+          "reading": "きく",
+          "meaning": "to ask; to hear",
+          "lexicalClass": "regular",
+          "type": "godan-verb",
+          "ending": "ku",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "壁",
+          "reading": "かべ",
+          "meaning": "wall",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "母",
+          "reading": "はは",
+          "meaning": "mother",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "蜂の巣",
+          "reading": "はちのす",
+          "meaning": "beehive; wasp nest",
+          "type": "expression",
+          "lexicalClass": "regular",
+          "tags": [
+            "animal_related",
+            "compound_phrase"
+          ],
+          "status": "",
+          "orthography": "both"
+        },
+        {
+          "kanji": "蜂蜜",
+          "reading": "はちみつ",
+          "meaning": "honey",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "food",
+            "animal_related"
+          ],
+          "status": "",
+          "orthography": "both"
+        },
+        {
+          "kanji": "忘れる",
+          "reading": "わすれる",
+          "meaning": "to forget",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "毎日",
+          "reading": "まいにち",
+          "meaning": "every day",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "未来",
+          "reading": "みらい",
+          "meaning": "future",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "anime_ui"
+          ]
+        },
+        {
+          "kanji": "蜜蜂",
+          "reading": "みつばち",
+          "meaning": "honeybee",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "animal",
+            "compound"
+          ],
+          "status": "",
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "野菜",
+          "reading": "やさい",
+          "meaning": "vegetables",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "約束",
+          "reading": "やくそく",
+          "meaning": "promise",
+          "type": "noun",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "夕食",
+          "reading": "ゆうしょく",
+          "meaning": "dinner",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "来る",
+          "reading": "くる",
+          "meaning": "to come",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "緑",
+          "reading": "みどり",
+          "meaning": "green",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji"
+        },
+        {
+          "kanji": "話す",
+          "reading": "はなす",
+          "meaning": "to talk",
+          "ending": "su",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "橙色",
+          "reading": "だいだいいろ",
+          "meaning": "orange",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji"
+        }
+      ],
+      "upsertMinimal": [
+        {
+          "meaning": "curry",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "kanji": "カレー"
+        },
+        {
+          "tags": [
+            "game-center-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "kanji": "ゲーム"
+        },
+        {
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "kanji": "サラダ"
+        },
+        {
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "じゃがいも"
+        },
+        {
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "kanji": "スーパー"
+        },
+        {
+          "meaning": "immediately",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "すぐ"
+        },
+        {
+          "meaning": "all the time; continuously; much more",
+          "tags": [
+            "duration",
+            "comparison",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ],
+          "orthography": "hiragana",
+          "kanji": "ずっと"
+        },
+        {
+          "meaning": "check; checking",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "チェック"
+        },
+        {
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "kanji": "チョコレート"
+        },
+        {
+          "tags": [
+            "origin:english",
+            "device",
+            "media"
+          ],
+          "lexicalClass": "regular",
+          "kanji": "テレビ"
+        },
+        {
+          "tags": [
+            "origin:english",
+            "media"
+          ],
+          "lexicalClass": "regular",
+          "kanji": "ビデオ"
+        },
+        {
+          "tags": [
+            "game-center-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "kanji": "ボタン"
+        },
+        {
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "みんな"
+        },
+        {
+          "meaning": "slowly; at ease",
+          "orthography": "hiragana",
+          "tags": [
+            "origin:Japanese",
+            "spoken"
+          ],
+          "kanji": "ゆっくり"
+        },
+        {
+          "meaning": "one (thing)",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "一つ"
+        },
+        {
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "飲む"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "駅"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "可愛い"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "家族"
+        },
+        {
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji",
+          "kanji": "灰色"
+        },
+        {
+          "meaning": "outside; exterior",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n5"
+          ],
+          "kanji": "外"
+        },
+        {
+          "meaning": "to remove; to take off; to unfasten",
+          "tags": [
+            "jlpt_n4"
+          ],
+          "kanji": "外す"
+        },
+        {
+          "meaning": "fun; enjoyable",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "楽しい"
+        },
+        {
+          "meaning": "to return home",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "帰る"
+        },
+        {
+          "meaning": "technique; skill; move (in fighting/games)",
+          "tags": [
+            "anime_ui"
+          ],
+          "kanji": "技"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "近く"
+        },
+        {
+          "meaning": "gold",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji",
+          "kanji": "金色"
+        },
+        {
+          "meaning": "silver",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji",
+          "kanji": "銀色"
+        },
+        {
+          "meaning": "to decide",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "決める"
+        },
+        {
+          "meaning": "Kenta (given name)",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "健太"
+        },
+        {
+          "meaning": "to see; to look",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "見る"
+        },
+        {
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "言う"
+        },
+        {
+          "meaning": "afternoon (p.m.)",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "午後"
+        },
+        {
+          "meaning": "after; later",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "後"
+        },
+        {
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "行く"
+        },
+        {
+          "meaning": "steel",
+          "tags": [
+            "material",
+            "metal",
+            "jlpt_n1",
+            "written",
+            "spoken"
+          ],
+          "lexicalClass": "regular",
+          "kanji": "鋼"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "今日"
+        },
+        {
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "使う"
+        },
+        {
+          "meaning": "to begin",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "始める"
+        },
+        {
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji",
+          "kanji": "紫"
+        },
+        {
+          "tags": [
+            "game-center-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "kanji": "次"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "重い"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "準備"
+        },
+        {
+          "meaning": "bookstore",
+          "tags": [
+            "manga-overview"
+          ],
+          "orthography": "kanji",
+          "kanji": "書店"
+        },
+        {
+          "meaning": "a little",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "少し"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "食べる"
+        },
+        {
+          "meaning": "truth; reality",
+          "tags": [
+            "gidk48",
+            "origin:Japanese"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "kanji": "真実"
+        },
+        {
+          "meaning": "serious; earnest; diligent",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "gidk48",
+            "jlpt_n3",
+            "origin:Japanese"
+          ],
+          "kanji": "真面目"
+        },
+        {
+          "status": "",
+          "orthography": "kanji",
+          "kanji": "雀蜂"
+        },
+        {
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "絶対"
+        },
+        {
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "kanji": "前"
+        },
+        {
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "走る"
+        },
+        {
+          "meaning": "to search all over",
+          "tags": [
+            "search",
+            "compound_verb",
+            "common"
+          ],
+          "kanji": "探し回る"
+        },
+        {
+          "meaning": "to probe around; to snoop around",
+          "tags": [
+            "search",
+            "investigation",
+            "compound_verb"
+          ],
+          "kanji": "探り回る"
+        },
+        {
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "着く"
+        },
+        {
+          "meaning": "inside",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "中"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "朝"
+        },
+        {
+          "meaning": "right away; immediately",
+          "tags": [
+            "game-center-story"
+          ],
+          "orthography": "hiragana",
+          "kanji": "直ぐ"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "弟"
+        },
+        {
+          "meaning": "store",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "店"
+        },
+        {
+          "meaning": "registration; subscription",
+          "tags": [
+            "digital",
+            "account",
+            "common"
+          ],
+          "lexicalClass": "regular",
+          "kanji": "登録"
+        },
+        {
+          "meaning": "peach pink",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji",
+          "kanji": "桃色"
+        },
+        {
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji",
+          "kanji": "透明"
+        },
+        {
+          "meaning": "to enter; to go in",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "入る"
+        },
+        {
+          "meaning": "to put in",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "入れる"
+        },
+        {
+          "tags": [
+            "digital",
+            "security",
+            "formal"
+          ],
+          "lexicalClass": "regular",
+          "kanji": "認証"
+        },
+        {
+          "tags": [
+            "anime_ui"
+          ],
+          "kanji": "敗北"
+        },
+        {
+          "meaning": "shopping",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "買い物"
+        },
+        {
+          "meaning": "father",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "父"
+        },
+        {
+          "meaning": "thing; item",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "物"
+        },
+        {
+          "meaning": "to ask; to hear",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "聞く"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "壁"
+        },
+        {
+          "meaning": "mother",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "母"
+        },
+        {
+          "status": "",
+          "orthography": "both",
+          "kanji": "蜂の巣"
+        },
+        {
+          "status": "",
+          "orthography": "both",
+          "kanji": "蜂蜜"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "忘れる"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "毎日"
+        },
+        {
+          "reading": "みらい",
+          "meaning": "future",
+          "tags": [
+            "anime_ui"
+          ],
+          "kanji": "未来"
+        },
+        {
+          "tags": [
+            "animal",
+            "compound"
+          ],
+          "status": "",
+          "orthography": "kanji",
+          "kanji": "蜜蜂"
+        },
+        {
+          "meaning": "vegetables",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "野菜"
+        },
+        {
+          "meaning": "promise",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "kanji": "約束"
+        },
+        {
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "夕食"
+        },
+        {
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ],
+          "kanji": "来る"
+        },
+        {
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji",
+          "kanji": "緑"
+        },
+        {
+          "meaning": "to talk",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ],
+          "kanji": "話す"
+        },
+        {
+          "meaning": "orange",
+          "tags": [
+            "colors"
+          ],
+          "orthography": "kanji",
+          "kanji": "橙色"
+        }
+      ],
+      "removeKeys": []
+    },
+    "_inputKind": "entries-object"
+  }
+}

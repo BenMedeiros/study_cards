@@ -2,7 +2,9 @@ import { createTable } from '../components/table.js';
 import { card, el } from '../components/ui.js';
 import { createDropdown } from '../components/dropdown.js';
 import { createJsonViewer } from '../components/jsonViewer.js';
+import { buildImportFeedback } from '../utils/common/collectionImportFeedback.mjs';
 import { validateEntriesAgainstSchema } from '../utils/common/validation.mjs';
+import { parseCollectionImportInput } from '../utils/common/collectionImport.mjs';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import manageCollectionsViewController from '../controllers/manageCollectionsViewController.js';
 import {
@@ -89,179 +91,7 @@ function detectArrayKey(collection) {
   return 'entries';
 }
 
-function jsonEqual(a, b) {
-  try { return JSON.stringify(a) === JSON.stringify(b); } catch { return a === b; }
-}
-
-function diffEntryFields(before, after) {
-  const o = before && typeof before === 'object' ? before : {};
-  const n = after && typeof after === 'object' ? after : {};
-  const keys = new Set([...Object.keys(o), ...Object.keys(n)]);
-  const out = [];
-  for (const k of keys) {
-    // Treat relatedCollections that are empty (or missing) as equal to avoid
-    // noisy diffs when imports omit this field.
-    if (k === 'relatedCollections') {
-      const isEmptyRelated = (v) => {
-        try {
-          if (v == null) return true;
-          if (Array.isArray(v)) return v.length === 0;
-          if (typeof v === 'object') {
-            // consider it empty if all values are empty arrays/objects
-            for (const val of Object.values(v)) {
-              if (Array.isArray(val) && val.length) return false;
-              if (val && typeof val === 'object') {
-                if (Object.keys(val).length) return false;
-              } else if (val != null) {
-                return false;
-              }
-            }
-            return true;
-          }
-          return false;
-        } catch (e) { return false; }
-      };
-      if (isEmptyRelated(o[k]) && isEmptyRelated(n[k])) continue;
-      if (!jsonEqual(o[k], n[k])) out.push(k);
-      continue;
-    }
-    if (!jsonEqual(o[k], n[k])) out.push(k);
-  }
-  out.sort();
-  return out;
-}
-
-// --- Input scrubbing / parsing helpers ----------------------------------
-
-// Trim leading/trailing junk until we find a likely JSON start/end.
-function scrubRawText(raw) {
-  if (!raw || typeof raw !== 'string') return '';
-  let s = raw.trim();
-  // find first useful char { or [
-  const firstBrace = Math.min(
-    ...['{','['].map(ch => { const i = s.indexOf(ch); return i === -1 ? Infinity : i; })
-  );
-  if (firstBrace === Infinity) return s;
-  s = s.slice(firstBrace);
-  // find last useful char } or ]
-  const lastBrace = Math.max(
-    s.lastIndexOf('}'),
-    s.lastIndexOf(']')
-  );
-  if (lastBrace !== -1) s = s.slice(0, lastBrace + 1);
-  return s.trim();
-}
-
-// Insert commas between adjacent object end/start like "}{" -> "},{".
-function fixAdjacentObjects(text) {
-  if (typeof text !== 'string') return text;
-  // simple heuristic: replace '}{' with '},{' and ']][' with '],[' etc.
-  return text.replace(/}\s*{/g, '},{').replace(/\]\s*\[/g, '],[');
-}
-
-// Extract balanced top-level JSON objects from text (returns array of JSON strings)
-function extractTopLevelObjects(text) {
-  const out = [];
-  if (!text || typeof text !== 'string') return out;
-  const len = text.length;
-  let i = 0;
-  while (i < len) {
-    // skip until we find { or [
-    while (i < len && text[i] !== '{' && text[i] !== '[') i++;
-    if (i >= len) break;
-    const startChar = text[i];
-    const endChar = startChar === '{' ? '}' : ']';
-    let depth = 0;
-    let j = i;
-    for (; j < len; j++) {
-      const ch = text[j];
-      if (ch === startChar) depth++;
-      else if (ch === endChar) depth--;
-      // naive string handling: skip over string literals to avoid brace counting inside strings
-      else if (ch === '"') {
-        j++;
-        while (j < len && text[j] !== '"') {
-          if (text[j] === '\\') j += 2; else j++;
-        }
-      }
-      if (depth === 0) break;
-    }
-    if (depth === 0) {
-      out.push(text.slice(i, j + 1));
-      i = j + 1;
-    } else break;
-  }
-  return out;
-}
-
-// Try to parse text into JSON using several heuristics and scrubbing steps.
-function tryParseJsonLoose(raw) {
-  if (raw == null) return null;
-  let s = String(raw);
-  // quick try
-  try { return JSON.parse(s); } catch (e) {}
-
-  // scrub outer junk
-  s = scrubRawText(s);
-  s = fixAdjacentObjects(s);
-  try { return JSON.parse(s); } catch (e) {}
-
-  // if it's a sequence of objects, extract them and wrap in array
-  const objs = extractTopLevelObjects(s).map(x => x.trim()).filter(Boolean);
-  if (objs.length === 1) {
-    try { return JSON.parse(objs[0]); } catch (e) {}
-  }
-  if (objs.length > 1) {
-    const combined = `[${objs.join(',')}]`;
-    try { return JSON.parse(combined); } catch (e) {}
-  }
-
-  // last resort: try to repair obvious trailing commas and stray characters
-  const cleaned = s.replace(/,\s*([\]}])/g, '$1');
-  try { return JSON.parse(cleaned); } catch (e) {}
-
-  return null;
-}
-
 // Schema/entries validation provided by ../utils/common/validation.mjs
-
-// Deep equality that ignores object key ordering. Handles primitives, arrays, and plain objects.
-function deepEqual(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return a === b;
-  if (typeof a !== typeof b) return false;
-  if (Array.isArray(a)) {
-    if (!Array.isArray(b)) return false;
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) if (!deepEqual(a[i], b[i])) return false;
-    return true;
-  }
-  if (typeof a === 'object') {
-    if (typeof b !== 'object') return false;
-    const ak = Object.keys(a).filter(k => typeof a[k] !== 'undefined').sort();
-    const bk = Object.keys(b).filter(k => typeof b[k] !== 'undefined').sort();
-    if (ak.length !== bk.length) return false;
-    for (let i = 0; i < ak.length; i++) if (ak[i] !== bk[i]) return false;
-    for (const k of ak) {
-      if (!deepEqual(a[k], b[k])) return false;
-    }
-    return true;
-  }
-  // functions, symbols, etc — fallback to strict equality
-  return a === b;
-}
-
-function pickEntrySummary(entry) {
-  const e = entry && typeof entry === 'object' ? entry : {};
-  const bits = [];
-  if (typeof e.kanji === 'string' && e.kanji.trim()) bits.push(e.kanji.trim());
-  if (typeof e.reading === 'string' && e.reading.trim()) bits.push(`(${e.reading.trim()})`);
-  if (typeof e.ja === 'string' && e.ja.trim()) bits.push(e.ja.trim().slice(0, 24));
-  if (typeof e.meaning === 'string' && e.meaning.trim()) bits.push(`— ${e.meaning.trim().slice(0, 40)}`);
-  if (!bits.length && typeof e.name === 'string' && e.name.trim()) bits.push(e.name.trim().slice(0, 40));
-  if (!bits.length) return '';
-  return bits.join(' ');
-}
 
 function preJson(v, maxHeight = '18rem') {
   return el('pre', {
@@ -868,258 +698,45 @@ export function renderManageCollections({ store, onNavigate }) {
       return;
     }
 
-    const { patch, diffs, merged } = previewResult;
-    
+    const { patch, diffs } = previewResult;
+    const feedback = previewResult?._importFeedback || buildImportFeedback({
+      collectionKey,
+      baseCollection: currentCollection,
+      input: previewResult?._importInput || null,
+      previewResult,
+      entryValidation: null,
+      patchPayloadDetected: false,
+    });
 
-    // ---- base + merged helpers ----
-    const arrayKey = diffs?.arrayKey || patch?.targetArrayKey || detectArrayKey(currentCollection) || 'entries';
-    const entryKeyField = diffs?.entryKeyField || patch?.entryKeyField || getEntryKeyField(currentCollection, arrayKey) || '';
-    const baseArr = Array.isArray(currentCollection?.[arrayKey]) ? currentCollection[arrayKey] : [];
-    const mergedArr = Array.isArray(merged?.[arrayKey]) ? merged[arrayKey] : [];
-
-    const baseMap = new Map();
-    if (entryKeyField) {
-      for (const e of baseArr) {
-        const k = e && typeof e === 'object' && e[entryKeyField] != null ? String(e[entryKeyField]).trim() : '';
-        if (k && !baseMap.has(k)) baseMap.set(k, e);
-      }
-    }
-    const mergedMap = new Map();
-    if (entryKeyField) {
-      for (const e of mergedArr) {
-        const k = e && typeof e === 'object' && e[entryKeyField] != null ? String(e[entryKeyField]).trim() : '';
-        if (k && !mergedMap.has(k)) mergedMap.set(k, e);
-      }
-    }
-    // ---- Entries: edited vs new vs unchanged ----
-    // Prepare entry validation maps (by id and by index) so we can surface per-entry schema errors
-    const entryValidation = previewResult?._entryValidation || { entryErrors: [], entryWarnings: [], warnings: [] };
-    const errorsById = new Map();
-    const errorsByIndex = new Map();
-    try {
-      for (const ev of (entryValidation.entryErrors || [])) {
-        if (!ev) continue;
-        const rawId = typeof ev.id !== 'undefined' && ev.id !== null ? String(ev.id) : '';
-        if (!rawId) continue;
-        if (rawId && rawId[0] === '#') {
-          const idx = parseInt(rawId.slice(1));
-          if (!Number.isNaN(idx)) {
-            const arr = errorsByIndex.get(idx) || [];
-            arr.push(ev.message || String(ev.message || ''));
-            errorsByIndex.set(idx, arr);
-          }
-        } else {
-          const msg = ev.message || String(ev.message || '');
-          const arr = errorsById.get(rawId) || [];
-          arr.push(msg);
-          errorsById.set(rawId, arr);
-          // also store a trimmed-key entry to improve matching robustness
-          try { const t = rawId.trim(); if (t !== rawId) errorsById.set(t, arr); } catch (e) {}
-        }
-      }
-    } catch (e) {}
-    const upsert = Array.isArray(patch?.entries?.upsert) ? patch.entries.upsert : [];
-    // Prefer iterating the original parsed input entries (so unchanged items are visible).
-    // Fall back to patch upserts only when the parsed input entries are not available.
-    const inputEntriesForLoop = (Array.isArray(previewResult?._inputEntries) && previewResult._inputEntries.length)
-      ? previewResult._inputEntries
-      : (Array.isArray(upsert) ? upsert : []);
-
-    // Detect duplicate keys within the import itself. If duplicates exist, mark
-    // all entries with that key as invalid (dupkey in import).
-    const importKeyCounts = new Map();
-    const importDupKeys = new Set();
-    try {
-      if (entryKeyField) {
-        for (const it of (Array.isArray(previewResult?._inputEntries) ? previewResult._inputEntries : inputEntriesForLoop)) {
-          if (!it || typeof it !== 'object') continue;
-          const k = it[entryKeyField] != null ? String(it[entryKeyField]).trim() : '';
-          if (!k) continue;
-          importKeyCounts.set(k, (importKeyCounts.get(k) || 0) + 1);
-        }
-        for (const [k, v] of importKeyCounts.entries()) if (v > 1) importDupKeys.add(k);
-      }
-    } catch (e) {}
-    const removeKeys = Array.isArray(patch?.entries?.removeKeys) ? patch.entries.removeKeys : [];
-    
-    // map of minimal upsert objects (when provided by preview/patcher)
-    const upsertMinimalArr = Array.isArray(patch?.entries?.upsertMinimal) ? patch.entries.upsertMinimal : [];
-    const upsertMinimalMap = new Map();
-    if (entryKeyField) {
-      for (const m of upsertMinimalArr) {
-        try {
-          const mk = m && typeof m === 'object' && m[entryKeyField] != null ? String(m[entryKeyField]).trim() : '';
-          if (mk) upsertMinimalMap.set(mk, m);
-        } catch (e) {}
-      }
-    }
-
-    const editedItems = [];
-    const newItems = [];
-    const unchangedItems = [];
-    const invalidItems = [];
-
-    for (const incoming of inputEntriesForLoop) {
-      // If this import contains duplicate keys, classify them as invalid up-front
-      try {
-        if (entryKeyField) {
-          const candidateId = (incoming && typeof incoming === 'object' && incoming[entryKeyField] != null) ? String(incoming[entryKeyField]).trim() : null;
-          if (candidateId && importDupKeys.has(candidateId)) {
-            const label = candidateId || '(no key)';
-            const body = el('div', { className: 'mc-diff-body', children: [ el('div', { className: 'mc-single-col', children: [preJson(incoming, '18rem'), el('div', { className: 'mc-validation-messages', text: 'dupkey in import' })] }) ] });
-            const node = makeDetailsItem({ summaryLeft: label, summaryRight: `invalid • dupkey in import`, children: [body] });
-            invalidItems.push({ key: label, node });
-            continue;
-          }
-        }
-      } catch (e) {}
-      // Check for per-entry validation errors first and classify as invalid if present.
-      try {
-        if (entryKeyField) {
-          const rawCandidate = (incoming && typeof incoming === 'object' && incoming[entryKeyField] != null) ? incoming[entryKeyField] : null;
-          const candidateId = rawCandidate != null ? String(rawCandidate) : null;
-          const candidateTrim = candidateId ? candidateId.trim() : candidateId;
-          let msgs = [];
-          if (candidateId && errorsById.has(candidateId)) msgs = errorsById.get(candidateId) || [];
-          if ((!msgs || !msgs.length) && candidateTrim && errorsById.has(candidateTrim)) msgs = errorsById.get(candidateTrim) || [];
-          // fallback: if no direct id match, try to find the original input entry with same key
-          if ((!msgs || !msgs.length) && previewResult?._inputEntries && Array.isArray(previewResult._inputEntries)) {
-            try {
-              const idx = previewResult._inputEntries.findIndex(x => x && typeof x === 'object' && String(x[entryKeyField] ?? '').trim() === String(candidateId ?? '').trim());
-              if (idx >= 0 && errorsByIndex.has(idx)) msgs = errorsByIndex.get(idx) || [];
-            } catch (e) {}
-          }
-          if (msgs && msgs.length) {
-            const label = candidateId || '(no key)';
-            const body = el('div', { className: 'mc-diff-body', children: [ el('div', { className: 'mc-single-col', children: [preJson(incoming, '18rem'), el('div', { className: 'mc-validation-messages', text: msgs.join('; ') })] }) ] });
-            const node = makeDetailsItem({ summaryLeft: label, summaryRight: `invalid • ${msgs.length} error(s)`, children: [body] });
-            invalidItems.push({ key: label, node });
-            continue;
-          }
-        } else {
-          // no entry key: validation used index-based ids like '#0', '#1'
-          if (Array.isArray(previewResult?._inputEntries)) {
-            const idx = previewResult._inputEntries.findIndex(x => deepEqual(x, incoming));
-            if (idx >= 0 && errorsByIndex.has(idx)) {
-              const msgs = errorsByIndex.get(idx) || [];
-              const label = `#${idx}`;
-              const body = el('div', { className: 'mc-diff-body', children: [ el('div', { className: 'mc-single-col', children: [preJson(incoming, '18rem'), el('div', { className: 'mc-validation-messages', text: msgs.join('; ') })] }) ] });
-              const node = makeDetailsItem({ summaryLeft: label, summaryRight: `invalid • ${msgs.length} error(s)`, children: [body] });
-              invalidItems.push({ key: label, node });
-              continue;
-            }
-          }
-        }
-      } catch (e) {}
-      let k = '';
-      let isNew = true;
-      let before = null;
-      let after = incoming;
-
-      if (entryKeyField) {
-        // If an entry key is expected but missing, classify as invalid.
-        if (!incoming || typeof incoming !== 'object' || incoming[entryKeyField] == null) {
-          const label = '(no key)';
-          const body = el('div', { className: 'mc-diff-body', children: [ el('div', { className: 'mc-single-col', children: [preJson(incoming, '18rem')] }) ] });
-          const node = makeDetailsItem({ summaryLeft: label, summaryRight: `invalid • missing '${entryKeyField}'`, children: [body] });
-          invalidItems.push({ key: label, node });
-          continue;
-        }
-        k = (incoming && typeof incoming === 'object' && incoming[entryKeyField] != null) ? String(incoming[entryKeyField]).trim() : '';
-        isNew = !baseMap.has(k);
-        before = baseMap.get(k) || null;
-        after = mergedMap.get(k) || incoming;
-      } else {
-        // No entry key: try to find an exact matching base entry to detect unchanged rows
-        for (const b of baseArr) {
-          if (b && typeof b === 'object' && deepEqual(b, incoming)) {
-            before = b;
-            isNew = false;
-            break;
-          }
-        }
-        // after remains the incoming; we can't reliably map to mergedMap without a key
-      }
-      const changedFields = before ? diffEntryFields(before, after) : [];
-      // if there's a before and either the objects are deeply equal or
-      // there are no detected changed fields (e.g. differences are only
-      // in ignored/masked properties like empty relatedCollections),
-      // classify as unchanged
-      if (before && (deepEqual(before, after) || (Array.isArray(changedFields) && changedFields.length === 0))) {
-        const summaryBits = pickEntrySummary(after);
-        const label = k || '(no key)';
-        const body = el('div', { className: 'mc-diff-body', children: [ el('div', { className: 'mc-single-col', children: [preJson(after, '18rem')] }) ] });
-        const node = makeDetailsItem({ summaryLeft: label, summaryRight: `unchanged${summaryBits ? ' • ' + summaryBits : ''}`, children: [body] });
-        unchangedItems.push({ key: label, node });
-        continue;
-      }
-      const summaryBits = pickEntrySummary(after);
-      const label = k || '(no key)';
+    function renderEditedOrNewItem(item, { isNew = false } = {}) {
+      const label = String(item?.key || '(no key)');
+      const summaryBits = item?.summary ? ` • ${item.summary}` : '';
       const right = isNew
-        ? (summaryBits ? `new • ${summaryBits}` : 'new')
-        : `${changedFields.length} field(s) • ${summaryBits}`.trim();
+        ? `new${summaryBits}`
+        : `${Array.isArray(item?.changedFields) ? item.changedFields.length : 0} field(s)${summaryBits}`;
 
-      // toggleable view: show diffs (only changed fields / minimal) or show full
+      const before = item?.before ?? null;
+      const after = item?.after ?? item?.entry ?? null;
+      const minimalBefore = item?.minimalBefore ?? null;
+      const minimalAfter = item?.minimalAfter ?? null;
+
       const toggleBtn = el('button', { className: 'btn small', text: 'Show Diffs', attrs: { type: 'button' } });
-
-      // Copy buttons
       const beforeCopyBtn = before ? el('button', { className: 'btn small', text: 'Copy Before', attrs: { type: 'button' } }) : null;
       const afterCopyBtn = el('button', { className: 'btn small', text: isNew ? 'Copy Entry' : 'Copy After', attrs: { type: 'button' } });
-
       const copyRow = el('div', { className: 'mc-diff-actions', children: [toggleBtn, beforeCopyBtn, afterCopyBtn].filter(Boolean) });
 
-      if (beforeCopyBtn) {
-        beforeCopyBtn.addEventListener('click', async () => {
-          const v = (typeof showDiffOnly !== 'undefined' && showDiffOnly) ? (minimalBefore ?? before) : before;
-          await copyToClipboard(safeJsonStringify(v, 2));
-          setStatus('Copied before entry JSON.');
-        });
-      }
-      if (afterCopyBtn) {
-        afterCopyBtn.addEventListener('click', async () => {
-          const v = (typeof showDiffOnly !== 'undefined' && showDiffOnly) ? (minimalAfter ?? after) : after;
-          await copyToClipboard(safeJsonStringify(v, 2));
-          setStatus('Copied entry JSON.');
-        });
-      }
-
-      // create pre elements (we'll update their content when toggling)
       const beforePre = before ? preJson(before, '18rem') : null;
       const afterPre = preJson(after, isNew ? '22rem' : '18rem');
 
-      // helpers to pick fields
-      const pickFields = (obj, keys) => {
-        if (!obj || typeof obj !== 'object') return obj;
-        const out = {};
-        for (const k of keys) if (typeof obj[k] !== 'undefined') out[k] = obj[k];
-        return out;
-      };
-
-      // compute minimal objects for diff view
-      const minimalBefore = (!isNew && before && changedFields && changedFields.length) ? pickFields(before, changedFields) : null;
-      let minimalAfter = null;
-      if (!isNew && after && changedFields && changedFields.length) minimalAfter = pickFields(after, changedFields);
-      // for new entries, try to use upsertMinimal mapping when available
-      if (isNew && entryKeyField && typeof k === 'string' && k && upsertMinimalMap.has(k)) {
-        minimalAfter = upsertMinimalMap.get(k);
-      }
-
-      // stateful toggle
       let showDiffOnly = true;
       const applyView = (diffOnly) => {
         try {
-          if (beforePre) {
-            const v = (diffOnly && minimalBefore) ? minimalBefore : before;
-            beforePre.textContent = safeJsonStringify(v, 2);
-          }
-          if (afterPre) {
-            const v = (diffOnly && minimalAfter) ? minimalAfter : after;
-            afterPre.textContent = safeJsonStringify(v, 2);
-          }
+          if (beforePre) beforePre.textContent = safeJsonStringify(diffOnly && minimalBefore ? minimalBefore : before, 2);
+          if (afterPre) afterPre.textContent = safeJsonStringify(diffOnly && minimalAfter ? minimalAfter : after, 2);
         } catch (e) {}
       };
-      // initialize view: when there are no changedFields/minimals, default to full
-      if ((!isNew && (!changedFields || !changedFields.length)) || (isNew && !minimalAfter)) showDiffOnly = false;
+
+      if ((!isNew && !(item?.changedFields || []).length) || (isNew && !minimalAfter)) showDiffOnly = false;
       applyView(showDiffOnly);
       toggleBtn.textContent = showDiffOnly ? 'Show Full' : 'Show Diffs';
       toggleBtn.addEventListener('click', () => {
@@ -1127,6 +744,21 @@ export function renderManageCollections({ store, onNavigate }) {
         applyView(showDiffOnly);
         toggleBtn.textContent = showDiffOnly ? 'Show Full' : 'Show Diffs';
       });
+
+      if (beforeCopyBtn) {
+        beforeCopyBtn.addEventListener('click', async () => {
+          const value = showDiffOnly && minimalBefore ? minimalBefore : before;
+          await copyToClipboard(safeJsonStringify(value, 2));
+          setStatus('Copied before entry JSON.');
+        });
+      }
+      if (afterCopyBtn) {
+        afterCopyBtn.addEventListener('click', async () => {
+          const value = showDiffOnly && minimalAfter ? minimalAfter : after;
+          await copyToClipboard(safeJsonStringify(value, 2));
+          setStatus('Copied entry JSON.');
+        });
+      }
 
       const body = el('div', {
         className: 'mc-diff-body',
@@ -1141,20 +773,36 @@ export function renderManageCollections({ store, onNavigate }) {
                 el('div', { className: 'mc-diff-col', children: [el('div', { className: 'mc-diff-col-title', text: 'After' }), afterPre] }),
               ]
             }),
-
-          (!isNew && changedFields.length)
+          (!isNew && Array.isArray(item?.changedFields) && item.changedFields.length)
             ? el('div', { className: 'mc-fields', children: [
               el('div', { className: 'mc-fields-title', text: 'Changed fields' }),
-              el('div', { className: 'mc-fields-list', text: changedFields.join(', ') })
+              el('div', { className: 'mc-fields-list', text: item.changedFields.join(', ') })
             ]})
             : null,
         ].filter(Boolean)
       });
 
-      const node = makeDetailsItem({ summaryLeft: label, summaryRight: right, children: [body] });
-      if (isNew) newItems.push({ key: label, node });
-      else editedItems.push({ key: label, node });
+      return { key: label, node: makeDetailsItem({ summaryLeft: label, summaryRight: right, children: [body] }) };
     }
+
+    const editedItems = (Array.isArray(feedback?.edited) ? feedback.edited : []).map((item) => renderEditedOrNewItem(item, { isNew: false }));
+    const newItems = (Array.isArray(feedback?.added) ? feedback.added : []).map((item) => renderEditedOrNewItem(item, { isNew: true }));
+    const unchangedItems = (Array.isArray(feedback?.unchanged) ? feedback.unchanged : []).map((item) => {
+      const label = String(item?.key || '(no key)');
+      const right = `unchanged${item?.summary ? ` • ${item.summary}` : ''}`;
+      const body = el('div', { className: 'mc-diff-body', children: [el('div', { className: 'mc-single-col', children: [preJson(item?.entry ?? item?.after ?? null, '18rem')] })] });
+      return { key: label, node: makeDetailsItem({ summaryLeft: label, summaryRight: right, children: [body] }) };
+    });
+    const invalidItems = (Array.isArray(feedback?.invalid) ? feedback.invalid : []).map((item) => {
+      const label = String(item?.key || '(no key)');
+      const reasons = Array.isArray(item?.reasons) ? item.reasons : [];
+      const body = el('div', {
+        className: 'mc-diff-body',
+        children: [el('div', { className: 'mc-single-col', children: [preJson(item?.entry ?? null, '18rem'), el('div', { className: 'mc-validation-messages', text: reasons.join('; ') })] })]
+      });
+      return { key: label, node: makeDetailsItem({ summaryLeft: label, summaryRight: `invalid • ${reasons.length ? reasons.join('; ') : 'invalid'}`, children: [body] }) };
+    });
+    const removalItems = Array.isArray(feedback?.removals) ? feedback.removals : [];
 
     if (editedItems.length) {
       setCorner(editedCard, `${editedItems.length}`);
@@ -1192,12 +840,12 @@ export function renderManageCollections({ store, onNavigate }) {
       // leave invalidBody empty; the static hint lives in the card header
     }
 
-    if (removeKeys.length) {
-      setCorner(removedCard, `${removeKeys.length}`);
+    if (removalItems.length) {
+      setCorner(removedCard, `${removalItems.length}`);
       const list = el('div', { className: 'mc-diff-list' });
-      for (const k of removeKeys) {
-        const label = String(k);
-        const before = entryKeyField ? baseMap.get(label) : null;
+      for (const item of removalItems) {
+        const label = String(item?.key || '(no key)');
+        const before = item?.before ?? null;
         const body = el('div', { className: 'mc-diff-body', children: [before ? preJson(before, '18rem') : el('div', { className: 'hint', text: 'No base entry found.' })] });
         list.append(makeDetailsItem({ summaryLeft: label, summaryRight: 'remove', children: [body] }));
       }
@@ -1223,16 +871,16 @@ export function renderManageCollections({ store, onNavigate }) {
       }
     } catch (e) {}
     try {
-      setWarnings(Array.isArray(previewResult?.warnings) ? previewResult.warnings.slice() : []);
+      setWarnings(Array.isArray(feedback?.messages?.warnings) ? feedback.messages.warnings.slice() : []);
     } catch (e) {}
 
     // Enable/disable Save Diff depending on whether there are meaningful changes
     try {
-      const ne = Number(diffs?.newEntries || 0);
-      const ed = Number(diffs?.editedEntries || 0);
-      const rm = Number(diffs?.entriesRemove || 0);
+      const ne = Number(feedback?.summary?.added || diffs?.newEntries || 0);
+      const ed = Number(feedback?.summary?.edited || diffs?.editedEntries || 0);
+      const rm = Number(feedback?.summary?.removals || diffs?.entriesRemove || 0);
       const meaningful = (ne + ed + rm) > 0;
-      const hasInvalid = (invalidItems && invalidItems.length) ? true : false;
+      const hasInvalid = !!(invalidItems && invalidItems.length);
       saveDiffBtn.disabled = !meaningful || hasInvalid || !previewResult?.patch;
       // visually indicate error state by toggling a scoped class
       try {
@@ -1522,7 +1170,6 @@ export function renderManageCollections({ store, onNavigate }) {
     // hold per-entry validation results here so we can attach to previewResult
     let entryValidation = null;
     let patchPayloadDetected = false;
-    let patchTargetCollectionKey = '';
     // clear diff card bodies    editedBody.innerHTML = '';
     newBody.innerHTML = '';
     removedBody.innerHTML = '';
@@ -1530,151 +1177,22 @@ export function renderManageCollections({ store, onNavigate }) {
     const raw = String(importArea.value || '').trim();
     if (!raw) return;
 
-    // Try loose parsing / scrubbing to handle messy inputs
-    let parsed = null;
+    let inputForPreview = null;
     try {
-      parsed = tryParseJsonLoose(raw);
-      if (parsed == null) {
-        setStatus('Invalid JSON: unable to parse input after cleanup.');
-        return;
-      }
-
-      // Accept copied patch payloads by unwrapping to entries only.
-      // Supported shapes:
-      // - full revision wrapper: { id, kind, parentId, label, patch: { ... } }
-      // - raw patch object: { targetArrayKey, entryKeyField, entries }
-      try {
-        const root = (parsed && typeof parsed === 'object') ? parsed : null;
-        const candidate = (root && root.patch && typeof root.patch === 'object') ? root.patch : root;
-
-        const normalizeCollectionRef = (v) => {
-          let s = String(v || '').trim();
-          if (!s) return '';
-          s = s.replace(/^\.\//, '');
-          s = s.replace(/^collections\//, '');
-          return s;
-        };
-
-        const detectedTarget = normalizeCollectionRef(
-          root?.collectionKey || root?.targetCollectionKey || root?.collection || root?.path ||
-          candidate?.collectionKey || candidate?.targetCollectionKey || candidate?.collection || candidate?.path
-        );
-
-        const looksLikePatchPayload = !!(
-          candidate &&
-          typeof candidate === 'object' &&
-          candidate.entries &&
-          typeof candidate.entries === 'object' &&
-          (
-            Array.isArray(candidate.entries.upsert) ||
-            Array.isArray(candidate.entries.upsertMinimal) ||
-            Array.isArray(candidate.entries.removeKeys)
-          ) &&
-          (
-            typeof candidate.targetArrayKey === 'string' ||
-            typeof candidate.entryKeyField === 'string'
-          )
-        );
-
-        if (looksLikePatchPayload) {
-          patchTargetCollectionKey = detectedTarget;
-          const activeCollectionKey = normalizeCollectionRef(collectionKey);
-          if (patchTargetCollectionKey && activeCollectionKey && patchTargetCollectionKey !== activeCollectionKey) {
-            setStatus(`Patch payload target mismatch: ${patchTargetCollectionKey} (patch) vs ${activeCollectionKey} (active).`);
-            return;
-          }
-          const arrayKey = (typeof candidate.targetArrayKey === 'string' && candidate.targetArrayKey.trim())
-            ? candidate.targetArrayKey.trim()
-            : (detectArrayKey(currentCollection || {}) || 'entries');
-          const upsert = Array.isArray(candidate?.entries?.upsert) ? candidate.entries.upsert : [];
-          parsed = { [arrayKey]: upsert };
-          patchPayloadDetected = true;
-        }
-      } catch (e) {}
-
-      // Disallow importing related collections for now — TODO feature
-      const hasRelatedCollections = (v) => {
-        try {
-          if (!v) return false;
-          if (Array.isArray(v)) return v.some(hasRelatedCollections);
-          if (typeof v === 'object') {
-            if (Object.prototype.hasOwnProperty.call(v, 'relatedCollections')) {
-              const rc = v.relatedCollections;
-              if (rc && typeof rc === 'object') {
-                // any non-empty array under relatedCollections keys counts
-                for (const val of Object.values(rc)) {
-                  if (Array.isArray(val) && val.length) return true;
-                }
-                // presence of the property is enough to disallow as well
-                return true;
-              }
-            }
-            for (const o of Object.values(v)) {
-              if (hasRelatedCollections(o)) return true;
-            }
-          }
-        } catch (e) {}
-        return false;
-      };
-
-      if (hasRelatedCollections(parsed)) {
-        setStatus('Import contains relatedCollections — not supported yet (TODO).');
-        return;
-      }
+      const parsedImport = parseCollectionImportInput({
+        rawInput: raw,
+        collectionKey,
+        defaultArrayKey: detectArrayKey(currentCollection || {}) || 'entries',
+        allowFullCollection: false,
+      });
+      inputForPreview = parsedImport.input;
+      patchPayloadDetected = !!parsedImport.patchPayloadDetected;
     } catch (e) {
-      setStatus(`Invalid JSON: ${e?.message || e}`);
+      setStatus(String(e?.message || e || 'Invalid JSON.'));
       return;
     }
 
     try {
-      // Normalize input to entries only.
-      // Rules:
-      // - A bare array is interpreted as an entries array.
-      // - A single object without an entry-array key is interpreted as a single entry (wrapped in entries array).
-      // - Keys accepted as entry arrays/objects: entries, entry, sentences, paragraphs, items, cards
-      let inputForPreview = parsed;
-      try {
-        const isArr = Array.isArray(parsed);
-        const isObj = parsed && typeof parsed === 'object' && !isArr;
-        const entryKeys = ['entries', 'entry', 'sentences', 'paragraphs', 'items', 'cards'];
-        const hasEntryKey = isObj && entryKeys.some(k => k in parsed);
-        const hasTopLevelMetadata = isObj && Object.prototype.hasOwnProperty.call(parsed, 'metadata');
-        const hasTopLevelSchema = isObj && Object.prototype.hasOwnProperty.call(parsed, 'schema');
-
-        if (isArr) {
-          // bare array -> treat as entries
-          const arrayKey = detectArrayKey(currentCollection || {}) || 'entries';
-          inputForPreview = { [arrayKey]: parsed };
-        } else if (isObj) {
-          if (hasEntryKey) {
-            // ensure entry key values are arrays (wrap single-object into array)
-            const copy = { ...parsed };
-            delete copy.metadata;
-            delete copy.schema;
-            for (const k of entryKeys) {
-              if (k in copy) {
-                if (Array.isArray(copy[k])) {
-                  // ok
-                } else if (copy[k] && typeof copy[k] === 'object') {
-                  copy[k] = [copy[k]];
-                }
-                break;
-              }
-            }
-            inputForPreview = copy;
-          } else {
-            if (hasTopLevelMetadata || hasTopLevelSchema) {
-              setStatus('Import only supports entries now. Metadata and schema changes must be made in the codebase.');
-              return;
-            }
-            // simple object -> treat as single entry
-            const arrayKey = detectArrayKey(currentCollection || {}) || 'entries';
-            inputForPreview = { [arrayKey]: [parsed] };
-          }
-        }
-      } catch (e) {
-        inputForPreview = parsed;
-      }
       // Validate entries against the current collection schema.
       try {
         const ik = detectArrayKey(inputForPreview || {}) || 'entries';
@@ -1699,16 +1217,16 @@ export function renderManageCollections({ store, onNavigate }) {
 
       const res = await store.collectionDB.previewInputChanges(collectionKey, inputForPreview, { treatFullAsReplace: false });
       previewResult = res;
-      // attach any entry-level validation results computed earlier during parse
       try {
-        previewResult._entryValidation = entryValidation || { entryErrors: [], entryWarnings: [], warnings: [] };
-      } catch (e) {}
-      // attach normalized input entries so the renderer can classify unchanged rows
-      try {
-        const ik = detectArrayKey(inputForPreview || {}) || 'entries';
-        const iarr = Array.isArray(inputForPreview?.[ik]) ? inputForPreview[ik] : (Array.isArray(inputForPreview) ? inputForPreview : []);
-        previewResult._inputArrKey = ik;
-        previewResult._inputEntries = iarr;
+        previewResult._importInput = inputForPreview;
+        previewResult._importFeedback = buildImportFeedback({
+          collectionKey,
+          baseCollection: currentCollection,
+          input: inputForPreview,
+          previewResult,
+          entryValidation: entryValidation || { entryErrors: [], entryWarnings: [], warnings: [] },
+          patchPayloadDetected,
+        });
       } catch (e) {}
       setWarnings(res?.warnings || []);
       snapshotToggleBtn.disabled = false;

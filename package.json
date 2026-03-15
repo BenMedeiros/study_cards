@@ -9,6 +9,8 @@
     "validate:common-shared": "node scripts/build/validate_common_shared.js",
     "report:duplicated-keys": "node scripts/report_duplicated_keys.mjs",
     "report:missing-related": "node scripts/report_missing_related_collection_data.mjs",
+    "imports:process": "node scripts/process_collection_import.mjs",
+    "revisions:process": "node scripts/process_collection_revisions.mjs",
     "zip:backup": "node scripts/backup_zips.js --clean --openDistFolder",
     "zip:applyUpdatedZips": "node scripts/apply_updated_zips.js"
   },

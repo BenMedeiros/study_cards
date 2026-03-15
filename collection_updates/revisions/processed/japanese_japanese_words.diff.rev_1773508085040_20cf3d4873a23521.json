@@ -1,0 +1,44 @@
+{
+  "id": "rev_1773508085040_20cf3d4873a23521",
+  "kind": "diff",
+  "collectionKey": "japanese/japanese_words.json",
+  "parentId": "rev_1773503805820_e8c0a2f3adb9b006",
+  "label": null,
+  "patch": {
+    "targetArrayKey": "entries",
+    "entryKeyField": "kanji",
+    "metadata": {
+      "set": {},
+      "unset": []
+    },
+    "schema": {
+      "upsert": [],
+      "removeKeys": []
+    },
+    "entries": {
+      "upsert": [
+        {
+          "kanji": "参上",
+          "reading": "さんじょう",
+          "meaning": "dramatic appearance; arrival333",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "opm-song-the_hero",
+            "anime_song",
+            "heroic",
+            "written"
+          ]
+        }
+      ],
+      "upsertMinimal": [
+        {
+          "meaning": "dramatic appearance; arrival333",
+          "kanji": "参上"
+        }
+      ],
+      "removeKeys": []
+    },
+    "_inputKind": "entries-object"
+  }
+}

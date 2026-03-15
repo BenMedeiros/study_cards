@@ -2,12 +2,20 @@ import { idbGet, idbPut, idbGetAll, idbGetAllByIndex } from '../utils/browser/id
 import { timed } from '../utils/browser/timing.js';
 import { normalizeFolderPath } from '../utils/browser/helpers.js';
 import { getGlobalSettingsManager } from './settingsManager.js';
-import { computePatchFromInput, applyPatchToCollection } from '../utils/common/collectionDiff.mjs';
+import { computePatchFromInput } from '../utils/common/collectionDiff.mjs';
 import {
   attachRelatedCollections,
   normalizeCollectionBlob,
   normalizeRelatedCollectionsConfig,
 } from '../utils/common/collectionParser.mjs';
+import {
+  createRevisionId,
+  createPatchRevisionRecord,
+  createSnapshotRevisionRecord,
+  currentTimestampIso,
+  normalizeRevisionSet,
+  resolveCollectionAtRevision as resolveCollectionAtRevisionShared,
+} from '../utils/common/collectionRevisions.mjs';
 import { validateCollection } from '../utils/common/validation.mjs';
 import {
   validateDuplicatedKeys,
@@ -24,28 +32,6 @@ function normalizeIndexRelativePath(p) {
 
 function _safeDebug(...args) {
   try { console.debug('[CollectionDB]', ...args); } catch { /* ignore */ }
-}
-
-function _nowIso() {
-  try { return (new Date()).toISOString(); } catch { return ''; }
-}
-
-function _randomIdFragment() {
-  try {
-    if (typeof crypto !== 'undefined' && crypto && typeof crypto.getRandomValues === 'function') {
-      const a = new Uint32Array(2);
-      crypto.getRandomValues(a);
-      return `${a[0].toString(16)}${a[1].toString(16)}`;
-    }
-  } catch {}
-  return Math.random().toString(16).slice(2);
-}
-
-function _makeRevisionId() {
-  const ts = (() => {
-    try { return Date.now(); } catch { return 0; }
-  })();
-  return `rev_${ts}_${_randomIdFragment()}`;
 }
 
 function _safeClone(v) {
@@ -608,24 +594,6 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
     });
   }
 
-  function _buildRevisionChain({ revisionId, revisionsById } = {}) {
-    const rid = (typeof revisionId === 'string' && revisionId.trim()) ? revisionId.trim() : '';
-    if (!rid) return [];
-    const map = revisionsById instanceof Map ? revisionsById : new Map();
-    const out = [];
-    const seen = new Set();
-    let cur = rid;
-    while (cur && !seen.has(cur)) {
-      seen.add(cur);
-      const rec = map.get(cur);
-      if (!rec) break;
-      out.push(rec);
-      cur = (typeof rec.parentId === 'string' && rec.parentId.trim()) ? rec.parentId.trim() : '';
-    }
-    out.reverse();
-    return out;
-  }
-
   async function resolveCollectionAtRevision(collectionKey, revisionId, { baseBlob = null } = {}) {
     const key = String(collectionKey || '').trim();
     if (!key) throw new Error('collectionKey required');
@@ -640,45 +608,16 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
         }
       }
 
-      const revisions = await listUserRevisions(key);
-      const map = new Map();
-      for (const r of revisions) {
-        if (r && typeof r.id === 'string') map.set(r.id, r);
-      }
-
-      const chain = _buildRevisionChain({ revisionId, revisionsById: map });
-      if (!chain.length) {
-        if (base) return base;
-        // No system base and no applicable chain. Return an empty collection.
-        return { metadata: { name: key, version: 1 }, entries: [] };
-      }
-
-      // If no system base, start from the earliest snapshot we can find.
-      if (!base) {
-        const snap = chain.find(r => r && r.kind === 'snapshot' && r.blob && typeof r.blob === 'object');
-        if (snap) base = _safeClone(snap.blob);
-      }
-      if (!base) base = { metadata: { name: key, version: 1 }, entries: [] };
-
-      let out = base;
-      for (const rec of chain) {
-        if (!rec || typeof rec !== 'object') continue;
-        if (rec.kind === 'snapshot' && rec.blob && typeof rec.blob === 'object') {
-          out = _safeClone(rec.blob) || out;
-          continue;
-        }
-        if (rec.kind === 'diff' && rec.patch && typeof rec.patch === 'object') {
-          out = applyPatchToCollection({ baseCollection: out, patch: rec.patch });
-        }
-      }
-
-      // Annotate with active revision (for UI/debug only)
-      try {
-        if (!out.metadata || typeof out.metadata !== 'object') out.metadata = {};
-        out.metadata._active_revision = String(revisionId || '').trim() || null;
-      } catch (e) {}
-
-      return out;
+      const revisions = normalizeRevisionSet(await listUserRevisions(key));
+      return resolveCollectionAtRevisionShared({
+        collectionKey: key,
+        revisionId,
+        baseCollection: base,
+        revisions,
+        fallbackToEmpty: true,
+        strictParents: false,
+        annotateRevision: true,
+      });
     });
   }
 
@@ -715,19 +654,16 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
     if (!p) throw new Error('patch required');
 
     const parentId = _getActiveRevisionId(key);
-    const id = _makeRevisionId();
-    const createdAt = _nowIso();
-    const rec = {
-      id,
+    const rec = createPatchRevisionRecord({
       collectionKey: key,
-      kind: 'diff',
-      createdAt,
-      parentId: parentId || null,
-      label: (typeof label === 'string' && label.trim()) ? label.trim() : null,
-      patch: _safeClone(p) || p,
-    };
+      patch: p,
+      parentId,
+      id: createRevisionId(),
+      createdAt: currentTimestampIso(),
+      label,
+    });
     await idbPut('user_collections', rec);
-    _setActiveRevisionId(key, id);
+    _setActiveRevisionId(key, rec.id);
     void _scheduleValidationRun({ reason: 'commitPatch' }).catch(() => {});
     return rec;
   }
@@ -739,20 +675,16 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
     if (!b) throw new Error('blob required');
 
     const parentId = _getActiveRevisionId(key);
-    const id = _makeRevisionId();
-    const createdAt = _nowIso();
-    const rec = {
-      id,
+    const rec = createSnapshotRevisionRecord({
       collectionKey: key,
-      kind: 'snapshot',
-      createdAt,
-      parentId: parentId || null,
-      label: (typeof label === 'string' && label.trim()) ? label.trim() : null,
-      blob: _safeClone(b) || b,
-      patch: null,
-    };
+      blob: b,
+      parentId,
+      id: createRevisionId(),
+      createdAt: currentTimestampIso(),
+      label,
+    });
     await idbPut('user_collections', rec);
-    _setActiveRevisionId(key, id);
+    _setActiveRevisionId(key, rec.id);
     void _scheduleValidationRun({ reason: 'commitSnapshot' }).catch(() => {});
     return rec;
   }

@@ -1,0 +1,4632 @@
+{
+  "id": "rev_1773538323684_212c962e13e3111c",
+  "collectionKey": "japanese/japanese_words.json",
+  "kind": "diff",
+  "createdAt": "2026-03-15T01:32:03.686Z",
+  "parentId": null,
+  "label": "newimports.json",
+  "patch": {
+    "targetArrayKey": "entries",
+    "entryKeyField": "kanji",
+    "metadata": {
+      "set": {},
+      "unset": []
+    },
+    "schema": {
+      "upsert": [],
+      "removeKeys": []
+    },
+    "entries": {
+      "upsert": [
+        {
+          "kanji": "YouTube",
+          "reading": "ユーチューブ",
+          "meaning": "YouTube",
+          "type": "proper-noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "brand",
+            "video_platform",
+            "digital"
+          ]
+        },
+        {
+          "kanji": "アクセスする",
+          "reading": "アクセスする",
+          "meaning": "to access",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "digital",
+            "computer"
+          ]
+        },
+        {
+          "kanji": "うれしそう",
+          "reading": "うれしそう",
+          "meaning": "looking happy",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "おいしい",
+          "reading": "おいしい",
+          "meaning": "delicious",
+          "type": "i-adjective",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "お菓子",
+          "reading": "おかし",
+          "meaning": "sweets; snacks",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "お気に入り",
+          "reading": "おきにいり",
+          "meaning": "favorite; bookmarked item",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "digital",
+            "ui",
+            "common"
+          ]
+        },
+        {
+          "kanji": "かご",
+          "reading": "かご",
+          "meaning": "basket",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "クレーンゲーム",
+          "reading": "クレーンゲーム",
+          "meaning": "claw crane game",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "ゲームセンター",
+          "reading": "ゲームセンター",
+          "meaning": "game center; arcade",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "この先ずっと",
+          "reading": "このさきずっと",
+          "meaning": "from here on forever; all the way ahead",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "time_expression",
+            "future",
+            "duration",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "これからもずっと",
+          "reading": "これからもずっと",
+          "meaning": "forever from now on; from here on too",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "duration",
+            "future",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "これまでもずっと",
+          "reading": "これまでもずっと",
+          "meaning": "up to now as well, all along",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "duration",
+            "past_to_present",
+            "written",
+            "spoken"
+          ]
+        },
+        {
+          "kanji": "サインインする",
+          "reading": "サインインする",
+          "meaning": "to sign in",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "digital"
+          ]
+        },
+        {
+          "kanji": "さけ",
+          "reading": "さけ",
+          "meaning": "salmon",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "サブスクライブする",
+          "reading": "サブスクライブする",
+          "meaning": "to subscribe",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "digital"
+          ]
+        },
+        {
+          "kanji": "ずっと後",
+          "reading": "ずっとあと",
+          "meaning": "much later; far later",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと後で",
+          "reading": "ずっとあとで",
+          "meaning": "much later on",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "future",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと後に",
+          "reading": "ずっとあとに",
+          "meaning": "much later; at a far later point",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "future",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと昔",
+          "reading": "ずっとむかし",
+          "meaning": "long, long ago",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "time_expression",
+            "past",
+            "storytelling",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと先",
+          "reading": "ずっとさき",
+          "meaning": "far ahead; much further on",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "time_expression",
+            "space_expression",
+            "future",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと前",
+          "reading": "ずっとまえ",
+          "meaning": "long ago; far back",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと前から",
+          "reading": "ずっとまえから",
+          "meaning": "since long ago; for a long time already",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "duration",
+            "past_to_present",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと前に",
+          "reading": "ずっとまえに",
+          "meaning": "a long time ago",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "past",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "チャンネル",
+          "reading": "チャンネル",
+          "meaning": "channel",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "media",
+            "digital"
+          ]
+        },
+        {
+          "kanji": "テレビジョン",
+          "reading": "テレビジョン",
+          "meaning": "television",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "device",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "なかなか",
+          "reading": "なかなか",
+          "meaning": "not easily; quite; fairly",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "にぎやか",
+          "reading": "にぎやか",
+          "meaning": "lively; bustling",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "にんじん",
+          "reading": "にんじん",
+          "meaning": "carrot",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "ぬいぐるみ",
+          "reading": "ぬいぐるみ",
+          "meaning": "stuffed toy; plush",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "ぶつかる",
+          "reading": "ぶつかる",
+          "meaning": "to bump into; to collide",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "ムービー",
+          "reading": "ムービー",
+          "meaning": "movie; video clip",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "media"
+          ]
+        },
+        {
+          "kanji": "リズム",
+          "reading": "リズム",
+          "meaning": "rhythm",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "レースゲーム",
+          "reading": "レースゲーム",
+          "meaning": "racing game",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "レジ",
+          "reading": "レジ",
+          "meaning": "cash register; checkout",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "ログインする",
+          "reading": "ログインする",
+          "meaning": "to log in; sign in",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "digital",
+            "computer"
+          ]
+        },
+        {
+          "kanji": "ワイドスクリーン",
+          "reading": "ワイドスクリーン",
+          "meaning": "widescreen",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "screen",
+            "media"
+          ]
+        },
+        {
+          "kanji": "以外",
+          "reading": "いがい",
+          "meaning": "except; besides; other than",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n4",
+            "grammar_marker"
+          ]
+        },
+        {
+          "kanji": "一日",
+          "reading": "いちにち",
+          "meaning": "one day",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "一番",
+          "reading": "いちばん",
+          "meaning": "number one; the most",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "運転する",
+          "reading": "うんてんする",
+          "meaning": "to drive",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "映像",
+          "reading": "えいぞう",
+          "meaning": "visual footage; imagery",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "駅前",
+          "reading": "えきまえ",
+          "meaning": "in front of the station",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "押す",
+          "reading": "おす",
+          "meaning": "to push; to press",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "黄金色",
+          "reading": "こがねいろ",
+          "meaning": "golden",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "黄緑",
+          "reading": "きみどり",
+          "meaning": "yellow-green",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "音楽ゲーム",
+          "reading": "おんがくゲーム",
+          "meaning": "music rhythm game",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "both",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "何度も",
+          "reading": "なんども",
+          "meaning": "many times; repeatedly",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "加入",
+          "reading": "かにゅう",
+          "meaning": "joining; enrollment; membership",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "formal",
+            "membership"
+          ]
+        },
+        {
+          "kanji": "画集",
+          "reading": "がしゅう",
+          "meaning": "art book; collection of illustrations",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "回",
+          "reading": "かい",
+          "meaning": "times; occurrence; counter for occurrences",
+          "type": "counter",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "counter_related",
+            "origin:Sino-Japanese"
+          ]
+        },
+        {
+          "kanji": "回す",
+          "reading": "まわす",
+          "meaning": "to turn; to spin; to rotate something",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "transitive",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "回る",
+          "reading": "まわる",
+          "meaning": "to turn; to go around; to rotate",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "intransitive",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "回数",
+          "reading": "かいすう",
+          "meaning": "number of times; frequency",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "counter_related",
+            "origin:Sino-Japanese"
+          ]
+        },
+        {
+          "kanji": "回転",
+          "reading": "かいてん",
+          "meaning": "rotation; spinning",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "origin:Sino-Japanese",
+            "technical"
+          ]
+        },
+        {
+          "kanji": "回復",
+          "reading": "かいふく",
+          "meaning": "recovery; restoration",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "origin:Sino-Japanese",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "外れる",
+          "reading": "はずれる",
+          "meaning": "to come off; to be disconnected; to miss",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n4"
+          ]
+        },
+        {
+          "kanji": "外国",
+          "reading": "がいこく",
+          "meaning": "foreign country",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n5"
+          ]
+        },
+        {
+          "kanji": "外国人",
+          "reading": "がいこくじん",
+          "meaning": "foreigner; foreign person",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n5"
+          ]
+        },
+        {
+          "kanji": "外出",
+          "reading": "がいしゅつ",
+          "meaning": "going out; outing",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n4"
+          ]
+        },
+        {
+          "kanji": "外側",
+          "reading": "そとがわ",
+          "meaning": "outside; outer side",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n4"
+          ]
+        },
+        {
+          "kanji": "外伝",
+          "reading": "がいでん",
+          "meaning": "side story; spinoff tale",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "楽しそう",
+          "reading": "たのしそう",
+          "meaning": "seems fun; looks like enjoying it",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "完結",
+          "reading": "かんけつ",
+          "meaning": "completion; finished (series)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "完全版",
+          "reading": "かんぜんばん",
+          "meaning": "complete edition",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "鑑賞する",
+          "reading": "かんしょうする",
+          "meaning": "to appreciate; to watch (art/film)",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "間",
+          "reading": "あいだ",
+          "meaning": "interval; while; during",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "休憩スペース",
+          "reading": "きゅうけいスペース",
+          "meaning": "rest area; break space",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "both",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "魚売り場",
+          "reading": "さかなうりば",
+          "meaning": "fish section",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "空色",
+          "reading": "そらいろ",
+          "meaning": "sky blue",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "原作",
+          "reading": "げんさく",
+          "meaning": "original work; source material",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "限定版",
+          "reading": "げんていばん",
+          "meaning": "limited edition",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "向かう",
+          "reading": "むかう",
+          "meaning": "to head toward",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "紅色",
+          "reading": "べにいろ",
+          "meaning": "crimson",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "行きたがる",
+          "reading": "いきたがる",
+          "meaning": "to want to go (third-person desire)",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "鋼の意志",
+          "reading": "はがねのいし",
+          "meaning": "will of steel; iron will",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "tags": [
+            "metaphor",
+            "determination",
+            "written",
+            "spoken"
+          ]
+        },
+        {
+          "kanji": "鋼の錬金術師",
+          "reading": "はがねのれんきんじゅつし",
+          "meaning": "Fullmetal Alchemist",
+          "type": "proper-noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "anime",
+            "manga",
+            "title",
+            "pop_culture"
+          ]
+        },
+        {
+          "kanji": "鋼管",
+          "reading": "こうかん",
+          "meaning": "steel pipe",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "industry",
+            "construction",
+            "infrastructure",
+            "technical",
+            "written"
+          ]
+        },
+        {
+          "kanji": "鋼材",
+          "reading": "こうざい",
+          "meaning": "steel materials; structural steel",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "construction",
+            "industry",
+            "material",
+            "technical",
+            "written"
+          ]
+        },
+        {
+          "kanji": "鋼鉄",
+          "reading": "こうてつ",
+          "meaning": "steel",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "material",
+            "metal",
+            "industry",
+            "written"
+          ]
+        },
+        {
+          "kanji": "鋼板",
+          "reading": "こうばん",
+          "meaning": "steel plate; sheet steel",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "industry",
+            "material",
+            "metal",
+            "technical",
+            "written"
+          ]
+        },
+        {
+          "kanji": "高校生",
+          "reading": "こうこうせい",
+          "meaning": "high school student",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "合わせる",
+          "reading": "あわせる",
+          "meaning": "to match; to align",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "今までずっと",
+          "reading": "いままでずっと",
+          "meaning": "all this time until now",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "time_expression",
+            "duration",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "今もずっと",
+          "reading": "いまもずっと",
+          "meaning": "still all this time even now",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "time_expression",
+            "duration",
+            "continuation",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "今回",
+          "reading": "こんかい",
+          "meaning": "this time",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "time_expression",
+            "origin:Sino-Japanese"
+          ]
+        },
+        {
+          "kanji": "紺色",
+          "reading": "こんいろ",
+          "meaning": "navy blue",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "再生する",
+          "reading": "さいせいする",
+          "meaning": "to play; to playback",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "digital"
+          ]
+        },
+        {
+          "kanji": "作る",
+          "reading": "つくる",
+          "meaning": "to make",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "作者",
+          "reading": "さくしゃ",
+          "meaning": "author; creator",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "桜色",
+          "reading": "さくらいろ",
+          "meaning": "cherry blossom pink",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "山吹色",
+          "reading": "やまぶきいろ",
+          "meaning": "golden yellow",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "暫く",
+          "reading": "しばらく",
+          "meaning": "for a while",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "紙版",
+          "reading": "かみばん",
+          "meaning": "print edition (paper version)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "視聴",
+          "reading": "しちょう",
+          "meaning": "viewing; watching",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "視聴する",
+          "reading": "しちょうする",
+          "meaning": "to watch; to view",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "持つ",
+          "reading": "もつ",
+          "meaning": "to hold; to carry",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "自宅",
+          "reading": "じたく",
+          "meaning": "one's home; residence",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "common",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "失う",
+          "reading": "うしなう",
+          "meaning": "to lose",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "transitive",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "若草色",
+          "reading": "わかくさいろ",
+          "meaning": "fresh green",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "取る",
+          "reading": "とる",
+          "meaning": "to take; to get (a prize)",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "朱色",
+          "reading": "しゅいろ",
+          "meaning": "vermilion",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "受像機",
+          "reading": "じゅぞうき",
+          "meaning": "television receiver",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "device",
+            "technical"
+          ]
+        },
+        {
+          "kanji": "終わる",
+          "reading": "おわる",
+          "meaning": "to finish",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "重版",
+          "reading": "じゅうはん",
+          "meaning": "reprint (additional printing)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "出版社",
+          "reading": "しゅっぱんしゃ",
+          "meaning": "publishing company; publisher",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "初版",
+          "reading": "しょはん",
+          "meaning": "first edition; first printing",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "勝つ",
+          "reading": "かつ",
+          "meaning": "to win",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "小学生",
+          "reading": "しょうがくせい",
+          "meaning": "elementary school student",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "笑う",
+          "reading": "わらう",
+          "meaning": "to smile; to laugh",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "象牙色",
+          "reading": "ぞうげいろ",
+          "meaning": "ivory",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "信頼",
+          "reading": "しんらい",
+          "meaning": "trust; confidence",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "origin:Sino-Japanese",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "慎重",
+          "reading": "しんちょう",
+          "meaning": "careful; cautious",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "新刊",
+          "reading": "しんかん",
+          "meaning": "new release (book/volume)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "新鮮",
+          "reading": "しんせん",
+          "meaning": "fresh",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "新装版",
+          "reading": "しんそうばん",
+          "meaning": "newly designed edition; reissue with new cover/layout",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "新品",
+          "reading": "しんぴん",
+          "meaning": "new item; brand-new (condition)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "深緑",
+          "reading": "ふかみどり",
+          "meaning": "deep green",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真っ黄色",
+          "reading": "まっきいろ",
+          "meaning": "bright yellow",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真っ黒",
+          "reading": "まっくろ",
+          "meaning": "pitch black",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真っ青",
+          "reading": "まっさお",
+          "meaning": "deep blue; pale blue",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真っ赤",
+          "reading": "まっか",
+          "meaning": "bright red",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真っ白",
+          "reading": "まっしろ",
+          "meaning": "pure white",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真ん中",
+          "reading": "まんなか",
+          "meaning": "middle; center",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "gidk48",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "真上",
+          "reading": "まうえ",
+          "meaning": "directly above",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "gidk48",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "真夜中",
+          "reading": "まよなか",
+          "meaning": "midnight; dead of night",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "gidk48",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "水色",
+          "reading": "みずいろ",
+          "meaning": "light blue",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "製鋼",
+          "reading": "せいこう",
+          "meaning": "steelmaking; steel production",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "industry",
+            "manufacturing",
+            "technical",
+            "written"
+          ]
+        },
+        {
+          "kanji": "青紫",
+          "reading": "あおむらさき",
+          "meaning": "bluish purple",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "青緑",
+          "reading": "あおみどり",
+          "meaning": "blue-green",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "赤紫",
+          "reading": "あかむらさき",
+          "meaning": "reddish purple",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "切る",
+          "reading": "きる",
+          "meaning": "to cut",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "前よりずっと",
+          "reading": "まえよりずっと",
+          "meaning": "much more than before",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "comparison",
+            "degree",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "全巻",
+          "reading": "ぜんかん",
+          "meaning": "all volumes (entire series set)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "全巻セット",
+          "reading": "ぜんかんせっと",
+          "meaning": "complete set (all volumes)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "both",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "走り過ぎる",
+          "reading": "はしりすぎる",
+          "meaning": "to run/drive too fast; to overdo running",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "速く",
+          "reading": "はやく",
+          "meaning": "fast; quickly",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "対戦する",
+          "reading": "たいせんする",
+          "meaning": "to compete; to face off",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "袋",
+          "reading": "ふくろ",
+          "meaning": "bag",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "大画面",
+          "reading": "だいがめん",
+          "meaning": "large screen; big display",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "device",
+            "screen"
+          ]
+        },
+        {
+          "kanji": "大型画面",
+          "reading": "おおがたがめん",
+          "meaning": "large-sized screen",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "device",
+            "screen"
+          ]
+        },
+        {
+          "kanji": "大好き",
+          "reading": "だいすき",
+          "meaning": "love; like a lot",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "単行本",
+          "reading": "たんこうぼん",
+          "meaning": "collected volume; tankobon",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "探し物",
+          "reading": "さがしもの",
+          "meaning": "lost item; something one is looking for",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "search",
+            "common"
+          ]
+        },
+        {
+          "kanji": "探す",
+          "reading": "さがす",
+          "meaning": "to search; to look for",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "search",
+            "common"
+          ]
+        },
+        {
+          "kanji": "探る",
+          "reading": "さぐる",
+          "meaning": "to probe; to investigate",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "search",
+            "investigation"
+          ]
+        },
+        {
+          "kanji": "探求",
+          "reading": "たんきゅう",
+          "meaning": "pursuit; inquiry",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "abstract",
+            "written",
+            "academic"
+          ]
+        },
+        {
+          "kanji": "探検",
+          "reading": "たんけん",
+          "meaning": "exploration; expedition",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "exploration",
+            "common"
+          ]
+        },
+        {
+          "kanji": "探検家",
+          "reading": "たんけんか",
+          "meaning": "explorer",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "person",
+            "exploration"
+          ]
+        },
+        {
+          "kanji": "探査",
+          "reading": "たんさ",
+          "meaning": "survey; probe; exploration",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "science",
+            "technical",
+            "written"
+          ]
+        },
+        {
+          "kanji": "探査機",
+          "reading": "たんさき",
+          "meaning": "probe; exploration craft",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "science",
+            "space",
+            "technical"
+          ]
+        },
+        {
+          "kanji": "探索",
+          "reading": "たんさく",
+          "meaning": "search; exploration",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "search",
+            "written"
+          ]
+        },
+        {
+          "kanji": "探知",
+          "reading": "たんち",
+          "meaning": "detection",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "technical",
+            "detection",
+            "written"
+          ]
+        },
+        {
+          "kanji": "探知機",
+          "reading": "たんちき",
+          "meaning": "detector",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "device",
+            "technical",
+            "detection"
+          ]
+        },
+        {
+          "kanji": "探偵",
+          "reading": "たんてい",
+          "meaning": "detective",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "person",
+            "investigation",
+            "common"
+          ]
+        },
+        {
+          "kanji": "探訪",
+          "reading": "たんぼう",
+          "meaning": "visit; exploration tour",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "travel",
+            "written"
+          ]
+        },
+        {
+          "kanji": "中古",
+          "reading": "ちゅうこ",
+          "meaning": "used; secondhand",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "挑む",
+          "reading": "いどむ",
+          "meaning": "to challenge; to confront",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "common_word",
+            "action_verb",
+            "competitive"
+          ]
+        },
+        {
+          "kanji": "挑戦",
+          "reading": "ちょうせん",
+          "meaning": "challenge; undertaking",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n3",
+            "common_word",
+            "abstract_noun"
+          ]
+        },
+        {
+          "kanji": "挑戦する",
+          "reading": "ちょうせんする",
+          "meaning": "to challenge; to try",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "挑戦者",
+          "reading": "ちょうせんしゃ",
+          "meaning": "challenger",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "agent_noun",
+            "competitive",
+            "common_word"
+          ]
+        },
+        {
+          "kanji": "挑発",
+          "reading": "ちょうはつ",
+          "meaning": "provocation; provoking",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "common_word",
+            "formal",
+            "conflict_related"
+          ]
+        },
+        {
+          "kanji": "挑発する",
+          "reading": "ちょうはつする",
+          "meaning": "to provoke",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "suru_verb",
+            "formal",
+            "conflict_related"
+          ]
+        },
+        {
+          "kanji": "電子書籍",
+          "reading": "でんししょせき",
+          "meaning": "e-book; electronic book",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "電子版",
+          "reading": "でんしばん",
+          "meaning": "digital edition",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "登録する",
+          "reading": "とうろくする",
+          "meaning": "to register; subscribe",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "digital",
+            "account"
+          ]
+        },
+        {
+          "kanji": "土曜日",
+          "reading": "どようび",
+          "meaning": "Saturday",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "動画",
+          "reading": "どうが",
+          "meaning": "video; moving image",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "digital",
+            "common"
+          ]
+        },
+        {
+          "kanji": "同人誌",
+          "reading": "どうじんし",
+          "meaning": "doujinshi; fan/self-published comic",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "銅色",
+          "reading": "どういろ",
+          "meaning": "copper-colored",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "特装版",
+          "reading": "とくそうばん",
+          "meaning": "special edition (with extras)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "特売",
+          "reading": "とくばい",
+          "meaning": "special sale",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "虹色",
+          "reading": "にじいろ",
+          "meaning": "rainbow-colored",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "日本語版",
+          "reading": "にほんごばん",
+          "meaning": "Japanese-language edition",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "乳白色",
+          "reading": "にゅうはくしょく",
+          "meaning": "milky white",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "認証する",
+          "reading": "にんしょうする",
+          "meaning": "to authenticate; verify identity",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "digital",
+            "security"
+          ]
+        },
+        {
+          "kanji": "濃灰色",
+          "reading": "こいはいいろ",
+          "meaning": "dark gray",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "買い物リスト",
+          "reading": "かいものリスト",
+          "meaning": "shopping list",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "both",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "売り場",
+          "reading": "うりば",
+          "meaning": "sales floor; section",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "薄灰色",
+          "reading": "うすはいいろ",
+          "meaning": "light gray",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "肌色",
+          "reading": "はだいろ",
+          "meaning": "skin color",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "挽回",
+          "reading": "ばんかい",
+          "meaning": "recovery; making up for a loss or mistake",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "origin:Sino-Japanese",
+            "written",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "番外編",
+          "reading": "ばんがいへん",
+          "meaning": "extra chapter; special side episode",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "美咲",
+          "reading": "みさき",
+          "meaning": "Misaki (given name)",
+          "type": "proper-noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "文庫版",
+          "reading": "ぶんこばん",
+          "meaning": "bunko edition (pocket paperback format)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "並ぶ",
+          "reading": "ならぶ",
+          "meaning": "to be lined up",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "萌黄色",
+          "reading": "もえぎいろ",
+          "meaning": "yellow-green",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "status": "",
+          "kanji": "蜂.",
+          "reading": "はち",
+          "meaning": "bee; wasp",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "common_animal"
+          ]
+        },
+        {
+          "kanji": "毎週",
+          "reading": "まいしゅう",
+          "meaning": "every week",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "又",
+          "reading": "また",
+          "meaning": "again; also",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "漫画",
+          "reading": "まんが",
+          "meaning": "manga; comic",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "無色",
+          "reading": "むしょく",
+          "meaning": "colorless",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "娘",
+          "reading": "むすめ",
+          "meaning": "daughter",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "迷う",
+          "reading": "まよう",
+          "meaning": "to hesitate; to be unsure",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "夕飯",
+          "reading": "ゆうはん",
+          "meaning": "evening meal; dinner",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "夕方",
+          "reading": "ゆうがた",
+          "meaning": "evening; late afternoon",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "用",
+          "reading": "よう",
+          "meaning": "for use; purpose",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "藍色",
+          "reading": "あいいろ",
+          "meaning": "indigo",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "亮",
+          "reading": "りょう",
+          "meaning": "Ryo (given name)",
+          "type": "proper-noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "連載",
+          "reading": "れんさい",
+          "meaning": "serialization; serialized publication",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "卍解",
+          "reading": "ばんかい",
+          "meaning": "Bankai; final release (fictional term)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "fiction",
+            "manga_anime",
+            "origin:Japanese"
+          ]
+        }
+      ],
+      "upsertMinimal": [
+        {
+          "kanji": "YouTube",
+          "reading": "ユーチューブ",
+          "meaning": "YouTube",
+          "type": "proper-noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "brand",
+            "video_platform",
+            "digital"
+          ]
+        },
+        {
+          "kanji": "アクセスする",
+          "reading": "アクセスする",
+          "meaning": "to access",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "digital",
+            "computer"
+          ]
+        },
+        {
+          "kanji": "うれしそう",
+          "reading": "うれしそう",
+          "meaning": "looking happy",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "おいしい",
+          "reading": "おいしい",
+          "meaning": "delicious",
+          "type": "i-adjective",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "お菓子",
+          "reading": "おかし",
+          "meaning": "sweets; snacks",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "お気に入り",
+          "reading": "おきにいり",
+          "meaning": "favorite; bookmarked item",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "digital",
+            "ui",
+            "common"
+          ]
+        },
+        {
+          "kanji": "かご",
+          "reading": "かご",
+          "meaning": "basket",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "クレーンゲーム",
+          "reading": "クレーンゲーム",
+          "meaning": "claw crane game",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "ゲームセンター",
+          "reading": "ゲームセンター",
+          "meaning": "game center; arcade",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "この先ずっと",
+          "reading": "このさきずっと",
+          "meaning": "from here on forever; all the way ahead",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "time_expression",
+            "future",
+            "duration",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "これからもずっと",
+          "reading": "これからもずっと",
+          "meaning": "forever from now on; from here on too",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "duration",
+            "future",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "これまでもずっと",
+          "reading": "これまでもずっと",
+          "meaning": "up to now as well, all along",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "duration",
+            "past_to_present",
+            "written",
+            "spoken"
+          ]
+        },
+        {
+          "kanji": "サインインする",
+          "reading": "サインインする",
+          "meaning": "to sign in",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "digital"
+          ]
+        },
+        {
+          "kanji": "さけ",
+          "reading": "さけ",
+          "meaning": "salmon",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "サブスクライブする",
+          "reading": "サブスクライブする",
+          "meaning": "to subscribe",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "digital"
+          ]
+        },
+        {
+          "kanji": "ずっと後",
+          "reading": "ずっとあと",
+          "meaning": "much later; far later",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと後で",
+          "reading": "ずっとあとで",
+          "meaning": "much later on",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "future",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと後に",
+          "reading": "ずっとあとに",
+          "meaning": "much later; at a far later point",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "future",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと昔",
+          "reading": "ずっとむかし",
+          "meaning": "long, long ago",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "time_expression",
+            "past",
+            "storytelling",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと先",
+          "reading": "ずっとさき",
+          "meaning": "far ahead; much further on",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "time_expression",
+            "space_expression",
+            "future",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと前",
+          "reading": "ずっとまえ",
+          "meaning": "long ago; far back",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと前から",
+          "reading": "ずっとまえから",
+          "meaning": "since long ago; for a long time already",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "duration",
+            "past_to_present",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "ずっと前に",
+          "reading": "ずっとまえに",
+          "meaning": "a long time ago",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "hiragana",
+          "tags": [
+            "time_expression",
+            "past",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "チャンネル",
+          "reading": "チャンネル",
+          "meaning": "channel",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "media",
+            "digital"
+          ]
+        },
+        {
+          "kanji": "テレビジョン",
+          "reading": "テレビジョン",
+          "meaning": "television",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "device",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "なかなか",
+          "reading": "なかなか",
+          "meaning": "not easily; quite; fairly",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "にぎやか",
+          "reading": "にぎやか",
+          "meaning": "lively; bustling",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "にんじん",
+          "reading": "にんじん",
+          "meaning": "carrot",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "ぬいぐるみ",
+          "reading": "ぬいぐるみ",
+          "meaning": "stuffed toy; plush",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "ぶつかる",
+          "reading": "ぶつかる",
+          "meaning": "to bump into; to collide",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "ムービー",
+          "reading": "ムービー",
+          "meaning": "movie; video clip",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "media"
+          ]
+        },
+        {
+          "kanji": "リズム",
+          "reading": "リズム",
+          "meaning": "rhythm",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "レースゲーム",
+          "reading": "レースゲーム",
+          "meaning": "racing game",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "レジ",
+          "reading": "レジ",
+          "meaning": "cash register; checkout",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "katakana",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "ログインする",
+          "reading": "ログインする",
+          "meaning": "to log in; sign in",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "digital",
+            "computer"
+          ]
+        },
+        {
+          "kanji": "ワイドスクリーン",
+          "reading": "ワイドスクリーン",
+          "meaning": "widescreen",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "origin:english",
+            "screen",
+            "media"
+          ]
+        },
+        {
+          "kanji": "以外",
+          "reading": "いがい",
+          "meaning": "except; besides; other than",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n4",
+            "grammar_marker"
+          ]
+        },
+        {
+          "kanji": "一日",
+          "reading": "いちにち",
+          "meaning": "one day",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "一番",
+          "reading": "いちばん",
+          "meaning": "number one; the most",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "運転する",
+          "reading": "うんてんする",
+          "meaning": "to drive",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "映像",
+          "reading": "えいぞう",
+          "meaning": "visual footage; imagery",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "駅前",
+          "reading": "えきまえ",
+          "meaning": "in front of the station",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "押す",
+          "reading": "おす",
+          "meaning": "to push; to press",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "黄金色",
+          "reading": "こがねいろ",
+          "meaning": "golden",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "黄緑",
+          "reading": "きみどり",
+          "meaning": "yellow-green",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "音楽ゲーム",
+          "reading": "おんがくゲーム",
+          "meaning": "music rhythm game",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "both",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "何度も",
+          "reading": "なんども",
+          "meaning": "many times; repeatedly",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "加入",
+          "reading": "かにゅう",
+          "meaning": "joining; enrollment; membership",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "formal",
+            "membership"
+          ]
+        },
+        {
+          "kanji": "画集",
+          "reading": "がしゅう",
+          "meaning": "art book; collection of illustrations",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "回",
+          "reading": "かい",
+          "meaning": "times; occurrence; counter for occurrences",
+          "type": "counter",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "counter_related",
+            "origin:Sino-Japanese"
+          ]
+        },
+        {
+          "kanji": "回す",
+          "reading": "まわす",
+          "meaning": "to turn; to spin; to rotate something",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "transitive",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "回る",
+          "reading": "まわる",
+          "meaning": "to turn; to go around; to rotate",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "intransitive",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "回数",
+          "reading": "かいすう",
+          "meaning": "number of times; frequency",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "counter_related",
+            "origin:Sino-Japanese"
+          ]
+        },
+        {
+          "kanji": "回転",
+          "reading": "かいてん",
+          "meaning": "rotation; spinning",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "origin:Sino-Japanese",
+            "technical"
+          ]
+        },
+        {
+          "kanji": "回復",
+          "reading": "かいふく",
+          "meaning": "recovery; restoration",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "origin:Sino-Japanese",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "外れる",
+          "reading": "はずれる",
+          "meaning": "to come off; to be disconnected; to miss",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n4"
+          ]
+        },
+        {
+          "kanji": "外国",
+          "reading": "がいこく",
+          "meaning": "foreign country",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n5"
+          ]
+        },
+        {
+          "kanji": "外国人",
+          "reading": "がいこくじん",
+          "meaning": "foreigner; foreign person",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n5"
+          ]
+        },
+        {
+          "kanji": "外出",
+          "reading": "がいしゅつ",
+          "meaning": "going out; outing",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n4"
+          ]
+        },
+        {
+          "kanji": "外側",
+          "reading": "そとがわ",
+          "meaning": "outside; outer side",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n4"
+          ]
+        },
+        {
+          "kanji": "外伝",
+          "reading": "がいでん",
+          "meaning": "side story; spinoff tale",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "楽しそう",
+          "reading": "たのしそう",
+          "meaning": "seems fun; looks like enjoying it",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "完結",
+          "reading": "かんけつ",
+          "meaning": "completion; finished (series)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "完全版",
+          "reading": "かんぜんばん",
+          "meaning": "complete edition",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "鑑賞する",
+          "reading": "かんしょうする",
+          "meaning": "to appreciate; to watch (art/film)",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "間",
+          "reading": "あいだ",
+          "meaning": "interval; while; during",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "休憩スペース",
+          "reading": "きゅうけいスペース",
+          "meaning": "rest area; break space",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "both",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "魚売り場",
+          "reading": "さかなうりば",
+          "meaning": "fish section",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "空色",
+          "reading": "そらいろ",
+          "meaning": "sky blue",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "原作",
+          "reading": "げんさく",
+          "meaning": "original work; source material",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "限定版",
+          "reading": "げんていばん",
+          "meaning": "limited edition",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "向かう",
+          "reading": "むかう",
+          "meaning": "to head toward",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "紅色",
+          "reading": "べにいろ",
+          "meaning": "crimson",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "行きたがる",
+          "reading": "いきたがる",
+          "meaning": "to want to go (third-person desire)",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "鋼の意志",
+          "reading": "はがねのいし",
+          "meaning": "will of steel; iron will",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "tags": [
+            "metaphor",
+            "determination",
+            "written",
+            "spoken"
+          ]
+        },
+        {
+          "kanji": "鋼の錬金術師",
+          "reading": "はがねのれんきんじゅつし",
+          "meaning": "Fullmetal Alchemist",
+          "type": "proper-noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "anime",
+            "manga",
+            "title",
+            "pop_culture"
+          ]
+        },
+        {
+          "kanji": "鋼管",
+          "reading": "こうかん",
+          "meaning": "steel pipe",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "industry",
+            "construction",
+            "infrastructure",
+            "technical",
+            "written"
+          ]
+        },
+        {
+          "kanji": "鋼材",
+          "reading": "こうざい",
+          "meaning": "steel materials; structural steel",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "construction",
+            "industry",
+            "material",
+            "technical",
+            "written"
+          ]
+        },
+        {
+          "kanji": "鋼鉄",
+          "reading": "こうてつ",
+          "meaning": "steel",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "material",
+            "metal",
+            "industry",
+            "written"
+          ]
+        },
+        {
+          "kanji": "鋼板",
+          "reading": "こうばん",
+          "meaning": "steel plate; sheet steel",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "industry",
+            "material",
+            "metal",
+            "technical",
+            "written"
+          ]
+        },
+        {
+          "kanji": "高校生",
+          "reading": "こうこうせい",
+          "meaning": "high school student",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "合わせる",
+          "reading": "あわせる",
+          "meaning": "to match; to align",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "今までずっと",
+          "reading": "いままでずっと",
+          "meaning": "all this time until now",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "time_expression",
+            "duration",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "今もずっと",
+          "reading": "いまもずっと",
+          "meaning": "still all this time even now",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "time_expression",
+            "duration",
+            "continuation",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "今回",
+          "reading": "こんかい",
+          "meaning": "this time",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "time_expression",
+            "origin:Sino-Japanese"
+          ]
+        },
+        {
+          "kanji": "紺色",
+          "reading": "こんいろ",
+          "meaning": "navy blue",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "再生する",
+          "reading": "さいせいする",
+          "meaning": "to play; to playback",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "digital"
+          ]
+        },
+        {
+          "kanji": "作る",
+          "reading": "つくる",
+          "meaning": "to make",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "作者",
+          "reading": "さくしゃ",
+          "meaning": "author; creator",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "桜色",
+          "reading": "さくらいろ",
+          "meaning": "cherry blossom pink",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "山吹色",
+          "reading": "やまぶきいろ",
+          "meaning": "golden yellow",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "暫く",
+          "reading": "しばらく",
+          "meaning": "for a while",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "紙版",
+          "reading": "かみばん",
+          "meaning": "print edition (paper version)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "視聴",
+          "reading": "しちょう",
+          "meaning": "viewing; watching",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "視聴する",
+          "reading": "しちょうする",
+          "meaning": "to watch; to view",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "持つ",
+          "reading": "もつ",
+          "meaning": "to hold; to carry",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "自宅",
+          "reading": "じたく",
+          "meaning": "one's home; residence",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "common",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "失う",
+          "reading": "うしなう",
+          "meaning": "to lose",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "transitive",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "若草色",
+          "reading": "わかくさいろ",
+          "meaning": "fresh green",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "取る",
+          "reading": "とる",
+          "meaning": "to take; to get (a prize)",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "朱色",
+          "reading": "しゅいろ",
+          "meaning": "vermilion",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "受像機",
+          "reading": "じゅぞうき",
+          "meaning": "television receiver",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "device",
+            "technical"
+          ]
+        },
+        {
+          "kanji": "終わる",
+          "reading": "おわる",
+          "meaning": "to finish",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "重版",
+          "reading": "じゅうはん",
+          "meaning": "reprint (additional printing)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "出版社",
+          "reading": "しゅっぱんしゃ",
+          "meaning": "publishing company; publisher",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "初版",
+          "reading": "しょはん",
+          "meaning": "first edition; first printing",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "勝つ",
+          "reading": "かつ",
+          "meaning": "to win",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "小学生",
+          "reading": "しょうがくせい",
+          "meaning": "elementary school student",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "笑う",
+          "reading": "わらう",
+          "meaning": "to smile; to laugh",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "象牙色",
+          "reading": "ぞうげいろ",
+          "meaning": "ivory",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "信頼",
+          "reading": "しんらい",
+          "meaning": "trust; confidence",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "origin:Sino-Japanese",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "慎重",
+          "reading": "しんちょう",
+          "meaning": "careful; cautious",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "新刊",
+          "reading": "しんかん",
+          "meaning": "new release (book/volume)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "新鮮",
+          "reading": "しんせん",
+          "meaning": "fresh",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "新装版",
+          "reading": "しんそうばん",
+          "meaning": "newly designed edition; reissue with new cover/layout",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "新品",
+          "reading": "しんぴん",
+          "meaning": "new item; brand-new (condition)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "深緑",
+          "reading": "ふかみどり",
+          "meaning": "deep green",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真っ黄色",
+          "reading": "まっきいろ",
+          "meaning": "bright yellow",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真っ黒",
+          "reading": "まっくろ",
+          "meaning": "pitch black",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真っ青",
+          "reading": "まっさお",
+          "meaning": "deep blue; pale blue",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真っ赤",
+          "reading": "まっか",
+          "meaning": "bright red",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真っ白",
+          "reading": "まっしろ",
+          "meaning": "pure white",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "真ん中",
+          "reading": "まんなか",
+          "meaning": "middle; center",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "gidk48",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "真上",
+          "reading": "まうえ",
+          "meaning": "directly above",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "gidk48",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "真夜中",
+          "reading": "まよなか",
+          "meaning": "midnight; dead of night",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "gidk48",
+            "origin:Japanese"
+          ]
+        },
+        {
+          "kanji": "水色",
+          "reading": "みずいろ",
+          "meaning": "light blue",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "製鋼",
+          "reading": "せいこう",
+          "meaning": "steelmaking; steel production",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "industry",
+            "manufacturing",
+            "technical",
+            "written"
+          ]
+        },
+        {
+          "kanji": "青紫",
+          "reading": "あおむらさき",
+          "meaning": "bluish purple",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "青緑",
+          "reading": "あおみどり",
+          "meaning": "blue-green",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "赤紫",
+          "reading": "あかむらさき",
+          "meaning": "reddish purple",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "切る",
+          "reading": "きる",
+          "meaning": "to cut",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "前よりずっと",
+          "reading": "まえよりずっと",
+          "meaning": "much more than before",
+          "type": "expression",
+          "lexicalClass": "set-phrase",
+          "orthography": "both",
+          "tags": [
+            "comparison",
+            "degree",
+            "jlpt_n3",
+            "spoken",
+            "written"
+          ]
+        },
+        {
+          "kanji": "全巻",
+          "reading": "ぜんかん",
+          "meaning": "all volumes (entire series set)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "全巻セット",
+          "reading": "ぜんかんせっと",
+          "meaning": "complete set (all volumes)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "both",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "走り過ぎる",
+          "reading": "はしりすぎる",
+          "meaning": "to run/drive too fast; to overdo running",
+          "type": "ichidan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "速く",
+          "reading": "はやく",
+          "meaning": "fast; quickly",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "対戦する",
+          "reading": "たいせんする",
+          "meaning": "to compete; to face off",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "袋",
+          "reading": "ふくろ",
+          "meaning": "bag",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "大画面",
+          "reading": "だいがめん",
+          "meaning": "large screen; big display",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "device",
+            "screen"
+          ]
+        },
+        {
+          "kanji": "大型画面",
+          "reading": "おおがたがめん",
+          "meaning": "large-sized screen",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "device",
+            "screen"
+          ]
+        },
+        {
+          "kanji": "大好き",
+          "reading": "だいすき",
+          "meaning": "love; like a lot",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "単行本",
+          "reading": "たんこうぼん",
+          "meaning": "collected volume; tankobon",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "探し物",
+          "reading": "さがしもの",
+          "meaning": "lost item; something one is looking for",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "search",
+            "common"
+          ]
+        },
+        {
+          "kanji": "探す",
+          "reading": "さがす",
+          "meaning": "to search; to look for",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "search",
+            "common"
+          ]
+        },
+        {
+          "kanji": "探る",
+          "reading": "さぐる",
+          "meaning": "to probe; to investigate",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "search",
+            "investigation"
+          ]
+        },
+        {
+          "kanji": "探求",
+          "reading": "たんきゅう",
+          "meaning": "pursuit; inquiry",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "abstract",
+            "written",
+            "academic"
+          ]
+        },
+        {
+          "kanji": "探検",
+          "reading": "たんけん",
+          "meaning": "exploration; expedition",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "exploration",
+            "common"
+          ]
+        },
+        {
+          "kanji": "探検家",
+          "reading": "たんけんか",
+          "meaning": "explorer",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "person",
+            "exploration"
+          ]
+        },
+        {
+          "kanji": "探査",
+          "reading": "たんさ",
+          "meaning": "survey; probe; exploration",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "science",
+            "technical",
+            "written"
+          ]
+        },
+        {
+          "kanji": "探査機",
+          "reading": "たんさき",
+          "meaning": "probe; exploration craft",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "science",
+            "space",
+            "technical"
+          ]
+        },
+        {
+          "kanji": "探索",
+          "reading": "たんさく",
+          "meaning": "search; exploration",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "search",
+            "written"
+          ]
+        },
+        {
+          "kanji": "探知",
+          "reading": "たんち",
+          "meaning": "detection",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "technical",
+            "detection",
+            "written"
+          ]
+        },
+        {
+          "kanji": "探知機",
+          "reading": "たんちき",
+          "meaning": "detector",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "device",
+            "technical",
+            "detection"
+          ]
+        },
+        {
+          "kanji": "探偵",
+          "reading": "たんてい",
+          "meaning": "detective",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "person",
+            "investigation",
+            "common"
+          ]
+        },
+        {
+          "kanji": "探訪",
+          "reading": "たんぼう",
+          "meaning": "visit; exploration tour",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "travel",
+            "written"
+          ]
+        },
+        {
+          "kanji": "中古",
+          "reading": "ちゅうこ",
+          "meaning": "used; secondhand",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "挑む",
+          "reading": "いどむ",
+          "meaning": "to challenge; to confront",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "common_word",
+            "action_verb",
+            "competitive"
+          ]
+        },
+        {
+          "kanji": "挑戦",
+          "reading": "ちょうせん",
+          "meaning": "challenge; undertaking",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "jlpt_n3",
+            "common_word",
+            "abstract_noun"
+          ]
+        },
+        {
+          "kanji": "挑戦する",
+          "reading": "ちょうせんする",
+          "meaning": "to challenge; to try",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "挑戦者",
+          "reading": "ちょうせんしゃ",
+          "meaning": "challenger",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "agent_noun",
+            "competitive",
+            "common_word"
+          ]
+        },
+        {
+          "kanji": "挑発",
+          "reading": "ちょうはつ",
+          "meaning": "provocation; provoking",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "common_word",
+            "formal",
+            "conflict_related"
+          ]
+        },
+        {
+          "kanji": "挑発する",
+          "reading": "ちょうはつする",
+          "meaning": "to provoke",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "suru_verb",
+            "formal",
+            "conflict_related"
+          ]
+        },
+        {
+          "kanji": "電子書籍",
+          "reading": "でんししょせき",
+          "meaning": "e-book; electronic book",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "電子版",
+          "reading": "でんしばん",
+          "meaning": "digital edition",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "登録する",
+          "reading": "とうろくする",
+          "meaning": "to register; subscribe",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "digital",
+            "account"
+          ]
+        },
+        {
+          "kanji": "土曜日",
+          "reading": "どようび",
+          "meaning": "Saturday",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "動画",
+          "reading": "どうが",
+          "meaning": "video; moving image",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "tags": [
+            "media",
+            "digital",
+            "common"
+          ]
+        },
+        {
+          "kanji": "同人誌",
+          "reading": "どうじんし",
+          "meaning": "doujinshi; fan/self-published comic",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "銅色",
+          "reading": "どういろ",
+          "meaning": "copper-colored",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "特装版",
+          "reading": "とくそうばん",
+          "meaning": "special edition (with extras)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "特売",
+          "reading": "とくばい",
+          "meaning": "special sale",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "虹色",
+          "reading": "にじいろ",
+          "meaning": "rainbow-colored",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "日本語版",
+          "reading": "にほんごばん",
+          "meaning": "Japanese-language edition",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "乳白色",
+          "reading": "にゅうはくしょく",
+          "meaning": "milky white",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "認証する",
+          "reading": "にんしょうする",
+          "meaning": "to authenticate; verify identity",
+          "type": "irregular-verb",
+          "lexicalClass": "regular",
+          "tags": [
+            "digital",
+            "security"
+          ]
+        },
+        {
+          "kanji": "濃灰色",
+          "reading": "こいはいいろ",
+          "meaning": "dark gray",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "買い物リスト",
+          "reading": "かいものリスト",
+          "meaning": "shopping list",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "both",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "売り場",
+          "reading": "うりば",
+          "meaning": "sales floor; section",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "薄灰色",
+          "reading": "うすはいいろ",
+          "meaning": "light gray",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "肌色",
+          "reading": "はだいろ",
+          "meaning": "skin color",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "挽回",
+          "reading": "ばんかい",
+          "meaning": "recovery; making up for a loss or mistake",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "origin:Sino-Japanese",
+            "written",
+            "formal"
+          ]
+        },
+        {
+          "kanji": "番外編",
+          "reading": "ばんがいへん",
+          "meaning": "extra chapter; special side episode",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "美咲",
+          "reading": "みさき",
+          "meaning": "Misaki (given name)",
+          "type": "proper-noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "文庫版",
+          "reading": "ぶんこばん",
+          "meaning": "bunko edition (pocket paperback format)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "並ぶ",
+          "reading": "ならぶ",
+          "meaning": "to be lined up",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "萌黄色",
+          "reading": "もえぎいろ",
+          "meaning": "yellow-green",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "status": "",
+          "kanji": "蜂.",
+          "reading": "はち",
+          "meaning": "bee; wasp",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "common_animal"
+          ]
+        },
+        {
+          "kanji": "毎週",
+          "reading": "まいしゅう",
+          "meaning": "every week",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "又",
+          "reading": "また",
+          "meaning": "again; also",
+          "type": "adverb",
+          "lexicalClass": "regular",
+          "orthography": "hiragana",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "漫画",
+          "reading": "まんが",
+          "meaning": "manga; comic",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "無色",
+          "reading": "むしょく",
+          "meaning": "colorless",
+          "type": "na-adjective",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "娘",
+          "reading": "むすめ",
+          "meaning": "daughter",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "迷う",
+          "reading": "まよう",
+          "meaning": "to hesitate; to be unsure",
+          "type": "godan-verb",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "夕飯",
+          "reading": "ゆうはん",
+          "meaning": "evening meal; dinner",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "夕方",
+          "reading": "ゆうがた",
+          "meaning": "evening; late afternoon",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "用",
+          "reading": "よう",
+          "meaning": "for use; purpose",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "grocery-shopping-story"
+          ]
+        },
+        {
+          "kanji": "藍色",
+          "reading": "あいいろ",
+          "meaning": "indigo",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "colors"
+          ]
+        },
+        {
+          "kanji": "亮",
+          "reading": "りょう",
+          "meaning": "Ryo (given name)",
+          "type": "proper-noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "game-center-story"
+          ]
+        },
+        {
+          "kanji": "連載",
+          "reading": "れんさい",
+          "meaning": "serialization; serialized publication",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "manga-overview"
+          ]
+        },
+        {
+          "kanji": "卍解",
+          "reading": "ばんかい",
+          "meaning": "Bankai; final release (fictional term)",
+          "type": "noun",
+          "lexicalClass": "regular",
+          "orthography": "kanji",
+          "tags": [
+            "fiction",
+            "manga_anime",
+            "origin:Japanese"
+          ]
+        }
+      ],
+      "removeKeys": []
+    },
+    "_inputKind": "entries-object"
+  }
+}

@@ -1,0 +1,251 @@
+{
+  "id": "rev_1772811484786_39f09a08df2a8e7",
+  "kind": "diff",
+  "collectionKey": "japanese/japanese_sentences.json",
+  "parentId": null,
+  "label": null,
+  "patch": {
+    "targetArrayKey": "entries",
+    "entryKeyField": "ja",
+    "metadata": {
+      "set": {},
+      "unset": []
+    },
+    "schema": {
+      "upsert": [],
+      "removeKeys": []
+    },
+    "entries": {
+      "upsert": [
+        {
+          "status": "",
+          "ja": "庭に蜂が飛んでいるので、気をつけてください。",
+          "en": "A bee is flying in the garden, so please be careful.",
+          "notes": [],
+          "grammarNotes": [
+            "〜ている indicates an ongoing state/action (\"is flying\").",
+            "ので gives an explanatory reason (so/because), often softer than から.",
+            "Vてください is a polite request."
+          ],
+          "chunks": [
+            {
+              "ja": "庭に",
+              "gloss": "in the garden",
+              "focus": "",
+              "refs": [
+                "庭"
+              ]
+            },
+            {
+              "ja": "蜂が飛んでいるので",
+              "gloss": "because a bee is flying",
+              "focus": "Vている + ので",
+              "refs": [
+                "蜂",
+                "飛ぶ",
+                "ている",
+                "ので"
+              ]
+            },
+            {
+              "ja": "気をつけてください",
+              "gloss": "please be careful",
+              "focus": "Vてください",
+              "refs": [
+                "気をつける",
+                "ください"
+              ]
+            }
+          ]
+        },
+        {
+          "status": "",
+          "ja": "子どものころ、蜂に刺されたことがあります。",
+          "en": "I have been stung by a bee when I was a child.",
+          "notes": [],
+          "grammarNotes": [
+            "Vたことがある expresses past experience (\"have ever done/experienced\").",
+            "刺された is passive, emphasizing the experience of being stung."
+          ],
+          "chunks": [
+            {
+              "ja": "子どものころ",
+              "gloss": "when I was a child",
+              "focus": "",
+              "refs": [
+                "子ども",
+                "ころ"
+              ]
+            },
+            {
+              "ja": "蜂に刺されたことがあります",
+              "gloss": "I have been stung by a bee (before)",
+              "focus": "Passive + Vたことがある",
+              "refs": [
+                "蜂",
+                "刺す",
+                "刺される",
+                "たことがある"
+              ]
+            }
+          ]
+        },
+        {
+          "status": "",
+          "ja": "この店では地元の蜂蜜を売っています。",
+          "en": "This shop sells local honey.",
+          "notes": [],
+          "grammarNotes": [
+            "〜では sets the topic/location context (\"at this shop\").",
+            "売っています is a common use of 〜ている for a habitual/ongoing business action (\"they sell\")."
+          ],
+          "chunks": [
+            {
+              "ja": "この店では",
+              "gloss": "at this shop",
+              "focus": "〜では (context/topic)",
+              "refs": [
+                "この",
+                "店"
+              ]
+            },
+            {
+              "ja": "地元の蜂蜜を",
+              "gloss": "local honey",
+              "focus": "",
+              "refs": [
+                "地元",
+                "蜂蜜"
+              ]
+            },
+            {
+              "ja": "売っています",
+              "gloss": "sell (as a regular offering)",
+              "focus": "Vている (habitual/ongoing)",
+              "refs": [
+                "売る",
+                "ている"
+              ]
+            }
+          ]
+        }
+      ],
+      "upsertMinimal": [
+        {
+          "status": "",
+          "ja": "庭に蜂が飛んでいるので、気をつけてください。",
+          "en": "A bee is flying in the garden, so please be careful.",
+          "notes": [],
+          "grammarNotes": [
+            "〜ている indicates an ongoing state/action (\"is flying\").",
+            "ので gives an explanatory reason (so/because), often softer than から.",
+            "Vてください is a polite request."
+          ],
+          "chunks": [
+            {
+              "ja": "庭に",
+              "gloss": "in the garden",
+              "focus": "",
+              "refs": [
+                "庭"
+              ]
+            },
+            {
+              "ja": "蜂が飛んでいるので",
+              "gloss": "because a bee is flying",
+              "focus": "Vている + ので",
+              "refs": [
+                "蜂",
+                "飛ぶ",
+                "ている",
+                "ので"
+              ]
+            },
+            {
+              "ja": "気をつけてください",
+              "gloss": "please be careful",
+              "focus": "Vてください",
+              "refs": [
+                "気をつける",
+                "ください"
+              ]
+            }
+          ]
+        },
+        {
+          "status": "",
+          "ja": "子どものころ、蜂に刺されたことがあります。",
+          "en": "I have been stung by a bee when I was a child.",
+          "notes": [],
+          "grammarNotes": [
+            "Vたことがある expresses past experience (\"have ever done/experienced\").",
+            "刺された is passive, emphasizing the experience of being stung."
+          ],
+          "chunks": [
+            {
+              "ja": "子どものころ",
+              "gloss": "when I was a child",
+              "focus": "",
+              "refs": [
+                "子ども",
+                "ころ"
+              ]
+            },
+            {
+              "ja": "蜂に刺されたことがあります",
+              "gloss": "I have been stung by a bee (before)",
+              "focus": "Passive + Vたことがある",
+              "refs": [
+                "蜂",
+                "刺す",
+                "刺される",
+                "たことがある"
+              ]
+            }
+          ]
+        },
+        {
+          "status": "",
+          "ja": "この店では地元の蜂蜜を売っています。",
+          "en": "This shop sells local honey.",
+          "notes": [],
+          "grammarNotes": [
+            "〜では sets the topic/location context (\"at this shop\").",
+            "売っています is a common use of 〜ている for a habitual/ongoing business action (\"they sell\")."
+          ],
+          "chunks": [
+            {
+              "ja": "この店では",
+              "gloss": "at this shop",
+              "focus": "〜では (context/topic)",
+              "refs": [
+                "この",
+                "店"
+              ]
+            },
+            {
+              "ja": "地元の蜂蜜を",
+              "gloss": "local honey",
+              "focus": "",
+              "refs": [
+                "地元",
+                "蜂蜜"
+              ]
+            },
+            {
+              "ja": "売っています",
+              "gloss": "sell (as a regular offering)",
+              "focus": "Vている (habitual/ongoing)",
+              "refs": [
+                "売る",
+                "ている"
+              ]
+            }
+          ]
+        }
+      ],
+      "removeKeys": []
+    },
+    "_inputKind": "entries-object"
+  }
+}
