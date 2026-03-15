@@ -1,5 +1,8 @@
 /**
- * Japanese text utilities: romaji conversion, kana detection, normalization
+ * Shared Japanese text utilities.
+ *
+ * Not collection-specific and not JSON-specific. These helpers work on plain strings
+ * for romaji conversion, kana detection, normalization, and adjective inflection.
  */
 
 export function isVowel(ch) {

@@ -1,3 +1,11 @@
+/**
+ * Shared schema and entry validation helpers for a single collection.
+ *
+ * Works on parsed collection objects after `JSON.parse`, not on raw JSON text.
+ * Validates schema shape, validates entries against schema fields, and reports
+ * duplicate entry keys inside the parsed collection object.
+ */
+
 import { detectCollectionArrayKey, inferEntryKeyField } from './collectionDiff.mjs';
 
 function safeJsonStringify(v) {

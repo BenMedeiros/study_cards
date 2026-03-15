@@ -1,3 +1,11 @@
+/**
+ * Shared collection diff and patch helpers.
+ *
+ * Works on parsed collection objects after `JSON.parse`, not on raw JSON text.
+ * Computes object-level diffs/patches for metadata, schema, and entry arrays, and
+ * applies those patches back onto parsed collection objects.
+ */
+
 function safeClone(v) {
   try { return JSON.parse(JSON.stringify(v)); } catch { return null; }
 }

@@ -1,3 +1,11 @@
+/**
+ * Shared collection parsing and relation helpers.
+ *
+ * Works on parsed collection JSON objects after `JSON.parse`, not on raw JSON text.
+ * Normalizes collection-shaped objects, reads relation config, resolves relation paths,
+ * and attaches `relatedCollections` arrays onto parsed entry objects.
+ */
+
 function normalizeFolderPath(folderPath) {
   return String(folderPath || '').replace(/^\/+/, '').replace(/\/+$/, '');
 }

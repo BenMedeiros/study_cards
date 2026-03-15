@@ -4430,6 +4430,119 @@
         "命令形",
         "〜と思って"
       ]
+    },
+    {
+      "pattern": "〜がる",
+      "meaning": "show signs of; act as if feeling ~",
+      "sectionKey": "change_process_result",
+      "sectionLabel": "Change, process, outcomes, and trends",
+      "notes_grammar": [
+        "Often used with feelings or sensations that can be observed from the outside, especially in the third person.",
+        "Common with adjectives like 怖い and うれしい, and in lexicalized forms like 嫌がる."
+      ],
+      "example_jp": "子どもが犬を怖がっている。",
+      "example_en": "The child is acting scared of the dog.",
+      "formations": [
+        "i-adj stem + がる"
+      ]
+    },
+    {
+      "pattern": "〜くない",
+      "meaning": "not ~ (i-adjective negative)",
+      "sectionKey": "aspect_result_state",
+      "sectionLabel": "Tense, aspect, result-state, completion",
+      "example_jp": "この部屋は広くない。",
+      "example_en": "This room is not spacious.",
+      "formations": [
+        "i-adj stem + くない"
+      ]
+    },
+    {
+      "pattern": "〜くなる",
+      "meaning": "become ~",
+      "sectionKey": "change_process_result",
+      "sectionLabel": "Change, process, outcomes, and trends",
+      "example_jp": "春になると暖かくなる。",
+      "example_en": "When spring comes, it becomes warm.",
+      "formations": [
+        "i-adj stem + くなる",
+        "na-adj + になる"
+      ]
+    },
+    {
+      "pattern": "〜くする / 〜にする",
+      "meaning": "make ~; change something to ~",
+      "sectionKey": "change_process_result",
+      "sectionLabel": "Change, process, outcomes, and trends",
+      "notes_grammar": [
+        "〜くする is used with i-adjectives, while 〜にする is used with na-adjectives and nouns.",
+        "〜にする can also mean choosing something, as in これにする."
+      ],
+      "example_jp": "音を小さくしてください。",
+      "example_en": "Please make the volume lower.",
+      "formations": [
+        "i-adj stem + くする",
+        "na-adj + にする",
+        "N + にする"
+      ]
+    },
+    {
+      "pattern": "〜ければ",
+      "meaning": "if ~ (i-adjective conditional)",
+      "sectionKey": "conditionals_hypotheticals",
+      "sectionLabel": "Conditionals & hypotheticals",
+      "example_jp": "安ければ買います。",
+      "example_en": "If it's cheap, I'll buy it.",
+      "formations": [
+        "i-adj stem + ければ"
+      ]
+    },
+    {
+      "pattern": "〜さ",
+      "meaning": "~ness; degree or quality as a noun",
+      "sectionKey": "nominalization_packaging",
+      "sectionLabel": "Nominalization & clause packaging (こと/の/わけ/はず etc.)",
+      "notes_grammar": [
+        "Nominalizes adjectives into quality nouns such as 高さ and 便利さ.",
+        "It often refers to measurable degree or an abstract quality."
+      ],
+      "example_jp": "この橋の長さはどのくらいですか。",
+      "example_en": "How long is this bridge?",
+      "formations": [
+        "adj stem + さ"
+      ]
+    },
+    {
+      "pattern": "〜すぎる",
+      "meaning": "too ~; excessively ~",
+      "sectionKey": "comparison_degree_limit",
+      "sectionLabel": "Comparison, degree, limitation, evaluation",
+      "notes_grammar": [
+        "With i-adjectives, drop い before attaching すぎる.",
+        "With na-adjectives, attach directly: 静かすぎる."
+      ],
+      "example_jp": "このかばんは高すぎる。",
+      "example_en": "This bag is too expensive.",
+      "formations": [
+        "i-adj stem + すぎる",
+        "na-adj + すぎる"
+      ]
+    },
+    {
+      "pattern": "〜め",
+      "meaning": "somewhat ~; on the ~ side",
+      "sectionKey": "comparison_degree_limit",
+      "sectionLabel": "Comparison, degree, limitation, evaluation",
+      "notes_grammar": [
+        "Usually attaches to i-adjective stems to describe a slight tendency or moderate degree.",
+        "Common in everyday expressions like 早め and 少なめ."
+      ],
+      "example_jp": "今日は少し早めに出発しよう。",
+      "example_en": "Let's leave a little earlier than usual today.",
+      "formations": [
+        "i-adj stem + め"
+      ]
     }
   ]
 }
+

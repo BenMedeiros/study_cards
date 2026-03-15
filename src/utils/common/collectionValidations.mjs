@@ -1,3 +1,11 @@
+/**
+ * Shared collection validation/report helpers.
+ *
+ * Works on parsed collection objects or maps/lists of parsed collection objects,
+ * not on raw JSON text. These validations inspect collection structure and relation
+ * references before any runtime related-collection object pointers are required.
+ */
+
 import {
   extractCollectionRecords,
   extractPathValues,
