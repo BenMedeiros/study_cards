@@ -161,6 +161,14 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
   let showSentenceChunks = false;
   let selectedChunkIndex = -1;
 
+  function setDisplayText(el, value) {
+    if (!el) return;
+    const text = String(value ?? '');
+    el.textContent = text;
+    el.style.whiteSpace = /\r|\n/.test(text) ? 'pre-wrap' : '';
+    el.style.wordBreak = /\r|\n/.test(text) ? 'break-word' : '';
+  }
+
   function firstDefinedString(obj, keys = []) {
     if (!obj || typeof obj !== 'object') return '';
     for (const key of keys) {
@@ -321,7 +329,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
       ja.className = 'kanji-related-text';
       ja.style.fontSize = '1rem';
       ja.style.flex = '1';
-      ja.textContent = String(chunk?.ja || '');
+      setDisplayText(ja, String(chunk?.ja || ''));
 
       const chunkSpeakBtn = document.createElement('button');
       chunkSpeakBtn.type = 'button';
@@ -343,7 +351,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
       gloss.style.color = 'var(--text)';
       gloss.style.opacity = '0.85';
       gloss.style.fontSize = '0.95rem';
-      gloss.textContent = String(chunk?.gloss || '');
+      setDisplayText(gloss, String(chunk?.gloss || ''));
 
       chunkTop.append(ja, chunkSpeakBtn);
       chunkBtn.append(chunkTop, gloss);
@@ -354,14 +362,14 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
           const focus = document.createElement('div');
           focus.className = 'kanji-related-label';
           focus.style.marginTop = '0.4rem';
-          focus.textContent = `Focus: ${chunk.focus}`;
+          setDisplayText(focus, `Focus: ${chunk.focus}`);
           row.appendChild(focus);
         }
         if (Array.isArray(chunk?.refs) && chunk.refs.length) {
           const refs = document.createElement('div');
           refs.className = 'kanji-related-label';
           refs.style.marginTop = '0.25rem';
-          refs.textContent = `Refs: ${chunk.refs.join(', ')}`;
+          setDisplayText(refs, `Refs: ${chunk.refs.join(', ')}`);
           row.appendChild(refs);
         }
       }
@@ -412,7 +420,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
       sentenceJa.className = 'kanji-related-text';
       sentenceJa.style.fontSize = '1rem';
       sentenceJa.style.flex = '1';
-      sentenceJa.textContent = sentence.ja;
+      setDisplayText(sentenceJa, sentence.ja);
 
       const sentenceSpeakBtn = document.createElement('button');
       sentenceSpeakBtn.type = 'button';
@@ -438,7 +446,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
         sentenceEn.style.color = 'var(--text)';
         sentenceEn.style.opacity = '0.85';
         sentenceEn.style.fontSize = '0.95rem';
-        sentenceEn.textContent = sentence.en;
+        setDisplayText(sentenceEn, sentence.en);
         sentenceBtn.appendChild(sentenceEn);
       }
 
@@ -449,14 +457,14 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
           const pattern = document.createElement('div');
           pattern.className = 'kanji-related-label';
           pattern.style.marginTop = '0.4rem';
-          pattern.textContent = `Pattern: ${sentence.pattern}`;
+          setDisplayText(pattern, `Pattern: ${sentence.pattern}`);
           row.appendChild(pattern);
         }
         if (sentence.notes.length) {
           const note = document.createElement('div');
           note.className = 'kanji-related-label';
           note.style.marginTop = '0.25rem';
-          note.textContent = sentence.notes.join(' | ');
+          setDisplayText(note, sentence.notes.join(' | '));
           row.appendChild(note);
         }
         if (fieldVisibility.chunks) {
@@ -518,14 +526,14 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
     const hasTitle = fieldVisibility.title && !!current.title;
     titleLabel.style.display = hasTitle ? '' : 'none';
     titleText.style.display = hasTitle ? '' : 'none';
-    titleText.textContent = current.title;
+    setDisplayText(titleText, current.title);
 
     const canExpandSentences = current.sentences.length && fieldVisibility.sentences;
     const canExpandChunks = current.chunks.length && fieldVisibility.chunks;
     const canExpand = canExpandSentences || canExpandChunks;
 
     primaryBtn.style.display = (fieldVisibility.japanese && current.jp) ? '' : 'none';
-    primaryBtn.textContent = current.jp;
+    setDisplayText(primaryBtn, current.jp);
     primaryBtn.style.cursor = canExpand ? 'pointer' : 'default';
     primaryBtn.title = canExpandSentences
       ? 'Show passage sentences'
@@ -543,7 +551,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
 
     enLabel.style.display = (fieldVisibility.english && current.en) ? '' : 'none';
     enText.style.display = (fieldVisibility.english && current.en) ? '' : 'none';
-    enText.textContent = current.en;
+    setDisplayText(enText, current.en);
 
     notesList.innerHTML = '';
     if (fieldVisibility.notes && current.notes.length) {
@@ -551,7 +559,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
       notesList.style.display = '';
       for (const n of current.notes) {
         const li = document.createElement('li');
-        li.textContent = String(n);
+        setDisplayText(li, String(n));
         notesList.appendChild(li);
       }
     } else {

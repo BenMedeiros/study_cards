@@ -104,10 +104,10 @@
     },
     {
       "path": "japanese/japanese_paragraphs.json",
-      "modifiedAt": "2026-03-13T02:11:48.983Z",
+      "modifiedAt": "2026-03-15T02:27:37.426Z",
       "name": "Japanese Paragraphs",
       "description": "Learner-friendly multi-sentence Japanese reading passages with sentence-level chunking.",
-      "entriesCount": 2,
+      "entriesCount": 3,
       "valid": true,
       "validation": {
         "schema": {
@@ -150,7 +150,7 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-03-15T01:37:42.249Z",
+      "modifiedAt": "2026-03-15T02:05:05.909Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
       "entriesCount": 1970,

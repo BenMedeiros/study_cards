@@ -204,6 +204,22 @@ export function createTable({ store = null, headers, rows, className = '', id, c
     return String(cell ?? '').trim();
   }
 
+  function hasLineBreak(value) {
+    return typeof value === 'string' && /\r|\n/.test(value);
+  }
+
+  function rowsContainLineBreaks(rowsArr) {
+    if (!Array.isArray(rowsArr) || !rowsArr.length) return false;
+    return rowsArr.some((row) => {
+      if (!Array.isArray(row)) return false;
+      return row.some((cell) => {
+        if (typeof cell === 'string') return hasLineBreak(cell);
+        if (cell instanceof HTMLElement) return hasLineBreak(String(cell.textContent || ''));
+        return false;
+      });
+    });
+  }
+
   function appendTokenToSearchInput(token) {
     try {
       if (!searchInputEl) return;
@@ -311,7 +327,10 @@ export function createTable({ store = null, headers, rows, className = '', id, c
   }
 
   function shouldVirtualize(rowsArr) {
-    return VIRTUAL_ENABLED && Array.isArray(rowsArr) && rowsArr.length > VIRTUALIZE_THRESHOLD;
+    return VIRTUAL_ENABLED
+      && Array.isArray(rowsArr)
+      && rowsArr.length > VIRTUALIZE_THRESHOLD
+      && !rowsContainLineBreaks(rowsArr);
   }
 
   function getTotalColumnCount() {
@@ -373,7 +392,17 @@ export function createTable({ store = null, headers, rows, className = '', id, c
       const jsonViewerDefaultExpanded = !!colCfg?.jsonViewerDefaultExpanded;
 
       if (typeof cellData === 'string' || typeof cellData === 'number') {
-        td.textContent = cellData;
+        const text = String(cellData ?? '');
+        if (hasLineBreak(text)) {
+          const content = document.createElement('div');
+          content.className = 'table-cell-text table-cell-text-multiline';
+          content.style.whiteSpace = 'pre-wrap';
+          content.style.wordBreak = 'break-word';
+          content.textContent = text;
+          td.append(content);
+        } else {
+          td.textContent = text;
+        }
       } else if (cellData instanceof HTMLElement) {
         td.append(cellData);
       } else if (cellData && typeof cellData === 'object' && useJsonViewer) {
