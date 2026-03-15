@@ -3466,12 +3466,6 @@ h2 {
   border-bottom-color: rgba(255, 255, 255, 0.7);
 }
 
-#study-manager-root .study-manager-insights {
-  margin-top: 0.8rem;
-  display: grid;
-  gap: 0.65rem;
-}
-
 /* #study-manager-root .study-manager-insight-group {
   border: var(--border-1);
   border-radius: 0.55rem;
@@ -3483,6 +3477,72 @@ h2 {
   font-size: 0.8rem;
   color: var(--muted);
   margin-bottom: 0.35rem;
+}
+
+
+#study-manager-root .study-manager-route-action,
+#study-manager-root .study-manager-day-filter-link,
+#study-manager-root .study-manager-rec-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color: var(--text);
+  border: var(--border-1);
+  border-radius: 999px;
+  padding: 0.22rem 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+#study-manager-root .study-manager-route-action-meta {
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+#study-manager-root .study-manager-day-list,
+#study-manager-root .study-manager-rec-list,
+#study-manager-root .study-manager-easy-word-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+#study-manager-root .study-manager-day-row,
+#study-manager-root .study-manager-rec-row {
+  border: var(--border-1);
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+#study-manager-root .study-manager-day-head,
+#study-manager-root .study-manager-rec-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+#study-manager-root .study-manager-day-label {
+  font-size: 0.9rem;
+}
+
+#study-manager-root .study-manager-day-meta,
+#study-manager-root .study-manager-rec-samples,
+#study-manager-root .study-manager-easy-word {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+#study-manager-root .study-manager-day-filters {
+  margin-top: 0.45rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+#study-manager-root .study-manager-recommendations-section + .study-manager-recommendations-section {
+  margin-top: 0.8rem;
 }
 /* Data table settings dialog */
 .table-settings-backdrop {
@@ -3687,6 +3747,83 @@ h2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.35rem;
+}
+
+.table-settings-sources-intro {
+  margin-bottom: 0.4rem;
+}
+
+.table-settings-source-row {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.table-settings-source-group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.table-settings-source-group-head strong {
+  font-size: 0.92rem;
+}
+
+.table-settings-source-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 0.45rem;
+}
+
+.table-settings-source-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 0.4rem;
+  padding: 0.38rem 0.45rem;
+  border: var(--border-1);
+  border-radius: 0.42rem;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.table-settings-source-option input[type='checkbox'] {
+  margin: 0.1rem 0 0;
+}
+
+.table-settings-source-option-text {
+  min-width: 0;
+  display: grid;
+  gap: 0.18rem;
+}
+
+.table-settings-source-option-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.table-settings-source-option-top strong {
+  font-size: 0.78rem;
+}
+
+.table-settings-source-option-desc {
+  font-size: 0.64rem;
+  line-height: 1.25;
+}
+
+.table-settings-source-controls {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.table-settings-source-mode {
+  display: grid;
+  gap: 0.14rem;
+}
+
+.table-settings-source-mode select {
+  width: 100%;
 }
 
 .table-settings-row-table {

@@ -2,6 +2,7 @@ import { basename, dirname, normalizeFolderPath, titleFromFilename } from '../ut
 import { buildHashRoute, parseHashRoute } from '../utils/browser/helpers.js';
 import { timed } from '../utils/browser/timing.js';
 import { compileTableSearchQuery, matchesTableSearch, filterRecordsAndIndicesByTableSearch } from '../utils/browser/tableSearch.js';
+import { extractPathValues } from '../utils/common/collectionParser.mjs';
 import {
   collectionUsesJapaneseExpansion,
   getJapaneseExpansionControlConfig,
@@ -1031,6 +1032,63 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   // Table Search / Filtering Utilities
   // ============================================================================
 
+  function normalizeRelatedFieldValues(values) {
+    const list = Array.isArray(values) ? values : [values];
+    const out = [];
+    const seen = new Set();
+    function visit(value) {
+      if (value == null) return;
+      if (Array.isArray(value)) {
+        for (const item of value) visit(item);
+        return;
+      }
+      if (typeof value === 'object') return;
+      const token = String(value).trim();
+      if (!token || seen.has(token)) return;
+      seen.add(token);
+      out.push(token);
+    }
+    for (const value of list) visit(value);
+    return out;
+  }
+
+  function getEntryRelatedFieldMap(entry, collection) {
+    const coll = (collection && typeof collection === 'object') ? collection : null;
+    const relations = normalizeRelatedCollectionsConfig(coll?.metadata?.relatedCollections);
+    const out = {};
+    for (const relation of relations) {
+      const records = Array.isArray(entry?.relatedCollections?.[relation.name]) ? entry.relatedCollections[relation.name] : [];
+      out[`${relation.name}.count`] = records.length;
+      const fieldDefs = Array.isArray(relation.fields) ? relation.fields : [];
+      for (const field of fieldDefs) {
+        const fieldKey = String(field?.key || '').trim();
+        if (!fieldKey) continue;
+        const values = [];
+        for (const record of records) {
+          try { values.push(...extractPathValues(record, fieldKey)); } catch {}
+        }
+        out[`${relation.name}.${fieldKey}`] = normalizeRelatedFieldValues(values);
+      }
+    }
+    return out;
+  }
+
+  function getRelatedFieldMeta(collection = null) {
+    const coll = (collection && typeof collection === 'object') ? collection : null;
+    const relations = normalizeRelatedCollectionsConfig(coll?.metadata?.relatedCollections);
+    const out = [];
+    for (const relation of relations) {
+      out.push({ key: `${relation.name}.count`, type: 'number' });
+      const fieldDefs = Array.isArray(relation.fields) ? relation.fields : [];
+      for (const field of fieldDefs) {
+        const fieldKey = String(field?.key || '').trim();
+        if (!fieldKey) continue;
+        out.push({ key: `${relation.name}.${fieldKey}`, type: 'array<string>' });
+      }
+    }
+    return out;
+  }
+
   function buildEntrySearchAccessor(entry, { fields = null, collection = null } = {}) {
     const coll = (collection && typeof collection === 'object') ? collection : null;
     const adapter = progressAdapterForCollection(coll);
@@ -1062,16 +1120,14 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       // ignore
     }
 
-    const relatedCounts = getEntryRelatedCounts(entry, coll);
+    const relatedFieldMap = getEntryRelatedFieldMap(entry, coll);
     const dynamic = {
       status,
       studySeen: !!seen,
       studyTimesSeen: timesSeen,
       studyTimeMs: timeMs,
+      ...relatedFieldMap,
     };
-    for (const [name, count] of Object.entries(relatedCounts)) {
-      dynamic[`${name}.count`] = Number(count) || 0;
-    }
 
     // Accept explicit `fields` parameter, or fall back to the collection's
     // metadata fields if available. This allows callers that don't pass a
@@ -1085,7 +1141,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
     const typeMap = new Map(metaFields.map(f => [String(f.key), f.type ?? null]));
     const metaKeys = metaFields.map(f => String(f.key));
-    const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', ...Object.keys(relatedCounts).map(name => `${name}.count`)];
+    const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', ...Object.keys(relatedFieldMap)];
 
     return {
       hasField: (k) => {
@@ -1130,8 +1186,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const base = Array.isArray(fields)
       ? fields.map(f => (typeof f === 'string' ? { key: String(f), type: null } : { key: String(f?.key || ''), type: f?.type ?? (f?.schema && f.schema.type) ?? null })).filter(f => f.key)
       : [];
-    const related = normalizeRelatedCollectionsConfig(collection?.metadata?.relatedCollections)
-      .map(rel => ({ key: `${rel.name}.count`, type: 'number' }));
+    const related = getRelatedFieldMeta(collection);
     return [
       ...base,
       { key: 'status', type: null },

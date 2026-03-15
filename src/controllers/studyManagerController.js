@@ -478,84 +478,266 @@ const studyManagerController = (() => {
     return { todayStamp: stamp(today), yesterdayStamp: stamp(yesterday) };
   }
 
-  function buildCollectionInsights({ collectionId, filterRows, filterMap, recentSessions, relationGraph }) {
+  function formatDayLabel(dayStamp, { todayStamp = '', yesterdayStamp = '' } = {}) {
+    const stamp = String(dayStamp || '').trim();
+    if (!stamp) return '';
+    if (stamp === todayStamp) return 'Today';
+    if (stamp === yesterdayStamp) return 'Yesterday';
+    const d = new Date(stamp + 'T00:00:00');
+    if (Number.isNaN(d.getTime())) return stamp;
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  }
+
+  function buildDailyFilterActivity({ collectionId, recentSessions, filterMap, dayLimit = 14 }) {
     const sessions = Array.isArray(recentSessions) ? recentSessions : [];
     const { todayStamp, yesterdayStamp } = getTodayYesterdayStamps();
-    const byFilter = new Map();
-
-    function ensureFilterDay(filterKey) {
-      const key = String(filterKey || '').trim();
-      if (!byFilter.has(key)) {
-        byFilter.set(key, {
-          filterKey: key,
-          todayDurationMs: 0,
-          yesterdayDurationMs: 0,
-          lastEndIso: null,
-        });
-      }
-      return byFilter.get(key);
-    }
+    const byDay = new Map();
 
     for (const sess of sessions) {
-      const filterKey = String(sess?.heldTableSearch || '').trim();
-      const day = dayStampFromIso(sess?.endIso || sess?.startIso || '');
-      const dMs = Math.max(0, Math.round(Number(sess?.durationMs) || 0));
-      const rec = ensureFilterDay(filterKey);
-      if (day === todayStamp) rec.todayDurationMs += dMs;
-      if (day === yesterdayStamp) rec.yesterdayDurationMs += dMs;
-      const endIso = String(sess?.endIso || '').trim();
-      if (endIso && (!rec.lastEndIso || endIso > rec.lastEndIso)) rec.lastEndIso = endIso;
+      const dayStamp = dayStampFromIso(sess?.endIso || sess?.startIso || '');
+      if (!dayStamp) continue;
+      const durationMs = Math.max(0, Math.round(Number(sess?.durationMs) || 0));
+      if (!byDay.has(dayStamp)) {
+        byDay.set(dayStamp, {
+          dayStamp,
+          totalDurationMs: 0,
+          sessionCount: 0,
+          byFilter: new Map(),
+        });
+      }
+      const day = byDay.get(dayStamp);
+      day.totalDurationMs += durationMs;
+      day.sessionCount += 1;
+      const filterKey = normalizeSearchQuery(sess?.heldTableSearch || '');
+      const current = day.byFilter.get(filterKey) || { filterKey, durationMs: 0, sessionCount: 0 };
+      current.durationMs += durationMs;
+      current.sessionCount += 1;
+      day.byFilter.set(filterKey, current);
     }
 
-    for (const row of (Array.isArray(filterRows) ? filterRows : [])) {
-      const rec = ensureFilterDay(row.filterKey);
-      if (!rec.lastEndIso && row.lastSessionIso) rec.lastEndIso = row.lastSessionIso;
-    }
+    const days = Array.from(byDay.values())
+      .sort((a, b) => String(b.dayStamp).localeCompare(String(a.dayStamp)))
+      .slice(0, Math.max(1, Math.round(Number(dayLimit) || 14)))
+      .map((day) => ({
+        dayStamp: day.dayStamp,
+        dayLabel: formatDayLabel(day.dayStamp, { todayStamp, yesterdayStamp }),
+        totalDurationMs: day.totalDurationMs,
+        sessionCount: day.sessionCount,
+        filterCount: day.byFilter.size,
+        topFilters: Array.from(day.byFilter.values())
+          .sort((a, b) => {
+            if (b.durationMs !== a.durationMs) return b.durationMs - a.durationMs;
+            return String(a.filterKey || '').localeCompare(String(b.filterKey || ''));
+          })
+          .slice(0, 4)
+          .map((item) => {
+            const row = filterMap?.[item.filterKey] || null;
+            return {
+              filterKey: item.filterKey,
+              filterLabel: row?.filterLabel || makeFilterLabel(item.filterKey),
+              durationMs: Math.max(0, Math.round(Number(item.durationMs) || 0)),
+              sessionCount: Math.max(0, Math.round(Number(item.sessionCount) || 0)),
+            };
+          }),
+      }));
 
-    function makeItem(filterKey, durationMs, hintPrefix = '') {
-      const key = String(filterKey || '').trim();
-      const row = filterMap?.[key] || null;
-      if (!row) return null;
-      const st = 'N/F/L ' + Math.max(0, Number(row.stateNullCount) || 0) + ' / ' + Math.max(0, Number(row.stateFocusCount) || 0) + ' / ' + Math.max(0, Number(row.stateLearnedCount) || 0);
-      const prefix = hintPrefix ? (hintPrefix + ' • ') : '';
-      const hint = prefix + st;
-      const rec = byFilter.get(key) || {};
-      const route = key
-        ? ('/data?collection=' + encodeURIComponent(collectionId) + '&heldTableSearch=' + encodeURIComponent(key))
-        : ('/data?collection=' + encodeURIComponent(collectionId));
-      return {
-        kind: 'filter',
-        filterKey: key,
-        label: row.filterLabel,
-        durationMs: Math.max(0, Math.round(Number(durationMs) || 0)),
-        hint,
-        lastSessionIso: rec.lastEndIso || row.lastSessionIso || null,
-        route,
-      };
-    }
-
-    const allDayRows = Array.from(byFilter.values());
-    const todayItems = allDayRows
-      .filter((r) => r.todayDurationMs > 0)
-      .sort((a, b) => b.todayDurationMs - a.todayDurationMs)
-      .slice(0, 8)
-      .map((r) => makeItem(r.filterKey, r.todayDurationMs, 'Today'))
-      .filter(Boolean);
-
-    const yesterdayItems = allDayRows
-      .filter((r) => r.yesterdayDurationMs > 0)
-      .sort((a, b) => b.yesterdayDurationMs - a.yesterdayDurationMs)
-      .slice(0, 8)
-      .map((r) => makeItem(r.filterKey, r.yesterdayDurationMs, 'Yesterday'))
-      .filter(Boolean);
-
+    const last7Days = days.slice(0, 7);
     return {
-      groups: [
-        { id: 'today', title: 'Studied Today', items: todayItems },
-        { id: 'yesterday', title: 'Studied Yesterday', items: yesterdayItems },
-      ],
+      collectionId: String(collectionId || '').trim(),
+      summary: {
+        dayCount: days.length,
+        totalDurationMs: last7Days.reduce((sum, day) => sum + Math.max(0, Math.round(Number(day.totalDurationMs) || 0)), 0),
+        totalSessions: last7Days.reduce((sum, day) => sum + Math.max(0, Math.round(Number(day.sessionCount) || 0)), 0),
+        activeDays: last7Days.filter((day) => Math.max(0, Math.round(Number(day.totalDurationMs) || 0)) > 0).length,
+      },
+      days,
     };
   }
+
+  function extractKanjiCharacters(value) {
+    const matches = Array.from(String(value || '').matchAll(/[㐀-䶿一-鿿豈-﫿]/g)).map((m) => String(m[0] || ''));
+    const out = [];
+    const seen = new Set();
+    for (const char of matches) {
+      if (!char || seen.has(char)) continue;
+      seen.add(char);
+      out.push(char);
+    }
+    return out;
+  }
+
+  function detectWordField(collection) {
+    const fields = Array.isArray(collection?.metadata?.fields) ? collection.metadata.fields : [];
+    const fieldKeys = fields.map((field) => String(field?.key || '').trim()).filter(Boolean);
+    const candidates = ['kanji', 'word', 'text', 'term', 'title', 'name', 'pattern'];
+    for (const key of candidates) {
+      if (fieldKeys.includes(key)) return key;
+    }
+    return '';
+  }
+
+  function getEntryLabel(entry, primaryField = '') {
+    if (primaryField && entry && typeof entry === 'object') {
+      const direct = entry[primaryField];
+      if (direct != null && String(direct).trim()) return String(direct).trim();
+    }
+    if (entry && typeof entry === 'object') {
+      for (const key of ['kanji', 'word', 'text', 'term', 'title', 'name', 'pattern', 'id']) {
+        const value = entry[key];
+        if (value != null && String(value).trim()) return String(value).trim();
+      }
+    }
+    return '';
+  }
+
+  function buildRecommendationRoute(collectionId, fieldKey, token) {
+    const coll = encodeURIComponent(String(collectionId || '').trim());
+    const field = String(fieldKey || '').trim();
+    const value = String(token || '').trim();
+    if (!coll || !field || !value) return '';
+    const filterKey = `{${field}:%${value}%}`;
+    return '/data?collection=' + coll + '&heldTableSearch=' + encodeURIComponent(filterKey);
+  }
+
+  function buildWordLearningRecommendations({ collection }) {
+    const collectionId = String(collection?.key || '').trim();
+    if (!collectionId) return null;
+
+    const entries = Array.isArray(collection?.entries) ? collection.entries : [];
+    if (!entries.length) return null;
+
+    const category = String(collection?.metadata?.category || '').trim();
+    const isGrammar = category === 'japanese.grammar' || category.endsWith('.grammar') || category.includes('.grammar.');
+    if (isGrammar) return null;
+
+    const primaryField = detectWordField(collection);
+    if (!primaryField) return null;
+
+    function getEntryKey(entry) {
+      return String(store?.collections?.getEntryStudyKey?.(entry) || '').trim();
+    }
+
+    function getProgressRecord(entryKey) {
+      if (!entryKey) return null;
+      try {
+        if (typeof store?.kanjiProgress?.getKanjiProgressRecord === 'function') {
+          return store.kanjiProgress.getKanjiProgressRecord(entryKey, { collectionKey: collectionId }) || null;
+        }
+      } catch {}
+      return null;
+    }
+
+    const learnedInfos = [];
+    const candidateInfos = [];
+    const knownKanji = new Set();
+
+    for (const entry of entries) {
+      const label = getEntryLabel(entry, primaryField);
+      if (!label) continue;
+      const chars = extractKanjiCharacters(entry?.kanji ?? label);
+      if (!chars.length) continue;
+      const entryKey = getEntryKey(entry);
+      const rec = getProgressRecord(entryKey);
+      const state = rec ? normalizeState(rec.state) : 'null';
+      const learned = state === 'learned';
+      const info = { entry, label, entryKey, chars, state };
+      if (learned) {
+        learnedInfos.push(info);
+        for (const char of chars) knownKanji.add(char);
+      } else {
+        candidateInfos.push(info);
+      }
+    }
+
+    if (!knownKanji.size) return null;
+
+    const easyWords = [];
+    const bucketMap = new Map();
+
+    for (const info of candidateInfos) {
+      const knownChars = info.chars.filter((char) => knownKanji.has(char));
+      if (!knownChars.length) continue;
+      const unknownChars = info.chars.filter((char) => !knownKanji.has(char));
+      if (unknownChars.length > 2) continue;
+      const overlapRatio = knownChars.length / Math.max(1, info.chars.length);
+      if (overlapRatio < 0.5) continue;
+
+      easyWords.push({
+        label: info.label,
+        knownChars,
+        unknownChars,
+        overlapRatio,
+        totalKanji: info.chars.length,
+      });
+
+      const perWordSeen = new Set();
+      for (const char of knownChars) {
+        if (!char || perWordSeen.has(char)) continue;
+        perWordSeen.add(char);
+        const bucket = bucketMap.get(char) || {
+          kanjiChar: char,
+          totalWords: 0,
+          fullyKnownWords: 0,
+          oneNewKanjiWords: 0,
+          sampleWords: [],
+        };
+        bucket.totalWords += 1;
+        if (unknownChars.length === 0) bucket.fullyKnownWords += 1;
+        if (unknownChars.length === 1) bucket.oneNewKanjiWords += 1;
+        bucket.sampleWords.push({ label: info.label, unknownCount: unknownChars.length, overlapRatio });
+        bucketMap.set(char, bucket);
+      }
+    }
+
+    const topFilters = Array.from(bucketMap.values())
+      .map((bucket) => ({
+        ...bucket,
+        sampleWords: bucket.sampleWords
+          .sort((a, b) => {
+            if (a.unknownCount !== b.unknownCount) return a.unknownCount - b.unknownCount;
+            if (b.overlapRatio !== a.overlapRatio) return b.overlapRatio - a.overlapRatio;
+            return String(a.label || '').localeCompare(String(b.label || ''));
+          })
+          .slice(0, 5)
+          .map((item) => String(item.label || '')),
+        route: buildRecommendationRoute(collectionId, primaryField, bucket.kanjiChar),
+      }))
+      .sort((a, b) => {
+        if (b.fullyKnownWords !== a.fullyKnownWords) return b.fullyKnownWords - a.fullyKnownWords;
+        if (b.totalWords !== a.totalWords) return b.totalWords - a.totalWords;
+        if (b.oneNewKanjiWords !== a.oneNewKanjiWords) return b.oneNewKanjiWords - a.oneNewKanjiWords;
+        return String(a.kanjiChar || '').localeCompare(String(b.kanjiChar || ''));
+      })
+      .slice(0, 8);
+
+    const rankedWords = easyWords
+      .sort((a, b) => {
+        if (a.unknownChars.length !== b.unknownChars.length) return a.unknownChars.length - b.unknownChars.length;
+        if (b.overlapRatio !== a.overlapRatio) return b.overlapRatio - a.overlapRatio;
+        if (a.totalKanji !== b.totalKanji) return a.totalKanji - b.totalKanji;
+        return String(a.label || '').localeCompare(String(b.label || ''));
+      })
+      .slice(0, 10)
+      .map((item) => ({
+        label: item.label,
+        knownChars: item.knownChars.slice(),
+        unknownChars: item.unknownChars.slice(),
+      }));
+
+    return {
+      summary: {
+        learnedWordCount: learnedInfos.length,
+        knownUniqueKanjiCount: knownKanji.size,
+        candidateWordCount: easyWords.length,
+        fullyKnownCandidateCount: easyWords.filter((item) => item.unknownChars.length === 0).length,
+        oneNewKanjiCandidateCount: easyWords.filter((item) => item.unknownChars.length === 1).length,
+        primaryField,
+      },
+      topFilters,
+      easyWords: rankedWords,
+    };
+  }
+
   function makeFilterLabel(key) {
     return key ? key : '(no filter)';
   }
@@ -697,12 +879,13 @@ const studyManagerController = (() => {
       .map(([appId, durationMs]) => ({ appId, durationMs: Math.max(0, Math.round(Number(durationMs) || 0)) }))
       .sort((a, b) => b.durationMs - a.durationMs);
 
-    const insights = buildCollectionInsights({
+    const dailyActivity = buildDailyFilterActivity({
       collectionId,
-      filterRows,
-      filterMap,
       recentSessions,
-      relationGraph,
+      filterMap,
+    });
+    const recommendations = buildWordLearningRecommendations({
+      collection,
     });
 
     const topFilter = filterMap[''] || filterRows[0] || null;
@@ -732,7 +915,8 @@ const studyManagerController = (() => {
       filterMap,
       appRows,
       recentSessions,
-      insights,
+      dailyActivity,
+      recommendations,
       updatedAtIso: nowIso(),
     };
   }

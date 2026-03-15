@@ -191,6 +191,13 @@ export function createTable({ store = null, headers, rows, className = '', id, c
   // Helper to extract comparable text/number from a cell value
   function extractCellValue(cell) {
     if (cell instanceof HTMLElement) {
+      const tokenJson = String(cell?.dataset?.searchTokens ?? '').trim();
+      if (tokenJson) {
+        try {
+          const parsed = JSON.parse(tokenJson);
+          if (Array.isArray(parsed)) return parsed;
+        } catch (e) {}
+      }
       const sv = String(cell?.dataset?.searchValue ?? '').trim();
       if (sv) return sv;
       return (cell.textContent || '').trim();

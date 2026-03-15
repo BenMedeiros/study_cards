@@ -22,6 +22,12 @@ const DEFAULT_TABLE_SETTINGS = {
   table: {
     virtualization: { ...DEFAULT_TABLE_VIRTUALIZATION },
   },
+  sources: {
+    customized: false,
+    relatedColumns: [],
+    studyProgressFields: [],
+    configByKey: {},
+  },
 };
 
 const DEFAULT_VIEW = {
@@ -116,6 +122,17 @@ function normalizeDataTableSettings(v) {
   const cols = (src.columns && typeof src.columns === 'object') ? src.columns : {};
   const acts = (src.actions && typeof src.actions === 'object') ? src.actions : {};
   const table = (src.table && typeof src.table === 'object') ? src.table : {};
+  const sources = (src.sources && typeof src.sources === 'object') ? src.sources : {};
+  const sourceConfigByKey = (sources.configByKey && typeof sources.configByKey === 'object') ? sources.configByKey : {};
+  const normalizedConfigByKey = {};
+  for (const [rawKey, rawConfig] of Object.entries(sourceConfigByKey)) {
+    const key = String(rawKey || '').trim();
+    if (!key) continue;
+    const cfg = (rawConfig && typeof rawConfig === 'object') ? rawConfig : {};
+    const mode = String(cfg.mode || '').trim() || 'tokenList';
+    const dedupe = (typeof cfg.dedupe === 'boolean') ? cfg.dedupe : (mode !== 'json');
+    normalizedConfigByKey[key] = { mode, dedupe };
+  }
   return {
     columns: {
       orderKeys: normalizeKeyList(cols.orderKeys),
@@ -128,6 +145,12 @@ function normalizeDataTableSettings(v) {
     },
     table: {
       virtualization: normalizeVirtualization(table.virtualization),
+    },
+    sources: {
+      customized: !!sources.customized,
+      relatedColumns: normalizeKeyList(sources.relatedColumns),
+      studyProgressFields: normalizeKeyList(sources.studyProgressFields),
+      configByKey: normalizedConfigByKey,
     },
   };
 }

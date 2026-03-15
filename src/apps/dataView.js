@@ -11,6 +11,7 @@ import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDial
 import dataViewController from '../controllers/dataViewController.js';
 import { parseHashRoute, buildHashRoute } from '../utils/browser/helpers.js';
 import { buildTableColumnItems } from '../utils/browser/tableSettings.js';
+import { extractPathValues } from '../utils/common/collectionParser.mjs';
 
 export function renderData({ store }) {
   const root = document.createElement('div');
@@ -26,25 +27,242 @@ export function renderData({ store }) {
       const name = String(raw.name || '').trim();
       if (!name || seen.has(name)) continue;
       seen.add(name);
-      out.push({ name });
+      out.push({
+        ...raw,
+        name,
+        label: String(raw.label || raw.name || '').trim() || name,
+        fields: Array.isArray(raw.fields) ? raw.fields.slice() : [],
+      });
     }
     return out;
   }
 
-  const relatedCollectionConfigs = normalizeRelatedCollectionsConfig(active?.metadata?.relatedCollections);
-  const relatedCountColumns = relatedCollectionConfigs.map(rel => ({
-    key: `${rel.name}.count`,
-    label: `${rel.name}.count`,
-    type: 'number',
-    relationName: rel.name,
-  }));
+  const SOURCE_VALUE_MODE_ITEMS = [
+    { value: 'tokenList', label: 'Flatten to tokens' },
+    { value: 'flatten', label: 'Flatten 1 level' },
+    { value: 'flattenUnique', label: 'Flatten 1 level + unique' },
+    { value: 'deepFlatten', label: 'Flatten all levels' },
+    { value: 'deepFlattenUnique', label: 'Flatten all levels + unique' },
+    { value: 'json', label: 'Keep nested JSON' },
+  ];
+
+  function getRelatedRecordsForEntry(entry, relationName) {
+    const name = String(relationName || '').trim();
+    if (!name) return [];
+    return Array.isArray(entry?.relatedCollections?.[name]) ? entry.relatedCollections[name] : [];
+  }
 
   function getRelatedCountForEntry(entry, relationName) {
-    const name = String(relationName || '').trim();
-    if (!name) return 0;
-    const arr = Array.isArray(entry?.relatedCollections?.[name]) ? entry.relatedCollections[name] : [];
-    return arr.length;
+    return getRelatedRecordsForEntry(entry, relationName).length;
   }
+
+  function normalizeSearchTokens(values) {
+    const list = Array.isArray(values) ? values : [values];
+    const out = [];
+    const seen = new Set();
+    for (const raw of list) {
+      if (raw == null) continue;
+      if (Array.isArray(raw)) {
+        for (const item of normalizeSearchTokens(raw)) {
+          if (seen.has(item)) continue;
+          seen.add(item);
+          out.push(item);
+        }
+        continue;
+      }
+      if (typeof raw === 'object') continue;
+      const token = String(raw).trim();
+      if (!token || seen.has(token)) continue;
+      seen.add(token);
+      out.push(token);
+    }
+    return out;
+  }
+
+  function flattenArrayValues(values, { deep = false } = {}) {
+    const list = Array.isArray(values) ? values : [values];
+    const out = [];
+    for (const raw of list) {
+      if (Array.isArray(raw)) {
+        if (deep) out.push(...flattenArrayValues(raw, { deep: true }));
+        else out.push(...raw);
+        continue;
+      }
+      out.push(raw);
+    }
+    return out;
+  }
+
+  function dedupeValues(values) {
+    const list = Array.isArray(values) ? values : [values];
+    const out = [];
+    const seen = new Set();
+    for (const raw of list) {
+      const marker = (() => {
+        if (raw == null) return '__null__';
+        if (typeof raw === 'object') {
+          try { return `obj:${JSON.stringify(raw)}`; } catch (e) { return `obj:${String(raw)}`; }
+        }
+        return `${typeof raw}:${String(raw)}`;
+      })();
+      if (seen.has(marker)) continue;
+      seen.add(marker);
+      out.push(raw);
+    }
+    return out;
+  }
+
+  function collectRelatedFieldRawValues(entry, relationName, fieldPath) {
+    const path = String(fieldPath || '').trim();
+    if (!path) return [];
+    const values = [];
+    for (const record of getRelatedRecordsForEntry(entry, relationName)) {
+      try { values.push(...extractPathValues(record, path)); } catch (e) {}
+    }
+    return values;
+  }
+
+  function normalizeSourceMode(mode, { aggregate = false, sampleValues = [] } = {}) {
+    if (aggregate) return 'count';
+    const raw = String(mode || '').trim();
+    const allowed = new Set(SOURCE_VALUE_MODE_ITEMS.map(item => item.value));
+    if (allowed.has(raw)) return raw;
+    const sampleList = Array.isArray(sampleValues) ? sampleValues : [];
+    if (sampleList.some(value => Array.isArray(value) || (value && typeof value === 'object'))) return 'json';
+    return 'tokenList';
+  }
+
+  function shapeRelatedSourceValues(rawValues, mode) {
+    const normalizedMode = normalizeSourceMode(mode, { sampleValues: rawValues });
+    const values = Array.isArray(rawValues) ? rawValues.slice() : [];
+    if (normalizedMode === 'json') return values;
+    if (normalizedMode === 'flatten') return flattenArrayValues(values, { deep: false });
+    if (normalizedMode === 'flattenUnique') return dedupeValues(flattenArrayValues(values, { deep: false }));
+    if (normalizedMode === 'deepFlatten') return flattenArrayValues(values, { deep: true });
+    if (normalizedMode === 'deepFlattenUnique') return dedupeValues(flattenArrayValues(values, { deep: true }));
+    return normalizeSearchTokens(values);
+  }
+
+  function inferValueType(value) {
+    if (Array.isArray(value)) {
+      const itemTypes = Array.from(new Set(value.map(item => inferValueType(item)).filter(Boolean)));
+      const inner = itemTypes.length === 1 ? itemTypes[0] : (itemTypes.length ? itemTypes.join(' | ') : 'unknown');
+      return `array<${inner}>`;
+    }
+    if (value == null) return 'unknown';
+    if (typeof value === 'number') return 'number';
+    if (typeof value === 'boolean') return 'boolean';
+    if (typeof value === 'string') return 'string';
+    if (typeof value === 'object') return 'object';
+    return typeof value;
+  }
+
+  function inferGroupedFieldType(values) {
+    const list = Array.isArray(values) ? values : [];
+    if (!list.length) return 'array<string>';
+    const typeSet = new Set();
+    for (const value of list) {
+      const type = inferValueType(value);
+      if (type && type !== 'unknown') typeSet.add(type);
+    }
+    const inner = typeSet.size === 1 ? Array.from(typeSet)[0] : (typeSet.size ? Array.from(typeSet).join(' | ') : 'string');
+    return `array<${inner}>`;
+  }
+
+  function inferShapedFieldType(rawValues, mode) {
+    const normalizedMode = normalizeSourceMode(mode, { sampleValues: rawValues });
+    if (normalizedMode === 'tokenList') return 'array<string>';
+    return inferValueType(shapeRelatedSourceValues(rawValues, normalizedMode));
+  }
+
+  function createSearchTokenCell(tokens, { className = '' } = {}) {
+    const values = normalizeSearchTokens(tokens);
+    const cell = document.createElement('span');
+    if (className) cell.className = className;
+    cell.dataset.searchTokens = JSON.stringify(values);
+    cell.dataset.searchValue = values.join(' | ');
+    cell.textContent = values.join(' | ');
+    cell.title = values.join(' | ');
+    return cell;
+  }
+
+  function collectRelatedFieldOptions(entries, relatedConfigs, sourceConfigByKey = {}) {
+    const sourceEntries = Array.isArray(entries) ? entries : [];
+    const relations = Array.isArray(relatedConfigs) ? relatedConfigs : [];
+    const configByKey = (sourceConfigByKey && typeof sourceConfigByKey === 'object') ? sourceConfigByKey : {};
+    const out = [];
+
+    for (const rel of relations) {
+      const labelByKey = new Map();
+      for (const field of Array.isArray(rel.fields) ? rel.fields : []) {
+        const key = String(field?.key || '').trim();
+        if (!key) continue;
+        labelByKey.set(key, String(field?.label || key).trim() || key);
+      }
+
+      const discovered = new Map();
+      for (const entry of sourceEntries) {
+        for (const record of getRelatedRecordsForEntry(entry, rel.name)) {
+          if (!record || typeof record !== 'object' || Array.isArray(record)) continue;
+          for (const [rawKey, rawValue] of Object.entries(record)) {
+            const key = String(rawKey || '').trim();
+            if (!key) continue;
+            const bucket = discovered.get(key) || [];
+            bucket.push(rawValue);
+            discovered.set(key, bucket);
+          }
+        }
+      }
+      const fieldKeys = Array.from(new Set([
+        ...discovered.keys(),
+        ...labelByKey.keys(),
+      ])).sort((a, b) => a.localeCompare(b));
+
+      out.push({
+        key: `${rel.name}.count`,
+        label: `${rel.name}.count`,
+        type: 'number',
+        groupedType: 'number',
+        sourceKind: 'related',
+        relationName: rel.name,
+        relationLabel: rel.label,
+        aggregate: 'count',
+        description: `Number of related ${rel.label || rel.name} records linked to this row.`,
+        defaultSelected: true,
+      });
+
+      for (const fieldKey of fieldKeys) {
+        const sourceKey = `${rel.name}.${fieldKey}`;
+        const rawValues = discovered.get(fieldKey) || [];
+        const groupedType = inferGroupedFieldType(rawValues);
+        const mode = normalizeSourceMode(configByKey?.[sourceKey]?.mode, { sampleValues: rawValues });
+        out.push({
+          key: sourceKey,
+          label: sourceKey,
+          type: inferShapedFieldType(rawValues, mode),
+          groupedType,
+          sourceMode: mode,
+          sourceKind: 'related',
+          relationName: rel.name,
+          relationLabel: rel.label,
+          fieldPath: fieldKey,
+          description: `Values pulled from ${rel.label || rel.name}.${labelByKey.get(fieldKey) || fieldKey}.`,
+          defaultSelected: false,
+          availableModes: SOURCE_VALUE_MODE_ITEMS.slice(),
+        });
+      }
+    }
+
+    return out;
+  }
+
+  const STUDY_PROGRESS_COLUMN_DEFS = [
+    { key: 'studySeen', label: 'Seen', type: 'boolean', sourceKind: 'studyProgress', description: 'Whether the entry has been seen in study.', defaultSelected: true },
+    { key: 'studyTimesSeen', label: 'Times Seen', type: 'number', sourceKind: 'studyProgress', description: 'How many times the entry has been marked seen.', defaultSelected: true },
+    { key: 'studyTimeMs', label: 'Time (ms)', type: 'number', sourceKind: 'studyProgress', description: 'Total recorded study time in milliseconds.', defaultSelected: true },
+  ];
+
+  const relatedCollectionConfigs = normalizeRelatedCollectionsConfig(active?.metadata?.relatedCollections);
 
   const STUDY_STATE_ORDER = ['null', 'focus', 'learned'];
   let studyFilterStates = STUDY_STATE_ORDER.slice();
@@ -65,6 +283,8 @@ export function renderData({ store }) {
   let dataViewCtrl = null;
   let dataTableSettings = dataViewController.getDefaultTableSettings();
   let latestDataTableColumns = [];
+  let latestDataTableRelatedSources = [];
+  let latestDataTableStudySources = STUDY_PROGRESS_COLUMN_DEFS.slice();
 
   try {
     if (active?.key) {
@@ -102,6 +322,63 @@ export function renderData({ store }) {
 
   function sameDataTableSettings(a, b) {
     try { return JSON.stringify(normalizeDataTableSettingsLocal(a)) === JSON.stringify(normalizeDataTableSettingsLocal(b)); } catch (e) { return false; }
+  }
+
+  function getAvailableDerivedColumns(entries = baseEntries) {
+    return [
+      ...collectRelatedFieldOptions(entries, relatedCollectionConfigs, dataTableSettings?.sources?.configByKey || {}),
+      ...STUDY_PROGRESS_COLUMN_DEFS.map(def => ({ ...def })),
+    ];
+  }
+
+  function getSelectedDerivedColumns(allDefs) {
+    const defs = Array.isArray(allDefs) ? allDefs : [];
+    const sourceSettings = dataTableSettings?.sources || {};
+    const byKey = new Map(defs.map(def => [def.key, def]));
+
+    if (sourceSettings.customized) {
+      const relatedKeys = normalizeKeyList(sourceSettings.relatedColumns);
+      const studyKeys = normalizeKeyList(sourceSettings.studyProgressFields);
+      return [
+        ...relatedKeys.map(key => byKey.get(key)).filter(Boolean),
+        ...studyKeys.map(key => byKey.get(key)).filter(Boolean),
+      ];
+    }
+
+    return defs.filter(def => def.defaultSelected !== false);
+  }
+
+  function buildDerivedCell(entry, def, metrics) {
+    if (!def || typeof def !== 'object') return '';
+    if (def.sourceKind === 'studyProgress') {
+      if (def.key === 'studySeen') {
+        const seenCell = document.createElement('span');
+        seenCell.className = 'study-seen-cell';
+        seenCell.dataset.searchValue = metrics.seen ? 'true' : 'false';
+        seenCell.textContent = metrics.seen ? '✓' : '';
+        seenCell.title = metrics.seen ? 'true' : 'false';
+        return seenCell;
+      }
+      if (def.key === 'studyTimesSeen') return metrics.timesSeen > 0 ? metrics.timesSeen : '';
+      if (def.key === 'studyTimeMs') return metrics.timeMs > 0 ? metrics.timeMs : '';
+      return '';
+    }
+    if (def.aggregate === 'count') {
+      const cell = document.createElement('span');
+      cell.className = 'related-count-cell';
+      const count = getRelatedCountForEntry(entry, def.relationName);
+      cell.dataset.searchValue = String(count);
+      cell.textContent = count > 0 ? String(count) : '';
+      cell.title = String(count);
+      return cell;
+    }
+    const rawValues = collectRelatedFieldRawValues(entry, def.relationName, def.fieldPath);
+    const mode = normalizeSourceMode(def.sourceMode, { sampleValues: rawValues });
+    const shaped = shapeRelatedSourceValues(rawValues, mode);
+    if (mode === 'tokenList') {
+      return createSearchTokenCell(shaped, { className: 'related-values-cell' });
+    }
+    return shaped;
   }
 
   async function persistDataTableSettings(nextDataTable, { rerender = true } = {}) {
@@ -1080,22 +1357,20 @@ export function renderData({ store }) {
       columns: latestDataTableColumns,
       actions: DATA_TABLE_ACTION_ITEMS,
       settings: dataTableSettings,
+      relatedSources: latestDataTableRelatedSources,
+      studyProgressSources: latestDataTableStudySources,
     });
     if (!next) return;
     await persistDataTableSettings(next, { rerender: true });
   }
-  // Build table headers from fields (preserve schema `key` and `label` separately)
-  const headers = [
+
+  const baseHeaders = [
     { key: 'status', label: '' },
     ...fields.map(f => ({
-    key: f.key,
-    label: f.label || f.key,
-    type: f.type ?? (f.schema && f.schema.type) ?? null,
-  })),
-    ...relatedCountColumns.map(c => ({ key: c.key, label: c.label, type: 'number' })),
-    { key: 'studySeen', label: 'Seen', type: 'boolean' },
-    { key: 'studyTimesSeen', label: 'Times Seen', type: 'number' },
-    { key: 'studyTimeMs', label: 'Time (ms)', type: 'number' },
+      key: f.key,
+      label: f.label || f.key,
+      type: f.type ?? (f.schema && f.schema.type) ?? null,
+    })),
   ];
 
   function renderTable() {
@@ -1105,6 +1380,19 @@ export function renderData({ store }) {
     lastRenderedEntries = visibleEntries.slice();
 
     const adapter = getProgressAdapter();
+    const allDerivedColumns = getAvailableDerivedColumns(baseEntries);
+    const selectedDerivedColumns = getSelectedDerivedColumns(allDerivedColumns);
+    const selectedSourceKeySet = new Set(selectedDerivedColumns.map(def => String(def?.key || '').trim()).filter(Boolean));
+    const allHeaders = [
+      ...baseHeaders,
+      ...allDerivedColumns.map(def => ({ key: def.key, label: def.label, type: def.type, description: def.description || '', sourceKind: def.sourceKind || '' })),
+    ];
+    const selectedHeaders = [
+      ...baseHeaders,
+      ...selectedDerivedColumns.map(def => ({ key: def.key, label: def.label, type: def.type, description: def.description || '', sourceKind: def.sourceKind || '' })),
+    ];
+
+    const allRows = [];
     const rows = visibleEntries.map((entry, i) => {
       const key = adapter.getKey(entry);
       const learned = adapter.isLearned(key);
@@ -1128,26 +1416,15 @@ export function renderData({ store }) {
         icon.title = '';
       }
 
-      const relatedCountCells = relatedCollectionConfigs.map(rel => {
-        const el = document.createElement('span');
-        el.className = 'related-count-cell';
-        const count = getRelatedCountForEntry(entry, rel.name);
-        el.textContent = count > 0 ? String(count) : '';
-        return el;
-      });
+      const baseFieldCells = fields.map(f => entry[f.key] ?? '');
+      const derivedCellByKey = new Map();
+      for (const def of allDerivedColumns) derivedCellByKey.set(def.key, buildDerivedCell(entry, def, metrics));
 
-      const seenCell = document.createElement('span');
-      seenCell.className = 'study-seen-cell';
-      seenCell.dataset.searchValue = metrics.seen ? 'true' : 'false';
-      seenCell.textContent = metrics.seen ? '✓' : '';
-      seenCell.title = metrics.seen ? 'true' : 'false';
-      const timesSeenCell = metrics.timesSeen > 0 ? metrics.timesSeen : '';
-      const timeMsCell = metrics.timeMs > 0 ? metrics.timeMs : '';
-
-      const row = [icon, ...fields.map(f => entry[f.key] ?? ''), ...relatedCountCells, seenCell, timesSeenCell, timeMsCell];
-      // Stable identifier for this row so we can resolve the source entry
-      // even after the table component filters/sorts.
+      const allRow = [icon, ...baseFieldCells, ...allDerivedColumns.map(def => derivedCellByKey.get(def.key))];
+      const row = [icon, ...baseFieldCells, ...selectedDerivedColumns.map(def => derivedCellByKey.get(def.key))];
+      try { allRow.__id = String(i); } catch (e) {}
       try { row.__id = String(i); } catch (e) {}
+      allRows.push(allRow);
       return row;
     });
 
@@ -1165,10 +1442,30 @@ export function renderData({ store }) {
       }
     } catch (e) {}
 
-        const configured = applyDataTableColumnSettings({ headers, rows });
-    latestDataTableColumns = buildTableColumnItems(headers, rows, {
+    const configured = applyDataTableColumnSettings({ headers: selectedHeaders, rows });
+    const selectedHeaderMetaByKey = new Map(selectedHeaders.map(h => [String(h?.key || '').trim(), h]));
+    latestDataTableColumns = buildTableColumnItems(selectedHeaders, rows, {
       schemaFields: Array.isArray(fields) ? fields : [],
-    });
+    }).map((item) => ({
+      ...item,
+      description: item.description || String(selectedHeaderMetaByKey.get(item.key)?.description || '').trim(),
+      sourceKind: String(selectedHeaderMetaByKey.get(item.key)?.sourceKind || '').trim(),
+    }));
+    latestDataTableRelatedSources = allDerivedColumns.filter(def => def.sourceKind === 'related').map(def => ({
+      key: def.key,
+      label: def.label,
+      relationName: def.relationName,
+      relationLabel: def.relationLabel,
+      description: def.description || '',
+      type: def.type || '',
+      groupedType: def.groupedType || '',
+      sourceMode: def.sourceMode || '',
+      availableModes: Array.isArray(def.availableModes) ? def.availableModes.slice() : [],
+      sourceKind: 'related',
+      selected: selectedSourceKeySet.has(def.key),
+      defaultSelected: def.defaultSelected !== false,
+    }));
+    latestDataTableStudySources = STUDY_PROGRESS_COLUMN_DEFS.map(def => ({ ...def, selected: selectedSourceKeySet.has(def.key) }));
 
     const tbl = createTable({
       store,

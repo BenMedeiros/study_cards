@@ -2,7 +2,7 @@ import { createTable } from '../components/table.js';
 import { card, el } from '../components/ui.js';
 import { createViewHeaderTools } from '../components/viewHeaderTools.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
-import { formatDurationMs, formatIsoShort, formatRelativeFromIso } from '../utils/browser/helpers.js';
+import { formatDurationMs, formatIsoShort } from '../utils/browser/helpers.js';
 import studyManagerController from '../controllers/studyManagerController.js';
 import studyManagerViewController from '../controllers/studyManagerViewController.js';
 import {
@@ -52,48 +52,143 @@ function buildDataRoute(collectionId, filterKey) {
   return `/data?collection=${coll}&heldTableSearch=${encodeURIComponent(held)}`;
 }
 
-function makeInsightLink({ item, onNavigate }) {
-  const path = String(item?.route || '').trim();
-  if (!path) return null;
-  const a = el('a', {
-    className: 'home-link',
-    attrs: { href: `#${path}`, 'data-go': path },
+function makeRouteAction({ label, meta = '', path = '', onNavigate, className = 'study-manager-route-action' }) {
+  const route = String(path || '').trim();
+  if (!route) return null;
+  const link = el('a', {
+    className,
+    attrs: { href: `#${route}`, 'data-go': route },
     children: [
-      el('span', { className: 'home-link-label', text: shortFilterLabel(item?.label || item?.filterKey || '') }),
-      el('span', { className: 'home-link-meta', text: formatDurationMs(asNumber(item?.durationMs)) }),
-    ],
+      el('span', { text: String(label || '') }),
+      meta ? el('span', { className: 'study-manager-route-action-meta', text: String(meta) }) : null,
+    ].filter(Boolean),
   });
-  a.addEventListener('click', (e) => {
+  link.addEventListener('click', (e) => {
     e.preventDefault();
-    if (typeof onNavigate === 'function') onNavigate(path);
-    else location.hash = path;
+    if (typeof onNavigate === 'function') onNavigate(route);
+    else location.hash = route;
   });
-  const hintParts = [];
-  if (item?.lastSessionIso) hintParts.push(`${formatIsoShort(item.lastSessionIso)} (${formatRelativeFromIso(item.lastSessionIso)})`);
-  if (item?.hint) hintParts.push(String(item.hint));
-  return el('div', {
-    className: 'home-link-row',
-    children: [a, el('div', { className: 'hint', text: hintParts.join(' • ') })],
+  return link;
+}
+
+function buildDailyActivityCard({ report, onNavigate }) {
+  const daily = report?.dailyActivity || null;
+  const days = Array.isArray(daily?.days) ? daily.days : [];
+  if (!days.length) return null;
+
+  const summary = daily?.summary || {};
+  const rows = days.map((day) => {
+    const filters = (Array.isArray(day.topFilters) ? day.topFilters : [])
+      .map((item) => makeRouteAction({
+        label: shortFilterLabel(item.filterLabel || item.filterKey),
+        meta: formatDurationMs(asNumber(item.durationMs)),
+        path: buildDataRoute(report.collectionId, item.filterKey),
+        onNavigate,
+        className: 'study-manager-day-filter-link',
+      }))
+      .filter(Boolean);
+    return el('div', {
+      className: 'study-manager-day-row',
+      children: [
+        el('div', {
+          className: 'study-manager-day-head',
+          children: [
+            el('div', { className: 'study-manager-day-label', text: String(day.dayLabel || day.dayStamp || '') }),
+            el('div', { className: 'study-manager-day-meta', text: `${formatDurationMs(asNumber(day.totalDurationMs))} • ${asNumber(day.sessionCount)} sessions • ${asNumber(day.filterCount)} filters` }),
+          ],
+        }),
+        filters.length ? el('div', { className: 'study-manager-day-filters', children: filters }) : null,
+      ].filter(Boolean),
+    });
+  });
+
+  return card({
+    id: 'study-manager-daily-card',
+    title: 'Daily Filter Activity',
+    cornerCaption: `${days.length} days`,
+    children: [
+      el('div', {
+        className: 'study-manager-summary-grid',
+        children: [
+          renderMetric('7d Time', formatDurationMs(asNumber(summary.totalDurationMs))),
+          renderMetric('7d Sessions', String(asNumber(summary.totalSessions))),
+          renderMetric('7d Active Days', String(asNumber(summary.activeDays))),
+        ],
+      }),
+      el('div', { className: 'study-manager-day-list', children: rows }),
+    ],
   });
 }
 
-function buildInsightsSection({ report, onNavigate }) {
-  const groups = Array.isArray(report?.insights?.groups) ? report.insights.groups : [];
-  const populated = groups.filter((g) => Array.isArray(g?.items) && g.items.length);
-  if (!populated.length) return null;
-  const blocks = populated.map((group) => {
-    const links = (Array.isArray(group.items) ? group.items : [])
-      .map((item) => makeInsightLink({ item, onNavigate }))
-      .filter(Boolean);
+function buildRecommendationsCard({ report, onNavigate }) {
+  const rec = report?.recommendations || null;
+  const summary = rec?.summary || null;
+  if (!summary) return null;
+
+  const filterRows = (Array.isArray(rec.topFilters) ? rec.topFilters : []).map((item) => {
+    const action = makeRouteAction({
+      label: `Kanji ${item.kanjiChar}`,
+      meta: `${asNumber(item.totalWords)} words`,
+      path: String(item.route || '').trim(),
+      onNavigate,
+      className: 'study-manager-rec-link',
+    });
+    const samples = Array.isArray(item.sampleWords) ? item.sampleWords.filter(Boolean).join(' | ') : '';
     return el('div', {
-      className: 'study-manager-insight-group',
+      className: 'study-manager-rec-row',
       children: [
-        el('div', { className: 'study-manager-insight-title', text: String(group.title || '') }),
-        el('div', { className: 'home-links', children: links }),
-      ],
+        el('div', {
+          className: 'study-manager-rec-head',
+          children: [
+            action,
+            el('div', {
+              className: 'hint',
+              text: `${asNumber(item.fullyKnownWords)} fully-known • ${asNumber(item.oneNewKanjiWords)} with 1 new kanji`,
+            }),
+          ].filter(Boolean),
+        }),
+        samples ? el('div', { className: 'study-manager-rec-samples hint', text: samples }) : null,
+      ].filter(Boolean),
     });
   });
-  return el('div', { className: 'study-manager-insights', children: blocks });
+
+  const easyWords = (Array.isArray(rec.easyWords) ? rec.easyWords : []).map((item) => {
+    const unknown = Array.isArray(item.unknownChars) ? item.unknownChars.join(' ') : '';
+    const known = Array.isArray(item.knownChars) ? item.knownChars.join(' ') : '';
+    const hint = unknown ? `known: ${known} • new: ${unknown}` : `known only: ${known}`;
+    return el('div', { className: 'study-manager-easy-word', text: `${String(item.label || '')} (${hint})` });
+  });
+
+  return card({
+    id: 'study-manager-recommendations-card',
+    title: 'Related Word Recommendations',
+    cornerCaption: `${asNumber(summary.candidateWordCount)} candidates`,
+    children: [
+      el('div', {
+        className: 'study-manager-summary-grid',
+        children: [
+          renderMetric('Learned Words', String(asNumber(summary.learnedWordCount))),
+          renderMetric('Unique Kanji', String(asNumber(summary.knownUniqueKanjiCount))),
+          renderMetric('0 New Kanji', String(asNumber(summary.fullyKnownCandidateCount))),
+          renderMetric('1 New Kanji', String(asNumber(summary.oneNewKanjiCandidateCount))),
+        ],
+      }),
+      filterRows.length ? el('div', {
+        className: 'study-manager-recommendations-section',
+        children: [
+          el('div', { className: 'study-manager-insight-title', text: 'Suggested Filters' }),
+          el('div', { className: 'study-manager-rec-list', children: filterRows }),
+        ],
+      }) : null,
+      easyWords.length ? el('div', {
+        className: 'study-manager-recommendations-section',
+        children: [
+          el('div', { className: 'study-manager-insight-title', text: 'Easy Next Words' }),
+          el('div', { className: 'study-manager-easy-word-list', children: easyWords }),
+        ],
+      }) : null,
+    ].filter(Boolean),
+  });
 }
 
 function buildFilterTable({ store, report, onNavigate, tableSettings }) {
@@ -370,7 +465,8 @@ export function renderStudyManager({ store, onNavigate, route }) {
     }
 
     const summary = report.summary || {};
-    const insightsSection = buildInsightsSection({ report, onNavigate });
+    const dailyActivityCard = buildDailyActivityCard({ report, onNavigate });
+    const recommendationsCard = buildRecommendationsCard({ report, onNavigate });
     const summaryCard = card({
       id: 'study-manager-summary-card',
       title: 'Study Summary',
@@ -389,7 +485,6 @@ export function renderStudyManager({ store, onNavigate, route }) {
             renderMetric('Tracked Filters', String(asNumber(summary.filterCount))),
           ],
         }),
-        insightsSection,
       ].filter(Boolean),
     });
 
@@ -458,7 +553,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       },
     });
 
-    body.append(summaryCard, filtersCard, appsCard, sessionsCard);
+    body.append(...[summaryCard, dailyActivityCard, recommendationsCard, filtersCard, appsCard, sessionsCard].filter(Boolean));
   }
 
   renderControls();
