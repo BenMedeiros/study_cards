@@ -9,9 +9,6 @@
 
 import { detectCollectionArrayKey, inferEntryKeyField } from './collectionDiff.mjs';
 
-const COLLECTION_CONTRACT_SCHEMA_URL = new URL('../../../collections/_collections.schema.json', import.meta.url);
-let collectionContractSchemaPromise = null;
-
 function safeJsonStringify(v) {
   try { return JSON.parse(JSON.stringify(v)); } catch { return null; }
 }
@@ -132,30 +129,13 @@ function validateBySchema(value, schema, rootSchema, pathParts, errors) {
   }
 }
 
-async function loadCollectionContractSchema() {
-  if (!collectionContractSchemaPromise) {
-    collectionContractSchemaPromise = (async () => {
-      if (typeof window === 'undefined') {
-        const [{ readFile }, { fileURLToPath }] = await Promise.all([
-          import('node:fs/promises'),
-          import('node:url')
-        ]);
-        const filePath = fileURLToPath(COLLECTION_CONTRACT_SCHEMA_URL);
-        const text = await readFile(filePath, 'utf8');
-        return JSON.parse(text);
-      }
-      const res = await fetch(COLLECTION_CONTRACT_SCHEMA_URL);
-      if (!res.ok) throw new Error(`Failed to load collection contract schema (status ${res.status})`);
-      return res.json();
-    })();
-  }
-  return collectionContractSchemaPromise;
-}
-
-export async function validateCollectionContract(collection, { entryArrayKey = null } = {}) {
+export async function validateCollectionContract(collection, { entryArrayKey = null, contractSchema = null } = {}) {
   const out = { errors: [], warnings: [] };
   try {
-    const contractSchema = await loadCollectionContractSchema();
+    if (!contractSchema || typeof contractSchema !== 'object') {
+      out.errors.push('Collection contract schema was not provided.');
+      return out;
+    }
     const normalized = collection && typeof collection === 'object' ? { ...collection } : collection;
     if (entryArrayKey && entryArrayKey !== 'entries' && normalized && typeof normalized === 'object' && !(normalized.entries)) {
       normalized.entries = normalized[entryArrayKey];
@@ -313,7 +293,7 @@ export function validateEntriesAgainstSchema(entries, schemaArr, { entryKeyField
   return out;
 }
 
-export async function validateCollection(collection, { entryArrayKey = null, verbose = false, logLimit = 5 } = {}) {
+export async function validateCollection(collection, { entryArrayKey = null, verbose = false, logLimit = 5, contractSchema = null } = {}) {
   const coll = collection && typeof collection === 'object' ? collection : { metadata: {} };
   const meta = coll.metadata && typeof coll.metadata === 'object' ? coll.metadata : {};
   const schemaArr = Array.isArray(meta.schema) ? meta.schema : (Array.isArray(coll.schema) ? coll.schema : null);
@@ -325,7 +305,7 @@ export async function validateCollection(collection, { entryArrayKey = null, ver
   if (verbose) console.log('detected arrayKey:', arrayKey, 'entryKeyField:', entryKeyField, 'entriesCount:', entries.length);
 
   if (verbose) console.group('collection contract validation');
-  const collectionValidation = await validateCollectionContract(coll, { entryArrayKey });
+  const collectionValidation = await validateCollectionContract(coll, { entryArrayKey, contractSchema });
   if (verbose) {
     if (collectionValidation.errors && collectionValidation.errors.length) console.error('collection errors:', collectionValidation.errors);
     if (collectionValidation.warnings && collectionValidation.warnings.length) console.warn('collection warnings:', collectionValidation.warnings);

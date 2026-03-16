@@ -107,6 +107,7 @@ export function renderEntityExplorer({ store }) {
   let latestTableHeaders = [];
   let latestTableRows = [];
   let latestTableSourceInfo = '';
+  let sessionStateUnsub = null;
 
   try {
     if (settingsCollectionKey) {
@@ -192,13 +193,68 @@ export function renderEntityExplorer({ store }) {
   const managerItems = [
     { value: 'idb', label: 'IndexedDB' },
     { value: 'ls', label: 'localStorage' },
+    { value: 'session', label: 'Session State' },
   ];
 
+  function teardownSessionStateSubscription() {
+    try { if (typeof sessionStateUnsub === 'function') sessionStateUnsub(); } catch (e) {}
+    sessionStateUnsub = null;
+  }
+
+  function updateTableSettingsBtnState(manager) {
+    const button = headerTools.getControl('tableSettings');
+    if (!button) return;
+    button.disabled = String(manager || 'idb') === 'session';
+  }
+
+  function hideIdbControls() {
+    try { if (dbGroup?.parentElement) dbGroup.parentElement.removeChild(dbGroup); } catch (e) {}
+    try { if (storeGroup?.parentElement) storeGroup.parentElement.removeChild(storeGroup); } catch (e) {}
+  }
+
+  function showIdbControls() {
+    try { if (dbGroup && !dbGroup.parentElement) left.append(dbGroup); } catch (e) {}
+    try { if (storeGroup && !storeGroup.parentElement) left.append(storeGroup); } catch (e) {}
+  }
+
   async function loadAndRenderManager(manager) {
+    teardownSessionStateSubscription();
+    updateTableSettingsBtnState(manager);
     content.innerHTML = '';
     content.append(el('div', { className: 'hint', text: 'Loading…' }));
     try {
-      if (manager === 'idb') {
+      if (manager === 'session') {
+        latestTableHeaders = [];
+        latestTableRows = [];
+        latestTableSourceInfo = 'Session State';
+
+        const expose = {};
+        const getSessionStateSnapshot = () => {
+          try { return store?.analysis?.getState?.() || {}; } catch (e) { return {}; }
+        };
+        const viewer = renderJsonViewer(getSessionStateSnapshot(), {
+          id: 'entity-explorer-session-state',
+          expanded: true,
+          maxChars: 200000,
+          maxLines: 10000,
+          previewLen: 400,
+          expose,
+        });
+
+        content.innerHTML = '';
+        content.append(viewer);
+        if (store && typeof store.subscribe === 'function') {
+          sessionStateUnsub = store.subscribe(() => {
+            try {
+              const activeManager = String((managerDropdown?.getValue && managerDropdown.getValue()) || initialManager || 'idb');
+              if (activeManager !== 'session') return;
+              expose.setJson?.(getSessionStateSnapshot());
+              updateCollapseAllBtnState();
+            } catch (e) {}
+          });
+        }
+        try { updateCollapseAllBtnState(); } catch (e) {}
+      } else if (manager === 'idb') {
         content.innerHTML = el('div', { className: 'hint', text: 'Select a database and store to inspect.' });
       } else {
         const keys = collectLocalStorageKeys();
@@ -255,7 +311,7 @@ export function renderEntityExplorer({ store }) {
       try {
         if (store?.settings && typeof store.settings.set === 'function') {
           store.settings.set('apps.entityExplorer.manager', sel, { consumerId: 'entityExplorerView', immediate: true });
-          if (sel === 'ls') {
+          if (sel !== 'idb') {
             store.settings.set('apps.entityExplorer.db', null, { consumerId: 'entityExplorerView', immediate: true });
             store.settings.set('apps.entityExplorer.selection', null, { consumerId: 'entityExplorerView', immediate: true });
           }
@@ -263,12 +319,10 @@ export function renderEntityExplorer({ store }) {
       } catch (e) {}
       loadAndRenderManager(sel);
       if (sel === 'idb') {
-        if (!dbGroup.parentElement) left.append(dbGroup);
-        if (!storeGroup.parentElement) left.append(storeGroup);
+        showIdbControls();
         rebuildDbDropdown();
       } else {
-        try { if (dbGroup.parentElement) dbGroup.parentElement.removeChild(dbGroup); } catch (e) {}
-        try { if (storeGroup.parentElement) storeGroup.parentElement.removeChild(storeGroup); } catch (e) {}
+        hideIdbControls();
       }
     },
     className: '',
@@ -317,12 +371,13 @@ export function renderEntityExplorer({ store }) {
   const _initState = _savedAppState || {};
   const _initManager = String(_initState.manager || 'idb');
   if (_initManager === 'idb') {
+    updateTableSettingsBtnState('idb');
     loadAndRenderManager('idb');
     rebuildDbDropdown();
   } else {
-    loadAndRenderManager('ls');
-    try { if (dbGroup.parentElement) dbGroup.parentElement.removeChild(dbGroup); } catch (e) {}
-    try { if (storeGroup.parentElement) storeGroup.parentElement.removeChild(storeGroup); } catch (e) {}
+    updateTableSettingsBtnState(_initManager);
+    loadAndRenderManager(_initManager);
+    hideIdbControls();
   }
 
   async function rebuildDbDropdown() {
@@ -451,6 +506,7 @@ export function renderEntityExplorer({ store }) {
 
   const mo = new MutationObserver(() => {
     if (!document.body.contains(root)) {
+      teardownSessionStateSubscription();
       try { if (tableSettingsCtrl && typeof tableSettingsCtrl.dispose === 'function') tableSettingsCtrl.dispose(); } catch (e) {}
       mo.disconnect();
     }

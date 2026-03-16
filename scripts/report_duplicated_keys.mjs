@@ -13,7 +13,8 @@ const collectionsRoot = path.join(repoRoot, 'collections');
 const scriptRoot = fs.existsSync(path.join(repoRoot, 'scripts'))
   ? path.join(repoRoot, 'scripts')
   : __dirname;
-const outputPath = path.join(scriptRoot, 'report_duplicated_keys_output.json');
+const outputDir = path.join(scriptRoot, 'outputs');
+const outputPath = path.join(outputDir, 'report_duplicated_keys_output.json');
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -71,6 +72,7 @@ async function main() {
     parseErrors,
   };
 
+  fs.mkdirSync(outputDir, { recursive: true });
   fs.writeFileSync(outputPath, JSON.stringify(output, null, 2) + '\n');
 
   console.log(`Wrote ${path.relative(repoRoot, outputPath).replace(/\\/g, '/')}`);

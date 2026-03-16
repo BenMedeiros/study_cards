@@ -16,7 +16,7 @@ import {
   normalizeRevisionSet,
   resolveCollectionAtRevision as resolveCollectionAtRevisionShared,
 } from '../utils/common/collectionRevisions.mjs';
-import { validateCollection } from '../utils/common/validation.mjs';
+import { validateCollection } from '../utils/browser/validation.js';
 import {
   validateDuplicatedKeys,
   validateMissingRelatedCollectionData,
@@ -36,6 +36,10 @@ function _safeDebug(...args) {
 
 function _safeClone(v) {
   try { return JSON.parse(JSON.stringify(v)); } catch { return null; }
+}
+
+function _nowIso() {
+  return new Date().toISOString();
 }
 
 function _normalizeFetchHistory(history) {
@@ -67,7 +71,7 @@ function _appendFetchHistory(history, row, { limit = 100 } = {}) {
   return base;
 }
 
-export function createCollectionDatabaseManager({ log = false } = {}) {
+export function createCollectionDatabaseManager({ log = false, onValidationStateChange = null } = {}) {
   let logEnabled = !!log;
   let logReturningCached = false;
 
@@ -105,6 +109,37 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
   let validationRerunRequested = false;
   let validationRunCounter = 0;
 
+  const validationMeta = {
+    state: 'idle',
+    source: 'runtime',
+    owner: 'collectionDB',
+    module: 'src/managers/collectionDatabaseManager.js',
+    scheduleFunction: '_scheduleValidationRun',
+    runFunction: '_runAllValidationsNow',
+    validationFunctions: {
+      duplicated_keys: 'validateDuplicatedKeys',
+      missing_related_collection_data: 'validateMissingRelatedCollectionData',
+    },
+    validationModule: 'src/utils/common/collectionValidations.mjs',
+    createdAt: _nowIso(),
+    lastScheduledAt: null,
+    lastScheduledReason: null,
+    lastRunRequestedAt: null,
+    lastRunStartedAt: null,
+    lastRunFinishedAt: null,
+    lastRunReason: null,
+    lastRunStatus: null,
+    lastRunId: null,
+    runCount: 0,
+    rerunRequested: false,
+    isRunning: false,
+    pendingPromise: false,
+    lastCollectionLoadSummary: {
+      recordsLoaded: 0,
+      loadErrorCount: 0,
+    },
+  };
+
   const validations = {
     duplicated_keys: { status: 'idle', startedAt: null, finishedAt: null, error: null, result: null, loadErrors: [] },
     missing_related_collection_data: { status: 'idle', startedAt: null, finishedAt: null, error: null, result: null, loadErrors: [] },
@@ -113,11 +148,19 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
     },
     getSnapshot: function() {
       return _safeClone({
+        meta: validationMeta,
         duplicated_keys: validations.duplicated_keys,
         missing_related_collection_data: validations.missing_related_collection_data,
       });
     },
   };
+
+  function _notifyValidationStateChanged() {
+    if (typeof onValidationStateChange !== 'function') return;
+    try {
+      onValidationStateChange(validations.getSnapshot());
+    } catch (e) {}
+  }
 
   function _markValidationRunning(state) {
     state.status = 'running';
@@ -156,47 +199,99 @@ export function createCollectionDatabaseManager({ log = false } = {}) {
         loadErrors.push({ key, error: e?.message || String(e) });
       }
     }
+    validationMeta.lastCollectionLoadSummary = {
+      recordsLoaded: records.length,
+      loadErrorCount: loadErrors.length,
+    };
     return { records, loadErrors };
   }
 
-  async function _runAllValidationsNow() {
+  async function _runAllValidationsNow({ reason = 'unknown' } = {}) {
     const runId = ++validationRunCounter;
+    validationMeta.state = 'running';
+    validationMeta.isRunning = true;
+    validationMeta.pendingPromise = true;
+    validationMeta.lastRunId = runId;
+    validationMeta.lastRunReason = reason;
+    validationMeta.lastRunRequestedAt = validationMeta.lastRunRequestedAt || _nowIso();
+    validationMeta.lastRunStartedAt = _nowIso();
+    validationMeta.runCount += 1;
+    validationMeta.rerunRequested = false;
     _markValidationRunning(validations.duplicated_keys);
     _markValidationRunning(validations.missing_related_collection_data);
+    _notifyValidationStateChanged();
 
     const { records, loadErrors } = await _loadCollectionsForValidation();
 
     try {
       const duplicatedKeysResult = validateDuplicatedKeys(records);
       duplicatedKeysResult.loadErrors = loadErrors.slice();
-      if (runId === validationRunCounter) _markValidationReady(validations.duplicated_keys, duplicatedKeysResult, loadErrors);
+      if (runId === validationRunCounter) {
+        _markValidationReady(validations.duplicated_keys, duplicatedKeysResult, loadErrors);
+        _notifyValidationStateChanged();
+      }
     } catch (e) {
-      if (runId === validationRunCounter) _markValidationError(validations.duplicated_keys, e?.message || e, loadErrors);
+      if (runId === validationRunCounter) {
+        _markValidationError(validations.duplicated_keys, e?.message || e, loadErrors);
+        _notifyValidationStateChanged();
+      }
     }
 
     try {
       const missingRelatedResult = validateMissingRelatedCollectionData(records);
       missingRelatedResult.loadErrors = loadErrors.slice();
-      if (runId === validationRunCounter) _markValidationReady(validations.missing_related_collection_data, missingRelatedResult, loadErrors);
+      if (runId === validationRunCounter) {
+        _markValidationReady(validations.missing_related_collection_data, missingRelatedResult, loadErrors);
+        _notifyValidationStateChanged();
+      }
     } catch (e) {
-      if (runId === validationRunCounter) _markValidationError(validations.missing_related_collection_data, e?.message || e, loadErrors);
+      if (runId === validationRunCounter) {
+        _markValidationError(validations.missing_related_collection_data, e?.message || e, loadErrors);
+        _notifyValidationStateChanged();
+      }
+    }
+
+    if (runId === validationRunCounter) {
+      validationMeta.isRunning = false;
+      validationMeta.pendingPromise = false;
+      validationMeta.lastRunFinishedAt = _nowIso();
+      const states = [validations.duplicated_keys.status, validations.missing_related_collection_data.status];
+      validationMeta.lastRunStatus = states.includes('error') ? 'error' : 'ready';
+      validationMeta.state = validationRerunRequested ? 'queued' : validationMeta.lastRunStatus;
+      validationMeta.rerunRequested = !!validationRerunRequested;
+      _notifyValidationStateChanged();
     }
   }
 
   function _scheduleValidationRun({ reason = 'unknown' } = {}) {
     logger('validations: schedule', reason);
+    validationMeta.lastScheduledAt = _nowIso();
+    validationMeta.lastScheduledReason = reason;
+    validationMeta.lastRunRequestedAt = validationMeta.lastScheduledAt;
+    validationMeta.pendingPromise = true;
+    validationMeta.state = validationRunPromise ? 'queued' : 'scheduled';
+    _notifyValidationStateChanged();
     if (validationRunPromise) {
       validationRerunRequested = true;
+      validationMeta.rerunRequested = true;
+      validationMeta.state = 'queued';
+      _notifyValidationStateChanged();
       return validationRunPromise;
     }
 
     validationRunPromise = (async () => {
       do {
         validationRerunRequested = false;
-        await _runAllValidationsNow();
+        validationMeta.rerunRequested = false;
+        await _runAllValidationsNow({ reason });
       } while (validationRerunRequested);
     })().finally(() => {
       validationRunPromise = null;
+      validationMeta.pendingPromise = false;
+      if (!validationMeta.isRunning && validationMeta.state === 'scheduled') {
+        validationMeta.state = validationMeta.lastRunStatus || 'idle';
+      }
+      _notifyValidationStateChanged();
     });
 
     return validationRunPromise;

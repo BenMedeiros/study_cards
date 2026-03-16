@@ -1,0 +1,1470 @@
+{
+  "generatedAt": "2026-03-16T22:21:51.676Z",
+  "scannedCollections": 12,
+  "collectionsWithRelations": 2,
+  "relationCount": 4,
+  "missingRelationCount": 3,
+  "missingRefTotal": 195,
+  "reports": [
+    {
+      "sourceName": "Japanese Grammar",
+      "sourcePath": "collections/japanese/japanese_grammar.json",
+      "relations": [
+        {
+          "name": "sentences",
+          "thisKey": "pattern",
+          "foreignKey": "chunks[].focus",
+          "relatedPath": "collections/japanese/japanese_sentences.json",
+          "missingCount": 53,
+          "missing": [
+            {
+              "ref": "Vている",
+              "count": 10,
+              "samples": [
+                "子供たちが夜遅くまで騒いでいる。",
+                "彼は会社でお金を稼いでいる。",
+                "子どもたちが外で騒いでいる。"
+              ]
+            },
+            {
+              "ref": "Vたら",
+              "count": 5,
+              "samples": [
+                "家に入ったら、すぐコートを脱いでください。",
+                "山で雀蜂を見かけたら、走らずに静かに離れてください。",
+                "雀蜂は危ないので、巣を見つけたら市役所に連絡します。"
+              ]
+            },
+            {
+              "ref": "AのでB",
+              "count": 3,
+              "samples": [
+                "庭で蜂を見たので、窓を閉めました。",
+                "蜜蜂は花粉を運ぶので、農業にも大切です。",
+                "雀蜂は危ないので、巣を見つけたら市役所に連絡します。"
+              ]
+            },
+            {
+              "ref": "Vてください",
+              "count": 3,
+              "samples": [
+                "家に入ったら、すぐコートを脱いでください。",
+                "靴を脱いでください。",
+                "庭に蜂が飛んでいるので、気をつけてください。"
+              ]
+            },
+            {
+              "ref": "AよりB",
+              "count": 2,
+              "samples": [
+                "この本は前のよりずっと面白い。",
+                "今日は昨日よりずっと寒い。"
+              ]
+            },
+            {
+              "ref": "A間、B",
+              "count": 2,
+              "samples": [
+                "日本にいる間、ずっと雨でした。",
+                "彼は会議の間、ずっと黙っていた。"
+              ]
+            },
+            {
+              "ref": "Vてから",
+              "count": 2,
+              "samples": [
+                "朝、包丁を研いでから料理を始めます。",
+                "彼は私を睨んでから、何も言わずに席を立った。"
+              ]
+            },
+            {
+              "ref": "Vば",
+              "count": 2,
+              "samples": [
+                "Wi-Fiにスマホを繋げば、地図が見られます。",
+                "テレビでログインすれば、お気に入りの動画や登録チャンネルをご自宅の大画面で視聴できます。"
+              ]
+            },
+            {
+              "ref": "Vると",
+              "count": 2,
+              "samples": [
+                "ヨーグルトに蜂蜜をかけると食べやすいです。",
+                "このセーターは洗うと縮む。"
+              ]
+            },
+            {
+              "ref": "オノマトペ + している",
+              "count": 2,
+              "samples": [
+                "暑くて、体がべたべたしている。",
+                "子どもが母親にべたべたしている。"
+              ]
+            },
+            {
+              "ref": "〜では (context/topic)",
+              "count": 1,
+              "samples": [
+                "この店では地元の蜂蜜を売っています。"
+              ]
+            },
+            {
+              "ref": "A/N + になる",
+              "count": 1,
+              "samples": [
+                "床がジュースでべたべたになった。"
+              ]
+            },
+            {
+              "ref": "AからB",
+              "count": 1,
+              "samples": [
+                "夏は蜂が多いから、甘い飲み物に気をつけて。"
+              ]
+            },
+            {
+              "ref": "Aくて",
+              "count": 1,
+              "samples": [
+                "悲しくて胸が塞いだ。"
+              ]
+            },
+            {
+              "ref": "AとB",
+              "count": 1,
+              "samples": [
+                "蜂の巣が近いと危ないから、子どもには近づかないように言った。"
+              ]
+            },
+            {
+              "ref": "Aとき",
+              "count": 1,
+              "samples": [
+                "のどが痛いとき、温かいお茶に蜂蜜を入れます。"
+              ]
+            },
+            {
+              "ref": "N/今日は + Aい + から",
+              "count": 1,
+              "samples": [
+                "今日は忙しいから、ゲームは駄目です。"
+              ]
+            },
+            {
+              "ref": "Nする予定",
+              "count": 1,
+              "samples": [
+                "午後は少し外出する予定です。"
+              ]
+            },
+            {
+              "ref": "Nになってから",
+              "count": 1,
+              "samples": [
+                "ずっと先になってから、その意味が分かった。"
+              ]
+            },
+            {
+              "ref": "N以外",
+              "count": 1,
+              "samples": [
+                "日曜日以外は毎日働いている。"
+              ]
+            },
+            {
+              "ref": "Passive + Vたことがある",
+              "count": 1,
+              "samples": [
+                "子どものころ、蜂に刺されたことがあります。"
+              ]
+            },
+            {
+              "ref": "Potential",
+              "count": 1,
+              "samples": [
+                "このアプリはウイルスを防げます。"
+              ]
+            },
+            {
+              "ref": "Vずに",
+              "count": 1,
+              "samples": [
+                "山で雀蜂を見かけたら、走らずに静かに離れてください。"
+              ]
+            },
+            {
+              "ref": "Vた",
+              "count": 1,
+              "samples": [
+                "彼はニューヨークでたくさんお金を稼いだ。"
+              ]
+            },
+            {
+              "ref": "Vたい",
+              "count": 1,
+              "samples": [
+                "ずっとここに住みたい。"
+              ]
+            },
+            {
+              "ref": "Vたほうがいい",
+              "count": 1,
+              "samples": [
+                "このシャツは手で濯いだほうがいい。"
+              ]
+            },
+            {
+              "ref": "Vていた",
+              "count": 1,
+              "samples": [
+                "彼女は京都のカフェでコーヒーを注いでいた。"
+              ]
+            },
+            {
+              "ref": "Vていて",
+              "count": 1,
+              "samples": [
+                "ベランダに蜂の巣ができていて、びっくりしました。"
+              ]
+            },
+            {
+              "ref": "Vていました",
+              "count": 1,
+              "samples": [
+                "ハワイの海で三時間も泳いでいました。"
+              ]
+            },
+            {
+              "ref": "Vている (habitual/ongoing)",
+              "count": 1,
+              "samples": [
+                "この店では地元の蜂蜜を売っています。"
+              ]
+            },
+            {
+              "ref": "Vている + ので",
+              "count": 1,
+              "samples": [
+                "庭に蜂が飛んでいるので、気をつけてください。"
+              ]
+            },
+            {
+              "ref": "Vている間",
+              "count": 1,
+              "samples": [
+                "映画を見ている間、彼女はずっと泣いていた。"
+              ]
+            },
+            {
+              "ref": "Vてしまう",
+              "count": 1,
+              "samples": [
+                "ボタンが一つ外れてしまった。"
+              ]
+            },
+            {
+              "ref": "Vてはいけません",
+              "count": 1,
+              "samples": [
+                "図書館の本は外に持ち出してはいけません。"
+              ]
+            },
+            {
+              "ref": "Vないでください",
+              "count": 1,
+              "samples": [
+                "お金を無駄に使わないでください。"
+              ]
+            },
+            {
+              "ref": "Vないように言う",
+              "count": 1,
+              "samples": [
+                "蜂の巣が近いと危ないから、子どもには近づかないように言った。"
+              ]
+            },
+            {
+              "ref": "Vなければなりません",
+              "count": 1,
+              "samples": [
+                "東京駅まで急がなければなりません。"
+              ]
+            },
+            {
+              "ref": "Vのは～だ",
+              "count": 1,
+              "samples": [
+                "写真が少し歪んで見えるのは、このレンズのせいだ。"
+              ]
+            },
+            {
+              "ref": "Vましょう",
+              "count": 1,
+              "samples": [
+                "「[LG] webOS TV OLED55B7A」でYouTubeにログインしましょう。"
+              ]
+            },
+            {
+              "ref": "Vます-stem + すぎる",
+              "count": 1,
+              "samples": [
+                "彼は彼女にべたべたしすぎる。"
+              ]
+            },
+            {
+              "ref": "Vよう",
+              "count": 1,
+              "samples": [
+                "今日は外で昼ご飯を食べよう。"
+              ]
+            },
+            {
+              "ref": "Vる + な",
+              "count": 1,
+              "samples": [
+                "彼女にべたべたするな。"
+              ]
+            },
+            {
+              "ref": "Vることが多い",
+              "count": 1,
+              "samples": [
+                "長男が家を継ぐことが多かった。"
+              ]
+            },
+            {
+              "ref": "Vるために",
+              "count": 1,
+              "samples": [
+                "事故を防ぐために注意する。"
+              ]
+            },
+            {
+              "ref": "Vるつもりだ",
+              "count": 1,
+              "samples": [
+                "父の仕事を継ぐつもりだ。"
+              ]
+            },
+            {
+              "ref": "Vるな",
+              "count": 1,
+              "samples": [
+                "そんなことで騒ぐな。"
+              ]
+            },
+            {
+              "ref": "Vるべきではない",
+              "count": 1,
+              "samples": [
+                "結論を急ぐべきではない。"
+              ]
+            },
+            {
+              "ref": "Vるように",
+              "count": 1,
+              "samples": [
+                "人混みの中を泳ぐように進んだ。"
+              ]
+            },
+            {
+              "ref": "い-adjective + くて",
+              "count": 1,
+              "samples": [
+                "暑くて、体がべたべたしている。"
+              ]
+            },
+            {
+              "ref": "オノマトペ + する",
+              "count": 1,
+              "samples": [
+                "手がべたべたする。"
+              ]
+            },
+            {
+              "ref": "ずっと + Vている",
+              "count": 1,
+              "samples": [
+                "犬がバッグの中をずっと嗅いでいる。"
+              ]
+            },
+            {
+              "ref": "ようにしている",
+              "count": 1,
+              "samples": [
+                "彼は夜遅い外出を慎んで、毎朝早く起きるようにしている。"
+              ]
+            },
+            {
+              "ref": "受け身",
+              "count": 1,
+              "samples": [
+                "みんなに担がれた。"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "paragraphs",
+          "thisKey": "pattern",
+          "foreignKey": "sentences[].chunks[].focus",
+          "relatedPath": "collections/japanese/japanese_paragraphs.json",
+          "missingCount": 0,
+          "missing": []
+        }
+      ]
+    },
+    {
+      "sourceName": "All Japanese Words",
+      "sourcePath": "collections/japanese/japanese_words.json",
+      "relations": [
+        {
+          "name": "sentences",
+          "thisKey": "kanji",
+          "foreignKey": "chunks[].refs[]",
+          "relatedPath": "collections/japanese/japanese_sentences.json",
+          "missingCount": 117,
+          "missing": [
+            {
+              "ref": "Vている",
+              "count": 6,
+              "samples": [
+                "犬がバッグの中をずっと嗅いでいる。",
+                "彼はずっと先の計画まで考えている。",
+                "オリンポス山には多くの神が住んでいると言われています。"
+              ]
+            },
+            {
+              "ref": "ている",
+              "count": 6,
+              "samples": [
+                "その花には蜜蜂がたくさん集まっています。",
+                "ベランダに蜂の巣ができていて、びっくりしました。",
+                "庭に蜂が飛んでいるので、気をつけてください。"
+              ]
+            },
+            {
+              "ref": "ので",
+              "count": 5,
+              "samples": [
+                "庭で蜂を見たので、窓を閉めました。",
+                "蜜蜂は花粉を運ぶので、農業にも大切です。",
+                "雀蜂は危ないので、巣を見つけたら市役所に連絡します。"
+              ]
+            },
+            {
+              "ref": "から",
+              "count": 3,
+              "samples": [
+                "夏は蜂が多いから、甘い飲み物に気をつけて。",
+                "蜂の巣が近いと危ないから、子どもには近づかないように言った。",
+                "今日は忙しいから、ゲームは駄目です。"
+              ]
+            },
+            {
+              "ref": "ずに",
+              "count": 3,
+              "samples": [
+                "山で雀蜂を見かけたら、走らずに静かに離れてください。",
+                "彼は一言も言わずに、口を噤んだ。",
+                "彼は私を睨んでから、何も言わずに席を立った。"
+              ]
+            },
+            {
+              "ref": "Vたら",
+              "count": 2,
+              "samples": [
+                "薬を一回飲んだら、少し楽になった。",
+                "雨がやんだら、近所を一周走ろう。"
+              ]
+            },
+            {
+              "ref": "Vてしまう",
+              "count": 2,
+              "samples": [
+                "駅で誰かの足を踏んでしまった。",
+                "ボタンが一つ外れてしまった。"
+              ]
+            },
+            {
+              "ref": "ギリシャ",
+              "count": 2,
+              "samples": [
+                "日本語で少しギリシャ神話について話してください。",
+                "ギリシャ神話は古代ギリシャの神々や英雄についての物語です。"
+              ]
+            },
+            {
+              "ref": "たら",
+              "count": 2,
+              "samples": [
+                "山で雀蜂を見かけたら、走らずに静かに離れてください。",
+                "雀蜂は危ないので、巣を見つけたら市役所に連絡します。"
+              ]
+            },
+            {
+              "ref": "と",
+              "count": 2,
+              "samples": [
+                "ヨーグルトに蜂蜜をかけると食べやすいです。",
+                "蜂の巣が近いと危ないから、子どもには近づかないように言った。"
+              ]
+            },
+            {
+              "ref": "について",
+              "count": 2,
+              "samples": [
+                "日本語で少しギリシャ神話について話してください。",
+                "ギリシャ神話は古代ギリシャの神々や英雄についての物語です。"
+              ]
+            },
+            {
+              "ref": "まで",
+              "count": 2,
+              "samples": [
+                "彼はずっと先の計画まで考えている。",
+                "この問題はずっと先まで影響する。"
+              ]
+            },
+            {
+              "ref": "ように",
+              "count": 2,
+              "samples": [
+                "子どもに川へ近づかないように、河童の話をしました。",
+                "人混みの中を泳ぐように進んだ。"
+              ]
+            },
+            {
+              "ref": "より",
+              "count": 2,
+              "samples": [
+                "この本は前のよりずっと面白い。",
+                "今日は昨日よりずっと寒い。"
+              ]
+            },
+            {
+              "ref": "英雄",
+              "count": 2,
+              "samples": [
+                "ギリシャ神話は古代ギリシャの神々や英雄についての物語です。",
+                "ヘラクレスは十二の功業で有名な英雄です。"
+              ]
+            },
+            {
+              "ref": "資料",
+              "count": 2,
+              "samples": [
+                "私は資料を二ページでまとめて、会議で説明した。",
+                "田中さんは会議で資料を一部配った。"
+              ]
+            },
+            {
+              "ref": "配る",
+              "count": 2,
+              "samples": [
+                "先生はプリントを六枚配りました。",
+                "田中さんは会議で資料を一部配った。"
+              ]
+            },
+            {
+              "ref": "[LG] webOS TV OLED55B7A",
+              "count": 1,
+              "samples": [
+                "「[LG] webOS TV OLED55B7A」でYouTubeにログインしましょう。"
+              ]
+            },
+            {
+              "ref": "Nになってから",
+              "count": 1,
+              "samples": [
+                "ずっと先になってから、その意味が分かった。"
+              ]
+            },
+            {
+              "ref": "Vたくない",
+              "count": 1,
+              "samples": [
+                "無駄な時間を過ごしたくない。"
+              ]
+            },
+            {
+              "ref": "Vてから",
+              "count": 1,
+              "samples": [
+                "彼は私を睨んでから、何も言わずに席を立った。"
+              ]
+            },
+            {
+              "ref": "Vてください",
+              "count": 1,
+              "samples": [
+                "日本語で少しギリシャ神話について話してください。"
+              ]
+            },
+            {
+              "ref": "Vてはいけません",
+              "count": 1,
+              "samples": [
+                "図書館の本は外に持ち出してはいけません。"
+              ]
+            },
+            {
+              "ref": "Vないでください",
+              "count": 1,
+              "samples": [
+                "お金を無駄に使わないでください。"
+              ]
+            },
+            {
+              "ref": "Vのは～だ",
+              "count": 1,
+              "samples": [
+                "写真が少し歪んで見えるのは、このレンズのせいだ。"
+              ]
+            },
+            {
+              "ref": "Vよう",
+              "count": 1,
+              "samples": [
+                "今日は外で昼ご飯を食べよう。"
+              ]
+            },
+            {
+              "ref": "Vることが多い",
+              "count": 1,
+              "samples": [
+                "長男が家を継ぐことが多かった。"
+              ]
+            },
+            {
+              "ref": "Vるつもりだ",
+              "count": 1,
+              "samples": [
+                "父の仕事を継ぐつもりだ。"
+              ]
+            },
+            {
+              "ref": "Vると",
+              "count": 1,
+              "samples": [
+                "このセーターは洗うと縮む。"
+              ]
+            },
+            {
+              "ref": "アイデア",
+              "count": 1,
+              "samples": [
+                "彼は会議で新しいアイデアを持ち出した。"
+              ]
+            },
+            {
+              "ref": "インク",
+              "count": 1,
+              "samples": [
+                "インクが二か所も滲んで、字が読みにくい。"
+              ]
+            },
+            {
+              "ref": "オリンポス山",
+              "count": 1,
+              "samples": [
+                "オリンポス山には多くの神が住んでいると言われています。"
+              ]
+            },
+            {
+              "ref": "お寺",
+              "count": 1,
+              "samples": [
+                "京都でお寺を三つ回りました。"
+              ]
+            },
+            {
+              "ref": "ギリシャ神話",
+              "count": 1,
+              "samples": [
+                "ギリシャ神話は古代ギリシャの神々や英雄についての物語です。"
+              ]
+            },
+            {
+              "ref": "ください",
+              "count": 1,
+              "samples": [
+                "庭に蜂が飛んでいるので、気をつけてください。"
+              ]
+            },
+            {
+              "ref": "くれる",
+              "count": 1,
+              "samples": [
+                "両親は小さな店を営んで、私を大学まで通わせてくれた。"
+              ]
+            },
+            {
+              "ref": "ここ",
+              "count": 1,
+              "samples": [
+                "ずっとここに住みたい。"
+              ]
+            },
+            {
+              "ref": "ご自宅",
+              "count": 1,
+              "samples": [
+                "テレビでログインすれば、お気に入りの動画や登録チャンネルをご自宅の大画面で視聴できます。"
+              ]
+            },
+            {
+              "ref": "しか～ない",
+              "count": 1,
+              "samples": [
+                "この肉は二日で傷んだので、捨てるしかなかった。"
+              ]
+            },
+            {
+              "ref": "ず",
+              "count": 1,
+              "samples": [
+                "彼は質問に答えず、口を噤んだ。"
+              ]
+            },
+            {
+              "ref": "すぎる",
+              "count": 1,
+              "samples": [
+                "彼は彼女にべたべたしすぎる。"
+              ]
+            },
+            {
+              "ref": "せいだ",
+              "count": 1,
+              "samples": [
+                "写真が少し歪んで見えるのは、このレンズのせいだ。"
+              ]
+            },
+            {
+              "ref": "ゼウス",
+              "count": 1,
+              "samples": [
+                "一番有名な神はゼウスです。"
+              ]
+            },
+            {
+              "ref": "その",
+              "count": 1,
+              "samples": [
+                "彼女は突然その問題を持ち出した。"
+              ]
+            },
+            {
+              "ref": "それ",
+              "count": 1,
+              "samples": [
+                "それは無駄な努力だ。"
+              ]
+            },
+            {
+              "ref": "だ",
+              "count": 1,
+              "samples": [
+                "それは無駄な努力だ。"
+              ]
+            },
+            {
+              "ref": "たい",
+              "count": 1,
+              "samples": [
+                "ずっとここに住みたい。"
+              ]
+            },
+            {
+              "ref": "だけ",
+              "count": 1,
+              "samples": [
+                "階段を五段上っただけで、足が痛む。"
+              ]
+            },
+            {
+              "ref": "たことがある",
+              "count": 1,
+              "samples": [
+                "子どものころ、蜂に刺されたことがあります。"
+              ]
+            },
+            {
+              "ref": "だった",
+              "count": 1,
+              "samples": [
+                "この会議は無駄だった。"
+              ]
+            },
+            {
+              "ref": "ため",
+              "count": 1,
+              "samples": [
+                "事故を防ぐために注意する。"
+              ]
+            },
+            {
+              "ref": "てから",
+              "count": 1,
+              "samples": [
+                "ずっと先になってから、その意味が分かった。"
+              ]
+            },
+            {
+              "ref": "という",
+              "count": 1,
+              "samples": [
+                "狐の霊が人に化けるという伝説があります。"
+              ]
+            },
+            {
+              "ref": "と言われている",
+              "count": 1,
+              "samples": [
+                "オリンポス山には多くの神が住んでいると言われています。"
+              ]
+            },
+            {
+              "ref": "ないように",
+              "count": 1,
+              "samples": [
+                "蜂の巣が近いと危ないから、子どもには近づかないように言った。"
+              ]
+            },
+            {
+              "ref": "プリント",
+              "count": 1,
+              "samples": [
+                "先生はプリントを六枚配りました。"
+              ]
+            },
+            {
+              "ref": "べき",
+              "count": 1,
+              "samples": [
+                "結論を急ぐべきではない。"
+              ]
+            },
+            {
+              "ref": "ヘラクレス",
+              "count": 1,
+              "samples": [
+                "ヘラクレスは十二の功業で有名な英雄です。"
+              ]
+            },
+            {
+              "ref": "まだ",
+              "count": 1,
+              "samples": [
+                "ずっと先のことは、まだ分からない。"
+              ]
+            },
+            {
+              "ref": "まとめる",
+              "count": 1,
+              "samples": [
+                "私は資料を二ページでまとめて、会議で説明した。"
+              ]
+            },
+            {
+              "ref": "みかん",
+              "count": 1,
+              "samples": [
+                "祖母はみかんを五個むきました。"
+              ]
+            },
+            {
+              "ref": "むく",
+              "count": 1,
+              "samples": [
+                "祖母はみかんを五個むきました。"
+              ]
+            },
+            {
+              "ref": "や",
+              "count": 1,
+              "samples": [
+                "ギリシャ神話は古代ギリシャの神々や英雄についての物語です。"
+              ]
+            },
+            {
+              "ref": "やっと",
+              "count": 1,
+              "samples": [
+                "私は三日も悩んで、やっと決めた。"
+              ]
+            },
+            {
+              "ref": "ようにしている",
+              "count": 1,
+              "samples": [
+                "彼は夜遅い外出を慎んで、毎朝早く起きるようにしている。"
+              ]
+            },
+            {
+              "ref": "レンズ",
+              "count": 1,
+              "samples": [
+                "写真が少し歪んで見えるのは、このレンズのせいだ。"
+              ]
+            },
+            {
+              "ref": "一回",
+              "count": 1,
+              "samples": [
+                "薬を一回飲んだら、少し楽になった。"
+              ]
+            },
+            {
+              "ref": "一言",
+              "count": 1,
+              "samples": [
+                "彼は一言も言わずに、口を噤んだ。"
+              ]
+            },
+            {
+              "ref": "一周",
+              "count": 1,
+              "samples": [
+                "雨がやんだら、近所を一周走ろう。"
+              ]
+            },
+            {
+              "ref": "一泊",
+              "count": 1,
+              "samples": [
+                "彼女は景色を望む部屋を一泊で予約した。"
+              ]
+            },
+            {
+              "ref": "一部",
+              "count": 1,
+              "samples": [
+                "田中さんは会議で資料を一部配った。"
+              ]
+            },
+            {
+              "ref": "影響する",
+              "count": 1,
+              "samples": [
+                "この問題はずっと先まで影響する。"
+              ]
+            },
+            {
+              "ref": "何も",
+              "count": 1,
+              "samples": [
+                "彼は私を睨んでから、何も言わずに席を立った。"
+              ]
+            },
+            {
+              "ref": "過ごす",
+              "count": 1,
+              "samples": [
+                "無駄な時間を過ごしたくない。"
+              ]
+            },
+            {
+              "ref": "楽",
+              "count": 1,
+              "samples": [
+                "薬を一回飲んだら、少し楽になった。"
+              ]
+            },
+            {
+              "ref": "観光客",
+              "count": 1,
+              "samples": [
+                "外国人の観光客がこの町に増えている。"
+              ]
+            },
+            {
+              "ref": "景色",
+              "count": 1,
+              "samples": [
+                "彼女は景色を望む部屋を一泊で予約した。"
+              ]
+            },
+            {
+              "ref": "計画",
+              "count": 1,
+              "samples": [
+                "彼はずっと先の計画まで考えている。"
+              ]
+            },
+            {
+              "ref": "古代",
+              "count": 1,
+              "samples": [
+                "ギリシャ神話は古代ギリシャの神々や英雄についての物語です。"
+              ]
+            },
+            {
+              "ref": "五個",
+              "count": 1,
+              "samples": [
+                "祖母はみかんを五個むきました。"
+              ]
+            },
+            {
+              "ref": "五段",
+              "count": 1,
+              "samples": [
+                "階段を五段上っただけで、足が痛む。"
+              ]
+            },
+            {
+              "ref": "功業",
+              "count": 1,
+              "samples": [
+                "ヘラクレスは十二の功業で有名な英雄です。"
+              ]
+            },
+            {
+              "ref": "三年",
+              "count": 1,
+              "samples": [
+                "彼女は外国で三年間働いた。"
+              ]
+            },
+            {
+              "ref": "私たち",
+              "count": 1,
+              "samples": [
+                "鳥が私たちの真上を飛んでいる。"
+              ]
+            },
+            {
+              "ref": "視聴できる",
+              "count": 1,
+              "samples": [
+                "テレビでログインすれば、お気に入りの動画や登録チャンネルをご自宅の大画面で視聴できます。"
+              ]
+            },
+            {
+              "ref": "社員教育",
+              "count": 1,
+              "samples": [
+                "この会社は社員教育に力を入れて、経験に富む人材を育てている。"
+              ]
+            },
+            {
+              "ref": "十二",
+              "count": 1,
+              "samples": [
+                "ヘラクレスは十二の功業で有名な英雄です。"
+              ]
+            },
+            {
+              "ref": "上る",
+              "count": 1,
+              "samples": [
+                "階段を五段上っただけで、足が痛む。"
+              ]
+            },
+            {
+              "ref": "神々",
+              "count": 1,
+              "samples": [
+                "ギリシャ神話は古代ギリシャの神々や英雄についての物語です。"
+              ]
+            },
+            {
+              "ref": "神話",
+              "count": 1,
+              "samples": [
+                "日本語で少しギリシャ神話について話してください。"
+              ]
+            },
+            {
+              "ref": "人材",
+              "count": 1,
+              "samples": [
+                "この会社は社員教育に力を入れて、経験に富む人材を育てている。"
+              ]
+            },
+            {
+              "ref": "跡",
+              "count": 1,
+              "samples": [
+                "彼は父の跡を継いだ。"
+              ]
+            },
+            {
+              "ref": "説明する",
+              "count": 1,
+              "samples": [
+                "私は資料を二ページでまとめて、会議で説明した。"
+              ]
+            },
+            {
+              "ref": "増える",
+              "count": 1,
+              "samples": [
+                "外国人の観光客がこの町に増えている。"
+              ]
+            },
+            {
+              "ref": "駄目",
+              "count": 1,
+              "samples": [
+                "今日は忙しいから、ゲームは駄目です。"
+              ]
+            },
+            {
+              "ref": "体",
+              "count": 1,
+              "samples": [
+                "暑くて、体がべたべたしている。"
+              ]
+            },
+            {
+              "ref": "待つ",
+              "count": 1,
+              "samples": [
+                "駅の外側で友達を待っている。"
+              ]
+            },
+            {
+              "ref": "大学",
+              "count": 1,
+              "samples": [
+                "両親は小さな店を営んで、私を大学まで通わせてくれた。"
+              ]
+            },
+            {
+              "ref": "昼ご飯",
+              "count": 1,
+              "samples": [
+                "今日は外で昼ご飯を食べよう。"
+              ]
+            },
+            {
+              "ref": "通う",
+              "count": 1,
+              "samples": [
+                "両親は小さな店を営んで、私を大学まで通わせてくれた。"
+              ]
+            },
+            {
+              "ref": "通る",
+              "count": 1,
+              "samples": [
+                "飛行機が家の真上を通った。"
+              ]
+            },
+            {
+              "ref": "田中さん",
+              "count": 1,
+              "samples": [
+                "田中さんは会議で資料を一部配った。"
+              ]
+            },
+            {
+              "ref": "読みにくい",
+              "count": 1,
+              "samples": [
+                "インクが二か所も滲んで、字が読みにくい。"
+              ]
+            },
+            {
+              "ref": "突然",
+              "count": 1,
+              "samples": [
+                "彼女は突然その問題を持ち出した。"
+              ]
+            },
+            {
+              "ref": "二か所",
+              "count": 1,
+              "samples": [
+                "インクが二か所も滲んで、字が読みにくい。"
+              ]
+            },
+            {
+              "ref": "二ページ",
+              "count": 1,
+              "samples": [
+                "私は資料を二ページでまとめて、会議で説明した。"
+              ]
+            },
+            {
+              "ref": "二日",
+              "count": 1,
+              "samples": [
+                "この肉は二日で傷んだので、捨てるしかなかった。"
+              ]
+            },
+            {
+              "ref": "二杯",
+              "count": 1,
+              "samples": [
+                "駅前の店でコーヒーを二杯頼んだ。"
+              ]
+            },
+            {
+              "ref": "二枚",
+              "count": 1,
+              "samples": [
+                "姉は映画館でチケットを二枚買いました。"
+              ]
+            },
+            {
+              "ref": "母親",
+              "count": 1,
+              "samples": [
+                "子どもが母親にべたべたしている。"
+              ]
+            },
+            {
+              "ref": "黙る",
+              "count": 1,
+              "samples": [
+                "彼は会議の間、ずっと黙っていた。"
+              ]
+            },
+            {
+              "ref": "夜遅い",
+              "count": 1,
+              "samples": [
+                "彼は夜遅い外出を慎んで、毎朝早く起きるようにしている。"
+              ]
+            },
+            {
+              "ref": "予約する",
+              "count": 1,
+              "samples": [
+                "彼女は景色を望む部屋を一泊で予約した。"
+              ]
+            },
+            {
+              "ref": "立つ",
+              "count": 1,
+              "samples": [
+                "彼は私を睨んでから、何も言わずに席を立った。"
+              ]
+            },
+            {
+              "ref": "力を入れる",
+              "count": 1,
+              "samples": [
+                "この会社は社員教育に力を入れて、経験に富む人材を育てている。"
+              ]
+            },
+            {
+              "ref": "六枚",
+              "count": 1,
+              "samples": [
+                "先生はプリントを六枚配りました。"
+              ]
+            },
+            {
+              "ref": "腕時計",
+              "count": 1,
+              "samples": [
+                "彼は会議の前に腕時計を外した。"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "paragraphs",
+          "thisKey": "kanji",
+          "foreignKey": "sentences[].chunks[].refs[]",
+          "relatedPath": "collections/japanese/japanese_paragraphs.json",
+          "missingCount": 25,
+          "missing": [
+            {
+              "ref": "ヒーロー",
+              "count": 12,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero",
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero",
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "俺",
+              "count": 9,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero",
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero",
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "パワー",
+              "count": 3,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero",
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero",
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "悪",
+              "count": 3,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero",
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero",
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "パンチ",
+              "count": 2,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero",
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "アドレナリン",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "ガキ",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "ギリギリ",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "キル",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "ジャスティス",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "ショット",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "ちっぽけ",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "フラストレーション",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "喝",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "居る",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "向ける",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "今",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "止まる",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "常に",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "鍛える",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "諦める",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "奴",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "背",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "覆う",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            },
+            {
+              "ref": "目覚める",
+              "count": 1,
+              "samples": [
+                "THE HERO!! ～怒れる拳に火をつけろ～ | the-hero-ikareru-kobushi-ni-hi-o-tsukero"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
+  "outputPath": "scripts/report_missing_related_collection_data_output.json",
+  "parseErrors": []
+}

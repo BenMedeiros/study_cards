@@ -6,6 +6,10 @@ import { createCollectionsManager } from './managers/collectionsManager.js';
 import createCollectionDatabaseManager from './managers/collectionDatabaseManager.js';
 import { createSettingsManager, setGlobalSettingsManager } from './managers/settingsManager.js';
 
+function safeClone(value) {
+  try { return JSON.parse(JSON.stringify(value)); } catch { return null; }
+}
+
 export function createStore() {
   // In-memory UI state cache. Persisted by persistenceManager.
   const uiState = {
@@ -27,7 +31,47 @@ export function createStore() {
     _availableCollectionPaths: [],
   };
 
+  // Non-persisted, session-scoped analysis data shared across the app.
+  const analysisState = {};
+
   const emitter = createEmitter();
+
+  function getAnalysisState() {
+    return safeClone(analysisState) || {};
+  }
+
+  function getAnalysisEntry(key) {
+    const normalizedKey = String(key || '').trim();
+    if (!normalizedKey) return null;
+    return safeClone(analysisState[normalizedKey]);
+  }
+
+  function setAnalysisEntry(key, value, { silent = false } = {}) {
+    const normalizedKey = String(key || '').trim();
+    if (!normalizedKey) return;
+    if (value === undefined) {
+      try { delete analysisState[normalizedKey]; } catch (e) {}
+    } else {
+      const cloned = safeClone(value);
+      analysisState[normalizedKey] = cloned === null && value !== null ? value : cloned;
+    }
+    if (!silent) emitter.emit();
+  }
+
+  function setAnalysisState(nextState, { silent = false } = {}) {
+    const normalized = (nextState && typeof nextState === 'object') ? (safeClone(nextState) || {}) : {};
+    for (const key of Object.keys(analysisState)) delete analysisState[key];
+    Object.assign(analysisState, normalized);
+    if (!silent) emitter.emit();
+  }
+
+  function mergeAnalysisState(patch, { silent = false } = {}) {
+    const normalized = (patch && typeof patch === 'object') ? (safeClone(patch) || {}) : null;
+    if (!normalized) return;
+    Object.assign(analysisState, normalized);
+    if (!silent) emitter.emit();
+  }
+
   const persistence = createPersistenceManager({ uiState, emitter, studyProgressKey: 'study_progress', studyTimeKey: 'study_time' });
 
   const studyProgress = createStudyProgressManager({ uiState, persistence, emitter, studyProgressKey: 'study_progress', studyTimeKey: 'study_time' });
@@ -48,7 +92,12 @@ export function createStore() {
   // Make SettingsManager available immediately (reads from localStorage directly)
   try { settings.setReady(true); } catch (e) {}
 
-  const collectionDB = createCollectionDatabaseManager();
+  const collectionDB = createCollectionDatabaseManager({
+    onValidationStateChange: (snapshot) => {
+      setAnalysisEntry('validations', snapshot, { silent: false });
+    },
+  });
+  setAnalysisEntry('validations', collectionDB?.validations?.getSnapshot?.() || null, { silent: true });
   const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, grammarProgressManager: grammarProgress, collectionDB, settings });
 
   function subscribe(fn) {
@@ -232,6 +281,13 @@ export function createStore() {
     apps: {
       getState: ui.getAppState,
       setState: ui.setAppState,
+    },
+    analysis: {
+      getState: getAnalysisState,
+      getEntry: getAnalysisEntry,
+      setState: setAnalysisState,
+      mergeState: mergeAnalysisState,
+      setEntry: setAnalysisEntry,
     },
     kanjiProgress: {
       isKanjiLearned: kanjiProgress.isKanjiLearned,

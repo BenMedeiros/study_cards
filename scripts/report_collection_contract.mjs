@@ -10,10 +10,12 @@ const repoRoot = fs.existsSync(path.join(process.cwd(), 'collections'))
   ? process.cwd()
   : path.resolve(__dirname, '..');
 const collectionsRoot = path.join(repoRoot, 'collections');
+const contractSchemaPath = path.join(collectionsRoot, '_collections.schema.json');
 const scriptRoot = fs.existsSync(path.join(repoRoot, 'scripts'))
   ? path.join(repoRoot, 'scripts')
   : __dirname;
-const outputPath = path.join(scriptRoot, 'report_collection_contract_output.json');
+const outputDir = path.join(scriptRoot, 'outputs');
+const outputPath = path.join(outputDir, 'report_collection_contract_output.json');
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -47,6 +49,7 @@ function normalizeIssueList(list = []) {
 
 async function main() {
   const collectionFiles = findCollectionFiles(collectionsRoot);
+  const contractSchema = readJson(contractSchemaPath);
   const parseErrors = [];
   const clean = [];
   const review = [];
@@ -55,7 +58,7 @@ async function main() {
     try {
       const relativePath = path.relative(collectionsRoot, filePath).replace(/\\/g, '/');
       const collection = readJson(filePath);
-      const result = await validateCollection(collection, {});
+      const result = await validateCollection(collection, { contractSchema });
       const report = {
         collectionPath: `collections/${relativePath}`,
         valid: !!result.valid,
@@ -92,6 +95,7 @@ async function main() {
     reports_review: review,
   };
 
+  fs.mkdirSync(outputDir, { recursive: true });
   fs.writeFileSync(outputPath, JSON.stringify(output, null, 2) + '\n');
 
   console.log(`Wrote ${output.outputPath}`);
