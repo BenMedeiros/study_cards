@@ -99,6 +99,7 @@ const CATALOG = Object.freeze((() => {
 
     // apps.viewFooter.*
     'apps.viewFooter.configs': { type: { kind: 'json' }, default: {} },
+    'apps.viewFooter.rowConfigsByCollection': { type: { kind: 'json' }, default: {} },
 
     // apps.entityExplorer.*
     'apps.entityExplorer.manager': { type: { kind: 'enum', values: ['idb', 'ls'] }, default: 'idb' },

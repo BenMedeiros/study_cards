@@ -202,12 +202,37 @@ body {
   .view-footer-controls .btn .icon {
     font-size: 1.05rem;
   }
+
 }
 
 .view-footer-settings-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   justify-content: flex-end;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  width: 100%;
+}
 
+.view-footer-config-buttons {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  gap: 0.35rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.view-footer-config-chip.active {
+  background: var(--accent, #2563eb);
+  color: var(--accent-contrast, #fff);
+}
+
+.view-footer-flatten-btn,
+.view-footer-settings-btn {
+  min-width: 2rem;
 }
 
 .view-footer-controls .btn .text {
@@ -260,6 +285,19 @@ body {
 .view-footer-settings-dialog.open {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
+}
+
+.view-footer-row-config-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.view-footer-row-config-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 @media (max-width: 900px) {

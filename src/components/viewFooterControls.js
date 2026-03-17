@@ -2,6 +2,7 @@ import { getGlobalSettingsManager } from '../managers/settingsManager.js';
 import { openViewFooterSettingsDialog } from './dialogs/viewFooterSettingsDialog.js';
 
 const FOOTER_CONFIGS_SETTING_ID = 'apps.viewFooter.configs';
+const FOOTER_ROW_CONFIGS_SETTING_ID = 'apps.viewFooter.rowConfigsByCollection';
 
 // Autoplay constraints (mirror of settings dialog)
 const AUTOPLAY_MIN_MS = 500;
@@ -140,6 +141,23 @@ function normalizeAppFooterPrefs(raw, baseKeys = [], { customOnly = false } = {}
 function getConfigById(appPrefs, configId) {
   if (!appPrefs || !Array.isArray(appPrefs.configs)) return null;
   return appPrefs.configs.find(c => c.id === configId) || null;
+}
+
+function normalizeVisibleConfigIds(raw, appPrefs) {
+  const configs = Array.isArray(appPrefs?.configs) ? appPrefs.configs : [];
+  const validIds = configs.map(cfg => asString(cfg?.id).trim()).filter(Boolean);
+  const validSet = new Set(validIds);
+  if (typeof raw === 'undefined') return validIds.slice();
+  if (!Array.isArray(raw)) return validIds.slice();
+  const out = [];
+  const seen = new Set();
+  for (const value of raw) {
+    const id = asString(value).trim();
+    if (!id || seen.has(id) || !validSet.has(id)) continue;
+    seen.add(id);
+    out.push(id);
+  }
+  return out;
 }
 
 function applyStateOverrides(state, overrideState, disableHotkeys = false) {
@@ -498,10 +516,27 @@ function createViewFooterControls(items = [], opts = {}) {
   const baseKeys = baseControlItems.map(it => String(it.key || '').trim()).filter(Boolean);
   const customOnly = !!(opts && opts.customOnly);
   let allFooterPrefs = {};
+  let allRowConfigPrefs = {};
   const defaultAppPrefs = normalizeAppFooterPrefs(opts?.defaultPrefs || null, baseKeys, { customOnly });
   let appPrefs = normalizeAppFooterPrefs(null, baseKeys, { customOnly });
+  let visibleConfigIds = normalizeVisibleConfigIds(undefined, appPrefs);
   // autoplay runtime state: only one autoplay allowed at a time
   let currentAutoplay = null;
+  let settingsRow = null;
+  let configButtonsWrap = null;
+
+  function getCollectionKey() {
+    try {
+      const key = (opts && typeof opts.getCollectionKey === 'function') ? opts.getCollectionKey() : '';
+      return asString(key).trim();
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function getRowConfigScopeKey() {
+    return getCollectionKey() || '__default__';
+  }
 
   function cancelAutoplay() {
     try {
@@ -841,14 +876,19 @@ function createViewFooterControls(items = [], opts = {}) {
   function readPrefs() {
     if (!settingsManager || typeof settingsManager.get !== 'function' || typeof settingsManager.set !== 'function' || typeof settingsManager.registerConsumer !== 'function') {
       appPrefs = normalizeAppFooterPrefs(null, baseKeys, { customOnly });
+      visibleConfigIds = normalizeVisibleConfigIds(undefined, appPrefs);
       return;
     }
     try {
       allFooterPrefs = settingsManager.get(FOOTER_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
       appPrefs = normalizeAppFooterPrefs(allFooterPrefs[appId], baseKeys, { customOnly });
+      allRowConfigPrefs = settingsManager.get(FOOTER_ROW_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
+      visibleConfigIds = normalizeVisibleConfigIds(allRowConfigPrefs?.[appId]?.[getRowConfigScopeKey()], appPrefs);
     } catch (e) {
       allFooterPrefs = {};
+      allRowConfigPrefs = {};
       appPrefs = normalizeAppFooterPrefs(null, baseKeys, { customOnly });
+      visibleConfigIds = normalizeVisibleConfigIds(undefined, appPrefs);
     }
   }
 
@@ -863,9 +903,61 @@ function createViewFooterControls(items = [], opts = {}) {
     }
   }
 
+  function persistVisibleConfigIds(nextIds, prefsForValidation = appPrefs) {
+    if (!settingsManager || typeof settingsManager.set !== 'function') return;
+    try {
+      const current = settingsManager.get(FOOTER_ROW_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
+      const currentApp = (current && typeof current[appId] === 'object' && current[appId]) ? current[appId] : {};
+      const normalizedIds = normalizeVisibleConfigIds(nextIds, prefsForValidation);
+      const merged = {
+        ...(current || {}),
+        [appId]: {
+          ...currentApp,
+          [getRowConfigScopeKey()]: normalizedIds,
+        },
+      };
+      settingsManager.set(FOOTER_ROW_CONFIGS_SETTING_ID, merged, { consumerId: `footer.${appId}` });
+      allRowConfigPrefs = merged;
+      visibleConfigIds = normalizedIds;
+    } catch (e) {
+      // ignore persistence failures
+    }
+  }
+
+  function rebuildSettingsRowButtons() {
+    if (!configButtonsWrap) return;
+    configButtonsWrap.innerHTML = '';
+    const visibleSet = new Set(normalizeVisibleConfigIds(visibleConfigIds, appPrefs));
+    for (const cfg of (Array.isArray(appPrefs?.configs) ? appPrefs.configs : [])) {
+      const cfgId = asString(cfg?.id).trim();
+      if (!cfgId || !visibleSet.has(cfgId)) continue;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'view-footer-config-chip btn small';
+      btn.textContent = asString(cfg?.name || cfgId) || cfgId;
+      btn.title = `Use footer config: ${asString(cfg?.name || cfgId) || cfgId}`;
+      btn.setAttribute('aria-label', `Use footer config: ${asString(cfg?.name || cfgId) || cfgId}`);
+      if (cfgId === appPrefs?.activeConfigId) btn.classList.add('active');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (appPrefs?.activeConfigId === cfgId) return;
+        appPrefs = {
+          ...appPrefs,
+          activeConfigId: cfgId,
+          configs: Array.isArray(appPrefs?.configs) ? appPrefs.configs : [],
+        };
+        persistPrefs(appPrefs);
+        rebuildFromConfig();
+      });
+      configButtonsWrap.appendChild(btn);
+    }
+  }
+
   function rebuildFromConfig() {
     const renderItems = applyFooterConfig(items, appPrefs, actionRegistry, { customOnly });
     buildButtons(renderItems);
+    rebuildSettingsRowButtons();
   }
 
   readPrefs();
@@ -897,12 +989,17 @@ function createViewFooterControls(items = [], opts = {}) {
 
   if (opts.enableSettings !== false && baseControlItems.length) {
     // settings button should sit in its own block row above the controls
-    const settingsRow = document.createElement('div');
+    settingsRow = document.createElement('div');
     settingsRow.className = 'view-footer-settings-row';
+
+    configButtonsWrap = document.createElement('div');
+    configButtonsWrap.className = 'view-footer-config-buttons';
+    settingsRow.appendChild(configButtonsWrap);
 
     const flattenBtn = document.createElement('button');
     flattenBtn.type = 'button';
     flattenBtn.className = 'view-footer-flatten-btn btn small';
+    flattenBtn.style.minWidth = '2rem';
     flattenBtn.title = 'Toggle flattened footer';
     flattenBtn.setAttribute('aria-label', 'Toggle flattened footer');
     flattenBtn.setAttribute('aria-pressed', 'false');
@@ -921,6 +1018,7 @@ function createViewFooterControls(items = [], opts = {}) {
     const settingsBtn = document.createElement('button');
     settingsBtn.type = 'button';
     settingsBtn.className = 'view-footer-settings-btn btn small';
+    settingsBtn.style.minWidth = '2rem';
     settingsBtn.textContent = '⚙';
     settingsBtn.title = 'Footer settings';
     settingsBtn.setAttribute('aria-label', 'Footer settings');
@@ -936,6 +1034,13 @@ function createViewFooterControls(items = [], opts = {}) {
         appPrefs,
         defaultAppPrefs: deepClone(defaultAppPrefs),
         customOnly,
+        visibleConfigIds: visibleConfigIds.slice(),
+        collectionLabel: getCollectionKey(),
+        onVisibleConfigsChange: (nextIds, nextPrefs) => {
+          const prefsForValidation = nextPrefs ? normalizeAppFooterPrefs(nextPrefs, baseKeys, { customOnly }) : appPrefs;
+          persistVisibleConfigIds(nextIds, prefsForValidation);
+          rebuildSettingsRowButtons();
+        },
         onChange: (nextPrefs) => {
           appPrefs = normalizeAppFooterPrefs(nextPrefs, baseKeys, { customOnly });
           persistPrefs(appPrefs);
@@ -947,18 +1052,26 @@ function createViewFooterControls(items = [], opts = {}) {
     settingsRow.appendChild(settingsBtn);
     // insert settings row before the controls row so it appears above
     footerControls.insertBefore(settingsRow, controlsRow);
+    rebuildSettingsRowButtons();
   }
 
   if (settingsManager && typeof settingsManager.registerConsumer === 'function') {
     try {
       unregSettings = settingsManager.registerConsumer({
         consumerId: `footer.${appId}`,
-        settings: [FOOTER_CONFIGS_SETTING_ID],
+        settings: [FOOTER_CONFIGS_SETTING_ID, FOOTER_ROW_CONFIGS_SETTING_ID],
         onChange: ({ settingId, next }) => {
-          if (settingId !== FOOTER_CONFIGS_SETTING_ID) return;
           try {
-            const all = (next && typeof next === 'object') ? next : {};
-            appPrefs = normalizeAppFooterPrefs(all[appId], baseKeys, { customOnly });
+            if (settingId === FOOTER_CONFIGS_SETTING_ID) {
+              const all = (next && typeof next === 'object') ? next : {};
+              appPrefs = normalizeAppFooterPrefs(all[appId], baseKeys, { customOnly });
+              visibleConfigIds = normalizeVisibleConfigIds(allRowConfigPrefs?.[appId]?.[getRowConfigScopeKey()], appPrefs);
+            } else if (settingId === FOOTER_ROW_CONFIGS_SETTING_ID) {
+              allRowConfigPrefs = (next && typeof next === 'object') ? next : {};
+              visibleConfigIds = normalizeVisibleConfigIds(allRowConfigPrefs?.[appId]?.[getRowConfigScopeKey()], appPrefs);
+            } else {
+              return;
+            }
             rebuildFromConfig();
           } catch (e) {
             // ignore

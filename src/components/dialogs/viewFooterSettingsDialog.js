@@ -444,6 +444,9 @@ export function openViewFooterSettingsDialog({
   appPrefs = null,
   defaultAppPrefs = null,
   customOnly = false,
+  visibleConfigIds = null,
+  collectionLabel = '',
+  onVisibleConfigsChange = null,
   onChange = null,
 } = {}) {
   const controls = normalizeBaseControls(baseControls);
@@ -453,9 +456,23 @@ export function openViewFooterSettingsDialog({
   let selectedConfigId = prefs.activeConfigId;
   let isDirty = false;
   let expandedRows = new Set();
+  let shownConfigIds = Array.isArray(visibleConfigIds) ? visibleConfigIds.map(id => asString(id).trim()).filter(Boolean) : [];
   const availableActionList = Array.isArray(availableActions) ? availableActions.slice() : [];
   const availableActionById = new Map(availableActionList.map(a => [asString(a.id).trim(), a]));
   const templatePrefs = normalizeAppPrefs(defaultAppPrefs, controls, { customOnly: !!customOnly });
+
+  function syncShownConfigIds() {
+    const validIds = new Set((Array.isArray(prefs.configs) ? prefs.configs : []).map(cfg => asString(cfg?.id).trim()).filter(Boolean));
+    const next = [];
+    const seen = new Set();
+    for (const id of shownConfigIds) {
+      const key = asString(id).trim();
+      if (!key || seen.has(key) || !validIds.has(key)) continue;
+      seen.add(key);
+      next.push(key);
+    }
+    shownConfigIds = next;
+  }
 
   function getDefaultTemplateConfig() {
     return getConfigById(templatePrefs, 'default') || getConfigById(prefs, 'default') || {
@@ -497,6 +514,14 @@ export function openViewFooterSettingsDialog({
   function emitSave(nextPrefs = prefs) {
     try {
       if (typeof onChange === 'function') onChange(deepClone(nextPrefs));
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  function emitVisibleConfigsChange(nextIds = shownConfigIds, nextPrefs = prefs) {
+    try {
+      if (typeof onVisibleConfigsChange === 'function') onVisibleConfigsChange(deepClone(nextIds), deepClone(nextPrefs));
     } catch (e) {
       // ignore
     }
@@ -578,6 +603,8 @@ export function openViewFooterSettingsDialog({
     prefs.configs.push(next);
     prefs.activeConfigId = id;
     selectedConfigId = id;
+    if (!shownConfigIds.includes(id)) shownConfigIds.push(id);
+    emitVisibleConfigsChange(shownConfigIds);
     markDirty();
   }
 
@@ -592,6 +619,8 @@ export function openViewFooterSettingsDialog({
     prefs.configs.push(next);
     prefs.activeConfigId = id;
     selectedConfigId = id;
+    if (!shownConfigIds.includes(id)) shownConfigIds.push(id);
+    emitVisibleConfigsChange(shownConfigIds);
     markDirty();
   }
 
@@ -599,6 +628,8 @@ export function openViewFooterSettingsDialog({
     const current = selectedConfig();
     if (!current) return;
     prefs.configs = prefs.configs.filter(c => c.id !== current.id);
+    shownConfigIds = shownConfigIds.filter(id => id !== current.id);
+    emitVisibleConfigsChange(shownConfigIds);
     const nextActive = (prefs.configs[0] && asString(prefs.configs[0].id).trim()) || '';
     prefs.activeConfigId = nextActive;
     selectedConfigId = nextActive;
@@ -781,6 +812,8 @@ export function openViewFooterSettingsDialog({
 
   const leftTitle = el('div', { className: 'hint', text: 'Saved Configurations' });
   const configList = el('div', { className: 'view-footer-config-list' });
+  const rowButtonsTitle = el('div', { className: 'hint', text: collectionLabel ? `Footer Row Buttons (${collectionLabel})` : 'Footer Row Buttons' });
+  const rowButtonsList = el('div', { className: 'view-footer-row-config-list' });
   const leftActions = el('div', { className: 'view-footer-config-actions' });
 
   const newBtn = el('button', { className: 'btn small', text: 'New' });
@@ -791,7 +824,7 @@ export function openViewFooterSettingsDialog({
   delBtn.type = 'button';
 
   leftActions.append(newBtn, dupBtn, delBtn);
-  left.append(leftTitle, configList, leftActions);
+  left.append(leftTitle, configList, leftActions, rowButtonsTitle, rowButtonsList);
 
   const rightTop = el('div', { className: 'view-footer-editor-top' });
   const nameLabel = el('div', { className: 'hint', text: 'Config Name' });
@@ -841,6 +874,31 @@ export function openViewFooterSettingsDialog({
         renderAll();
       });
       configList.appendChild(row);
+    }
+  }
+
+  function renderRowConfigList() {
+    syncShownConfigIds();
+    rowButtonsList.innerHTML = '';
+    for (const cfg of prefs.configs) {
+      const cfgId = asString(cfg?.id).trim();
+      if (!cfgId) continue;
+      const row = el('label', { className: 'view-footer-row-config-item' });
+      const input = el('input', { attrs: { type: 'checkbox' } });
+      input.checked = shownConfigIds.includes(cfgId);
+      const text = el('span', { text: cfg.name || cfgId });
+      input.addEventListener('change', () => {
+        syncShownConfigIds();
+        if (input.checked) {
+          if (!shownConfigIds.includes(cfgId)) shownConfigIds.push(cfgId);
+        } else {
+          shownConfigIds = shownConfigIds.filter(id => id !== cfgId);
+        }
+        emitVisibleConfigsChange(shownConfigIds);
+        renderRowConfigList();
+      });
+      row.append(input, text);
+      rowButtonsList.appendChild(row);
     }
   }
 
@@ -1509,7 +1567,9 @@ export function openViewFooterSettingsDialog({
   }
 
   function renderAll() {
+    syncShownConfigIds();
     renderConfigList();
+    renderRowConfigList();
     renderEditor();
     try { updateDisableHotkeysText(); } catch (e) {}
     markDirty();

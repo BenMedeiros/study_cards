@@ -456,6 +456,7 @@ export function renderKanjiStudyCard({ store }) {
     actionDefinitions: footerActions.actionDefinitions,
     defaultPrefs: footerActions.defaultPrefs,
     customOnly: true,
+    getCollectionKey: getCurrentCollectionKey,
   });
 
   // Load default view mode from settings
