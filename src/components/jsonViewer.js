@@ -3,12 +3,164 @@ function safeJson(v) {
   try { return JSON.stringify(v, null, 2); } catch { return String(v); }
 }
 
+function isContainer(value) {
+  return Boolean(value) && typeof value === 'object';
+}
+
+function encodePathSegment(value) {
+  return String(value).replace(/~/g, '~0').replace(/\//g, '~1');
+}
+
+function createPath(parentPath, key) {
+  return `${parentPath}/${encodePathSegment(key)}`;
+}
+
+function formatContainerSummary(value) {
+  if (Array.isArray(value)) return value.length ? `[${value.length} items]` : '[]';
+  const size = Object.keys(value || {}).length;
+  return size ? `{${size} keys}` : '{}';
+}
+
+function formatPrimitive(value) {
+  return JSON.stringify(value);
+}
+
+function getEntries(value) {
+  if (!isContainer(value)) return [];
+  return Array.isArray(value)
+    ? value.map((item, index) => [index, item])
+    : Object.entries(value);
+}
+
+function appendToken(parent, className, text) {
+  const token = document.createElement('span');
+  token.className = className;
+  token.textContent = text;
+  parent.appendChild(token);
+  return token;
+}
+
+function buildJsonTree(value, options = {}) {
+  const {
+    collapsedPaths = new Set(),
+    onTogglePath = () => {},
+    wrapping = false,
+  } = options;
+
+  const root = document.createElement('div');
+  root.className = 'json-tree';
+  if (wrapping) root.classList.add('json-tree-wrap');
+
+  function createLine(depth) {
+    const line = document.createElement('div');
+    line.className = 'json-tree-line';
+    line.style.paddingLeft = `${depth * 16}px`;
+    return line;
+  }
+
+  function createToggle(path, isCollapsed) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'json-node-toggle';
+    button.textContent = isCollapsed ? '▸' : '▾';
+    button.title = isCollapsed ? 'Expand node' : 'Collapse node';
+    button.setAttribute('aria-label', isCollapsed ? 'Expand node' : 'Collapse node');
+    button.setAttribute('aria-pressed', isCollapsed ? 'false' : 'true');
+    button.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      onTogglePath(path, !isCollapsed);
+    });
+    return button;
+  }
+
+  function createTogglePlaceholder() {
+    const spacer = document.createElement('span');
+    spacer.className = 'json-node-toggle-placeholder';
+    spacer.textContent = ' ';
+    return spacer;
+  }
+
+  function appendKey(line, key) {
+    appendToken(line, 'json-token-key', JSON.stringify(String(key)));
+    appendToken(line, 'json-token-punctuation', ': ');
+  }
+
+  function renderNode(nodeValue, path, depth, opts = {}) {
+    const { key = null, trailingComma = false, isRoot = false } = opts;
+    if (!isContainer(nodeValue)) {
+      const line = createLine(depth);
+      line.appendChild(createTogglePlaceholder());
+      if (key !== null) appendKey(line, key);
+      appendToken(line, 'json-token-primitive', formatPrimitive(nodeValue));
+      if (trailingComma) appendToken(line, 'json-token-punctuation', ',');
+      return line;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'json-tree-node';
+
+    const line = createLine(depth);
+    const entries = getEntries(nodeValue);
+    const isCollapsed = !isRoot && collapsedPaths.has(path);
+    const openBracket = Array.isArray(nodeValue) ? '[' : '{';
+    const closeBracket = Array.isArray(nodeValue) ? ']' : '}';
+
+    if (entries.length) line.appendChild(isRoot ? createTogglePlaceholder() : createToggle(path, isCollapsed));
+    else line.appendChild(createTogglePlaceholder());
+
+    if (key !== null) appendKey(line, key);
+
+    if (!entries.length) {
+      appendToken(line, 'json-token-punctuation', openBracket + closeBracket);
+      if (trailingComma) appendToken(line, 'json-token-punctuation', ',');
+      wrapper.appendChild(line);
+      return wrapper;
+    }
+
+    if (isCollapsed) {
+      appendToken(line, 'json-token-punctuation', openBracket);
+      appendToken(line, 'json-token-summary', ` ${formatContainerSummary(nodeValue)} `);
+      appendToken(line, 'json-token-punctuation', closeBracket);
+      if (trailingComma) appendToken(line, 'json-token-punctuation', ',');
+      wrapper.appendChild(line);
+      return wrapper;
+    }
+
+    appendToken(line, 'json-token-punctuation', openBracket);
+    wrapper.appendChild(line);
+
+    entries.forEach(([entryKey, entryValue], index) => {
+      wrapper.appendChild(renderNode(entryValue, createPath(path, entryKey), depth + 1, {
+        key: entryKey,
+        trailingComma: index < entries.length - 1,
+      }));
+    });
+
+    const closeLine = createLine(depth);
+    closeLine.appendChild(createTogglePlaceholder());
+    appendToken(closeLine, 'json-token-punctuation', closeBracket);
+    if (trailingComma) appendToken(closeLine, 'json-token-punctuation', ',');
+    wrapper.appendChild(closeLine);
+    return wrapper;
+  }
+
+  root.appendChild(renderNode(value, '', 0, { isRoot: true }));
+  return root;
+}
+
 export function createJsonViewer(value, opts = {}) {
-  const text = safeJson(value);
   const MAX_CHARS = opts.maxChars ?? 1000;
   const MAX_LINES = opts.maxLines ?? 40;
-  const lines = (typeof text === 'string') ? text.split('\n').length : 0;
-  const isBig = (typeof text === 'string' && text.length > MAX_CHARS) || lines > MAX_LINES;
+  const previewLen = opts.previewLen ?? 200;
+  const treeEnabled = opts.tree !== false;
+
+  let currentValue = value;
+  let text = safeJson(currentValue);
+  let lines = (typeof text === 'string') ? text.split('\n').length : 0;
+  let isBig = (typeof text === 'string' && text.length > MAX_CHARS) || lines > MAX_LINES;
+  let isTreeValue = treeEnabled && isContainer(currentValue);
+  let treeRoot = null;
+  const collapsedPaths = new Set(Array.isArray(opts.collapsedPaths) ? opts.collapsedPaths.filter((entry) => typeof entry === 'string') : []);
 
   const wrapper = document.createElement('div');
   wrapper.className = 'json-view-wrapper';
@@ -24,7 +176,6 @@ export function createJsonViewer(value, opts = {}) {
   if (opts.preId) pre.id = opts.preId;
   pre.textContent = text;
 
-  const previewLen = opts.previewLen ?? 200;
   const previewText = typeof text === 'string' ? (text.slice(0, previewLen).replace(/\n/g, ' ') + (text.length > previewLen ? '…' : '')) : String(text);
   const placeholder = document.createElement('div');
   placeholder.className = 'json-collapsed-placeholder';
@@ -56,10 +207,34 @@ export function createJsonViewer(value, opts = {}) {
 
   let wrapMainBtn = null;
 
+  function rebuildTree() {
+    if (!isTreeValue) {
+      treeRoot = null;
+      return;
+    }
+    treeRoot = buildJsonTree(currentValue, {
+      collapsedPaths,
+      wrapping,
+      onTogglePath(path, nextCollapsed) {
+        if (!path) return;
+        if (nextCollapsed) collapsedPaths.add(path);
+        else collapsedPaths.delete(path);
+        rebuildTree();
+        renderCurrent();
+        try { wrapper.dispatchEvent(new CustomEvent('json-tree-toggle', { detail: { path, collapsed: nextCollapsed }, bubbles: true })); } catch (e) {}
+      },
+    });
+  }
+
   function renderCurrent() {
-    content.innerHTML = '';
+    content.replaceChildren();
     if (expanded) {
-      content.appendChild(pre);
+      if (isTreeValue) {
+        if (!treeRoot) rebuildTree();
+        if (treeRoot) content.appendChild(treeRoot);
+      } else {
+        content.appendChild(pre);
+      }
       toggle.textContent = '−';
       toggle.title = 'Collapse JSON';
       toggle.setAttribute('aria-label', 'Collapse JSON');
@@ -127,6 +302,7 @@ export function createJsonViewer(value, opts = {}) {
       ev.stopPropagation();
       wrapping = !wrapping;
       try { pre.style.setProperty('white-space', wrapping ? 'pre-wrap' : 'pre'); } catch (e) {}
+      if (treeRoot) treeRoot.classList.toggle('json-tree-wrap', wrapping);
       wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false');
     });
     controls.appendChild(wrapMainBtn);
@@ -141,42 +317,19 @@ export function createJsonViewer(value, opts = {}) {
       const mount = document.getElementById('shell-root') || document.getElementById('app') || document.body;
       const backdrop = document.createElement('div');
       backdrop.className = 'json-max-backdrop';
-      backdrop.style.position = 'fixed';
-      backdrop.style.left = '0';
-      backdrop.style.top = '0';
-      backdrop.style.right = '0';
-      backdrop.style.bottom = '0';
-      backdrop.style.background = 'rgba(0,0,0,0.6)';
-      backdrop.style.zIndex = '9999';
 
       const dialog = document.createElement('div');
       dialog.className = 'json-max-dialog';
-      dialog.style.position = 'fixed';
-      dialog.style.left = '4%';
-      dialog.style.top = '4%';
-      dialog.style.width = '92%';
-      dialog.style.height = '92%';
-      dialog.style.background = 'var(--bg, #001)';
-      dialog.style.border = '1px solid rgba(255,255,255,0.06)';
-      dialog.style.borderRadius = '8px';
-      dialog.style.zIndex = '10000';
-      dialog.style.display = 'flex';
-      dialog.style.flexDirection = 'column';
 
       const header = document.createElement('div');
       header.className = 'json-max-header';
-      header.style.display = 'flex';
-      header.style.justifyContent = 'space-between';
-      header.style.alignItems = 'center';
-      header.style.padding = '0.5rem';
 
       const title = document.createElement('div');
       title.className = 'json-max-title';
       title.textContent = 'JSON Viewer';
 
       const actions = document.createElement('div');
-      actions.style.display = 'flex';
-      actions.style.gap = '0.5rem';
+      actions.className = 'json-max-actions';
 
       const copyBtn = document.createElement('button');
       copyBtn.type = 'button';
@@ -192,18 +345,37 @@ export function createJsonViewer(value, opts = {}) {
       header.append(title, actions);
 
       const bodyWrap = document.createElement('div');
-      bodyWrap.style.flex = '1 1 auto';
-      bodyWrap.style.overflow = 'auto';
-      bodyWrap.style.padding = '0.5rem';
+      bodyWrap.className = 'json-max-body';
 
-      const bigPre = document.createElement('pre');
-      bigPre.className = 'json-view json-view-max mono';
-      bigPre.style.margin = '0';
-      bigPre.style.whiteSpace = wrapping ? 'pre-wrap' : 'pre';
-      bigPre.style.fontSize = '0.95rem';
-      bigPre.textContent = pre.textContent;
+      function renderMaximizedBody() {
+        bodyWrap.replaceChildren();
+        if (isTreeValue) {
+          const bigTree = buildJsonTree(currentValue, {
+            collapsedPaths,
+            wrapping,
+            onTogglePath(path, nextCollapsed) {
+              if (!path) return;
+              if (nextCollapsed) collapsedPaths.add(path);
+              else collapsedPaths.delete(path);
+              rebuildTree();
+              renderCurrent();
+              renderMaximizedBody();
+            },
+          });
+          bigTree.classList.add('json-view-max');
+          bodyWrap.appendChild(bigTree);
+          return;
+        }
 
-      bodyWrap.appendChild(bigPre);
+        const bigPre = document.createElement('pre');
+        bigPre.className = 'json-view json-view-max mono';
+        bigPre.style.margin = '0';
+        bigPre.style.whiteSpace = wrapping ? 'pre-wrap' : 'pre';
+        bigPre.textContent = text;
+        bodyWrap.appendChild(bigPre);
+      }
+
+      renderMaximizedBody();
       dialog.append(header, bodyWrap);
 
       function closeDialog() {
@@ -220,10 +392,10 @@ export function createJsonViewer(value, opts = {}) {
 
       copyBtn.addEventListener('click', async () => {
         try {
-          if (navigator?.clipboard?.writeText) await navigator.clipboard.writeText(bigPre.textContent || '');
+          if (navigator?.clipboard?.writeText) await navigator.clipboard.writeText(text || '');
           else {
             const ta = document.createElement('textarea');
-            ta.value = bigPre.textContent || '';
+            ta.value = text || '';
             document.body.appendChild(ta);
             ta.select();
             document.execCommand('copy');
@@ -241,9 +413,10 @@ export function createJsonViewer(value, opts = {}) {
         wrapBtn.addEventListener('click', () => {
           try {
             wrapping = !wrapping;
-            bigPre.style.whiteSpace = wrapping ? 'pre-wrap' : 'pre';
             try { pre.style.setProperty('white-space', wrapping ? 'pre-wrap' : 'pre'); } catch (e) {}
+            try { if (treeRoot) treeRoot.classList.toggle('json-tree-wrap', wrapping); } catch (e) {}
             try { if (wrapMainBtn) wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false'); } catch (e) {}
+            renderMaximizedBody();
           } catch (e) {}
         });
         actions.insertBefore(wrapBtn, actions.firstChild || null);
@@ -267,17 +440,20 @@ export function createJsonViewer(value, opts = {}) {
   // out the underlying <pre> content and placeholder preview.
   function setJson(newValue) {
     try {
-      const newText = safeJson(newValue);
-      const newLines = (typeof newText === 'string') ? newText.split('\n').length : 0;
-      const newIsBig = (typeof newText === 'string' && newText.length > MAX_CHARS) || newLines > MAX_LINES;
+      currentValue = newValue;
+      text = safeJson(newValue);
+      lines = (typeof text === 'string') ? text.split('\n').length : 0;
+      isBig = (typeof text === 'string' && text.length > MAX_CHARS) || lines > MAX_LINES;
+      isTreeValue = treeEnabled && isContainer(currentValue);
 
       // update pre and placeholder
-      pre.textContent = newText;
-      const newPreview = typeof newText === 'string' ? (newText.slice(0, previewLen).replace(/\n/g, ' ') + (newText.length > previewLen ? '…' : '')) : String(newText);
+      pre.textContent = text;
+      const newPreview = typeof text === 'string' ? (text.slice(0, previewLen).replace(/\n/g, ' ') + (text.length > previewLen ? '…' : '')) : String(text);
       placeholder.textContent = newPreview;
+      rebuildTree();
 
       // If the new payload is large, force collapse to avoid rendering huge text.
-      if (newIsBig && expanded) {
+      if (isBig && expanded) {
         expanded = false;
       }
       // If new payload is small, leave expanded state as-is (preserve user choice).
@@ -294,7 +470,12 @@ export function createJsonViewer(value, opts = {}) {
 
   // expose some handles for external control
   if (opts.expose) {
-    try { opts.expose.wrapper = wrapper; opts.expose.pre = pre; opts.expose.setJson = setJson; } catch (e) {}
+    try {
+      opts.expose.wrapper = wrapper;
+      opts.expose.pre = pre;
+      opts.expose.setJson = setJson;
+      opts.expose.getCollapsedPaths = () => Array.from(collapsedPaths);
+    } catch (e) {}
   }
 
   // apply optional wrapping state

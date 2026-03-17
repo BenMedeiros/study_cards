@@ -2813,6 +2813,8 @@ select:hover {
 
 #entity-explorer-root .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    max-height: 100%;
+    max-width: 90vw;
 }
 
 #entity-explorer-root .wrap {
@@ -2892,6 +2894,73 @@ select:hover {
   padding: 0.25rem 0.25rem 0.5rem 0.25rem;
 }
 
+.json-view-wrapper .json-tree {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--text);
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.45rem;
+  background: rgba(2, 6, 23, 0.25);
+}
+
+.json-view-wrapper .json-tree-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.15rem;
+  min-height: 1.35rem;
+}
+
+.json-view-wrapper .json-tree-wrap .json-tree-line {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.json-view-wrapper .json-node-toggle,
+.json-view-wrapper .json-node-toggle-placeholder {
+  width: 1rem;
+  min-width: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 1rem;
+}
+
+.json-view-wrapper .json-node-toggle {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  margin-top: 0.08rem;
+}
+
+.json-view-wrapper .json-node-toggle:hover {
+  color: var(--text);
+}
+
+.json-view-wrapper .json-node-toggle-placeholder {
+  color: transparent;
+  user-select: none;
+}
+
+.json-view-wrapper .json-token-key {
+  color: var(--accent, #93c5fd);
+}
+
+.json-view-wrapper .json-token-punctuation {
+  color: var(--muted);
+}
+
+.json-view-wrapper .json-token-summary {
+  color: color-mix(in srgb, var(--muted) 82%, white 18%);
+  font-style: italic;
+}
+
+.json-view-wrapper .json-token-primitive {
+  color: var(--text);
+}
+
 .json-view-wrapper .json-view {
   margin: 0;
   white-space: pre;
@@ -2967,6 +3036,64 @@ select:hover {
   border-color: rgba(96, 165, 250, 0.25);
 }
 
+.json-max-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+}
+
+.json-max-dialog {
+  position: fixed;
+  left: 4%;
+  top: 4%;
+  width: 92%;
+  height: 92%;
+  background: color-mix(in srgb, var(--panel, #0f172a) 86%, black 14%);
+  border: var(--border-1);
+  border-radius: 0.8rem;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+  padding: 0.9rem;
+}
+
+.json-max-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.json-max-title {
+  font-weight: 750;
+  font-size: 1.05rem;
+}
+
+.json-max-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.json-max-body {
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.json-max-body .json-tree,
+.json-max-body .json-view {
+  font-size: 0.95rem;
+  min-height: 100%;
+}
+
+.json-max-body .json-tree {
+  margin: 0;
+}
+
 .table td.table-cell-json {
   vertical-align: top;
   min-width: 12rem;
@@ -2983,6 +3110,12 @@ select:hover {
 }
 
 .table td.table-cell-json .table-cell-json-viewer .json-view {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  padding: 0.35rem 0.45rem;
+}
+
+.table td.table-cell-json .table-cell-json-viewer .json-tree {
   font-size: 0.78rem;
   line-height: 1.35;
   padding: 0.35rem 0.45rem;
@@ -3016,6 +3149,11 @@ select:hover {
    `pre-wrap` so long lines wrap. */
 #entity-explorer-root.json-wrap .json-view {
   white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#entity-explorer-root.json-wrap .json-tree .json-tree-line {
+  white-space: normal;
   word-break: break-word;
 }
 
