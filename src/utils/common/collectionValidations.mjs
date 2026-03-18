@@ -172,33 +172,19 @@ function buildKnownValueSet(collection, key) {
 function collectMissingRefs(sourceCollection, relatedCollection, relation) {
   const sourceKey = relation.this_key || sourceCollection.metadata?.entry_key;
   const knownValues = buildKnownValueSet(sourceCollection, sourceKey);
-  const relatedEntryKey = relatedCollection.metadata?.entry_key || 'ja';
-  const missing = new Map();
+  const missing = new Set();
 
   for (const entry of extractCollectionRecords(relatedCollection)) {
     const refs = extractPathValues(entry, relation.foreign_key);
-    const entryLabel = getEntryLabel(entry, relatedEntryKey);
 
     for (const ref of refs) {
       if (typeof ref !== 'string' || !ref.trim()) continue;
       if (knownValues.has(ref)) continue;
-
-      if (!missing.has(ref)) {
-        missing.set(ref, {
-          count: 0,
-          samples: []
-        });
-      }
-
-      const info = missing.get(ref);
-      info.count += 1;
-      if (info.samples.length < 3) info.samples.push(truncate(entryLabel));
+      missing.add(ref);
     }
   }
 
-  return [...missing.entries()]
-    .map(([ref, info]) => ({ ref, ...info }))
-    .sort((a, b) => b.count - a.count || a.ref.localeCompare(b.ref, 'ja'));
+  return [...missing].sort((a, b) => a.localeCompare(b, 'ja'));
 }
 
 export function validateDuplicatedKeys(collections) {
@@ -282,7 +268,6 @@ export function validateMissingRelatedCollectionData(collections) {
         thisKey: relation.this_key || sourceCollection.metadata?.entry_key || null,
         foreignKey: relation.foreign_key || null,
         relatedPath: `collections/${relatedPath}`,
-        missingCount: 0,
         missing: []
       };
 
@@ -295,7 +280,6 @@ export function validateMissingRelatedCollectionData(collections) {
 
       const relatedCollection = normalizeCollectionBlob(relatedRecord.collection);
       const missing = collectMissingRefs(sourceCollection, relatedCollection, relation);
-      relationReport.missingCount = missing.length;
       relationReport.missing = missing;
       if (missing.length > 0) {
         missingRelationCount += 1;

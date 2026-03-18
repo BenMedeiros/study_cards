@@ -15,12 +15,19 @@ import {
   buildTableColumnItems,
   attachCardTableSettingsButton,
 } from '../utils/browser/tableSettings.js';
+import {
+  buildManageCollectionsAiPrompt,
+  buildManageCollectionsMissingRecordsPrompt,
+  createBalancedMissingBatches,
+  prepareManageCollectionsPromptPayload,
+} from '../templates/aiPromptsManageCollections.js';
 
 const TABLE_ACTION_ITEMS = [
   { key: 'clear', label: 'Clear' },
   { key: 'copyJson', label: 'Copy JSON' },
   { key: 'copyFullJson', label: 'Copy Full JSON' },
 ];
+const AI_PROMPT_MISSING_BATCH_TARGET = 20;
 
 function safeJsonStringify(v, space = 2) {
   try { return JSON.stringify(v, null, space); } catch { return String(v ?? ''); }
@@ -132,6 +139,18 @@ function getEntryKeyField(collection, arrayKey) {
   return '';
 }
 
+function normalizeValidationCollectionPath(value) {
+  const text = String(value || '').trim().replace(/\\/g, '/');
+  return text.replace(/^collections\//i, '');
+}
+
+function getCollectionPathLabel(value) {
+  const normalized = normalizeValidationCollectionPath(value);
+  if (!normalized) return '';
+  const parts = normalized.split('/');
+  return parts[parts.length - 1] || normalized;
+}
+
 export function renderManageCollections({ store, onNavigate }) {
   const root = document.createElement('div');
   root.id = 'manage-collections-root';
@@ -182,131 +201,6 @@ export function renderManageCollections({ store, onNavigate }) {
 
   // group buttons into logical clusters
   const grp1 = document.createElement('div'); grp1.className = 'mc-json-group'; grp1.append(snapshotToggleBtn);
-  // Copy AI Prompt button: copies a blurb + metadata + schema + a diverse sample of entries
-  const copyAiBtn = document.createElement('button');
-  copyAiBtn.type = 'button';
-  copyAiBtn.className = 'btn small';
-  copyAiBtn.textContent = 'Copy AI Prompt';
-  copyAiBtn.title = 'Copy metadata, schema, and example entries for an AI prompt';
-  copyAiBtn.addEventListener('click', async () => {
-    try {
-      const src = (currentJsonMode === 'preview' && previewResult?.merged) ? previewResult.merged : currentCollection;
-      if (!src) { setStatus('No collection loaded to build AI prompt.'); return; }
-
-      const meta = (src.metadata && typeof src.metadata === 'object') ? src.metadata : (src.metadata ?? {});
-      // exclude relatedCollections from the AI prompt metadata
-      const metaForPrompt = (meta && typeof meta === 'object') ? { ...meta } : meta;
-      try { if (metaForPrompt && typeof metaForPrompt === 'object') delete metaForPrompt.relatedCollections; } catch (e) {}
-      const schema = Array.isArray(src?.metadata?.schema) ? src.metadata.schema : (Array.isArray(src?.schema) ? src.schema : []);
-      const arrayKey = detectArrayKey(src) || 'entries';
-      const entriesArr = Array.isArray(src[arrayKey]) ? src[arrayKey] : [];
-
-      // New sampling strategy:
-      // 1) Sample ~100 entries evenly across the collection: indices floor(i * total / 100) for i=0..99
-      // 2) From that sample, try to find a field (schema order or entry keys) whose distinct value
-      //    count across the sample is between 5 and 20 (i.e., grouped). If found, return one example
-      //    entry per distinct value. Otherwise fall back to a small diverse slice.
-      const examples = (function buildExamples() {
-        if (!Array.isArray(entriesArr) || !entriesArr.length) return [];
-        const total = entriesArr.length;
-        // collect ~100 evenly spaced indices (deduplicated)
-        const idxSet = new Set();
-        for (let i = 0; i < 100; i++) {
-          const idx = Math.floor(i * total / 100);
-          idxSet.add(Math.min(total - 1, Math.max(0, idx)));
-        }
-        const sampled = Array.from(idxSet).sort((a, b) => a - b).map(i => entriesArr[i]).filter(Boolean);
-
-        // derive candidate field keys from schema first, then from a sample entry
-        let fieldKeys = [];
-        if (Array.isArray(schema) && schema.length) {
-          fieldKeys = schema.map(f => (f && typeof f === 'object' ? f.key : null)).filter(Boolean);
-        }
-        if (!fieldKeys.length) {
-          const firstObj = entriesArr.find(e => e && typeof e === 'object');
-          if (firstObj) fieldKeys = Object.keys(firstObj || []);
-        }
-
-        // helper to stringify a field value for counting/distinctness
-        const valKey = (v) => {
-          try { return safeJsonStringify(v); } catch (e) { return String(v); }
-        };
-
-        // find counts per distinct value for each candidate field
-        let groupingKey = null;
-        let bestCounts = null;
-        for (const k of fieldKeys) {
-          const counts = new Map();
-          for (const e of sampled) {
-            const v = e && typeof e === 'object' ? e[k] : undefined;
-            const vk = valKey(v);
-            counts.set(vk, (counts.get(vk) || 0) + 1);
-            if (counts.size > 200) break; // too many distinct values, skip
-          }
-          const distinct = counts.size;
-          if (distinct >= 5) {
-            // prefer fields with moderate distinct counts; accept if distinct <= 200
-            groupingKey = k;
-            bestCounts = counts;
-            break;
-          }
-        }
-
-        // fallback: small evenly spaced sample (up to 5)
-        function limitRelatedCollections(entry) {
-          if (!entry || typeof entry !== 'object') return entry;
-          const copy = { ...entry };
-          if (copy.relatedCollections && typeof copy.relatedCollections === 'object') {
-            const rc = {};
-            for (const [rk, rv] of Object.entries(copy.relatedCollections)) {
-              if (Array.isArray(rv)) rc[rk] = rv.length ? [rv[0]] : [];
-              else rc[rk] = rv;
-            }
-            copy.relatedCollections = rc;
-          }
-          return copy;
-        }
-
-        if (!groupingKey || !bestCounts) {
-          const take = Math.min(5, sampled.length);
-          return sampled.slice(0, take).map(limitRelatedCollections);
-        }
-
-        // pick the top 5 most popular distinct values and return one representative entry per value
-        const topValues = Array.from(bestCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5).map(x => x[0]);
-        const reps = [];
-        for (const tv of topValues) {
-          const found = sampled.find(e => valKey(e && e[groupingKey]) === tv) || entriesArr.find(e => valKey(e && e[groupingKey]) === tv);
-          if (found) reps.push(limitRelatedCollections(found));
-        }
-        return reps.slice(0, 5);
-      })();
-
-      // remove relatedCollections from example entries for the AI prompt
-      const examplesForPrompt = Array.isArray(examples) ? examples.map(e => {
-        if (!e || typeof e !== 'object') return e;
-        const c = { ...e };
-        try { delete c.relatedCollections; } catch (err) {}
-        return c;
-      }) : examples;
-
-      const blurb = `Context: I will paste the metadata, schema, and several example entries from a collection. Using the provided schema, please produce new entries that match the schema and reflect the concepts shown in the examples. Return only a JSON array of new entries.`;
-
-      const parts = [];
-      parts.push(blurb);
-      parts.push('\nMetadata:\n' + safeJsonStringify(metaForPrompt, 0));
-      // parts.push('\nSchema:\n' + safeJsonStringify(schema, 0)); // schema already in metadata
-      parts.push('\nExamples:\n' + safeJsonStringify(examplesForPrompt, 0));
-      parts.push('\nInstructions:\n- Produce new entries that follow the schema exactly.\n- Output only a JSON array of entries (no extra text).');
-
-      const promptText = parts.join('\n\n');
-      await copyToClipboard(promptText);
-      setStatus('Copied AI prompt to clipboard.');
-    } catch (e) {
-      setStatus('Failed to copy AI prompt.');
-    }
-  });
-  grp1.append(copyAiBtn);
 
   const downloadSnapshotBtn = document.createElement('button');
   downloadSnapshotBtn.type = 'button';
@@ -434,6 +328,18 @@ export function renderManageCollections({ store, onNavigate }) {
   warningsEl.className = 'mc-warnings';
   warningsEl.textContent = '';
 
+  const aiPromptBody = el('div', { className: 'mc-ai-prompts' });
+  const aiPromptsCard = card({
+    id: 'mc-ai-prompts',
+    title: 'AI Prompts',
+    cornerCaption: '',
+    className: 'mc-card',
+    children: [
+      el('p', { className: 'hint', text: 'Copy a general import prompt for this collection or generate missing-record batches for related collections.' }),
+      aiPromptBody,
+    ]
+  });
+
   // persistent diff cards will be appended directly into the right column
 
   const historyMount = document.createElement('div');
@@ -463,7 +369,8 @@ export function renderManageCollections({ store, onNavigate }) {
   left.append(historyMount);
 
   right.append(
-  card({ title: 'Import', className: 'mc-card', children: [el('p', { className: 'hint', text: 'Paste entry JSON only. Metadata and schema are managed in code and ignored here.' }), importArea, actionsRow, statusEl, warningsEl] }),
+    aiPromptsCard,
+    card({ title: 'Import', className: 'mc-card', children: [el('p', { className: 'hint', text: 'Paste entry JSON only. Metadata and schema are managed in code and ignored here.' }), importArea, actionsRow, statusEl, warningsEl] }),
     unchangedCard,
     editedCard,
     newCard,
@@ -482,6 +389,7 @@ export function renderManageCollections({ store, onNavigate }) {
   let activeRevisionId = null;
   let historyTableSettings = manageCollectionsViewController.getDefaultHistoryTableSettings();
   let historyTableCtrl = null;
+  const aiPromptCollectionCache = new Map();
 
   function ensureHistoryTableController(collKey) {
     const key = String(collKey || '').trim();
@@ -542,6 +450,178 @@ export function renderManageCollections({ store, onNavigate }) {
     warningsEl.style.display = '';
     warningsEl.textContent = arr.map(s => `• ${String(s)}`).join('\n');
     try { if (store?.shell && typeof store.shell.setFooterLeftWarnings === 'function') store.shell.setFooterLeftWarnings(arr); } catch (e) {}
+  }
+
+  async function loadAiPromptCollection(key) {
+    const normalized = normalizeValidationCollectionPath(key);
+    if (!normalized) return null;
+    if (aiPromptCollectionCache.has(normalized)) return aiPromptCollectionCache.get(normalized);
+    const pending = Promise.resolve()
+      .then(() => store?.collectionDB?.getCollection?.(normalized, { force: false }))
+      .catch(() => null);
+    aiPromptCollectionCache.set(normalized, pending);
+    return pending;
+  }
+
+  function getValidationsSnapshot() {
+    try { return store?.analysis?.getEntry?.('validations') || null; } catch (e) { return null; }
+  }
+
+  function getActiveCollectionMissingReport() {
+    const validations = getValidationsSnapshot();
+    const state = validations?.missing_related_collection_data || null;
+    const result = state?.result || null;
+    const reports = Array.isArray(result?.reports) ? result.reports : [];
+    const activeKey = normalizeValidationCollectionPath(collectionKey);
+    if (!activeKey) return { state, report: null };
+    const report = reports.find((entry) => normalizeValidationCollectionPath(entry?.sourcePath) === activeKey) || null;
+    return { state, report };
+  }
+
+  async function copyGenericAiPrompt() {
+    try {
+      const src = (currentJsonMode === 'preview' && previewResult?.merged) ? previewResult.merged : currentCollection;
+      if (!src) { setStatus('No collection loaded to build AI prompt.'); return; }
+      const promptPayload = prepareManageCollectionsPromptPayload({ collection: src, safeJsonStringify });
+      const promptText = buildManageCollectionsAiPrompt({
+        collection: src,
+        collectionKey,
+        metadata: promptPayload.metadata,
+        examples: promptPayload.examples,
+        safeJsonStringify,
+      });
+      await copyToClipboard(promptText);
+      setStatus('Copied generic AI prompt to clipboard.');
+    } catch (e) {
+      setStatus('Failed to copy generic AI prompt.');
+    }
+  }
+
+  async function copyMissingRelationBatchPrompt(report, relation, batch, batchIndex, batchCount) {
+    try {
+      const relatedKey = normalizeValidationCollectionPath(relation?.relatedPath);
+      if (!relatedKey) {
+        setStatus('Missing related collection path for AI prompt.');
+        return;
+      }
+      const targetCollection = await loadAiPromptCollection(relatedKey);
+      if (!targetCollection) {
+        setStatus(`Failed to load related collection: ${relatedKey}`);
+        return;
+      }
+      const promptText = buildManageCollectionsMissingRecordsPrompt({
+        targetCollection,
+        targetCollectionKey: relatedKey,
+        sourceCollectionKey: normalizeValidationCollectionPath(report?.sourcePath) || collectionKey,
+        relation,
+        missingValues: batch,
+        safeJsonStringify,
+      });
+      await copyToClipboard(promptText);
+      setStatus(`Copied missing-record AI prompt for ${relation?.name || relatedKey} batch ${batchIndex + 1}/${batchCount}.`);
+    } catch (e) {
+      setStatus(`Failed to copy missing-record AI prompt: ${e?.message || e}`);
+    }
+  }
+
+  function renderAiPrompts() {
+    aiPromptBody.innerHTML = '';
+
+    const corner = aiPromptsCard.querySelector('.card-corner-caption');
+    if (corner) corner.textContent = '';
+
+    const genericRow = el('div', {
+      className: 'mc-ai-prompt-row',
+      children: [
+        el('div', {
+          children: [
+            el('div', { text: 'General import prompt' }),
+            el('div', { className: 'hint', text: 'Uses this collection’s metadata and representative examples.' }),
+          ]
+        }),
+      ]
+    });
+    const genericBtn = el('button', { className: 'btn small', text: 'Copy Generic Prompt', attrs: { type: 'button' } });
+    genericBtn.disabled = !currentCollection;
+    genericBtn.addEventListener('click', copyGenericAiPrompt);
+    genericRow.append(genericBtn);
+    aiPromptBody.append(genericRow);
+
+    const { state, report } = getActiveCollectionMissingReport();
+    const relationReports = Array.isArray(report?.relations)
+      ? report.relations.filter((relation) => Array.isArray(relation?.missing) && relation.missing.length > 0)
+      : [];
+    const totalMissing = relationReports.reduce((sum, relation) => sum + relation.missing.length, 0);
+    if (corner && totalMissing > 0) corner.textContent = `${totalMissing} missing refs`;
+
+    if (!state || state.status === 'idle' || state.status === 'running') {
+      aiPromptBody.append(el('p', {
+        className: 'hint',
+        text: state?.status === 'running'
+          ? 'Missing-related validation is still running.'
+          : 'Missing-related validation has not run yet.'
+      }));
+      return;
+    }
+
+    if (state.status === 'error') {
+      aiPromptBody.append(el('p', { className: 'hint', text: `Missing-related validation failed: ${state.error || 'Unknown error'}` }));
+      return;
+    }
+
+    if (!report) {
+      aiPromptBody.append(el('p', { className: 'hint', text: 'No missing-related report for this collection.' }));
+      return;
+    }
+
+    if (!relationReports.length) {
+      aiPromptBody.append(el('p', { className: 'hint', text: 'No missing related records for this collection.' }));
+      return;
+    }
+
+    aiPromptBody.append(el('div', {
+      className: 'hint',
+      text: `Balanced batches target about ${AI_PROMPT_MISSING_BATCH_TARGET} missing references per prompt.`
+    }));
+
+    for (const relation of relationReports) {
+      const missing = Array.isArray(relation?.missing) ? relation.missing.slice() : [];
+      const batches = createBalancedMissingBatches(missing, AI_PROMPT_MISSING_BATCH_TARGET);
+      const buttons = el('div', { className: 'mc-actions-row mc-ai-prompt-actions' });
+
+      batches.forEach((batch, batchIndex) => {
+        const batchBtn = el('button', {
+          className: 'btn small',
+          text: `Copy Batch ${batchIndex + 1} (${batch.length})`,
+          attrs: { type: 'button', title: `Copy AI prompt for ${batch.length} missing references` }
+        });
+        batchBtn.addEventListener('click', () => {
+          batchBtn.disabled = true;
+          Promise.resolve(copyMissingRelationBatchPrompt(report, relation, batch, batchIndex, batches.length))
+            .finally(() => { batchBtn.disabled = false; });
+        });
+        buttons.append(batchBtn);
+      });
+
+      const relationMeta = [
+        `Target: ${getCollectionPathLabel(relation?.relatedPath) || relation?.relatedPath || 'unknown'}`,
+        relation?.foreignKey ? `Target ref field: ${relation.foreignKey}` : null,
+        relation?.thisKey ? `Source key: ${relation.thisKey}` : null,
+      ].filter(Boolean).join(' • ');
+
+      const batchHint = batches.length === 1
+        ? '1 batch'
+        : `${batches.length} batches`;
+
+      aiPromptBody.append(makeDetailsItem({
+        summaryLeft: `${relation?.name || 'Relation'} → ${getCollectionPathLabel(relation?.relatedPath) || relation?.relatedPath || ''}`,
+        summaryRight: `${missing.length} missing • ${batchHint}`,
+        children: [
+          el('p', { className: 'hint', text: relationMeta }),
+          buttons,
+        ],
+      }));
+    }
   }
 
   // Build a filtered snapshot object according to selected JSON fields
@@ -1145,6 +1225,8 @@ export function renderManageCollections({ store, onNavigate }) {
       setStatus(`Failed to load collection: ${e?.message || e}`);
     }
 
+    renderAiPrompts();
+
     await loadHistory();
   }
 
@@ -1405,10 +1487,25 @@ export function renderManageCollections({ store, onNavigate }) {
   // Ensure the JSON viewer is created on init — the viewer manages its own collapse state.
   jsonVisible = true;
   try { renderJson(currentJsonMode); } catch (e) {}
+  try { renderAiPrompts(); } catch (e) {}
   Promise.resolve().then(loadCurrent);
+
+  const unsubscribe = (typeof store?.subscribe === 'function')
+    ? store.subscribe(() => {
+        const active = store?.collections?.getActiveCollection?.();
+        const nextKey = String(active?.key || active?.path || '').trim();
+        if (nextKey && nextKey !== collectionKey) {
+          collectionKey = nextKey;
+          Promise.resolve().then(loadCurrent);
+          return;
+        }
+        try { renderAiPrompts(); } catch (e) {}
+      })
+    : null;
 
   const mo = new MutationObserver(() => {
     if (!document.body.contains(root)) {
+      try { if (typeof unsubscribe === 'function') unsubscribe(); } catch (e) {}
       try { if (historyTableCtrl && typeof historyTableCtrl.dispose === 'function') historyTableCtrl.dispose(); } catch (e) {}
       mo.disconnect();
     }
@@ -1416,11 +1513,6 @@ export function renderManageCollections({ store, onNavigate }) {
   mo.observe(document.body, { childList: true, subtree: true });
   return root;
 }
-
-
-
-
-
 
 
 

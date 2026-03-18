@@ -3319,6 +3319,24 @@ h2 {
   flex-wrap: wrap;
 }
 
+#manage-collections-root .mc-ai-prompts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#manage-collections-root .mc-ai-prompt-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+#manage-collections-root .mc-ai-prompt-actions {
+  margin-top: 0;
+}
+
 /* When the label input is placed inside the actions row, show it inline */
 #manage-collections-root .mc-actions-row .mc-label-input {
   width: auto;
