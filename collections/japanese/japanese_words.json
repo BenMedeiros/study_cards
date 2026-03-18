@@ -499,49 +499,49 @@
     {
       "kanji": "二つ",
       "reading": "ふたつ",
-      "meaning": "two (things); two items (native 'つ' counting)",
+      "meaning": "two things; two items in the native counting system",
       "type": "counter"
     },
     {
       "kanji": "三つ",
       "reading": "みっつ",
-      "meaning": "three (things); three items (native 'つ' counting)",
+      "meaning": "three things; three items in the native counting system",
       "type": "counter"
     },
     {
       "kanji": "四つ",
       "reading": "よっつ",
-      "meaning": "four (things); four items (native 'つ' counting)",
+      "meaning": "four things; four items in the native counting system",
       "type": "counter"
     },
     {
       "kanji": "五つ",
       "reading": "いつつ",
-      "meaning": "five (things); five items (native 'つ' counting)",
+      "meaning": "five things; five items in the native counting system",
       "type": "counter"
     },
     {
       "kanji": "六つ",
       "reading": "むっつ",
-      "meaning": "six (things); six items (native 'つ' counting)",
+      "meaning": "six things; six items in the native counting system",
       "type": "counter"
     },
     {
       "kanji": "七つ",
       "reading": "ななつ",
-      "meaning": "seven (things); seven items (native 'つ' counting)",
+      "meaning": "seven things; seven items in the native counting system",
       "type": "counter"
     },
     {
       "kanji": "八つ",
       "reading": "やっつ",
-      "meaning": "eight (things); eight items (native 'つ' counting)",
+      "meaning": "eight things; eight items in the native counting system",
       "type": "counter"
     },
     {
       "kanji": "九つ",
       "reading": "ここのつ",
-      "meaning": "nine (things); nine items (native 'つ' counting)",
+      "meaning": "nine things; nine items in the native counting system",
       "type": "counter"
     },
     {
@@ -613,7 +613,7 @@
     {
       "kanji": "二個",
       "reading": "にこ",
-      "meaning": "two (items) (counter: 個)",
+      "meaning": "two items; two pieces",
       "lexicalClass": "regular",
       "type": "descriptive-phrase"
     },
@@ -658,7 +658,7 @@
     {
       "kanji": "第一",
       "reading": "だいいち",
-      "meaning": "first; number one (ordinal form using 第)",
+      "meaning": "first; number one in ordinal form",
       "type": "expression",
       "tags": [
         "ordinals"
@@ -668,7 +668,7 @@
     {
       "kanji": "第二",
       "reading": "だいに",
-      "meaning": "second (ordinal form using 第)",
+      "meaning": "second in ordinal form",
       "type": "expression",
       "tags": [
         "ordinals"
@@ -678,7 +678,7 @@
     {
       "kanji": "第三",
       "reading": "だいさん",
-      "meaning": "third (ordinal form using 第)",
+      "meaning": "third in ordinal form",
       "type": "expression",
       "tags": [
         "ordinals"
@@ -688,7 +688,7 @@
     {
       "kanji": "第四",
       "reading": "だいよん",
-      "meaning": "fourth (ordinal form using 第)",
+      "meaning": "fourth in ordinal form",
       "type": "expression",
       "tags": [
         "ordinals"
@@ -698,7 +698,7 @@
     {
       "kanji": "第五",
       "reading": "だいご",
-      "meaning": "fifth (ordinal form using 第)",
+      "meaning": "fifth in ordinal form",
       "type": "expression",
       "tags": [
         "ordinals"
@@ -708,7 +708,7 @@
     {
       "kanji": "第十",
       "reading": "だいじゅう",
-      "meaning": "tenth (ordinal form using 第)",
+      "meaning": "tenth in ordinal form",
       "type": "expression",
       "tags": [
         "ordinals"
@@ -1636,7 +1636,7 @@
     {
       "kanji": "喜ぶ",
       "reading": "よろこぶ",
-      "meaning": "to be happy; to喜ぶ; to be delighted",
+      "meaning": "to be happy; to be delighted",
       "ending": "bu",
       "type": "godan-verb",
       "lexicalClass": "regular"
@@ -2966,7 +2966,7 @@
     {
       "kanji": "迎える",
       "reading": "むかえる",
-      "meaning": "to pick up; to welcome; to迎える",
+      "meaning": "to pick up; to welcome; to receive",
       "type": "ichidan-verb"
     },
     {
@@ -4008,7 +4008,7 @@
     {
       "kanji": "ます形",
       "reading": "ますけい",
-      "meaning": "polite verb form ending in ～ます",
+      "meaning": "polite verb form ending in masu",
       "type": "noun",
       "tags": [
         "linguistic_terms"
@@ -4017,7 +4017,7 @@
     {
       "kanji": "ない形",
       "reading": "ないけい",
-      "meaning": "negative verb form ending in ～ない",
+      "meaning": "negative verb form ending in nai",
       "type": "noun",
       "tags": [
         "linguistic_terms"
@@ -4035,7 +4035,7 @@
     {
       "kanji": "た形",
       "reading": "たけい",
-      "meaning": "past tense verb form ending in ～た",
+      "meaning": "past tense verb form ending in ta",
       "type": "noun",
       "tags": [
         "linguistic_terms"
@@ -4044,7 +4044,7 @@
     {
       "kanji": "ら抜き言葉",
       "reading": "らぬきことば",
-      "meaning": "ra-dropping speech; colloquial omission of ら in potential forms (e.g., 食べれる)",
+      "meaning": "ra-dropping speech; colloquial omission of ra in potential forms",
       "type": "noun",
       "tags": [
         "linguistic_terms"
@@ -6754,7 +6754,7 @@
     {
       "kanji": "携帯",
       "reading": "けいたい",
-      "meaning": "mobile phone (short for 携帯電話)",
+      "meaning": "mobile phone; cell phone",
       "type": "noun"
     },
     {
@@ -7237,7 +7237,7 @@
     {
       "kanji": "拗音",
       "reading": "ようおん",
-      "meaning": "contracted sound (e.g., きょ / しゃ)",
+      "meaning": "contracted sound; palatalized kana combination",
       "tags": [
         "linguistic_terms"
       ],
@@ -7246,7 +7246,7 @@
     {
       "kanji": "促音",
       "reading": "そくおん",
-      "meaning": "small っ (geminate consonant marker)",
+      "meaning": "small tsu; geminate consonant marker",
       "tags": [
         "linguistic_terms"
       ],
@@ -7264,7 +7264,7 @@
     {
       "kanji": "撥音",
       "reading": "はつおん",
-      "meaning": "the ん sound (syllabic 'n')",
+      "meaning": "syllabic n sound",
       "tags": [
         "linguistic_terms"
       ],
@@ -7273,7 +7273,7 @@
     {
       "kanji": "清音",
       "reading": "せいおん",
-      "meaning": "unvoiced/plain kana (か, き, く...)",
+      "meaning": "unvoiced plain kana",
       "tags": [
         "linguistic_terms"
       ],
@@ -7282,7 +7282,7 @@
     {
       "kanji": "濁音",
       "reading": "だくおん",
-      "meaning": "voiced consonants (が, ぎ, ぐ... with ゛)",
+      "meaning": "voiced kana with dakuten marks",
       "tags": [
         "linguistic_terms"
       ],
@@ -7291,7 +7291,7 @@
     {
       "kanji": "半濁音",
       "reading": "はんだくおん",
-      "meaning": "semi-voiced (ぱ, ぴ, ぷ... with ゜)",
+      "meaning": "semi-voiced kana with handakuten marks",
       "tags": [
         "linguistic_terms"
       ],
@@ -7381,7 +7381,7 @@
     {
       "kanji": "意向形",
       "reading": "いこうけい",
-      "meaning": "volitional form; expresses intention or suggestion (～よう)",
+      "meaning": "volitional form; expresses intention or suggestion",
       "tags": [
         "linguistic_terms"
       ],
@@ -7399,7 +7399,7 @@
     {
       "kanji": "仮定形",
       "reading": "かていけい",
-      "meaning": "conditional form; typically ～ば form",
+      "meaning": "conditional form; typically the ba form",
       "tags": [
         "linguistic_terms"
       ],
@@ -9722,7 +9722,7 @@
     {
       "kanji": "萬",
       "reading": "まん",
-      "meaning": "ten thousand (old/traditional form of 万)",
+      "meaning": "ten thousand; old traditional form",
       "tags": [
         "formal_numeral"
       ],
@@ -10644,7 +10644,7 @@
     {
       "kanji": "命",
       "reading": "いのち",
-      "meaning": "life;生命",
+      "meaning": "life",
       "type": "noun",
       "tags": [
         "anime_ui"
@@ -13613,7 +13613,7 @@
     {
       "kanji": "明日（あす）",
       "reading": "あす",
-      "meaning": "tomorrow (poetic reading あす)",
+      "meaning": "tomorrow",
       "type": "noun",
       "lexicalClass": "regular",
       "tags": [
@@ -13626,7 +13626,7 @@
     {
       "kanji": "描く",
       "reading": "えがく",
-      "meaning": "to描く; to picture; to描く",
+      "meaning": "to draw; to depict; to picture",
       "type": "godan-verb",
       "lexicalClass": "regular",
       "tags": [
@@ -17231,6 +17231,733 @@
       "kanji": "腕時計",
       "reading": "うでどけい",
       "meaning": "wristwatch",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "アドレナリン",
+      "reading": "アドレナリン",
+      "meaning": "adrenaline",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "ガキ",
+      "reading": "ガキ",
+      "meaning": "brat; kid",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "casual",
+        "rough"
+      ]
+    },
+    {
+      "kanji": "ギリギリ",
+      "reading": "ギリギリ",
+      "meaning": "just barely; right to the limit",
+      "type": "adverb",
+      "lexicalClass": "onomatopoeia",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "キル",
+      "reading": "キル",
+      "meaning": "kill",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "ジャスティス",
+      "reading": "ジャスティス",
+      "meaning": "justice",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic"
+      ]
+    },
+    {
+      "kanji": "ショット",
+      "reading": "ショット",
+      "meaning": "shot",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "ちっぽけ",
+      "reading": "ちっぽけ",
+      "meaning": "tiny; insignificant",
+      "type": "na-adjective",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "casual"
+      ]
+    },
+    {
+      "kanji": "パワー",
+      "reading": "パワー",
+      "meaning": "power",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "パンチ",
+      "reading": "パンチ",
+      "meaning": "punch",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "martial_arts"
+      ]
+    },
+    {
+      "kanji": "ヒーロー",
+      "reading": "ヒーロー",
+      "meaning": "hero",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "heroic"
+      ]
+    },
+    {
+      "kanji": "フラストレーション",
+      "reading": "フラストレーション",
+      "meaning": "frustration",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song"
+      ]
+    },
+    {
+      "kanji": "悪",
+      "reading": "あく",
+      "meaning": "evil",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "written"
+      ]
+    },
+    {
+      "kanji": "俺",
+      "reading": "おれ",
+      "meaning": "I; me (rough masculine)",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the_hero",
+        "anime_song",
+        "casual",
+        "rough"
+      ]
+    },
+    {
+      "kanji": "喝",
+      "reading": "かつ",
+      "meaning": "shout; sharp yell",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "居る",
+      "reading": "いる",
+      "meaning": "to exist; to be present (animate)",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "向ける",
+      "reading": "むける",
+      "meaning": "to turn toward; to point at",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "今",
+      "reading": "いま",
+      "meaning": "now",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "止まる",
+      "reading": "とまる",
+      "meaning": "to stop",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "常に",
+      "reading": "つねに",
+      "meaning": "always; constantly",
+      "type": "adverb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "鍛える",
+      "reading": "きたえる",
+      "meaning": "to train; to forge",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "諦める",
+      "reading": "あきらめる",
+      "meaning": "to give up; to abandon hope",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "奴",
+      "reading": "やつ",
+      "meaning": "guy; fellow",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "背",
+      "reading": "せ",
+      "meaning": "back",
+      "type": "noun",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "覆う",
+      "reading": "おおう",
+      "meaning": "to cover; to cloak",
+      "type": "godan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "目覚める",
+      "reading": "めざめる",
+      "meaning": "to awaken; to wake up",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular",
+      "tags": [
+        "opm-song-the-hero"
+      ]
+    },
+    {
+      "kanji": "ご自宅",
+      "reading": "ごじたく",
+      "meaning": "your home; one's home (honorific)",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "しか～ない",
+      "reading": "しかない",
+      "meaning": "there is nothing but; only",
+      "type": "expression",
+      "lexicalClass": "set-phrase"
+    },
+    {
+      "kanji": "ず",
+      "reading": "ず",
+      "meaning": "without doing; not and",
+      "type": "particle",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "すぎる",
+      "reading": "すぎる",
+      "meaning": "to exceed; to be too much",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ずに",
+      "reading": "ずに",
+      "meaning": "without doing",
+      "type": "particle",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "せいだ",
+      "reading": "せいだ",
+      "meaning": "it is because of; to blame for",
+      "type": "expression",
+      "lexicalClass": "set-phrase"
+    },
+    {
+      "kanji": "ゼウス",
+      "reading": "ゼウス",
+      "meaning": "Zeus",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "その",
+      "reading": "その",
+      "meaning": "that; that ...",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "それ",
+      "reading": "それ",
+      "meaning": "that",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "だ",
+      "reading": "だ",
+      "meaning": "to be (plain copula)",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "たい",
+      "reading": "たい",
+      "meaning": "want to do",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "だけ",
+      "reading": "だけ",
+      "meaning": "only; just",
+      "type": "particle",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "たことがある",
+      "reading": "たことがある",
+      "meaning": "have done before; have the experience of doing",
+      "type": "expression",
+      "lexicalClass": "set-phrase"
+    },
+    {
+      "kanji": "だった",
+      "reading": "だった",
+      "meaning": "was; were",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ため",
+      "reading": "ため",
+      "meaning": "for the sake of; because of",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "たら",
+      "reading": "たら",
+      "meaning": "if; when",
+      "type": "conjunction",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ている",
+      "reading": "ている",
+      "meaning": "be doing; ongoing state",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "てから",
+      "reading": "てから",
+      "meaning": "after doing",
+      "type": "conjunction",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "と",
+      "reading": "と",
+      "meaning": "and; with; if/when; quotation marker",
+      "type": "particle",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "という",
+      "reading": "という",
+      "meaning": "called; that says; that is called",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "と言われている",
+      "reading": "といわれている",
+      "meaning": "it is said that; is called",
+      "type": "phrase-sentence",
+      "lexicalClass": "set-phrase"
+    },
+    {
+      "kanji": "ないように",
+      "reading": "ないように",
+      "meaning": "so as not to; in order not to",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ギリシャ",
+      "reading": "ギリシャ",
+      "meaning": "Greece",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ギリシャ神話",
+      "reading": "ギリシャしんわ",
+      "meaning": "Greek mythology",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ください",
+      "reading": "ください",
+      "meaning": "please; please do",
+      "type": "expression",
+      "lexicalClass": "set-phrase"
+    },
+    {
+      "kanji": "くれる",
+      "reading": "くれる",
+      "meaning": "to give (to me/us)",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ここ",
+      "reading": "ここ",
+      "meaning": "here",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "について",
+      "reading": "について",
+      "meaning": "about; regarding",
+      "type": "particle",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ので",
+      "reading": "ので",
+      "meaning": "because; so",
+      "type": "conjunction",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "プリント",
+      "reading": "プリント",
+      "meaning": "printout; worksheet",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "べき",
+      "reading": "べき",
+      "meaning": "should; ought to",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ヘラクレス",
+      "reading": "ヘラクレス",
+      "meaning": "Heracles; Hercules",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "まだ",
+      "reading": "まだ",
+      "meaning": "still; not yet",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "まで",
+      "reading": "まで",
+      "meaning": "until; up to",
+      "type": "particle",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "まとめる",
+      "reading": "まとめる",
+      "meaning": "to gather together; to summarize",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "みかん",
+      "reading": "みかん",
+      "meaning": "mandarin orange",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "むく",
+      "reading": "むく",
+      "meaning": "to peel",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "や",
+      "reading": "や",
+      "meaning": "and; such as",
+      "type": "particle",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "やっと",
+      "reading": "やっと",
+      "meaning": "at last; finally",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ように",
+      "reading": "ように",
+      "meaning": "so that; in order to; like",
+      "type": "expression",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "ようにしている",
+      "reading": "ようにしている",
+      "meaning": "make a habit of; try to",
+      "type": "phrase-sentence",
+      "lexicalClass": "set-phrase"
+    },
+    {
+      "kanji": "より",
+      "reading": "より",
+      "meaning": "than; from",
+      "type": "particle",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "レンズ",
+      "reading": "レンズ",
+      "meaning": "lens",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "一回",
+      "reading": "いっかい",
+      "meaning": "one time; once",
+      "type": "descriptive-phrase",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "一言",
+      "reading": "ひとこと",
+      "meaning": "a word; a brief remark",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "一周",
+      "reading": "いっしゅう",
+      "meaning": "one lap; one circuit",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "一泊",
+      "reading": "いっぱく",
+      "meaning": "one night stay",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "一部",
+      "reading": "いちぶ",
+      "meaning": "one part; a portion",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "影響する",
+      "reading": "えいきょうする",
+      "meaning": "to influence; to affect",
+      "type": "irregular-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "英雄",
+      "reading": "えいゆう",
+      "meaning": "hero",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "何も",
+      "reading": "なにも",
+      "meaning": "nothing; not anything",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "過ごす",
+      "reading": "すごす",
+      "meaning": "to spend (time); to pass",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "楽",
+      "reading": "らく",
+      "meaning": "easy; comfortable",
+      "type": "na-adjective",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "観光客",
+      "reading": "かんこうきゃく",
+      "meaning": "tourist",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "景色",
+      "reading": "けしき",
+      "meaning": "scenery; view",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "計画",
+      "reading": "けいかく",
+      "meaning": "plan",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "古代",
+      "reading": "こだい",
+      "meaning": "ancient times; antiquity",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "五個",
+      "reading": "ごこ",
+      "meaning": "five pieces; five items",
+      "type": "descriptive-phrase",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "五段",
+      "reading": "ごだん",
+      "meaning": "godan; five-step",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "功業",
+      "reading": "こうぎょう",
+      "meaning": "great achievement; distinguished service",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "三年",
+      "reading": "さんねん",
+      "meaning": "three years",
+      "type": "descriptive-phrase",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "私たち",
+      "reading": "わたしたち",
+      "meaning": "we; us",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "視聴できる",
+      "reading": "しちょうできる",
+      "meaning": "can watch; can view",
+      "type": "phrase-sentence",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "資料",
+      "reading": "しりょう",
+      "meaning": "materials; reference materials",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "社員教育",
+      "reading": "しゃいんきょういく",
+      "meaning": "employee training",
       "type": "noun",
       "lexicalClass": "regular"
     }

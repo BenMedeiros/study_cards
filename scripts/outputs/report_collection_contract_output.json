@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-03-18T00:08:16.336Z",
+  "generatedAt": "2026-03-18T14:41:31.228Z",
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_collection_contract_output.json",
-  "scannedCollections": 11,
-  "collectionsWithProblems": 0,
+  "scannedCollections": 12,
+  "collectionsWithProblems": 1,
   "parseErrors": [],
   "reports_clean": [
     {
@@ -170,5 +170,19 @@
       "duplicateCount": 0
     }
   ],
-  "reports_review": []
+  "reports_review": [
+    {
+      "collectionPath": "collections/spanish_words.json",
+      "valid": false,
+      "arrayKey": "entries",
+      "entryKeyField": "lemma",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 1,
+      "entryWarningCount": 0,
+      "duplicateCount": 1
+    }
+  ]
 }

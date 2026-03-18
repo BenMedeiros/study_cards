@@ -1,0 +1,2387 @@
+{
+  "metadata": {
+    "name": "All Spanish Words",
+    "description": "First-generation Spanish vocabulary entries in canonical dictionary form, with English glosses and lightweight grammatical metadata.",
+    "version": 1,
+    "category": "spanish",
+    "source": "Curated Spanish vocabulary list",
+    "entry_key": "lemma",
+    "relatedCollections": [],
+    "schema": [
+      {
+        "key": "lemma",
+        "label": "Lemma",
+        "description": "Canonical dictionary form. Use the infinitive for verbs, singular masculine/base form for adjectives where applicable, and singular noun form.",
+        "type": "string"
+      },
+      {
+        "key": "meaning",
+        "label": "Meaning",
+        "description": "Short English gloss. Keep it compact; put nuance in notes later if needed.",
+        "type": "string"
+      },
+      {
+        "key": "type",
+        "label": "Type",
+        "description": "Basic grammatical classification.",
+        "type": "enum",
+        "values": {
+          "noun": "Common noun.",
+          "proper-noun": "Name of a person, place, organization, etc.",
+          "verb": "Verb in infinitive form.",
+          "adjective": "Adjective in canonical form.",
+          "adverb": "Adverb.",
+          "pronoun": "Pronoun.",
+          "determiner": "Article, demonstrative, possessive, quantifier, etc.",
+          "preposition": "Preposition.",
+          "conjunction": "Conjunction.",
+          "interjection": "Interjection or exclamation.",
+          "expression": "Fixed phrase or multi-word expression."
+        }
+      },
+      {
+        "key": "semanticClass",
+        "label": "Semantic Class",
+        "description": "Semantic category/class of the word. Use plain text rather than an enum so this can scale across parts of speech; examples for nouns include home, food, animals, people, city, and time. Use null when not needed.",
+        "type": "string"
+      },
+      {
+        "key": "gender",
+        "label": "Gender",
+        "description": "Gender classification for nouns; use null when not applicable.",
+        "type": "enum",
+        "values": {
+          "m": "Masculine.",
+          "f": "Feminine.",
+          "mf": "Common gender / masculine and feminine forms.",
+          "f_el": "Feminine noun that takes singular `el` before stressed /a/ (for example, `el agua`, `el águila`)."
+        }
+      },
+      {
+        "key": "tags",
+        "label": "Tags",
+        "description": "Optional machine-friendly tags for filtering/grouping.",
+        "type": "string[]"
+      }
+    ]
+  },
+  "entries": [
+    {
+      "lemma": "agua",
+      "meaning": "water",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f_el"
+    },
+    {
+      "lemma": "pan",
+      "meaning": "bread",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "arroz",
+      "meaning": "rice",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "leche",
+      "meaning": "milk",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "queso",
+      "meaning": "cheese",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "huevo",
+      "meaning": "egg",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "carne",
+      "meaning": "meat",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "pollo",
+      "meaning": "chicken",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "pescado",
+      "meaning": "fish",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "manzana",
+      "meaning": "apple",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "plátano",
+      "meaning": "banana",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "naranja",
+      "meaning": "orange",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "uva",
+      "meaning": "grape",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "fresa",
+      "meaning": "strawberry",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "limón",
+      "meaning": "lemon",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "tomate",
+      "meaning": "tomato",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "patata",
+      "meaning": "potato",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "cebolla",
+      "meaning": "onion",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "ajo",
+      "meaning": "garlic",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "zanahoria",
+      "meaning": "carrot",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "ensalada",
+      "meaning": "salad",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "sopa",
+      "meaning": "soup",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "azúcar",
+      "meaning": "sugar",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "sal",
+      "meaning": "salt",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "aceite",
+      "meaning": "oil",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "mantequilla",
+      "meaning": "butter",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "café",
+      "meaning": "coffee",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "té",
+      "meaning": "tea",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "jugo",
+      "meaning": "juice",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "cerveza",
+      "meaning": "beer",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "vino",
+      "meaning": "wine",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "quesadilla",
+      "meaning": "quesadilla",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "almuerzo",
+      "meaning": "lunch",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "cena",
+      "meaning": "dinner",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "comida",
+      "meaning": "food; meal",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "fruta",
+      "meaning": "fruit",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "verdura",
+      "meaning": "vegetable",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "postre",
+      "meaning": "dessert",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "galleta",
+      "meaning": "cookie",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "pastel",
+      "meaning": "cake",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "helado",
+      "meaning": "ice cream",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "chocolate",
+      "meaning": "chocolate",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "miel",
+      "meaning": "honey",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "mermelada",
+      "meaning": "jam",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "sándwich",
+      "meaning": "sandwich",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "pizza",
+      "meaning": "pizza",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "hamburguesa",
+      "meaning": "hamburger",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "pasta",
+      "meaning": "pasta",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "taco",
+      "meaning": "taco",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "frijol",
+      "meaning": "bean",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "maíz",
+      "meaning": "corn",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "harina",
+      "meaning": "flour",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "vinagre",
+      "meaning": "vinegar",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "pimienta",
+      "meaning": "pepper",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "desayuno",
+      "meaning": "breakfast",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "yogur",
+      "meaning": "yogurt",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "manteca",
+      "meaning": "lard; shortening",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "atún",
+      "meaning": "tuna",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "jamón",
+      "meaning": "ham",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "lemma": "salchicha",
+      "meaning": "sausage",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "lemma": "perro",
+      "meaning": "dog",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "gato",
+      "meaning": "cat",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "pájaro",
+      "meaning": "bird",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "pez",
+      "meaning": "fish",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "caballo",
+      "meaning": "horse",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "vaca",
+      "meaning": "cow",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "cerdo",
+      "meaning": "pig",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "oveja",
+      "meaning": "sheep",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "ardilla",
+      "meaning": "squirrel",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "conejo",
+      "meaning": "rabbit",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "ratón",
+      "meaning": "mouse",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "tortuga",
+      "meaning": "turtle",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "rana",
+      "meaning": "frog",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "serpiente",
+      "meaning": "snake",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "cabra",
+      "meaning": "goat",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "león",
+      "meaning": "lion",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "tigre",
+      "meaning": "tiger",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "oso",
+      "meaning": "bear",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "lobo",
+      "meaning": "wolf",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "zorro",
+      "meaning": "fox",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "mono",
+      "meaning": "monkey",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "elefante",
+      "meaning": "elephant",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "jirafa",
+      "meaning": "giraffe",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "cebra",
+      "meaning": "zebra",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "hipopótamo",
+      "meaning": "hippopotamus",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "rinoceronte",
+      "meaning": "rhinoceros",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "delfín",
+      "meaning": "dolphin",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "ballena",
+      "meaning": "whale",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "tiburón",
+      "meaning": "shark",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "pulpo",
+      "meaning": "octopus",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "pingüino",
+      "meaning": "penguin",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "águila",
+      "meaning": "eagle",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f_el"
+    },
+    {
+      "lemma": "halcón",
+      "meaning": "falcon",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "búho",
+      "meaning": "owl",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "paloma",
+      "meaning": "dove; pigeon",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "gallina",
+      "meaning": "hen",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "gallo",
+      "meaning": "rooster",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "pato",
+      "meaning": "duck",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "cisne",
+      "meaning": "swan",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "mariposa",
+      "meaning": "butterfly",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "abeja",
+      "meaning": "bee",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "hormiga",
+      "meaning": "ant",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "mosca",
+      "meaning": "fly",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "mosquito",
+      "meaning": "mosquito",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "araña",
+      "meaning": "spider",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "ciervo",
+      "meaning": "deer",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "camello",
+      "meaning": "camel",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "cocodrilo",
+      "meaning": "crocodile",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "lagarto",
+      "meaning": "lizard",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "murciélago",
+      "meaning": "bat",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "foca",
+      "meaning": "seal",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "medusa",
+      "meaning": "jellyfish",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "cangrejo",
+      "meaning": "crab",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "langosta",
+      "meaning": "lobster",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "calamar",
+      "meaning": "squid",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "gusano",
+      "meaning": "worm",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "burro",
+      "meaning": "donkey",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "mula",
+      "meaning": "mule",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "lemma": "chimpancé",
+      "meaning": "chimpanzee",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "gorila",
+      "meaning": "gorilla",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "koala",
+      "meaning": "koala",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "lemma": "casa",
+      "meaning": "house; home",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "hogar",
+      "meaning": "home",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "apartamento",
+      "meaning": "apartment",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "habitación",
+      "meaning": "room; bedroom",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "cocina",
+      "meaning": "kitchen",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "baño",
+      "meaning": "bathroom",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "sala",
+      "meaning": "living room; hall",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "comedor",
+      "meaning": "dining room",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "puerta",
+      "meaning": "door",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "ventana",
+      "meaning": "window",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "pared",
+      "meaning": "wall",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "techo",
+      "meaning": "ceiling; roof",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "suelo",
+      "meaning": "floor; ground",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "mesa",
+      "meaning": "table",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "silla",
+      "meaning": "chair",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "sofá",
+      "meaning": "sofa",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "cama",
+      "meaning": "bed",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "armario",
+      "meaning": "closet; wardrobe",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "espejo",
+      "meaning": "mirror",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "lámpara",
+      "meaning": "lamp",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "cortina",
+      "meaning": "curtain",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "alfombra",
+      "meaning": "rug; carpet",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "nevera",
+      "meaning": "refrigerator",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "horno",
+      "meaning": "oven",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "fregadero",
+      "meaning": "sink",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "ducha",
+      "meaning": "shower",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "toalla",
+      "meaning": "towel",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "jabón",
+      "meaning": "soap",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "lemma": "llave",
+      "meaning": "key",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "escalera",
+      "meaning": "stairs; staircase",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "lemma": "persona",
+      "meaning": "person",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "hombre",
+      "meaning": "man",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "mujer",
+      "meaning": "woman",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "niño",
+      "meaning": "boy; child",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "niña",
+      "meaning": "girl",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "bebé",
+      "meaning": "baby",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "mf"
+    },
+    {
+      "lemma": "amigo",
+      "meaning": "friend",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "amiga",
+      "meaning": "friend",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "familia",
+      "meaning": "family",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "madre",
+      "meaning": "mother",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "padre",
+      "meaning": "father",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "hermano",
+      "meaning": "brother",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "hermana",
+      "meaning": "sister",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "hijo",
+      "meaning": "son",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "hija",
+      "meaning": "daughter",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "abuelo",
+      "meaning": "grandfather",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "abuela",
+      "meaning": "grandmother",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "tío",
+      "meaning": "uncle",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "tía",
+      "meaning": "aunt",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "primo",
+      "meaning": "cousin",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "prima",
+      "meaning": "cousin",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "vecino",
+      "meaning": "neighbor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "vecina",
+      "meaning": "neighbor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "estudiante",
+      "meaning": "student",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "mf"
+    },
+    {
+      "lemma": "profesor",
+      "meaning": "teacher; professor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "profesora",
+      "meaning": "teacher; professor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "doctor",
+      "meaning": "doctor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "doctora",
+      "meaning": "doctor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "lemma": "cliente",
+      "meaning": "customer; client",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "mf"
+    },
+    {
+      "lemma": "jefe",
+      "meaning": "boss; manager",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "lemma": "ciudad",
+      "meaning": "city",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "pueblo",
+      "meaning": "town; village",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "barrio",
+      "meaning": "neighborhood",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "calle",
+      "meaning": "street",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "avenida",
+      "meaning": "avenue",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "plaza",
+      "meaning": "plaza; square",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "parque",
+      "meaning": "park",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "puente",
+      "meaning": "bridge",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "edificio",
+      "meaning": "building",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "tienda",
+      "meaning": "store; shop",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "mercado",
+      "meaning": "market",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "supermercado",
+      "meaning": "supermarket",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "restaurante",
+      "meaning": "restaurant",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "café",
+      "meaning": "cafe",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "hotel",
+      "meaning": "hotel",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "banco",
+      "meaning": "bank",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "hospital",
+      "meaning": "hospital",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "farmacia",
+      "meaning": "pharmacy",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "escuela",
+      "meaning": "school",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "biblioteca",
+      "meaning": "library",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "museo",
+      "meaning": "museum",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "iglesia",
+      "meaning": "church",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "estación",
+      "meaning": "station",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "aeropuerto",
+      "meaning": "airport",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "oficina",
+      "meaning": "office",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "correos",
+      "meaning": "post office; mail",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "acera",
+      "meaning": "sidewalk",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "semáforo",
+      "meaning": "traffic light",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "lemma": "fuente",
+      "meaning": "fountain",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "rotonda",
+      "meaning": "roundabout",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "lemma": "cuerpo",
+      "meaning": "body",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "cabeza",
+      "meaning": "head",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "cara",
+      "meaning": "face",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "ojo",
+      "meaning": "eye",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "nariz",
+      "meaning": "nose",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "boca",
+      "meaning": "mouth",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "oreja",
+      "meaning": "ear",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "diente",
+      "meaning": "tooth",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "lengua",
+      "meaning": "tongue",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "cuello",
+      "meaning": "neck",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "hombro",
+      "meaning": "shoulder",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "brazo",
+      "meaning": "arm",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "codo",
+      "meaning": "elbow",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "mano",
+      "meaning": "hand",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "dedo",
+      "meaning": "finger; toe",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "pecho",
+      "meaning": "chest",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "espalda",
+      "meaning": "back",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "estómago",
+      "meaning": "stomach",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "corazón",
+      "meaning": "heart",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "pierna",
+      "meaning": "leg",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "rodilla",
+      "meaning": "knee",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "pie",
+      "meaning": "foot",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "piel",
+      "meaning": "skin",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "hueso",
+      "meaning": "bone",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "sangre",
+      "meaning": "blood",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "cerebro",
+      "meaning": "brain",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "labio",
+      "meaning": "lip",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "uña",
+      "meaning": "nail",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "garganta",
+      "meaning": "throat",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "lemma": "pulmón",
+      "meaning": "lung",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "lemma": "transporte",
+      "meaning": "transportation",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "vehículo",
+      "meaning": "vehicle",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "coche",
+      "meaning": "car",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "automóvil",
+      "meaning": "automobile",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "autobús",
+      "meaning": "bus",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "camión",
+      "meaning": "truck",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "taxi",
+      "meaning": "taxi",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "tren",
+      "meaning": "train",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "metro",
+      "meaning": "subway; metro",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "tranvía",
+      "meaning": "tram",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "motocicleta",
+      "meaning": "motorcycle",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "lemma": "bicicleta",
+      "meaning": "bicycle",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "lemma": "barco",
+      "meaning": "boat; ship",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "barca",
+      "meaning": "small boat",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "lemma": "avión",
+      "meaning": "airplane",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "helicóptero",
+      "meaning": "helicopter",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "cohete",
+      "meaning": "rocket",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "carretera",
+      "meaning": "highway; road",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "lemma": "camino",
+      "meaning": "road; path",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "ruta",
+      "meaning": "route",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "lemma": "carril",
+      "meaning": "lane",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "tráfico",
+      "meaning": "traffic",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "viaje",
+      "meaning": "trip; journey",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "pasajero",
+      "meaning": "passenger",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "conductor",
+      "meaning": "driver",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "volante",
+      "meaning": "steering wheel",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "freno",
+      "meaning": "brake",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "motor",
+      "meaning": "engine; motor",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "lemma": "gasolina",
+      "meaning": "gasoline",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "lemma": "maleta",
+      "meaning": "suitcase",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "lemma": "tiempo",
+      "meaning": "time",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "momento",
+      "meaning": "moment",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "instante",
+      "meaning": "instant",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "segundo",
+      "meaning": "second",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "minuto",
+      "meaning": "minute",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "hora",
+      "meaning": "hour",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "lemma": "día",
+      "meaning": "day",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "semana",
+      "meaning": "week",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "lemma": "mes",
+      "meaning": "month",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "año",
+      "meaning": "year",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "siglo",
+      "meaning": "century",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "pasado",
+      "meaning": "past",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "presente",
+      "meaning": "present",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "futuro",
+      "meaning": "future",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "mañana",
+      "meaning": "morning",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "lemma": "tarde",
+      "meaning": "afternoon; evening",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "lemma": "noche",
+      "meaning": "night",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "lemma": "madrugada",
+      "meaning": "early morning; dawn hours",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "lemma": "amanecer",
+      "meaning": "dawn",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "atardecer",
+      "meaning": "sunset; dusk",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "anochecer",
+      "meaning": "nightfall",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "primavera",
+      "meaning": "spring",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "lemma": "verano",
+      "meaning": "summer",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "otoño",
+      "meaning": "autumn",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "invierno",
+      "meaning": "winter",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "fecha",
+      "meaning": "date",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "lemma": "plazo",
+      "meaning": "term; deadline",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "calendario",
+      "meaning": "calendar",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "reloj",
+      "meaning": "clock; watch",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "horario",
+      "meaning": "schedule; timetable",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "lemma": "objeto",
+      "meaning": "object",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "cosa",
+      "meaning": "thing",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "caja",
+      "meaning": "box",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "bolsa",
+      "meaning": "bag",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "botella",
+      "meaning": "bottle",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "vaso",
+      "meaning": "glass; cup",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "taza",
+      "meaning": "cup; mug",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "plato",
+      "meaning": "plate",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "cuchara",
+      "meaning": "spoon",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "tenedor",
+      "meaning": "fork",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "cuchillo",
+      "meaning": "knife",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "papel",
+      "meaning": "paper",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "libreta",
+      "meaning": "notebook",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "cuaderno",
+      "meaning": "notebook",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "libro",
+      "meaning": "book",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "lápiz",
+      "meaning": "pencil",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "bolígrafo",
+      "meaning": "pen",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "moneda",
+      "meaning": "coin",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "billete",
+      "meaning": "bill; ticket",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "cartera",
+      "meaning": "wallet",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "mochila",
+      "meaning": "backpack",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "regalo",
+      "meaning": "gift",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "juguete",
+      "meaning": "toy",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "herramienta",
+      "meaning": "tool",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "cadena",
+      "meaning": "chain",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "anillo",
+      "meaning": "ring",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "collar",
+      "meaning": "necklace",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "retrato",
+      "meaning": "portrait; picture",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "lemma": "bandera",
+      "meaning": "flag",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "lemma": "jarrón",
+      "meaning": "vase",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    }
+  ]
+}

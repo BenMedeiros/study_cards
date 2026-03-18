@@ -105,10 +105,10 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-03-17T23:53:42.218Z",
+      "modifiedAt": "2026-03-18T14:23:23.622Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
-      "entriesCount": 2002,
+      "entriesCount": 2092,
       "valid": true,
       "validation": {
         "schema": {
@@ -213,6 +213,60 @@
         "entries": {
           "errors": [],
           "warnings": []
+        }
+      },
+      "schemaSource": "inline"
+    },
+    {
+      "path": "spanish_words.json",
+      "modifiedAt": "2026-03-18T14:39:16.394Z",
+      "name": "All Spanish Words",
+      "description": "First-generation Spanish vocabulary entries in canonical dictionary form, with English glosses and lightweight grammatical metadata.",
+      "entriesCount": 331,
+      "valid": false,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [
+            {
+              "id": "café",
+              "message": "Duplicate entry key 'café' appears 2 times in file"
+            }
+          ],
+          "warnings": [],
+          "duplicates": [
+            {
+              "key": "café",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 26,
+                  "line": 251,
+                  "entry": {
+                    "lemma": "café",
+                    "meaning": "coffee",
+                    "type": "noun",
+                    "semanticClass": "food",
+                    "gender": "m"
+                  }
+                },
+                {
+                  "index": 194,
+                  "line": 1427,
+                  "entry": {
+                    "lemma": "café",
+                    "meaning": "cafe",
+                    "type": "noun",
+                    "semanticClass": "city",
+                    "gender": "m"
+                  }
+                }
+              ]
+            }
+          ]
         }
       },
       "schemaSource": "inline"
