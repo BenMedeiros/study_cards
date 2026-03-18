@@ -1,9 +1,9 @@
-import { el } from '../components/ui.js';
+import { el } from '../utils/browser/ui.js';
 import * as idb from '../utils/browser/idb.js';
-import { createViewHeaderTools } from '../components/viewHeaderTools.js';
-import { createDropdown } from '../components/dropdown.js';
-import { createTable } from '../components/table.js';
-import { createJsonViewer } from '../components/jsonViewer.js';
+import { createViewHeaderTools } from '../components/features/viewHeaderTools.js';
+import { createDropdown } from '../components/shared/dropdown.js';
+import { createTable } from '../components/shared/table.js';
+import { createJsonViewer } from '../components/shared/jsonViewer.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import entityExplorerViewController from '../controllers/entityExplorerViewController.js';
 import {

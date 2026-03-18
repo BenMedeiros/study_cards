@@ -1,9 +1,9 @@
 import { nowMs } from '../utils/browser/helpers.js';
 import { isHiraganaOrKatakana, convertRomajiIncremental, normalizeJapanese } from '../utils/common/japanese.mjs';
-import { createDropdown } from '../components/dropdown.js';
-import { createSpeakerButton } from '../components/ui.js';
-import { createViewHeaderTools } from '../components/viewHeaderTools.js';
-import { addShuffleControls } from '../components/collectionControls.js';
+import { createDropdown } from '../components/shared/dropdown.js';
+import { createSpeakerButton } from '../utils/browser/ui.js';
+import { createViewHeaderTools } from '../components/features/viewHeaderTools.js';
+import { addShuffleControls } from '../components/features/collectionControls.js';
 import collectionSettingsController from '../controllers/collectionSettingsController.js';
 import qaCardsController from '../controllers/qaCardsController.js';
 

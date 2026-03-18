@@ -1,5 +1,5 @@
-import { el } from '../ui.js';
-import { createDropdown } from '../dropdown.js';
+import { el } from '../../utils/browser/ui.js';
+import { createDropdown } from '../shared/dropdown.js';
 import { confirmDialog } from './confirmDialog.js';
 
 const WORD_BREAK_OPTIONS = [

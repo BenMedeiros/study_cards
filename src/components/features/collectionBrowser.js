@@ -5,7 +5,7 @@
  * because this needs hierarchical navigation (folders + up-dir).
  */
 
-import { basename, dirname, titleFromFilename } from '../utils/browser/helpers.js';
+import { basename, dirname, titleFromFilename } from '../../utils/browser/helpers.js';
 
 function shortId(value, n = 18) {
   const text = String(value || '').trim();

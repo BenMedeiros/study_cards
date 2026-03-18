@@ -1,5 +1,5 @@
-import { createTable } from '../components/table.js';
-import { card } from '../components/ui.js';
+import { createTable } from '../components/shared/table.js';
+import { card } from '../utils/browser/ui.js';
 import { validateCollection } from '../utils/browser/validation.js';
 import { formatDurationMs, formatIsoShort } from '../utils/browser/helpers.js';
 import collectionSettingsController from '../controllers/collectionSettingsController.js';

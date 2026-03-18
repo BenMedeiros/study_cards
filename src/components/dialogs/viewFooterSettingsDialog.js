@@ -1,7 +1,7 @@
-import { el, safeId } from '../ui.js';
+import { el, safeId } from '../../utils/browser/ui.js';
 import { openViewFooterCustomButtonDialog } from './viewFooterCustomButtonDialog.js';
 import { confirmDialog } from './confirmDialog.js';
-import { createDropdown } from '../dropdown.js';
+import { createDropdown } from '../shared/dropdown.js';
 
 // Autoplay constraints
 const AUTOPLAY_MIN_MS = 500;

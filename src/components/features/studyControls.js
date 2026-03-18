@@ -1,6 +1,6 @@
 // Helper to add a study-filter dropdown into a view headerTools
 // Usage: addStudyFilter(headerTools, { getCurrentCollectionKey, onChange })
-import collectionSettingsController from '../controllers/collectionSettingsController.js';
+import collectionSettingsController from '../../controllers/collectionSettingsController.js';
 
 export function addStudyFilter(headerTools, { getCurrentCollectionKey, onChange } = {}) {
   if (!headerTools || typeof headerTools.addElement !== 'function') return null;

@@ -1,5 +1,5 @@
-import { getGlobalSettingsManager } from '../managers/settingsManager.js';
-import { openViewFooterSettingsDialog } from './dialogs/viewFooterSettingsDialog.js';
+import { getGlobalSettingsManager } from '../../managers/settingsManager.js';
+import { openViewFooterSettingsDialog } from '../dialogs/viewFooterSettingsDialog.js';
 
 const FOOTER_CONFIGS_SETTING_ID = 'apps.viewFooter.configs';
 const FOOTER_ROW_CONFIGS_SETTING_ID = 'apps.viewFooter.rowConfigsByCollection';

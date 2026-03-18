@@ -1,4 +1,4 @@
-import { speak, getLanguageCode } from '../utils/browser/speech.js';
+import { speak, getLanguageCode } from '../../utils/browser/speech.js';
 
 /**
  * Simplified DOM element creation

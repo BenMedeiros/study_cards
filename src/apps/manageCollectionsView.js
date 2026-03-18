@@ -1,7 +1,7 @@
-import { createTable } from '../components/table.js';
-import { card, el } from '../components/ui.js';
-import { createDropdown } from '../components/dropdown.js';
-import { createJsonViewer } from '../components/jsonViewer.js';
+import { createTable } from '../components/shared/table.js';
+import { card, el } from '../utils/browser/ui.js';
+import { createDropdown } from '../components/shared/dropdown.js';
+import { createJsonViewer } from '../components/shared/jsonViewer.js';
 import { buildImportFeedback } from '../utils/common/collectionImportFeedback.mjs';
 import { validateEntriesAgainstSchema } from '../utils/common/validation.mjs';
 import { parseCollectionImportInput } from '../utils/common/collectionImport.mjs';
@@ -1513,8 +1513,6 @@ export function renderManageCollections({ store, onNavigate }) {
   mo.observe(document.body, { childList: true, subtree: true });
   return root;
 }
-
-
 
 
 

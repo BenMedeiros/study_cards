@@ -1,6 +1,6 @@
 // Helper to add shuffle/clear-shuffle/clear-learned controls to a headerTools instance.
 // Usage: addShuffleControls(headerTools, { store, onShuffle, onClearShuffle, onClearLearned, includeClearShuffle=true, includeClearLearned=true })
-import collectionSettingsController from '../controllers/collectionSettingsController.js';
+import collectionSettingsController from '../../controllers/collectionSettingsController.js';
 
 export function addShuffleControls(headerTools, { store, onShuffle, onClearShuffle, onClearLearned, includeClearShuffle = true, includeClearLearned = true } = {}) {
   if (!headerTools || typeof headerTools.addElement !== 'function') return null;

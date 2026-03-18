@@ -1,4 +1,4 @@
-import collectionSettingsController from '../controllers/collectionSettingsController.js';
+import collectionSettingsController from '../../controllers/collectionSettingsController.js';
 
 export function createShellFooter({ store, captionsVisible = false } = {}) {
   const FLASH_MS = 420;

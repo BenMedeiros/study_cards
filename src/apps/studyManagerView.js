@@ -1,6 +1,6 @@
-import { createTable } from '../components/table.js';
-import { card, el } from '../components/ui.js';
-import { createViewHeaderTools } from '../components/viewHeaderTools.js';
+import { createTable } from '../components/shared/table.js';
+import { card, el } from '../utils/browser/ui.js';
+import { createViewHeaderTools } from '../components/features/viewHeaderTools.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import { formatDurationMs, formatIsoShort } from '../utils/browser/helpers.js';
 import studyManagerController from '../controllers/studyManagerController.js';

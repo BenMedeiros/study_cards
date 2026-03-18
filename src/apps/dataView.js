@@ -1,11 +1,11 @@
-import { createTable } from '../components/table.js';
-import { card } from '../components/ui.js';
-import { el } from '../components/ui.js';
-import { createViewHeaderTools } from '../components/viewHeaderTools.js';
-import { addShuffleControls } from '../components/collectionControls.js';
-import { addStudyFilter } from '../components/studyControls.js';
+import { createTable } from '../components/shared/table.js';
+import { card } from '../utils/browser/ui.js';
+import { el } from '../utils/browser/ui.js';
+import { createViewHeaderTools } from '../components/features/viewHeaderTools.js';
+import { addShuffleControls } from '../components/features/collectionControls.js';
+import { addStudyFilter } from '../components/features/studyControls.js';
 import collectionSettingsController from '../controllers/collectionSettingsController.js';
-import { createDropdown } from '../components/dropdown.js';
+import { createDropdown } from '../components/shared/dropdown.js';
 import { confirmDialog } from '../components/dialogs/confirmDialog.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import dataViewController from '../controllers/dataViewController.js';

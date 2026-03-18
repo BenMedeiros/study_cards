@@ -1,7 +1,7 @@
 // Simple helper to create a standardized header tools container for any view.
 // Replaces the previous kanji-specific header container.
 
-import { createDropdown as _createDropdown } from './dropdown.js';
+import { createDropdown as _createDropdown } from '../shared/dropdown.js';
 
 // Config-driven header tools creator
 // Example usage:
