@@ -6,6 +6,7 @@ import { buildImportFeedback } from '../utils/common/collectionImportFeedback.mj
 import { validateEntriesAgainstSchema } from '../utils/common/validation.mjs';
 import { parseCollectionImportInput } from '../utils/common/collectionImport.mjs';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
+import { openAiPromptsEditorDialog } from '../components/dialogs/aiPromptsEditor.js';
 import manageCollectionsViewController from '../controllers/manageCollectionsViewController.js';
 import {
   normalizeTableSettings,
@@ -339,6 +340,41 @@ export function renderManageCollections({ store, onNavigate }) {
       aiPromptBody,
     ]
   });
+  const aiPromptsEditorBtn = document.createElement('button');
+  aiPromptsEditorBtn.type = 'button';
+  aiPromptsEditorBtn.className = 'btn small table-card-settings-btn';
+  aiPromptsEditorBtn.textContent = 'AI⚙️';
+  aiPromptsEditorBtn.title = 'Open AI prompt editor';
+  aiPromptsEditorBtn.addEventListener('click', () => {
+    void (async () => {
+      const { report } = getActiveCollectionMissingReport();
+      const relation = Array.isArray(report?.relations)
+        ? report.relations.find((entry) => Array.isArray(entry?.missing) && entry.missing.length > 0) || null
+        : null;
+      const targetCollectionKey = normalizeValidationCollectionPath(relation?.relatedPath);
+      const targetCollection = targetCollectionKey ? await loadAiPromptCollection(targetCollectionKey) : null;
+      openAiPromptsEditorDialog({
+        collection: currentCollection || null,
+        collectionKey: collectionKey || '',
+        validationPreview: relation ? {
+          report,
+          relation,
+          sourceCollectionKey: normalizeValidationCollectionPath(report?.sourcePath) || collectionKey || '',
+          targetCollectionKey: targetCollectionKey || '',
+          targetCollection: targetCollection || null,
+          missingValues: Array.isArray(relation?.missing) ? relation.missing : [],
+        } : null,
+      });
+    })();
+  });
+  const aiPromptsCorner = aiPromptsCard.querySelector('.card-corner-caption');
+  if (aiPromptsCorner) {
+    try {
+      const w = Math.max(96, (aiPromptsCorner.offsetWidth || 0) + 16);
+      aiPromptsEditorBtn.style.right = `${w}px`;
+    } catch (e) {}
+    aiPromptsCorner.insertAdjacentElement('afterend', aiPromptsEditorBtn);
+  }
 
   // persistent diff cards will be appended directly into the right column
 
@@ -1513,7 +1549,3 @@ export function renderManageCollections({ store, onNavigate }) {
   mo.observe(document.body, { childList: true, subtree: true });
   return root;
 }
-
-
-
-
