@@ -105,10 +105,10 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-03-15T16:15:58.070Z",
+      "modifiedAt": "2026-03-17T23:53:42.218Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
-      "entriesCount": 1970,
+      "entriesCount": 2002,
       "valid": true,
       "validation": {
         "schema": {

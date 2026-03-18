@@ -17009,6 +17009,230 @@
         "manga_anime",
         "origin:Japanese"
       ]
+    },
+    {
+      "kanji": "十二",
+      "reading": "じゅうに",
+      "meaning": "twelve",
+      "type": "numeral",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "上る",
+      "reading": "のぼる",
+      "meaning": "to go up; to climb",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "神々",
+      "reading": "かみがみ",
+      "meaning": "gods",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "神話",
+      "reading": "しんわ",
+      "meaning": "myth",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "人材",
+      "reading": "じんざい",
+      "meaning": "personnel; human resources; talented person",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "跡",
+      "reading": "あと",
+      "meaning": "trace; tracks; mark",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "説明する",
+      "reading": "せつめいする",
+      "meaning": "to explain",
+      "type": "irregular-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "増える",
+      "reading": "ふえる",
+      "meaning": "to increase",
+      "type": "ichidan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "駄目",
+      "reading": "だめ",
+      "meaning": "no good; hopeless; not allowed",
+      "type": "na-adjective",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "体",
+      "reading": "からだ",
+      "meaning": "body",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "待つ",
+      "reading": "まつ",
+      "meaning": "to wait",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "大学",
+      "reading": "だいがく",
+      "meaning": "university; college",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "昼ご飯",
+      "reading": "ひるごはん",
+      "meaning": "lunch",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "通う",
+      "reading": "かよう",
+      "meaning": "to commute to; to attend regularly",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "通る",
+      "reading": "とおる",
+      "meaning": "to pass through; to go along",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "田中さん",
+      "reading": "たなかさん",
+      "meaning": "Mr./Ms. Tanaka",
+      "type": "proper-noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "読みにくい",
+      "reading": "よみにくい",
+      "meaning": "hard to read",
+      "type": "i-adjective",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "突然",
+      "reading": "とつぜん",
+      "meaning": "suddenly",
+      "type": "adverb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "二か所",
+      "reading": "にかしょ",
+      "meaning": "two places; two locations",
+      "type": "descriptive-phrase",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "二ページ",
+      "reading": "にページ",
+      "meaning": "two pages",
+      "type": "descriptive-phrase",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "二日",
+      "reading": "ふつか",
+      "meaning": "two days; the second day of the month",
+      "type": "descriptive-phrase",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "二杯",
+      "reading": "にはい",
+      "meaning": "two cupfuls; two cups",
+      "type": "descriptive-phrase",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "二枚",
+      "reading": "にまい",
+      "meaning": "two flat objects; two sheets",
+      "type": "descriptive-phrase",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "配る",
+      "reading": "くばる",
+      "meaning": "to hand out; to distribute",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "母親",
+      "reading": "ははおや",
+      "meaning": "mother",
+      "type": "noun",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "黙る",
+      "reading": "だまる",
+      "meaning": "to fall silent; to keep quiet",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "夜遅い",
+      "reading": "よるおそい",
+      "meaning": "late at night",
+      "type": "descriptive-phrase",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "予約する",
+      "reading": "よやくする",
+      "meaning": "to reserve; to book",
+      "type": "irregular-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "立つ",
+      "reading": "たつ",
+      "meaning": "to stand",
+      "type": "godan-verb",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "力を入れる",
+      "reading": "ちからをいれる",
+      "meaning": "to put effort into; to focus on",
+      "type": "phrase-sentence",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "六枚",
+      "reading": "ろくまい",
+      "meaning": "six flat objects; six sheets",
+      "type": "descriptive-phrase",
+      "lexicalClass": "regular"
+    },
+    {
+      "kanji": "腕時計",
+      "reading": "うでどけい",
+      "meaning": "wristwatch",
+      "type": "noun",
+      "lexicalClass": "regular"
     }
   ]
 }
