@@ -1,15 +1,12 @@
 {
-  "generatedAt": "2026-03-14T16:31:02.199Z",
-  "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
-  "outputPath": "scripts/report_duplicated_keys_output.json",
-  "scannedCollections": 11,
-  "collectionsWithProblems": 0,
-  "collectionsWithInvalidEntryKey": 0,
+  "generatedAt": "2026-03-18T00:08:15.240Z",
+  "scannedCollections": 12,
+  "collectionsWithProblems": 1,
+  "collectionsWithInvalidEntryKey": 1,
   "collectionsWithSchemaMismatch": 0,
-  "totalInvalidEntries": 0,
+  "totalInvalidEntries": 2,
   "totalDuplicateValues": 0,
   "totalDuplicateEntries": 0,
-  "parseErrors": [],
   "reports_clean": [
     {
       "collectionName": "Greek Alphabet",
@@ -41,7 +38,7 @@
       "collectionName": "Japanese Grammar",
       "collectionPath": "collections/japanese/japanese_grammar.json",
       "entryKey": "pattern",
-      "entryCount": 290,
+      "entryCount": 317,
       "hasValidEntryKeyMetadata": true,
       "schemaHasEntryKey": true,
       "invalidEntryCount": 0,
@@ -53,8 +50,8 @@
     {
       "collectionName": "Japanese Paragraphs",
       "collectionPath": "collections/japanese/japanese_paragraphs.json",
-      "entryKey": "ja",
-      "entryCount": 2,
+      "entryKey": "id",
+      "entryCount": 3,
       "hasValidEntryKeyMetadata": true,
       "schemaHasEntryKey": true,
       "invalidEntryCount": 0,
@@ -67,7 +64,7 @@
       "collectionName": "Japanese Sentences",
       "collectionPath": "collections/japanese/japanese_sentences.json",
       "entryKey": "ja",
-      "entryCount": 138,
+      "entryCount": 214,
       "hasValidEntryKeyMetadata": true,
       "schemaHasEntryKey": true,
       "invalidEntryCount": 0,
@@ -80,7 +77,7 @@
       "collectionName": "All Japanese Words",
       "collectionPath": "collections/japanese/japanese_words.json",
       "entryKey": "kanji",
-      "entryCount": 1770,
+      "entryCount": 2002,
       "hasValidEntryKeyMetadata": true,
       "schemaHasEntryKey": true,
       "invalidEntryCount": 0,
@@ -155,5 +152,33 @@
       "duplicates": []
     }
   ],
-  "reports_review": []
+  "reports_review": [
+    {
+      "collectionName": "_collections.schema.json",
+      "collectionPath": "collections/_collections.schema.json",
+      "entryKey": null,
+      "entryCount": 2,
+      "hasValidEntryKeyMetadata": false,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 2,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [
+        {
+          "index": 0,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 1,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        }
+      ],
+      "duplicates": []
+    }
+  ],
+  "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
+  "outputPath": "scripts/outputs/report_duplicated_keys_output.json",
+  "parseErrors": []
 }
