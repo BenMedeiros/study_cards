@@ -15,9 +15,7 @@
     "report:collection-contract": "node scripts/report_collection_contract.mjs",
     
     "imports:process": "node scripts/process_collection_import.mjs",
-    "revisions:process": "node scripts/process_collection_revisions.mjs",
-    "zip:backup": "node scripts/backup_zips.js --clean --openDistFolder",
-    "zip:applyUpdatedZips": "node scripts/apply_updated_zips.js"
+    "revisions:process": "node scripts/process_collection_revisions.mjs"
   },
   "keywords": [],
   "author": "",
