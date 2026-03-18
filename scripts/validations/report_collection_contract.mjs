@@ -1,14 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validateCollection } from '../src/utils/common/validation.mjs';
+import { validateCollection } from '../../src/utils/common/validation.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const repoRoot = fs.existsSync(path.join(process.cwd(), 'collections'))
   ? process.cwd()
-  : path.resolve(__dirname, '..');
+  : path.resolve(__dirname, '..', '..');
 const collectionsRoot = path.join(repoRoot, 'collections');
 const contractSchemaPath = path.join(collectionsRoot, '_collections.schema.json');
 const scriptRoot = fs.existsSync(path.join(repoRoot, 'scripts'))
@@ -16,6 +16,20 @@ const scriptRoot = fs.existsSync(path.join(repoRoot, 'scripts'))
   : __dirname;
 const outputDir = path.join(scriptRoot, 'outputs');
 const outputPath = path.join(outputDir, 'report_collection_contract_output.json');
+
+function buildRunTiming(startedAt, finishedAt = new Date()) {
+  const durationMs = finishedAt.getTime() - startedAt.getTime();
+  return {
+    startedAt: startedAt.toISOString(),
+    finishedAt: finishedAt.toISOString(),
+    durationMs,
+    durationSeconds: Number((durationMs / 1000).toFixed(3)),
+  };
+}
+
+function formatDuration(timing) {
+  return `${timing.durationMs}ms (${timing.durationSeconds.toFixed(3)}s)`;
+}
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -47,7 +61,7 @@ function normalizeIssueList(list = []) {
   return Array.isArray(list) ? list.map((message) => ({ message })) : [];
 }
 
-async function main() {
+async function main(startedAt = new Date()) {
   const collectionFiles = findCollectionFiles(collectionsRoot);
   const contractSchema = readJson(contractSchemaPath);
   const parseErrors = [];
@@ -88,6 +102,7 @@ async function main() {
     generatedAt: new Date().toISOString(),
     repoRoot,
     outputPath: path.relative(repoRoot, outputPath).replace(/\\/g, '/'),
+    runTiming: buildRunTiming(startedAt),
     scannedCollections: collectionFiles.length,
     collectionsWithProblems: review.length,
     parseErrors,
@@ -102,10 +117,13 @@ async function main() {
   console.log(`Scanned collections: ${output.scannedCollections}`);
   console.log(`Collections with problems: ${output.collectionsWithProblems}`);
   console.log(`Parse errors: ${output.parseErrors.length}`);
+  console.log(`Run duration: ${formatDuration(output.runTiming)}`);
 }
 
-main().catch((error) => {
+const startedAt = new Date();
+main(startedAt).catch((error) => {
+  const timing = buildRunTiming(startedAt);
   console.error(error);
+  console.error(`Run duration before failure: ${formatDuration(timing)}`);
   process.exitCode = 1;
 });
-

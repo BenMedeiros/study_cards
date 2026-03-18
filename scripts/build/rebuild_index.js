@@ -6,12 +6,17 @@
  * collections/index.json with lightweight records and per-collection
  * validation summaries.
  *
- * Usage: node scripts/rebuild_index.js
+ * Usage: node scripts/build/rebuild_index.js
  */
 const fs = require('fs').promises;
 const path = require('path');
 
-const collectionsDir = path.resolve(__dirname, '..', 'collections');
+const collectionsDir = path.resolve(__dirname, '..', '..', 'collections');
+
+function formatDuration(durationMs) {
+  const durationSeconds = durationMs / 1000;
+  return `${durationMs}ms (${durationSeconds.toFixed(3)}s)`;
+}
 
 async function walk(dir) {
   const ents = await fs.readdir(dir, { withFileTypes: true });
@@ -418,6 +423,19 @@ async function rebuildIndex() {
   }
 }
 
-if (require.main === module) rebuildIndex().catch(err => { console.error('Error:', err); process.exitCode = 1; });
+if (require.main === module) {
+  const startedAt = new Date();
+  rebuildIndex()
+    .then(() => {
+      const finishedAt = new Date();
+      console.log(`[rebuild_index] completed in ${formatDuration(finishedAt.getTime() - startedAt.getTime())}`);
+    })
+    .catch((err) => {
+      const finishedAt = new Date();
+      console.error('Error:', err);
+      console.error(`[rebuild_index] failed after ${formatDuration(finishedAt.getTime() - startedAt.getTime())}`);
+      process.exitCode = 1;
+    });
+}
 
 module.exports = { rebuildIndex };

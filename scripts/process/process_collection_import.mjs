@@ -1,10 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { computePatchFromInput, detectCollectionArrayKey } from '../src/utils/common/collectionDiff.mjs';
-import { buildImportFeedback } from '../src/utils/common/collectionImportFeedback.mjs';
-import { parseCollectionImportInput } from '../src/utils/common/collectionImport.mjs';
-import { validateEntriesAgainstSchema } from '../src/utils/common/validation.mjs';
+import { computePatchFromInput, detectCollectionArrayKey } from '../../src/utils/common/collectionDiff.mjs';
+import { buildImportFeedback } from '../../src/utils/common/collectionImportFeedback.mjs';
+import { parseCollectionImportInput } from '../../src/utils/common/collectionImport.mjs';
+import { validateEntriesAgainstSchema } from '../../src/utils/common/validation.mjs';
 import {
   createPatchRevisionRecord,
   createRevisionId,
@@ -12,18 +12,32 @@ import {
   normalizeRevisionSet,
   resolveCollectionAtRevision,
   selectRevisionHead,
-} from '../src/utils/common/collectionRevisions.mjs';
+} from '../../src/utils/common/collectionRevisions.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const repoRoot = fs.existsSync(path.join(process.cwd(), 'collections'))
   ? process.cwd()
-  : path.resolve(__dirname, '..');
+  : path.resolve(__dirname, '..', '..');
 const collectionsRoot = path.join(repoRoot, 'collections');
 const dataImportRoot = path.join(repoRoot, 'collection_updates', 'dataImport');
 const revisionsRoot = path.join(repoRoot, 'collection_updates', 'revisions');
 const revisionsProcessedRoot = path.join(revisionsRoot, 'processed');
+
+function buildRunTiming(startedAt, finishedAt = new Date()) {
+  const durationMs = finishedAt.getTime() - startedAt.getTime();
+  return {
+    startedAt: startedAt.toISOString(),
+    finishedAt: finishedAt.toISOString(),
+    durationMs,
+    durationSeconds: Number((durationMs / 1000).toFixed(3)),
+  };
+}
+
+function formatDuration(timing) {
+  return `${timing.durationMs}ms (${timing.durationSeconds.toFixed(3)}s)`;
+}
 
 function toRepoRelative(filePath) {
   return path.relative(repoRoot, filePath).replace(/\\/g, '/');
@@ -308,7 +322,15 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+const startedAt = new Date();
+main()
+  .then(() => {
+    const timing = buildRunTiming(startedAt);
+    console.log(`Run duration: ${formatDuration(timing)}`);
+  })
+  .catch((error) => {
+    const timing = buildRunTiming(startedAt);
+    console.error(error);
+    console.error(`Run duration before failure: ${formatDuration(timing)}`);
+    process.exitCode = 1;
+  });

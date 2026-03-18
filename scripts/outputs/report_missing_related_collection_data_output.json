@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-18T14:41:30.607Z",
+  "generatedAt": "2026-03-18T17:11:12.230Z",
   "scannedCollections": 13,
   "collectionsWithRelations": 2,
   "relationCount": 4,
@@ -124,5 +124,11 @@
   ],
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_missing_related_collection_data_output.json",
-  "parseErrors": []
+  "parseErrors": [],
+  "runTiming": {
+    "startedAt": "2026-03-18T17:11:12.203Z",
+    "finishedAt": "2026-03-18T17:11:12.231Z",
+    "durationMs": 28,
+    "durationSeconds": 0.028
+  }
 }

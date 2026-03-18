@@ -8,6 +8,11 @@ const BANNED = [
   /\bwindow\b/, /\bdocument\b/, /\blocalStorage\b/, /\bindexedDB\b/, /\bfetch\b/, /\bspeechSynthesis\b/, /\bSpeechSynthesisUtterance\b/, /\bnavigator\b/, /\blocation\b/, /\bHTMLElement\b/, /\bcustomElements\b/, /\bXMLHttpRequest\b/
 ];
 
+function formatDuration(durationMs) {
+  const durationSeconds = durationMs / 1000;
+  return `${durationMs}ms (${durationSeconds.toFixed(3)}s)`;
+}
+
 function walk(dir) {
   const out = [];
   for (const name of fs.readdirSync(dir)) {
@@ -70,4 +75,13 @@ function main() {
   return 0;
 }
 
-if (require.main === module) process.exitCode = main();
+if (require.main === module) {
+  const startedAt = Date.now();
+  try {
+    process.exitCode = main();
+    console.log(`[validate_common_shared] completed in ${formatDuration(Date.now() - startedAt)}`);
+  } catch (error) {
+    console.error(`[validate_common_shared] failed after ${formatDuration(Date.now() - startedAt)}`);
+    throw error;
+  }
+}

@@ -1,20 +1,34 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validateMissingRelatedCollectionData } from '../src/utils/common/collectionValidations.mjs';
+import { validateDuplicatedKeys } from '../../src/utils/common/collectionValidations.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const repoRoot = fs.existsSync(path.join(process.cwd(), 'collections'))
   ? process.cwd()
-  : path.resolve(__dirname, '..');
+  : path.resolve(__dirname, '..', '..');
 const collectionsRoot = path.join(repoRoot, 'collections');
 const scriptRoot = fs.existsSync(path.join(repoRoot, 'scripts'))
   ? path.join(repoRoot, 'scripts')
   : __dirname;
 const outputDir = path.join(scriptRoot, 'outputs');
-const outputPath = path.join(outputDir, 'report_missing_related_collection_data_output.json');
+const outputPath = path.join(outputDir, 'report_duplicated_keys_output.json');
+
+function buildRunTiming(startedAt, finishedAt = new Date()) {
+  const durationMs = finishedAt.getTime() - startedAt.getTime();
+  return {
+    startedAt: startedAt.toISOString(),
+    finishedAt: finishedAt.toISOString(),
+    durationMs,
+    durationSeconds: Number((durationMs / 1000).toFixed(3)),
+  };
+}
+
+function formatDuration(timing) {
+  return `${timing.durationMs}ms (${timing.durationSeconds.toFixed(3)}s)`;
+}
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -42,18 +56,17 @@ function findCollectionFiles(rootDir) {
   return files.sort((a, b) => a.localeCompare(b));
 }
 
-async function main() {
+async function main(startedAt = new Date()) {
   const collectionFiles = findCollectionFiles(collectionsRoot);
-  const collectionsByRelativePath = new Map();
   const parseErrors = [];
+  const collections = new Map();
 
   for (const filePath of collectionFiles) {
     try {
       const relativePath = path.relative(collectionsRoot, filePath).replace(/\\/g, '/');
-      collectionsByRelativePath.set(relativePath, {
+      collections.set(relativePath, {
         key: relativePath,
         path: relativePath,
-        filePath,
         collection: readJson(filePath)
       });
     } catch (error) {
@@ -64,13 +77,14 @@ async function main() {
     }
   }
 
-  const report = validateMissingRelatedCollectionData(collectionsByRelativePath);
+  const report = validateDuplicatedKeys(collections);
 
   const output = {
     ...report,
     repoRoot,
     outputPath: path.relative(repoRoot, outputPath).replace(/\\/g, '/'),
     parseErrors,
+    runTiming: buildRunTiming(startedAt),
   };
 
   fs.mkdirSync(outputDir, { recursive: true });
@@ -78,13 +92,19 @@ async function main() {
 
   console.log(`Wrote ${path.relative(repoRoot, outputPath).replace(/\\/g, '/')}`);
   console.log(`Scanned collections: ${output.scannedCollections}`);
-  console.log(`Collections with relations: ${output.collectionsWithRelations}`);
-  console.log(`Relations checked: ${output.relationCount}`);
-  console.log(`Relations with missing data: ${output.missingRelationCount}`);
-  console.log(`Total unique missing refs: ${output.missingRefTotal}`);
+  console.log(`Collections with problems: ${output.collectionsWithProblems}`);
+  console.log(`Collections with invalid metadata.entry_key: ${output.collectionsWithInvalidEntryKey}`);
+  console.log(`Collections with schema mismatch: ${output.collectionsWithSchemaMismatch}`);
+  console.log(`Invalid entries: ${output.totalInvalidEntries}`);
+  console.log(`Duplicate values: ${output.totalDuplicateValues}`);
+  console.log(`Duplicate entries: ${output.totalDuplicateEntries}`);
+  console.log(`Run duration: ${formatDuration(output.runTiming)}`);
 }
 
-main().catch((error) => {
+const startedAt = new Date();
+main(startedAt).catch((error) => {
+  const timing = buildRunTiming(startedAt);
   console.error(error);
+  console.error(`Run duration before failure: ${formatDuration(timing)}`);
   process.exitCode = 1;
 });

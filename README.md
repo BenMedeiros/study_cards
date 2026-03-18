@@ -32,9 +32,9 @@ Collections and metadata
 - When a collection sits inside a category folder, category metadata is merged into the collection at load time: category commonFields are prepended unless the collection overrides them.
 
 Collections tooling
-- Rebuild index: `node scripts/rebuild_index.js` regenerates `collections/index.json`.
-- Process import payloads: `node scripts/process_collection_import.mjs` converts the first file in `collection_updates/dataImport/` into a diff revision in `collection_updates/revisions/` and then moves the import file into `collection_updates/dataImport/processed/`. If the import produces invalid entries, no revision is created; the import file is moved into `collection_updates/dataImport/error/` and a sibling `.feedback.json` is written there for review.
-- Process exported revision files: `node scripts/process_collection_revisions.mjs` applies files from `collection_updates/revisions/` onto base collections and moves processed revisions into `collection_updates/revisions/processed/`.
+- Rebuild index: `node scripts/build/rebuild_index.js` regenerates `collections/index.json`.
+- Process import payloads: `node scripts/process/process_collection_import.mjs` converts the first file in `collection_updates/dataImport/` into a diff revision in `collection_updates/revisions/` and then moves the import file into `collection_updates/dataImport/processed/`. If the import produces invalid entries, no revision is created; the import file is moved into `collection_updates/dataImport/error/` and a sibling `.feedback.json` is written there for review.
+- Process exported revision files: `node scripts/process/process_collection_revisions.mjs` applies files from `collection_updates/revisions/` onto base collections and moves processed revisions into `collection_updates/revisions/processed/`.
 - Flatten legacy per-file defaults: `node scripts/flatten_collection_defaults.js --write` expands `defaults` / `root.defaults` into entries and removes the defaults objects.
 - Vocab aggregate: `node scripts/extract_japanese_vocab.js` writes `scripts/extract_japanese_vocab_output.json`.
 

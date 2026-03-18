@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-18T14:41:30.066Z",
+  "generatedAt": "2026-03-18T17:11:11.734Z",
   "scannedCollections": 13,
   "collectionsWithProblems": 2,
   "collectionsWithInvalidEntryKey": 1,
@@ -208,5 +208,11 @@
   ],
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_duplicated_keys_output.json",
-  "parseErrors": []
+  "parseErrors": [],
+  "runTiming": {
+    "startedAt": "2026-03-18T17:11:11.707Z",
+    "finishedAt": "2026-03-18T17:11:11.735Z",
+    "durationMs": 28,
+    "durationSeconds": 0.028
+  }
 }

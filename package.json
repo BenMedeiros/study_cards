@@ -3,19 +3,21 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "npm run report && npm run validate && node scripts/rebuild_index.js && npx http-server -p 3000 -c-1",
-    "build": "node scripts/rebuild_index.js",
+    "dev": "npm run report && npm run validate && npm run build && npx http-server -p 3000 -c-1",
+        
+    "build": "npm run build:rebuild-index",
+    "build:rebuild-index": "node scripts/build/rebuild_index.js",
 
     "validate": "npm run validate:common-shared",
     "validate:common-shared": "node scripts/build/validate_common_shared.js",
 
     "report": "npm run report:duplicated-keys && npm run report:missing-related && npm run report:collection-contract",
-    "report:duplicated-keys": "node scripts/report_duplicated_keys.mjs",
-    "report:missing-related": "node scripts/report_missing_related_collection_data.mjs",
-    "report:collection-contract": "node scripts/report_collection_contract.mjs",
+    "report:duplicated-keys": "node scripts/validations/report_duplicated_keys.mjs",
+    "report:missing-related": "node scripts/validations/report_missing_related_collection_data.mjs",
+    "report:collection-contract": "node scripts/validations/report_collection_contract.mjs",
     
-    "imports:process": "node scripts/process_collection_import.mjs",
-    "revisions:process": "node scripts/process_collection_revisions.mjs"
+    "imports:process": "node scripts/process/process_collection_import.mjs",
+    "revisions:process": "node scripts/process/process_collection_revisions.mjs"
   },
   "keywords": [],
   "author": "",
