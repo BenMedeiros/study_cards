@@ -7,6 +7,10 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+function clonePlain(value) {
+  try { return JSON.parse(JSON.stringify(value)); } catch { return null; }
+}
+
 function normalizeState(v) {
   const s = String(v || '').trim().toLowerCase();
   if (s === 'focus' || s === 'learned') return s;
@@ -207,22 +211,55 @@ const studyManagerController = (() => {
   let unsubStore = null;
   let isComputing = false;
   let pendingReason = null;
+  let pendingCollectionIds = null;
 
   let sessionCursor = 0;
   const sessionByCollection = new Map();
   const cacheByCollection = new Map();
   const subs = new Set();
 
+  const managerMeta = {
+    owner: 'studyManager',
+    module: 'src/controllers/studyManagerController.js',
+    scheduleFunction: 'requestRefresh',
+    runFunction: 'recompute',
+    createdAt: nowIso(),
+    state: 'idle',
+    lastScheduledAt: null,
+    lastScheduledReason: null,
+    lastRunRequestedAt: null,
+    lastRunStartedAt: null,
+    lastRunFinishedAt: null,
+    lastRunReason: null,
+    lastRunStatus: null,
+    runCount: 0,
+    rerunRequested: false,
+    isRunning: false,
+    pendingPromise: false,
+    lastCollectionCount: 0,
+    lastReadyCollectionCount: 0,
+    lastTargetCollectionCount: 0,
+  };
+
   let snapshot = {
+    meta: clonePlain(managerMeta) || { ...managerMeta },
     ready: false,
     isComputing: false,
     updatedAtIso: null,
     reason: '',
-    collections: [],
-    collectionMap: {},
+    collections: {},
   };
 
+  function syncSnapshotMeta(patch = null) {
+    if (patch && typeof patch === 'object') Object.assign(managerMeta, patch);
+    snapshot = {
+      ...snapshot,
+      meta: clonePlain(managerMeta) || { ...managerMeta },
+    };
+  }
+
   function emit() {
+    syncSnapshotMeta();
     for (const cb of Array.from(subs)) {
       try { cb(snapshot); } catch {}
     }
@@ -244,6 +281,60 @@ const studyManagerController = (() => {
     if (!key) return null;
     if (!sessionByCollection.has(key)) sessionByCollection.set(key, makeSessionAggregate(key));
     return sessionByCollection.get(key);
+  }
+
+  function listAvailableCollections() {
+    const collections = store?.collections?.getCollections?.() || [];
+    return Array.isArray(collections) ? collections : [];
+  }
+
+  function normalizeCollectionIds(input, { fallbackToActive = true } = {}) {
+    const available = listAvailableCollections();
+    const validIds = new Set(
+      available.map((coll) => String(coll?.key || '').trim()).filter(Boolean)
+    );
+    const out = [];
+    const seen = new Set();
+    const arr = Array.isArray(input) ? input : [];
+    for (const raw of arr) {
+      const key = String(raw || '').trim();
+      if (!key || seen.has(key) || !validIds.has(key)) continue;
+      seen.add(key);
+      out.push(key);
+    }
+    if (out.length || !fallbackToActive) return out;
+    const active = String(store?.collections?.getActiveCollectionId?.() || '').trim();
+    if (active && validIds.has(active)) return [active];
+    const first = available.find((coll) => String(coll?.key || '').trim());
+    return first ? [String(first.key).trim()] : [];
+  }
+
+  function mergePendingCollectionIds(nextIds) {
+    const incoming = normalizeCollectionIds(nextIds, { fallbackToActive: false });
+    if (!incoming.length) return Array.isArray(pendingCollectionIds) ? pendingCollectionIds.slice() : [];
+    const merged = new Set(Array.isArray(pendingCollectionIds) ? pendingCollectionIds : []);
+    for (const id of incoming) merged.add(id);
+    pendingCollectionIds = Array.from(merged);
+    return pendingCollectionIds.slice();
+  }
+
+  function buildAvailableCollectionRefs(collections) {
+    return collections
+      .map((coll) => ({
+        collectionId: String(coll?.key || '').trim(),
+        collectionName: String(coll?.metadata?.name || coll?.key || '').trim(),
+      }))
+      .filter((coll) => coll.collectionId)
+      .sort((a, b) => String(a.collectionName || a.collectionId).localeCompare(String(b.collectionName || b.collectionId)));
+  }
+
+  function sortReports(reports) {
+    return reports.sort((a, b) => {
+      const ta = a?.summary?.lastSessionIso ? new Date(a.summary.lastSessionIso).getTime() : 0;
+      const tb = b?.summary?.lastSessionIso ? new Date(b.summary.lastSessionIso).getTime() : 0;
+      if (tb !== ta) return tb - ta;
+      return String(a.collectionName || '').localeCompare(String(b.collectionName || ''));
+    });
   }
 
   function ingestSession(session) {
@@ -911,63 +1002,155 @@ const studyManagerController = (() => {
     };
   }
 
-  async function recompute(reason = 'recompute') {
+  async function recompute(reason = 'recompute', { collectionIds = null } = {}) {
     if (!store) return;
     if (isComputing) {
       pendingReason = reason || 'pending';
+      mergePendingCollectionIds(collectionIds);
+      syncSnapshotMeta({
+        state: 'queued',
+        rerunRequested: true,
+        pendingPromise: true,
+        lastScheduledAt: nowIso(),
+        lastScheduledReason: String(reason || 'pending'),
+        lastRunRequestedAt: nowIso(),
+      });
+      emit();
       return;
     }
+    const targetIds = normalizeCollectionIds(collectionIds || pendingCollectionIds, { fallbackToActive: true });
+    pendingCollectionIds = null;
+    if (!targetIds.length) return;
     isComputing = true;
+    try { console.log('[studyManager] run:start', { reason, collectionIds: targetIds.slice() }); } catch (e) {}
+    syncSnapshotMeta({
+      state: 'running',
+      isRunning: true,
+      pendingPromise: true,
+      rerunRequested: false,
+      lastRunReason: String(reason || 'recompute'),
+      lastRunRequestedAt: managerMeta.lastRunRequestedAt || nowIso(),
+      lastRunStartedAt: nowIso(),
+      runCount: Math.max(0, Math.round(Number(managerMeta.runCount) || 0)) + 1,
+      lastTargetCollectionCount: targetIds.length,
+    });
     snapshot = { ...snapshot, isComputing: true, reason: String(reason || 'recompute') };
     emit();
 
     try {
       processSessionsIncremental();
       const progressByCollection = buildProgressByCollection();
-      const collections = store?.collections?.getCollections?.() || [];
-      const reports = [];
-      const reportMap = {};
-      for (const coll of collections) {
-        const key = String(coll?.key || '').trim();
-        if (!key) continue;
+      const collections = listAvailableCollections();
+      const availableRefs = buildAvailableCollectionRefs(collections);
+      const byId = new Map(collections.map((coll) => [String(coll?.key || '').trim(), coll]));
+      const reportMap = { ...((snapshot?.collections && typeof snapshot.collections === 'object') ? snapshot.collections : {}) };
+      for (const existingId of Object.keys(reportMap)) {
+        if (!byId.has(existingId)) delete reportMap[existingId];
+      }
+      for (const key of targetIds) {
+        const coll = byId.get(key);
+        if (!coll) continue;
         const progressSummary = progressByCollection.get(key) || makeProgressSummary(key);
         const sessionAgg = sessionByCollection.get(key) || makeSessionAggregate(key);
         const report = buildCollectionReport(coll, progressSummary, sessionAgg);
-        reports.push(report);
         reportMap[key] = report;
       }
-      reports.sort((a, b) => {
-        const ta = a?.summary?.lastSessionIso ? new Date(a.summary.lastSessionIso).getTime() : 0;
-        const tb = b?.summary?.lastSessionIso ? new Date(b.summary.lastSessionIso).getTime() : 0;
-        if (tb !== ta) return tb - ta;
-        return String(a.collectionName || '').localeCompare(String(b.collectionName || ''));
-      });
+      const reports = sortReports(Object.values(reportMap));
 
       snapshot = {
+        ...snapshot,
         ready: true,
         isComputing: false,
         updatedAtIso: nowIso(),
         reason: String(reason || ''),
-        collections: reports,
-        collectionMap: reportMap,
+        availableCollections: availableRefs,
+        collections: reportMap,
+      };
+      syncSnapshotMeta({
+        state: 'ready',
+        isRunning: false,
+        pendingPromise: false,
+        lastRunFinishedAt: nowIso(),
+        lastRunStatus: 'ready',
+        lastCollectionCount: collections.length,
+        lastReadyCollectionCount: reports.length,
+      });
+      emit();
+      try {
+        console.log('[studyManager] run:finish', {
+          reason,
+          collectionIds: targetIds.slice(),
+          totalAvailableCollections: collections.length,
+          cachedReports: reports.length,
+          status: 'ready',
+        });
+      } catch (e) {}
+    } catch (error) {
+      syncSnapshotMeta({
+        state: 'error',
+        isRunning: false,
+        pendingPromise: false,
+        lastRunFinishedAt: nowIso(),
+        lastRunStatus: 'error',
+        lastCollectionCount: Array.isArray(store?.collections?.getCollections?.()) ? store.collections.getCollections().length : 0,
+      });
+      snapshot = {
+        ...snapshot,
+        isComputing: false,
+        reason: String(reason || 'recompute'),
       };
       emit();
+      try {
+        console.log('[studyManager] run:finish', {
+          reason,
+          collectionIds: targetIds.slice(),
+          status: 'error',
+          error: error?.message || String(error),
+        });
+      } catch (e) {}
+      throw error;
     } finally {
       isComputing = false;
       if (pendingReason) {
         const nextReason = pendingReason;
         pendingReason = null;
-        requestRefresh(nextReason, { delayMs: 150 });
+        syncSnapshotMeta({
+          state: 'queued',
+          rerunRequested: true,
+          pendingPromise: true,
+        });
+        requestRefresh(nextReason, {
+          delayMs: 150,
+          collectionIds: Array.isArray(pendingCollectionIds) ? pendingCollectionIds.slice() : null,
+        });
+      } else if (managerMeta.state !== 'error') {
+        syncSnapshotMeta({
+          isRunning: false,
+          pendingPromise: false,
+          rerunRequested: false,
+        });
       }
     }
   }
 
-  function requestRefresh(reason = 'refresh', { delayMs = 350 } = {}) {
+  function requestRefresh(reason = 'refresh', { delayMs = 350, collectionIds = null } = {}) {
     if (!store) return;
     if (debounceTimer) clearTimeout(debounceTimer);
+    const targetIds = normalizeCollectionIds(collectionIds, { fallbackToActive: true });
+    pendingCollectionIds = targetIds.slice();
+    syncSnapshotMeta({
+      state: isComputing ? 'queued' : 'scheduled',
+      lastScheduledAt: nowIso(),
+      lastScheduledReason: String(reason || 'refresh'),
+      lastRunRequestedAt: nowIso(),
+      pendingPromise: true,
+      rerunRequested: !!isComputing,
+      lastTargetCollectionCount: targetIds.length,
+    });
+    emit();
     debounceTimer = setTimeout(() => {
       debounceTimer = null;
-      recompute(reason);
+      recompute(reason, { collectionIds: targetIds });
     }, Math.max(0, Math.round(Number(delayMs) || 0)));
   }
 
@@ -978,15 +1161,10 @@ const studyManagerController = (() => {
     if (initialized) return;
     initialized = true;
 
-    try {
-      unsubStore = store.subscribe(() => requestRefresh('store.emit', { delayMs: 450 }));
-    } catch {}
-
-    pollTimer = setInterval(() => {
-      requestRefresh('poll', { delayMs: 0 });
-    }, pollMs);
-
-    requestRefresh('init', { delayMs: 0 });
+    requestRefresh('init', {
+      delayMs: 0,
+      collectionIds: [store?.collections?.getActiveCollectionId?.()],
+    });
   }
 
   function dispose() {
@@ -1005,6 +1183,7 @@ const studyManagerController = (() => {
     getSnapshot,
     subscribe,
     requestRefresh,
+    ensureCollections: (collectionIds, opts = {}) => requestRefresh('ensureCollections', { delayMs: 0, collectionIds, ...(opts || {}) }),
   };
 })();
 

@@ -6,6 +6,7 @@ import { createTable } from '../components/shared/table.js';
 import { createJsonViewer } from '../components/shared/jsonViewer.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import entityExplorerViewController from '../controllers/entityExplorerViewController.js';
+import studyManagerController from '../controllers/studyManagerController.js';
 import {
   normalizeTableSettings,
   applyTableColumnSettings,
@@ -19,6 +20,45 @@ const TABLE_ACTION_ITEMS = [
   { key: 'copyJson', label: 'Copy JSON' },
   { key: 'copyFullJson', label: 'Copy Full JSON' },
 ];
+
+const DEFAULT_ENTITY_EXPLORER_SETTINGS = Object.freeze({
+  manager: 'idb',
+  db: null,
+  selection: null,
+  sessionStateViewer: {
+    expanded: true,
+    wrapping: false,
+    collapsedPaths: [],
+  },
+});
+
+function cloneJson(value, fallback = null) {
+  try {
+    const cloned = JSON.parse(JSON.stringify(value));
+    return cloned == null ? fallback : cloned;
+  } catch {
+    return fallback;
+  }
+}
+
+function normalizeEntityExplorerSettings(value) {
+  const src = (value && typeof value === 'object') ? value : {};
+  const rawManager = String(src.manager || DEFAULT_ENTITY_EXPLORER_SETTINGS.manager).trim();
+  const manager = ['idb', 'ls', 'session'].includes(rawManager) ? rawManager : DEFAULT_ENTITY_EXPLORER_SETTINGS.manager;
+  const sessionStateViewer = (src.sessionStateViewer && typeof src.sessionStateViewer === 'object') ? src.sessionStateViewer : {};
+  return {
+    manager,
+    db: (typeof src.db === 'string' && src.db.trim()) ? src.db : null,
+    selection: (typeof src.selection === 'string' && src.selection.trim()) ? src.selection : null,
+    sessionStateViewer: {
+      expanded: sessionStateViewer.expanded !== undefined ? !!sessionStateViewer.expanded : true,
+      wrapping: !!sessionStateViewer.wrapping,
+      collapsedPaths: Array.isArray(sessionStateViewer.collapsedPaths)
+        ? sessionStateViewer.collapsedPaths.filter((entry) => typeof entry === 'string')
+        : [],
+    },
+  };
+}
 
 // Persist UI selections for this view under the global namespaced blob
 // stored at localStorage key `study_cards:v1` -> `apps` -> `entityExplorer`.
@@ -107,7 +147,62 @@ export function renderEntityExplorer({ store }) {
   let latestTableHeaders = [];
   let latestTableRows = [];
   let latestTableSourceInfo = '';
-  let sessionStateUnsub = null;
+  let analysisStateUnsub = null;
+  let sessionViewerExpose = null;
+
+  function readSavedEntityExplorerSettings() {
+    try {
+      if (!(store?.settings && typeof store.settings.get === 'function')) return normalizeEntityExplorerSettings(null);
+      try {
+        return normalizeEntityExplorerSettings(
+          store.settings.get('apps.entityExplorer', { consumerId: 'entityExplorerView' })
+        );
+      } catch (e) {}
+      try {
+        const raw = localStorage.getItem('study_cards:settings');
+        const parsed = raw ? JSON.parse(raw) : {};
+        return normalizeEntityExplorerSettings({
+          manager: parsed?.['apps.entityExplorer.manager'],
+          db: parsed?.['apps.entityExplorer.db'],
+          selection: parsed?.['apps.entityExplorer.selection'],
+        });
+      } catch (e) {}
+    } catch (e) {
+    }
+    return normalizeEntityExplorerSettings(null);
+  }
+
+  let entityExplorerSettings = readSavedEntityExplorerSettings();
+
+  function persistEntityExplorerSettings(patch) {
+    try {
+      if (!(store?.settings && typeof store.settings.set === 'function')) return;
+      entityExplorerSettings = normalizeEntityExplorerSettings({
+        ...entityExplorerSettings,
+        ...(patch && typeof patch === 'object' ? patch : {}),
+      });
+      store.settings.set(
+        'apps.entityExplorer',
+        cloneJson(entityExplorerSettings, {}) || {},
+        { consumerId: 'entityExplorerView', immediate: true }
+      );
+    } catch (e) {}
+  }
+
+  function persistSessionViewerState() {
+    try {
+      if (!sessionViewerExpose) return;
+      persistEntityExplorerSettings({
+        sessionStateViewer: {
+          expanded: !!sessionViewerExpose.getExpanded?.(),
+          wrapping: !!sessionViewerExpose.getWrapping?.(),
+          collapsedPaths: Array.isArray(sessionViewerExpose.getCollapsedPaths?.())
+            ? sessionViewerExpose.getCollapsedPaths()
+            : [],
+        },
+      });
+    } catch (e) {}
+  }
 
   try {
     if (settingsCollectionKey) {
@@ -144,9 +239,7 @@ export function renderEntityExplorer({ store }) {
     store?.settings?.registerConsumer?.({
       consumerId: 'entityExplorerView',
       settings: [
-        'apps.entityExplorer.manager',
-        'apps.entityExplorer.db',
-        'apps.entityExplorer.selection',
+        'apps.entityExplorer',
       ],
     });
   } catch (e) {}
@@ -162,6 +255,9 @@ export function renderEntityExplorer({ store }) {
   const _tableSettingsRec = headerTools.addElement({
     type: 'button', key: 'tableSettings', label: 'Table', title: 'Storage table settings'
   });
+  const _refreshSessionRec = headerTools.addElement({
+    type: 'button', key: 'refreshSessionState', label: 'Refresh', title: 'Refresh session-state analysis reports'
+  });
   function updateCollapseAllBtnState() {
     const collapseAllBtn = headerTools.getControl('collapseAll');
     // enabled only if there exists at least one expanded json-view-wrapper
@@ -173,6 +269,12 @@ export function renderEntityExplorer({ store }) {
   if (tableSettingsBtn) {
     tableSettingsBtn.addEventListener('click', () => {
       void openStorageTableSettingsDialog();
+    });
+  }
+  const refreshSessionBtn = headerTools.getControl('refreshSessionState');
+  if (refreshSessionBtn) {
+    refreshSessionBtn.addEventListener('click', () => {
+      void refreshSessionStateReports();
     });
   }
   const collapseAllBtn = headerTools.getControl('collapseAll');
@@ -197,14 +299,34 @@ export function renderEntityExplorer({ store }) {
   ];
 
   function teardownSessionStateSubscription() {
-    try { if (typeof sessionStateUnsub === 'function') sessionStateUnsub(); } catch (e) {}
-    sessionStateUnsub = null;
+    try { if (typeof analysisStateUnsub === 'function') analysisStateUnsub(); } catch (e) {}
+    analysisStateUnsub = null;
+    sessionViewerExpose = null;
   }
 
   function updateTableSettingsBtnState(manager) {
     const button = headerTools.getControl('tableSettings');
     if (!button) return;
     button.disabled = String(manager || 'idb') === 'session';
+  }
+
+  function updateSessionRefreshBtnState(manager) {
+    const button = headerTools.getControl('refreshSessionState');
+    if (!button) return;
+    button.disabled = String(manager || 'idb') !== 'session';
+  }
+
+  async function refreshSessionStateReports() {
+    try { await store?.collectionDB?.validations?.runAll?.(); } catch (e) {}
+    try {
+      const activeCollectionId = String(store?.collections?.getActiveCollectionId?.() || '').trim();
+      if (activeCollectionId) {
+        studyManagerController.requestRefresh('entityExplorer.session.refresh', {
+          delayMs: 0,
+          collectionIds: [activeCollectionId],
+        });
+      }
+    } catch (e) {}
   }
 
   function hideIdbControls() {
@@ -220,6 +342,7 @@ export function renderEntityExplorer({ store }) {
   async function loadAndRenderManager(manager) {
     teardownSessionStateSubscription();
     updateTableSettingsBtnState(manager);
+    updateSessionRefreshBtnState(manager);
     content.innerHTML = '';
     content.append(el('div', { className: 'hint', text: 'Loading…' }));
     try {
@@ -229,12 +352,19 @@ export function renderEntityExplorer({ store }) {
         latestTableSourceInfo = 'Session State';
 
         const expose = {};
+        sessionViewerExpose = expose;
         const getSessionStateSnapshot = () => {
           try { return store?.analysis?.getState?.() || {}; } catch (e) { return {}; }
         };
         const viewer = renderJsonViewer(getSessionStateSnapshot(), {
           id: 'entity-explorer-session-state',
-          expanded: true,
+          expanded: entityExplorerSettings?.sessionStateViewer?.expanded !== undefined
+            ? !!entityExplorerSettings.sessionStateViewer.expanded
+            : true,
+          wrapping: !!entityExplorerSettings?.sessionStateViewer?.wrapping,
+          collapsedPaths: Array.isArray(entityExplorerSettings?.sessionStateViewer?.collapsedPaths)
+            ? entityExplorerSettings.sessionStateViewer.collapsedPaths
+            : [],
           maxChars: 200000,
           maxLines: 10000,
           previewLen: 400,
@@ -243,8 +373,17 @@ export function renderEntityExplorer({ store }) {
 
         content.innerHTML = '';
         content.append(viewer);
-        if (store && typeof store.subscribe === 'function') {
-          sessionStateUnsub = store.subscribe(() => {
+        viewer.addEventListener('json-toggle', () => {
+          persistSessionViewerState();
+        });
+        viewer.addEventListener('json-tree-toggle', () => {
+          persistSessionViewerState();
+        });
+        viewer.addEventListener('json-wrap-toggle', () => {
+          persistSessionViewerState();
+        });
+        if (store?.analysis && typeof store.analysis.subscribe === 'function') {
+          analysisStateUnsub = store.analysis.subscribe(() => {
             try {
               const activeManager = String((managerDropdown?.getValue && managerDropdown.getValue()) || initialManager || 'idb');
               if (activeManager !== 'session') return;
@@ -287,11 +426,7 @@ export function renderEntityExplorer({ store }) {
   const _savedAppState = (() => {
     try {
       if (store?.settings && typeof store.settings.get === 'function') {
-        return {
-          manager: store.settings.get('apps.entityExplorer.manager', { consumerId: 'entityExplorerView' }),
-          db: store.settings.get('apps.entityExplorer.db', { consumerId: 'entityExplorerView' }),
-          selection: store.settings.get('apps.entityExplorer.selection', { consumerId: 'entityExplorerView' }),
-        };
+        return readSavedEntityExplorerSettings();
       }
     } catch (e) {}
     return {};
@@ -307,16 +442,10 @@ export function renderEntityExplorer({ store }) {
     value: initialManager,
     onChange: (next) => {
       const sel = String(next || 'idb');
-      // persist manager selection (apps.entityExplorer)
-      try {
-        if (store?.settings && typeof store.settings.set === 'function') {
-          store.settings.set('apps.entityExplorer.manager', sel, { consumerId: 'entityExplorerView', immediate: true });
-          if (sel !== 'idb') {
-            store.settings.set('apps.entityExplorer.db', null, { consumerId: 'entityExplorerView', immediate: true });
-            store.settings.set('apps.entityExplorer.selection', null, { consumerId: 'entityExplorerView', immediate: true });
-          }
-        }
-      } catch (e) {}
+      persistEntityExplorerSettings({
+        manager: sel,
+        ...(sel !== 'idb' ? { db: null, selection: null } : {}),
+      });
       loadAndRenderManager(sel);
       if (sel === 'idb') {
         showIdbControls();
@@ -356,6 +485,7 @@ export function renderEntityExplorer({ store }) {
   headerTools.append(left, spacer);
   // append right-side controls to header tools
   try { if (_tableSettingsRec && _tableSettingsRec.group) headerTools.append(_tableSettingsRec.group); } catch (e) {}
+  try { if (_refreshSessionRec && _refreshSessionRec.group) headerTools.append(_refreshSessionRec.group); } catch (e) {}
   try { if (_collapseRec && _collapseRec.group) headerTools.append(_collapseRec.group); } catch (e) {}
 
   // wrap handled per-view inside each JSON viewer component
@@ -394,11 +524,7 @@ export function renderEntityExplorer({ store }) {
         value: initialDb,
         onChange: (next) => {
           const dbName = String(next || initialDb);
-          // persist selected DB
-          try {
-            store?.settings?.set?.('apps.entityExplorer.manager', 'idb', { consumerId: 'entityExplorerView', immediate: true });
-            store?.settings?.set?.('apps.entityExplorer.db', dbName, { consumerId: 'entityExplorerView', immediate: true });
-          } catch (e) {}
+          persistEntityExplorerSettings({ manager: 'idb', db: dbName });
           rebuildStoreDropdown(dbName);
         },
         className: '',
@@ -442,12 +568,11 @@ export function renderEntityExplorer({ store }) {
         value: initialStore,
         onChange: async (next) => {
           const storeName = String(next || initialStore);
-          // persist selected store and manager/db
-          try {
-            store?.settings?.set?.('apps.entityExplorer.manager', 'idb', { consumerId: 'entityExplorerView', immediate: true });
-            store?.settings?.set?.('apps.entityExplorer.db', dbName, { consumerId: 'entityExplorerView', immediate: true });
-            store?.settings?.set?.('apps.entityExplorer.selection', `idb:${storeName}`, { consumerId: 'entityExplorerView', immediate: true });
-          } catch (e) {}
+          persistEntityExplorerSettings({
+            manager: 'idb',
+            db: dbName,
+            selection: `idb:${storeName}`,
+          });
           await loadAndRenderIdbStore(dbName, storeName);
         },
         className: '',

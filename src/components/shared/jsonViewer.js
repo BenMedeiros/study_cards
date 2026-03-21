@@ -15,6 +15,10 @@ function createPath(parentPath, key) {
   return `${parentPath}/${encodePathSegment(key)}`;
 }
 
+function decodePathSegment(value) {
+  return String(value).replace(/~1/g, '/').replace(/~0/g, '~');
+}
+
 function formatContainerSummary(value) {
   if (Array.isArray(value)) return value.length ? `[${value.length} items]` : '[]';
   const size = Object.keys(value || {}).length;
@@ -32,12 +36,91 @@ function getEntries(value) {
     : Object.entries(value);
 }
 
+function getValueAtPath(rootValue, path) {
+  const rawPath = String(path || '');
+  if (!rawPath) return rootValue;
+  const segments = rawPath.split('/').slice(1).map(decodePathSegment);
+  let current = rootValue;
+  for (const seg of segments) {
+    if (!isContainer(current)) return undefined;
+    if (Array.isArray(current)) {
+      const index = Number(seg);
+      if (!Number.isInteger(index)) return undefined;
+      current = current[index];
+    } else {
+      current = current[seg];
+    }
+  }
+  return current;
+}
+
+function collectDescendantContainerPaths(value, basePath) {
+  if (!isContainer(value)) return [];
+  const out = [];
+  const stack = [{ value, path: String(basePath || '') }];
+  while (stack.length) {
+    const next = stack.pop();
+    const entries = getEntries(next.value);
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const [entryKey, entryValue] = entries[i];
+      if (!isContainer(entryValue)) continue;
+      const childPath = createPath(next.path, entryKey);
+      out.push(childPath);
+      stack.push({ value: entryValue, path: childPath });
+    }
+  }
+  return out;
+}
+
 function appendToken(parent, className, text) {
   const token = document.createElement('span');
   token.className = className;
   token.textContent = text;
   parent.appendChild(token);
   return token;
+}
+
+function estimateJsonTreeLines(value, collapsedPaths = new Set(), path = '', { isRoot = true } = {}) {
+  if (!isContainer(value)) return 1;
+  const entries = getEntries(value);
+  if (!entries.length) return 1;
+  const isCollapsed = !isRoot && collapsedPaths.has(path);
+  if (isCollapsed) return 1;
+  let total = 2;
+  for (const [entryKey, entryValue] of entries) {
+    total += estimateJsonTreeLines(entryValue, collapsedPaths, createPath(path, entryKey), { isRoot: false });
+  }
+  return total;
+}
+
+function buildAutoCollapsedPaths(value, {
+  totalLineThreshold = 100,
+  expandedLineBudget = 50,
+} = {}) {
+  if (!isContainer(value)) return new Set();
+  const totalLines = estimateJsonTreeLines(value, new Set(), '', { isRoot: true });
+  if (totalLines <= Math.max(1, Math.round(Number(totalLineThreshold) || 100))) return new Set();
+
+  const entries = getEntries(value);
+  const collapsed = new Set();
+  for (const [entryKey, entryValue] of entries) {
+    if (!isContainer(entryValue)) continue;
+    collapsed.add(createPath('', entryKey));
+  }
+
+  const budget = Math.max(1, Math.round(Number(expandedLineBudget) || 50));
+  for (const [entryKey, entryValue] of entries) {
+    if (!isContainer(entryValue)) continue;
+    const childPath = createPath('', entryKey);
+    collapsed.delete(childPath);
+    const visibleLines = estimateJsonTreeLines(value, collapsed, '', { isRoot: true });
+    if (visibleLines > budget) {
+      collapsed.add(childPath);
+      break;
+    }
+  }
+
+  return collapsed;
 }
 
 function buildJsonTree(value, options = {}) {
@@ -153,6 +236,8 @@ export function createJsonViewer(value, opts = {}) {
   const MAX_LINES = opts.maxLines ?? 40;
   const previewLen = opts.previewLen ?? 200;
   const treeEnabled = opts.tree !== false;
+  const autoCollapseTotalLines = opts.autoCollapseTotalLines ?? 100;
+  const autoExpandLineBudget = opts.autoExpandLineBudget ?? 50;
 
   let currentValue = value;
   let text = safeJson(currentValue);
@@ -160,7 +245,8 @@ export function createJsonViewer(value, opts = {}) {
   let isBig = (typeof text === 'string' && text.length > MAX_CHARS) || lines > MAX_LINES;
   let isTreeValue = treeEnabled && isContainer(currentValue);
   let treeRoot = null;
-  const collapsedPaths = new Set(Array.isArray(opts.collapsedPaths) ? opts.collapsedPaths.filter((entry) => typeof entry === 'string') : []);
+  const userCollapsedPaths = Array.isArray(opts.collapsedPaths) ? opts.collapsedPaths.filter((entry) => typeof entry === 'string') : [];
+  const collapsedPaths = new Set(userCollapsedPaths);
 
   const wrapper = document.createElement('div');
   wrapper.className = 'json-view-wrapper';
@@ -200,9 +286,20 @@ export function createJsonViewer(value, opts = {}) {
     try { pre.style.setProperty('white-space', 'pre-wrap'); } catch (e) {}
   }
 
-  // Always start collapsed for large payloads, even if `opts.expanded` is true.
+  if (!userCollapsedPaths.length && isTreeValue) {
+    const autoCollapsed = buildAutoCollapsedPaths(currentValue, {
+      totalLineThreshold: autoCollapseTotalLines,
+      expandedLineBudget: autoExpandLineBudget,
+    });
+    for (const path of autoCollapsed) collapsedPaths.add(path);
+  }
+
+  const autoCollapsedTree = isTreeValue && collapsedPaths.size > 0;
+
+  // Large primitive payloads still start collapsed. Large tree payloads can open
+  // with a partially-collapsed tree if auto-collapse found a reasonable budget.
   let expanded;
-  if (isBig) expanded = false;
+  if (isBig && !(isTreeValue && autoCollapsedTree)) expanded = false;
   else expanded = (opts.expanded !== undefined) ? !!opts.expanded : true;
 
   let wrapMainBtn = null;
@@ -218,7 +315,12 @@ export function createJsonViewer(value, opts = {}) {
       onTogglePath(path, nextCollapsed) {
         if (!path) return;
         if (nextCollapsed) collapsedPaths.add(path);
-        else collapsedPaths.delete(path);
+        else {
+          collapsedPaths.delete(path);
+          const nodeValue = getValueAtPath(currentValue, path);
+          const descendantPaths = collectDescendantContainerPaths(nodeValue, path);
+          for (const descendantPath of descendantPaths) collapsedPaths.add(descendantPath);
+        }
         rebuildTree();
         renderCurrent();
         try { wrapper.dispatchEvent(new CustomEvent('json-tree-toggle', { detail: { path, collapsed: nextCollapsed }, bubbles: true })); } catch (e) {}
@@ -298,14 +400,15 @@ export function createJsonViewer(value, opts = {}) {
     wrapMainBtn.title = 'Toggle wrap';
     wrapMainBtn.textContent = '↪';
     wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false');
-    wrapMainBtn.addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      wrapping = !wrapping;
-      try { pre.style.setProperty('white-space', wrapping ? 'pre-wrap' : 'pre'); } catch (e) {}
-      if (treeRoot) treeRoot.classList.toggle('json-tree-wrap', wrapping);
-      wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false');
-    });
-    controls.appendChild(wrapMainBtn);
+      wrapMainBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        wrapping = !wrapping;
+        try { pre.style.setProperty('white-space', wrapping ? 'pre-wrap' : 'pre'); } catch (e) {}
+        if (treeRoot) treeRoot.classList.toggle('json-tree-wrap', wrapping);
+        wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false');
+        try { wrapper.dispatchEvent(new CustomEvent('json-wrap-toggle', { detail: { wrapping }, bubbles: true })); } catch (e) {}
+      });
+      controls.appendChild(wrapMainBtn);
   }
 
   if (opts.showCopy !== false) controls.appendChild(copyMainBtn);
@@ -356,7 +459,12 @@ export function createJsonViewer(value, opts = {}) {
             onTogglePath(path, nextCollapsed) {
               if (!path) return;
               if (nextCollapsed) collapsedPaths.add(path);
-              else collapsedPaths.delete(path);
+              else {
+                collapsedPaths.delete(path);
+                const nodeValue = getValueAtPath(currentValue, path);
+                const descendantPaths = collectDescendantContainerPaths(nodeValue, path);
+                for (const descendantPath of descendantPaths) collapsedPaths.add(descendantPath);
+              }
               rebuildTree();
               renderCurrent();
               renderMaximizedBody();
@@ -445,6 +553,17 @@ export function createJsonViewer(value, opts = {}) {
       lines = (typeof text === 'string') ? text.split('\n').length : 0;
       isBig = (typeof text === 'string' && text.length > MAX_CHARS) || lines > MAX_LINES;
       isTreeValue = treeEnabled && isContainer(currentValue);
+      const preservedCollapsedPaths = Array.from(collapsedPaths);
+      collapsedPaths.clear();
+      const baseCollapsedPaths = preservedCollapsedPaths.length ? preservedCollapsedPaths : userCollapsedPaths;
+      for (const path of baseCollapsedPaths) collapsedPaths.add(path);
+      if (!baseCollapsedPaths.length && isTreeValue) {
+        const autoCollapsed = buildAutoCollapsedPaths(currentValue, {
+          totalLineThreshold: autoCollapseTotalLines,
+          expandedLineBudget: autoExpandLineBudget,
+        });
+        for (const path of autoCollapsed) collapsedPaths.add(path);
+      }
 
       // update pre and placeholder
       pre.textContent = text;
@@ -453,7 +572,7 @@ export function createJsonViewer(value, opts = {}) {
       rebuildTree();
 
       // If the new payload is large, force collapse to avoid rendering huge text.
-      if (isBig && expanded) {
+      if (isBig && expanded && !(isTreeValue && collapsedPaths.size > 0)) {
         expanded = false;
       }
       // If new payload is small, leave expanded state as-is (preserve user choice).
@@ -475,6 +594,28 @@ export function createJsonViewer(value, opts = {}) {
       opts.expose.pre = pre;
       opts.expose.setJson = setJson;
       opts.expose.getCollapsedPaths = () => Array.from(collapsedPaths);
+      opts.expose.setCollapsedPaths = (nextPaths) => {
+        collapsedPaths.clear();
+        const arr = Array.isArray(nextPaths) ? nextPaths : [];
+        for (const path of arr) {
+          if (typeof path === 'string' && path) collapsedPaths.add(path);
+        }
+        rebuildTree();
+        renderCurrent();
+      };
+      opts.expose.getExpanded = () => !!expanded;
+      opts.expose.setExpanded = (nextExpanded) => {
+        expanded = !!nextExpanded;
+        renderCurrent();
+      };
+      opts.expose.getWrapping = () => !!wrapping;
+      opts.expose.setWrapping = (nextWrapping) => {
+        wrapping = !!nextWrapping;
+        try { pre.style.setProperty('white-space', wrapping ? 'pre-wrap' : 'pre'); } catch (e) {}
+        if (treeRoot) treeRoot.classList.toggle('json-tree-wrap', wrapping);
+        try { if (wrapMainBtn) wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false'); } catch (e) {}
+        renderCurrent();
+      };
     } catch (e) {}
   }
 

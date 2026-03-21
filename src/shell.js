@@ -13,7 +13,6 @@ import { speak } from './utils/browser/speech.js';
 import { createDropdown } from './components/shared/dropdown.js';
 import { timed } from './utils/browser/timing.js';
 import collectionSettingsController from './controllers/collectionSettingsController.js';
-import studyManagerController from './controllers/studyManagerController.js';
 
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
@@ -21,7 +20,6 @@ export function createAppShell({ store, onNavigate }) {
 
   // Initialize controllers with store
   collectionSettingsController.init({ store });
-  try { studyManagerController.init({ store }); } catch (e) {}
 
   // Register shell as a settings consumer for persisted shell settings.
   try {

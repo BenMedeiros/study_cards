@@ -333,8 +333,6 @@ function buildSessionsTable({ store, report, tableSettings }) {
 }
 
 export function renderStudyManager({ store, onNavigate, route }) {
-  try { studyManagerController.init({ store }); } catch {}
-
   const root = document.createElement('div');
   root.id = 'study-manager-root';
 
@@ -402,19 +400,24 @@ export function renderStudyManager({ store, onNavigate, route }) {
   root.append(controls, body);
 
   function getReport(snap = snapshot) {
-    const reports = Array.isArray(snap?.collections) ? snap.collections : [];
-    if (!reports.length) return null;
-    if (!selectedCollectionId || !reports.some((r) => r.collectionId === selectedCollectionId)) {
-      selectedCollectionId = reports[0].collectionId;
+    const reportMap = (snap?.collections && typeof snap.collections === 'object') ? snap.collections : {};
+    const reports = Object.values(reportMap);
+    const availableCollections = Array.isArray(snap?.availableCollections) ? snap.availableCollections : [];
+    if (!selectedCollectionId) {
+      selectedCollectionId = String(
+        availableCollections[0]?.collectionId
+        || reports[0]?.collectionId
+        || ''
+      ).trim();
     }
-    return snap?.collectionMap?.[selectedCollectionId] || null;
+    return reportMap[selectedCollectionId] || null;
   }
 
   function renderControls() {
     controls.removeControl && controls.removeControl('collection');
     controls.removeControl && controls.removeControl('refresh');
 
-    const collections = Array.isArray(snapshot?.collections) ? snapshot.collections : [];
+    const collections = Array.isArray(snapshot?.availableCollections) ? snapshot.availableCollections : [];
     if (!collections.length) return;
 
     controls.addElement({
@@ -426,6 +429,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       value: selectedCollectionId,
       onChange: (next) => {
         selectedCollectionId = String(next || '').trim();
+        try { studyManagerController.ensureCollections([selectedCollectionId]); } catch {}
         renderControls();
         renderBody();
       },
@@ -444,7 +448,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
           renderControls();
           renderBody();
         }
-        try { studyManagerController.requestRefresh('manual', { delayMs: 0 }); } catch {}
+        try { studyManagerController.requestRefresh('manual', { delayMs: 0, collectionIds: [selectedCollectionId] }); } catch {}
       },
       disabled: !!snapshot?.isComputing,
     });
@@ -460,7 +464,18 @@ export function renderStudyManager({ store, onNavigate, route }) {
 
     const report = getReport(snapshot);
     if (!report) {
-      body.append(card({ id: 'study-manager-empty-card', title: 'Study Manager', subtitle: 'No collection study data available yet.' }));
+      try {
+        if (selectedCollectionId && !snapshot?.isComputing) {
+          studyManagerController.ensureCollections([selectedCollectionId]);
+        }
+      } catch {}
+      body.append(card({
+        id: 'study-manager-empty-card',
+        title: 'Study Manager',
+        subtitle: selectedCollectionId
+          ? `Building study summary for ${selectedCollectionId}...`
+          : 'No collection study data available yet.',
+      }));
       return;
     }
 

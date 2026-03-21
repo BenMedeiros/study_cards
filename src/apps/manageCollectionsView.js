@@ -500,7 +500,11 @@ export function renderManageCollections({ store, onNavigate }) {
   }
 
   function getValidationsSnapshot() {
-    try { return store?.analysis?.getEntry?.('validations') || null; } catch (e) { return null; }
+    try {
+      return store?.analysis?.getEntry?.('validationManager')
+        || store?.analysis?.getEntry?.('validations')
+        || null;
+    } catch (e) { return null; }
   }
 
   function getActiveCollectionMissingReport() {

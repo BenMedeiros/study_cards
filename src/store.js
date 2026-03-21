@@ -5,6 +5,7 @@ import { createStudyProgressManager } from './managers/studyProgressManager.js';
 import { createCollectionsManager } from './managers/collectionsManager.js';
 import createCollectionDatabaseManager from './managers/collectionDatabaseManager.js';
 import { createSettingsManager, setGlobalSettingsManager } from './managers/settingsManager.js';
+import studyManagerController from './controllers/studyManagerController.js';
 
 function safeClone(value) {
   try { return JSON.parse(JSON.stringify(value)); } catch { return null; }
@@ -35,6 +36,7 @@ export function createStore() {
   const analysisState = {};
 
   const emitter = createEmitter();
+  const analysisEmitter = createEmitter();
 
   function getAnalysisState() {
     return safeClone(analysisState) || {};
@@ -55,21 +57,30 @@ export function createStore() {
       const cloned = safeClone(value);
       analysisState[normalizedKey] = cloned === null && value !== null ? value : cloned;
     }
-    if (!silent) emitter.emit();
+    if (!silent) {
+      analysisEmitter.emit();
+      emitter.emit();
+    }
   }
 
   function setAnalysisState(nextState, { silent = false } = {}) {
     const normalized = (nextState && typeof nextState === 'object') ? (safeClone(nextState) || {}) : {};
     for (const key of Object.keys(analysisState)) delete analysisState[key];
     Object.assign(analysisState, normalized);
-    if (!silent) emitter.emit();
+    if (!silent) {
+      analysisEmitter.emit();
+      emitter.emit();
+    }
   }
 
   function mergeAnalysisState(patch, { silent = false } = {}) {
     const normalized = (patch && typeof patch === 'object') ? (safeClone(patch) || {}) : null;
     if (!normalized) return;
     Object.assign(analysisState, normalized);
-    if (!silent) emitter.emit();
+    if (!silent) {
+      analysisEmitter.emit();
+      emitter.emit();
+    }
   }
 
   const persistence = createPersistenceManager({ uiState, emitter, studyProgressKey: 'study_progress', studyTimeKey: 'study_time' });
@@ -93,10 +104,17 @@ export function createStore() {
 
   const collectionDB = createCollectionDatabaseManager({
     onValidationStateChange: (snapshot) => {
-      setAnalysisEntry('validations', snapshot, { silent: false });
+      setAnalysisEntry('validationManager', snapshot, { silent: false });
     },
   });
-  setAnalysisEntry('validations', collectionDB?.validations?.getSnapshot?.() || null, { silent: true });
+  setAnalysisEntry('validationManager', collectionDB?.validations?.getSnapshot?.() || null, { silent: true });
+
+  try {
+    studyManagerController.subscribe((snapshot) => {
+      setAnalysisEntry('studyManager', snapshot || null, { silent: true });
+      analysisEmitter.emit();
+    });
+  } catch (e) {}
   const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, collectionDB, settings });
 
   function subscribe(fn) {
@@ -138,6 +156,10 @@ export function createStore() {
       if (!state.activeCollectionId && Array.isArray(paths) && paths.length > 0) {
         await collections.setActiveCollectionId(paths[0]);
       }
+      try {
+        studyManagerController.init({ store: api });
+        setAnalysisEntry('studyManager', studyManagerController.getSnapshot?.() || null, { silent: true });
+      } catch (e) {}
     } catch (err) {
       console.error(`Failed to initialize store: ${err.message}`);
       state.collections = [];
@@ -148,7 +170,7 @@ export function createStore() {
     persistence.installFlushGuards();
   }
 
-  return {
+  const api = {
     subscribe,
     initialize,
     settings,
@@ -284,6 +306,7 @@ export function createStore() {
     analysis: {
       getState: getAnalysisState,
       getEntry: getAnalysisEntry,
+      subscribe: analysisEmitter.subscribe,
       setState: setAnalysisState,
       mergeState: mergeAnalysisState,
       setEntry: setAnalysisEntry,
@@ -315,4 +338,5 @@ export function createStore() {
       sumSessionDurations: studyTime.sumSessionDurations,
     },
   };
+  return api;
 }

@@ -366,6 +366,7 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
 
   async function _runAllValidationsNow({ reason = 'unknown' } = {}) {
     const runId = ++validationRunCounter;
+    try { console.log('[validationManager] run:start', { reason, runId }); } catch (e) {}
     validationMeta.state = 'running';
     validationMeta.isRunning = true;
     validationMeta.pendingPromise = true;
@@ -418,6 +419,15 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
       validationMeta.state = validationRerunRequested ? 'queued' : validationMeta.lastRunStatus;
       validationMeta.rerunRequested = !!validationRerunRequested;
       _notifyValidationStateChanged();
+      try {
+        console.log('[validationManager] run:finish', {
+          reason,
+          runId,
+          status: validationMeta.lastRunStatus,
+          duplicated_keys: validations.duplicated_keys.status,
+          missing_related_collection_data: validations.missing_related_collection_data.status,
+        });
+      } catch (e) {}
     }
   }
 
@@ -948,7 +958,6 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
 }
 
 export default createCollectionDatabaseManager;
-
 
 
 
