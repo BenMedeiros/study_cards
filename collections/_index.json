@@ -218,11 +218,11 @@
       "schemaSource": "inline"
     },
     {
-      "path": "spanish_words.json",
-      "modifiedAt": "2026-03-18T14:39:16.394Z",
+      "path": "spanish/spanish_words.json",
+      "modifiedAt": "2026-03-21T13:25:31.292Z",
       "name": "All Spanish Words",
       "description": "First-generation Spanish vocabulary entries in canonical dictionary form, with English glosses and lightweight grammatical metadata.",
-      "entriesCount": 331,
+      "entriesCount": 631,
       "valid": false,
       "validation": {
         "schema": {

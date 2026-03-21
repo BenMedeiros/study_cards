@@ -2382,6 +2382,1806 @@
       "type": "noun",
       "semanticClass": "objects",
       "gender": "m"
+    },
+    {
+      "lemma": "ser",
+      "meaning": "to be",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "estar",
+      "meaning": "to be",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "haber",
+      "meaning": "to have; there to be",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "tener",
+      "meaning": "to have",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "hacer",
+      "meaning": "to do; to make",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "poder",
+      "meaning": "to be able to",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "querer",
+      "meaning": "to want; to love",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "deber",
+      "meaning": "to owe; should",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "parecer",
+      "meaning": "to seem",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "resultar",
+      "meaning": "to result; to turn out",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "servir",
+      "meaning": "to serve; to be useful",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "valer",
+      "meaning": "to be worth; to cost",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "poner",
+      "meaning": "to put; to place",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "dar",
+      "meaning": "to give",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "tomar",
+      "meaning": "to take; to drink",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "pasar",
+      "meaning": "to pass; to happen",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "necesitar",
+      "meaning": "to need",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "quedar",
+      "meaning": "to remain; to meet",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "traer",
+      "meaning": "to bring",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "tratar",
+      "meaning": "to try; to deal with",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "lemma": "ir",
+      "meaning": "to go",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "venir",
+      "meaning": "to come",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "llegar",
+      "meaning": "to arrive",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "salir",
+      "meaning": "to leave; to go out",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "entrar",
+      "meaning": "to enter",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "volver",
+      "meaning": "to return",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "regresar",
+      "meaning": "to return",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "caminar",
+      "meaning": "to walk",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "correr",
+      "meaning": "to run",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "andar",
+      "meaning": "to walk; to go around",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "subir",
+      "meaning": "to go up; to upload",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "bajar",
+      "meaning": "to go down; to download",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "caer",
+      "meaning": "to fall",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "moverse",
+      "meaning": "to move",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "viajar",
+      "meaning": "to travel",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "cruzar",
+      "meaning": "to cross",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "acercarse",
+      "meaning": "to get closer",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "alejarse",
+      "meaning": "to move away",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "avanzar",
+      "meaning": "to advance",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "conducir",
+      "meaning": "to drive",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "lemma": "existir",
+      "meaning": "to exist",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "vivir",
+      "meaning": "to live",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "permanecer",
+      "meaning": "to remain",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "continuar",
+      "meaning": "to continue",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "mantenerse",
+      "meaning": "to remain; to stay",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "quedarse",
+      "meaning": "to stay; to remain",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "convertirse",
+      "meaning": "to become",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "volverse",
+      "meaning": "to become",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "hacerse",
+      "meaning": "to become",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "ponerse",
+      "meaning": "to become; to put on",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "depender",
+      "meaning": "to depend",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "consistir",
+      "meaning": "to consist",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "pertenecer",
+      "meaning": "to belong",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "faltar",
+      "meaning": "to be missing; to lack",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "sobrar",
+      "meaning": "to be left over",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "importar",
+      "meaning": "to matter",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "significar",
+      "meaning": "to mean; to signify",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "funcionar",
+      "meaning": "to function; to work",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "hallarse",
+      "meaning": "to be located; to find oneself",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "ubicarse",
+      "meaning": "to be located",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "lemma": "decir",
+      "meaning": "to say; to tell",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "hablar",
+      "meaning": "to speak; to talk",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "preguntar",
+      "meaning": "to ask",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "responder",
+      "meaning": "to answer; to respond",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "contar",
+      "meaning": "to tell; to count",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "explicar",
+      "meaning": "to explain",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "llamar",
+      "meaning": "to call",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "nombrar",
+      "meaning": "to name",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "mencionar",
+      "meaning": "to mention",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "repetir",
+      "meaning": "to repeat",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "anunciar",
+      "meaning": "to announce",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "avisar",
+      "meaning": "to notify; to warn",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "discutir",
+      "meaning": "to discuss; to argue",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "conversar",
+      "meaning": "to converse",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "comunicar",
+      "meaning": "to communicate",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "expresar",
+      "meaning": "to express",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "describir",
+      "meaning": "to describe",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "leer",
+      "meaning": "to read",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "escribir",
+      "meaning": "to write",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "traducir",
+      "meaning": "to translate",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "lemma": "saber",
+      "meaning": "to know",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "pensar",
+      "meaning": "to think",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "creer",
+      "meaning": "to believe",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "entender",
+      "meaning": "to understand",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "comprender",
+      "meaning": "to understand; to comprehend",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "recordar",
+      "meaning": "to remember",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "olvidar",
+      "meaning": "to forget",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "aprender",
+      "meaning": "to learn",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "estudiar",
+      "meaning": "to study",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "conocer",
+      "meaning": "to know; to meet",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "imaginar",
+      "meaning": "to imagine",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "considerar",
+      "meaning": "to consider",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "suponer",
+      "meaning": "to suppose",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "decidir",
+      "meaning": "to decide",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "dudar",
+      "meaning": "to doubt",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "deducir",
+      "meaning": "to deduce",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "descubrir",
+      "meaning": "to discover",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "investigar",
+      "meaning": "to investigate",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "calcular",
+      "meaning": "to calculate",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "analizar",
+      "meaning": "to analyze",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "lemma": "gustar",
+      "meaning": "to like",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "amar",
+      "meaning": "to love",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "adorar",
+      "meaning": "to adore",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "odiar",
+      "meaning": "to hate",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "temer",
+      "meaning": "to fear",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "desear",
+      "meaning": "to desire; to wish",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "preocuparse",
+      "meaning": "to worry",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "alegrarse",
+      "meaning": "to become happy",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "entristecerse",
+      "meaning": "to become sad",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "molestar",
+      "meaning": "to bother",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "interesar",
+      "meaning": "to interest",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "aburrir",
+      "meaning": "to bore",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "divertir",
+      "meaning": "to amuse",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "disfrutar",
+      "meaning": "to enjoy",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "sufrir",
+      "meaning": "to suffer",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "lamentar",
+      "meaning": "to regret; to lament",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "enojarse",
+      "meaning": "to get angry",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "tranquilizarse",
+      "meaning": "to calm down",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "asustarse",
+      "meaning": "to get scared",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "entusiasmarse",
+      "meaning": "to get excited",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "lemma": "comer",
+      "meaning": "to eat",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "beber",
+      "meaning": "to drink",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "dormir",
+      "meaning": "to sleep",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "descansar",
+      "meaning": "to rest",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "despertar",
+      "meaning": "to wake; to wake up",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "sentarse",
+      "meaning": "to sit down",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "levantarse",
+      "meaning": "to get up",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "acostarse",
+      "meaning": "to go to bed",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "bañarse",
+      "meaning": "to bathe; to shower",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "lavarse",
+      "meaning": "to wash oneself",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "vestirse",
+      "meaning": "to get dressed",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "peinarse",
+      "meaning": "to comb one's hair",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "sonreír",
+      "meaning": "to smile",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "reír",
+      "meaning": "to laugh",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "llorar",
+      "meaning": "to cry",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "toser",
+      "meaning": "to cough",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "estornudar",
+      "meaning": "to sneeze",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "masticar",
+      "meaning": "to chew",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "respirar",
+      "meaning": "to breathe",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "nadar",
+      "meaning": "to swim",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "lemma": "cocinar",
+      "meaning": "to cook",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "limpiar",
+      "meaning": "to clean",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "abrir",
+      "meaning": "to open",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "cerrar",
+      "meaning": "to close",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "usar",
+      "meaning": "to use; to wear",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "guardar",
+      "meaning": "to keep; to store",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "buscar",
+      "meaning": "to look for",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "encontrar",
+      "meaning": "to find",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "preparar",
+      "meaning": "to prepare",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "arreglar",
+      "meaning": "to fix; to arrange",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "lavar",
+      "meaning": "to wash",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "planchar",
+      "meaning": "to iron",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "encender",
+      "meaning": "to turn on; to light",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "apagar",
+      "meaning": "to turn off",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "cortar",
+      "meaning": "to cut",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "llenar",
+      "meaning": "to fill",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "vaciar",
+      "meaning": "to empty",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "tirar",
+      "meaning": "to throw away; to pull",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "ordenar",
+      "meaning": "to tidy; to put in order",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "recoger",
+      "meaning": "to pick up; to collect",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "lemma": "comprar",
+      "meaning": "to buy",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "vender",
+      "meaning": "to sell",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "pagar",
+      "meaning": "to pay",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "cobrar",
+      "meaning": "to charge; to collect",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "recibir",
+      "meaning": "to receive",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "prestar",
+      "meaning": "to lend",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "gastar",
+      "meaning": "to spend",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "ahorrar",
+      "meaning": "to save",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "ganar",
+      "meaning": "to earn; to win",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "perder",
+      "meaning": "to lose",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "compartir",
+      "meaning": "to share",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "devolver",
+      "meaning": "to return; to give back",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "regalar",
+      "meaning": "to give as a gift",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "elegir",
+      "meaning": "to choose",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "poseer",
+      "meaning": "to possess",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "adquirir",
+      "meaning": "to acquire",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "alquilar",
+      "meaning": "to rent",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "costar",
+      "meaning": "to cost",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "robar",
+      "meaning": "to steal",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "ofrecer",
+      "meaning": "to offer",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "lemma": "trabajar",
+      "meaning": "to work",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "crear",
+      "meaning": "to create",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "construir",
+      "meaning": "to build",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "producir",
+      "meaning": "to produce",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "empezar",
+      "meaning": "to start; to begin",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "terminar",
+      "meaning": "to finish; to end",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "mejorar",
+      "meaning": "to improve",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "desarrollar",
+      "meaning": "to develop",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "organizar",
+      "meaning": "to organize",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "planear",
+      "meaning": "to plan",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "intentar",
+      "meaning": "to try; to attempt",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "lograr",
+      "meaning": "to achieve",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "resolver",
+      "meaning": "to solve; to resolve",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "reparar",
+      "meaning": "to repair",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "fabricar",
+      "meaning": "to manufacture",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "diseñar",
+      "meaning": "to design",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "administrar",
+      "meaning": "to manage; to administer",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "dirigir",
+      "meaning": "to direct; to lead",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "presentar",
+      "meaning": "to present",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "operar",
+      "meaning": "to operate",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "lemma": "ayudar",
+      "meaning": "to help",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "invitar",
+      "meaning": "to invite",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "visitar",
+      "meaning": "to visit",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "acompañar",
+      "meaning": "to accompany",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "saludar",
+      "meaning": "to greet",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "despedirse",
+      "meaning": "to say goodbye",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "reunirse",
+      "meaning": "to meet; to gather",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "casarse",
+      "meaning": "to get married",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "celebrar",
+      "meaning": "to celebrate",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "apoyar",
+      "meaning": "to support",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "respetar",
+      "meaning": "to respect",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "confiar",
+      "meaning": "to trust",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "abrazar",
+      "meaning": "to hug",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "besar",
+      "meaning": "to kiss",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "jugar",
+      "meaning": "to play",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "colaborar",
+      "meaning": "to collaborate",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "competir",
+      "meaning": "to compete",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "unirse",
+      "meaning": "to join",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "cuidar",
+      "meaning": "to take care of",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "negociar",
+      "meaning": "to negotiate",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "lemma": "dejar",
+      "meaning": "to let; to leave",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "permitir",
+      "meaning": "to allow",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "prohibir",
+      "meaning": "to prohibit",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "obligar",
+      "meaning": "to force; to oblige",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "mandar",
+      "meaning": "to order; to send",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "controlar",
+      "meaning": "to control",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "manejar",
+      "meaning": "to handle; to manage",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "evitar",
+      "meaning": "to avoid",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "proteger",
+      "meaning": "to protect",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "atacar",
+      "meaning": "to attack",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "defender",
+      "meaning": "to defend",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "aceptar",
+      "meaning": "to accept",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "rechazar",
+      "meaning": "to reject",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "exigir",
+      "meaning": "to demand",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "cumplir",
+      "meaning": "to fulfill; to comply",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "detener",
+      "meaning": "to stop; to detain",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "soltar",
+      "meaning": "to release; to let go",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "aplicar",
+      "meaning": "to apply",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "impedir",
+      "meaning": "to prevent",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "supervisar",
+      "meaning": "to supervise",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "lemma": "ver",
+      "meaning": "to see",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "oír",
+      "meaning": "to hear",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "escuchar",
+      "meaning": "to listen",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "mirar",
+      "meaning": "to look at",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "sentir",
+      "meaning": "to feel",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "notar",
+      "meaning": "to notice",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "observar",
+      "meaning": "to observe",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "tocar",
+      "meaning": "to touch",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "oler",
+      "meaning": "to smell",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "probar",
+      "meaning": "to taste; to try",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "distinguir",
+      "meaning": "to distinguish",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "vigilar",
+      "meaning": "to watch; to keep an eye on",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "mostrar",
+      "meaning": "to show",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "señalar",
+      "meaning": "to point out; to signal",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "enfocar",
+      "meaning": "to focus",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "captar",
+      "meaning": "to capture; to grasp",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "percibir",
+      "meaning": "to perceive",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "contemplar",
+      "meaning": "to contemplate; to look at",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "examinar",
+      "meaning": "to examine",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "detectar",
+      "meaning": "to detect",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "lemma": "durar",
+      "meaning": "to last",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "ocurrir",
+      "meaning": "to happen; to occur",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "suceder",
+      "meaning": "to happen",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "comenzar",
+      "meaning": "to begin",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "iniciar",
+      "meaning": "to begin; to start",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "acabar",
+      "meaning": "to finish; to end",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "nacer",
+      "meaning": "to be born",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "morir",
+      "meaning": "to die",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "tardar",
+      "meaning": "to take time; to delay",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "aprovechar",
+      "meaning": "to make use of",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "retrasar",
+      "meaning": "to delay",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "adelantar",
+      "meaning": "to move forward; to advance",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "posponer",
+      "meaning": "to postpone",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "cancelar",
+      "meaning": "to cancel",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "renovar",
+      "meaning": "to renew",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "surgir",
+      "meaning": "to arise; to emerge",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "desaparecer",
+      "meaning": "to disappear",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "caducar",
+      "meaning": "to expire",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "transcurrir",
+      "meaning": "to pass; to elapse",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "persistir",
+      "meaning": "to persist",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "lemma": "crecer",
+      "meaning": "to grow",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "aumentar",
+      "meaning": "to increase",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "disminuir",
+      "meaning": "to decrease",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "reducir",
+      "meaning": "to reduce",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "cambiar",
+      "meaning": "to change",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "transformar",
+      "meaning": "to transform",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "romper",
+      "meaning": "to break",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "empeorar",
+      "meaning": "to worsen",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "secar",
+      "meaning": "to dry",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "mojar",
+      "meaning": "to wet",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "derretir",
+      "meaning": "to melt",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "congelar",
+      "meaning": "to freeze",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "mezclar",
+      "meaning": "to mix",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "separar",
+      "meaning": "to separate",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "adaptar",
+      "meaning": "to adapt",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "reemplazar",
+      "meaning": "to replace",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "doblar",
+      "meaning": "to fold; to bend",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "calentar",
+      "meaning": "to heat; to warm",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "enfriar",
+      "meaning": "to cool",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "lemma": "convertir",
+      "meaning": "to convert; to turn into",
+      "type": "verb",
+      "semanticClass": "change"
     }
   ]
 }
