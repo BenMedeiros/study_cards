@@ -76,7 +76,6 @@ export function createStore() {
 
   const studyProgress = createStudyProgressManager({ uiState, persistence, emitter, studyProgressKey: 'study_progress', studyTimeKey: 'study_time' });
   const kanjiProgress = studyProgress;
-  const grammarProgress = studyProgress;
   const studyTime = studyProgress;
   const ui = createUIStateManager({ uiState, persistence, emitter });
 
@@ -98,7 +97,7 @@ export function createStore() {
     },
   });
   setAnalysisEntry('validations', collectionDB?.validations?.getSnapshot?.() || null, { silent: true });
-  const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, grammarProgressManager: grammarProgress, collectionDB, settings });
+  const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, collectionDB, settings });
 
   function subscribe(fn) {
     return emitter.subscribe(fn);
@@ -307,18 +306,6 @@ export function createStore() {
       getFocusKanjiValues: kanjiProgress.getFocusKanjiValues,
     },
 
-    grammarProgress: {
-      isGrammarLearned: grammarProgress.isGrammarLearned,
-      isGrammarFocus: grammarProgress.isGrammarFocus,
-      toggleGrammarLearned: grammarProgress.toggleGrammarLearned,
-      toggleGrammarFocus: grammarProgress.toggleGrammarFocus,
-      clearLearnedGrammar: grammarProgress.clearLearnedGrammar,
-      getGrammarProgressRecord: grammarProgress.getGrammarProgressRecord,
-      recordSeen: grammarProgress.recordSeenForGrammar,
-      addStudyTimeMs: grammarProgress.addStudyTimeMsForGrammar,
-      createCardProgressTracker: grammarProgress.createCardProgressTracker,
-      getActiveCardProgressStatus: grammarProgress.getActiveCardProgressStatus,
-    },
     studyTime: {
       recordAppCollectionStudySession: studyTime.recordAppCollectionStudySession,
       getStudyTimeRecord: studyTime.getStudyTimeRecord,

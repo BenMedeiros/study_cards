@@ -4,7 +4,6 @@ import { validateCollection } from '../utils/browser/validation.js';
 import { formatDurationMs, formatIsoShort } from '../utils/browser/helpers.js';
 import collectionSettingsController from '../controllers/collectionSettingsController.js';
 import kanjiStudyController from '../controllers/kanjiStudyController.js';
-import qaCardsController from '../controllers/qaCardsController.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import collectionsViewController from '../controllers/collectionsViewController.js';
 import {
@@ -199,9 +198,8 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
         const id = tr?.dataset?.rowId || rowData.__id;
         // Reset top-level collection settings
         collectionSettingsController.set(id, { order_hash_int: null, isShuffled: false, studyFilter: '', defaultViewMode: null, heldTableSearch: '', expansion_i: [], expansion_na: [] });
-        // Reset per-view app indices
+        // Reset the remaining study view index.
         kanjiStudyController.create(id).set({ currentIndex: 0 });
-        qaCardsController.create(id).set({ currentIndex: 0 });
         // update the row cells in-place so UI reflects cleared settings
         if (tr) {
           const ci = tr.querySelector('[data-field="currentIndex"]'); if (ci) ci.textContent = '';

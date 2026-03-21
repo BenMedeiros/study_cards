@@ -352,7 +352,7 @@ export function renderEntityExplorer({ store }) {
   try { if (_storeGroupRec && _storeGroupRec.group) { storeGroup = _storeGroupRec.group; left.append(_storeGroupRec.group); } } catch (e) {}
 
   const spacer = document.createElement('div');
-  spacer.className = 'qa-header-spacer';
+  spacer.className = 'header-tools-spacer';
   headerTools.append(left, spacer);
   // append right-side controls to header tools
   try { if (_tableSettingsRec && _tableSettingsRec.group) headerTools.append(_tableSettingsRec.group); } catch (e) {}

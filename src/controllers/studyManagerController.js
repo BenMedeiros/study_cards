@@ -379,23 +379,13 @@ const studyManagerController = (() => {
     const entries = Array.isArray(view?.entries) ? view.entries : [];
     const indices = Array.isArray(view?.indices) ? view.indices : entries.map((_, i) => i);
     const fields = Array.isArray(collection?.metadata?.fields) ? collection.metadata.fields : null;
-    const category = String(collection?.metadata?.category || '').trim();
-    const isGrammar = category === 'japanese.grammar' || category.endsWith('.grammar') || category.includes('.grammar.');
-
     function getEntryKey(entry) {
-      if (isGrammar) {
-        const v = entry?.pattern;
-        return (typeof v === 'string') ? v.trim() : '';
-      }
       return String(store?.collections?.getEntryStudyKey?.(entry) || '').trim();
     }
 
     function getProgressRecord(entryKey) {
       if (!entryKey) return null;
       try {
-        if (isGrammar && typeof store?.grammarProgress?.getGrammarProgressRecord === 'function') {
-          return store.grammarProgress.getGrammarProgressRecord(entryKey, { collectionKey }) || null;
-        }
         if (typeof store?.kanjiProgress?.getKanjiProgressRecord === 'function') {
           return store.kanjiProgress.getKanjiProgressRecord(entryKey, { collectionKey }) || null;
         }

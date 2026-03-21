@@ -5,7 +5,6 @@ export function createStudyProgressManager({
   studyProgressKey = 'study_progress',
   studyTimeKey = 'study_time',
 } = {}) {
-  const KNOWN_APP_IDS = ['kanjiStudyCardView', 'qaCardsView'];
   let trackerSeq = 0;
   let activeTrackerStatus = {
     trackerId: null,
@@ -608,138 +607,6 @@ export function createStudyProgressManager({
     }
   }
 
-  // Grammar API (backed by unified records)
-  function normalizeGrammarKey(v) { return normalizeValue(v); }
-
-  function getGrammarProgressRecord(v, opts = {}) {
-    const k = normalizeGrammarKey(v);
-    if (!k) return null;
-    const collectionKey = normalizeCollectionKey(opts.collectionKey, 'grammar');
-    const rec = getBaseRecord(k, { collectionKey }).record;
-    if (!rec) return null;
-    const st = getStudyMetricsForRecord(rec, { appIds: KNOWN_APP_IDS });
-    return {
-      ...rec,
-      timesSeen: st.timesSeen,
-      timeMs: st.timeMs,
-      lastSeenIso: st.lastSeenIso,
-    };
-  }
-
-  function setGrammarProgressRecord(v, patch, opts = {}) {
-    const k = normalizeGrammarKey(v);
-    if (!k) return null;
-    const collectionKey = normalizeCollectionKey(opts.collectionKey, 'grammar');
-    return setBaseRecord(k, patch, { ...opts, collectionKey, appId: 'qaCardsView' });
-  }
-
-  function getGrammarState(v, opts = {}) {
-    const rec = getGrammarProgressRecord(v, opts);
-    const s = rec?.state;
-    return (typeof s === 'string' && s.trim()) ? s.trim() : null;
-  }
-
-  function setGrammarState(v, nextState, opts = {}) {
-    const state = (typeof nextState === 'string' && nextState.trim()) ? nextState.trim() : null;
-    return setGrammarProgressRecord(v, { state }, opts);
-  }
-
-  function isGrammarLearned(v, opts = {}) { return getGrammarState(v, opts) === 'learned'; }
-  function isGrammarFocus(v, opts = {}) { return getGrammarState(v, opts) === 'focus'; }
-
-  function toggleGrammarLearned(v, opts = {}) {
-    const cur = getGrammarState(v, opts);
-    const next = (cur === 'learned') ? null : 'learned';
-    return setGrammarState(v, next, { ...opts, immediate: true });
-  }
-
-  function toggleGrammarFocus(v, opts = {}) {
-    const cur = getGrammarState(v, opts);
-    const next = (cur === 'focus') ? null : 'focus';
-    return setGrammarState(v, next, { ...opts, immediate: true });
-  }
-
-  function recordSeenForGrammar(v, { silent = true, immediate = false, collectionKey = 'grammar' } = {}) {
-    const k = normalizeGrammarKey(v);
-    if (!k) return null;
-    const base = getBaseRecord(k, { collectionKey }).record || {};
-    const appId = 'qaCardsView';
-    const next = ensureAppStats(base, appId);
-    const nowIso = new Date().toISOString();
-    const prev = cloneObject(next.apps[appId]);
-    next.apps[appId] = {
-      timesSeen: Math.max(0, Math.round(Number(prev.timesSeen) || 0)) + 1,
-      timeMs: Math.max(0, Math.round(Number(prev.timeMs) || 0)),
-      lastSeenIso: nowIso,
-    };
-    return setBaseRecord(k, next, { collectionKey, silent, immediate });
-  }
-
-  function addStudyTimeMsForGrammar(v, addMs, { silent = true, immediate = false, collectionKey = 'grammar' } = {}) {
-    const k = normalizeGrammarKey(v);
-    if (!k) return null;
-    const add = (typeof addMs === 'number' && Number.isFinite(addMs)) ? Math.max(0, Math.round(addMs)) : 0;
-    if (!add) return getGrammarProgressRecord(k, { collectionKey });
-    const base = getBaseRecord(k, { collectionKey }).record || {};
-    const appId = 'qaCardsView';
-    const next = ensureAppStats(base, appId);
-    const nowIso = new Date().toISOString();
-    const prev = cloneObject(next.apps[appId]);
-    next.apps[appId] = {
-      timesSeen: Math.max(0, Math.round(Number(prev.timesSeen) || 0)),
-      timeMs: Math.max(0, Math.round(Number(prev.timeMs) || 0)) + add,
-      lastSeenIso: nowIso,
-    };
-    return setBaseRecord(k, next, { collectionKey, silent, immediate });
-  }
-
-  function clearLearnedGrammar(opts = {}) {
-    const coll = normalizeCollectionKey(opts.collectionKey, 'grammar');
-    const map = ensureStudyProgressMap();
-    let changed = false;
-    for (const [id, rec] of Object.entries(map)) {
-      if (!rec || typeof rec !== 'object') continue;
-      const parts = splitStudyId(id);
-      if (parts.collectionKey !== coll) continue;
-      if (rec.state === 'learned') {
-        map[id] = { ...rec, state: null };
-        changed = true;
-      }
-    }
-    if (!changed) return;
-    persistence.markDirty({ kvKey: studyProgressKey });
-    persistence.scheduleFlush({ immediate: true });
-    emitter.emit();
-  }
-
-  function clearLearnedGrammarForKeys(keys, opts = {}) {
-    try {
-      const arr = Array.isArray(keys) ? keys : [];
-      if (!arr.length) return;
-      const coll = normalizeCollectionKey(opts.collectionKey, 'grammar');
-      const toClear = new Set(arr.map(normalizeGrammarKey).filter(Boolean));
-      if (!toClear.size) return;
-
-      const map = ensureStudyProgressMap();
-      let changed = false;
-      for (const k of toClear) {
-        const id = makeStudyId(coll, k);
-        const rec = map[id];
-        if (rec && typeof rec === 'object' && rec.state === 'learned') {
-          map[id] = { ...rec, state: null };
-          changed = true;
-        }
-      }
-      if (!changed) return;
-
-      persistence.markDirty({ kvKey: studyProgressKey });
-      persistence.scheduleFlush({ immediate: true });
-      emitter.emit();
-    } catch {
-      // ignore
-    }
-  }
-
   // Study time methods (merged here rather than thin wrapper)
   function ensureStudyTimeRecord() {
     uiState.kv = uiState.kv || {};
@@ -890,21 +757,6 @@ export function createStudyProgressManager({
     createCardProgressTracker,
     getActiveCardProgressStatus,
     getFocusKanjiValues,
-
-    // Grammar API
-    normalizeGrammarKey,
-    getGrammarProgressRecord,
-    setGrammarProgressRecord,
-    getGrammarState,
-    setGrammarState,
-    isGrammarLearned,
-    isGrammarFocus,
-    toggleGrammarLearned,
-    toggleGrammarFocus,
-    clearLearnedGrammar,
-    clearLearnedGrammarForKeys,
-    recordSeenForGrammar,
-    addStudyTimeMsForGrammar,
 
     // Study time
     ensureStudyTimeRecord,

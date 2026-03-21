@@ -20,7 +20,7 @@ import {
   getJapaneseSentencesMathExpansionDeltas,
 } from '../collectionExpansions/japaneseSentencesMath.js';
 
-export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, grammarProgressManager = null, collectionDB = null, settings = null }) {
+export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, collectionDB = null, settings = null }) {
   // Folder metadata helpers/storage used for lazy loads
   let folderMetadataMap = null;
   const metadataCache = {};
@@ -1101,21 +1101,12 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     let timeMs = 0;
     let seen = false;
     try {
-      if (adapter?.kind === 'grammar') {
-        const rec = (key && typeof grammarProgressManager?.getGrammarProgressRecord === 'function')
-          ? (grammarProgressManager.getGrammarProgressRecord(key, { collectionKey: coll?.key }) || {})
-          : {};
-        timesSeen = Math.max(0, Math.round(Number(rec?.timesSeen) || 0));
-        timeMs = Math.max(0, Math.round(Number(rec?.timeMs) || 0));
-        seen = !!rec?.seen || timesSeen > 0 || timeMs > 0;
-      } else {
-        const rec = (key && typeof progressManager?.getKanjiProgressRecord === 'function')
-          ? (progressManager.getKanjiProgressRecord(key, { collectionKey: coll?.key }) || {})
-          : {};
-        timesSeen = Math.max(0, Math.round(Number(rec?.timesSeen) || 0));
-        timeMs = Math.max(0, Math.round(Number(rec?.timeMs) || 0));
-        seen = !!rec?.seen || timesSeen > 0 || timeMs > 0;
-      }
+      const rec = (key && typeof progressManager?.getKanjiProgressRecord === 'function')
+        ? (progressManager.getKanjiProgressRecord(key, { collectionKey: coll?.key }) || {})
+        : {};
+      timesSeen = Math.max(0, Math.round(Number(rec?.timesSeen) || 0));
+      timeMs = Math.max(0, Math.round(Number(rec?.timeMs) || 0));
+      seen = !!rec?.seen || timesSeen > 0 || timeMs > 0;
     } catch {
       // ignore
     }
@@ -1421,21 +1412,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   }
 
   function progressAdapterForCollection(coll) {
-    const category = String(coll?.metadata?.category || '').trim();
-    const isGrammar = category === 'japanese.grammar' || category.endsWith('.grammar') || category.includes('.grammar.');
-
-    if (isGrammar) {
-      return {
-        kind: 'grammar',
-        getKey: (entry) => {
-          const p = entry && typeof entry === 'object' ? entry.pattern : '';
-          return String(p || '').trim();
-        },
-        isLearned: (key) => !!(key && typeof grammarProgressManager?.isGrammarLearned === 'function' && grammarProgressManager.isGrammarLearned(key, { collectionKey: coll?.key })),
-        isFocus: (key) => !!(key && typeof grammarProgressManager?.isGrammarFocus === 'function' && grammarProgressManager.isGrammarFocus(key, { collectionKey: coll?.key })),
-      };
-    }
-
     return {
       kind: 'kanji',
       getKey: (entry) => String(getEntryStudyKey(entry, { collection: coll }) || '').trim(),
@@ -1762,12 +1738,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const entries = Array.isArray(coll.entries) ? coll.entries : [];
     const adapter = progressAdapterForCollection(coll);
     const values = entries.map((e) => String(adapter?.getKey?.(e) || '').trim()).filter(Boolean);
-    if (adapter?.kind === 'grammar') {
-      if (typeof grammarProgressManager?.clearLearnedGrammarForKeys === 'function') {
-        grammarProgressManager.clearLearnedGrammarForKeys(values, { collectionKey: coll.key });
-        return true;
-      }
-    } else if (typeof progressManager?.clearLearnedKanjiForValues === 'function') {
+    if (typeof progressManager?.clearLearnedKanjiForValues === 'function') {
       progressManager.clearLearnedKanjiForValues(values, { collectionKey: coll.key });
       return true;
     }

@@ -1,5 +1,3 @@
-import { renderHome } from './apps/homeView.js';
-import { renderQaCards } from './apps/qaCardsView.js';
 import { renderCollectionsManager } from './apps/collectionsView.js';
 import { renderManageCollections } from './apps/manageCollectionsView.js';
 import { renderStudyManager } from './apps/studyManagerView.js';
@@ -466,8 +464,6 @@ export function createAppShell({ store, onNavigate }) {
   function routePathToAppId(pathname) {
     const p = String(pathname || '').trim();
     if (!p) return null;
-    if (p === '/') return 'home';
-    if (p === '/qa-cards') return 'qa-cards';
     if (p === '/kanji') return 'kanji';
     if (p === '/explorer') return 'explorer';
     if (p === '/data') return 'data';
@@ -912,8 +908,6 @@ export function createAppShell({ store, onNavigate }) {
     nav.innerHTML = '';
 
     const links = [
-      { href: '#/', label: 'Home' },
-      { href: '#/qa-cards', label: 'QA Cards' },
       { href: '#/kanji', label: 'Kanji Study' },
       { href: '#/data', label: 'Data' },
       { href: '#/study-manager', label: 'Study Manager' },
@@ -934,7 +928,7 @@ export function createAppShell({ store, onNavigate }) {
         const existing = document.getElementById('hdr-nav-dropdown');
         if (existing) existing.remove();
         const ddItems = links.map(l => ({ value: l.href, label: l.label }));
-        const dd = createDropdown({ items: ddItems, value: `#${currentPath}`, onChange: (v) => { try { location.hash = String(v || '#/'); } catch (e) {} }, className: 'hdr-nav-dropdown align-right', closeOverlaysOnOpen: true });
+        const dd = createDropdown({ items: ddItems, value: `#${currentPath}`, onChange: (v) => { try { location.hash = String(v || '#/collections'); } catch (e) {} }, className: 'hdr-nav-dropdown align-right', closeOverlaysOnOpen: true });
         dd.id = 'hdr-nav-dropdown';
         try { const prev = right.querySelector('#hdr-nav-dropdown'); if (prev) prev.remove(); } catch (e) {}
         try { right.appendChild(dd); } catch (e) {}
@@ -975,17 +969,6 @@ export function createAppShell({ store, onNavigate }) {
 
       renderHeader();
       main.innerHTML = '';
-
-      if (route.pathname === '/') {
-        main.append(timed('view.renderHome', () => renderHome({ store, onNavigate })));
-        return;
-      }
-
-      if (route.pathname === '/qa-cards') {
-        main.append(timed('view.renderQaCards', () => renderQaCards({ store, onNavigate })));
-        return;
-      }
-      // Crossword and Word Search routes removed
 
       if (route.pathname === '/kanji') {
         main.append(timed('view.renderKanjiStudyCard', () => renderKanjiStudyCard({ store })));

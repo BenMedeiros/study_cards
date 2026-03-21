@@ -29,7 +29,7 @@ timed('store.initialize', () => store.initialize()).then(async () => {
   // If URL already has a hash, that wins. Otherwise restore last visited route.
   if (!location.hash) {
     const last = (store?.shell && typeof store.shell.getLastRoute === 'function') ? store.shell.getLastRoute() : null;
-    navigateTo(last || '/');
+    navigateTo(last || '/collections');
   }
 
   // Now that collections are loaded, sync from URL and set up router
