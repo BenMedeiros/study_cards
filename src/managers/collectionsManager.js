@@ -1413,7 +1413,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
   function progressAdapterForCollection(coll) {
     return {
-      kind: 'kanji',
       getKey: (entry) => String(getEntryStudyKey(entry, { collection: coll }) || '').trim(),
       isLearned: (key) => !!(key && typeof progressManager?.isKanjiLearned === 'function' && progressManager.isKanjiLearned(key, { collectionKey: coll?.key })),
       isFocus: (key) => !!(key && typeof progressManager?.isKanjiFocus === 'function' && progressManager.isKanjiFocus(key, { collectionKey: coll?.key })),

@@ -662,7 +662,6 @@ export function renderData({ store }) {
     if (filterState) detailParts.push(`Study filter: ${filterState}`);
 
     return {
-      kind: adapter?.kind || 'kanji',
       count: keys.size,
       keys: Array.from(keys),
       detail: detailParts.join(' • '),
@@ -681,7 +680,7 @@ export function renderData({ store }) {
         const n = Math.max(0, Math.round(Number(stats?.count) || 0));
         if (!n) return;
 
-        const unit = (stats?.kind === 'grammar') ? 'pattern' : 'item';
+        const unit = 'item';
         const unitPlural = `${unit}s`;
 
         const ok = await confirmDialog({
@@ -1065,7 +1064,6 @@ export function renderData({ store }) {
       : active;
 
     return {
-      kind: 'kanji',
       getKey: (entry) => getEntryKanjiValue(entry),
       isLearned: (key) => !!(key && typeof store?.kanjiProgress?.isKanjiLearned === 'function' && store.kanjiProgress.isKanjiLearned(key, { collectionKey: coll?.key })),
       isFocus: (key) => !!(key && typeof store?.kanjiProgress?.isKanjiFocus === 'function' && store.kanjiProgress.isKanjiFocus(key, { collectionKey: coll?.key })),

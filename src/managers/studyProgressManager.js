@@ -141,34 +141,6 @@ export function createStudyProgressManager({
     return next;
   }
 
-  function getStudyMetricsForRecord(rec, { appIds = null } = {}) {
-    const src = cloneObject(rec);
-    const apps = cloneObject(src.apps);
-    const requested = Array.isArray(appIds) && appIds.length
-      ? appIds.map(normalizeAppId).filter(Boolean)
-      : Object.keys(apps);
-
-    let timesSeen = 0;
-    let timeMs = 0;
-    let lastSeenIso = null;
-    for (const app of requested) {
-      const st = cloneObject(apps[app]);
-      const ts = Math.max(0, Math.round(Number(st.timesSeen) || 0));
-      const tm = Math.max(0, Math.round(Number(st.timeMs) || 0));
-      const ls = normalizeValue(st.lastSeenIso) || null;
-      timesSeen += ts;
-      timeMs += tm;
-      if (ls && (!lastSeenIso || ls > lastSeenIso)) lastSeenIso = ls;
-    }
-
-    return {
-      seen: timesSeen > 0 || timeMs > 0 || !!src.seen,
-      timesSeen,
-      timeMs,
-      lastSeenIso,
-    };
-  }
-
   // Kanji helpers (also accepts generic entry objects).
   function normalizeKanjiValue(v) {
     if (v && typeof v === 'object') {
