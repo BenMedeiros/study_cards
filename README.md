@@ -4,7 +4,6 @@ Local-first, vanilla JavaScript study tools - single-page app with hash routing 
 
 Features
 - Multiple study apps built on the same collections model
-  - QA Cards - type answers (with romaji->hiragana support in some collections)
   - Kanji Study - focused card flow for kanji learning
   - Study Manager - filterable study history and rollups
   - Collections Manager - view and edit collections (client-side)
@@ -19,7 +18,7 @@ Quickstart (local)
 2. Start the local server:
    npm run dev
 3. Open the app in your browser:
-   http://127.0.0.1:3000/#/
+  http://127.0.0.1:3000/#/collections
 
 Notes
 - The app is served statically. The repo's dev script uses http-server (see package.json).
@@ -49,10 +48,7 @@ Example collection shape
     "fields": [
       { "key": "front", "label": "Front" },
       { "key": "back", "label": "Back" }
-    ],
-    "settings": {
-      "qaCards": { "submitMethod": "enter" }
-    }
+    ]
   },
   "entries": [
     { "front": "Question 1", "back": "Answer 1" }
@@ -75,7 +71,7 @@ Project structure (top-level)
 - apps/             - optional server code (unused for static mode)
 - collections/      - collection JSON files and category metadata
 - src/              - client source
-  - apps/           - app implementations (home, qaCards, kanjiStudyCard, studyManager, collections, manageCollections, data, entityExplorer)
+  - apps/           - app implementations (kanjiStudyCard, studyManager, collections, manageCollections, data, entityExplorer)
   - components/     - reusable UI components
   - utils/          - helpers
   - router.js

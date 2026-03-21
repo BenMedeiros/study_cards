@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-18T17:11:11.734Z",
+  "generatedAt": "2026-03-21T15:25:52.085Z",
   "scannedCollections": 13,
   "collectionsWithProblems": 2,
   "collectionsWithInvalidEntryKey": 1,
@@ -166,11 +166,13 @@
       "invalidEntries": [
         {
           "index": 0,
+          "lineNumber": 8,
           "label": "(unlabeled entry)",
           "reason": "Collection metadata.entry_key is missing or invalid"
         },
         {
           "index": 1,
+          "lineNumber": 9,
           "label": "(unlabeled entry)",
           "reason": "Collection metadata.entry_key is missing or invalid"
         }
@@ -179,9 +181,9 @@
     },
     {
       "collectionName": "All Spanish Words",
-      "collectionPath": "collections/spanish_words.json",
+      "collectionPath": "collections/spanish/spanish_words.json",
       "entryKey": "lemma",
-      "entryCount": 331,
+      "entryCount": 631,
       "hasValidEntryKeyMetadata": true,
       "schemaHasEntryKey": true,
       "invalidEntryCount": 0,
@@ -195,10 +197,12 @@
           "entries": [
             {
               "index": 26,
+              "lineNumber": 251,
               "label": "café"
             },
             {
               "index": 194,
+              "lineNumber": 1427,
               "label": "café"
             }
           ]
@@ -210,9 +214,9 @@
   "outputPath": "scripts/outputs/report_duplicated_keys_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-03-18T17:11:11.707Z",
-    "finishedAt": "2026-03-18T17:11:11.735Z",
-    "durationMs": 28,
-    "durationSeconds": 0.028
+    "startedAt": "2026-03-21T15:25:51.945Z",
+    "finishedAt": "2026-03-21T15:25:52.086Z",
+    "durationMs": 141,
+    "durationSeconds": 0.141
   }
 }

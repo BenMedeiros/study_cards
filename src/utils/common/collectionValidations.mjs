@@ -48,6 +48,11 @@ function formatKeyValue(value) {
   return JSON.stringify(value);
 }
 
+function getEntryLineNumber(record, index) {
+  const lineNumber = record?.entryLineNumbers?.[index];
+  return Number.isInteger(lineNumber) && lineNumber > 0 ? lineNumber : null;
+}
+
 function normalizeCollectionRecord(value, fallbackKey = '') {
   const raw = value && typeof value === 'object' ? value : null;
   const collection = raw && raw.collection && typeof raw.collection === 'object'
@@ -60,6 +65,7 @@ function normalizeCollectionRecord(value, fallbackKey = '') {
     key: key || path,
     path: path || key,
     collection: normalizeCollectionBlob(collection),
+    entryLineNumbers: Array.isArray(raw?.entryLineNumbers) ? raw.entryLineNumbers.slice() : null,
   };
 }
 
@@ -120,6 +126,7 @@ function inspectCollectionForDuplicatedKeys(record) {
     if (!isValidEntryKeyValue(value)) {
       invalidEntries.push({
         index,
+        lineNumber: getEntryLineNumber(record, index),
         label: truncate(getEntryLabel(entry, entryKey)),
         reason: entryKey
           ? `Missing or invalid \`${entryKey}\` value`
@@ -132,6 +139,7 @@ function inspectCollectionForDuplicatedKeys(record) {
     if (!seenValues.has(comparableValue)) seenValues.set(comparableValue, []);
     seenValues.get(comparableValue).push({
       index,
+      lineNumber: getEntryLineNumber(record, index),
       label: truncate(getEntryLabel(entry, entryKey))
     });
   }

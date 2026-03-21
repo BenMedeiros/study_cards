@@ -2,7 +2,7 @@ import { idbGet, idbPut, idbGetAll, idbGetAllByIndex } from '../utils/browser/id
 import { timed } from '../utils/browser/timing.js';
 import { normalizeFolderPath } from '../utils/browser/helpers.js';
 import { getGlobalSettingsManager } from './settingsManager.js';
-import { computePatchFromInput } from '../utils/common/collectionDiff.mjs';
+import { computePatchFromInput, detectCollectionArrayKey } from '../utils/common/collectionDiff.mjs';
 import {
   attachRelatedCollections,
   normalizeCollectionBlob,
@@ -40,6 +40,152 @@ function _safeClone(v) {
 
 function _nowIso() {
   return new Date().toISOString();
+}
+
+function _buildArrayElementLineNumbers(jsonText, targetKey) {
+  if (typeof jsonText !== 'string' || !targetKey) return [];
+
+  let index = 0;
+  let line = 1;
+  let capturedLines = [];
+
+  function isWhitespace(char) {
+    return char === ' ' || char === '\t' || char === '\n' || char === '\r';
+  }
+
+  function advanceChar() {
+    if (jsonText[index] === '\r' && jsonText[index + 1] === '\n') {
+      index += 2;
+      line += 1;
+      return;
+    }
+    if (jsonText[index] === '\n' || jsonText[index] === '\r') line += 1;
+    index += 1;
+  }
+
+  function skipWhitespace() {
+    while (index < jsonText.length && isWhitespace(jsonText[index])) advanceChar();
+  }
+
+  function parseString() {
+    if (jsonText[index] !== '"') throw new Error(`Expected string at offset ${index}`);
+    index += 1;
+    let value = '';
+
+    while (index < jsonText.length) {
+      const char = jsonText[index];
+      if (char === '"') {
+        index += 1;
+        return value;
+      }
+      if (char === '\\') {
+        const nextChar = jsonText[index + 1];
+        if (nextChar === 'u') {
+          value += jsonText.slice(index, index + 6);
+          index += 6;
+        } else {
+          value += char + (nextChar || '');
+          index += 2;
+        }
+        continue;
+      }
+      value += char;
+      index += 1;
+    }
+
+    throw new Error('Unterminated string literal');
+  }
+
+  function parsePrimitive() {
+    while (index < jsonText.length) {
+      const char = jsonText[index];
+      if (isWhitespace(char) || char === ',' || char === ']' || char === '}') return;
+      index += 1;
+    }
+  }
+
+  function parseValue({ captureElements = false } = {}, depth = 0) {
+    skipWhitespace();
+    const char = jsonText[index];
+    if (char === '{') return parseObject(depth);
+    if (char === '[') return parseArray({ captureElements }, depth);
+    if (char === '"') {
+      parseString();
+      return null;
+    }
+    parsePrimitive();
+    return null;
+  }
+
+  function parseObject(depth = 0) {
+    if (jsonText[index] !== '{') throw new Error(`Expected object at offset ${index}`);
+    index += 1;
+    skipWhitespace();
+    if (jsonText[index] === '}') {
+      index += 1;
+      return null;
+    }
+
+    while (index < jsonText.length) {
+      skipWhitespace();
+      const key = parseString();
+      skipWhitespace();
+      if (jsonText[index] !== ':') throw new Error(`Expected ':' at offset ${index}`);
+      index += 1;
+      const shouldCapture = depth === 0 && key === targetKey;
+      const maybeLines = parseValue({ captureElements: shouldCapture }, depth + 1);
+      if (shouldCapture && Array.isArray(maybeLines)) capturedLines = maybeLines;
+      skipWhitespace();
+      if (jsonText[index] === ',') {
+        index += 1;
+        continue;
+      }
+      if (jsonText[index] === '}') {
+        index += 1;
+        return null;
+      }
+      throw new Error(`Expected ',' or '}' at offset ${index}`);
+    }
+
+    throw new Error('Unterminated object literal');
+  }
+
+  function parseArray({ captureElements = false } = {}, depth = 0) {
+    if (jsonText[index] !== '[') throw new Error(`Expected array at offset ${index}`);
+    index += 1;
+    skipWhitespace();
+    const lines = [];
+    if (jsonText[index] === ']') {
+      index += 1;
+      return captureElements ? lines : null;
+    }
+
+    while (index < jsonText.length) {
+      skipWhitespace();
+      if (captureElements) lines.push(line);
+      parseValue({}, depth + 1);
+      skipWhitespace();
+      if (jsonText[index] === ',') {
+        index += 1;
+        continue;
+      }
+      if (jsonText[index] === ']') {
+        index += 1;
+        return captureElements ? lines : null;
+      }
+      throw new Error(`Expected ',' or ']' at offset ${index}`);
+    }
+
+    throw new Error('Unterminated array literal');
+  }
+
+  try {
+    parseValue({}, 0);
+  } catch {
+    return [];
+  }
+
+  return capturedLines;
 }
 
 function _normalizeFetchHistory(history) {
@@ -192,9 +338,21 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
       const key = String(row?.key || row?.path || '').trim();
       if (!key) continue;
       try {
+        const activeRevisionId = _getActiveRevisionId(key);
         const collection = await _resolveCollectionBase(key, { force: false, systemOnly: false });
         if (!collection || typeof collection !== 'object') throw new Error('collection not found');
-        records.push({ key, path: key, collection: _safeClone(collection) || collection });
+        let entryLineNumbers = null;
+        if (!activeRevisionId) {
+          let cachedSystemRow = await idbGet('system_collections', key).catch(() => null);
+          if (cachedSystemRow?.blob && !Array.isArray(cachedSystemRow?.entryLineNumbers)) {
+            try {
+              await getSystemCollection(key, { force: true });
+              cachedSystemRow = await idbGet('system_collections', key).catch(() => cachedSystemRow);
+            } catch (e) {}
+          }
+          if (Array.isArray(cachedSystemRow?.entryLineNumbers)) entryLineNumbers = cachedSystemRow.entryLineNumbers.slice();
+        }
+        records.push({ key, path: key, collection: _safeClone(collection) || collection, entryLineNumbers });
       } catch (e) {
         loadErrors.push({ key, error: e?.message || String(e) });
       }
@@ -564,7 +722,7 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
       const idxModified = idx?.modifiedAt || null;
 
       const cached = await idbGet('system_collections', key).catch(() => null);
-      if (!force && cached && idxModified && cached.modifiedAt === idxModified && cached.blob) {
+      if (!force && cached && idxModified && cached.modifiedAt === idxModified && cached.blob && Array.isArray(cached.entryLineNumbers)) {
         loggerReturningCached('getCollection: returning cached', key);
         return cached.blob;
       }
@@ -599,6 +757,7 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
       }
 
       data = normalizeCollectionBlob(data);
+      const entryLineNumbers = _buildArrayElementLineNumbers(txt, detectCollectionArrayKey(data).key);
 
       const now = (new Date()).toISOString();
       const modifiedAt = idxModified || now;
@@ -622,7 +781,7 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
         // ignore validation errors
       }
 
-      const toStore = { key, blob: data, modifiedAt, fetchedAt: now };
+      const toStore = { key, blob: data, modifiedAt, fetchedAt: now, entryLineNumbers };
       if (validatedAt) toStore.validatedAt = validatedAt;
       try {
         await idbPut('system_collections', toStore);
