@@ -29,6 +29,14 @@ function formatMinutes(ms) {
   return `${minutes} min`;
 }
 
+function cycleOption(options, currentValue) {
+  const items = Array.isArray(options) ? options.filter(Boolean) : [];
+  if (!items.length) return currentValue;
+  const index = items.findIndex((item) => String(item) === String(currentValue));
+  if (index < 0) return items[0];
+  return items[(index + 1) % items.length];
+}
+
 function shortFilterLabel(filterKey) {
   const key = String(filterKey || '').trim();
   if (!key) return '(no filter)';
@@ -331,20 +339,57 @@ function buildDailyActivityCard({ report, onNavigate, hideRepeatedFilters = fals
   return dailyCard;
 }
 
-function buildRecommendationsCard({ report, onNavigate }) {
+function sortRecommendationItems(items, sortKey) {
+  const rows = Array.isArray(items) ? items.slice() : [];
+  rows.sort((a, b) => {
+    if (sortKey === 'remainingCountDesc') {
+      if (b.remainingCount !== a.remainingCount) return b.remainingCount - a.remainingCount;
+      if (b.totalCount !== a.totalCount) return b.totalCount - a.totalCount;
+      if (b.focusCount !== a.focusCount) return b.focusCount - a.focusCount;
+    } else {
+      if (b.focusCount !== a.focusCount) return b.focusCount - a.focusCount;
+      if (b.remainingCount !== a.remainingCount) return b.remainingCount - a.remainingCount;
+      if (b.totalCount !== a.totalCount) return b.totalCount - a.totalCount;
+    }
+    return String(a.token || '').localeCompare(String(b.token || ''));
+  });
+  return rows;
+}
+
+function buildRecommendationsCard({
+  report,
+  onNavigate,
+  sortKey = 'focusCountDesc',
+  minimumEntryCount = 5,
+  onToggleSort = null,
+  onToggleMinimumEntryCount = null,
+} = {}) {
   const rec = report?.recommendations || null;
   const summary = rec?.summary || null;
-  if (!summary) return null;
+  const config = rec?.config || null;
+  if (!summary || !config) return null;
 
-  const filterRows = (Array.isArray(rec.topFilters) ? rec.topFilters : []).map((item) => {
+  const sortOptions = Array.isArray(config.sortOptions) ? config.sortOptions : [];
+  const minimumEntryCountOptions = Array.isArray(config.minimumEntryCountOptions) ? config.minimumEntryCountOptions : [];
+  const activeSortKey = sortOptions.some((item) => item?.key === sortKey)
+    ? sortKey
+    : String(config.defaultSortKey || sortOptions[0]?.key || 'focusCountDesc');
+  const activeMinimumEntryCount = minimumEntryCountOptions.includes(asNumber(minimumEntryCount))
+    ? asNumber(minimumEntryCount)
+    : asNumber(config.defaultMinimumEntryCount);
+  const visibleItems = sortRecommendationItems(Array.isArray(rec.items) ? rec.items : [], activeSortKey)
+    .filter((item) => asNumber(item.totalCount) >= activeMinimumEntryCount);
+  const sortLabel = sortOptions.find((item) => item?.key === activeSortKey)?.label || activeSortKey;
+  const tokenLabel = String(config.tokenLabel || summary.tokenLabel || 'Token');
+
+  const filterRows = visibleItems.map((item) => {
     const action = makeRouteAction({
-      label: `Kanji ${item.kanjiChar}`,
-      meta: `${asNumber(item.totalWords)} words`,
+      label: `${tokenLabel} ${item.token}`,
+      meta: `${asNumber(item.totalCount)} words`,
       path: String(item.route || '').trim(),
       onNavigate,
       className: 'study-manager-rec-link',
     });
-    const samples = Array.isArray(item.sampleWords) ? item.sampleWords.filter(Boolean).join(' | ') : '';
     return el('div', {
       className: 'study-manager-rec-row',
       children: [
@@ -354,41 +399,41 @@ function buildRecommendationsCard({ report, onNavigate }) {
             action,
             el('div', {
               className: 'hint',
-              text: `${asNumber(item.fullyKnownWords)} fully-known • ${asNumber(item.oneNewKanjiWords)} with 1 new kanji`,
+              text: `seen ${asNumber(item.seenCount)} • focus ${asNumber(item.focusCount)} • learned ${asNumber(item.learnedCount)} • remaining ${asNumber(item.remainingCount)}`,
             }),
           ].filter(Boolean),
         }),
-        samples ? el('div', { className: 'study-manager-rec-samples hint', text: samples }) : null,
       ].filter(Boolean),
     });
-  });
-
-  const easyWords = (Array.isArray(rec.easyWords) ? rec.easyWords : []).map((item) => {
-    const unknown = Array.isArray(item.unknownChars) ? item.unknownChars.join(' ') : '';
-    const known = Array.isArray(item.knownChars) ? item.knownChars.join(' ') : '';
-    const hint = unknown ? `known: ${known} • new: ${unknown}` : `known only: ${known}`;
-    return el('div', { className: 'study-manager-easy-word', text: `${String(item.label || '')} (${hint})` });
   });
 
   return card({
     id: 'study-manager-recommendations-card',
     title: 'Related Word Recommendations',
-    cornerCaption: `${asNumber(summary.candidateWordCount)} candidates`,
+    cornerCaption: `${filterRows.length}/${asNumber(summary.itemCount)} shown`,
     children: [
+      el('div', {
+        className: 'study-manager-summary-grid',
+        children: [
+          renderMetric('Entries', String(asNumber(summary.sourceEntryCount))),
+          renderMetric('Tokenized', String(asNumber(summary.tokenizedEntryCount))),
+          renderMetric(tokenLabel, String(asNumber(summary.itemCount))),
+          renderMetric(`>= ${activeMinimumEntryCount} Words`, String(filterRows.length)),
+          renderMetric('Sort', sortLabel),
+        ],
+      }),
       filterRows.length ? el('div', {
         className: 'study-manager-recommendations-section',
         children: [
-          el('div', { className: 'study-manager-insight-title', text: 'Suggested Filters' }),
+          el('div', { className: 'study-manager-insight-title', text: `${tokenLabel} Coverage` }),
           el('div', { className: 'study-manager-rec-list', children: filterRows }),
         ],
-      }) : null,
-      easyWords.length ? el('div', {
+      }) : el('div', {
         className: 'study-manager-recommendations-section',
         children: [
-          el('div', { className: 'study-manager-insight-title', text: 'Easy Next Words' }),
-          el('div', { className: 'study-manager-easy-word-list', children: easyWords }),
+          el('div', { className: 'hint', text: `No ${tokenLabel.toLowerCase()} items match the current minimum word count.` }),
         ],
-      }) : null,
+      }),
     ].filter(Boolean),
   });
 }
@@ -520,6 +565,8 @@ export function renderStudyManager({ store, onNavigate, route }) {
   let pendingSnapshot = null;
   let selectedCollectionId = String(route?.query?.get('collection') || store?.collections?.getActiveCollectionId?.() || '').trim();
   let hideRepeatedDateFilters = false;
+  let recommendationsSortKey = 'focusCountDesc';
+  let recommendationsMinimumEntryCount = 5;
   const collapsedCards = Object.create(null);
 
   let tableSettingsCtrl = null;
@@ -556,12 +603,16 @@ export function renderStudyManager({ store, onNavigate, route }) {
       collapsedCards.studyTimeByFilter = !!cardsState?.studyTimeByFilter?.collapsed;
       collapsedCards.groupByAppId = !!cardsState?.groupByAppId?.collapsed;
       hideRepeatedDateFilters = !!cardsState?.studyTimeByDate?.hideRepeated;
+      recommendationsSortKey = String(cardsState?.recommendations?.sortKey || 'focusCountDesc').trim() || 'focusCountDesc';
+      recommendationsMinimumEntryCount = asNumber(cardsState?.recommendations?.minimumEntryCount) || 5;
     } catch (e) {
       tableSettingsCtrl = null;
       filtersTableSettings = studyManagerViewController.getDefaultFiltersTableSettings();
       appsTableSettings = studyManagerViewController.getDefaultAppsTableSettings();
       for (const k of Object.keys(collapsedCards)) delete collapsedCards[k];
       hideRepeatedDateFilters = false;
+      recommendationsSortKey = 'focusCountDesc';
+      recommendationsMinimumEntryCount = 5;
     }
   }
 
@@ -587,7 +638,11 @@ export function renderStudyManager({ store, onNavigate, route }) {
         collapsed: !!collapsedCards.studyTimeByDate,
         hideRepeated: !!hideRepeatedDateFilters,
       },
-      recommendations: { collapsed: !!collapsedCards.recommendations },
+      recommendations: {
+        collapsed: !!collapsedCards.recommendations,
+        sortKey: recommendationsSortKey,
+        minimumEntryCount: recommendationsMinimumEntryCount,
+      },
       studyTimeByFilter: { collapsed: !!collapsedCards.studyTimeByFilter },
       groupByAppId: { collapsed: !!collapsedCards.groupByAppId },
     };
@@ -713,6 +768,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
     }
 
     const summary = report.collectionSummary || {};
+    ensureTableSettingsController(report.collectionId);
     const dailySummaryCard = buildDailySummaryCard({ report });
     const dailyActivityCard = buildDailyActivityCard({
       report,
@@ -724,7 +780,12 @@ export function renderStudyManager({ store, onNavigate, route }) {
         renderBody();
       },
     });
-    const recommendationsCard = buildRecommendationsCard({ report, onNavigate });
+    const recommendationsCard = buildRecommendationsCard({
+      report,
+      onNavigate,
+      sortKey: recommendationsSortKey,
+      minimumEntryCount: recommendationsMinimumEntryCount,
+    });
     const summaryCard = card({
       id: 'study-manager-summary-card',
       title: 'Study Summary',
@@ -753,14 +814,9 @@ export function renderStudyManager({ store, onNavigate, route }) {
       title: 'Open JSON viewer for this card',
       onClick: () => openStudyManagerJsonDialog({
         title: 'Study Summary JSON',
-        data: {
-          query: report?.queries?.collectionSummary || null,
-          data: report?.collectionSummary || null,
-        },
+        data: report?.reportResults?.collectionSummary || null,
       }),
     });
-
-    ensureTableSettingsController(report.collectionId);
 
     const filtersTableObj = buildFilterTable({ store, report, onNavigate, tableSettings: filtersTableSettings });
     const filtersCard = makeTableCard({
@@ -775,10 +831,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       title: 'Open JSON viewer for this card',
       onClick: () => openStudyManagerJsonDialog({
         title: 'Study Time By Filter JSON',
-        data: {
-          query: report?.queries?.studyTimeByFilter || null,
-          data: report?.studyTimeByFilter || [],
-        },
+        data: report?.reportResults?.studyTimeByFilter || null,
       }),
     });
     attachCardCornerButton({
@@ -810,10 +863,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       title: 'Open JSON viewer for this card',
       onClick: () => openStudyManagerJsonDialog({
         title: 'Group By App Id JSON',
-        data: {
-          query: report?.queries?.groupByAppId || null,
-          data: report?.groupByAppId || [],
-        },
+        data: report?.reportResults?.groupByAppId || null,
       }),
     });
     attachCardCornerButton({
@@ -838,10 +888,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       title: 'Open JSON viewer for this card',
       onClick: () => openStudyManagerJsonDialog({
         title: 'Daily Study Summary JSON',
-        data: {
-          query: report?.queries?.studyTimeByDateSummary || null,
-          data: report?.studyTimeByDateSummary || null,
-        },
+        data: report?.reportResults?.studyTimeByDateSummary || null,
       }),
     });
     attachCardCornerButton({
@@ -850,11 +897,30 @@ export function renderStudyManager({ store, onNavigate, route }) {
       title: 'Open JSON viewer for this card',
       onClick: () => openStudyManagerJsonDialog({
         title: 'Study Time By Date JSON',
-        data: {
-          query: report?.queries?.studyTimeByDate || null,
-          data: report?.studyTimeByDate || [],
-        },
+        data: report?.reportResults?.studyTimeByDate || null,
       }),
+    });
+    attachCardCornerButton({
+      cardEl: recommendationsCard,
+      text: `Sort ${String((report?.recommendations?.config?.sortOptions || []).find((item) => item?.key === recommendationsSortKey)?.label || 'Focus')}`,
+      title: 'Toggle recommendation sorting',
+      onClick: () => {
+        const options = (report?.recommendations?.config?.sortOptions || []).map((item) => String(item?.key || '').trim()).filter(Boolean);
+        recommendationsSortKey = cycleOption(options, recommendationsSortKey);
+        void persistCardsState();
+        renderBody();
+      },
+    });
+    attachCardCornerButton({
+      cardEl: recommendationsCard,
+      text: `Min ${asNumber(recommendationsMinimumEntryCount)}`,
+      title: 'Toggle recommendation minimum word count',
+      onClick: () => {
+        const options = (report?.recommendations?.config?.minimumEntryCountOptions || []).map((value) => asNumber(value)).filter(Boolean);
+        recommendationsMinimumEntryCount = asNumber(cycleOption(options, recommendationsMinimumEntryCount));
+        void persistCardsState();
+        renderBody();
+      },
     });
     attachCardCornerButton({
       cardEl: recommendationsCard,
@@ -862,7 +928,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       title: 'Open JSON viewer for this card',
       onClick: () => openStudyManagerJsonDialog({
         title: 'Recommendations JSON',
-        data: report?.recommendations || null,
+        data: report?.reportResults?.recommendations || null,
       }),
     });
 

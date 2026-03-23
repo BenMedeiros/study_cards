@@ -17,10 +17,8 @@ import {
   resolveCollectionAtRevision as resolveCollectionAtRevisionShared,
 } from '../utils/common/collectionRevisions.mjs';
 import { validateCollection } from '../utils/browser/validation.js';
-import {
-  validateDuplicatedKeys,
-  validateMissingRelatedCollectionData,
-} from '../utils/common/collectionValidations.mjs';
+import { buildDuplicatedKeysReport } from '../reports/validation/buildDuplicatedKeysReport.js';
+import { buildMissingRelatedCollectionDataReport } from '../reports/validation/buildMissingRelatedCollectionDataReport.js';
 
 function normalizeIndexRelativePath(p) {
   let s = String(p || '').trim();
@@ -383,8 +381,7 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
     const { records, loadErrors } = await _loadCollectionsForValidation();
 
     try {
-      const duplicatedKeysResult = validateDuplicatedKeys(records);
-      duplicatedKeysResult.loadErrors = loadErrors.slice();
+      const duplicatedKeysResult = buildDuplicatedKeysReport({ records, loadErrors });
       if (runId === validationRunCounter) {
         _markValidationReady(validations.duplicated_keys, duplicatedKeysResult, loadErrors);
         _notifyValidationStateChanged();
@@ -397,8 +394,7 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
     }
 
     try {
-      const missingRelatedResult = validateMissingRelatedCollectionData(records);
-      missingRelatedResult.loadErrors = loadErrors.slice();
+      const missingRelatedResult = buildMissingRelatedCollectionDataReport({ records, loadErrors });
       if (runId === validationRunCounter) {
         _markValidationReady(validations.missing_related_collection_data, missingRelatedResult, loadErrors);
         _notifyValidationStateChanged();
@@ -958,6 +954,5 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
 }
 
 export default createCollectionDatabaseManager;
-
 
 

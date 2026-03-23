@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-03-21T15:25:53.300Z",
+  "generatedAt": "2026-03-22T01:04:17.861Z",
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_collection_contract_output.json",
   "runTiming": {
-    "startedAt": "2026-03-21T15:25:53.242Z",
-    "finishedAt": "2026-03-21T15:25:53.301Z",
-    "durationMs": 59,
-    "durationSeconds": 0.059
+    "startedAt": "2026-03-22T01:04:17.802Z",
+    "finishedAt": "2026-03-22T01:04:17.862Z",
+    "durationMs": 60,
+    "durationSeconds": 0.06
   },
-  "scannedCollections": 12,
-  "collectionsWithProblems": 1,
+  "scannedCollections": 14,
+  "collectionsWithProblems": 3,
   "parseErrors": [],
   "reports_clean": [
     {
@@ -177,6 +177,58 @@
     }
   ],
   "reports_review": [
+    {
+      "collectionPath": "collections/japanese/japanese_semantic_class_taxonomy.json",
+      "valid": false,
+      "arrayKey": "entries",
+      "entryKeyField": "",
+      "collectionErrors": [
+        {
+          "message": "$.entries is required."
+        },
+        {
+          "message": "$.metadata.category is required."
+        },
+        {
+          "message": "$.metadata.entry_key is required."
+        },
+        {
+          "message": "$.metadata.schema is required."
+        },
+        {
+          "message": "$.metadata.sourceCollection is not allowed by the collection contract."
+        },
+        {
+          "message": "$.types is not allowed by the collection contract."
+        }
+      ],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/japanese/japanese_words.semantic_classes.json",
+      "valid": false,
+      "arrayKey": "entries",
+      "entryKeyField": "kanji",
+      "collectionErrors": [
+        {
+          "message": "$.metadata.semanticClassTaxonomyPath is not allowed by the collection contract."
+        },
+        {
+          "message": "$.metadata.semanticClassGeneratedFrom is not allowed by the collection contract."
+        }
+      ],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
     {
       "collectionPath": "collections/spanish/spanish_words.json",
       "valid": false,

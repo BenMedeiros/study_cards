@@ -105,7 +105,7 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-03-18T14:23:23.622Z",
+      "modifiedAt": "2026-03-22T00:27:43.810Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
       "entriesCount": 2092,
@@ -121,6 +121,26 @@
         }
       },
       "schemaSource": "inline"
+    },
+    {
+      "path": "japanese/japanese_words_updates.json",
+      "modifiedAt": "2026-03-22T01:24:04.657Z",
+      "name": null,
+      "description": null,
+      "entriesCount": 0,
+      "valid": false,
+      "validation": {
+        "schema": {
+          "errors": [
+            "Missing required metadata fields: metadata"
+          ],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [],
+          "warnings": []
+        }
+      }
     },
     {
       "path": "languageHistory.json",

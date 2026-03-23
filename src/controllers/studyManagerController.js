@@ -1,4 +1,7 @@
 import { cleanSearchQuery, splitTopLevel } from '../utils/browser/tableSearch.js';
+import { buildStudyTimeByDate } from '../reports/studyManager/buildStudyTimeByDate.js';
+import { buildStudyTimeByDateSummary } from '../reports/studyManager/buildStudyTimeByDateSummary.js';
+import { buildWordLearningRecommendations } from '../reports/studyManager/buildWordLearningRecommendations.js';
 
 const STUDY_STATES = ['null', 'focus', 'learned'];
 const STUDY_STATS_APP_ID = 'kanji';
@@ -574,259 +577,30 @@ const studyManagerController = (() => {
     return y + '-' + m + '-' + day;
   }
 
-  function getTodayYesterdayStamps(nowMs = Date.now()) {
-    const d = new Date(nowMs);
-    const today = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-    const yesterday = new Date(today.getTime() - (24 * 60 * 60 * 1000));
-    const stamp = (x) => {
-      const y = x.getFullYear();
-      const m = String(x.getMonth() + 1).padStart(2, '0');
-      const day = String(x.getDate()).padStart(2, '0');
-      return y + '-' + m + '-' + day;
-    };
-    return { todayStamp: stamp(today), yesterdayStamp: stamp(yesterday) };
-  }
-
-  function formatDayLabel(dayStamp, { todayStamp = '', yesterdayStamp = '' } = {}) {
-    const stamp = String(dayStamp || '').trim();
-    if (!stamp) return '';
-    if (stamp === todayStamp) return 'Today';
-    if (stamp === yesterdayStamp) return 'Yesterday';
-    const d = new Date(stamp + 'T00:00:00');
-    if (Number.isNaN(d.getTime())) return stamp;
-    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-  }
-
-  function buildStudyTimeByDate({ byDay, filterMap, dayLimit = 14 }) {
-    const { todayStamp, yesterdayStamp } = getTodayYesterdayStamps();
-
-    return Array.from(byDay instanceof Map ? byDay.values() : [])
-      .sort((a, b) => String(b.dayStamp).localeCompare(String(a.dayStamp)))
-      .slice(0, Math.max(1, Math.round(Number(dayLimit) || 14)))
-      .map((day) => ({
-        dayStamp: day.dayStamp,
-        dayLabel: formatDayLabel(day.dayStamp, { todayStamp, yesterdayStamp }),
-        totalDurationMs: day.totalDurationMs,
-        sessionCount: day.sessionCount,
-        filterCount: day.filterSummaries instanceof Map ? day.filterSummaries.size : 0,
-        filterSummaries: Array.from(day.filterSummaries instanceof Map ? day.filterSummaries.values() : [])
-          .sort((a, b) => {
-            if (b.durationMs !== a.durationMs) return b.durationMs - a.durationMs;
-            const filterCmp = String(a.filterKey || '').localeCompare(String(b.filterKey || ''));
-            if (filterCmp !== 0) return filterCmp;
-            return 0;
-          })
-          .map((item) => {
-            const row = filterMap?.[item.filterKey] || null;
-            return {
-              filterKey: item.filterKey,
-              filterLabel: row?.filterLabel || makeFilterLabel(item.filterKey),
-              durationMs: Math.max(0, Math.round(Number(item.durationMs) || 0)),
-              sessionCount: Math.max(0, Math.round(Number(item.sessionCount) || 0)),
-            };
-          }),
-      }));
-  }
-
-  function buildStudyTimeByDateSummary({ collectionId, studyTimeByDate, windowDays = 7 }) {
-    const days = Array.isArray(studyTimeByDate) ? studyTimeByDate : [];
-    const recentDays = days.slice(0, Math.max(1, Math.round(Number(windowDays) || 7)));
-    return {
-      collectionId: String(collectionId || '').trim(),
-      totalDays: days.length,
-      windowDays: Math.max(1, Math.round(Number(windowDays) || 7)),
-      totalDurationMs: recentDays.reduce((sum, day) => sum + Math.max(0, Math.round(Number(day.totalDurationMs) || 0)), 0),
-      totalSessions: recentDays.reduce((sum, day) => sum + Math.max(0, Math.round(Number(day.sessionCount) || 0)), 0),
-      activeDays: recentDays.filter((day) => Math.max(0, Math.round(Number(day.totalDurationMs) || 0)) > 0).length,
-    };
-  }
-
-  function extractKanjiCharacters(value) {
-    const matches = Array.from(String(value || '').matchAll(/[㐀-䶿一-鿿豈-﫿]/g)).map((m) => String(m[0] || ''));
-    const out = [];
-    const seen = new Set();
-    for (const char of matches) {
-      if (!char || seen.has(char)) continue;
-      seen.add(char);
-      out.push(char);
-    }
-    return out;
-  }
-
-  function detectWordField(collection) {
-    const fields = Array.isArray(collection?.metadata?.fields) ? collection.metadata.fields : [];
-    const fieldKeys = fields.map((field) => String(field?.key || '').trim()).filter(Boolean);
-    const candidates = ['kanji', 'word', 'text', 'term', 'title', 'name', 'pattern'];
-    for (const key of candidates) {
-      if (fieldKeys.includes(key)) return key;
-    }
-    return '';
-  }
-
-  function getEntryLabel(entry, primaryField = '') {
-    if (primaryField && entry && typeof entry === 'object') {
-      const direct = entry[primaryField];
-      if (direct != null && String(direct).trim()) return String(direct).trim();
-    }
-    if (entry && typeof entry === 'object') {
-      for (const key of ['kanji', 'word', 'text', 'term', 'title', 'name', 'pattern', 'id']) {
-        const value = entry[key];
-        if (value != null && String(value).trim()) return String(value).trim();
-      }
-    }
-    return '';
-  }
-
-  function buildRecommendationRoute(collectionId, fieldKey, token) {
-    const coll = encodeURIComponent(String(collectionId || '').trim());
-    const field = String(fieldKey || '').trim();
-    const value = String(token || '').trim();
-    if (!coll || !field || !value) return '';
-    const filterKey = `{${field}:%${value}%}`;
-    return '/data?collection=' + coll + '&heldTableSearch=' + encodeURIComponent(filterKey);
-  }
-
-  function buildWordLearningRecommendations({ collection }) {
-    const collectionId = String(collection?.key || '').trim();
-    if (!collectionId) return null;
-
-    const entries = Array.isArray(collection?.entries) ? collection.entries : [];
-    if (!entries.length) return null;
-
-    const category = String(collection?.metadata?.category || '').trim();
-    const isGrammar = category === 'japanese.grammar' || category.endsWith('.grammar') || category.includes('.grammar.');
-    if (isGrammar) return null;
-
-    const primaryField = detectWordField(collection);
-    if (!primaryField) return null;
-
-    function getEntryKey(entry) {
-      return String(store?.collections?.getEntryStudyKey?.(entry) || '').trim();
-    }
-
-    function getProgressRecord(entryKey) {
-      if (!entryKey) return null;
-      try {
-        if (typeof store?.kanjiProgress?.getKanjiProgressRecord === 'function') {
-          return store.kanjiProgress.getKanjiProgressRecord(entryKey, { collectionKey: collectionId }) || null;
-        }
-      } catch {}
-      return null;
-    }
-
-    const learnedInfos = [];
-    const candidateInfos = [];
-    const knownKanji = new Set();
-
-    for (const entry of entries) {
-      const label = getEntryLabel(entry, primaryField);
-      if (!label) continue;
-      const chars = extractKanjiCharacters(entry?.kanji ?? label);
-      if (!chars.length) continue;
-      const entryKey = getEntryKey(entry);
-      const rec = getProgressRecord(entryKey);
-      const state = rec ? normalizeState(rec.state) : 'null';
-      const learned = state === 'learned';
-      const info = { entry, label, entryKey, chars, state };
-      if (learned) {
-        learnedInfos.push(info);
-        for (const char of chars) knownKanji.add(char);
-      } else {
-        candidateInfos.push(info);
-      }
-    }
-
-    if (!knownKanji.size) return null;
-
-    const easyWords = [];
-    const bucketMap = new Map();
-
-    for (const info of candidateInfos) {
-      const knownChars = info.chars.filter((char) => knownKanji.has(char));
-      if (!knownChars.length) continue;
-      const unknownChars = info.chars.filter((char) => !knownKanji.has(char));
-      if (unknownChars.length > 2) continue;
-      const overlapRatio = knownChars.length / Math.max(1, info.chars.length);
-      if (overlapRatio < 0.5) continue;
-
-      easyWords.push({
-        label: info.label,
-        knownChars,
-        unknownChars,
-        overlapRatio,
-        totalKanji: info.chars.length,
-      });
-
-      const perWordSeen = new Set();
-      for (const char of knownChars) {
-        if (!char || perWordSeen.has(char)) continue;
-        perWordSeen.add(char);
-        const bucket = bucketMap.get(char) || {
-          kanjiChar: char,
-          totalWords: 0,
-          fullyKnownWords: 0,
-          oneNewKanjiWords: 0,
-          sampleWords: [],
-        };
-        bucket.totalWords += 1;
-        if (unknownChars.length === 0) bucket.fullyKnownWords += 1;
-        if (unknownChars.length === 1) bucket.oneNewKanjiWords += 1;
-        bucket.sampleWords.push({ label: info.label, unknownCount: unknownChars.length, overlapRatio });
-        bucketMap.set(char, bucket);
-      }
-    }
-
-    const topFilters = Array.from(bucketMap.values())
-      .map((bucket) => ({
-        ...bucket,
-        sampleWords: bucket.sampleWords
-          .sort((a, b) => {
-            if (a.unknownCount !== b.unknownCount) return a.unknownCount - b.unknownCount;
-            if (b.overlapRatio !== a.overlapRatio) return b.overlapRatio - a.overlapRatio;
-            return String(a.label || '').localeCompare(String(b.label || ''));
-          })
-          .slice(0, 5)
-          .map((item) => String(item.label || '')),
-        route: buildRecommendationRoute(collectionId, primaryField, bucket.kanjiChar),
-      }))
-      .sort((a, b) => {
-        if (b.fullyKnownWords !== a.fullyKnownWords) return b.fullyKnownWords - a.fullyKnownWords;
-        if (b.totalWords !== a.totalWords) return b.totalWords - a.totalWords;
-        if (b.oneNewKanjiWords !== a.oneNewKanjiWords) return b.oneNewKanjiWords - a.oneNewKanjiWords;
-        return String(a.kanjiChar || '').localeCompare(String(b.kanjiChar || ''));
-      })
-      .slice(0, 8);
-
-    const rankedWords = easyWords
-      .sort((a, b) => {
-        if (a.unknownChars.length !== b.unknownChars.length) return a.unknownChars.length - b.unknownChars.length;
-        if (b.overlapRatio !== a.overlapRatio) return b.overlapRatio - a.overlapRatio;
-        if (a.totalKanji !== b.totalKanji) return a.totalKanji - b.totalKanji;
-        return String(a.label || '').localeCompare(String(b.label || ''));
-      })
-      .slice(0, 10)
-      .map((item) => ({
-        label: item.label,
-        knownChars: item.knownChars.slice(),
-        unknownChars: item.unknownChars.slice(),
-      }));
-
-    return {
-      summary: {
-        learnedWordCount: learnedInfos.length,
-        knownUniqueKanjiCount: knownKanji.size,
-        candidateWordCount: easyWords.length,
-        fullyKnownCandidateCount: easyWords.filter((item) => item.unknownChars.length === 0).length,
-        oneNewKanjiCandidateCount: easyWords.filter((item) => item.unknownChars.length === 1).length,
-        primaryField,
-      },
-      topFilters,
-      easyWords: rankedWords,
-    };
-  }
-
   function makeFilterLabel(key) {
     return key ? key : '(no filter)';
+  }
+
+  function makeReportResult({
+    reportId,
+    builder = '',
+    collectionId = '',
+    generatedAtIso = '',
+    inputs = null,
+    query = null,
+    output = null,
+  } = {}) {
+    return {
+      meta: {
+        reportId: String(reportId || '').trim(),
+        builder: String(builder || '').trim(),
+        collectionId: String(collectionId || '').trim(),
+        generatedAtIso: String(generatedAtIso || nowIso()).trim(),
+      },
+      inputs: inputs && typeof inputs === 'object' ? inputs : {},
+      query: query && typeof query === 'object' ? query : null,
+      output: output ?? null,
+    };
   }
 
   function buildCollectionReport(collection, progressSummary, sessionAgg) {
@@ -970,6 +744,16 @@ const studyManagerController = (() => {
     const studyTimeByDateSummary = buildStudyTimeByDateSummary({ collectionId, studyTimeByDate });
     const recommendations = buildWordLearningRecommendations({
       collection,
+      getEntryKey: (entry) => String(store?.collections?.getEntryStudyKey?.(entry) || '').trim(),
+      getProgressRecord: (entryKey) => {
+        if (!entryKey) return null;
+        try {
+          if (typeof store?.kanjiProgress?.getKanjiProgressRecord === 'function') {
+            return store.kanjiProgress.getKanjiProgressRecord(entryKey, { collectionKey: collectionId }) || null;
+          }
+        } catch {}
+        return null;
+      },
     });
 
     const topFilter = studyTimeByFilterKey[''] || studyTimeByFilter[0] || null;
@@ -991,6 +775,7 @@ const studyManagerController = (() => {
       filterCount: studyTimeByFilter.length,
     };
 
+    const generatedAtIso = nowIso();
     const queries = {
       collectionSummary: {
         data: ['study_progress', 'study_time_sessions'],
@@ -1018,11 +803,88 @@ const studyManagerController = (() => {
         windowDays: studyTimeByDateSummary.windowDays,
       },
     };
+    const reportResults = {
+      collectionSummary: makeReportResult({
+        reportId: 'collectionSummary',
+        builder: 'inline:buildCollectionSummary',
+        collectionId,
+        generatedAtIso,
+        inputs: {
+          entryCount,
+          progressRecordCount: Math.max(0, Math.round(Number(progressSummary?.progressRecordCount) || 0)),
+          totalStudySessions: Math.max(0, Math.round(Number(sessionAgg?.totalSessions) || 0)),
+          trackedFilterCount: studyTimeByFilter.length,
+        },
+        query: queries.collectionSummary,
+        output: collectionSummary,
+      }),
+      studyTimeByFilter: makeReportResult({
+        reportId: 'studyTimeByFilter',
+        builder: 'inline:buildStudyTimeByFilter',
+        collectionId,
+        generatedAtIso,
+        inputs: {
+          filterUniverseCount: filters.length,
+          savedFilterCount: savedFilterSet.size,
+          appCount: appTotals.size,
+        },
+        query: queries.studyTimeByFilter,
+        output: studyTimeByFilter,
+      }),
+      groupByAppId: makeReportResult({
+        reportId: 'groupByAppId',
+        builder: 'inline:buildGroupByAppId',
+        collectionId,
+        generatedAtIso,
+        inputs: {
+          distinctAppCount: appTotals.size,
+        },
+        query: queries.groupByAppId,
+        output: groupByAppId,
+      }),
+      studyTimeByDate: makeReportResult({
+        reportId: 'studyTimeByDate',
+        builder: 'src/reports/studyManager/buildStudyTimeByDate.js',
+        collectionId,
+        generatedAtIso,
+        inputs: {
+          dayCount: sessionAgg?.byDay instanceof Map ? sessionAgg.byDay.size : 0,
+          filterLookupCount: Object.keys(studyTimeByFilterKey).length,
+        },
+        query: queries.studyTimeByDate,
+        output: studyTimeByDate,
+      }),
+      studyTimeByDateSummary: makeReportResult({
+        reportId: 'studyTimeByDateSummary',
+        builder: 'src/reports/studyManager/buildStudyTimeByDateSummary.js',
+        collectionId,
+        generatedAtIso,
+        inputs: {
+          sourceDayCount: studyTimeByDate.length,
+          windowDays: studyTimeByDateSummary.windowDays,
+        },
+        query: queries.studyTimeByDateSummary,
+        output: studyTimeByDateSummary,
+      }),
+      recommendations: makeReportResult({
+        reportId: 'recommendations',
+        builder: 'src/reports/studyManager/buildWordLearningRecommendations.js',
+        collectionId,
+        generatedAtIso,
+        inputs: {
+          category: String(collection?.metadata?.category || '').trim(),
+          entryCount,
+        },
+        query: null,
+        output: recommendations,
+      }),
+    };
 
     return {
       collectionId,
       collectionName,
       queries,
+      reportResults,
       collectionSummary,
       studyTimeByFilter,
       studyTimeByFilterKey,
@@ -1030,7 +892,7 @@ const studyManagerController = (() => {
       studyTimeByDate,
       studyTimeByDateSummary,
       recommendations,
-      updatedAtIso: nowIso(),
+      updatedAtIso: generatedAtIso,
     };
   }
 

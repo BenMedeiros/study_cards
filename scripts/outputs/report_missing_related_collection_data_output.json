@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-21T15:25:52.662Z",
-  "scannedCollections": 13,
-  "collectionsWithRelations": 2,
-  "relationCount": 4,
-  "missingRelationCount": 2,
-  "missingRefTotal": 73,
+  "generatedAt": "2026-03-22T01:04:17.313Z",
+  "scannedCollections": 15,
+  "collectionsWithRelations": 3,
+  "relationCount": 6,
+  "missingRelationCount": 3,
+  "missingRefTotal": 93,
   "reports": [
     {
       "sourceName": "Japanese Grammar",
@@ -120,15 +120,56 @@
           "missing": []
         }
       ]
+    },
+    {
+      "sourceName": "All Japanese Words",
+      "sourcePath": "collections/japanese/japanese_words.semantic_classes.json",
+      "relations": [
+        {
+          "name": "sentences",
+          "thisKey": "kanji",
+          "foreignKey": "chunks[].refs[]",
+          "relatedPath": "collections/japanese/japanese_sentences.json",
+          "missing": [
+            "[LG] webOS TV OLED55B7A",
+            "Nになってから",
+            "Vたくない",
+            "Vたら",
+            "Vている",
+            "Vてから",
+            "Vてください",
+            "Vてしまう",
+            "Vてはいけません",
+            "Vないでください",
+            "Vのは～だ",
+            "Vよう",
+            "Vることが多い",
+            "Vるつもりだ",
+            "Vると",
+            "アイデア",
+            "インク",
+            "オリンポス山",
+            "お寺",
+            "から"
+          ]
+        },
+        {
+          "name": "paragraphs",
+          "thisKey": "kanji",
+          "foreignKey": "sentences[].chunks[].refs[]",
+          "relatedPath": "collections/japanese/japanese_paragraphs.json",
+          "missing": []
+        }
+      ]
     }
   ],
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_missing_related_collection_data_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-03-21T15:25:52.628Z",
-    "finishedAt": "2026-03-21T15:25:52.664Z",
-    "durationMs": 36,
-    "durationSeconds": 0.036
+    "startedAt": "2026-03-22T01:04:17.277Z",
+    "finishedAt": "2026-03-22T01:04:17.314Z",
+    "durationMs": 37,
+    "durationSeconds": 0.037
   }
 }

@@ -3416,13 +3416,22 @@ h2 {
 }
 
 #study-manager-root .study-manager-day-list,
-#study-manager-root .study-manager-rec-list,
-#study-manager-root .study-manager-easy-word-list {
+#study-manager-root .study-manager-rec-list {
   display: grid;
   gap: 0.5rem;
 }
 
 #study-manager-root .study-manager-day-list {
+  max-height: 38vh;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+}
+
+#study-manager-root #study-manager-recommendations-card {
+  overflow-y: visible;
+}
+
+#study-manager-root .study-manager-rec-list {
   max-height: 38vh;
   overflow-y: auto;
   padding-right: 0.2rem;
@@ -3450,8 +3459,7 @@ h2 {
 }
 
 #study-manager-root .study-manager-day-meta,
-#study-manager-root .study-manager-rec-samples,
-#study-manager-root .study-manager-easy-word {
+#study-manager-root .study-manager-rec-samples {
   color: var(--muted);
   font-size: 0.75rem;
 }

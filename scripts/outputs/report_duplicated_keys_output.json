@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-03-21T15:25:52.085Z",
-  "scannedCollections": 13,
-  "collectionsWithProblems": 2,
-  "collectionsWithInvalidEntryKey": 1,
+  "generatedAt": "2026-03-22T01:04:16.779Z",
+  "scannedCollections": 15,
+  "collectionsWithProblems": 3,
+  "collectionsWithInvalidEntryKey": 2,
   "collectionsWithSchemaMismatch": 0,
   "totalInvalidEntries": 2,
   "totalDuplicateValues": 1,
@@ -76,6 +76,19 @@
     {
       "collectionName": "All Japanese Words",
       "collectionPath": "collections/japanese/japanese_words.json",
+      "entryKey": "kanji",
+      "entryCount": 2092,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": true,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "All Japanese Words",
+      "collectionPath": "collections/japanese/japanese_words.semantic_classes.json",
       "entryKey": "kanji",
       "entryCount": 2092,
       "hasValidEntryKeyMetadata": true,
@@ -180,6 +193,19 @@
       "duplicates": []
     },
     {
+      "collectionName": "Japanese Semantic Class Taxonomy",
+      "collectionPath": "collections/japanese/japanese_semantic_class_taxonomy.json",
+      "entryKey": null,
+      "entryCount": 0,
+      "hasValidEntryKeyMetadata": false,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
       "collectionName": "All Spanish Words",
       "collectionPath": "collections/spanish/spanish_words.json",
       "entryKey": "lemma",
@@ -214,9 +240,9 @@
   "outputPath": "scripts/outputs/report_duplicated_keys_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-03-21T15:25:51.945Z",
-    "finishedAt": "2026-03-21T15:25:52.086Z",
-    "durationMs": 141,
-    "durationSeconds": 0.141
+    "startedAt": "2026-03-22T01:04:16.713Z",
+    "finishedAt": "2026-03-22T01:04:16.780Z",
+    "durationMs": 67,
+    "durationSeconds": 0.067
   }
 }

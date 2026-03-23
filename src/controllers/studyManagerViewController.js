@@ -7,7 +7,7 @@ const DEFAULT_CARDS = Object.freeze({
   summary: Object.freeze({ collapsed: false }),
   dailySummary: Object.freeze({ collapsed: false }),
   studyTimeByDate: Object.freeze({ collapsed: false, hideRepeated: false }),
-  recommendations: Object.freeze({ collapsed: false }),
+  recommendations: Object.freeze({ collapsed: false, sortKey: 'focusCountDesc', minimumEntryCount: 5 }),
   studyTimeByFilter: Object.freeze({ collapsed: false }),
   groupByAppId: Object.freeze({ collapsed: false }),
 });
@@ -27,7 +27,11 @@ function cloneCardsState(value) {
       collapsed: !!src?.studyTimeByDate?.collapsed,
       hideRepeated: !!src?.studyTimeByDate?.hideRepeated,
     },
-    recommendations: { collapsed: !!src?.recommendations?.collapsed },
+    recommendations: {
+      collapsed: !!src?.recommendations?.collapsed,
+      sortKey: String(src?.recommendations?.sortKey || 'focusCountDesc').trim() || 'focusCountDesc',
+      minimumEntryCount: Math.max(1, Math.round(Number(src?.recommendations?.minimumEntryCount) || 5)),
+    },
     studyTimeByFilter: { collapsed: !!src?.studyTimeByFilter?.collapsed },
     groupByAppId: { collapsed: !!src?.groupByAppId?.collapsed },
   };
