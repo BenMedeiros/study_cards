@@ -1905,6 +1905,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   white-space: nowrap;
   color: var(--muted);
   font-size: 0.8125rem;
+  overflow-x: auto;
 }
 
 .hint strong {
@@ -3306,6 +3307,10 @@ h2 {
   min-width: 0;
 }
 
+#study-manager-root [hidden] {
+  display: none !important;
+}
+
 #study-manager-root .study-manager-summary-grid,
 #study-manager-root .study-manager-drill-summary {
   display: grid;
@@ -3417,6 +3422,12 @@ h2 {
   gap: 0.5rem;
 }
 
+#study-manager-root .study-manager-day-list {
+  max-height: 38vh;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+}
+
 #study-manager-root .study-manager-day-row,
 #study-manager-root .study-manager-rec-row {
   border: var(--border-1);
@@ -3452,8 +3463,94 @@ h2 {
   gap: 0.35rem;
 }
 
+#study-manager-root .study-manager-day-filter-link.is-disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+
+#study-manager-root .study-manager-day-empty {
+  margin-top: 0.45rem;
+}
+
 #study-manager-root .study-manager-recommendations-section + .study-manager-recommendations-section {
   margin-top: 0.8rem;
+}
+
+#study-manager-root .study-manager-collapsible-title {
+  cursor: pointer;
+  user-select: none;
+}
+
+#study-manager-root .study-manager-card-top-right {
+  position: absolute;
+  top: 0.34rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+#study-manager-root .study-manager-card-top-right .card-corner-caption {
+  position: static;
+  margin: 0;
+  white-space: nowrap;
+}
+
+#study-manager-root .study-manager-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+#study-manager-root .study-manager-card-btn {
+  position: static;
+}
+
+.study-manager-json-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.56);
+  z-index: 99999;
+}
+
+.study-manager-json-dialog {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(1100px, 96vw);
+  max-height: 88vh;
+  z-index: 100000;
+  overflow: hidden;
+}
+
+.study-manager-json-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.study-manager-json-body {
+  max-height: 68vh;
+  overflow: auto;
+}
+
+.study-manager-json-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.study-manager-json-viewer {
+  max-height: none;
+}
+
+.study-manager-json-viewer .json-content {
+  background: rgba(2, 6, 23, 0.92);
 }
 /* Data table settings dialog */
 .table-settings-backdrop {
@@ -3869,6 +3966,10 @@ h2 {
   font-size: 0.66rem;
   line-height: 1;
   padding: 0.2rem 0.42rem;
+}
+
+.card .table-card-settings-btn.is-active {
+  background: rgba(255, 255, 255, 0.14);
 }
 #data-card .data-table-settings-btn {
   position: absolute;

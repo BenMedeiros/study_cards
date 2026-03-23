@@ -1,7 +1,7 @@
 import { cleanSearchQuery, splitTopLevel } from '../utils/browser/tableSearch.js';
 
 const STUDY_STATES = ['null', 'focus', 'learned'];
-const MAX_RECENT_SESSIONS_PER_COLLECTION = 1000;
+const STUDY_STATS_APP_ID = 'kanji';
 
 function nowIso() {
   return new Date().toISOString();
@@ -26,7 +26,8 @@ function normalizeStudyFilterString(v) {
     .filter(Boolean);
   const set = new Set(toks);
   const ordered = STUDY_STATES.filter((s) => set.has(s));
-  return ordered.join(',');
+  const normalized = ordered.join(',');
+  return normalized === STUDY_STATES.join(',') ? '' : normalized;
 }
 
 function normalizeSearchQuery(v) {
@@ -71,7 +72,7 @@ function makeSessionAggregate(collectionId) {
     lastEndIso: null,
     directByFilter: new Map(),
     appTotals: new Map(),
-    recentSessions: [],
+    byDay: new Map(),
   };
 }
 
@@ -85,6 +86,27 @@ function makeFilterAggregate(filterKey) {
     apps: new Map(),
     studyFilters: new Map(),
   };
+}
+
+function makeDateAggregate(dayStamp) {
+  return {
+    dayStamp,
+    totalDurationMs: 0,
+    sessionCount: 0,
+    filterSummaries: new Map(),
+  };
+}
+
+function makeDateFilterSummary(filterKey) {
+  return {
+    filterKey,
+    durationMs: 0,
+    sessionCount: 0,
+  };
+}
+
+function makeDateFilterSummaryKey(filterKey) {
+  return String(filterKey || '');
 }
 
 function parseAndClauses(query) {
@@ -330,8 +352,8 @@ const studyManagerController = (() => {
 
   function sortReports(reports) {
     return reports.sort((a, b) => {
-      const ta = a?.summary?.lastSessionIso ? new Date(a.summary.lastSessionIso).getTime() : 0;
-      const tb = b?.summary?.lastSessionIso ? new Date(b.summary.lastSessionIso).getTime() : 0;
+      const ta = a?.collectionSummary?.lastSessionIso ? new Date(a.collectionSummary.lastSessionIso).getTime() : 0;
+      const tb = b?.collectionSummary?.lastSessionIso ? new Date(b.collectionSummary.lastSessionIso).getTime() : 0;
       if (tb !== ta) return tb - ta;
       return String(a.collectionName || '').localeCompare(String(b.collectionName || ''));
     });
@@ -342,17 +364,21 @@ const studyManagerController = (() => {
     if (!s) return;
     const collectionId = String(s.collectionId || '').trim();
     if (!collectionId) return;
+    const appId = String(s.appId || '').trim() || 'unknown';
     const durationMs = Math.max(0, Math.round(Number(s.durationMs) || 0));
     if (!durationMs) return;
 
     const agg = getOrCreateSessionAggregate(collectionId);
     if (!agg) return;
 
+    agg.appTotals.set(appId, (agg.appTotals.get(appId) || 0) + durationMs);
+    if (appId !== STUDY_STATS_APP_ID) return;
+
     const filterKey = normalizeSearchQuery(s.heldTableSearch || '');
-    const appId = String(s.appId || '').trim() || 'unknown';
     const studyFilter = normalizeStudyFilterString(s.studyFilter || '');
     const startIso = String(s.startIso || '').trim() || null;
     const endIso = String(s.endIso || '').trim() || null;
+    const dayStamp = dayStampFromIso(endIso || startIso || '');
 
     agg.totalDurationMs += durationMs;
     agg.totalSessions += 1;
@@ -370,18 +396,20 @@ const studyManagerController = (() => {
     perFilter.apps.set(appId, (perFilter.apps.get(appId) || 0) + durationMs);
     if (studyFilter) perFilter.studyFilters.set(studyFilter, (perFilter.studyFilters.get(studyFilter) || 0) + durationMs);
 
-    agg.appTotals.set(appId, (agg.appTotals.get(appId) || 0) + durationMs);
-    agg.recentSessions.push({
-      startIso,
-      endIso,
-      appId,
-      collectionId,
-      durationMs,
-      heldTableSearch: filterKey,
-      studyFilter,
-    });
-    if (agg.recentSessions.length > MAX_RECENT_SESSIONS_PER_COLLECTION) {
-      agg.recentSessions.splice(0, agg.recentSessions.length - MAX_RECENT_SESSIONS_PER_COLLECTION);
+    if (dayStamp) {
+      let perDay = agg.byDay.get(dayStamp);
+      if (!perDay) {
+        perDay = makeDateAggregate(dayStamp);
+        agg.byDay.set(dayStamp, perDay);
+      }
+      perDay.totalDurationMs += durationMs;
+      perDay.sessionCount += 1;
+
+      const dateFilterKey = makeDateFilterSummaryKey(filterKey);
+      const current = perDay.filterSummaries.get(dateFilterKey) || makeDateFilterSummary(filterKey);
+      current.durationMs += durationMs;
+      current.sessionCount += 1;
+      perDay.filterSummaries.set(dateFilterKey, current);
     }
   }
 
@@ -569,34 +597,10 @@ const studyManagerController = (() => {
     return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   }
 
-  function buildDailyFilterActivity({ collectionId, recentSessions, filterMap, dayLimit = 14 }) {
-    const sessions = Array.isArray(recentSessions) ? recentSessions : [];
+  function buildStudyTimeByDate({ byDay, filterMap, dayLimit = 14 }) {
     const { todayStamp, yesterdayStamp } = getTodayYesterdayStamps();
-    const byDay = new Map();
 
-    for (const sess of sessions) {
-      const dayStamp = dayStampFromIso(sess?.endIso || sess?.startIso || '');
-      if (!dayStamp) continue;
-      const durationMs = Math.max(0, Math.round(Number(sess?.durationMs) || 0));
-      if (!byDay.has(dayStamp)) {
-        byDay.set(dayStamp, {
-          dayStamp,
-          totalDurationMs: 0,
-          sessionCount: 0,
-          byFilter: new Map(),
-        });
-      }
-      const day = byDay.get(dayStamp);
-      day.totalDurationMs += durationMs;
-      day.sessionCount += 1;
-      const filterKey = normalizeSearchQuery(sess?.heldTableSearch || '');
-      const current = day.byFilter.get(filterKey) || { filterKey, durationMs: 0, sessionCount: 0 };
-      current.durationMs += durationMs;
-      current.sessionCount += 1;
-      day.byFilter.set(filterKey, current);
-    }
-
-    const days = Array.from(byDay.values())
+    return Array.from(byDay instanceof Map ? byDay.values() : [])
       .sort((a, b) => String(b.dayStamp).localeCompare(String(a.dayStamp)))
       .slice(0, Math.max(1, Math.round(Number(dayLimit) || 14)))
       .map((day) => ({
@@ -604,13 +608,14 @@ const studyManagerController = (() => {
         dayLabel: formatDayLabel(day.dayStamp, { todayStamp, yesterdayStamp }),
         totalDurationMs: day.totalDurationMs,
         sessionCount: day.sessionCount,
-        filterCount: day.byFilter.size,
-        topFilters: Array.from(day.byFilter.values())
+        filterCount: day.filterSummaries instanceof Map ? day.filterSummaries.size : 0,
+        filterSummaries: Array.from(day.filterSummaries instanceof Map ? day.filterSummaries.values() : [])
           .sort((a, b) => {
             if (b.durationMs !== a.durationMs) return b.durationMs - a.durationMs;
-            return String(a.filterKey || '').localeCompare(String(b.filterKey || ''));
+            const filterCmp = String(a.filterKey || '').localeCompare(String(b.filterKey || ''));
+            if (filterCmp !== 0) return filterCmp;
+            return 0;
           })
-          .slice(0, 4)
           .map((item) => {
             const row = filterMap?.[item.filterKey] || null;
             return {
@@ -621,17 +626,18 @@ const studyManagerController = (() => {
             };
           }),
       }));
+  }
 
-    const last7Days = days.slice(0, 7);
+  function buildStudyTimeByDateSummary({ collectionId, studyTimeByDate, windowDays = 7 }) {
+    const days = Array.isArray(studyTimeByDate) ? studyTimeByDate : [];
+    const recentDays = days.slice(0, Math.max(1, Math.round(Number(windowDays) || 7)));
     return {
       collectionId: String(collectionId || '').trim(),
-      summary: {
-        dayCount: days.length,
-        totalDurationMs: last7Days.reduce((sum, day) => sum + Math.max(0, Math.round(Number(day.totalDurationMs) || 0)), 0),
-        totalSessions: last7Days.reduce((sum, day) => sum + Math.max(0, Math.round(Number(day.sessionCount) || 0)), 0),
-        activeDays: last7Days.filter((day) => Math.max(0, Math.round(Number(day.totalDurationMs) || 0)) > 0).length,
-      },
-      days,
+      totalDays: days.length,
+      windowDays: Math.max(1, Math.round(Number(windowDays) || 7)),
+      totalDurationMs: recentDays.reduce((sum, day) => sum + Math.max(0, Math.round(Number(day.totalDurationMs) || 0)), 0),
+      totalSessions: recentDays.reduce((sum, day) => sum + Math.max(0, Math.round(Number(day.sessionCount) || 0)), 0),
+      activeDays: recentDays.filter((day) => Math.max(0, Math.round(Number(day.totalDurationMs) || 0)) > 0).length,
     };
   }
 
@@ -879,8 +885,8 @@ const studyManagerController = (() => {
       return Math.max(0, Math.round(Number(directByFilter.get(filterKey)?.sessionCount) || 0));
     }
 
-    const filterRows = [];
-    const filterMap = {};
+    const studyTimeByFilter = [];
+    const studyTimeByFilterKey = {};
     for (const filterKey of filters) {
       const stats = derived.filterStats.get(filterKey) || {
         filterKey,
@@ -943,34 +949,31 @@ const studyManagerController = (() => {
         children: children.map((k) => ({ filterKey: k, filterLabel: makeFilterLabel(k) })),
       };
 
-      filterRows.push(row);
-      filterMap[filterKey] = row;
+      studyTimeByFilter.push(row);
+      studyTimeByFilterKey[filterKey] = row;
     }
 
-    filterRows.sort((a, b) => {
+    studyTimeByFilter.sort((a, b) => {
       if (b.rolledDownDurationMs !== a.rolledDownDurationMs) return b.rolledDownDurationMs - a.rolledDownDurationMs;
       if (b.directDurationMs !== a.directDurationMs) return b.directDurationMs - a.directDurationMs;
       return a.filterLabel.localeCompare(b.filterLabel);
     });
 
-    const recentSessions = (Array.isArray(sessionAgg?.recentSessions) ? sessionAgg.recentSessions.slice() : [])
-      .sort((a, b) => String(b.endIso || '').localeCompare(String(a.endIso || '')));
-
-    const appRows = Array.from(appTotals.entries())
+    const groupByAppId = Array.from(appTotals.entries())
       .map(([appId, durationMs]) => ({ appId, durationMs: Math.max(0, Math.round(Number(durationMs) || 0)) }))
       .sort((a, b) => b.durationMs - a.durationMs);
 
-    const dailyActivity = buildDailyFilterActivity({
-      collectionId,
-      recentSessions,
-      filterMap,
+    const studyTimeByDate = buildStudyTimeByDate({
+      byDay: sessionAgg?.byDay,
+      filterMap: studyTimeByFilterKey,
     });
+    const studyTimeByDateSummary = buildStudyTimeByDateSummary({ collectionId, studyTimeByDate });
     const recommendations = buildWordLearningRecommendations({
       collection,
     });
 
-    const topFilter = filterMap[''] || filterRows[0] || null;
-    const summary = {
+    const topFilter = studyTimeByFilterKey[''] || studyTimeByFilter[0] || null;
+    const collectionSummary = {
       entryCount,
       progressRecordCount: Math.max(0, Math.round(Number(progressSummary?.progressRecordCount) || 0)),
       seenCount: topFilter ? topFilter.seenCount : 0,
@@ -985,18 +988,47 @@ const studyManagerController = (() => {
       totalStudyDurationMs: Math.max(0, Math.round(Number(sessionAgg?.totalDurationMs) || 0)),
       totalStudySessions: Math.max(0, Math.round(Number(sessionAgg?.totalSessions) || 0)),
       lastSessionIso: String(sessionAgg?.lastEndIso || '') || null,
-      filterCount: filterRows.length,
+      filterCount: studyTimeByFilter.length,
+    };
+
+    const queries = {
+      collectionSummary: {
+        data: ['study_progress', 'study_time_sessions'],
+        where: { collectionId, appId: STUDY_STATS_APP_ID },
+      },
+      studyTimeByFilter: {
+        data: 'study_time_sessions',
+        where: { collectionId, appId: STUDY_STATS_APP_ID },
+        groupBy: ['heldTableSearch'],
+      },
+      groupByAppId: {
+        data: 'study_time_sessions',
+        where: { collectionId },
+        groupBy: ['appId'],
+      },
+      studyTimeByDate: {
+        data: 'study_time_sessions',
+        where: { collectionId, appId: STUDY_STATS_APP_ID },
+        groupBy: ['dayStamp', 'heldTableSearch'],
+      },
+      studyTimeByDateSummary: {
+        data: 'study_time_sessions',
+        where: { collectionId, appId: STUDY_STATS_APP_ID },
+        groupBy: ['dayStamp'],
+        windowDays: studyTimeByDateSummary.windowDays,
+      },
     };
 
     return {
       collectionId,
       collectionName,
-      summary,
-      filterRows,
-      filterMap,
-      appRows,
-      recentSessions,
-      dailyActivity,
+      queries,
+      collectionSummary,
+      studyTimeByFilter,
+      studyTimeByFilterKey,
+      groupByAppId,
+      studyTimeByDate,
+      studyTimeByDateSummary,
       recommendations,
       updatedAtIso: nowIso(),
     };

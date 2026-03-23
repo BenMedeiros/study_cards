@@ -3,12 +3,35 @@ import { normalizeTableSettings, createDefaultTableSettings, cloneTableSettings 
 
 const VIEW = 'studyManagerView';
 const DEFAULT_ACTION_ORDER = ['clear', 'copyJson', 'copyFullJson'];
+const DEFAULT_CARDS = Object.freeze({
+  summary: Object.freeze({ collapsed: false }),
+  dailySummary: Object.freeze({ collapsed: false }),
+  studyTimeByDate: Object.freeze({ collapsed: false, hideRepeated: false }),
+  recommendations: Object.freeze({ collapsed: false }),
+  studyTimeByFilter: Object.freeze({ collapsed: false }),
+  groupByAppId: Object.freeze({ collapsed: false }),
+});
 
 const DEFAULT_VIEW = {
   filtersTable: createDefaultTableSettings(DEFAULT_ACTION_ORDER),
   appsTable: createDefaultTableSettings(DEFAULT_ACTION_ORDER),
-  sessionsTable: createDefaultTableSettings(DEFAULT_ACTION_ORDER),
+  cards: cloneCardsState(DEFAULT_CARDS),
 };
+
+function cloneCardsState(value) {
+  const src = (value && typeof value === 'object' && !Array.isArray(value)) ? value : {};
+  return {
+    summary: { collapsed: !!src?.summary?.collapsed },
+    dailySummary: { collapsed: !!src?.dailySummary?.collapsed },
+    studyTimeByDate: {
+      collapsed: !!src?.studyTimeByDate?.collapsed,
+      hideRepeated: !!src?.studyTimeByDate?.hideRepeated,
+    },
+    recommendations: { collapsed: !!src?.recommendations?.collapsed },
+    studyTimeByFilter: { collapsed: !!src?.studyTimeByFilter?.collapsed },
+    groupByAppId: { collapsed: !!src?.groupByAppId?.collapsed },
+  };
+}
 
 function validateTable(v, name) {
   if (v == null) return;
@@ -16,6 +39,12 @@ function validateTable(v, name) {
     throw new Error(`${name} must be an object`);
   }
   normalizeTableSettings(v);
+}
+
+function validateCards(v) {
+  if (v == null) return;
+  if (typeof v !== 'object' || Array.isArray(v)) throw new Error('cards must be an object');
+  cloneCardsState(v);
 }
 
 function create(collKey) {
@@ -26,7 +55,7 @@ function create(collKey) {
     {
       filtersTable: (v) => validateTable(v, 'filtersTable'),
       appsTable: (v) => validateTable(v, 'appsTable'),
-      sessionsTable: (v) => validateTable(v, 'sessionsTable'),
+      cards: (v) => validateCards(v),
     }
   );
 
@@ -34,8 +63,8 @@ function create(collKey) {
     const state = base.get() || {};
     const filtersTable = normalizeTableSettings(state.filtersTable);
     const appsTable = normalizeTableSettings(state.appsTable);
-    const sessionsTable = normalizeTableSettings(state.sessionsTable);
-    return { ...state, filtersTable, appsTable, sessionsTable };
+    const cards = cloneCardsState(state.cards);
+    return { ...state, filtersTable, appsTable, cards };
   }
 
   function getFiltersTableSettings() {
@@ -46,8 +75,8 @@ function create(collKey) {
     return normalizeTableSettings(get().appsTable);
   }
 
-  function getSessionsTableSettings() {
-    return normalizeTableSettings(get().sessionsTable);
+  function getCardsState() {
+    return cloneCardsState(get().cards);
   }
 
   async function setFiltersTableSettings(nextTable) {
@@ -58,8 +87,8 @@ function create(collKey) {
     return base.set({ appsTable: normalizeTableSettings(nextTable) });
   }
 
-  async function setSessionsTableSettings(nextTable) {
-    return base.set({ sessionsTable: normalizeTableSettings(nextTable) });
+  async function setCardsState(nextCards) {
+    return base.set({ cards: cloneCardsState(nextCards) });
   }
 
   return {
@@ -71,10 +100,10 @@ function create(collKey) {
     dispose: base.dispose,
     getFiltersTableSettings,
     getAppsTableSettings,
-    getSessionsTableSettings,
+    getCardsState,
     setFiltersTableSettings,
     setAppsTableSettings,
-    setSessionsTableSettings,
+    setCardsState,
   };
 }
 
@@ -83,10 +112,6 @@ function getDefaultFiltersTableSettings() {
 }
 
 function getDefaultAppsTableSettings() {
-  return createDefaultTableSettings(DEFAULT_ACTION_ORDER);
-}
-
-function getDefaultSessionsTableSettings() {
   return createDefaultTableSettings(DEFAULT_ACTION_ORDER);
 }
 
@@ -101,5 +126,4 @@ export default {
   forCollection,
   getDefaultFiltersTableSettings,
   getDefaultAppsTableSettings,
-  getDefaultSessionsTableSettings,
 };
