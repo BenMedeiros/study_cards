@@ -356,14 +356,7 @@ function sortRecommendationItems(items, sortKey) {
   return rows;
 }
 
-function buildRecommendationsCard({
-  report,
-  onNavigate,
-  sortKey = 'focusCountDesc',
-  minimumEntryCount = 5,
-  onToggleSort = null,
-  onToggleMinimumEntryCount = null,
-} = {}) {
+function getRecommendationsState(report, sortKey, minimumEntryCount) {
   const rec = report?.recommendations || null;
   const summary = rec?.summary || null;
   const config = rec?.config || null;
@@ -382,9 +375,103 @@ function buildRecommendationsCard({
   const sortLabel = sortOptions.find((item) => item?.key === activeSortKey)?.label || activeSortKey;
   const tokenLabel = String(config.tokenLabel || summary.tokenLabel || 'Token');
 
-  const filterRows = visibleItems.map((item) => {
+  return {
+    rec,
+    summary,
+    config,
+    sortOptions,
+    minimumEntryCountOptions,
+    activeSortKey,
+    activeMinimumEntryCount,
+    visibleItems,
+    sortLabel,
+    tokenLabel,
+  };
+}
+
+function buildRecommendationsTable({ store, report, onNavigate, sortKey, minimumEntryCount, tableSettings }) {
+  const state = getRecommendationsState(report, sortKey, minimumEntryCount);
+  if (!state) return null;
+
+  const headers = [
+    { key: 'token', label: state.tokenLabel },
+    { key: 'words', label: 'Words', type: 'number' },
+    { key: 'seen', label: 'Seen', type: 'number' },
+    { key: 'focus', label: 'Focus', type: 'number' },
+    { key: 'learned', label: 'Learned', type: 'number' },
+    { key: 'remaining', label: 'Remaining', type: 'number' },
+  ];
+
+  const rows = state.visibleItems.map((item) => {
+    const route = String(item.route || '').trim();
+    const tokenLink = route
+      ? makeRouteAction({
+          label: `${state.tokenLabel} ${item.token}`,
+          meta: '',
+          path: route,
+          onNavigate,
+          className: 'study-manager-rec-link',
+        })
+      : String(item.token || '');
+    const out = [
+      tokenLink,
+      asNumber(item.totalCount),
+      asNumber(item.seenCount),
+      asNumber(item.focusCount),
+      asNumber(item.learnedCount),
+      asNumber(item.remainingCount),
+    ];
+    out.__id = String(item.token || '');
+    out.__route = route;
+    return out;
+  });
+
+  const applied = applyTableColumnSettings({ headers, rows, tableSettings });
+  const table = createTable({
+    store,
+    headers: applied.headers,
+    rows: applied.rows,
+    columnRenderSettings: (tableSettings?.columns?.stylesByKey || {}),
+    tableRenderSettings: tableSettings?.table || {},
+    id: 'study-manager-recommendations-table',
+    sortable: true,
+    searchable: true,
+    rowActions: [
+      {
+        label: 'Open Data',
+        title: 'Open Data view for this recommendation',
+        className: 'btn small',
+        onClick: (rowData) => {
+          const path = String(rowData?.__route || '').trim();
+          if (!path) return;
+          if (typeof onNavigate === 'function') onNavigate(path);
+          else location.hash = path;
+        },
+      },
+    ],
+  });
+
+  applyTableColumnStyles({ wrapper: table, tableSettings });
+  applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings, actionItems: TABLE_ACTION_ITEMS });
+
+  return { table, headers, rows, sourceInfo: formatQueryCaption(report?.queries?.recommendations), state };
+}
+
+function buildRecommendationsCard({
+  store,
+  report,
+  onNavigate,
+  sortKey = 'focusCountDesc',
+  minimumEntryCount = 5,
+  viewMode = 'cards',
+  recommendationsTableSettings = null,
+} = {}) {
+  const state = getRecommendationsState(report, sortKey, minimumEntryCount);
+  if (!state) return null;
+
+  const filterRows = state.visibleItems.map((item) => {
     const action = makeRouteAction({
-      label: `${tokenLabel} ${item.token}`,
+      label: `${state.tokenLabel} ${item.token}`,
       meta: `${asNumber(item.totalCount)} words`,
       path: String(item.route || '').trim(),
       onNavigate,
@@ -407,35 +494,62 @@ function buildRecommendationsCard({
     });
   });
 
-  return card({
+  const recommendationsTableObj = viewMode === 'table'
+    ? buildRecommendationsTable({
+        store,
+        report,
+        onNavigate,
+        sortKey: state.activeSortKey,
+        minimumEntryCount: state.activeMinimumEntryCount,
+        tableSettings: recommendationsTableSettings,
+      })
+    : null;
+
+  const cardEl = card({
     id: 'study-manager-recommendations-card',
     title: 'Related Word Recommendations',
-    cornerCaption: `${filterRows.length}/${asNumber(summary.itemCount)} shown`,
+    cornerCaption: `${filterRows.length}/${asNumber(state.summary.itemCount)} shown`,
     children: [
       el('div', {
         className: 'study-manager-summary-grid',
         children: [
-          renderMetric('Entries', String(asNumber(summary.sourceEntryCount))),
-          renderMetric('Tokenized', String(asNumber(summary.tokenizedEntryCount))),
-          renderMetric(tokenLabel, String(asNumber(summary.itemCount))),
-          renderMetric(`>= ${activeMinimumEntryCount} Words`, String(filterRows.length)),
-          renderMetric('Sort', sortLabel),
+          renderMetric('Entries', String(asNumber(state.summary.sourceEntryCount))),
+          renderMetric('Tokenized', String(asNumber(state.summary.tokenizedEntryCount))),
+          renderMetric(state.tokenLabel, String(asNumber(state.summary.itemCount))),
+          renderMetric(`>= ${state.activeMinimumEntryCount} Words`, String(filterRows.length)),
+          viewMode === 'table' ? null : renderMetric('Sort', state.sortLabel),
         ],
       }),
-      filterRows.length ? el('div', {
+      filterRows.length
+        ? (viewMode === 'table' && recommendationsTableObj?.table
+            ? el('div', {
+                className: 'study-manager-recommendations-section',
+                children: [
+                  el('div', { className: 'study-manager-insight-title', text: `${state.tokenLabel} Coverage` }),
+                  recommendationsTableObj.table,
+                ],
+              })
+            : el('div', {
+                className: 'study-manager-recommendations-section',
+                children: [
+                  el('div', { className: 'study-manager-insight-title', text: `${state.tokenLabel} Coverage` }),
+                  el('div', { className: 'study-manager-rec-list', children: filterRows }),
+                ],
+              }))
+        : el('div', {
         className: 'study-manager-recommendations-section',
         children: [
-          el('div', { className: 'study-manager-insight-title', text: `${tokenLabel} Coverage` }),
-          el('div', { className: 'study-manager-rec-list', children: filterRows }),
-        ],
-      }) : el('div', {
-        className: 'study-manager-recommendations-section',
-        children: [
-          el('div', { className: 'hint', text: `No ${tokenLabel.toLowerCase()} items match the current minimum word count.` }),
+          el('div', { className: 'hint', text: `No ${state.tokenLabel.toLowerCase()} items match the current minimum word count.` }),
         ],
       }),
     ].filter(Boolean),
   });
+
+  return {
+    card: cardEl,
+    tableObj: recommendationsTableObj,
+    state,
+  };
 }
 
 function buildFilterTable({ store, report, onNavigate, tableSettings }) {
@@ -564,15 +678,18 @@ export function renderStudyManager({ store, onNavigate, route }) {
   let snapshot = studyManagerController.getSnapshot() || {};
   let pendingSnapshot = null;
   let selectedCollectionId = String(route?.query?.get('collection') || store?.collections?.getActiveCollectionId?.() || '').trim();
+  let pendingEnsureCollectionId = '';
   let hideRepeatedDateFilters = false;
   let recommendationsSortKey = 'focusCountDesc';
   let recommendationsMinimumEntryCount = 5;
+  let recommendationsViewMode = 'cards';
   const collapsedCards = Object.create(null);
 
   let tableSettingsCtrl = null;
   let tableSettingsCollectionId = '';
   let filtersTableSettings = studyManagerViewController.getDefaultFiltersTableSettings();
   let appsTableSettings = studyManagerViewController.getDefaultAppsTableSettings();
+  let recommendationsTableSettings = studyManagerViewController.getDefaultRecommendationsTableSettings();
 
   function ensureTableSettingsController(collId) {
     const key = String(collId || '').trim();
@@ -581,8 +698,10 @@ export function renderStudyManager({ store, onNavigate, route }) {
       tableSettingsCollectionId = '';
       filtersTableSettings = studyManagerViewController.getDefaultFiltersTableSettings();
       appsTableSettings = studyManagerViewController.getDefaultAppsTableSettings();
+      recommendationsTableSettings = studyManagerViewController.getDefaultRecommendationsTableSettings();
       for (const k of Object.keys(collapsedCards)) delete collapsedCards[k];
       hideRepeatedDateFilters = false;
+      recommendationsViewMode = 'cards';
       return;
     }
     if (tableSettingsCtrl && tableSettingsCollectionId === key) return;
@@ -594,6 +713,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       tableSettingsCtrl = studyManagerViewController.create(key);
       filtersTableSettings = normalizeTableSettings(tableSettingsCtrl.getFiltersTableSettings());
       appsTableSettings = normalizeTableSettings(tableSettingsCtrl.getAppsTableSettings());
+      recommendationsTableSettings = normalizeTableSettings(tableSettingsCtrl.getRecommendationsTableSettings());
       const cardsState = tableSettingsCtrl.getCardsState();
       for (const k of Object.keys(collapsedCards)) delete collapsedCards[k];
       collapsedCards.summary = !!cardsState?.summary?.collapsed;
@@ -605,14 +725,17 @@ export function renderStudyManager({ store, onNavigate, route }) {
       hideRepeatedDateFilters = !!cardsState?.studyTimeByDate?.hideRepeated;
       recommendationsSortKey = String(cardsState?.recommendations?.sortKey || 'focusCountDesc').trim() || 'focusCountDesc';
       recommendationsMinimumEntryCount = asNumber(cardsState?.recommendations?.minimumEntryCount) || 5;
+      recommendationsViewMode = String(cardsState?.recommendations?.viewMode || 'cards').trim() === 'table' ? 'table' : 'cards';
     } catch (e) {
       tableSettingsCtrl = null;
       filtersTableSettings = studyManagerViewController.getDefaultFiltersTableSettings();
       appsTableSettings = studyManagerViewController.getDefaultAppsTableSettings();
+      recommendationsTableSettings = studyManagerViewController.getDefaultRecommendationsTableSettings();
       for (const k of Object.keys(collapsedCards)) delete collapsedCards[k];
       hideRepeatedDateFilters = false;
       recommendationsSortKey = 'focusCountDesc';
       recommendationsMinimumEntryCount = 5;
+      recommendationsViewMode = 'cards';
     }
   }
 
@@ -630,6 +753,13 @@ export function renderStudyManager({ store, onNavigate, route }) {
     renderBody();
   }
 
+  async function persistRecommendationsTableSettings(nextSettings) {
+    const normalized = normalizeTableSettings(nextSettings);
+    recommendationsTableSettings = normalized;
+    try { if (tableSettingsCtrl) await tableSettingsCtrl.setRecommendationsTableSettings(normalized); } catch (e) {}
+    renderBody();
+  }
+
   async function persistCardsState() {
     const nextCards = {
       summary: { collapsed: !!collapsedCards.summary },
@@ -642,6 +772,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
         collapsed: !!collapsedCards.recommendations,
         sortKey: recommendationsSortKey,
         minimumEntryCount: recommendationsMinimumEntryCount,
+        viewMode: recommendationsViewMode,
       },
       studyTimeByFilter: { collapsed: !!collapsedCards.studyTimeByFilter },
       groupByAppId: { collapsed: !!collapsedCards.groupByAppId },
@@ -653,16 +784,47 @@ export function renderStudyManager({ store, onNavigate, route }) {
   const body = el('div', { className: 'study-manager-body' });
   root.append(controls, body);
 
+  function getSelectableCollections() {
+    const available = (typeof store?.collections?.getAvailableCollections === 'function')
+      ? store.collections.getAvailableCollections()
+      : [];
+    const rows = Array.isArray(available) ? available : [];
+    return rows
+      .map((item) => ({
+        collectionId: String(item?.path || item?.collectionId || '').trim(),
+        collectionName: String(item?.name || item?.collectionName || item?.path || item?.collectionId || '').trim(),
+      }))
+      .filter((item) => item.collectionId);
+  }
+
+  async function ensureCollectionLoaded(collectionId) {
+    const id = String(collectionId || '').trim();
+    if (!id) return null;
+    const loaded = Array.isArray(store?.collections?.getCollections?.()) ? store.collections.getCollections() : [];
+    const existing = loaded.find((item) => String(item?.key || '').trim() === id);
+    if (existing) return existing;
+    if (typeof store?.collections?.loadCollection === 'function') {
+      try { return await store.collections.loadCollection(id); } catch {}
+    }
+    return null;
+  }
+
   function getReport(snap = snapshot) {
     const reportMap = (snap?.collections && typeof snap.collections === 'object') ? snap.collections : {};
     const reports = Object.values(reportMap);
-    const availableCollections = Array.isArray(snap?.availableCollections) ? snap.availableCollections : [];
+    const availableCollections = getSelectableCollections();
+    const fallbackCollectionId = String(
+      availableCollections[0]?.collectionId
+      || reports[0]?.collectionId
+      || ''
+    ).trim();
     if (!selectedCollectionId) {
-      selectedCollectionId = String(
-        availableCollections[0]?.collectionId
-        || reports[0]?.collectionId
-        || ''
-      ).trim();
+      selectedCollectionId = fallbackCollectionId;
+    } else if (!reportMap[selectedCollectionId] && fallbackCollectionId) {
+      const availableSet = new Set(availableCollections.map((item) => String(item?.collectionId || '').trim()).filter(Boolean));
+      if (!availableSet.has(selectedCollectionId)) {
+        selectedCollectionId = fallbackCollectionId;
+      }
     }
     return reportMap[selectedCollectionId] || null;
   }
@@ -703,7 +865,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
     controls.removeControl && controls.removeControl('collection');
     controls.removeControl && controls.removeControl('refresh');
 
-    const collections = Array.isArray(snapshot?.availableCollections) ? snapshot.availableCollections : [];
+    const collections = getSelectableCollections();
     if (!collections.length) return;
 
     controls.addElement({
@@ -713,13 +875,15 @@ export function renderStudyManager({ store, onNavigate, route }) {
       className: 'align-right',
       items: collections.map((c) => ({ value: c.collectionId, label: c.collectionName || c.collectionId })),
       value: selectedCollectionId,
-      onChange: (next) => {
+      onChange: async (next) => {
         const nextId = String(next || '').trim();
         if (!nextId || nextId === selectedCollectionId) return;
         selectedCollectionId = nextId;
-        try { studyManagerController.ensureCollections([selectedCollectionId]); } catch {}
+        pendingEnsureCollectionId = nextId;
         renderControls();
         renderBody();
+        await ensureCollectionLoaded(selectedCollectionId);
+        try { studyManagerController.ensureCollections([selectedCollectionId]); } catch {}
       },
     });
 
@@ -753,8 +917,11 @@ export function renderStudyManager({ store, onNavigate, route }) {
     const report = getReport(snapshot);
     if (!report) {
       try {
-        if (selectedCollectionId && !snapshot?.isComputing) {
-          studyManagerController.ensureCollections([selectedCollectionId]);
+        if (selectedCollectionId && !snapshot?.isComputing && pendingEnsureCollectionId !== selectedCollectionId) {
+          pendingEnsureCollectionId = selectedCollectionId;
+          void ensureCollectionLoaded(selectedCollectionId).then(() => {
+            try { studyManagerController.ensureCollections([selectedCollectionId]); } catch {}
+          });
         }
       } catch {}
       body.append(card({
@@ -766,6 +933,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       }));
       return;
     }
+    pendingEnsureCollectionId = '';
 
     const summary = report.collectionSummary || {};
     ensureTableSettingsController(report.collectionId);
@@ -780,12 +948,16 @@ export function renderStudyManager({ store, onNavigate, route }) {
         renderBody();
       },
     });
-    const recommendationsCard = buildRecommendationsCard({
+    const recommendationsCardObj = buildRecommendationsCard({
+      store,
       report,
       onNavigate,
       sortKey: recommendationsSortKey,
       minimumEntryCount: recommendationsMinimumEntryCount,
+      viewMode: recommendationsViewMode,
+      recommendationsTableSettings,
     });
+    const recommendationsCard = recommendationsCardObj?.card || null;
     const summaryCard = card({
       id: 'study-manager-summary-card',
       title: 'Study Summary',
@@ -902,15 +1074,44 @@ export function renderStudyManager({ store, onNavigate, route }) {
     });
     attachCardCornerButton({
       cardEl: recommendationsCard,
-      text: `Sort ${String((report?.recommendations?.config?.sortOptions || []).find((item) => item?.key === recommendationsSortKey)?.label || 'Focus')}`,
-      title: 'Toggle recommendation sorting',
+      text: recommendationsViewMode === 'table' ? 'Cards' : 'Table',
+      title: 'Toggle recommendation list view',
       onClick: () => {
-        const options = (report?.recommendations?.config?.sortOptions || []).map((item) => String(item?.key || '').trim()).filter(Boolean);
-        recommendationsSortKey = cycleOption(options, recommendationsSortKey);
+        recommendationsViewMode = recommendationsViewMode === 'table' ? 'cards' : 'table';
         void persistCardsState();
         renderBody();
       },
     });
+    if (recommendationsViewMode !== 'table') {
+      attachCardCornerButton({
+        cardEl: recommendationsCard,
+        text: `Sort ${String((report?.recommendations?.config?.sortOptions || []).find((item) => item?.key === recommendationsSortKey)?.label || 'Focus')}`,
+        title: 'Toggle recommendation sorting',
+        onClick: () => {
+          const options = (report?.recommendations?.config?.sortOptions || []).map((item) => String(item?.key || '').trim()).filter(Boolean);
+          recommendationsSortKey = cycleOption(options, recommendationsSortKey);
+          void persistCardsState();
+          renderBody();
+        },
+      });
+    }
+    if (recommendationsViewMode === 'table' && recommendationsCardObj?.tableObj) {
+      attachCardCornerButton({
+        cardEl: recommendationsCard,
+        text: 'Table',
+        title: 'Table settings',
+        onClick: async () => {
+          const next = await openTableSettingsDialog({
+            tableName: 'Study Manager Recommendations Table',
+            sourceInfo: `${report.collectionId} | ${recommendationsCardObj.tableObj.sourceInfo}`,
+            columns: buildTableColumnItems(recommendationsCardObj.tableObj.headers, recommendationsCardObj.tableObj.rows),
+            actions: TABLE_ACTION_ITEMS,
+            settings: recommendationsTableSettings,
+          });
+          if (next) await persistRecommendationsTableSettings(next);
+        },
+      });
+    }
     attachCardCornerButton({
       cardEl: recommendationsCard,
       text: `Min ${asNumber(recommendationsMinimumEntryCount)}`,

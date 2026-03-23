@@ -123,26 +123,6 @@
       "schemaSource": "inline"
     },
     {
-      "path": "japanese/japanese_words_updates.json",
-      "modifiedAt": "2026-03-22T01:24:04.657Z",
-      "name": null,
-      "description": null,
-      "entriesCount": 0,
-      "valid": false,
-      "validation": {
-        "schema": {
-          "errors": [
-            "Missing required metadata fields: metadata"
-          ],
-          "warnings": []
-        },
-        "entries": {
-          "errors": [],
-          "warnings": []
-        }
-      }
-    },
-    {
       "path": "languageHistory.json",
       "modifiedAt": "2026-02-24T20:04:00.901Z",
       "name": "Language History",

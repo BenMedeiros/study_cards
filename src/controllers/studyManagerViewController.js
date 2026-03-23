@@ -7,7 +7,7 @@ const DEFAULT_CARDS = Object.freeze({
   summary: Object.freeze({ collapsed: false }),
   dailySummary: Object.freeze({ collapsed: false }),
   studyTimeByDate: Object.freeze({ collapsed: false, hideRepeated: false }),
-  recommendations: Object.freeze({ collapsed: false, sortKey: 'focusCountDesc', minimumEntryCount: 5 }),
+  recommendations: Object.freeze({ collapsed: false, sortKey: 'focusCountDesc', minimumEntryCount: 5, viewMode: 'cards' }),
   studyTimeByFilter: Object.freeze({ collapsed: false }),
   groupByAppId: Object.freeze({ collapsed: false }),
 });
@@ -15,6 +15,7 @@ const DEFAULT_CARDS = Object.freeze({
 const DEFAULT_VIEW = {
   filtersTable: createDefaultTableSettings(DEFAULT_ACTION_ORDER),
   appsTable: createDefaultTableSettings(DEFAULT_ACTION_ORDER),
+  recommendationsTable: createDefaultTableSettings(DEFAULT_ACTION_ORDER),
   cards: cloneCardsState(DEFAULT_CARDS),
 };
 
@@ -31,6 +32,7 @@ function cloneCardsState(value) {
       collapsed: !!src?.recommendations?.collapsed,
       sortKey: String(src?.recommendations?.sortKey || 'focusCountDesc').trim() || 'focusCountDesc',
       minimumEntryCount: Math.max(1, Math.round(Number(src?.recommendations?.minimumEntryCount) || 5)),
+      viewMode: String(src?.recommendations?.viewMode || 'cards').trim() === 'table' ? 'table' : 'cards',
     },
     studyTimeByFilter: { collapsed: !!src?.studyTimeByFilter?.collapsed },
     groupByAppId: { collapsed: !!src?.groupByAppId?.collapsed },
@@ -59,6 +61,7 @@ function create(collKey) {
     {
       filtersTable: (v) => validateTable(v, 'filtersTable'),
       appsTable: (v) => validateTable(v, 'appsTable'),
+      recommendationsTable: (v) => validateTable(v, 'recommendationsTable'),
       cards: (v) => validateCards(v),
     }
   );
@@ -67,8 +70,9 @@ function create(collKey) {
     const state = base.get() || {};
     const filtersTable = normalizeTableSettings(state.filtersTable);
     const appsTable = normalizeTableSettings(state.appsTable);
+    const recommendationsTable = normalizeTableSettings(state.recommendationsTable);
     const cards = cloneCardsState(state.cards);
-    return { ...state, filtersTable, appsTable, cards };
+    return { ...state, filtersTable, appsTable, recommendationsTable, cards };
   }
 
   function getFiltersTableSettings() {
@@ -83,12 +87,20 @@ function create(collKey) {
     return cloneCardsState(get().cards);
   }
 
+  function getRecommendationsTableSettings() {
+    return normalizeTableSettings(get().recommendationsTable);
+  }
+
   async function setFiltersTableSettings(nextTable) {
     return base.set({ filtersTable: normalizeTableSettings(nextTable) });
   }
 
   async function setAppsTableSettings(nextTable) {
     return base.set({ appsTable: normalizeTableSettings(nextTable) });
+  }
+
+  async function setRecommendationsTableSettings(nextTable) {
+    return base.set({ recommendationsTable: normalizeTableSettings(nextTable) });
   }
 
   async function setCardsState(nextCards) {
@@ -104,9 +116,11 @@ function create(collKey) {
     dispose: base.dispose,
     getFiltersTableSettings,
     getAppsTableSettings,
+    getRecommendationsTableSettings,
     getCardsState,
     setFiltersTableSettings,
     setAppsTableSettings,
+    setRecommendationsTableSettings,
     setCardsState,
   };
 }
@@ -116,6 +130,10 @@ function getDefaultFiltersTableSettings() {
 }
 
 function getDefaultAppsTableSettings() {
+  return createDefaultTableSettings(DEFAULT_ACTION_ORDER);
+}
+
+function getDefaultRecommendationsTableSettings() {
   return createDefaultTableSettings(DEFAULT_ACTION_ORDER);
 }
 
@@ -130,4 +148,5 @@ export default {
   forCollection,
   getDefaultFiltersTableSettings,
   getDefaultAppsTableSettings,
+  getDefaultRecommendationsTableSettings,
 };

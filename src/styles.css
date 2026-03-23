@@ -2062,7 +2062,13 @@ input[type="number"].button::-webkit-inner-spin-button {
 
 @media (max-width: 700px) {
   .table-search {
+    width: 100%;
     max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .table-search-input {
+    width: 100%;
   }
 }
 
@@ -2104,6 +2110,14 @@ input[type="number"].button::-webkit-inner-spin-button {
   flex: 1 1 auto;
   min-width: 8rem;
 }
+
+
+@media (max-width: 700px) {
+  .table-search-combobox {
+    width: 100%;
+  }
+}
+
 
 .table-search-combobox .table-search-input {
   border-top-right-radius: 0;
@@ -3367,7 +3381,7 @@ h2 {
     grid-template-columns: 1fr;
   }
   #study-manager-root .table-wrapper {
-    max-height: 55vh;
+    max-height: 39vh;
   }
 }
 
@@ -3422,7 +3436,7 @@ h2 {
 }
 
 #study-manager-root .study-manager-day-list {
-  max-height: 38vh;
+  max-height: 39vh;
   overflow-y: auto;
   padding-right: 0.2rem;
 }
@@ -3432,7 +3446,7 @@ h2 {
 }
 
 #study-manager-root .study-manager-rec-list {
-  max-height: 38vh;
+  max-height: 39vh;
   overflow-y: auto;
   padding-right: 0.2rem;
 }
