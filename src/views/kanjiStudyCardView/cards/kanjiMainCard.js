@@ -1,6 +1,6 @@
 // Factory for creating a Kanji main card element.
 // The card uses the existing project CSS classes (from src/styles.css).
-import { settingsLog } from '../managers/settingsManager.js';
+import { settingsLog } from '../../../managers/settingsManager.js';
 
 export function createKanjiMainCard({ entry = null, indexText = '', handlers = {} } = {}) {
   settingsLog('[Card:Main] createKanjiMainCard()', { entry, indexText });

@@ -1,4 +1,4 @@
-import { createJsonViewer } from '../components/shared/jsonViewer.js';
+import { createJsonViewer } from '../../../components/shared/jsonViewer.js';
 
 // Simple card that renders the full entry using the reusable JSON viewer.
 export function createJsonViewerCard({ entry = null, config = {} } = {}) {

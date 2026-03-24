@@ -1,6 +1,6 @@
 // Factory for a full-detail kanji card showing labelled rows for all common fields.
-import { speak, getLanguageCode } from '../utils/browser/speech.js';
-import { settingsLog } from '../managers/settingsManager.js';
+import { speak, getLanguageCode } from '../../../utils/browser/speech.js';
+import { settingsLog } from '../../../managers/settingsManager.js';
 
 export function createKanjiFullCard({ entry = null, config = {}, handlers = {} } = {}) {
   settingsLog('[Card:Full] createKanjiFullCard()', { entry, config, handlers });

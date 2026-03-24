@@ -1,7 +1,7 @@
 // Factory for creating a Kanji related-item card element with internal carousel controls.
 // Uses existing CSS classes defined in src/styles.css.
-import { settingsLog } from '../managers/settingsManager.js';
-import { speak, getLanguageCode } from '../utils/browser/speech.js';
+import { settingsLog } from '../../../managers/settingsManager.js';
+import { speak, getLanguageCode } from '../../../utils/browser/speech.js';
 
 export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {} } = {}) {
   settingsLog('[Card:Related] createKanjiRelatedCard()', { entry });
@@ -649,4 +649,3 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
 
   return { el: root, update, setEntry, setVisible, setFieldVisible, setFieldsVisible, destroy };
 }
-

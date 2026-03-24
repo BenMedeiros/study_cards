@@ -1,5 +1,5 @@
-import controllerFactory from './controller.js';
-import { CARD_REGISTRY } from '../cards/index.js';
+import controllerFactory from '../../controllers/controller.js';
+import { CARD_REGISTRY } from './cards/index.js';
 
 const VIEW = 'kanjiStudyCardView';
 const AVAILABLE_CARD_KEYS = new Set((CARD_REGISTRY || []).map(c => c.key));

@@ -1,10 +1,10 @@
-import { renderCollectionsManager } from './apps/collectionsView.js';
-import { renderManageCollections } from './apps/manageCollectionsView.js';
-import { renderStudyManager } from './apps/studyManagerView.js';
+import { renderCollectionsManager } from './views/collectionsView.js';
+import { renderManageCollections } from './views/manageCollectionsView.js';
+import { renderStudyManager } from './views/studyManagerView.js';
 import { parseHashRoute } from './utils/browser/helpers.js';
-import { renderData } from './apps/dataView.js';
-import { renderKanjiStudyCard } from './apps/kanjiStudyCardView.js';
-import { renderEntityExplorer } from './apps/entityExplorerView.js';
+import { renderData } from './views/dataView.js';
+import { renderKanjiStudyCard } from './views/kanjiStudyCardView/kanjiStudyCardView.js';
+import { renderEntityExplorer } from './views/entityExplorerView.js';
 import { createCollectionBrowserDropdown } from './components/features/collectionBrowser.js';
 import { openRightClickMenu, registerRightClickContext } from './components/shared/rightClickMenu.js';
 import { createShellTitleContextMenu } from './components/features/shellTitleContextMenu.js';

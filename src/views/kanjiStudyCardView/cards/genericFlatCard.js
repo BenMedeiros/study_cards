@@ -1,6 +1,6 @@
 // Generic flat card: renders an object's top-level keys as labeled rows.
 // Styling mirrors the kanji full card (reuses .kanji-full-row/.kanji-full-label/.kanji-full-value).
-import { settingsLog } from '../managers/settingsManager.js';
+import { settingsLog } from '../../../managers/settingsManager.js';
 
 export function createGenericFlatCard({ entry = null, config = {} } = {}) {
   settingsLog('[Card:Generic] createGenericFlatCard()', { entry, config });

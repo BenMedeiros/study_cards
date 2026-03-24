@@ -1,13 +1,13 @@
-import { nowMs } from '../utils/browser/helpers.js';
-import { speak, getLanguageCode } from '../utils/browser/speech.js';
+import { nowMs } from '../../utils/browser/helpers.js';
+import { speak, getLanguageCode } from '../../utils/browser/speech.js';
 
-import { createViewHeaderTools } from '../components/features/viewHeaderTools.js';
-import { createViewFooterControls } from '../components/features/viewFooterControls.js';
-import { CARD_REGISTRY } from '../cards/index.js';
-import { addStudyFilter } from '../components/features/studyControls.js';
-import { addShuffleControls } from '../components/features/collectionControls.js';
-import kanjiStudyController from '../controllers/kanjiStudyController.js';
-import { createKanjiStudyFooterActionsController } from '../controllers/actionsController.js';
+import { createViewHeaderTools } from '../../components/features/viewHeaderTools.js';
+import { createViewFooterControls } from '../../components/features/viewFooterControls.js';
+import { CARD_REGISTRY } from './cards/index.js';
+import { addStudyFilter } from '../../components/features/studyControls.js';
+import { addShuffleControls } from '../../components/features/collectionControls.js';
+import kanjiStudyController from './kanjiStudyController.js';
+import { createKanjiStudyFooterActionsController } from '../../controllers/actionsController.js';
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');

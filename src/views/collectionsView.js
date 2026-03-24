@@ -3,7 +3,7 @@ import { card } from '../utils/browser/ui.js';
 import { validateCollection } from '../utils/browser/validation.js';
 import { formatDurationMs, formatIsoShort } from '../utils/browser/helpers.js';
 import collectionSettingsController from '../controllers/collectionSettingsController.js';
-import kanjiStudyController from '../controllers/kanjiStudyController.js';
+import kanjiStudyController from './kanjiStudyCardView/kanjiStudyController.js';
 import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
 import collectionsViewController from '../controllers/collectionsViewController.js';
 import {
