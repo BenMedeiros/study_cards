@@ -199,13 +199,19 @@ export function openViewFooterCustomButtonDialog({
         if (rowData.type === 'group') {
           const left = el('div', { className: 'view-footer-custom-action-label', text: rowData.fnName });
           const fieldCell = el('div', { className: 'view-footer-action-field' });
-          const groupedItems = rowData.options.map(opt => ({
-            value: asString(opt.actionId),
-            label: asString(opt.optionLabel),
-          }));
+          const groupedItems = rowData.options
+            .filter(opt => asString(opt?.actionId).trim() !== 'sound.__toggle__')
+            .map(opt => ({
+              value: asString(opt.actionId),
+              label: asString(opt.optionLabel),
+            }));
+          if (!groupedItems.length) continue;
           const dropdown = createDropdown({
             items: groupedItems,
-            value: groupedItems[0]?.value || '',
+            values: groupedItems[0]?.value ? [groupedItems[0].value] : [],
+            multi: true,
+            commitOnClose: true,
+            includeAllNone: true,
             className: 'view-footer-custom-group-dropdown',
             closeOverlaysOnOpen: false,
             portalZIndex: 1400,
@@ -215,9 +221,11 @@ export function openViewFooterCustomButtonDialog({
           const selectBtn = el('button', { className: 'btn small', text: 'Select' });
           selectBtn.type = 'button';
           selectBtn.addEventListener('click', () => {
-            const chosen = asString(dropdown?.getValue ? dropdown.getValue() : '').trim();
-            if (!chosen) return;
-            close({ actionId: chosen });
+            const chosen = (dropdown?.getValues ? dropdown.getValues() : [])
+              .map(value => asString(value).trim())
+              .filter(Boolean);
+            if (!chosen.length) return;
+            close({ actionIds: chosen });
           });
 
           row.append(left, fieldCell, selectBtn);

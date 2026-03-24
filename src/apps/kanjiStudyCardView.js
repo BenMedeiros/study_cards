@@ -425,6 +425,7 @@ export function renderKanjiStudyCard({ store }) {
   const footerActions = createKanjiStudyFooterActionsController({
     showPrev,
     showNext,
+    shuffle: shuffleEntries,
     speakField,
     getSearchTerm,
     getEntryFields: getEntryFieldsSelection,

@@ -173,6 +173,7 @@ function ensureDefaultConfig(config) {
     controls: (c.controls && typeof c.controls === 'object') ? deepClone(c.controls) : {},
     customButtons: normalizeCustomButtons(c.customButtons),
     hotkeysDisabled: !!c.hotkeysDisabled,
+    restrictToCollectionKey: asString(c.restrictToCollectionKey),
   };
 }
 
@@ -446,6 +447,7 @@ export function openViewFooterSettingsDialog({
   customOnly = false,
   visibleConfigIds = null,
   collectionLabel = '',
+  currentCollectionKey = '',
   onVisibleConfigsChange = null,
   onChange = null,
 } = {}) {
@@ -457,12 +459,36 @@ export function openViewFooterSettingsDialog({
   let isDirty = false;
   let expandedRows = new Set();
   let shownConfigIds = Array.isArray(visibleConfigIds) ? visibleConfigIds.map(id => asString(id).trim()).filter(Boolean) : [];
+  let isConfigListCollapsed = false;
   const availableActionList = Array.isArray(availableActions) ? availableActions.slice() : [];
   const availableActionById = new Map(availableActionList.map(a => [asString(a.id).trim(), a]));
   const templatePrefs = normalizeAppPrefs(defaultAppPrefs, controls, { customOnly: !!customOnly });
+  const normalizedCollectionKey = asString(currentCollectionKey || collectionLabel).trim();
+
+  function isConfigAvailableForCollection(config, collectionKey = normalizedCollectionKey) {
+    const restrictedKey = asString(config?.restrictToCollectionKey).trim();
+    if (!restrictedKey) return true;
+    return !!collectionKey && restrictedKey === collectionKey;
+  }
+
+  function availableConfigs() {
+    return (Array.isArray(prefs?.configs) ? prefs.configs : []).filter(cfg => isConfigAvailableForCollection(cfg));
+  }
+
+  function ensureSelectedConfigIsAvailable() {
+    const available = availableConfigs();
+    const hasSelected = available.some(cfg => asString(cfg?.id).trim() === asString(selectedConfigId).trim());
+    if (hasSelected) {
+      prefs.activeConfigId = selectedConfigId;
+      return;
+    }
+    const nextId = asString(available[0]?.id).trim();
+    selectedConfigId = nextId;
+    prefs.activeConfigId = nextId;
+  }
 
   function syncShownConfigIds() {
-    const validIds = new Set((Array.isArray(prefs.configs) ? prefs.configs : []).map(cfg => asString(cfg?.id).trim()).filter(Boolean));
+    const validIds = new Set(availableConfigs().map(cfg => asString(cfg?.id).trim()).filter(Boolean));
     const next = [];
     const seen = new Set();
     for (const id of shownConfigIds) {
@@ -511,6 +537,17 @@ export function openViewFooterSettingsDialog({
     };
   }
 
+  function formatCustomActionLabel(action) {
+    const fnName = asString(action?.fnName).trim();
+    const actionField = asString(action?.actionField).trim();
+    if (!fnName) return asString(action?.id).trim();
+    if (!actionField) return fnName;
+    if (fnName === 'entry.speakField') return `${fnName}[${actionField}]`;
+    if (/^app\.kanjiStudyCardView\.entryFields\.(setOff|setOn|toggle)$/.test(fnName)) return `${fnName}[${actionField}]`;
+    if (fnName === 'link.open') return `${fnName}[${actionField}]`;
+    return fnName;
+  }
+
   function emitSave(nextPrefs = prefs) {
     try {
       if (typeof onChange === 'function') onChange(deepClone(nextPrefs));
@@ -528,7 +565,8 @@ export function openViewFooterSettingsDialog({
   }
 
   function selectedConfig() {
-    return getConfigById(prefs, selectedConfigId) || (Array.isArray(prefs?.configs) ? prefs.configs[0] : null) || null;
+    ensureSelectedConfigIsAvailable();
+    return getConfigById(prefs, selectedConfigId) || availableConfigs()[0] || null;
   }
 
   function ensureSelectedOrder(config) {
@@ -683,8 +721,10 @@ export function openViewFooterSettingsDialog({
     const picked = await openViewFooterCustomButtonDialog({
       availableActions: availableActionList,
     });
-    const actionId = asString(picked && picked.actionId).trim();
-    if (!actionId) return;
+    const actionIds = Array.isArray(picked?.actionIds)
+      ? picked.actionIds.map(id => asString(id).trim()).filter(Boolean)
+      : [asString(picked && picked.actionId).trim()].filter(Boolean);
+    if (!actionIds.length) return;
 
     const source = existing ? deepClone(existing) : {
       id: `custom-${Date.now().toString(36).slice(-6)}`,
@@ -702,7 +742,9 @@ export function openViewFooterSettingsDialog({
         delayMs: Math.max(0, Math.round(Number(a && a.delayMs) || 0)),
       })).filter(a => a.actionId)
       : [];
-    actions.push({ actionId, delayMs: 0 });
+    for (const actionId of actionIds) {
+      actions.push({ actionId, delayMs: 0 });
+    }
 
     const normalized = {
       id,
@@ -810,10 +852,9 @@ export function openViewFooterSettingsDialog({
   const left = el('div', { className: 'view-footer-settings-left' });
   const right = el('div', { className: 'view-footer-settings-right' });
 
-  const leftTitle = el('div', { className: 'hint', text: 'Saved Configurations' });
+  const leftTitle = el('button', { className: 'hint view-footer-config-list-title', text: 'Saved Configurations' });
+  leftTitle.type = 'button';
   const configList = el('div', { className: 'view-footer-config-list' });
-  const rowButtonsTitle = el('div', { className: 'hint', text: collectionLabel ? `Footer Row Buttons (${collectionLabel})` : 'Footer Row Buttons' });
-  const rowButtonsList = el('div', { className: 'view-footer-row-config-list' });
   const leftActions = el('div', { className: 'view-footer-config-actions' });
 
   const newBtn = el('button', { className: 'btn small', text: 'New' });
@@ -824,11 +865,19 @@ export function openViewFooterSettingsDialog({
   delBtn.type = 'button';
 
   leftActions.append(newBtn, dupBtn, delBtn);
-  left.append(leftTitle, configList, leftActions, rowButtonsTitle, rowButtonsList);
+  left.append(leftTitle, configList, leftActions);
 
   const rightTop = el('div', { className: 'view-footer-editor-top' });
   const nameLabel = el('div', { className: 'hint', text: 'Config Name' });
   const nameInput = el('input', { className: 'view-footer-config-name', attrs: { type: 'text', maxlength: '64' } });
+  const showOnFooterBarLabel = el('label', { className: 'view-footer-header-toggle' });
+  const showOnFooterBarInput = el('input', { attrs: { type: 'checkbox' } });
+  const showOnFooterBarText = el('span', { text: 'Show on footer bar' });
+  showOnFooterBarLabel.append(showOnFooterBarInput, showOnFooterBarText);
+  const restrictToCollectionLabel = el('label', { className: 'view-footer-header-toggle' });
+  const restrictToCollectionInput = el('input', { attrs: { type: 'checkbox' } });
+  const restrictToCollectionText = el('span', { text: 'Restrict to this collection' });
+  restrictToCollectionLabel.append(restrictToCollectionInput, restrictToCollectionText);
   const addEmptyBtn = el('button', { className: 'btn small', text: 'Add Empty' });
   addEmptyBtn.type = 'button';
   const addCustomBtn = el('button', { className: 'btn small', text: 'Add Button' });
@@ -841,21 +890,66 @@ export function openViewFooterSettingsDialog({
 
   const expandCollapseAllBtn = el('button', { className: 'btn small', text: 'Collapse All' });
   expandCollapseAllBtn.type = 'button';
+  const validationWarning = el('div', { className: 'view-footer-validation-warning hint' });
 
-  rightTop.append(nameLabel, nameInput, expandCollapseAllBtn, saveBtn);
+  rightTop.append(nameLabel, nameInput, showOnFooterBarLabel, restrictToCollectionLabel, expandCollapseAllBtn, saveBtn);
 
   const controlsTitle = el('div', { className: 'hint', text: 'Controls' });
   const controlsList = el('div', { className: 'view-footer-controls-editor-list' });
   // place action buttons directly in the controls wrapper (no extra actions wrapper)
   const controlsWrapper = el('div', { className: 'view-footer-editor-controls', children: [controlsTitle, addEmptyBtn, addCustomBtn, disableHotkeysBtn] });
-  right.append(rightTop, controlsWrapper, controlsList);
+  right.append(rightTop, validationWarning, controlsWrapper, controlsList);
 
   const shell = el('div', { className: 'view-footer-settings-shell', children: [left, right] });
   dialog.append(closeBtn, title, subtitle, shell);
 
+  function updateConfigListCollapseUi() {
+    const cfg = selectedConfig();
+    const cfgName = asString(cfg?.name || cfg?.id).trim();
+    const collapsedText = cfgName ? `Saved Configurations (${cfgName})` : 'Saved Configurations';
+    left.classList.toggle('collapsed', !!isConfigListCollapsed);
+    leftTitle.setAttribute('aria-expanded', isConfigListCollapsed ? 'false' : 'true');
+    leftTitle.textContent = isConfigListCollapsed ? collapsedText : 'Saved Configurations';
+  }
+
+  function getConfigValidationWarnings(config) {
+    const warnings = [];
+    if (!config || !Array.isArray(config.customButtons)) return warnings;
+    for (const button of config.customButtons) {
+      const buttonName = asString(button?.text || button?.id || 'Custom').trim() || 'Custom';
+      for (const step of (Array.isArray(button?.actions) ? button.actions : [])) {
+        const actionId = asString(step?.actionId).trim();
+        if (!actionId) continue;
+        const action = availableActionById.get(actionId);
+        if (action) continue;
+        warnings.push(`${buttonName}: action "${actionId}" is not available for ${normalizedCollectionKey || 'this collection'}.`);
+      }
+    }
+    return warnings;
+  }
+
+  function renderValidationWarning() {
+    const cfg = selectedConfig();
+    const warnings = getConfigValidationWarnings(cfg);
+    validationWarning.innerHTML = '';
+    if (!warnings.length) {
+      validationWarning.style.display = 'none';
+      return;
+    }
+    validationWarning.style.display = '';
+    validationWarning.appendChild(el('div', {
+      className: 'view-footer-validation-warning-title',
+      text: 'This config uses actions that are not available for the current collection.',
+    }));
+    for (const warning of warnings) {
+      validationWarning.appendChild(el('div', { text: warning }));
+    }
+  }
+
   function renderConfigList() {
     configList.innerHTML = '';
-    for (const cfg of prefs.configs) {
+    ensureSelectedConfigIsAvailable();
+    for (const cfg of availableConfigs()) {
       const row = el('button', { className: 'view-footer-config-item btn small', text: cfg.name || cfg.id });
       row.type = 'button';
       if (cfg.id === prefs.activeConfigId) row.classList.add('active');
@@ -875,47 +969,37 @@ export function openViewFooterSettingsDialog({
       });
       configList.appendChild(row);
     }
-  }
-
-  function renderRowConfigList() {
-    syncShownConfigIds();
-    rowButtonsList.innerHTML = '';
-    for (const cfg of prefs.configs) {
-      const cfgId = asString(cfg?.id).trim();
-      if (!cfgId) continue;
-      const row = el('label', { className: 'view-footer-row-config-item' });
-      const input = el('input', { attrs: { type: 'checkbox' } });
-      input.checked = shownConfigIds.includes(cfgId);
-      const text = el('span', { text: cfg.name || cfgId });
-      input.addEventListener('change', () => {
-        syncShownConfigIds();
-        if (input.checked) {
-          if (!shownConfigIds.includes(cfgId)) shownConfigIds.push(cfgId);
-        } else {
-          shownConfigIds = shownConfigIds.filter(id => id !== cfgId);
-        }
-        emitVisibleConfigsChange(shownConfigIds);
-        renderRowConfigList();
-      });
-      row.append(input, text);
-      rowButtonsList.appendChild(row);
-    }
+    updateConfigListCollapseUi();
   }
 
   function renderEditor() {
     const cfg = selectedConfig();
     if (!cfg) {
       nameInput.value = '';
+      showOnFooterBarInput.checked = false;
+      showOnFooterBarInput.disabled = true;
+      restrictToCollectionInput.checked = false;
+      restrictToCollectionInput.disabled = true;
       dupBtn.disabled = true;
       delBtn.disabled = true;
       controlsList.innerHTML = '';
+      renderValidationWarning();
+      updateConfigListCollapseUi();
       return;
     }
 
     ensureSelectedOrder(cfg);
     nameInput.value = cfg.name || cfg.id;
+    syncShownConfigIds();
+    const cfgId = asString(cfg.id).trim();
+    showOnFooterBarInput.disabled = !cfgId;
+    showOnFooterBarInput.checked = !!cfgId && shownConfigIds.includes(cfgId);
+    restrictToCollectionInput.disabled = !normalizedCollectionKey;
+    restrictToCollectionInput.checked = !!normalizedCollectionKey && asString(cfg.restrictToCollectionKey).trim() === normalizedCollectionKey;
     dupBtn.disabled = false;
     delBtn.disabled = false;
+    renderValidationWarning();
+    updateConfigListCollapseUi();
 
     controlsList.innerHTML = '';
     for (let i = 0; i < cfg.order.length; i++) {
@@ -1144,7 +1228,7 @@ export function openViewFooterSettingsDialog({
           stepPlus.type = 'button';
           stepDelayWrap.append(stepMinus, stepDelayValue, stepPlus);
 
-          const fnText = el('div', { className: 'view-footer-action-fn', text: asString(mapped?.fnName || actionId) });
+          const fnText = el('div', { className: 'view-footer-action-fn', text: formatCustomActionLabel(mapped || { id: actionId, fnName: actionId }) });
           const ns = el('div', { className: 'view-footer-action-field', text: asString(mapped?.actionField || '') });
           const upBtn = el('button', { className: 'btn small', text: '↑' });
           upBtn.type = 'button';
@@ -1567,9 +1651,9 @@ export function openViewFooterSettingsDialog({
   }
 
   function renderAll() {
+    ensureSelectedConfigIsAvailable();
     syncShownConfigIds();
     renderConfigList();
-    renderRowConfigList();
     renderEditor();
     try { updateDisableHotkeysText(); } catch (e) {}
     markDirty();
@@ -1617,6 +1701,36 @@ export function openViewFooterSettingsDialog({
     cfg.name = asString(nameInput.value).trim() || cfg.id;
     markDirty();
     renderConfigList();
+    renderEditor();
+  });
+
+  leftTitle.addEventListener('click', () => {
+    if (window.innerWidth > 900) return;
+    isConfigListCollapsed = !isConfigListCollapsed;
+    updateConfigListCollapseUi();
+  });
+
+  showOnFooterBarInput.addEventListener('change', () => {
+    const cfg = selectedConfig();
+    const cfgId = asString(cfg?.id).trim();
+    if (!cfgId) return;
+    syncShownConfigIds();
+    if (showOnFooterBarInput.checked) {
+      if (!shownConfigIds.includes(cfgId)) shownConfigIds.push(cfgId);
+    } else {
+      shownConfigIds = shownConfigIds.filter(id => id !== cfgId);
+    }
+    emitVisibleConfigsChange(shownConfigIds);
+    renderEditor();
+  });
+
+  restrictToCollectionInput.addEventListener('change', () => {
+    const cfg = selectedConfig();
+    if (!cfg) return;
+    if (restrictToCollectionInput.checked && normalizedCollectionKey) cfg.restrictToCollectionKey = normalizedCollectionKey;
+    else delete cfg.restrictToCollectionKey;
+    markDirty();
+    renderAll();
   });
 
   addEmptyBtn.addEventListener('click', () => {

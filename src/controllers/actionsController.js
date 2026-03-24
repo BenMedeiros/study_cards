@@ -84,6 +84,7 @@ export function getKanjiStudyDefaultFooterPrefs() {
 export function createKanjiStudyFooterActionsController({
   showPrev,
   showNext,
+  shuffle,
   speakField,
   getSearchTerm,
   getEntryFields,
@@ -98,6 +99,7 @@ export function createKanjiStudyFooterActionsController({
   const run = {
     showPrev: (typeof showPrev === 'function') ? showPrev : () => {},
     showNext: (typeof showNext === 'function') ? showNext : () => {},
+    shuffle: (typeof shuffle === 'function') ? shuffle : () => {},
     speakField: (typeof speakField === 'function') ? speakField : () => {},
     getSearchTerm: (typeof getSearchTerm === 'function') ? getSearchTerm : () => '',
     getEntryFields: (typeof getEntryFields === 'function') ? getEntryFields : () => 'all',
@@ -309,6 +311,7 @@ export function createKanjiStudyFooterActionsController({
   const actionDefinitions = [
     { id: 'prev', fnName: 'app.kanjiStudyCardView.showPrev', actionField: '', invoke: () => run.showPrev() },
     { id: 'next', fnName: 'app.kanjiStudyCardView.showNext', actionField: '', invoke: () => run.showNext() },
+    { id: 'shuffle', fnName: 'app.kanjiStudyCardView.shuffle', actionField: 'collection.order', invoke: () => run.shuffle() },
 
     // Use a generic 'Sound' label for all sound actions; the specific
     // actionField indicates which entry field will be spoken.
