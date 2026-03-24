@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-22T01:04:17.313Z",
-  "scannedCollections": 15,
-  "collectionsWithRelations": 3,
-  "relationCount": 6,
-  "missingRelationCount": 3,
-  "missingRefTotal": 93,
+  "generatedAt": "2026-03-24T19:17:16.889Z",
+  "scannedCollections": 13,
+  "collectionsWithRelations": 2,
+  "relationCount": 4,
+  "missingRelationCount": 4,
+  "missingRefTotal": 118,
   "reports": [
     {
       "sourceName": "Japanese Grammar",
@@ -76,7 +76,36 @@
           "thisKey": "pattern",
           "foreignKey": "sentences[].chunks[].focus",
           "relatedPath": "collections/japanese/japanese_paragraphs.json",
-          "missing": []
+          "missing": [
+            "〜が",
+            "〜か / 〜が",
+            "〜そうに",
+            "〜そうに / 〜ている",
+            "〜たあと",
+            "〜たい / 〜ので",
+            "〜たがる / 〜が",
+            "〜で",
+            "〜ている / 〜から",
+            "〜てすぐに",
+            "〜ないように / 〜ている",
+            "〜ながら",
+            "〜ながら / 〜と",
+            "Nになる",
+            "Nにぶつかる",
+            "Nに決める",
+            "Nに行く",
+            "Nに入れる",
+            "Nへ向かう",
+            "Nを準備する",
+            "Vます-stem",
+            "Vます-stem始める",
+            "V意向形",
+            "V辞書形ことにする",
+            "なかなか〜ない",
+            "引用 + と言う",
+            "引用 + と聞く",
+            "修飾節"
+          ]
         }
       ]
     },
@@ -117,48 +146,25 @@
           "thisKey": "kanji",
           "foreignKey": "sentences[].chunks[].refs[]",
           "relatedPath": "collections/japanese/japanese_paragraphs.json",
-          "missing": []
-        }
-      ]
-    },
-    {
-      "sourceName": "All Japanese Words",
-      "sourcePath": "collections/japanese/japanese_words.semantic_classes.json",
-      "relations": [
-        {
-          "name": "sentences",
-          "thisKey": "kanji",
-          "foreignKey": "chunks[].refs[]",
-          "relatedPath": "collections/japanese/japanese_sentences.json",
           "missing": [
-            "[LG] webOS TV OLED55B7A",
-            "Nになってから",
-            "Vたくない",
-            "Vたら",
-            "Vている",
-            "Vてから",
-            "Vてください",
-            "Vてしまう",
-            "Vてはいけません",
-            "Vないでください",
-            "Vのは～だ",
-            "Vよう",
-            "Vることが多い",
-            "Vるつもりだ",
-            "Vると",
-            "アイデア",
-            "インク",
-            "オリンポス山",
-            "お寺",
-            "から"
+            "あと",
+            "あの",
+            "うれしい",
+            "お菓子売り場",
+            "かわいい",
+            "ことにする",
+            "しばらく",
+            "すぐに",
+            "すごい",
+            "その間",
+            "チェックする",
+            "また",
+            "レベル",
+            "何回",
+            "準備する",
+            "速い",
+            "約束する"
           ]
-        },
-        {
-          "name": "paragraphs",
-          "thisKey": "kanji",
-          "foreignKey": "sentences[].chunks[].refs[]",
-          "relatedPath": "collections/japanese/japanese_paragraphs.json",
-          "missing": []
         }
       ]
     }
@@ -167,9 +173,9 @@
   "outputPath": "scripts/outputs/report_missing_related_collection_data_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-03-22T01:04:17.277Z",
-    "finishedAt": "2026-03-22T01:04:17.314Z",
-    "durationMs": 37,
-    "durationSeconds": 0.037
+    "startedAt": "2026-03-24T19:17:16.860Z",
+    "finishedAt": "2026-03-24T19:17:16.890Z",
+    "durationMs": 30,
+    "durationSeconds": 0.03
   }
 }

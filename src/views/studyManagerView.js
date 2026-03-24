@@ -752,7 +752,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
   let tableSettingsCollectionId = '';
   let filtersTableSettings = studyManagerViewController.getDefaultFiltersTableSettings();
   let appsTableSettings = studyManagerViewController.getDefaultAppsTableSettings();
-  let recommendationsTableSettings = studyManagerViewController.getDefaultRecommendationsTableSettings();
+  let recommendationsTableSettingsById = Object.create(null);
 
   function ensureTableSettingsController(collId) {
     const key = String(collId || '').trim();
@@ -761,7 +761,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       tableSettingsCollectionId = '';
       filtersTableSettings = studyManagerViewController.getDefaultFiltersTableSettings();
       appsTableSettings = studyManagerViewController.getDefaultAppsTableSettings();
-      recommendationsTableSettings = studyManagerViewController.getDefaultRecommendationsTableSettings();
+      recommendationsTableSettingsById = Object.create(null);
       for (const k of Object.keys(collapsedCards)) delete collapsedCards[k];
       hideRepeatedDateFilters = false;
       recommendationsViewMode = 'cards';
@@ -776,7 +776,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       tableSettingsCtrl = studyManagerViewController.create(key);
       filtersTableSettings = normalizeTableSettings(tableSettingsCtrl.getFiltersTableSettings());
       appsTableSettings = normalizeTableSettings(tableSettingsCtrl.getAppsTableSettings());
-      recommendationsTableSettings = normalizeTableSettings(tableSettingsCtrl.getRecommendationsTableSettings());
+      recommendationsTableSettingsById = Object.create(null);
       const cardsState = tableSettingsCtrl.getCardsState();
       for (const k of Object.keys(collapsedCards)) delete collapsedCards[k];
       collapsedCards.summary = !!cardsState?.summary?.collapsed;
@@ -796,7 +796,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       tableSettingsCtrl = null;
       filtersTableSettings = studyManagerViewController.getDefaultFiltersTableSettings();
       appsTableSettings = studyManagerViewController.getDefaultAppsTableSettings();
-      recommendationsTableSettings = studyManagerViewController.getDefaultRecommendationsTableSettings();
+      recommendationsTableSettingsById = Object.create(null);
       for (const k of Object.keys(collapsedCards)) delete collapsedCards[k];
       hideRepeatedDateFilters = false;
       recommendationsSortKey = 'focusCountDesc';
@@ -819,23 +819,38 @@ export function renderStudyManager({ store, onNavigate, route }) {
     renderBody();
   }
 
-  async function persistRecommendationsTableSettings(nextSettings) {
+  function getRecommendationTableSettings(recommendationId = '') {
+    const id = String(recommendationId || '').trim();
+    if (id && recommendationsTableSettingsById[id]) return recommendationsTableSettingsById[id];
+    try {
+      if (tableSettingsCtrl) {
+        const normalized = normalizeTableSettings(tableSettingsCtrl.getRecommendationsTableSettings(id));
+        if (id) recommendationsTableSettingsById[id] = normalized;
+        return normalized;
+      }
+    } catch (e) {}
+    return studyManagerViewController.getDefaultRecommendationsTableSettings();
+  }
+
+  async function persistRecommendationsTableSettings(recommendationId, nextSettings) {
     const normalized = normalizeTableSettings(nextSettings);
-    recommendationsTableSettings = normalized;
-    try { if (tableSettingsCtrl) await tableSettingsCtrl.setRecommendationsTableSettings(normalized); } catch (e) {}
+    const id = String(recommendationId || '').trim();
+    if (id) recommendationsTableSettingsById[id] = normalized;
+    try { if (tableSettingsCtrl) await tableSettingsCtrl.setRecommendationsTableSettings(normalized, { recommendationId: id }); } catch (e) {}
     renderBody();
   }
 
-  async function persistRecommendationsTableSearchQuery(query) {
+  async function persistRecommendationsTableSearchQuery(recommendationId, query) {
+    const id = String(recommendationId || '').trim();
     const normalized = normalizeTableSettings({
-      ...recommendationsTableSettings,
+      ...getRecommendationTableSettings(id),
       table: {
-        ...(recommendationsTableSettings?.table || {}),
+        ...(getRecommendationTableSettings(id)?.table || {}),
         searchQuery: String(query || '').trim(),
       },
     });
-    recommendationsTableSettings = normalized;
-    try { if (tableSettingsCtrl) await tableSettingsCtrl.setRecommendationsTableSettings(normalized); } catch (e) {}
+    if (id) recommendationsTableSettingsById[id] = normalized;
+    try { if (tableSettingsCtrl) await tableSettingsCtrl.setRecommendationsTableSettings(normalized, { recommendationId: id }); } catch (e) {}
   }
 
   async function persistCardsState() {
@@ -1046,8 +1061,8 @@ export function renderStudyManager({ store, onNavigate, route }) {
         sortKey: recommendationsSortKey,
         minimumEntryCount: recommendationsMinimumEntryCount,
         viewMode: recommendationsViewMode,
-        recommendationsTableSettings,
-        onSearchQueryChange: persistRecommendationsTableSearchQuery,
+        recommendationsTableSettings: getRecommendationTableSettings(recommendationId),
+        onSearchQueryChange: (query) => persistRecommendationsTableSearchQuery(recommendationId, query),
       });
     }).filter(Boolean);
     const recommendationCards = recommendationCardObjs.map((item) => item?.card).filter(Boolean);
@@ -1195,6 +1210,8 @@ export function renderStudyManager({ store, onNavigate, route }) {
         });
       }
       if (recommendationsViewMode === 'table' && recommendationsCardObj?.tableObj) {
+        const recommendationId = String(recommendationState?.config?.id || '').trim();
+        const recommendationTableSettings = getRecommendationTableSettings(recommendationId);
         attachCardCornerButton({
           cardEl: recommendationsCard,
           text: 'Table',
@@ -1205,9 +1222,9 @@ export function renderStudyManager({ store, onNavigate, route }) {
               sourceInfo: `${report.collectionId} | ${recommendationsCardObj.tableObj.sourceInfo}`,
               columns: buildTableColumnItems(recommendationsCardObj.tableObj.headers, recommendationsCardObj.tableObj.rows),
               actions: TABLE_ACTION_ITEMS,
-              settings: recommendationsTableSettings,
+              settings: recommendationTableSettings,
             });
-            if (next) await persistRecommendationsTableSettings(next);
+            if (next) await persistRecommendationsTableSettings(recommendationId, next);
           },
         });
       }

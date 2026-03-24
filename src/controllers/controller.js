@@ -59,6 +59,20 @@ function createViewController(collKey, viewName, defaults = {}, validators = {})
     return () => { localSubs.delete(unsub); settingsLogControllers('controller.unsubscribe', { collKey, viewName }); unsub(); };
   }
 
+  function replace(nextState) {
+    _ensureNotDisposed();
+    settingsLogControllers('controller.replace.start', { collKey, viewName, nextState });
+    if (!nextState || typeof nextState !== 'object' || Array.isArray(nextState)) throw new Error('nextState object required');
+    const keys = Object.keys(nextState);
+    for (const k of keys) {
+      const vfn = validators && validators[k];
+      if (typeof vfn === 'function') vfn(nextState[k], collection);
+    }
+    const res = collectionSettingsController.replaceView(collKey, viewName, nextState);
+    settingsLogControllers('controller.replace.complete', { collKey, viewName, nextState });
+    return res;
+  }
+
   function dispose() {
     if (disposed) return; disposed = true;
     settingsLogControllers('controller.dispose', { collKey, viewName });
@@ -66,7 +80,7 @@ function createViewController(collKey, viewName, defaults = {}, validators = {})
     localSubs.clear();
   }
 
-  return { collKey, ready, get, set, reset, subscribe, dispose };
+  return { collKey, ready, get, set, replace, reset, subscribe, dispose };
 }
 
 export default { createViewController };

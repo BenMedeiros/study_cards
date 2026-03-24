@@ -131,6 +131,19 @@ function setView(collKey, viewName, patch) {
   return nextView;
 }
 
+function replaceView(collKey, viewName, nextView) {
+  if (!collKey) return null;
+  settingsLogControllers('collectionSettingsController.replaceView', { collKey, viewName, nextView });
+  const current = get(collKey) || {};
+  const safeNextView = (nextView && typeof nextView === 'object' && !Array.isArray(nextView)) ? { ...nextView } : {};
+  const patchObj = { [viewName]: safeNextView };
+  _store.collections.saveCollectionState(collKey, patchObj);
+  const next = { ...current, [viewName]: safeNextView };
+  cache.set(collKey, next);
+  _notify(collKey, next, patchObj);
+  return safeNextView;
+}
+
 function subscribe(collKey, cb) {
   if (!collKey) throw new Error('collKey required');
   if (typeof cb !== 'function') throw new Error('callback required');
@@ -180,6 +193,7 @@ export default {
   set,
   getView,
   setView,
+  replaceView,
   subscribe,
   getStore,
   ensureArray,

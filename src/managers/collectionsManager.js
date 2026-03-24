@@ -1122,6 +1122,35 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     return out;
   }
 
+  function resolveSingleRelatedFieldValue(entry, key) {
+    const rawKey = String(key || '').trim();
+    if (!rawKey || rawKey === 'status' || rawKey === 'studySeen' || rawKey === 'studyTimesSeen' || rawKey === 'studyTimeMs') return { found: false, value: undefined, type: null };
+
+    if (rawKey.endsWith('.count')) {
+      const relationName = String(rawKey.slice(0, -'.count'.length) || '').trim();
+      if (!relationName) return { found: false, value: undefined, type: null };
+      const records = Array.isArray(entry?.relatedCollections?.[relationName]) ? entry.relatedCollections[relationName] : null;
+      if (!records) return { found: false, value: undefined, type: null };
+      return { found: true, value: records.length, type: 'number' };
+    }
+
+    const dotIdx = rawKey.indexOf('.');
+    if (dotIdx <= 0 || dotIdx >= rawKey.length - 1) return { found: false, value: undefined, type: null };
+
+    const relationName = String(rawKey.slice(0, dotIdx) || '').trim();
+    const fieldPath = String(rawKey.slice(dotIdx + 1) || '').trim();
+    if (!relationName || !fieldPath) return { found: false, value: undefined, type: null };
+
+    const records = Array.isArray(entry?.relatedCollections?.[relationName]) ? entry.relatedCollections[relationName] : null;
+    if (!records) return { found: false, value: undefined, type: null };
+
+    const values = [];
+    for (const record of records) {
+      try { values.push(...extractPathValues(record, fieldPath)); } catch {}
+    }
+    return { found: true, value: normalizeRelatedFieldValues(values), type: 'array<string>' };
+  }
+
   function buildEntrySearchAccessor(entry, { fields = null, globalFields = null, collection = null } = {}) {
     const coll = (collection && typeof collection === 'object') ? collection : null;
     const adapter = progressAdapterForCollection(coll);
@@ -1179,6 +1208,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         const kk = String(k || '').trim();
         if (!kk) return false;
         if (Object.prototype.hasOwnProperty.call(dynamic, kk)) return true;
+        if (resolveSingleRelatedFieldValue(entry, kk).found) return true;
         // If caller provided an explicit fields list (metaKeys), treat those
         // fields as present even when the concrete entry object doesn't have
         // the property. This allows queries like `{lexicalClass:}` to match
@@ -1191,6 +1221,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         const kk = String(k || '').trim();
         if (!kk) return undefined;
         if (Object.prototype.hasOwnProperty.call(dynamic, kk)) return dynamic[kk];
+        const related = resolveSingleRelatedFieldValue(entry, kk);
+        if (related.found) return related.value;
         return entry ? entry[kk] : undefined;
       },
       getFieldType: (k) => {
@@ -1198,6 +1230,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         if (kk === 'studySeen') return 'boolean';
         if (kk === 'studyTimesSeen' || kk === 'studyTimeMs') return 'number';
         if (kk.endsWith('.count')) return 'number';
+        const related = resolveSingleRelatedFieldValue(entry, kk);
+        if (related.found) return related.type;
         return typeMap.has(kk) ? typeMap.get(kk) : null;
       },
       getAllValues: () => {

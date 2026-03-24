@@ -3,30 +3,55 @@ import { normalizeTableSettings, createDefaultTableSettings, cloneTableSettings 
 
 const VIEW = 'studyManagerView';
 const DEFAULT_ACTION_ORDER = ['clear', 'copyJson', 'copyFullJson'];
-const DEFAULT_CARDS = Object.freeze({
-  summary: Object.freeze({ collapsed: false }),
-  dailySummary: Object.freeze({ collapsed: false }),
-  studyTimeByDate: Object.freeze({ collapsed: false, hideRepeated: false }),
-  recommendations: Object.freeze({ collapsed: false, collapsedById: Object.freeze({}), sortKey: 'focusCountDesc', minimumEntryCount: 5, viewMode: 'cards' }),
-  studyTimeByFilter: Object.freeze({ collapsed: false }),
-  groupByAppId: Object.freeze({ collapsed: false }),
-});
+const LEGACY_RECOMMENDATIONS_TABLE_ID = '__legacy';
+
+function makeDefaultTableSettings() {
+  return createDefaultTableSettings(DEFAULT_ACTION_ORDER);
+}
+
+function makeDefaultCardsState() {
+  return {
+    summary: { collapsed: false },
+    dailySummary: { collapsed: false },
+    studyTimeByDate: { collapsed: false, hideRepeated: false },
+    recommendations: {
+      collapsed: false,
+      collapsedById: {},
+      sortKey: 'focusCountDesc',
+      minimumEntryCount: 5,
+      viewMode: 'cards',
+      tableSettingsById: {},
+    },
+    studyTimeByFilter: { collapsed: false, tableSettings: makeDefaultTableSettings() },
+    groupByAppId: { collapsed: false, tableSettings: makeDefaultTableSettings() },
+  };
+}
 
 const DEFAULT_VIEW = {
-  filtersTable: createDefaultTableSettings(DEFAULT_ACTION_ORDER),
-  appsTable: createDefaultTableSettings(DEFAULT_ACTION_ORDER),
-  recommendationsTable: createDefaultTableSettings(DEFAULT_ACTION_ORDER),
-  cards: cloneCardsState(DEFAULT_CARDS),
+  cards: makeDefaultCardsState(),
 };
 
-function cloneCardsState(value) {
-  const src = (value && typeof value === 'object' && !Array.isArray(value)) ? value : {};
-  const rawCollapsedById = (src?.recommendations?.collapsedById && typeof src.recommendations.collapsedById === 'object' && !Array.isArray(src.recommendations.collapsedById))
-    ? src.recommendations.collapsedById
-    : {};
-  const collapsedById = Object.fromEntries(
-    Object.entries(rawCollapsedById).map(([key, val]) => [String(key || '').trim(), !!val]).filter(([key]) => key)
+function normalizeCollapsedById(v) {
+  const src = (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+  return Object.fromEntries(
+    Object.entries(src).map(([key, val]) => [String(key || '').trim(), !!val]).filter(([key]) => key)
   );
+}
+
+function normalizeTableSettingsById(v) {
+  const src = (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+  const out = {};
+  for (const [rawKey, rawValue] of Object.entries(src)) {
+    const key = String(rawKey || '').trim();
+    if (!key) continue;
+    out[key] = normalizeTableSettings(rawValue);
+  }
+  return out;
+}
+
+function cloneCardsState(value) {
+  const defaults = makeDefaultCardsState();
+  const src = (value && typeof value === 'object' && !Array.isArray(value)) ? value : {};
   return {
     summary: { collapsed: !!src?.summary?.collapsed },
     dailySummary: { collapsed: !!src?.dailySummary?.collapsed },
@@ -36,22 +61,84 @@ function cloneCardsState(value) {
     },
     recommendations: {
       collapsed: !!src?.recommendations?.collapsed,
-      collapsedById,
-      sortKey: String(src?.recommendations?.sortKey || 'focusCountDesc').trim() || 'focusCountDesc',
-      minimumEntryCount: Math.max(1, Math.round(Number(src?.recommendations?.minimumEntryCount) || 5)),
-      viewMode: String(src?.recommendations?.viewMode || 'cards').trim() === 'table' ? 'table' : 'cards',
+      collapsedById: normalizeCollapsedById(src?.recommendations?.collapsedById),
+      sortKey: String(src?.recommendations?.sortKey || defaults.recommendations.sortKey).trim() || defaults.recommendations.sortKey,
+      minimumEntryCount: Math.max(1, Math.round(Number(src?.recommendations?.minimumEntryCount) || defaults.recommendations.minimumEntryCount)),
+      viewMode: String(src?.recommendations?.viewMode || defaults.recommendations.viewMode).trim() === 'table' ? 'table' : 'cards',
+      tableSettingsById: normalizeTableSettingsById(src?.recommendations?.tableSettingsById),
     },
-    studyTimeByFilter: { collapsed: !!src?.studyTimeByFilter?.collapsed },
-    groupByAppId: { collapsed: !!src?.groupByAppId?.collapsed },
+    studyTimeByFilter: {
+      collapsed: !!src?.studyTimeByFilter?.collapsed,
+      tableSettings: normalizeTableSettings(src?.studyTimeByFilter?.tableSettings || defaults.studyTimeByFilter.tableSettings),
+    },
+    groupByAppId: {
+      collapsed: !!src?.groupByAppId?.collapsed,
+      tableSettings: normalizeTableSettings(src?.groupByAppId?.tableSettings || defaults.groupByAppId.tableSettings),
+    },
   };
 }
 
-function validateTable(v, name) {
-  if (v == null) return;
-  if (typeof v !== 'object' || Array.isArray(v)) {
-    throw new Error(`${name} must be an object`);
+function normalizeViewState(value) {
+  const src = (value && typeof value === 'object' && !Array.isArray(value)) ? value : {};
+  const cardsSrc = (src.cards && typeof src.cards === 'object' && !Array.isArray(src.cards)) ? src.cards : {};
+  const recommendationTableSettingsById = normalizeTableSettingsById(cardsSrc?.recommendations?.tableSettingsById);
+
+  if (!recommendationTableSettingsById[LEGACY_RECOMMENDATIONS_TABLE_ID] && src.recommendationsTable) {
+    recommendationTableSettingsById[LEGACY_RECOMMENDATIONS_TABLE_ID] = normalizeTableSettings(src.recommendationsTable);
   }
-  normalizeTableSettings(v);
+
+  return {
+    cards: cloneCardsState({
+      ...cardsSrc,
+      studyTimeByFilter: {
+        ...(cardsSrc?.studyTimeByFilter || {}),
+        tableSettings: cardsSrc?.studyTimeByFilter?.tableSettings || src.filtersTable || makeDefaultTableSettings(),
+      },
+      groupByAppId: {
+        ...(cardsSrc?.groupByAppId || {}),
+        tableSettings: cardsSrc?.groupByAppId?.tableSettings || src.appsTable || makeDefaultTableSettings(),
+      },
+      recommendations: {
+        ...(cardsSrc?.recommendations || {}),
+        tableSettingsById: recommendationTableSettingsById,
+      },
+    }),
+  };
+}
+
+function mergeCardsState(currentCards, patchCards) {
+  const current = cloneCardsState(currentCards);
+  const patch = (patchCards && typeof patchCards === 'object' && !Array.isArray(patchCards)) ? patchCards : {};
+  return cloneCardsState({
+    ...current,
+    ...patch,
+    studyTimeByDate: {
+      ...current.studyTimeByDate,
+      ...(patch.studyTimeByDate || {}),
+    },
+    recommendations: {
+      ...current.recommendations,
+      ...(patch.recommendations || {}),
+      collapsedById: {
+        ...current.recommendations.collapsedById,
+        ...(patch?.recommendations?.collapsedById || {}),
+      },
+      tableSettingsById: {
+        ...current.recommendations.tableSettingsById,
+        ...(patch?.recommendations?.tableSettingsById || {}),
+      },
+    },
+    studyTimeByFilter: {
+      ...current.studyTimeByFilter,
+      ...(patch.studyTimeByFilter || {}),
+      tableSettings: normalizeTableSettings(patch?.studyTimeByFilter?.tableSettings || current.studyTimeByFilter.tableSettings),
+    },
+    groupByAppId: {
+      ...current.groupByAppId,
+      ...(patch.groupByAppId || {}),
+      tableSettings: normalizeTableSettings(patch?.groupByAppId?.tableSettings || current.groupByAppId.tableSettings),
+    },
+  });
 }
 
 function validateCards(v) {
@@ -66,52 +153,71 @@ function create(collKey) {
     VIEW,
     cloneTableSettings(DEFAULT_VIEW, DEFAULT_VIEW),
     {
-      filtersTable: (v) => validateTable(v, 'filtersTable'),
-      appsTable: (v) => validateTable(v, 'appsTable'),
-      recommendationsTable: (v) => validateTable(v, 'recommendationsTable'),
       cards: (v) => validateCards(v),
     }
   );
 
   function get() {
     const state = base.get() || {};
-    const filtersTable = normalizeTableSettings(state.filtersTable);
-    const appsTable = normalizeTableSettings(state.appsTable);
-    const recommendationsTable = normalizeTableSettings(state.recommendationsTable);
-    const cards = cloneCardsState(state.cards);
-    return { ...state, filtersTable, appsTable, recommendationsTable, cards };
+    return normalizeViewState(state);
   }
 
-  function getFiltersTableSettings() {
-    return normalizeTableSettings(get().filtersTable);
-  }
-
-  function getAppsTableSettings() {
-    return normalizeTableSettings(get().appsTable);
+  async function replaceState(nextState) {
+    const normalized = normalizeViewState(nextState);
+    return base.replace(normalized);
   }
 
   function getCardsState() {
     return cloneCardsState(get().cards);
   }
 
-  function getRecommendationsTableSettings() {
-    return normalizeTableSettings(get().recommendationsTable);
+  function getFiltersTableSettings() {
+    return normalizeTableSettings(get().cards?.studyTimeByFilter?.tableSettings || makeDefaultTableSettings());
+  }
+
+  function getAppsTableSettings() {
+    return normalizeTableSettings(get().cards?.groupByAppId?.tableSettings || makeDefaultTableSettings());
+  }
+
+  function getRecommendationsTableSettings(recommendationId = '') {
+    const cards = get().cards;
+    const id = String(recommendationId || '').trim();
+    const byId = cards?.recommendations?.tableSettingsById || {};
+    return normalizeTableSettings(byId[id] || byId[LEGACY_RECOMMENDATIONS_TABLE_ID] || makeDefaultTableSettings());
   }
 
   async function setFiltersTableSettings(nextTable) {
-    return base.set({ filtersTable: normalizeTableSettings(nextTable) });
+    const cards = get().cards;
+    const nextCards = mergeCardsState(cards, {
+      studyTimeByFilter: { tableSettings: normalizeTableSettings(nextTable) },
+    });
+    return replaceState({ cards: nextCards });
   }
 
   async function setAppsTableSettings(nextTable) {
-    return base.set({ appsTable: normalizeTableSettings(nextTable) });
+    const cards = get().cards;
+    const nextCards = mergeCardsState(cards, {
+      groupByAppId: { tableSettings: normalizeTableSettings(nextTable) },
+    });
+    return replaceState({ cards: nextCards });
   }
 
-  async function setRecommendationsTableSettings(nextTable) {
-    return base.set({ recommendationsTable: normalizeTableSettings(nextTable) });
+  async function setRecommendationsTableSettings(nextTable, { recommendationId = '' } = {}) {
+    const cards = get().cards;
+    const id = String(recommendationId || '').trim() || LEGACY_RECOMMENDATIONS_TABLE_ID;
+    const nextCards = mergeCardsState(cards, {
+      recommendations: {
+        tableSettingsById: {
+          [id]: normalizeTableSettings(nextTable),
+        },
+      },
+    });
+    return replaceState({ cards: nextCards });
   }
 
   async function setCardsState(nextCards) {
-    return base.set({ cards: cloneCardsState(nextCards) });
+    const merged = mergeCardsState(get().cards, nextCards);
+    return replaceState({ cards: merged });
   }
 
   return {
@@ -119,6 +225,7 @@ function create(collKey) {
     ready: base.ready,
     get,
     set: base.set,
+    replace: replaceState,
     subscribe: base.subscribe,
     dispose: base.dispose,
     getFiltersTableSettings,
@@ -133,15 +240,15 @@ function create(collKey) {
 }
 
 function getDefaultFiltersTableSettings() {
-  return createDefaultTableSettings(DEFAULT_ACTION_ORDER);
+  return makeDefaultTableSettings();
 }
 
 function getDefaultAppsTableSettings() {
-  return createDefaultTableSettings(DEFAULT_ACTION_ORDER);
+  return makeDefaultTableSettings();
 }
 
 function getDefaultRecommendationsTableSettings() {
-  return createDefaultTableSettings(DEFAULT_ACTION_ORDER);
+  return makeDefaultTableSettings();
 }
 
 async function forCollection(collKey) {
