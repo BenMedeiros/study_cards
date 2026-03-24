@@ -631,6 +631,12 @@ body {
   font-size: 0.85rem;
 }
 
+.view-footer-custom-available-header .view-footer-custom-action-label,
+.view-footer-custom-available-header .view-footer-action-field {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
 .view-footer-custom-group-dropdown {
   width: 100%;
   min-width: 10rem;
@@ -696,6 +702,7 @@ body {
 
 .view-footer-hotkey-dialog {
   position: fixed;
+  width: 90vw;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -791,6 +798,48 @@ body {
   .view-footer-action-row.view-footer-action-row-header.view-footer-custom-action-row {
     visibility: hidden;
     height: 1rem;
+  }
+
+  .view-footer-custom-available-header {
+    display: none;
+  }
+
+  .view-footer-custom-available-list > .view-footer-custom-available-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.45rem;
+    align-items: center;
+    padding: 0.45rem 0;
+    border-bottom: var(--border-1);
+  }
+
+  .view-footer-custom-available-list > .view-footer-custom-available-row:last-child {
+    border-bottom: 0;
+  }
+
+  .view-footer-custom-available-row .view-footer-custom-action-label {
+    grid-column: 1 / -1;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .view-footer-custom-available-row .view-footer-action-field {
+    min-width: 0;
+    width: 100%;
+    font-size: 0.82rem;
+  }
+
+  .view-footer-custom-available-row .view-footer-custom-group-dropdown,
+  .view-footer-custom-available-row .view-footer-custom-group-dropdown .custom-dropdown-button {
+    width: 100%;
+  }
+
+  .view-footer-custom-available-row > .btn.small {
+    white-space: nowrap;
   }
 
 }
