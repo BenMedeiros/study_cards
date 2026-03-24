@@ -46,7 +46,7 @@ function _installGlobalTableResizeHook() {
  * @param {string} [options.collection] - Optional collection name the table was populated from
  * @returns {HTMLTableElement}
  */
-export function createTable({ store = null, headers, rows, className = '', id, collection, sourceMetadata = null, sortable = false, searchable = false, rowActions = [], initialSortKey = null, initialSortDir = 'asc', columnRenderSettings = {}, tableRenderSettings = {}, getRowClassName = null } = {}) {
+export function createTable({ store = null, headers, rows, className = '', id, collection, sourceMetadata = null, sortable = false, searchable = false, rowActions = [], initialSortKey = null, initialSortDir = 'asc', columnRenderSettings = {}, tableRenderSettings = {}, getRowClassName = null, searchHeaders = null, searchRows = null, initialSearchQuery = '', onSearchQueryChange = null } = {}) {
   const __tableLabel = (() => {
     const parts = [];
     if (id) parts.push(String(id));
@@ -319,6 +319,8 @@ export function createTable({ store = null, headers, rows, className = '', id, c
 
   // Keep original rows and a current filtered/sorted set
   const originalRows = Array.isArray(rows) ? rows.slice() : [];
+  const originalSearchHeaders = Array.isArray(searchHeaders) ? searchHeaders.slice() : null;
+  const originalSearchRows = Array.isArray(searchRows) ? searchRows.slice() : null;
   let currentRows = originalRows.slice();
   displayRows = currentRows.slice();
 
@@ -712,24 +714,42 @@ export function createTable({ store = null, headers, rows, className = '', id, c
           const k = headerKeys[i]?.key;
           if (k) fieldIndexByKey.set(String(k), i);
         }
+        const searchHeaderList = Array.isArray(originalSearchHeaders) && originalSearchHeaders.length
+          ? originalSearchHeaders
+          : headerKeys;
+        const searchFieldsMeta = searchHeaderList
+          .map(h => ({ key: String(h?.key || '').trim(), type: h?.type ?? null }))
+          .filter(h => h && h.key);
+        const searchFieldIndexByKey = new Map();
+        for (let i = 0; i < searchHeaderList.length; i++) {
+          const k = String(searchHeaderList[i]?.key || '').trim();
+          if (k) searchFieldIndexByKey.set(k, i);
+        }
 
-        currentRows = originalRows.filter((row) => {
+        currentRows = originalRows.filter((row, rowIndex) => {
           try {
+            const searchRow = Array.isArray(originalSearchRows) ? originalSearchRows[rowIndex] : null;
             const accessor = {
-              hasField: (k) => fieldIndexByKey.has(String(k)),
+              hasField: (k) => fieldIndexByKey.has(String(k)) || searchFieldIndexByKey.has(String(k)),
               getValue: (k) => {
-                const idx = fieldIndexByKey.get(String(k));
-                if (idx == null || idx < 0) return undefined;
-                return extractCellValue(row[idx]);
+                const key = String(k);
+                const idx = fieldIndexByKey.get(key);
+                if (idx != null && idx >= 0) return extractCellValue(row[idx]);
+                const searchIdx = searchFieldIndexByKey.get(key);
+                if (searchIdx == null || searchIdx < 0 || !Array.isArray(searchRow)) return undefined;
+                return extractCellValue(searchRow[searchIdx]);
               },
               getFieldType: (k) => {
-                const idx = fieldIndexByKey.get(String(k));
-                const t = (idx != null && idx >= 0) ? headerKeys[idx]?.type : null;
-                return t ?? null;
+                const key = String(k);
+                const idx = fieldIndexByKey.get(key);
+                if (idx != null && idx >= 0) return headerKeys[idx]?.type ?? null;
+                const searchIdx = searchFieldIndexByKey.get(key);
+                if (searchIdx != null && searchIdx >= 0) return searchHeaderList[searchIdx]?.type ?? null;
+                return null;
               },
               getAllValues: () => row.slice(0, headerKeys.length).map(c => extractCellValue(c)),
             };
-            return matchesTableSearch(accessor, compiled, { fields: fieldsMeta });
+            return matchesTableSearch(accessor, compiled, { fields: searchFieldsMeta.length ? searchFieldsMeta : fieldsMeta });
           } catch {
             return false;
           }
@@ -761,6 +781,16 @@ export function createTable({ store = null, headers, rows, className = '', id, c
       }
     }
 
+    function emitSearchQueryChange({ via = 'input' } = {}) {
+      try {
+        if (typeof onSearchQueryChange === 'function') {
+          onSearchQueryChange(String(searchInput.value || '').trim(), { via: String(via || '').trim() || 'input' });
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+
     // Initial state
     try { clearBtn.disabled = !(String(searchInput.value || '').trim().length > 0); } catch (e) {}
 
@@ -785,19 +815,25 @@ export function createTable({ store = null, headers, rows, className = '', id, c
           } else {
             applyFilter(searchInput.value);
           }
+          emitSearchQueryChange({ via: 'enter' });
           emitSearchApplied({ via: 'enter' });
         } catch (err) {
           applyFilter(searchInput.value);
+          emitSearchQueryChange({ via: 'enter' });
           emitSearchApplied({ via: 'enter' });
         }
       }
     });
 
-    searchInput.addEventListener('input', () => scheduleApplyFilter(searchInput.value));
+    searchInput.addEventListener('input', () => {
+      scheduleApplyFilter(searchInput.value);
+      emitSearchQueryChange({ via: 'input' });
+    });
     clearBtn.addEventListener('click', () => {
       searchInput.value = '';
       if (_filterTimeout) { clearTimeout(_filterTimeout); _filterTimeout = null; }
       applyFilter('');
+      emitSearchQueryChange({ via: 'clear' });
       emitSearchApplied({ via: 'clear' });
       searchInput.focus();
     });
@@ -899,6 +935,13 @@ export function createTable({ store = null, headers, rows, className = '', id, c
         try { alert('Copy failed'); } catch (er) {}
       }
     });
+
+    const initialQuery = String(initialSearchQuery || '').trim();
+    if (initialQuery) {
+      searchInput.value = initialQuery;
+      applyFilter(initialQuery);
+      try { clearBtn.disabled = false; } catch (e) {}
+    }
   }
 
   // Perform initial render (respect any initial sort passed in)

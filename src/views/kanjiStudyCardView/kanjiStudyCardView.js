@@ -103,34 +103,7 @@ export function renderKanjiStudyCard({ store }) {
 
   // Root UI pieces
   const headerTools = createViewHeaderTools();
-  // Instantiate available cards from the registry so views can be generic.
   const cardApis = {};
-  for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-    // Pass a common shape; factories may ignore unknown props.
-    // Provide handlers for the related card so we don't need to recreate it later.
-    if (c.key === 'related') {
-      cardApis[c.key] = c.factory({ entry: null, indexText: '', handlers: {
-        onSpeak: (text) => {
-          if (!text) return;
-          const lang = getLanguageCode('reading');
-          speak(text, lang);
-        },
-        onNext: (ci) => {},
-        onPrev: (ci) => {},
-      }});
-    } else if (c.key === 'generic') {
-      cardApis[c.key] = c.factory({
-        entry: null,
-        indexText: '',
-        config: { cardId: GENERIC_CARD_SETTINGS_KEY },
-        handlers: {
-          onOpenConfig: () => { openGenericCardSettings(); },
-        },
-      });
-    } else {
-      cardApis[c.key] = c.factory({ entry: null, indexText: '' });
-    }
-  }
 
   // Track whether we mounted header/footer into the shell main container
   let __mountedHeaderInShell = false;
@@ -197,21 +170,7 @@ export function renderKanjiStudyCard({ store }) {
               const ds = viewState && viewState.displayCards !== undefined ? viewState.displayCards : viewPatch.displayCards;
               displayCardSelection = (ds === 'all') ? displayCardItems.map(it => String(it?.value || '')) : (Array.isArray(ds) ? ds.slice() : displayCardSelection);
               const resolvedDisplay = (viewPatch && viewPatch.resolved && Array.isArray(viewPatch.resolved.displayCards)) ? viewPatch.resolved.displayCards : ((viewState && viewState.resolved && Array.isArray(viewState.resolved.displayCards)) ? viewState.resolved.displayCards : null);
-              try {
-                const set = new Set(Array.isArray(resolvedDisplay) ? resolvedDisplay.map(String) : (Array.isArray(displayCardSelection) ? displayCardSelection.map(String) : []));
-                for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-                  const api = cardApis[c.key];
-                  if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
-                }
-                try {
-                  if (Array.isArray(resolvedDisplay)) {
-                    for (const rn of Object.keys(relatedDropdownControls || {})) {
-                      const rc = relatedDropdownControls[rn];
-                      if (rc && rc.parentNode) rc.parentNode.style.display = set.has('related') ? '' : 'none';
-                    }
-                  }
-                } catch (e) {}
-              } catch (e) {}
+              applyDisplayCardVisibility(resolvedDisplay, { renderNewlyVisible: true });
             }
 
             if (viewPatch && Object.prototype.hasOwnProperty.call(viewPatch, 'cards')) {
@@ -229,13 +188,15 @@ export function renderKanjiStudyCard({ store }) {
               }
               const resolvedRelated = (viewPatch && viewPatch.resolved && viewPatch.resolved.relatedFieldMaps) ? viewPatch.resolved.relatedFieldMaps : ((viewState && viewState.resolved && viewState.resolved.relatedFieldMaps) ? viewState.resolved.relatedFieldMaps : null);
               if (resolvedRelated) {
-                const api = cardApis['related'];
+                resolvedRelatedFieldMaps = { ...resolvedRelated };
+                const api = getCardApi('related', { createIfMissing: false });
                 for (const rn of Object.keys(resolvedRelated || {})) {
                   try { if (api && typeof api.setFieldsVisible === 'function') api.setFieldsVisible(resolvedRelated[rn]); } catch (e) {}
                 }
               } else {
+                resolvedRelatedFieldMaps = null;
                 // fallback: apply per-dropdown selection
-                const api = cardApis['related'];
+                const api = getCardApi('related', { createIfMissing: false });
                 for (const rel of relatedDefs) {
                   const name = String(rel?.name || '').trim();
                   if (!name) continue;
@@ -261,6 +222,9 @@ export function renderKanjiStudyCard({ store }) {
     ? (Array.isArray(appState.displayCards) ? appState.displayCards.slice() : appState.displayCards)
     : undefined;
   let cardsConfigState = normalizeKanjiStudyCardsConfig(appState?.cards);
+  let activeDisplayCardKeys = new Set();
+  let resolvedEntryFieldMap = null;
+  let resolvedRelatedFieldMaps = null;
 
   // state for visibility selections
   let entryFieldSelection = Array.isArray(appState?.entryFields) ? appState.entryFields.slice() : 'all';
@@ -268,6 +232,7 @@ export function renderKanjiStudyCard({ store }) {
 
   // helper to apply an entry-level visibility map to all card APIs
   function applyEntryFieldVisibility(map) {
+    resolvedEntryFieldMap = map && typeof map === 'object' ? { ...map } : null;
     for (const k of Object.keys(cardApis || {})) {
       const api = cardApis[k];
       if (!api) continue;
@@ -275,6 +240,57 @@ export function renderKanjiStudyCard({ store }) {
       else if (typeof api.setFieldVisible === 'function') {
         for (const fk of Object.keys(map)) api.setFieldVisible(fk, !!map[fk]);
       }
+    }
+  }
+
+  function getEntryFieldVisibilityMap() {
+    if (resolvedEntryFieldMap && typeof resolvedEntryFieldMap === 'object') return { ...resolvedEntryFieldMap };
+    const selected = (entryFieldSelection === 'all')
+      ? entryFieldItems.map((it) => String(it.value || ''))
+      : (Array.isArray(entryFieldSelection) ? entryFieldSelection.slice() : []);
+    const selectedSet = new Set(selected);
+    const map = {};
+    for (const it of entryFieldItems) map[String(it.value || '')] = selectedSet.has(String(it.value || ''));
+    return map;
+  }
+
+  function getRelatedFieldVisibilityMaps() {
+    if (resolvedRelatedFieldMaps && typeof resolvedRelatedFieldMaps === 'object') {
+      const out = {};
+      for (const k of Object.keys(resolvedRelatedFieldMaps)) out[k] = { ...resolvedRelatedFieldMaps[k] };
+      return out;
+    }
+    const out = {};
+    for (const rel of relatedDefs) {
+      const name = String(rel?.name || '').trim();
+      if (!name) continue;
+      const items = Array.isArray(rel.fields)
+        ? rel.fields.map((f) => ({ value: String(f.key || f), left: f.label || String(f.key || f) }))
+        : RELATED_DEFAULT_ITEMS.slice();
+      const sel = relatedFieldSelections[name] || 'all';
+      const chosen = (sel === 'all') ? items.map((it) => String(it.value || '')) : (Array.isArray(sel) ? sel.slice() : []);
+      const set = new Set(chosen);
+      const map = {};
+      for (const it of items) map[String(it.value || '')] = set.has(String(it.value || ''));
+      out[name] = map;
+    }
+    return out;
+  }
+
+  function applyCurrentVisibilityToCard(cardKey, api) {
+    if (!api) return;
+    if (cardKey === 'related') {
+      const relatedMaps = getRelatedFieldVisibilityMaps();
+      for (const name of Object.keys(relatedMaps)) {
+        try { if (typeof api.setFieldsVisible === 'function') api.setFieldsVisible(relatedMaps[name]); } catch (e) {}
+      }
+      return;
+    }
+
+    const entryMap = getEntryFieldVisibilityMap();
+    if (typeof api.setFieldsVisible === 'function') api.setFieldsVisible(entryMap);
+    else if (typeof api.setFieldVisible === 'function') {
+      for (const fieldKey of Object.keys(entryMap)) api.setFieldVisible(fieldKey, !!entryMap[fieldKey]);
     }
   }
 
@@ -312,7 +328,6 @@ export function renderKanjiStudyCard({ store }) {
     ? res.view.entries[0]
     : ((Array.isArray(coll?.entries) && coll.entries.length) ? coll.entries[0] : null);
   const entryFieldItems = buildEntryFieldItemsFromSchema(metadata, sampleEntry);
-  const genericCardApi = cardApis['generic'] || null;
 
   function getGenericCardAvailableFields() {
     return entryFieldItems.map((item) => ({
@@ -326,6 +341,7 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   function applyGenericCardConfig() {
+    const genericCardApi = getCardApi('generic', { createIfMissing: false });
     if (!genericCardApi) return;
     if (typeof genericCardApi.setAvailableFields === 'function') genericCardApi.setAvailableFields(getGenericCardAvailableFields());
     if (typeof genericCardApi.setConfig === 'function') genericCardApi.setConfig(getGenericCardConfig());
@@ -549,19 +565,129 @@ export function renderKanjiStudyCard({ store }) {
     if (typeof dvm === 'string') defaultViewMode = dvm;
   }
 
-  // Create main/related card APIs. Prefer registry instances where available;
-  // recreate related card with handlers so it can call back into this view.
-  const mainCardApi = cardApis['main'] || (function() {
-    const regMain = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(c => c.key === 'main') : null);
-    if (regMain && typeof regMain.factory === 'function') return regMain.factory({ entry: null, indexText: '' });
-    return null;
-  })();
-  const relatedFactory = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(c => c.key === 'related') : null);
-  let relatedCardApi = (cardApis && cardApis['related']) ? cardApis['related'] : null;
-
   // Dropdown to choose which cards are displayed
   // Build display card items from the card registry so new cards appear automatically.
   const displayCardItems = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : []).map(c => ({ value: c.key, left: c.label }));
+
+  function createCardApi(cardKey) {
+    const cardDef = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find((c) => c.key === cardKey) : null);
+    if (!cardDef || typeof cardDef.factory !== 'function') return null;
+
+    let api = null;
+    if (cardKey === 'related') {
+      api = cardDef.factory({ entry: null, indexText: '', handlers: {
+        onSpeak: (text) => {
+          if (!text) return;
+          const lang = getLanguageCode('reading');
+          speak(text, lang);
+        },
+        onNext: () => {},
+        onPrev: () => {},
+      }});
+    } else if (cardKey === 'generic') {
+      api = cardDef.factory({
+        entry: null,
+        indexText: '',
+        config: { cardId: GENERIC_CARD_SETTINGS_KEY },
+        handlers: {
+          onOpenConfig: () => { openGenericCardSettings(); },
+        },
+      });
+      if (api && typeof api.setAvailableFields === 'function') api.setAvailableFields(getGenericCardAvailableFields());
+      if (api && typeof api.setConfig === 'function') api.setConfig(getGenericCardConfig());
+    } else {
+      api = cardDef.factory({ entry: null, indexText: '' });
+    }
+
+    cardApis[cardKey] = api;
+    applyCurrentVisibilityToCard(cardKey, api);
+    return api;
+  }
+
+  function getCardApi(cardKey, { createIfMissing = true } = {}) {
+    if (!cardApis[cardKey] && createIfMissing) return createCardApi(cardKey);
+    return cardApis[cardKey] || null;
+  }
+
+  function destroyCardApi(cardKey) {
+    const api = cardApis[cardKey];
+    if (!api) return;
+    try { if (typeof api.destroy === 'function') api.destroy(); } catch (e) {}
+    cardApis[cardKey] = null;
+  }
+
+  function getResolvedDisplayCardKeys(resolvedDisplay) {
+    const source = Array.isArray(resolvedDisplay)
+      ? resolvedDisplay
+      : (Array.isArray(displayCardSelection) ? displayCardSelection : []);
+    return source.map((key) => String(key || '').trim()).filter(Boolean);
+  }
+
+  function setCardDisplayed(cardApi, isVisible) {
+    if (!cardApi) return;
+    if (isVisible && typeof cardApi.setVisible === 'function') cardApi.setVisible(true);
+    if (isVisible && cardApi.el) cardApi.el.style.display = '';
+  }
+
+  function syncDisplayedCardsInDom(displaySet) {
+    for (let i = 0; i < CARD_REGISTRY.length; i += 1) {
+      const cardDef = CARD_REGISTRY[i];
+      const api = displaySet.has(cardDef.key)
+        ? getCardApi(cardDef.key)
+        : getCardApi(cardDef.key, { createIfMissing: false });
+      const cardEl = api?.el;
+
+      if (!displaySet.has(cardDef.key)) {
+        destroyCardApi(cardDef.key);
+        continue;
+      }
+
+      if (!cardEl) continue;
+
+      let nextSibling = null;
+      for (let j = i + 1; j < CARD_REGISTRY.length; j += 1) {
+        const laterKey = CARD_REGISTRY[j].key;
+        const laterEl = getCardApi(laterKey, { createIfMissing: false })?.el;
+        if (displaySet.has(laterKey) && laterEl && laterEl.parentNode === el) {
+          nextSibling = laterEl;
+          break;
+        }
+      }
+
+      if (cardEl.parentNode !== el || cardEl.nextSibling !== nextSibling) {
+        el.insertBefore(cardEl, nextSibling);
+      }
+    }
+  }
+
+  function applyDisplayCardVisibility(resolvedDisplay, { renderNewlyVisible = false } = {}) {
+    const nextSet = new Set(getResolvedDisplayCardKeys(resolvedDisplay));
+    const newlyVisible = new Set();
+
+    for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
+      const isVisible = nextSet.has(c.key);
+      if (isVisible && !activeDisplayCardKeys.has(c.key)) newlyVisible.add(c.key);
+      const api = isVisible ? getCardApi(c.key) : getCardApi(c.key, { createIfMissing: false });
+      setCardDisplayed(api, isVisible);
+    }
+
+    syncDisplayedCardsInDom(nextSet);
+
+    try {
+      for (const rn of Object.keys(relatedDropdownControls || {})) {
+        const rc = relatedDropdownControls[rn];
+        if (rc && rc.parentNode) rc.parentNode.style.display = nextSet.has('related') ? '' : 'none';
+      }
+    } catch (e) {}
+
+    activeDisplayCardKeys = nextSet;
+
+    if (renderNewlyVisible && newlyVisible.size) {
+      render({ skipRefresh: true, forceCardKeys: newlyVisible });
+    }
+
+    return nextSet;
+  }
 
   const _displayCardsRec = headerTools.addElement({
     type: 'dropdown', key: 'displayCards', items: displayCardItems, multi: true,
@@ -580,17 +706,6 @@ export function renderKanjiStudyCard({ store }) {
   });
 
   addStudyFilter(headerTools, { getCurrentCollectionKey, onChange: () => { refreshEntriesFromStore(); render(); } });
-
-
-  // expose the same variable names used elsewhere so render() logic needs minimal changes
-  const card = mainCardApi.el; // root .card kanji-card
-  const wrapper = card.querySelector('.kanji-card-wrapper');
-  // collect registry-ordered elements for appending into the view root
-  const registryCardEls = [];
-  for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-    const api = cardApis[c.key];
-    if (api && api.el) registryCardEls.push(api.el);
-  }
 
   // Apply initial visibility defaults based on entry-level and related selections
   if (displayCardSelection === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
@@ -665,20 +780,11 @@ export function renderKanjiStudyCard({ store }) {
           if (appState && appState.resolved) {
             if (appState.resolved.entryFieldMap) applyEntryFieldVisibility(appState.resolved.entryFieldMap);
             if (Array.isArray(appState.resolved.displayCards)) {
-              const set = new Set(appState.resolved.displayCards.map(String));
-              for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-                const api = cardApis[c.key];
-                if (api && api.el) api.el.style.display = set.has(c.key) ? '' : 'none';
-              }
-              try {
-                for (const rn of Object.keys(relatedDropdownControls || {})) {
-                  const rc = relatedDropdownControls[rn];
-                  if (rc && rc.parentNode) rc.parentNode.style.display = set.has('related') ? '' : 'none';
-                }
-              } catch (e) {}
+              applyDisplayCardVisibility(appState.resolved.displayCards);
             }
             if (appState.resolved.relatedFieldMaps) {
-              const api = cardApis['related'];
+              resolvedRelatedFieldMaps = { ...appState.resolved.relatedFieldMaps };
+              const api = getCardApi('related', { createIfMissing: false });
               for (const rn of Object.keys(appState.resolved.relatedFieldMaps || {})) {
                 try { if (api && typeof api.setFieldsVisible === 'function') api.setFieldsVisible(appState.resolved.relatedFieldMaps[rn]); } catch (e) {}
               }
@@ -696,7 +802,7 @@ export function renderKanjiStudyCard({ store }) {
               const items = Array.isArray(rel.fields) ? rel.fields.map(f => String(f.key || f)) : RELATED_DEFAULT_ITEMS.map(it => it.value);
               const sel = relatedFieldSelections[name] || 'all';
               const chosen = (sel === 'all') ? items.slice() : (Array.isArray(sel) ? sel.slice() : []);
-              const api = cardApis['related'];
+              const api = getCardApi('related', { createIfMissing: false });
               if (api && typeof api.setFieldsVisible === 'function') {
                 const set = new Set(chosen);
                 const map = {};
@@ -796,7 +902,7 @@ export function renderKanjiStudyCard({ store }) {
     }
   }
 
-  function render({ skipRefresh = false } = {}) {
+  function render({ skipRefresh = false, forceCardKeys = null } = {}) {
     if (!skipRefresh && !isShuffled) {
       refreshEntriesFromStore();
     }
@@ -811,34 +917,41 @@ export function renderKanjiStudyCard({ store }) {
     const total = entries.length;
 
     // update view mode class on the wrapper (maintains previous behavior)
-    if (defaultViewMode === 'kanji-only') wrapper.classList.add('kanji-only');
-    else wrapper.classList.remove('kanji-only');
+    const displaySet = applyDisplayCardVisibility();
+    const cardsToRefresh = (forceCardKeys instanceof Set)
+      ? new Set(Array.from(forceCardKeys).filter((key) => displaySet.has(key)))
+      : displaySet;
+    const liveMainCardApi = displaySet.has('main') ? getCardApi('main') : null;
+    const liveRelatedCardApi = displaySet.has('related') ? getCardApi('related') : null;
+    const wrapper = liveMainCardApi?.el?.querySelector('.kanji-card-wrapper') || null;
+
+    if (wrapper) {
+      if (defaultViewMode === 'kanji-only') wrapper.classList.add('kanji-only');
+      else wrapper.classList.remove('kanji-only');
+    }
 
     // update main card content and corner caption
     const caption = total ? `${index + 1} / ${total}` : 'Empty';
-    mainCardApi.setIndexText(caption);
 
-    if (!entry) {
-      // show empty hint inside the card body
-      const bodyEl = mainCardApi.el.querySelector('.kanji-body');
-      if (bodyEl) bodyEl.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
-      mainCardApi.setEntry(null);
-    } else {
-      mainCardApi.setEntry(entry);
+    if (displaySet.has('main') && liveMainCardApi && cardsToRefresh.has('main')) {
+      liveMainCardApi.setIndexText(caption);
+      if (!entry) {
+        liveMainCardApi.setEntry(null);
+      } else {
+        liveMainCardApi.setEntry(entry);
+      }
     }
 
-    const displaySet = new Set(Array.isArray(displayCardSelection) ? displayCardSelection : []);
-    if (relatedCardApi && typeof relatedCardApi.setEntry === 'function') relatedCardApi.setEntry(entry);
-    // Set entry on any other registered cards (e.g., generic) so they can render.
+    if (displaySet.has('related') && liveRelatedCardApi && typeof liveRelatedCardApi.setEntry === 'function' && cardsToRefresh.has('related')) {
+      liveRelatedCardApi.setEntry(entry);
+    }
+
+    // Set entry only on currently displayed cards so hidden cards do not redraw on navigation.
     for (const k of Object.keys(cardApis || {})) {
       if (k === 'main' || k === 'related') continue;
+      if (!displaySet.has(k) || !cardsToRefresh.has(k)) continue;
       const api = cardApis[k];
       if (api && typeof api.setEntry === 'function') api.setEntry(entry);
-    }
-    // Toggle visibility for every registered card according to user selection.
-    for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) {
-      const api = cardApis[c.key];
-      if (api && api.el) api.el.style.display = displaySet.has(c.key) ? '' : 'none';
     }
     
     // (reveal toggle removed)
@@ -880,13 +993,6 @@ export function renderKanjiStudyCard({ store }) {
   footer.className = 'view-footer-caption';
   footer.id = 'kanji-controls';
   footer.textContent = '← / →: navigate  •  ↑: full  •  ↓: kanji only';
-
-  // mainCardApi.el already contains its internal wrapper
-
-  // Append every registered card element (in registry order) into the view root
-  for (const childEl of registryCardEls) {
-    el.appendChild(childEl);
-  }
 
   // Build a DocumentFragment containing header -> view root -> footer so
   // when the shell appends the fragment its children become siblings in
@@ -961,8 +1067,7 @@ export function renderKanjiStudyCard({ store }) {
       if (__mountedFooterInShell && footerControls && footerControls.el && footerControls.el.parentNode) footerControls.el.parentNode.removeChild(footerControls.el);
       // explicitly unregister footer key handler if provided
       if (footerControls && typeof footerControls.__unregister === 'function') footerControls.__unregister();
-      if (mainCardApi && typeof mainCardApi.destroy === 'function') mainCardApi.destroy();
-      if (relatedCardApi && typeof relatedCardApi.destroy === 'function') relatedCardApi.destroy();
+      for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) destroyCardApi(c.key);
       observer.disconnect();
     }
   });

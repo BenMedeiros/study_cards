@@ -7,7 +7,7 @@ const DEFAULT_CARDS = Object.freeze({
   summary: Object.freeze({ collapsed: false }),
   dailySummary: Object.freeze({ collapsed: false }),
   studyTimeByDate: Object.freeze({ collapsed: false, hideRepeated: false }),
-  recommendations: Object.freeze({ collapsed: false, sortKey: 'focusCountDesc', minimumEntryCount: 5, viewMode: 'cards' }),
+  recommendations: Object.freeze({ collapsed: false, collapsedById: Object.freeze({}), sortKey: 'focusCountDesc', minimumEntryCount: 5, viewMode: 'cards' }),
   studyTimeByFilter: Object.freeze({ collapsed: false }),
   groupByAppId: Object.freeze({ collapsed: false }),
 });
@@ -21,6 +21,12 @@ const DEFAULT_VIEW = {
 
 function cloneCardsState(value) {
   const src = (value && typeof value === 'object' && !Array.isArray(value)) ? value : {};
+  const rawCollapsedById = (src?.recommendations?.collapsedById && typeof src.recommendations.collapsedById === 'object' && !Array.isArray(src.recommendations.collapsedById))
+    ? src.recommendations.collapsedById
+    : {};
+  const collapsedById = Object.fromEntries(
+    Object.entries(rawCollapsedById).map(([key, val]) => [String(key || '').trim(), !!val]).filter(([key]) => key)
+  );
   return {
     summary: { collapsed: !!src?.summary?.collapsed },
     dailySummary: { collapsed: !!src?.dailySummary?.collapsed },
@@ -30,6 +36,7 @@ function cloneCardsState(value) {
     },
     recommendations: {
       collapsed: !!src?.recommendations?.collapsed,
+      collapsedById,
       sortKey: String(src?.recommendations?.sortKey || 'focusCountDesc').trim() || 'focusCountDesc',
       minimumEntryCount: Math.max(1, Math.round(Number(src?.recommendations?.minimumEntryCount) || 5)),
       viewMode: String(src?.recommendations?.viewMode || 'cards').trim() === 'table' ? 'table' : 'cards',

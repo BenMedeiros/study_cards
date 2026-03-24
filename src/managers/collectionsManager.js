@@ -1084,7 +1084,45 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     return out;
   }
 
-  function buildEntrySearchAccessor(entry, { fields = null, collection = null } = {}) {
+  function getExplicitRelatedFieldMap(entry, fields = null) {
+    const metaFields = Array.isArray(fields) ? fields : [];
+    const out = {};
+    const seen = new Set();
+
+    for (const field of metaFields) {
+      const rawKey = typeof field === 'string' ? field : field?.key;
+      const key = String(rawKey || '').trim();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      if (key === 'status' || key === 'studySeen' || key === 'studyTimesSeen' || key === 'studyTimeMs') continue;
+
+      if (key.endsWith('.count')) {
+        const relationName = String(key.slice(0, -'.count'.length) || '').trim();
+        if (!relationName) continue;
+        const records = Array.isArray(entry?.relatedCollections?.[relationName]) ? entry.relatedCollections[relationName] : null;
+        if (!records) continue;
+        out[key] = records.length;
+        continue;
+      }
+
+      const dotIdx = key.indexOf('.');
+      if (dotIdx <= 0 || dotIdx >= key.length - 1) continue;
+      const relationName = String(key.slice(0, dotIdx) || '').trim();
+      const fieldPath = String(key.slice(dotIdx + 1) || '').trim();
+      if (!relationName || !fieldPath) continue;
+      const records = Array.isArray(entry?.relatedCollections?.[relationName]) ? entry.relatedCollections[relationName] : null;
+      if (!records) continue;
+      const values = [];
+      for (const record of records) {
+        try { values.push(...extractPathValues(record, fieldPath)); } catch {}
+      }
+      out[key] = normalizeRelatedFieldValues(values);
+    }
+
+    return out;
+  }
+
+  function buildEntrySearchAccessor(entry, { fields = null, globalFields = null, collection = null } = {}) {
     const coll = (collection && typeof collection === 'object') ? collection : null;
     const adapter = progressAdapterForCollection(coll);
     const key = adapter?.getKey ? adapter.getKey(entry) : String(getEntryStudyKey(entry) || '').trim();
@@ -1106,18 +1144,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       // ignore
     }
 
-    const relatedFieldMap = getEntryRelatedFieldMap(entry, coll);
-    const dynamic = {
-      status,
-      studySeen: !!seen,
-      studyTimesSeen: timesSeen,
-      studyTimeMs: timeMs,
-      ...relatedFieldMap,
-    };
-
-    // Accept explicit `fields` parameter, or fall back to the collection's
-    // metadata fields if available. This allows callers that don't pass a
-    // `fields` array to still have accurate field presence/type info.
     let metaFields = [];
     if (Array.isArray(fields) && fields.length) {
       metaFields = fields.map(f => (typeof f === 'string' ? { key: String(f), type: null } : { key: String(f?.key || ''), type: f?.type ?? (f?.schema && f.schema.type) ?? null })).filter(f => f.key);
@@ -1125,9 +1151,28 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       const fm = Array.isArray(coll.metadata.fields) ? coll.metadata.fields : coll.metadata.schema;
       metaFields = fm.map(f => (typeof f === 'string' ? { key: String(f), type: null } : { key: String(f?.key || ''), type: f?.type ?? (f?.schema && f.schema.type) ?? null })).filter(f => f.key);
     }
+
+    const relatedFieldMap = getEntryRelatedFieldMap(entry, coll);
+    const explicitRelatedFieldMap = getExplicitRelatedFieldMap(entry, metaFields);
+    const dynamic = {
+      status,
+      studySeen: !!seen,
+      studyTimesSeen: timesSeen,
+      studyTimeMs: timeMs,
+      ...explicitRelatedFieldMap,
+      ...relatedFieldMap,
+    };
+
+    // Accept explicit `fields` parameter, or fall back to the collection's
+    // metadata fields if available. This allows callers that don't pass a
+    // `fields` array to still have accurate field presence/type info.
     const typeMap = new Map(metaFields.map(f => [String(f.key), f.type ?? null]));
     const metaKeys = metaFields.map(f => String(f.key));
-    const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', ...Object.keys(relatedFieldMap)];
+    const globalMetaFields = Array.isArray(globalFields) && globalFields.length
+      ? globalFields.map(f => (typeof f === 'string' ? { key: String(f), type: null } : { key: String(f?.key || ''), type: f?.type ?? (f?.schema && f.schema.type) ?? null })).filter(f => f.key)
+      : metaFields;
+    const globalKeys = globalMetaFields.map(f => String(f.key));
+    const dynamicKeys = ['status', 'studySeen', 'studyTimesSeen', 'studyTimeMs', ...Object.keys(explicitRelatedFieldMap), ...Object.keys(relatedFieldMap)];
 
     return {
       hasField: (k) => {
@@ -1157,12 +1202,20 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       },
       getAllValues: () => {
         const out = [];
-        if (metaKeys.length) {
-          for (const mk of metaKeys) out.push(entry ? entry[mk] : undefined);
+        if (globalKeys.length) {
+          for (const mk of globalKeys) {
+            if (Object.prototype.hasOwnProperty.call(dynamic, mk)) out.push(dynamic[mk]);
+            else out.push(entry ? entry[mk] : undefined);
+          }
         } else {
           for (const v of Object.values(entry || {})) out.push(v);
         }
-        for (const dk of dynamicKeys) out.push(dynamic[dk]);
+        const appended = new Set(globalKeys);
+        for (const dk of dynamicKeys) {
+          if (appended.has(dk)) continue;
+          if (globalKeys.length) continue;
+          out.push(dynamic[dk]);
+        }
         return out;
       },
     };
@@ -1183,12 +1236,12 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     ];
   }
 
-  function entryMatchesTableSearch(entry, { query, fields = null, collection = null } = {}) {
+  function entryMatchesTableSearch(entry, { query, fields = null, globalFields = null, collection = null } = {}) {
     try {
       const q = String(query || '').trim();
       if (!q) return false;
       const compiled = compileTableSearchQuery(q);
-      const accessor = buildEntrySearchAccessor(entry, { fields, collection });
+      const accessor = buildEntrySearchAccessor(entry, { fields, globalFields, collection });
       // Conditional debug logging to help diagnose empty-field matches
       const matched = matchesTableSearch(accessor, compiled, { fields: tableSearchFieldsMeta(fields, collection) });
       return matched;
@@ -1197,7 +1250,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     }
   }
 
-  function filterEntriesAndIndicesByTableSearch(entries, indices, { query, fields = null, collection = null } = {}) {
+  function filterEntriesAndIndicesByTableSearch(entries, indices, { query, fields = null, globalFields = null, collection = null } = {}) {
     const arr = Array.isArray(entries) ? entries : [];
     const idx = Array.isArray(indices) ? indices : arr.map((_, i) => i);
     const q = String(query || '').trim();
@@ -1215,7 +1268,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       const fieldsMeta = tableSearchFieldsMeta(fields, collection);
       for (let i = 0; i < arr.length; i++) {
         const rec = arr[i];
-        const accessor = buildEntrySearchAccessor(rec, { fields, collection });
+        const accessor = buildEntrySearchAccessor(rec, { fields, globalFields, collection });
         if (matchesTableSearch(accessor, compiled, { fields: fieldsMeta })) {
           outEntries.push(rec);
           outIdx.push(idx[i]);
@@ -1532,8 +1585,13 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     try {
       const held = String(stateObj?.heldTableSearch || '').trim();
       if (held) {
-        const fields = Array.isArray(coll?.metadata?.fields) ? coll.metadata.fields : null;
-        const filtered = filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields, collection: coll });
+        const fields = Array.isArray(opts?.tableSearchFields) && opts.tableSearchFields.length
+          ? opts.tableSearchFields
+          : (Array.isArray(coll?.metadata?.fields) ? coll.metadata.fields : null);
+        const globalFields = Array.isArray(opts?.tableGlobalSearchFields) && opts.tableGlobalSearchFields.length
+          ? opts.tableGlobalSearchFields
+          : fields;
+        const filtered = filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields, globalFields, collection: coll });
         nextEntries = filtered.entries;
         nextIndices = filtered.indices;
       }

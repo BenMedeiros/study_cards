@@ -356,8 +356,14 @@ function sortRecommendationItems(items, sortKey) {
   return rows;
 }
 
-function getRecommendationsState(report, sortKey, minimumEntryCount) {
-  const rec = report?.recommendations || null;
+function getRecommendationSets(report) {
+  const sets = Array.isArray(report?.recommendationSets) ? report.recommendationSets.filter(Boolean) : [];
+  if (sets.length) return sets;
+  return report?.recommendations ? [report.recommendations] : [];
+}
+
+function getRecommendationsState(recommendationSet, sortKey, minimumEntryCount) {
+  const rec = recommendationSet || null;
   const summary = rec?.summary || null;
   const config = rec?.config || null;
   if (!summary || !config) return null;
@@ -389,13 +395,24 @@ function getRecommendationsState(report, sortKey, minimumEntryCount) {
   };
 }
 
-function buildRecommendationsTable({ store, report, onNavigate, sortKey, minimumEntryCount, tableSettings }) {
-  const state = getRecommendationsState(report, sortKey, minimumEntryCount);
+function buildRecommendationsTable({
+  store,
+  recommendationSet,
+  recommendationReportResult = null,
+  onNavigate,
+  sortKey,
+  minimumEntryCount,
+  tableSettings,
+  onSearchQueryChange = null,
+} = {}) {
+  const state = getRecommendationsState(recommendationSet, sortKey, minimumEntryCount);
   if (!state) return null;
+  const hasWordsRoute = state.visibleItems.some((item) => String(item?.wordsRoute || '').trim());
 
   const headers = [
     { key: 'token', label: state.tokenLabel },
-    { key: 'words', label: 'Words', type: 'number' },
+    ...(hasWordsRoute ? [{ key: 'wordsLink', label: 'Words Link' }] : []),
+    { key: 'words', label: 'Word Count', type: 'number' },
     { key: 'seen', label: 'Seen', type: 'number' },
     { key: 'focus', label: 'Focus', type: 'number' },
     { key: 'learned', label: 'Learned', type: 'number' },
@@ -404,6 +421,7 @@ function buildRecommendationsTable({ store, report, onNavigate, sortKey, minimum
 
   const rows = state.visibleItems.map((item) => {
     const route = String(item.route || '').trim();
+    const wordsRoute = String(item.wordsRoute || '').trim();
     const tokenLink = route
       ? makeRouteAction({
           label: `${state.tokenLabel} ${item.token}`,
@@ -413,8 +431,18 @@ function buildRecommendationsTable({ store, report, onNavigate, sortKey, minimum
           className: 'study-manager-rec-link',
         })
       : String(item.token || '');
+    const wordsLink = wordsRoute
+      ? makeRouteAction({
+          label: 'Words',
+          meta: '',
+          path: wordsRoute,
+          onNavigate,
+          className: 'study-manager-rec-link',
+        })
+      : '';
     const out = [
       tokenLink,
+      ...(hasWordsRoute ? [wordsLink] : []),
       asNumber(item.totalCount),
       asNumber(item.seenCount),
       asNumber(item.focusCount),
@@ -423,6 +451,7 @@ function buildRecommendationsTable({ store, report, onNavigate, sortKey, minimum
     ];
     out.__id = String(item.token || '');
     out.__route = route;
+    out.__wordsRoute = wordsRoute;
     return out;
   });
 
@@ -436,6 +465,8 @@ function buildRecommendationsTable({ store, report, onNavigate, sortKey, minimum
     id: 'study-manager-recommendations-table',
     sortable: true,
     searchable: true,
+    initialSearchQuery: String(tableSettings?.table?.searchQuery || '').trim(),
+    onSearchQueryChange,
     rowActions: [
       {
         label: 'Open Data',
@@ -448,42 +479,71 @@ function buildRecommendationsTable({ store, report, onNavigate, sortKey, minimum
           else location.hash = path;
         },
       },
+      ...(hasWordsRoute ? [{
+        label: 'Open Words',
+        title: 'Open Data view for matching words',
+        className: 'btn small',
+        onClick: (rowData) => {
+          const path = String(rowData?.__wordsRoute || '').trim();
+          if (!path) return;
+          if (typeof onNavigate === 'function') onNavigate(path);
+          else location.hash = path;
+        },
+      }] : []),
     ],
   });
 
   applyTableColumnStyles({ wrapper: table, tableSettings });
   applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings, actionItems: TABLE_ACTION_ITEMS });
 
-  return { table, headers, rows, sourceInfo: formatQueryCaption(report?.queries?.recommendations), state };
+  return { table, headers, rows, sourceInfo: formatQueryCaption(recommendationReportResult?.query), state };
 }
 
 function buildRecommendationsCard({
   store,
-  report,
+  recommendationSet,
+  recommendationReportResult = null,
   onNavigate,
   sortKey = 'focusCountDesc',
   minimumEntryCount = 5,
   viewMode = 'cards',
   recommendationsTableSettings = null,
+  onSearchQueryChange = null,
 } = {}) {
-  const state = getRecommendationsState(report, sortKey, minimumEntryCount);
+  const state = getRecommendationsState(recommendationSet, sortKey, minimumEntryCount);
   if (!state) return null;
 
   const filterRows = state.visibleItems.map((item) => {
-    const action = makeRouteAction({
-      label: `${state.tokenLabel} ${item.token}`,
-      meta: `${asNumber(item.totalCount)} words`,
-      path: String(item.route || '').trim(),
-      onNavigate,
-      className: 'study-manager-rec-link',
-    });
+    const primaryAction = String(item.route || '').trim()
+      ? makeRouteAction({
+          label: `${state.tokenLabel} ${item.token}`,
+          meta: `${asNumber(item.totalCount)} words`,
+          path: String(item.route || '').trim(),
+          onNavigate,
+          className: 'study-manager-rec-link',
+        })
+      : makeDisabledRouteAction({
+          label: `${state.tokenLabel} ${item.token}`,
+          meta: `${asNumber(item.totalCount)} words`,
+          className: 'study-manager-rec-link is-disabled',
+        });
+    const wordsAction = String(item.wordsRoute || '').trim()
+      ? makeRouteAction({
+          label: 'Words',
+          meta: '',
+          path: String(item.wordsRoute || '').trim(),
+          onNavigate,
+          className: 'study-manager-rec-link',
+        })
+      : null;
     return el('div', {
       className: 'study-manager-rec-row',
       children: [
         el('div', {
           className: 'study-manager-rec-head',
           children: [
-            action,
+            primaryAction,
+            wordsAction,
             el('div', {
               className: 'hint',
               text: `seen ${asNumber(item.seenCount)} • focus ${asNumber(item.focusCount)} • learned ${asNumber(item.learnedCount)} • remaining ${asNumber(item.remainingCount)}`,
@@ -497,24 +557,26 @@ function buildRecommendationsCard({
   const recommendationsTableObj = viewMode === 'table'
     ? buildRecommendationsTable({
         store,
-        report,
+        recommendationSet,
+        recommendationReportResult,
         onNavigate,
         sortKey: state.activeSortKey,
         minimumEntryCount: state.activeMinimumEntryCount,
         tableSettings: recommendationsTableSettings,
+        onSearchQueryChange,
       })
     : null;
 
   const cardEl = card({
-    id: 'study-manager-recommendations-card',
-    title: 'Related Word Recommendations',
+    id: `study-manager-recommendations-card-${String(state.config.id || 'recommendations')}`,
+    title: String(state.config.title || 'Recommendations'),
     cornerCaption: `${filterRows.length}/${asNumber(state.summary.itemCount)} shown`,
     children: [
       el('div', {
         className: 'study-manager-summary-grid',
         children: [
           renderMetric('Entries', String(asNumber(state.summary.sourceEntryCount))),
-          renderMetric('Tokenized', String(asNumber(state.summary.tokenizedEntryCount))),
+          renderMetric('Grouped', String(asNumber(state.summary.groupedEntryCount ?? state.summary.tokenizedEntryCount))),
           renderMetric(state.tokenLabel, String(asNumber(state.summary.itemCount))),
           renderMetric(`>= ${state.activeMinimumEntryCount} Words`, String(filterRows.length)),
           viewMode === 'table' ? null : renderMetric('Sort', state.sortLabel),
@@ -548,6 +610,7 @@ function buildRecommendationsCard({
   return {
     card: cardEl,
     tableObj: recommendationsTableObj,
+    recommendationReportResult,
     state,
   };
 }
@@ -720,6 +783,9 @@ export function renderStudyManager({ store, onNavigate, route }) {
       collapsedCards.dailySummary = !!cardsState?.dailySummary?.collapsed;
       collapsedCards.studyTimeByDate = !!cardsState?.studyTimeByDate?.collapsed;
       collapsedCards.recommendations = !!cardsState?.recommendations?.collapsed;
+      for (const [id, collapsed] of Object.entries(cardsState?.recommendations?.collapsedById || {})) {
+        collapsedCards[`recommendations:${id}`] = !!collapsed;
+      }
       collapsedCards.studyTimeByFilter = !!cardsState?.studyTimeByFilter?.collapsed;
       collapsedCards.groupByAppId = !!cardsState?.groupByAppId?.collapsed;
       hideRepeatedDateFilters = !!cardsState?.studyTimeByDate?.hideRepeated;
@@ -760,7 +826,25 @@ export function renderStudyManager({ store, onNavigate, route }) {
     renderBody();
   }
 
+  async function persistRecommendationsTableSearchQuery(query) {
+    const normalized = normalizeTableSettings({
+      ...recommendationsTableSettings,
+      table: {
+        ...(recommendationsTableSettings?.table || {}),
+        searchQuery: String(query || '').trim(),
+      },
+    });
+    recommendationsTableSettings = normalized;
+    try { if (tableSettingsCtrl) await tableSettingsCtrl.setRecommendationsTableSettings(normalized); } catch (e) {}
+  }
+
   async function persistCardsState() {
+    const recommendationCollapsedById = Object.fromEntries(
+      Object.entries(collapsedCards)
+        .filter(([key]) => key.startsWith('recommendations:'))
+        .map(([key, value]) => [key.slice('recommendations:'.length), !!value])
+        .filter(([key]) => key)
+    );
     const nextCards = {
       summary: { collapsed: !!collapsedCards.summary },
       dailySummary: { collapsed: !!collapsedCards.dailySummary },
@@ -770,6 +854,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       },
       recommendations: {
         collapsed: !!collapsedCards.recommendations,
+        collapsedById: recommendationCollapsedById,
         sortKey: recommendationsSortKey,
         minimumEntryCount: recommendationsMinimumEntryCount,
         viewMode: recommendationsViewMode,
@@ -948,16 +1033,24 @@ export function renderStudyManager({ store, onNavigate, route }) {
         renderBody();
       },
     });
-    const recommendationsCardObj = buildRecommendationsCard({
-      store,
-      report,
-      onNavigate,
-      sortKey: recommendationsSortKey,
-      minimumEntryCount: recommendationsMinimumEntryCount,
-      viewMode: recommendationsViewMode,
-      recommendationsTableSettings,
-    });
-    const recommendationsCard = recommendationsCardObj?.card || null;
+    const recommendationCardObjs = getRecommendationSets(report).map((recommendationSet) => {
+      const recommendationId = String(recommendationSet?.config?.id || '').trim();
+      const recommendationReportResult = report?.reportResults?.recommendationSets?.[recommendationId]
+        || (recommendationId === 'kanjiCoverage' ? report?.reportResults?.recommendations : null)
+        || null;
+      return buildRecommendationsCard({
+        store,
+        recommendationSet,
+        recommendationReportResult,
+        onNavigate,
+        sortKey: recommendationsSortKey,
+        minimumEntryCount: recommendationsMinimumEntryCount,
+        viewMode: recommendationsViewMode,
+        recommendationsTableSettings,
+        onSearchQueryChange: persistRecommendationsTableSearchQuery,
+      });
+    }).filter(Boolean);
+    const recommendationCards = recommendationCardObjs.map((item) => item?.card).filter(Boolean);
     const summaryCard = card({
       id: 'study-manager-summary-card',
       title: 'Study Summary',
@@ -1072,79 +1165,92 @@ export function renderStudyManager({ store, onNavigate, route }) {
         data: report?.reportResults?.studyTimeByDate || null,
       }),
     });
-    attachCardCornerButton({
-      cardEl: recommendationsCard,
-      text: recommendationsViewMode === 'table' ? 'Cards' : 'Table',
-      title: 'Toggle recommendation list view',
-      onClick: () => {
-        recommendationsViewMode = recommendationsViewMode === 'table' ? 'cards' : 'table';
-        void persistCardsState();
-        renderBody();
-      },
-    });
-    if (recommendationsViewMode !== 'table') {
+    recommendationCardObjs.forEach((recommendationsCardObj) => {
+      const recommendationsCard = recommendationsCardObj?.card || null;
+      const recommendationState = recommendationsCardObj?.state || null;
+      const recommendationTitle = String(recommendationState?.config?.title || 'Recommendations');
+      if (!recommendationsCard || !recommendationState) return;
+
       attachCardCornerButton({
         cardEl: recommendationsCard,
-        text: `Sort ${String((report?.recommendations?.config?.sortOptions || []).find((item) => item?.key === recommendationsSortKey)?.label || 'Focus')}`,
-        title: 'Toggle recommendation sorting',
+        text: recommendationsViewMode === 'table' ? 'Cards' : 'Table',
+        title: 'Toggle recommendation list view',
         onClick: () => {
-          const options = (report?.recommendations?.config?.sortOptions || []).map((item) => String(item?.key || '').trim()).filter(Boolean);
-          recommendationsSortKey = cycleOption(options, recommendationsSortKey);
+          recommendationsViewMode = recommendationsViewMode === 'table' ? 'cards' : 'table';
           void persistCardsState();
           renderBody();
         },
       });
-    }
-    if (recommendationsViewMode === 'table' && recommendationsCardObj?.tableObj) {
+      if (recommendationsViewMode !== 'table') {
+        attachCardCornerButton({
+          cardEl: recommendationsCard,
+          text: `Sort ${String(recommendationState.sortLabel || 'Focus')}`,
+          title: 'Toggle recommendation sorting',
+          onClick: () => {
+            const options = recommendationState.sortOptions.map((item) => String(item?.key || '').trim()).filter(Boolean);
+            recommendationsSortKey = cycleOption(options, recommendationsSortKey);
+            void persistCardsState();
+            renderBody();
+          },
+        });
+      }
+      if (recommendationsViewMode === 'table' && recommendationsCardObj?.tableObj) {
+        attachCardCornerButton({
+          cardEl: recommendationsCard,
+          text: 'Table',
+          title: 'Table settings',
+          onClick: async () => {
+            const next = await openTableSettingsDialog({
+              tableName: `${recommendationTitle} Table`,
+              sourceInfo: `${report.collectionId} | ${recommendationsCardObj.tableObj.sourceInfo}`,
+              columns: buildTableColumnItems(recommendationsCardObj.tableObj.headers, recommendationsCardObj.tableObj.rows),
+              actions: TABLE_ACTION_ITEMS,
+              settings: recommendationsTableSettings,
+            });
+            if (next) await persistRecommendationsTableSettings(next);
+          },
+        });
+      }
       attachCardCornerButton({
         cardEl: recommendationsCard,
-        text: 'Table',
-        title: 'Table settings',
-        onClick: async () => {
-          const next = await openTableSettingsDialog({
-            tableName: 'Study Manager Recommendations Table',
-            sourceInfo: `${report.collectionId} | ${recommendationsCardObj.tableObj.sourceInfo}`,
-            columns: buildTableColumnItems(recommendationsCardObj.tableObj.headers, recommendationsCardObj.tableObj.rows),
-            actions: TABLE_ACTION_ITEMS,
-            settings: recommendationsTableSettings,
-          });
-          if (next) await persistRecommendationsTableSettings(next);
+        text: `Min ${asNumber(recommendationsMinimumEntryCount)}`,
+        title: 'Toggle recommendation minimum word count',
+        onClick: () => {
+          const options = recommendationState.minimumEntryCountOptions.map((value) => asNumber(value)).filter(Boolean);
+          recommendationsMinimumEntryCount = asNumber(cycleOption(options, recommendationsMinimumEntryCount));
+          void persistCardsState();
+          renderBody();
         },
       });
-    }
-    attachCardCornerButton({
-      cardEl: recommendationsCard,
-      text: `Min ${asNumber(recommendationsMinimumEntryCount)}`,
-      title: 'Toggle recommendation minimum word count',
-      onClick: () => {
-        const options = (report?.recommendations?.config?.minimumEntryCountOptions || []).map((value) => asNumber(value)).filter(Boolean);
-        recommendationsMinimumEntryCount = asNumber(cycleOption(options, recommendationsMinimumEntryCount));
-        void persistCardsState();
-        renderBody();
-      },
-    });
-    attachCardCornerButton({
-      cardEl: recommendationsCard,
-      text: 'JSON',
-      title: 'Open JSON viewer for this card',
-      onClick: () => openStudyManagerJsonDialog({
-        title: 'Recommendations JSON',
-        data: report?.reportResults?.recommendations || null,
-      }),
+      attachCardCornerButton({
+        cardEl: recommendationsCard,
+        text: 'JSON',
+        title: 'Open JSON viewer for this card',
+        onClick: () => openStudyManagerJsonDialog({
+          title: `${recommendationTitle} JSON`,
+          data: recommendationsCardObj?.recommendationReportResult || null,
+        }),
+      });
     });
 
     [
       ['summary', summaryCard],
       ['dailySummary', dailySummaryCard],
       ['studyTimeByDate', dailyActivityCard],
-      ['recommendations', recommendationsCard],
       ['studyTimeByFilter', filtersCard],
       ['groupByAppId', appsCard],
     ].forEach(([key, cardEl]) => {
       if (cardEl) applyCollapsibleCard(cardEl, key);
     });
+    recommendationCards.forEach((cardEl, index) => {
+      const id = String(recommendationCardObjs[index]?.state?.config?.id || '').trim() || `set-${index}`;
+      if (typeof collapsedCards[`recommendations:${id}`] === 'undefined') {
+        collapsedCards[`recommendations:${id}`] = !!collapsedCards.recommendations;
+      }
+      applyCollapsibleCard(cardEl, `recommendations:${id}`);
+    });
 
-    body.append(...[summaryCard, dailySummaryCard, dailyActivityCard, recommendationsCard, filtersCard, appsCard].filter(Boolean));
+    body.append(...[summaryCard, dailySummaryCard, dailyActivityCard, ...recommendationCards, filtersCard, appsCard].filter(Boolean));
   }
 
   renderControls();

@@ -1,13 +1,151 @@
 import { cleanSearchQuery, splitTopLevel } from '../utils/browser/tableSearch.js';
 import { buildStudyTimeByDate } from '../reports/studyManager/buildStudyTimeByDate.js';
 import { buildStudyTimeByDateSummary } from '../reports/studyManager/buildStudyTimeByDateSummary.js';
+import { buildGroupedLearningRecommendations } from '../reports/studyManager/buildGroupedLearningRecommendations.js';
 import { buildWordLearningRecommendations } from '../reports/studyManager/buildWordLearningRecommendations.js';
+import { normalizeRelatedCollectionsConfig } from '../utils/common/collectionParser.mjs';
 
 const STUDY_STATES = ['null', 'focus', 'learned'];
 const STUDY_STATS_APP_ID = 'kanji';
 
 function nowIso() {
   return new Date().toISOString();
+}
+
+function buildRecommendationRoute(collectionId, fieldKey, value) {
+  const coll = encodeURIComponent(String(collectionId || '').trim());
+  const field = String(fieldKey || '').trim();
+  const token = String(value || '').trim();
+  if (!coll || !field || !token) return '';
+  const filterKey = `{${field}:%${token}%}`;
+  return '/data?collection=' + coll + '&heldTableSearch=' + encodeURIComponent(filterKey);
+}
+
+function buildExactRecommendationRoute(collectionId, fieldKey, value) {
+  const coll = encodeURIComponent(String(collectionId || '').trim());
+  const field = String(fieldKey || '').trim();
+  const token = String(value || '').trim();
+  if (!coll || !field || !token) return '';
+  const filterKey = `{${field}:${token}}`;
+  return '/data?collection=' + coll + '&heldTableSearch=' + encodeURIComponent(filterKey);
+}
+
+function toTitleCase(value) {
+  return String(value || '')
+    .replace(/[_-]+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+function singularizeWord(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return 'Item';
+  if (raw.endsWith('ies')) return raw.slice(0, -3) + 'y';
+  if (raw.endsWith('s')) return raw.slice(0, -1);
+  return raw;
+}
+
+function detectRelatedRecordLabelField(relation, record = null) {
+  const relationFields = Array.isArray(relation?.fields)
+    ? relation.fields.map((field) => String(field?.key || '').trim()).filter(Boolean)
+    : [];
+  const recordFields = record && typeof record === 'object' ? Object.keys(record) : [];
+  const fieldKeys = relationFields.length ? relationFields : recordFields;
+  const candidates = ['japanese', 'ja', 'paragraph', 'text', 'title', 'name', 'id'];
+  for (const key of candidates) {
+    if (fieldKeys.includes(key)) return key;
+  }
+  return fieldKeys[0] || '';
+}
+
+function getRelatedRecordLabel(record, relation) {
+  const labelField = detectRelatedRecordLabelField(relation, record);
+  if (labelField) {
+    const value = record?.[labelField];
+    if (value != null && String(value).trim()) return String(value).trim();
+  }
+  if (record && typeof record === 'object') {
+    for (const key of ['japanese', 'ja', 'paragraph', 'text', 'title', 'name', 'id']) {
+      const value = record[key];
+      if (value != null && String(value).trim()) return String(value).trim();
+    }
+  }
+  return '';
+}
+
+function getRelatedRecordKey(record, relation) {
+  const id = record?.id != null ? String(record.id).trim() : '';
+  if (id) return 'id:' + id;
+  const labelField = detectRelatedRecordLabelField(relation, record);
+  const label = getRelatedRecordLabel(record, relation);
+  if (labelField && label) return labelField + ':' + label;
+  return label || '';
+}
+
+function detectRelatedWordsFilterField(relationName, relation, sampleRecord, labelField) {
+  const name = String(relationName || '').trim();
+  if (!name) return '';
+  if (name === 'sentences') {
+    if (sampleRecord && Object.prototype.hasOwnProperty.call(sampleRecord, 'ja')) return 'sentences.ja';
+    if (sampleRecord && Object.prototype.hasOwnProperty.call(sampleRecord, 'japanese')) return 'sentences.japanese';
+  }
+  if (name === 'paragraphs') {
+    if (sampleRecord && Object.prototype.hasOwnProperty.call(sampleRecord, 'id')) return 'paragraphs.id';
+  }
+  const fallbackField = String(labelField || '').trim() || 'id';
+  return `${name}.${fallbackField}`;
+}
+
+function buildRelatedCollectionRecommendationConfigs(collection) {
+  const relations = normalizeRelatedCollectionsConfig(collection?.metadata?.relatedCollections);
+  const entries = Array.isArray(collection?.entries) ? collection.entries : [];
+  const currentCollectionId = String(collection?.key || '').trim();
+  return relations.map((relation) => {
+    const relationName = String(relation?.name || '').trim();
+    if (!relationName) return null;
+    const displayLabel = toTitleCase(relationName);
+    const tokenLabel = singularizeWord(displayLabel);
+    const sampleRecord = entries
+      .map((entry) => (Array.isArray(entry?.relatedCollections?.[relationName]) ? entry.relatedCollections[relationName][0] : null))
+      .find(Boolean) || null;
+    const labelField = detectRelatedRecordLabelField(relation, sampleRecord);
+    const wordsFilterField = detectRelatedWordsFilterField(relationName, relation, sampleRecord, labelField);
+    const routeCollectionId = String(relation?.path || '').trim();
+    return {
+      id: relationName + 'Coverage',
+      title: displayLabel + ' Coverage',
+      tokenLabel,
+      minimumEntryCountOptions: [1, 3, 5, 10],
+      defaultMinimumEntryCount: relationName === 'paragraphs' ? 1 : 3,
+      defaultSortKey: 'remainingCountDesc',
+      sortOptions: [
+        { key: 'remainingCountDesc', label: 'Remaining' },
+        { key: 'focusCountDesc', label: 'Focus' },
+      ],
+      extractGroups(entry) {
+        const records = Array.isArray(entry?.relatedCollections?.[relationName]) ? entry.relatedCollections[relationName] : [];
+        return records
+          .map((record) => {
+            const key = getRelatedRecordKey(record, relation);
+            const label = getRelatedRecordLabel(record, relation);
+            if (!key || !label) return null;
+            return { key, label };
+          })
+          .filter(Boolean);
+      },
+      buildRoute({ label }) {
+        if (!routeCollectionId || !labelField) return '';
+        return buildRecommendationRoute(routeCollectionId, labelField, label);
+      },
+      buildWordsRoute({ label, group }) {
+        const wordFilterValue = relationName === 'paragraphs'
+          ? String(group?.key || '').replace(/^id:/, '').trim()
+          : String(label || '').trim();
+        if (!currentCollectionId || !wordsFilterField || !wordFilterValue) return '';
+        return buildExactRecommendationRoute(currentCollectionId, wordsFilterField, wordFilterValue);
+      },
+    };
+  }).filter(Boolean);
 }
 
 function clonePlain(value) {
@@ -742,19 +880,37 @@ const studyManagerController = (() => {
       filterMap: studyTimeByFilterKey,
     });
     const studyTimeByDateSummary = buildStudyTimeByDateSummary({ collectionId, studyTimeByDate });
-    const recommendations = buildWordLearningRecommendations({
+    const getEntryKey = (entry) => String(store?.collections?.getEntryStudyKey?.(entry) || '').trim();
+    const getProgressRecord = (entryKey) => {
+      if (!entryKey) return null;
+      try {
+        if (typeof store?.kanjiProgress?.getKanjiProgressRecord === 'function') {
+          return store.kanjiProgress.getKanjiProgressRecord(entryKey, { collectionKey: collectionId }) || null;
+        }
+      } catch {}
+      return null;
+    };
+
+    const recommendationSets = [];
+    const kanjiRecommendations = buildWordLearningRecommendations({
       collection,
-      getEntryKey: (entry) => String(store?.collections?.getEntryStudyKey?.(entry) || '').trim(),
-      getProgressRecord: (entryKey) => {
-        if (!entryKey) return null;
-        try {
-          if (typeof store?.kanjiProgress?.getKanjiProgressRecord === 'function') {
-            return store.kanjiProgress.getKanjiProgressRecord(entryKey, { collectionKey: collectionId }) || null;
-          }
-        } catch {}
-        return null;
-      },
+      getEntryKey,
+      getProgressRecord,
     });
+    if (kanjiRecommendations) recommendationSets.push(kanjiRecommendations);
+
+    const relatedRecommendationConfigs = buildRelatedCollectionRecommendationConfigs(collection);
+    for (const reportConfig of relatedRecommendationConfigs) {
+      const set = buildGroupedLearningRecommendations({
+        collection,
+        getEntryKey,
+        getProgressRecord,
+        reportConfig,
+      });
+      if (set && Array.isArray(set.items) && set.items.length) recommendationSets.push(set);
+    }
+
+    const recommendations = recommendationSets[0] || null;
 
     const topFilter = studyTimeByFilterKey[''] || studyTimeByFilter[0] || null;
     const collectionSummary = {
@@ -878,6 +1034,26 @@ const studyManagerController = (() => {
         query: null,
         output: recommendations,
       }),
+      recommendationSets: recommendationSets.reduce((out, set) => {
+        const id = String(set?.config?.id || '').trim();
+        if (!id) return out;
+        out[id] = makeReportResult({
+          reportId: id,
+          builder: id === 'kanjiCoverage'
+            ? 'src/reports/studyManager/buildWordLearningRecommendations.js'
+            : 'src/reports/studyManager/buildGroupedLearningRecommendations.js',
+          collectionId,
+          generatedAtIso,
+          inputs: {
+            category: String(collection?.metadata?.category || '').trim(),
+            entryCount,
+            recommendationId: id,
+          },
+          query: null,
+          output: set,
+        });
+        return out;
+      }, {}),
     };
 
     return {
@@ -892,6 +1068,7 @@ const studyManagerController = (() => {
       studyTimeByDate,
       studyTimeByDateSummary,
       recommendations,
+      recommendationSets,
       updatedAtIso: generatedAtIso,
     };
   }

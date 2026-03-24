@@ -98,6 +98,7 @@ export function normalizeTableSettings(v) {
   const cols = (src.columns && typeof src.columns === 'object') ? src.columns : {};
   const acts = (src.actions && typeof src.actions === 'object') ? src.actions : {};
   const table = (src.table && typeof src.table === 'object') ? src.table : {};
+  const searchQuery = String(table.searchQuery || '').trim();
   return {
     columns: {
       orderKeys: normalizeKeyList(cols.orderKeys),
@@ -110,6 +111,7 @@ export function normalizeTableSettings(v) {
     },
     table: {
       virtualization: normalizeVirtualization(table.virtualization),
+      searchQuery,
     },
   };
 }
@@ -127,6 +129,7 @@ export function createDefaultTableSettings(actionOrder = []) {
     },
     table: {
       virtualization: normalizeVirtualization(null),
+      searchQuery: '',
     },
   };
 }

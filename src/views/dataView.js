@@ -1130,12 +1130,35 @@ export function renderData({ store }) {
   let baseEntries = Array.isArray(active.entries) ? active.entries.slice() : [];
   let lastRenderedEntries = [];
 
+  function getAvailableSearchHeaders(entries = baseEntries) {
+    const allDerivedColumns = getAvailableDerivedColumns(entries);
+    return [
+      ...baseHeaders,
+      ...allDerivedColumns.map(def => ({ key: def.key, label: def.label, type: def.type, description: def.description || '', sourceKind: def.sourceKind || '' })),
+    ];
+  }
+
+  function getVisibleSearchHeaders(entries = baseEntries) {
+    const selectedDerivedColumns = getSelectedDerivedColumns(getAvailableDerivedColumns(entries));
+    const selectedHeaders = [
+      ...baseHeaders,
+      ...selectedDerivedColumns.map(def => ({ key: def.key, label: def.label, type: def.type, description: def.description || '', sourceKind: def.sourceKind || '' })),
+    ];
+    return applyDataTableColumnSettings({ headers: selectedHeaders, rows: [] }).headers;
+  }
+
   function getCurrentCollectionView(opts = {}) {
     const coll = store?.collections?.getActiveCollection?.() || active;
     const collState = readCollState() || {};
     const sourceEntries = Array.isArray(opts?.entries) ? opts.entries : baseEntries;
+    const tableSearchFields = Array.isArray(opts?.tableSearchFields) && opts.tableSearchFields.length
+      ? opts.tableSearchFields
+      : getAvailableSearchHeaders(sourceEntries);
+    const tableGlobalSearchFields = Array.isArray(opts?.tableGlobalSearchFields) && opts.tableGlobalSearchFields.length
+      ? opts.tableGlobalSearchFields
+      : getVisibleSearchHeaders(sourceEntries);
     try {
-      return store.collections.getCollectionViewForCollection(coll, collState, { windowSize: 10, entries: sourceEntries }) || { entries: [], indices: [] };
+      return store.collections.getCollectionViewForCollection(coll, collState, { windowSize: 10, entries: sourceEntries, tableSearchFields, tableGlobalSearchFields }) || { entries: [], indices: [] };
     } catch (e) {
       return { entries: [], indices: [], isShuffled: false, order_hash_int: null };
     }
@@ -1383,6 +1406,8 @@ export function renderData({ store }) {
       store,
       headers: configured.headers,
       rows: configured.rows,
+      searchHeaders: allHeaders,
+      searchRows: allRows,
       id: 'data-table',
       collection: active?.key || null,
       sourceMetadata: active?.metadata || null,
