@@ -2,7 +2,7 @@
   "metadata": {
     "name": "All Japanese Words",
     "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
-    "version": 2,
+    "version": 3,
     "category": "japanese",
     "source": "Various Japanese language resources and databases",
     "entry_key": "kanji",
@@ -512,6 +512,1080 @@
       "kanji": "九つ",
       "reading": "ここのつ",
       "meaning": "nine things; nine items in the native counting system",
+      "type": "counter"
+    },
+    {
+      "kanji": "一人",
+      "reading": "ひとり",
+      "meaning": "1 person",
+      "type": "counter"
+    },
+    {
+      "kanji": "三人",
+      "reading": "さんにん",
+      "meaning": "3 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "四人",
+      "reading": "よにん",
+      "meaning": "4 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "五人",
+      "reading": "ごにん",
+      "meaning": "5 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "六人",
+      "reading": "ろくにん",
+      "meaning": "6 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "七人",
+      "reading": "ななにん",
+      "meaning": "7 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "八人",
+      "reading": "はちにん",
+      "meaning": "8 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "九人",
+      "reading": "きゅうにん",
+      "meaning": "9 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "十人",
+      "reading": "じゅうにん",
+      "meaning": "10 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "十一人",
+      "reading": "じゅういちにん",
+      "meaning": "11 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "十二人",
+      "reading": "じゅうににん",
+      "meaning": "12 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "十三人",
+      "reading": "じゅうさんにん",
+      "meaning": "13 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "十四人",
+      "reading": "じゅうよにん",
+      "meaning": "14 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "十五人",
+      "reading": "じゅうごにん",
+      "meaning": "15 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "十六人",
+      "reading": "じゅうろくにん",
+      "meaning": "16 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "十七人",
+      "reading": "じゅうななにん",
+      "meaning": "17 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "十八人",
+      "reading": "じゅうはちにん",
+      "meaning": "18 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "十九人",
+      "reading": "じゅうきゅうにん",
+      "meaning": "19 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "二十人",
+      "reading": "にじゅうにん",
+      "meaning": "20 people",
+      "type": "counter"
+    },
+    {
+      "kanji": "一本",
+      "reading": "いっぽん",
+      "meaning": "1 long object",
+      "type": "counter"
+    },
+    {
+      "kanji": "三本",
+      "reading": "さんぼん",
+      "meaning": "3 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "四本",
+      "reading": "よんほん",
+      "meaning": "4 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "五本",
+      "reading": "ごほん",
+      "meaning": "5 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "六本",
+      "reading": "ろっぽん",
+      "meaning": "6 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "七本",
+      "reading": "ななほん",
+      "meaning": "7 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "八本",
+      "reading": "はっぽん",
+      "meaning": "8 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "九本",
+      "reading": "きゅうほん",
+      "meaning": "9 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十本",
+      "reading": "じゅっぽん",
+      "meaning": "10 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十一本",
+      "reading": "じゅういっぽん",
+      "meaning": "11 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十二本",
+      "reading": "じゅうにほん",
+      "meaning": "12 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十三本",
+      "reading": "じゅうさんぼん",
+      "meaning": "13 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十四本",
+      "reading": "じゅうよんほん",
+      "meaning": "14 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十五本",
+      "reading": "じゅうごほん",
+      "meaning": "15 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十六本",
+      "reading": "じゅうろっぽん",
+      "meaning": "16 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十七本",
+      "reading": "じゅうななほん",
+      "meaning": "17 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十八本",
+      "reading": "じゅうはっぽん",
+      "meaning": "18 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十九本",
+      "reading": "じゅうきゅうほん",
+      "meaning": "19 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "二十本",
+      "reading": "にじゅっぽん",
+      "meaning": "20 long objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "一枚",
+      "reading": "いちまい",
+      "meaning": "1 flat object",
+      "type": "counter"
+    },
+    {
+      "kanji": "四枚",
+      "reading": "よんまい",
+      "meaning": "4 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "五枚",
+      "reading": "ごまい",
+      "meaning": "5 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "七枚",
+      "reading": "ななまい",
+      "meaning": "7 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "八枚",
+      "reading": "はちまい",
+      "meaning": "8 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "九枚",
+      "reading": "きゅうまい",
+      "meaning": "9 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十枚",
+      "reading": "じゅうまい",
+      "meaning": "10 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十一枚",
+      "reading": "じゅういちまい",
+      "meaning": "11 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十二枚",
+      "reading": "じゅうにまい",
+      "meaning": "12 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十三枚",
+      "reading": "じゅうさんまい",
+      "meaning": "13 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十四枚",
+      "reading": "じゅうよんまい",
+      "meaning": "14 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十五枚",
+      "reading": "じゅうごまい",
+      "meaning": "15 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十六枚",
+      "reading": "じゅうろくまい",
+      "meaning": "16 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十七枚",
+      "reading": "じゅうななまい",
+      "meaning": "17 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十八枚",
+      "reading": "じゅうはちまい",
+      "meaning": "18 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十九枚",
+      "reading": "じゅうきゅうまい",
+      "meaning": "19 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "二十枚",
+      "reading": "にじゅうまい",
+      "meaning": "20 flat objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "一個",
+      "reading": "いっこ",
+      "meaning": "1 small object",
+      "type": "counter"
+    },
+    {
+      "kanji": "三個",
+      "reading": "さんこ",
+      "meaning": "3 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "四個",
+      "reading": "よんこ",
+      "meaning": "4 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "六個",
+      "reading": "ろっこ",
+      "meaning": "6 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "七個",
+      "reading": "ななこ",
+      "meaning": "7 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "八個",
+      "reading": "はっこ",
+      "meaning": "8 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "九個",
+      "reading": "きゅうこ",
+      "meaning": "9 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十個",
+      "reading": "じゅっこ",
+      "meaning": "10 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十一個",
+      "reading": "じゅういっこ",
+      "meaning": "11 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十二個",
+      "reading": "じゅうにこ",
+      "meaning": "12 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十三個",
+      "reading": "じゅうさんこ",
+      "meaning": "13 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十四個",
+      "reading": "じゅうよんこ",
+      "meaning": "14 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十五個",
+      "reading": "じゅうごこ",
+      "meaning": "15 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十六個",
+      "reading": "じゅうろっこ",
+      "meaning": "16 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十七個",
+      "reading": "じゅうななこ",
+      "meaning": "17 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十八個",
+      "reading": "じゅうはっこ",
+      "meaning": "18 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "十九個",
+      "reading": "じゅうきゅうこ",
+      "meaning": "19 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "二十個",
+      "reading": "にじゅっこ",
+      "meaning": "20 small objects",
+      "type": "counter"
+    },
+    {
+      "kanji": "二回",
+      "reading": "にかい",
+      "meaning": "2 times; 2 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "四回",
+      "reading": "よんかい",
+      "meaning": "4 times; 4 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "五回",
+      "reading": "ごかい",
+      "meaning": "5 times; 5 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "六回",
+      "reading": "ろっかい",
+      "meaning": "6 times; 6 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "七回",
+      "reading": "ななかい",
+      "meaning": "7 times; 7 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "八回",
+      "reading": "はっかい",
+      "meaning": "8 times; 8 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "九回",
+      "reading": "きゅうかい",
+      "meaning": "9 times; 9 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "十回",
+      "reading": "じゅっかい",
+      "meaning": "10 times; 10 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "十一回",
+      "reading": "じゅういっかい",
+      "meaning": "11 times; 11 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "十二回",
+      "reading": "じゅうにかい",
+      "meaning": "12 times; 12 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "十三回",
+      "reading": "じゅうさんかい",
+      "meaning": "13 times; 13 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "十四回",
+      "reading": "じゅうよんかい",
+      "meaning": "14 times; 14 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "十五回",
+      "reading": "じゅうごかい",
+      "meaning": "15 times; 15 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "十六回",
+      "reading": "じゅうろっかい",
+      "meaning": "16 times; 16 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "十七回",
+      "reading": "じゅうななかい",
+      "meaning": "17 times; 17 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "十八回",
+      "reading": "じゅうはっかい",
+      "meaning": "18 times; 18 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "十九回",
+      "reading": "じゅうきゅうかい",
+      "meaning": "19 times; 19 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "二十回",
+      "reading": "にじゅっかい",
+      "meaning": "20 times; 20 occurrences",
+      "type": "counter"
+    },
+    {
+      "kanji": "一分",
+      "reading": "いっぷん",
+      "meaning": "1 minute",
+      "type": "counter"
+    },
+    {
+      "kanji": "三分",
+      "reading": "さんぷん",
+      "meaning": "3 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "四分",
+      "reading": "よんぷん",
+      "meaning": "4 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "五分",
+      "reading": "ごふん",
+      "meaning": "5 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "六分",
+      "reading": "ろっぷん",
+      "meaning": "6 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "七分",
+      "reading": "ななふん",
+      "meaning": "7 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "八分",
+      "reading": "はっぷん",
+      "meaning": "8 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "九分",
+      "reading": "きゅうふん",
+      "meaning": "9 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "十分",
+      "reading": "じゅっぷん",
+      "meaning": "10 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "十一分",
+      "reading": "じゅういっぷん",
+      "meaning": "11 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "十二分",
+      "reading": "じゅうにふん",
+      "meaning": "12 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "十三分",
+      "reading": "じゅうさんぷん",
+      "meaning": "13 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "十四分",
+      "reading": "じゅうよんぷん",
+      "meaning": "14 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "十五分",
+      "reading": "じゅうごふん",
+      "meaning": "15 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "十六分",
+      "reading": "じゅうろっぷん",
+      "meaning": "16 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "十七分",
+      "reading": "じゅうななふん",
+      "meaning": "17 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "十八分",
+      "reading": "じゅうはっぷん",
+      "meaning": "18 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "十九分",
+      "reading": "じゅうきゅうふん",
+      "meaning": "19 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "二十分",
+      "reading": "にじゅっぷん",
+      "meaning": "20 minutes",
+      "type": "counter"
+    },
+    {
+      "kanji": "一匹",
+      "reading": "いっぴき",
+      "meaning": "1 small animal",
+      "type": "counter"
+    },
+    {
+      "kanji": "二匹",
+      "reading": "にひき",
+      "meaning": "2 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "三匹",
+      "reading": "さんびき",
+      "meaning": "3 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "四匹",
+      "reading": "よんひき",
+      "meaning": "4 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "五匹",
+      "reading": "ごひき",
+      "meaning": "5 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "六匹",
+      "reading": "ろっぴき",
+      "meaning": "6 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "七匹",
+      "reading": "ななひき",
+      "meaning": "7 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "八匹",
+      "reading": "はっぴき",
+      "meaning": "8 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "九匹",
+      "reading": "きゅうひき",
+      "meaning": "9 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "十匹",
+      "reading": "じゅっぴき",
+      "meaning": "10 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "十一匹",
+      "reading": "じゅういっぴき",
+      "meaning": "11 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "十二匹",
+      "reading": "じゅうにひき",
+      "meaning": "12 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "十三匹",
+      "reading": "じゅうさんびき",
+      "meaning": "13 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "十四匹",
+      "reading": "じゅうよんひき",
+      "meaning": "14 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "十五匹",
+      "reading": "じゅうごひき",
+      "meaning": "15 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "十六匹",
+      "reading": "じゅうろっぴき",
+      "meaning": "16 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "十七匹",
+      "reading": "じゅうななひき",
+      "meaning": "17 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "十八匹",
+      "reading": "じゅうはっぴき",
+      "meaning": "18 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "十九匹",
+      "reading": "じゅうきゅうひき",
+      "meaning": "19 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "二十匹",
+      "reading": "にじゅっぴき",
+      "meaning": "20 small animals",
+      "type": "counter"
+    },
+    {
+      "kanji": "一歳",
+      "reading": "いっさい",
+      "meaning": "1 year old",
+      "type": "counter"
+    },
+    {
+      "kanji": "二歳",
+      "reading": "にさい",
+      "meaning": "2 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "三歳",
+      "reading": "さんさい",
+      "meaning": "3 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "四歳",
+      "reading": "よんさい",
+      "meaning": "4 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "五歳",
+      "reading": "ごさい",
+      "meaning": "5 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "六歳",
+      "reading": "ろくさい",
+      "meaning": "6 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "七歳",
+      "reading": "ななさい",
+      "meaning": "7 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "八歳",
+      "reading": "はっさい",
+      "meaning": "8 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "九歳",
+      "reading": "きゅうさい",
+      "meaning": "9 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "十歳",
+      "reading": "じゅっさい",
+      "meaning": "10 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "十一歳",
+      "reading": "じゅういっさい",
+      "meaning": "11 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "十二歳",
+      "reading": "じゅうにさい",
+      "meaning": "12 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "十三歳",
+      "reading": "じゅうさんさい",
+      "meaning": "13 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "十四歳",
+      "reading": "じゅうよんさい",
+      "meaning": "14 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "十五歳",
+      "reading": "じゅうごさい",
+      "meaning": "15 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "十六歳",
+      "reading": "じゅうろくさい",
+      "meaning": "16 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "十七歳",
+      "reading": "じゅうななさい",
+      "meaning": "17 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "十八歳",
+      "reading": "じゅうはっさい",
+      "meaning": "18 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "十九歳",
+      "reading": "じゅうきゅうさい",
+      "meaning": "19 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "二十歳",
+      "reading": "はたち",
+      "meaning": "20 years old",
+      "type": "counter"
+    },
+    {
+      "kanji": "一冊",
+      "reading": "いっさつ",
+      "meaning": "1 bound volume; 1 book",
+      "type": "counter"
+    },
+    {
+      "kanji": "二冊",
+      "reading": "にさつ",
+      "meaning": "2 bound volumes; 2 books",
+      "type": "counter"
+    },
+    {
+      "kanji": "三冊",
+      "reading": "さんさつ",
+      "meaning": "3 bound volumes; 3 books",
+      "type": "counter"
+    },
+    {
+      "kanji": "四冊",
+      "reading": "よんさつ",
+      "meaning": "4 bound volumes; 4 books",
+      "type": "counter"
+    },
+    {
+      "kanji": "五冊",
+      "reading": "ごさつ",
+      "meaning": "5 bound volumes; 5 books",
+      "type": "counter"
+    },
+    {
+      "kanji": "六冊",
+      "reading": "ろくさつ",
+      "meaning": "6 bound volumes; 6 books",
+      "type": "counter"
+    },
+    {
+      "kanji": "七冊",
+      "reading": "ななさつ",
+      "meaning": "7 bound volumes; 7 books",
+      "type": "counter"
+    },
+    {
+      "kanji": "八冊",
+      "reading": "はっさつ",
+      "meaning": "8 bound volumes; 8 books",
+      "type": "counter"
+    },
+    {
+      "kanji": "九冊",
+      "reading": "きゅうさつ",
+      "meaning": "9 bound volumes; 9 books",
+      "type": "counter"
+    },
+    {
+      "kanji": "十冊",
+      "reading": "じゅっさつ",
+      "meaning": "10 bound volumes; 10 books",
+      "type": "counter"
+    },
+    {
+      "kanji": "一杯",
+      "reading": "いっぱい",
+      "meaning": "1 cup; 1 glassful",
+      "type": "counter"
+    },
+    {
+      "kanji": "三杯",
+      "reading": "さんばい",
+      "meaning": "3 cups; 3 glassfuls",
+      "type": "counter"
+    },
+    {
+      "kanji": "四杯",
+      "reading": "よんはい",
+      "meaning": "4 cups; 4 glassfuls",
+      "type": "counter"
+    },
+    {
+      "kanji": "五杯",
+      "reading": "ごはい",
+      "meaning": "5 cups; 5 glassfuls",
+      "type": "counter"
+    },
+    {
+      "kanji": "六杯",
+      "reading": "ろっぱい",
+      "meaning": "6 cups; 6 glassfuls",
+      "type": "counter"
+    },
+    {
+      "kanji": "七杯",
+      "reading": "ななはい",
+      "meaning": "7 cups; 7 glassfuls",
+      "type": "counter"
+    },
+    {
+      "kanji": "八杯",
+      "reading": "はっぱい",
+      "meaning": "8 cups; 8 glassfuls",
+      "type": "counter"
+    },
+    {
+      "kanji": "九杯",
+      "reading": "きゅうはい",
+      "meaning": "9 cups; 9 glassfuls",
+      "type": "counter"
+    },
+    {
+      "kanji": "十杯",
+      "reading": "じゅっぱい",
+      "meaning": "10 cups; 10 glassfuls",
+      "type": "counter"
+    },
+    {
+      "kanji": "一台",
+      "reading": "いちだい",
+      "meaning": "1 machine; 1 vehicle",
+      "type": "counter"
+    },
+    {
+      "kanji": "二台",
+      "reading": "にだい",
+      "meaning": "2 machines; 2 vehicles",
+      "type": "counter"
+    },
+    {
+      "kanji": "三台",
+      "reading": "さんだい",
+      "meaning": "3 machines; 3 vehicles",
+      "type": "counter"
+    },
+    {
+      "kanji": "四台",
+      "reading": "よんだい",
+      "meaning": "4 machines; 4 vehicles",
+      "type": "counter"
+    },
+    {
+      "kanji": "五台",
+      "reading": "ごだい",
+      "meaning": "5 machines; 5 vehicles",
+      "type": "counter"
+    },
+    {
+      "kanji": "六台",
+      "reading": "ろくだい",
+      "meaning": "6 machines; 6 vehicles",
+      "type": "counter"
+    },
+    {
+      "kanji": "七台",
+      "reading": "ななだい",
+      "meaning": "7 machines; 7 vehicles",
+      "type": "counter"
+    },
+    {
+      "kanji": "八台",
+      "reading": "はちだい",
+      "meaning": "8 machines; 8 vehicles",
+      "type": "counter"
+    },
+    {
+      "kanji": "九台",
+      "reading": "きゅうだい",
+      "meaning": "9 machines; 9 vehicles",
+      "type": "counter"
+    },
+    {
+      "kanji": "十台",
+      "reading": "じゅうだい",
+      "meaning": "10 machines; 10 vehicles",
       "type": "counter"
     },
     {

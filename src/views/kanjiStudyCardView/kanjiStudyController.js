@@ -10,7 +10,23 @@ const DEFAULT_VIEW = {
   entryFields: 'all',
   relatedFields: {},
   displayCards: 'all',
+  cards: {},
 };
+
+function cloneCardsConfig(cards) {
+  if (!cards || typeof cards !== 'object' || Array.isArray(cards)) return {};
+  const out = {};
+  for (const [cardKey, rawConfig] of Object.entries(cards)) {
+    const key = String(cardKey || '').trim();
+    if (!key || !rawConfig || typeof rawConfig !== 'object' || Array.isArray(rawConfig)) continue;
+    const nextConfig = {};
+    if (Array.isArray(rawConfig.fields)) {
+      nextConfig.fields = Array.from(new Set(rawConfig.fields.map((field) => String(field || '').trim()).filter(Boolean)));
+    }
+    out[key] = nextConfig;
+  }
+  return out;
+}
 
 function getCollectionFieldKeys(collection) {
   const md = collection?.metadata || {};
@@ -57,10 +73,30 @@ function _validateEntryFields(fields, collection) {
   }
 }
 
+function _validateCards(cards, collection) {
+  if (!cards || typeof cards !== 'object' || Array.isArray(cards)) throw new Error('cards must be an object');
+  const fieldKeys = new Set(getCollectionFieldKeys(collection));
+  for (const [cardKey, rawConfig] of Object.entries(cards)) {
+    const key = String(cardKey || '').trim();
+    if (!key) continue;
+    if (!rawConfig || typeof rawConfig !== 'object' || Array.isArray(rawConfig)) {
+      throw new Error(`cards.${key} must be an object`);
+    }
+    if (!Object.prototype.hasOwnProperty.call(rawConfig, 'fields')) continue;
+    if (!Array.isArray(rawConfig.fields)) throw new Error(`cards.${key}.fields must be an array`);
+    for (const fieldKey of rawConfig.fields) {
+      const field = String(fieldKey || '').trim();
+      if (!field) throw new Error(`cards.${key}.fields entries must be non-empty strings`);
+      if (!fieldKeys.has(field)) throw new Error(`cards.${key}.fields entry not in collection schema: ${field}`);
+    }
+  }
+}
+
 function create(collKey) {
   const validators = {
     displayCards: (v) => _validateDisplayCards(v),
     entryFields: (v, collection) => _validateEntryFields(v, collection),
+    cards: (v, collection) => _validateCards(v, collection),
     currentIndex: (v) => {
       const n = Number(v);
       if (!Number.isInteger(n) || n < 0) throw new Error('currentIndex must be an integer >= 0');
@@ -131,6 +167,23 @@ function create(collKey) {
     reset: base.reset,
     setEntryFields: (fields) => base.set({ entryFields: fields }),
     setDisplayCards: (cards) => base.set({ displayCards: cards }),
+    setCards: (cards) => base.set({ cards: cloneCardsConfig(cards) }),
+    setCardConfig: (cardKey, config) => {
+      const key = String(cardKey || '').trim();
+      if (!key) throw new Error('cardKey required');
+      const current = base.get() || {};
+      const nextCards = cloneCardsConfig(current.cards);
+      if (!config || typeof config !== 'object' || Array.isArray(config)) delete nextCards[key];
+      else nextCards[key] = cloneCardsConfig({ [key]: config })[key] || {};
+      return base.set({ cards: nextCards });
+    },
+    getCardConfig: (cardKey) => {
+      const key = String(cardKey || '').trim();
+      if (!key) return {};
+      const current = base.get() || {};
+      const nextCards = cloneCardsConfig(current.cards);
+      return nextCards[key] || {};
+    },
     goToIndex: async (newIndex) => {
       const coll = await base.ready;
       const n = Array.isArray(coll?.entries) ? coll.entries.length : 0;

@@ -484,7 +484,6 @@ export function renderData({ store }) {
   let expansionIchidanForms = [];
   let expansionGodanForms = [];
   let expansionIrregularForms = [];
-  let expansionCounterForms = [];
   let expansionSentenceMathForms = [];
   function getExpansionConfig() {
     try {
@@ -747,7 +746,6 @@ export function renderData({ store }) {
     const hasIchidan = !!expansionConfig?.supports?.ichidan;
     const hasGodan = !!expansionConfig?.supports?.godan;
     const hasIrregular = !!expansionConfig?.supports?.irregular;
-    const hasCounters = !!expansionConfig?.supports?.counters;
     const hasSentenceMath = !!expansionConfig?.supports?.sentenceMath;
 
     const iBaseItems = Array.isArray(expansionConfig?.iBaseItems) ? expansionConfig.iBaseItems : [];
@@ -755,7 +753,6 @@ export function renderData({ store }) {
     const ichidanBaseItems = Array.isArray(expansionConfig?.ichidanVerbBaseItems) ? expansionConfig.ichidanVerbBaseItems : [];
     const godanBaseItems = Array.isArray(expansionConfig?.godanVerbBaseItems) ? expansionConfig.godanVerbBaseItems : [];
     const irregularBaseItems = Array.isArray(expansionConfig?.irregularVerbBaseItems) ? expansionConfig.irregularVerbBaseItems : [];
-    const counterBaseItems = Array.isArray(expansionConfig?.counterBaseItems) ? expansionConfig.counterBaseItems : [];
     const sentenceMathBaseItems = Array.isArray(expansionConfig?.sentenceMathBaseItems) ? expansionConfig.sentenceMathBaseItems : [];
 
     const iItems = Array.isArray(expansionConfig?.iItems) ? expansionConfig.iItems : [];
@@ -763,7 +760,6 @@ export function renderData({ store }) {
     const ichidanItems = Array.isArray(expansionConfig?.ichidanVerbItems) ? expansionConfig.ichidanVerbItems : [];
     const godanItems = Array.isArray(expansionConfig?.godanVerbItems) ? expansionConfig.godanVerbItems : [];
     const irregularItems = Array.isArray(expansionConfig?.irregularVerbItems) ? expansionConfig.irregularVerbItems : [];
-    const counterItems = Array.isArray(expansionConfig?.counterItems) ? expansionConfig.counterItems : [];
     const sentenceMathItems = Array.isArray(expansionConfig?.sentenceMathItems) ? expansionConfig.sentenceMathItems : [];
 
     // Expand any saved 'all' sentinel into explicit lists based on available items
@@ -782,9 +778,6 @@ export function renderData({ store }) {
       }
       if (expansionIrregularForms === 'all' || (Array.isArray(expansionIrregularForms) && expansionIrregularForms.includes('all'))) {
         expansionIrregularForms = irregularItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
-      }
-      if (expansionCounterForms === 'all' || (Array.isArray(expansionCounterForms) && expansionCounterForms.includes('all'))) {
-        expansionCounterForms = counterItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
       }
       if (expansionSentenceMathForms === 'all' || (Array.isArray(expansionSentenceMathForms) && expansionSentenceMathForms.includes('all'))) {
         expansionSentenceMathForms = sentenceMathItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
@@ -886,24 +879,6 @@ export function renderData({ store }) {
       caption: 'irregular'
     });
     try { if (irregularRec && irregularRec.group) { irregularRec.group.style.display = hasIrregular ? '' : 'none'; expansionWrap.append(irregularRec.group); } } catch (e) {}
-    controls.removeControl && controls.removeControl('expansionCounters');
-    const counterRec = controls.addElement({
-      type: 'dropdown', key: 'expansionCounters', items: counterItems, multi: true,
-      values: expansionCounterForms,
-      commitOnClose: true,
-      getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
-      onChange: (vals) => {
-        const chosen = (typeof vals === 'string' && vals === 'all')
-          ? counterItems.map(it => String(it?.value || ''))
-          : vals;
-        expansionCounterForms = orderFormsByItems(normalizeFormList(chosen), counterBaseItems);
-        applyExpansionSelectionChange();
-      },
-      includeAllNone: true,
-      className: 'data-expansion-dropdown',
-      caption: 'counters'
-    });
-    try { if (counterRec && counterRec.group) { counterRec.group.style.display = hasCounters ? '' : 'none'; expansionWrap.append(counterRec.group); } } catch (e) {}
     controls.removeControl && controls.removeControl('expansionSentenceMath');
     const sentenceMathRec = controls.addElement({
       type: 'dropdown', key: 'expansionSentenceMath', items: sentenceMathItems, multi: true,
@@ -984,7 +959,6 @@ export function renderData({ store }) {
     expansionIchidanForms = normalizeFormList(saved?.expansion_ichidan ?? saved?.expansion_ichidanVerb ?? []);
     expansionGodanForms = normalizeFormList(saved?.expansion_godan ?? saved?.expansion_godanVerb ?? []);
     expansionIrregularForms = normalizeFormList(saved?.expansion_irregular ?? saved?.expansion_irregularVerb ?? []);
-    expansionCounterForms = normalizeFormList(saved?.expansion_counters ?? saved?.expansion_counter ?? []);
     expansionSentenceMathForms = normalizeFormList(saved?.expansion_sentence_math ?? saved?.expansion_sentenceMath ?? []);
 
     // If the active collection does not support the expansion kind,
@@ -995,7 +969,6 @@ export function renderData({ store }) {
     const hasIchidan = !!expansionConfig?.supports?.ichidan;
     const hasGodan = !!expansionConfig?.supports?.godan;
     const hasIrregular = !!expansionConfig?.supports?.irregular;
-    const hasCounters = !!expansionConfig?.supports?.counters;
     const hasSentenceMath = !!expansionConfig?.supports?.sentenceMath;
 
     if (!hasI) {
@@ -1026,12 +999,6 @@ export function renderData({ store }) {
       expansionIrregularForms = [];
       if (saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_irregular')) {
         deleteExpansionSettingIfPresent(['expansion_irregular', 'expansion_irregularVerb', 'expansion_irregular_verb']);
-      }
-    }
-    if (!hasCounters) {
-      expansionCounterForms = [];
-      if (saved && typeof saved === 'object' && (Object.prototype.hasOwnProperty.call(saved, 'expansion_counters') || Object.prototype.hasOwnProperty.call(saved, 'expansion_counter'))) {
-        deleteExpansionSettingIfPresent(['expansion_counters', 'expansion_counter']);
       }
     }
     if (!hasSentenceMath) {
@@ -1136,7 +1103,6 @@ export function renderData({ store }) {
     const ichidanItems = Array.isArray(cfg?.ichidanVerbItems) ? cfg.ichidanVerbItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
     const godanItems = Array.isArray(cfg?.godanVerbItems) ? cfg.godanVerbItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
     const irregularItems = Array.isArray(cfg?.irregularVerbItems) ? cfg.irregularVerbItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-    const counterItems = Array.isArray(cfg?.counterItems) ? cfg.counterItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
     const sentenceMathItems = Array.isArray(cfg?.sentenceMathItems) ? cfg.sentenceMathItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
 
     const iSave = (expansionIForms === 'all' || (Array.isArray(expansionIForms) && iItems.length > 0 && iItems.length === expansionIForms.length && iItems.every(v => expansionIForms.includes(v)))) ? 'all' : (Array.isArray(expansionIForms) ? expansionIForms.slice() : []);
@@ -1144,7 +1110,6 @@ export function renderData({ store }) {
     const ichidanSave = (expansionIchidanForms === 'all' || (Array.isArray(expansionIchidanForms) && ichidanItems.length > 0 && ichidanItems.length === expansionIchidanForms.length && ichidanItems.every(v => expansionIchidanForms.includes(v)))) ? 'all' : (Array.isArray(expansionIchidanForms) ? expansionIchidanForms.slice() : []);
     const godanSave = (expansionGodanForms === 'all' || (Array.isArray(expansionGodanForms) && godanItems.length > 0 && godanItems.length === expansionGodanForms.length && godanItems.every(v => expansionGodanForms.includes(v)))) ? 'all' : (Array.isArray(expansionGodanForms) ? expansionGodanForms.slice() : []);
     const irregularSave = (expansionIrregularForms === 'all' || (Array.isArray(expansionIrregularForms) && irregularItems.length > 0 && irregularItems.length === expansionIrregularForms.length && irregularItems.every(v => expansionIrregularForms.includes(v)))) ? 'all' : (Array.isArray(expansionIrregularForms) ? expansionIrregularForms.slice() : []);
-    const counterSave = (expansionCounterForms === 'all' || (Array.isArray(expansionCounterForms) && counterItems.length > 0 && counterItems.length === expansionCounterForms.length && counterItems.every(v => expansionCounterForms.includes(v)))) ? 'all' : (Array.isArray(expansionCounterForms) ? expansionCounterForms.slice() : []);
     const sentenceMathSave = (expansionSentenceMathForms === 'all' || (Array.isArray(expansionSentenceMathForms) && sentenceMathItems.length > 0 && sentenceMathItems.length === expansionSentenceMathForms.length && sentenceMathItems.every(v => expansionSentenceMathForms.includes(v)))) ? 'all' : (Array.isArray(expansionSentenceMathForms) ? expansionSentenceMathForms.slice() : []);
 
 
@@ -1154,7 +1119,6 @@ export function renderData({ store }) {
       expansion_ichidan: ichidanSave,
       expansion_godan: godanSave,
       expansion_irregular: irregularSave,
-      expansion_counters: counterSave,
       expansion_sentence_math: sentenceMathSave,
       expansion_sentence_math_seed: Date.now(),
     });
@@ -1192,8 +1156,6 @@ export function renderData({ store }) {
       expansion_ichidan: [],
       expansion_godan: [],
       expansion_irregular: [],
-      expansion_counters: [],
-      expansion_counter: [],
       expansion_sentence_math: [],
       expansion_sentenceMath: [],
       expansion_sentence_math_seed: 0,
@@ -1702,7 +1664,6 @@ export function renderData({ store }) {
                 ichidanForms: expansionIchidanForms,
                 godanForms: expansionGodanForms,
                 irregularForms: expansionIrregularForms,
-                counterForms: expansionCounterForms,
                 sentenceMathForms: expansionSentenceMathForms,
               })
             : null;
@@ -1711,17 +1672,15 @@ export function renderData({ store }) {
           const ichidanDelta = Math.max(0, Math.round(Number(stats?.ichidanDelta) || 0));
           const godanDelta = Math.max(0, Math.round(Number(stats?.godanDelta) || 0));
           const irregularDelta = Math.max(0, Math.round(Number(stats?.irregularDelta) || 0));
-          const counterDelta = Math.max(0, Math.round(Number(stats?.counterDelta) || 0));
           const sentenceMathDelta = Math.max(0, Math.round(Number(stats?.sentenceMathDelta) || 0));
           if (iDelta) parts.push(`+${iDelta} i-adj`);
           if (naDelta) parts.push(`+${naDelta} na-adj`);
           if (ichidanDelta) parts.push(`+${ichidanDelta} ichidan`);
           if (godanDelta) parts.push(`+${godanDelta} godan`);
           if (irregularDelta) parts.push(`+${irregularDelta} irregular`);
-          if (counterDelta) parts.push(`+${counterDelta} counters`);
           if (sentenceMathDelta) parts.push(`+${sentenceMathDelta} math`);
-          if (iDelta || naDelta || ichidanDelta || godanDelta || irregularDelta || counterDelta || sentenceMathDelta) {
-            titleParts.push(`Expansion delta: +${iDelta} i-adj, +${naDelta} na-adj, +${ichidanDelta} ichidan, +${godanDelta} godan, +${irregularDelta} irregular, +${counterDelta} counters, +${sentenceMathDelta} math`);
+          if (iDelta || naDelta || ichidanDelta || godanDelta || irregularDelta || sentenceMathDelta) {
+            titleParts.push(`Expansion delta: +${iDelta} i-adj, +${naDelta} na-adj, +${ichidanDelta} ichidan, +${godanDelta} godan, +${irregularDelta} irregular, +${sentenceMathDelta} math`);
           }
         } catch (e) {
           // ignore
@@ -1822,7 +1781,6 @@ export function renderData({ store }) {
           const nextIchidan = normalizeFormList(saved?.expansion_ichidan ?? saved?.expansion_ichidanVerb ?? []);
           const nextGodan = normalizeFormList(saved?.expansion_godan ?? saved?.expansion_godanVerb ?? []);
           const nextIrregular = normalizeFormList(saved?.expansion_irregular ?? saved?.expansion_irregularVerb ?? []);
-          const nextCounters = normalizeFormList(saved?.expansion_counters ?? saved?.expansion_counter ?? []);
           const nextSentenceMath = normalizeFormList(saved?.expansion_sentence_math ?? saved?.expansion_sentenceMath ?? []);
 
           const expansionConfig = getExpansionConfig();
@@ -1831,7 +1789,6 @@ export function renderData({ store }) {
           const hasIchidan = !!expansionConfig?.supports?.ichidan;
           const hasGodan = !!expansionConfig?.supports?.godan;
           const hasIrregular = !!expansionConfig?.supports?.irregular;
-          const hasCounters = !!expansionConfig?.supports?.counters;
           const hasSentenceMath = !!expansionConfig?.supports?.sentenceMath;
 
           const cleanedI = hasI ? nextI : [];
@@ -1839,7 +1796,6 @@ export function renderData({ store }) {
           const cleanedIchidan = hasIchidan ? nextIchidan : [];
           const cleanedGodan = hasGodan ? nextGodan : [];
           const cleanedIrregular = hasIrregular ? nextIrregular : [];
-          const cleanedCounters = hasCounters ? nextCounters : [];
           const cleanedSentenceMath = hasSentenceMath ? nextSentenceMath : [];
 
           // If settings exist for a kind the collection doesn't contain, delete them.
@@ -1858,9 +1814,6 @@ export function renderData({ store }) {
           if (!hasIrregular && saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_irregular')) {
             deleteExpansionSettingIfPresent(['expansion_irregular', 'expansion_irregularVerb', 'expansion_irregular_verb']);
           }
-          if (!hasCounters && saved && typeof saved === 'object' && (Object.prototype.hasOwnProperty.call(saved, 'expansion_counters') || Object.prototype.hasOwnProperty.call(saved, 'expansion_counter'))) {
-            deleteExpansionSettingIfPresent(['expansion_counters', 'expansion_counter']);
-          }
           if (!hasSentenceMath && saved && typeof saved === 'object' && (Object.prototype.hasOwnProperty.call(saved, 'expansion_sentence_math') || Object.prototype.hasOwnProperty.call(saved, 'expansion_sentenceMath') || Object.prototype.hasOwnProperty.call(saved, 'expansion_sentence_math_seed') || Object.prototype.hasOwnProperty.call(saved, 'expansion_sentenceMathSeed'))) {
             deleteExpansionSettingIfPresent(['expansion_sentence_math', 'expansion_sentenceMath', 'expansion_sentence_math_seed', 'expansion_sentenceMathSeed']);
           }
@@ -1871,7 +1824,6 @@ export function renderData({ store }) {
             (!sameStringArray(cleanedIchidan, expansionIchidanForms)) ||
             (!sameStringArray(cleanedGodan, expansionGodanForms)) ||
             (!sameStringArray(cleanedIrregular, expansionIrregularForms)) ||
-            (!sameStringArray(cleanedCounters, expansionCounterForms)) ||
             (!sameStringArray(cleanedSentenceMath, expansionSentenceMathForms));
 
           expansionIForms = cleanedI;
@@ -1879,7 +1831,6 @@ export function renderData({ store }) {
           expansionIchidanForms = cleanedIchidan;
           expansionGodanForms = cleanedGodan;
           expansionIrregularForms = cleanedIrregular;
-          expansionCounterForms = cleanedCounters;
           expansionSentenceMathForms = cleanedSentenceMath;
           if (changed) renderExpansionControls();
         } catch (e) {

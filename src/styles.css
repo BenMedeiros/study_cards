@@ -1406,19 +1406,7 @@ input[type="number"].button::-webkit-inner-spin-button {
 /* Kanji study specific tweaks */
 
 
-.kanji-full-card .kanji-full-row {
-  display: grid;
-  grid-template-columns: 10rem 1fr 3rem;
-  border-bottom: 1px grey solid;
-  padding: .3rem 0;
-}
-
-.kanji-full-card .kanji-full-label {
-  color: var(--muted);
-  font-size: 0.75rem;
-}
-
-/* Generic flat card should share the same visual styling as the kanji full card. */
+/* Generic flat card row layout. */
 .generic-flat-card .kanji-full-row {
   display: grid;
   grid-template-columns: 10rem 1fr;
@@ -1426,9 +1414,158 @@ input[type="number"].button::-webkit-inner-spin-button {
   padding: .3rem 0;
 }
 
+.generic-flat-card .generic-flat-body {
+  margin-top: 0.85rem;
+}
+
 .generic-flat-card .kanji-full-label {
   color: var(--muted);
   font-size: 0.75rem;
+}
+
+.kanji-study-card-config-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(2px);
+}
+
+.kanji-study-card-config-dialog {
+  width: min(34rem, calc(100vw - 1rem));
+  max-height: calc(100vh - 1rem);
+  margin: 0;
+  overflow: hidden;
+  gap: 0.85rem;
+}
+
+.kanji-study-card-config-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.kanji-study-card-config-header .hint {
+  margin: 0.35rem 0 0;
+}
+
+.kanji-study-card-config-summary {
+  margin-top: 0.5rem;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.kanji-study-card-config-body {
+  min-height: 0;
+  overflow: auto;
+}
+
+.kanji-study-card-config-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.kanji-study-card-config-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.7rem 0.8rem;
+  border: var(--border-1);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.kanji-study-card-config-item-main {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.kanji-study-card-config-item-main input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+}
+
+.kanji-study-card-config-item-copy {
+  min-width: 0;
+}
+
+.kanji-study-card-config-item-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.kanji-study-card-config-item-key {
+  margin-top: 0.15rem;
+  word-break: break-word;
+}
+
+.kanji-study-card-config-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.kanji-study-card-config-move:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.kanji-study-card-config-empty {
+  margin: 0;
+}
+
+.kanji-study-card-config-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.kanji-study-card-config-footer-left,
+.kanji-study-card-config-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (max-width: 720px) {
+  .kanji-study-card-config-backdrop {
+    padding: 0.25rem;
+  }
+
+  .kanji-study-card-config-dialog {
+    width: calc(100vw - 0.5rem);
+    max-height: calc(100vh - 0.5rem);
+    border-radius: 0.8rem;
+  }
+
+  .kanji-study-card-config-item {
+    grid-template-columns: 1fr;
+  }
+
+  .kanji-study-card-config-item-controls {
+    justify-content: flex-end;
+  }
+
+  .kanji-study-card-config-footer-left,
+  .kanji-study-card-config-footer-right {
+    width: 100%;
+  }
+
+  .kanji-study-card-config-footer-right .btn,
+  .kanji-study-card-config-footer-left .btn {
+    flex: 1 1 0;
+  }
 }
 
 .kanji-card {
@@ -1532,6 +1669,33 @@ input[type="number"].button::-webkit-inner-spin-button {
   font-weight: 500;
   line-height: 1;
 
+}
+
+#kanji-study-root .kanji-study-card-top-right {
+  position: absolute;
+  top: 0.34rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+#kanji-study-root .kanji-study-card-top-right .card-corner-caption {
+  position: static;
+  margin: 0;
+  white-space: nowrap;
+}
+
+#kanji-study-root .kanji-study-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+#kanji-study-root .kanji-study-card-config-btn {
+  font-size: 0.9rem;
+  line-height: 1;
 }
 
 /* Small caption-style footer for kanji controls (sibling under the card) */

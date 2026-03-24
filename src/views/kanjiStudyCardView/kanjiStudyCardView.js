@@ -7,7 +7,29 @@ import { CARD_REGISTRY } from './cards/index.js';
 import { addStudyFilter } from '../../components/features/studyControls.js';
 import { addShuffleControls } from '../../components/features/collectionControls.js';
 import kanjiStudyController from './kanjiStudyController.js';
+import { openGenericFlatCardConfigDialog } from './genericFlatCardConfigDialog.js';
 import { createKanjiStudyFooterActionsController } from '../../controllers/actionsController.js';
+
+const GENERIC_CARD_SETTINGS_KEY = 'genericFlatCard';
+
+function normalizeCardFieldList(fields) {
+  if (!Array.isArray(fields)) return null;
+  return Array.from(new Set(fields.map((field) => String(field || '').trim()).filter(Boolean)));
+}
+
+function normalizeKanjiStudyCardsConfig(cards) {
+  if (!cards || typeof cards !== 'object' || Array.isArray(cards)) return {};
+  const out = {};
+  for (const [cardKey, rawConfig] of Object.entries(cards)) {
+    const key = String(cardKey || '').trim();
+    if (!key || !rawConfig || typeof rawConfig !== 'object' || Array.isArray(rawConfig)) continue;
+    const nextConfig = {};
+    const fields = normalizeCardFieldList(rawConfig.fields);
+    if (fields) nextConfig.fields = fields;
+    out[key] = nextConfig;
+  }
+  return out;
+}
 
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
@@ -96,12 +118,20 @@ export function renderKanjiStudyCard({ store }) {
         onNext: (ci) => {},
         onPrev: (ci) => {},
       }});
+    } else if (c.key === 'generic') {
+      cardApis[c.key] = c.factory({
+        entry: null,
+        indexText: '',
+        config: { cardId: GENERIC_CARD_SETTINGS_KEY },
+        handlers: {
+          onOpenConfig: () => { openGenericCardSettings(); },
+        },
+      });
     } else {
       cardApis[c.key] = c.factory({ entry: null, indexText: '' });
     }
   }
 
-  const fullCardApi = cardApis['full'] || null;
   // Track whether we mounted header/footer into the shell main container
   let __mountedHeaderInShell = false;
   let __mountedFooterInShell = false;
@@ -184,6 +214,13 @@ export function renderKanjiStudyCard({ store }) {
               } catch (e) {}
             }
 
+            if (viewPatch && Object.prototype.hasOwnProperty.call(viewPatch, 'cards')) {
+              cardsConfigState = normalizeKanjiStudyCardsConfig(
+                (viewState && viewState.cards !== undefined) ? viewState.cards : viewPatch.cards
+              );
+              applyGenericCardConfig();
+            }
+
             // related fields changed
             if (viewPatch && Object.prototype.hasOwnProperty.call(viewPatch, 'relatedFields')) {
               const raw = viewState && viewState.relatedFields !== undefined ? viewState.relatedFields : viewPatch.relatedFields;
@@ -223,6 +260,7 @@ export function renderKanjiStudyCard({ store }) {
   let displayCardSelection = (appState && appState.displayCards !== undefined)
     ? (Array.isArray(appState.displayCards) ? appState.displayCards.slice() : appState.displayCards)
     : undefined;
+  let cardsConfigState = normalizeKanjiStudyCardsConfig(appState?.cards);
 
   // state for visibility selections
   let entryFieldSelection = Array.isArray(appState?.entryFields) ? appState.entryFields.slice() : 'all';
@@ -274,6 +312,51 @@ export function renderKanjiStudyCard({ store }) {
     ? res.view.entries[0]
     : ((Array.isArray(coll?.entries) && coll.entries.length) ? coll.entries[0] : null);
   const entryFieldItems = buildEntryFieldItemsFromSchema(metadata, sampleEntry);
+  const genericCardApi = cardApis['generic'] || null;
+
+  function getGenericCardAvailableFields() {
+    return entryFieldItems.map((item) => ({
+      key: String(item?.value || '').trim(),
+      label: String(item?.left || item?.value || '').trim() || String(item?.value || '').trim(),
+    })).filter((item) => item.key);
+  }
+
+  function getGenericCardConfig() {
+    return cardsConfigState[GENERIC_CARD_SETTINGS_KEY] || {};
+  }
+
+  function applyGenericCardConfig() {
+    if (!genericCardApi) return;
+    if (typeof genericCardApi.setAvailableFields === 'function') genericCardApi.setAvailableFields(getGenericCardAvailableFields());
+    if (typeof genericCardApi.setConfig === 'function') genericCardApi.setConfig(getGenericCardConfig());
+  }
+
+  async function openGenericCardSettings() {
+    const active = store?.collections?.getActiveCollection?.();
+    const key = String(active?.key || '').trim();
+    if (!key) return;
+    const availableFields = getGenericCardAvailableFields();
+    const currentConfig = getGenericCardConfig();
+    const next = await openGenericFlatCardConfigDialog({
+      title: 'Generic Card Settings',
+      fields: availableFields,
+      selectedFields: Array.isArray(currentConfig.fields)
+        ? currentConfig.fields.slice()
+        : availableFields.map((field) => field.key),
+    });
+    if (!next) return;
+    const fields = normalizeCardFieldList(next.fields) || [];
+    cardsConfigState = {
+      ...cardsConfigState,
+      [GENERIC_CARD_SETTINGS_KEY]: { fields },
+    };
+    applyGenericCardConfig();
+    try {
+      (kanjiController || kanjiStudyController.create(key)).setCardConfig(GENERIC_CARD_SETTINGS_KEY, { fields });
+    } catch (e) {}
+  }
+
+  applyGenericCardConfig();
 
   // create entry-level dropdown
   const entryFieldsRec = headerTools.addElement({
@@ -466,7 +549,7 @@ export function renderKanjiStudyCard({ store }) {
     if (typeof dvm === 'string') defaultViewMode = dvm;
   }
 
-  // Create main/related/full card APIs. Prefer registry instances where available;
+  // Create main/related card APIs. Prefer registry instances where available;
   // recreate related card with handlers so it can call back into this view.
   const mainCardApi = cardApis['main'] || (function() {
     const regMain = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(c => c.key === 'main') : null);
@@ -475,8 +558,6 @@ export function renderKanjiStudyCard({ store }) {
   })();
   const relatedFactory = (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY.find(c => c.key === 'related') : null);
   let relatedCardApi = (cardApis && cardApis['related']) ? cardApis['related'] : null;
-
-  // full card dropdown is handled via the registry-driven loop above
 
   // Dropdown to choose which cards are displayed
   // Build display card items from the card registry so new cards appear automatically.
@@ -574,8 +655,10 @@ export function renderKanjiStudyCard({ store }) {
         if (appState.relatedFields && typeof appState.relatedFields === 'object') {
           for (const k of Object.keys(appState.relatedFields)) relatedFieldSelections[k] = Array.isArray(appState.relatedFields[k]) ? appState.relatedFields[k].slice() : appState.relatedFields[k];
         }
+        cardsConfigState = normalizeKanjiStudyCardsConfig(appState.cards);
         if (Array.isArray(appState.displayCards)) displayCardSelection = appState.displayCards.slice();
         else if (appState.displayCards === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
+        applyGenericCardConfig();
 
         // apply resolved maps if controller provided them
         try {
@@ -630,12 +713,6 @@ export function renderKanjiStudyCard({ store }) {
     const prevIndex = index;
     index = Math.min(Math.max(0, index), Math.max(0, entries.length - 1));
     if (index !== prevIndex) {/* index clamped */}
-
-    // Ensure full-detail card reflects the currently selected entry after entries refresh
-    try {
-      const curEntry = entries && entries.length ? entries[index] : null;
-      if (fullCardApi && typeof fullCardApi.setEntry === 'function') fullCardApi.setEntry(curEntry);
-    } catch (e) {}
 
     try {
       const activeKey = String(active?.key || '').trim();
@@ -746,17 +823,15 @@ export function renderKanjiStudyCard({ store }) {
       const bodyEl = mainCardApi.el.querySelector('.kanji-body');
       if (bodyEl) bodyEl.innerHTML = '<p class="hint">This collection has no entries yet.</p>';
       mainCardApi.setEntry(null);
-      fullCardApi && typeof fullCardApi.setEntry === 'function' && fullCardApi.setEntry(null);
     } else {
       mainCardApi.setEntry(entry);
-      fullCardApi && typeof fullCardApi.setEntry === 'function' && fullCardApi.setEntry(entry);
     }
 
     const displaySet = new Set(Array.isArray(displayCardSelection) ? displayCardSelection : []);
     if (relatedCardApi && typeof relatedCardApi.setEntry === 'function') relatedCardApi.setEntry(entry);
     // Set entry on any other registered cards (e.g., generic) so they can render.
     for (const k of Object.keys(cardApis || {})) {
-      if (k === 'main' || k === 'full' || k === 'related') continue;
+      if (k === 'main' || k === 'related') continue;
       const api = cardApis[k];
       if (api && typeof api.setEntry === 'function') api.setEntry(entry);
     }
