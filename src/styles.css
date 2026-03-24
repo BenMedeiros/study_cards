@@ -540,7 +540,38 @@ body {
 }
 
 .view-footer-custom-action-row {
-  grid-template-columns: 18rem 7rem 8rem auto auto auto 1fr;
+  grid-template-columns: 2.4rem 1fr 8rem auto;
+}
+
+.view-footer-drag-handle {
+  min-width: 2.2rem;
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+  cursor: grab;
+  color: var(--muted);
+  touch-action: none;
+}
+
+.view-footer-drag-handle:active {
+  cursor: grabbing;
+}
+
+.view-footer-custom-action-row.dragging {
+  opacity: 0.55;
+}
+
+.view-footer-custom-action-row.drag-over {
+  outline: 1px dashed rgba(96, 165, 250, 0.65);
+  outline-offset: 2px;
+  background: rgba(96, 165, 250, 0.08);
+}
+
+.view-footer-custom-action-row.drag-over-before {
+  box-shadow: none;
+}
+
+.view-footer-custom-action-row.drag-over-after {
+  box-shadow: none;
 }
 
 .view-footer-button-header {
@@ -784,20 +815,30 @@ body {
   }
 
   .view-footer-action-row.view-footer-custom-action-row {
-    grid-template-columns: 1rem auto auto auto auto;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
   }
 
   .view-footer-action-row.view-footer-custom-action-row .view-footer-action-fn {
-    grid-column: 1 / 6;
-  }
-
-  .view-footer-action-row.view-footer-custom-action-row .view-footer-action-field {
-    visibility: hidden;
+    grid-column: 2 / 4;
   }
 
   .view-footer-action-row.view-footer-action-row-header.view-footer-custom-action-row {
     visibility: hidden;
     height: 1rem;
+  }
+
+  .view-footer-action-row.view-footer-custom-action-row .view-footer-action-inline-controls {
+    grid-column: 2 / 3;
+  }
+
+  .view-footer-action-row.view-footer-custom-action-row .view-footer-drag-handle {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+    align-self: center;
+  }
+
+  .view-footer-action-row.view-footer-custom-action-row .btn.small.danger {
+    grid-column: 3 / 4;
   }
 
   .view-footer-custom-available-header {

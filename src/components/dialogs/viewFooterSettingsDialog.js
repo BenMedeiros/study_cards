@@ -1168,11 +1168,9 @@ export function openViewFooterSettingsDialog({
 
         const header = el('div', { className: 'view-footer-action-row view-footer-action-row-header view-footer-custom-action-row' });
         header.append(
+          el('div', { className: 'view-footer-action-name', text: '' }),
           el('div', { className: 'view-footer-action-name', text: 'Function' }),
-          el('div', { className: 'view-footer-action-name', text: 'Field' }),
           el('div', { className: 'view-footer-action-name', text: 'Delay' }),
-          el('div', { className: 'view-footer-action-name', text: '↑' }),
-          el('div', { className: 'view-footer-action-name', text: '↓' }),
           el('div', { className: 'view-footer-action-name', text: 'Remove' }),
         );
         actionWrap.appendChild(header);
@@ -1211,6 +1209,95 @@ export function openViewFooterSettingsDialog({
         });
 
         const customActions = Array.isArray(customBtn.actions) ? customBtn.actions.slice() : [];
+        let draggedCustomActionIndex = null;
+        let touchDraggingActionIndex = null;
+        let touchDragPointerId = null;
+        let hoverDragOverIndex = null;
+        let hoverDragPlacement = 'before';
+        let loggedHoverTargetIndex = null;
+
+        function logCustomActionDrag(eventName, details = {}) {
+          try {
+            console.debug('[viewFooter][customActionDrag]', {
+              event: eventName,
+              configId: asString(cfg?.id).trim(),
+              buttonId: asString(customBtn?.id).trim(),
+              draggedCustomActionIndex,
+              touchDraggingActionIndex,
+              hoverDragOverIndex,
+              hoverDragPlacement,
+              customActionCount: customActions.length,
+              ...details,
+            });
+          } catch (err) {}
+        }
+
+        function clearCustomActionDragState() {
+          if (Number.isInteger(loggedHoverTargetIndex)) {
+            logCustomActionDrag('targetExit', { targetIndex: loggedHoverTargetIndex });
+          }
+          draggedCustomActionIndex = null;
+          touchDraggingActionIndex = null;
+          touchDragPointerId = null;
+          hoverDragOverIndex = null;
+          hoverDragPlacement = 'before';
+          loggedHoverTargetIndex = null;
+          try {
+            actionWrap.querySelectorAll('.view-footer-custom-action-row').forEach((node) => {
+              node.classList.remove('dragging');
+              node.classList.remove('drag-over');
+              node.classList.remove('drag-over-before');
+              node.classList.remove('drag-over-after');
+            });
+          } catch (err) {}
+        }
+
+        function setCustomActionDragIndicator(nextIndex, placement = 'before') {
+          try {
+            actionWrap.querySelectorAll('.view-footer-custom-action-row').forEach((node, idx) => {
+              const active = nextIndex === idx;
+              node.classList.toggle('drag-over', active);
+              node.classList.toggle('drag-over-before', active && placement === 'before');
+              node.classList.toggle('drag-over-after', active && placement === 'after');
+            });
+          } catch (err) {}
+        }
+
+        function resolveCustomActionDropState(fromIndex, hoverIndex) {
+          let state = null;
+          if (!Number.isInteger(hoverIndex) || hoverIndex < 0) {
+            state = { insertIndex: fromIndex, markerIndex: null, markerPlacement: 'before' };
+          } else if (hoverIndex === fromIndex) {
+            state = { insertIndex: fromIndex, markerIndex: null, markerPlacement: 'before' };
+          } else if (fromIndex > hoverIndex) {
+            state = { insertIndex: hoverIndex, markerIndex: hoverIndex, markerPlacement: 'before' };
+          } else {
+            state = { insertIndex: hoverIndex, markerIndex: hoverIndex, markerPlacement: 'after' };
+          }
+          return state;
+        }
+
+        function refreshCustomActionDragIndicator(fromIndex, hoverIndex) {
+          if (loggedHoverTargetIndex !== hoverIndex) {
+            if (Number.isInteger(loggedHoverTargetIndex)) {
+              logCustomActionDrag('targetExit', { targetIndex: loggedHoverTargetIndex });
+            }
+            if (Number.isInteger(hoverIndex)) {
+              logCustomActionDrag('targetEnter', { sourceIndex: fromIndex, targetIndex: hoverIndex });
+            }
+            loggedHoverTargetIndex = Number.isInteger(hoverIndex) ? hoverIndex : null;
+          }
+          hoverDragOverIndex = Number.isInteger(hoverIndex) ? hoverIndex : null;
+          const state = resolveCustomActionDropState(fromIndex, hoverIndex);
+          hoverDragPlacement = state.markerPlacement;
+          if (state.markerIndex == null) {
+            setCustomActionDragIndicator(null, 'before');
+            return state;
+          }
+          setCustomActionDragIndicator(state.markerIndex, state.markerPlacement);
+          return state;
+        }
+
         for (let stepIndex = 0; stepIndex < customActions.length; stepIndex++) {
           const step = customActions[stepIndex];
           if (!step || typeof step !== 'object') continue;
@@ -1228,12 +1315,12 @@ export function openViewFooterSettingsDialog({
           stepPlus.type = 'button';
           stepDelayWrap.append(stepMinus, stepDelayValue, stepPlus);
 
+          const dragHandle = el('button', { className: 'btn small view-footer-drag-handle', text: '⋮⋮' });
+          dragHandle.type = 'button';
+          dragHandle.title = 'Drag to reorder';
+          dragHandle.setAttribute('aria-label', 'Drag to reorder');
+          dragHandle.draggable = true;
           const fnText = el('div', { className: 'view-footer-action-fn', text: formatCustomActionLabel(mapped || { id: actionId, fnName: actionId }) });
-          const ns = el('div', { className: 'view-footer-action-field', text: asString(mapped?.actionField || '') });
-          const upBtn = el('button', { className: 'btn small', text: '↑' });
-          upBtn.type = 'button';
-          const downBtn = el('button', { className: 'btn small', text: '↓' });
-          downBtn.type = 'button';
           const removeStepBtn = el('button', { className: 'btn small danger', text: 'Remove' });
           removeStepBtn.type = 'button';
 
@@ -1266,22 +1353,124 @@ export function openViewFooterSettingsDialog({
             });
           });
 
-          upBtn.addEventListener('click', () => {
-            writeCustomActions((arr) => {
-              if (stepIndex <= 0 || stepIndex >= arr.length) return;
-              const tmp = arr[stepIndex - 1];
-              arr[stepIndex - 1] = arr[stepIndex];
-              arr[stepIndex] = tmp;
+          dragHandle.addEventListener('dragstart', (e) => {
+            draggedCustomActionIndex = stepIndex;
+            stepRow.classList.add('dragging');
+            logCustomActionDrag('dragstart', {
+              sourceIndex: stepIndex,
+              sourceActionId: actionId,
+              sourceLabel: formatCustomActionLabel(mapped || { id: actionId, fnName: actionId }),
             });
+            try {
+              if (e.dataTransfer) {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', String(stepIndex));
+              }
+            } catch (err) {}
           });
 
-          downBtn.addEventListener('click', () => {
+          dragHandle.addEventListener('dragend', () => {
+            clearCustomActionDragState();
+          });
+
+          stepRow.addEventListener('dragover', (e) => {
+            if (draggedCustomActionIndex == null || draggedCustomActionIndex === stepIndex) return;
+            e.preventDefault();
+            try { if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'; } catch (err) {}
+            refreshCustomActionDragIndicator(draggedCustomActionIndex, stepIndex);
+          });
+
+          stepRow.addEventListener('dragleave', () => {
+            stepRow.classList.remove('drag-over');
+            stepRow.classList.remove('drag-over-before');
+            stepRow.classList.remove('drag-over-after');
+          });
+
+          stepRow.addEventListener('drop', (e) => {
+            if (draggedCustomActionIndex == null || draggedCustomActionIndex === stepIndex) return;
+            e.preventDefault();
             writeCustomActions((arr) => {
-              if (stepIndex < 0 || stepIndex >= arr.length - 1) return;
-              const tmp = arr[stepIndex + 1];
-              arr[stepIndex + 1] = arr[stepIndex];
-              arr[stepIndex] = tmp;
+              if (draggedCustomActionIndex == null) return;
+              const fromIndex = draggedCustomActionIndex;
+              const state = resolveCustomActionDropState(fromIndex, hoverDragOverIndex);
+              const toIndex = state.insertIndex;
+              logCustomActionDrag('drop', {
+                sourceIndex: fromIndex,
+                targetIndex: stepIndex,
+                hoverIndex: hoverDragOverIndex,
+                computedInsertIndex: toIndex,
+                markerIndex: state.markerIndex,
+                markerPlacement: state.markerPlacement,
+                actionOrderBefore: arr.map(item => asString(item?.actionId).trim()),
+              });
+              if (fromIndex < 0 || fromIndex >= arr.length || toIndex < 0 || toIndex >= arr.length) return;
+              const [moved] = arr.splice(fromIndex, 1);
+              if (!moved) return;
+              arr.splice(toIndex, 0, moved);
             });
+            clearCustomActionDragState();
+          });
+
+          dragHandle.addEventListener('pointerdown', (e) => {
+            if (e.pointerType !== 'touch') return;
+            touchDraggingActionIndex = stepIndex;
+            touchDragPointerId = e.pointerId;
+            stepRow.classList.add('dragging');
+            logCustomActionDrag('dragstart', {
+              sourceIndex: stepIndex,
+              sourceActionId: actionId,
+              pointerId: e.pointerId,
+            });
+            try { dragHandle.setPointerCapture(e.pointerId); } catch (err) {}
+            e.preventDefault();
+          });
+
+          dragHandle.addEventListener('pointermove', (e) => {
+            if (e.pointerType !== 'touch') return;
+            if (touchDragPointerId !== e.pointerId || touchDraggingActionIndex == null) return;
+            const hit = document.elementFromPoint(e.clientX, e.clientY);
+            const hitRow = hit && typeof hit.closest === 'function'
+              ? hit.closest('.view-footer-custom-action-row')
+              : null;
+            if (!hitRow || hitRow.classList.contains('view-footer-action-row-header')) return;
+            const rows = Array.from(actionWrap.querySelectorAll('.view-footer-custom-action-row:not(.view-footer-action-row-header)'));
+            const hitIndex = rows.indexOf(hitRow);
+            if (hitIndex < 0) return;
+            refreshCustomActionDragIndicator(touchDraggingActionIndex, hitIndex);
+            e.preventDefault();
+          });
+
+          dragHandle.addEventListener('pointerup', (e) => {
+            if (e.pointerType !== 'touch') return;
+            if (touchDragPointerId !== e.pointerId || touchDraggingActionIndex == null) return;
+            const fromIndex = touchDraggingActionIndex;
+            const state = resolveCustomActionDropState(fromIndex, hoverDragOverIndex);
+            const toIndex = state.insertIndex;
+            logCustomActionDrag('drop', {
+              sourceIndex: fromIndex,
+              hoverIndex: hoverDragOverIndex,
+              computedInsertIndex: toIndex,
+              markerIndex: state.markerIndex,
+              markerPlacement: state.markerPlacement,
+              pointerId: e.pointerId,
+            });
+            try { dragHandle.releasePointerCapture(e.pointerId); } catch (err) {}
+            clearCustomActionDragState();
+            if (fromIndex === toIndex) return;
+            writeCustomActions((arr) => {
+              if (fromIndex < 0 || fromIndex >= arr.length || toIndex < 0 || toIndex > arr.length) return;
+              const [moved] = arr.splice(fromIndex, 1);
+              if (!moved) return;
+              arr.splice(toIndex, 0, moved);
+            });
+            e.preventDefault();
+          });
+
+          dragHandle.addEventListener('pointercancel', (e) => {
+            if (e.pointerType !== 'touch') return;
+            if (touchDragPointerId !== e.pointerId) return;
+            try { dragHandle.releasePointerCapture(e.pointerId); } catch (err) {}
+            clearCustomActionDragState();
           });
 
           removeStepBtn.addEventListener('click', () => {
@@ -1291,17 +1480,16 @@ export function openViewFooterSettingsDialog({
             });
           });
 
-          // order: Function, Field, Delay, Up, Down, Remove
-          stepRow.append(fnText, ns, stepDelayWrap, upBtn, downBtn, removeStepBtn);
+          // order: Drag, Function, Delay, Remove
+          stepRow.append(dragHandle, fnText, stepDelayWrap, removeStepBtn);
           actionWrap.appendChild(stepRow);
         }
 
         if (!customActions.length) {
           const emptyRow = el('div', { className: 'view-footer-action-row view-footer-custom-action-row' });
           emptyRow.append(
+            el('div', { className: 'view-footer-action-name', text: '—' }),
             el('div', { className: 'view-footer-action-name', text: 'No actions yet.' }),
-            el('div', { className: 'view-footer-action-name', text: '—' }),
-            el('div', { className: 'view-footer-action-name', text: '—' }),
             el('div', { className: 'view-footer-action-name', text: '—' }),
             el('div', { className: 'view-footer-action-name', text: '—' }),
             el('div', { className: 'view-footer-action-name', text: '—' } ),

@@ -200,7 +200,11 @@ export function openViewFooterCustomButtonDialog({
           const left = el('div', { className: 'view-footer-custom-action-label', text: rowData.fnName });
           const fieldCell = el('div', { className: 'view-footer-action-field' });
           const groupedItems = rowData.options
-            .filter(opt => asString(opt?.actionId).trim() !== 'sound.__toggle__')
+            .filter(opt => {
+              const actionId = asString(opt?.actionId).trim();
+              const optionLabel = asString(opt?.optionLabel).trim();
+              return !actionId.includes('__toggle__') && !optionLabel.includes('__toggle__');
+            })
             .map(opt => ({
               value: asString(opt.actionId),
               label: asString(opt.optionLabel),
@@ -208,7 +212,7 @@ export function openViewFooterCustomButtonDialog({
           if (!groupedItems.length) continue;
           const dropdown = createDropdown({
             items: groupedItems,
-            values: groupedItems[0]?.value ? [groupedItems[0].value] : [],
+            values: [],
             multi: true,
             commitOnClose: true,
             includeAllNone: true,
