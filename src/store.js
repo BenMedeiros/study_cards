@@ -190,8 +190,6 @@ export function createStore() {
       saveCollectionState: collections.saveCollectionState,
       deleteCollectionStateKeys: collections.deleteCollectionStateKeys,
       getInheritedFolderMetadata: collections.getInheritedFolderMetadata,
-      getCollectionExpansionConfig: collections.getCollectionExpansionConfig,
-
       // Debug/read-only runtime inspection helpers (Entity Explorer)
       debugListRuntimeMaps: collections.debugListRuntimeMaps,
       debugGetRuntimeMapDump: collections.debugGetRuntimeMapDump,
@@ -205,7 +203,6 @@ export function createStore() {
       getEntryStudyKey: collections.getEntryStudyKey,
       entryMatchesTableSearch: collections.entryMatchesTableSearch,
       filterEntriesAndIndicesByTableSearch: collections.filterEntriesAndIndicesByTableSearch,
-      getCollectionExpansionDeltas: collections.getCollectionExpansionDeltas,
       getCollectionEntriesWithRelated: collections.getCollectionEntriesWithRelated,
 
       // Collection actions (state modifications)
@@ -213,7 +210,6 @@ export function createStore() {
       clearCollectionShuffle: collections.clearCollectionShuffle,
       setStudyFilter: collections.setStudyFilter,
       setHeldTableSearch: collections.setHeldTableSearch,
-      setCollectionExpansionForms: collections.setCollectionExpansionForms,
       clearLearnedForCollection: collections.clearLearnedForCollection,
     },
     shell: {

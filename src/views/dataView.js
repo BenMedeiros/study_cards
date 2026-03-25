@@ -478,39 +478,16 @@ export function renderData({ store }) {
       if (node) searchWrap.append(node);
     }
   }
-  // Persisted per-collection expansion settings (Data view header dropdowns)
-  let expansionIForms = [];
-  let expansionNaForms = [];
-  let expansionIchidanForms = [];
-  let expansionGodanForms = [];
-  let expansionIrregularForms = [];
-  let expansionSentenceMathForms = [];
-  function getExpansionConfig() {
-    try {
-      if (typeof store?.collections?.getCollectionExpansionConfig !== 'function') return null;
-      const coll = store.collections.getActiveCollection();
-      return store.collections.getCollectionExpansionConfig(coll) || null;
-    } catch (e) {
-      return null;
-    }
-  }
-
   const STUDY_FILTER_ITEMS = [
     { value: 'null', label: 'null', left: 'state', right: 'null' },
     { value: 'focus', label: 'focus', left: 'state', right: 'focus' },
     { value: 'learned', label: 'learned', left: 'state', right: 'learned' },
   ];
 
-  function normalizeFormList(v) {
-    if (Array.isArray(v)) return v.map(x => String(x || '').trim()).filter(Boolean);
-    const s = String(v || '').trim();
-    if (!s) return [];
-    // accept legacy strings (single) or comma/space separated
-    return s.split(/[,|\s]+/g).map(x => String(x || '').trim()).filter(Boolean);
-  }
-
   function normalizeSavedSearchList(v) {
-    const arr = Array.isArray(v) ? v : normalizeFormList(v);
+    const arr = Array.isArray(v)
+      ? v
+      : String(v || '').split(/[,|\n]+/g).map(x => String(x || '').trim()).filter(Boolean);
     const out = [];
     const seen = new Set();
     for (const raw of arr) {
@@ -548,32 +525,6 @@ export function renderData({ store }) {
     return true;
   }
 
-  function formatMultiSelectButtonLabel(selectedValues, items) {
-    const baseItems = (Array.isArray(items) ? items : []).filter(it => {
-      const kind = String(it?.kind || '').trim();
-      return kind !== 'action' && kind !== 'divider';
-    });
-
-    const allValues = baseItems.map(it => String(it?.value ?? '')).filter(Boolean);
-    const selectedSet = new Set((Array.isArray(selectedValues) ? selectedValues : []).map(v => String(v || '').trim()).filter(Boolean));
-    const selectedInOrder = allValues.filter(v => selectedSet.has(v));
-
-    if (!selectedInOrder.length) return '—';
-    if (selectedInOrder.length === allValues.length) return 'all';
-    if (selectedInOrder.length >= 2) return `${selectedInOrder.length} selected`;
-
-    const byValue = new Map(baseItems.map(it => [String(it?.value ?? ''), String(it?.rightText ?? it?.right ?? it?.label ?? it?.value ?? '')]));
-    const v = selectedInOrder[0];
-    return byValue.get(v) || v;
-  }
-
-  function orderFormsByItems(values, items) {
-    const set = new Set((Array.isArray(values) ? values : []).map(v => String(v || '').trim()).filter(Boolean));
-    const ordered = (Array.isArray(items) ? items : [])
-      .map(it => String(it?.value ?? ''))
-      .filter(v => v && set.has(v));
-    return ordered;
-  }
 
   function orderStudyStates(values) {
     const set = new Set((Array.isArray(values) ? values : []).map(v => String(v || '').trim().toLowerCase()).filter(Boolean));
@@ -623,18 +574,6 @@ export function renderData({ store }) {
 
   function serializeStudyFilter({ states = [] } = {}) {
     return orderStudyStates(states).join(',');
-  }
-
-  function deleteExpansionSettingIfPresent(keys) {
-    try {
-      const coll = store.collections.getActiveCollection();
-      if (!coll?.key) return;
-      if (typeof store?.collections?.deleteCollectionStateKeys === 'function') {
-        store.collections.deleteCollectionStateKeys(coll.key, keys);
-      }
-    } catch (e) {
-      // ignore
-    }
   }
 
   function getClearLearnedStats() {
@@ -726,179 +665,6 @@ export function renderData({ store }) {
     });
   }
 
-  function applyExpansionSelectionChange() {
-    persistCollectionExpansions();
-    renderTable();
-    updateStudyLabel();
-    markStudyRows();
-    updateControlStates();
-  }
-  // Collection expansion dropdowns (persisted per-collection)
-  const expansionWrap = document.createElement('div');
-  expansionWrap.className = 'data-expansion-tools';
-  controls.append(expansionWrap);
-
-  function renderExpansionControls() {
-    expansionWrap.innerHTML = '';
-    const expansionConfig = getExpansionConfig();
-    const hasI = !!expansionConfig?.supports?.i;
-    const hasNa = !!expansionConfig?.supports?.na;
-    const hasIchidan = !!expansionConfig?.supports?.ichidan;
-    const hasGodan = !!expansionConfig?.supports?.godan;
-    const hasIrregular = !!expansionConfig?.supports?.irregular;
-    const hasSentenceMath = !!expansionConfig?.supports?.sentenceMath;
-
-    const iBaseItems = Array.isArray(expansionConfig?.iBaseItems) ? expansionConfig.iBaseItems : [];
-    const naBaseItems = Array.isArray(expansionConfig?.naBaseItems) ? expansionConfig.naBaseItems : [];
-    const ichidanBaseItems = Array.isArray(expansionConfig?.ichidanVerbBaseItems) ? expansionConfig.ichidanVerbBaseItems : [];
-    const godanBaseItems = Array.isArray(expansionConfig?.godanVerbBaseItems) ? expansionConfig.godanVerbBaseItems : [];
-    const irregularBaseItems = Array.isArray(expansionConfig?.irregularVerbBaseItems) ? expansionConfig.irregularVerbBaseItems : [];
-    const sentenceMathBaseItems = Array.isArray(expansionConfig?.sentenceMathBaseItems) ? expansionConfig.sentenceMathBaseItems : [];
-
-    const iItems = Array.isArray(expansionConfig?.iItems) ? expansionConfig.iItems : [];
-    const naItems = Array.isArray(expansionConfig?.naItems) ? expansionConfig.naItems : [];
-    const ichidanItems = Array.isArray(expansionConfig?.ichidanVerbItems) ? expansionConfig.ichidanVerbItems : [];
-    const godanItems = Array.isArray(expansionConfig?.godanVerbItems) ? expansionConfig.godanVerbItems : [];
-    const irregularItems = Array.isArray(expansionConfig?.irregularVerbItems) ? expansionConfig.irregularVerbItems : [];
-    const sentenceMathItems = Array.isArray(expansionConfig?.sentenceMathItems) ? expansionConfig.sentenceMathItems : [];
-
-    // Expand any saved 'all' sentinel into explicit lists based on available items
-    try {
-      if (expansionIForms === 'all' || (Array.isArray(expansionIForms) && expansionIForms.includes('all'))) {
-        expansionIForms = iItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
-      }
-      if (expansionNaForms === 'all' || (Array.isArray(expansionNaForms) && expansionNaForms.includes('all'))) {
-        expansionNaForms = naItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
-      }
-      if (expansionIchidanForms === 'all' || (Array.isArray(expansionIchidanForms) && expansionIchidanForms.includes('all'))) {
-        expansionIchidanForms = ichidanItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
-      }
-      if (expansionGodanForms === 'all' || (Array.isArray(expansionGodanForms) && expansionGodanForms.includes('all'))) {
-        expansionGodanForms = godanItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
-      }
-      if (expansionIrregularForms === 'all' || (Array.isArray(expansionIrregularForms) && expansionIrregularForms.includes('all'))) {
-        expansionIrregularForms = irregularItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
-      }
-      if (expansionSentenceMathForms === 'all' || (Array.isArray(expansionSentenceMathForms) && expansionSentenceMathForms.includes('all'))) {
-        expansionSentenceMathForms = sentenceMathItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || ''));
-      }
-    } catch (e) {}
-
-    // use headerTools helper to create dropdowns then move the created groups into expansionWrap
-    controls.removeControl && controls.removeControl('expansionI');
-    const iRec = controls.addElement({
-      type: 'dropdown', key: 'expansionI', items: iItems, multi: true,
-      values: expansionIForms,
-      commitOnClose: true,
-      getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
-      onChange: (vals) => {
-        const chosen = (typeof vals === 'string' && vals === 'all')
-          ? iItems.map(it => String(it?.value || ''))
-          : vals;
-        expansionIForms = orderFormsByItems(normalizeFormList(chosen), iBaseItems);
-        applyExpansionSelectionChange();
-      },
-      includeAllNone: true,
-      className: 'data-expansion-dropdown',
-      caption: 'i-adj'
-    });
-    try { if (iRec && iRec.group) { iRec.group.style.display = hasI ? '' : 'none'; expansionWrap.append(iRec.group); } } catch (e) {}
-
-    controls.removeControl && controls.removeControl('expansionNa');
-    const naRec = controls.addElement({
-      type: 'dropdown', key: 'expansionNa', items: naItems, multi: true,
-      values: expansionNaForms,
-      commitOnClose: true,
-      getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
-      onChange: (vals) => {
-        const chosen = (typeof vals === 'string' && vals === 'all')
-          ? naItems.map(it => String(it?.value || ''))
-          : vals;
-        expansionNaForms = orderFormsByItems(normalizeFormList(chosen), naBaseItems);
-        applyExpansionSelectionChange();
-      },
-      includeAllNone: true,
-      className: 'data-expansion-dropdown',
-      caption: 'na-adj'
-    });
-    try { if (naRec && naRec.group) { naRec.group.style.display = hasNa ? '' : 'none'; expansionWrap.append(naRec.group); } } catch (e) {}
-
-    controls.removeControl && controls.removeControl('expansionIchidan');
-    const ichidanRec = controls.addElement({
-      type: 'dropdown', key: 'expansionIchidan', items: ichidanItems, multi: true,
-      values: expansionIchidanForms,
-      commitOnClose: true,
-      getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
-      onChange: (vals) => {
-        const chosen = (typeof vals === 'string' && vals === 'all')
-          ? ichidanItems.map(it => String(it?.value || ''))
-          : vals;
-        expansionIchidanForms = orderFormsByItems(normalizeFormList(chosen), ichidanBaseItems);
-        applyExpansionSelectionChange();
-      },
-      includeAllNone: true,
-      className: 'data-expansion-dropdown',
-      caption: 'ichidan'
-    });
-    try { if (ichidanRec && ichidanRec.group) { ichidanRec.group.style.display = hasIchidan ? '' : 'none'; expansionWrap.append(ichidanRec.group); } } catch (e) {}
-
-    controls.removeControl && controls.removeControl('expansionGodan');
-    const godanRec = controls.addElement({
-      type: 'dropdown', key: 'expansionGodan', items: godanItems, multi: true,
-      values: expansionGodanForms,
-      commitOnClose: true,
-      getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
-      onChange: (vals) => {
-        const chosen = (typeof vals === 'string' && vals === 'all')
-          ? godanItems.map(it => String(it?.value || ''))
-          : vals;
-        expansionGodanForms = orderFormsByItems(normalizeFormList(chosen), godanBaseItems);
-        applyExpansionSelectionChange();
-      },
-      includeAllNone: true,
-      className: 'data-expansion-dropdown',
-      caption: 'godan'
-    });
-    try { if (godanRec && godanRec.group) { godanRec.group.style.display = hasGodan ? '' : 'none'; expansionWrap.append(godanRec.group); } } catch (e) {}
-
-    controls.removeControl && controls.removeControl('expansionIrregular');
-    const irregularRec = controls.addElement({
-      type: 'dropdown', key: 'expansionIrregular', items: irregularItems, multi: true,
-      values: expansionIrregularForms,
-      commitOnClose: true,
-      getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
-      onChange: (vals) => {
-        const chosen = (typeof vals === 'string' && vals === 'all')
-          ? irregularItems.map(it => String(it?.value || ''))
-          : vals;
-        expansionIrregularForms = orderFormsByItems(normalizeFormList(chosen), irregularBaseItems);
-        applyExpansionSelectionChange();
-      },
-      includeAllNone: true,
-      className: 'data-expansion-dropdown',
-      caption: 'irregular'
-    });
-    try { if (irregularRec && irregularRec.group) { irregularRec.group.style.display = hasIrregular ? '' : 'none'; expansionWrap.append(irregularRec.group); } } catch (e) {}
-    controls.removeControl && controls.removeControl('expansionSentenceMath');
-    const sentenceMathRec = controls.addElement({
-      type: 'dropdown', key: 'expansionSentenceMath', items: sentenceMathItems, multi: true,
-      values: expansionSentenceMathForms,
-      commitOnClose: true,
-      getButtonLabel: ({ selectedValues, items }) => formatMultiSelectButtonLabel(selectedValues, items),
-      onChange: (vals) => {
-        const chosen = (typeof vals === 'string' && vals === 'all')
-          ? sentenceMathItems.map(it => String(it?.value || ''))
-          : vals;
-        expansionSentenceMathForms = orderFormsByItems(normalizeFormList(chosen), sentenceMathBaseItems);
-        applyExpansionSelectionChange();
-      },
-      includeAllNone: true,
-      className: 'data-expansion-dropdown',
-      caption: 'math'
-    });
-    try { if (sentenceMathRec && sentenceMathRec.group) { sentenceMathRec.group.style.display = hasSentenceMath ? '' : 'none'; expansionWrap.append(sentenceMathRec.group); } } catch (e) {}
-  }
-
   root.appendChild(controls);
   
   if (!active) {
@@ -953,66 +719,11 @@ export function renderData({ store }) {
     savedTableSearches = normalizeSavedSearchList(
       saved?.savedTableSearches ?? saved?.saved_table_searches ?? saved?.savedTableSearch ?? saved?.savedFiltersTableSearch ?? []
     );
-
-    expansionIForms = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);
-    expansionNaForms = normalizeFormList(saved?.expansion_na ?? saved?.expansion_naAdj ?? []);
-    expansionIchidanForms = normalizeFormList(saved?.expansion_ichidan ?? saved?.expansion_ichidanVerb ?? []);
-    expansionGodanForms = normalizeFormList(saved?.expansion_godan ?? saved?.expansion_godanVerb ?? []);
-    expansionIrregularForms = normalizeFormList(saved?.expansion_irregular ?? saved?.expansion_irregularVerb ?? []);
-    expansionSentenceMathForms = normalizeFormList(saved?.expansion_sentence_math ?? saved?.expansion_sentenceMath ?? []);
-
-    // If the active collection does not support the expansion kind,
-    // hide the control and delete the persisted setting to avoid future issues.
-    const expansionConfig = getExpansionConfig();
-    const hasI = !!expansionConfig?.supports?.i;
-    const hasNa = !!expansionConfig?.supports?.na;
-    const hasIchidan = !!expansionConfig?.supports?.ichidan;
-    const hasGodan = !!expansionConfig?.supports?.godan;
-    const hasIrregular = !!expansionConfig?.supports?.irregular;
-    const hasSentenceMath = !!expansionConfig?.supports?.sentenceMath;
-
-    if (!hasI) {
-      expansionIForms = [];
-      if (saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_i')) {
-        deleteExpansionSettingIfPresent(['expansion_i', 'expansion_iAdj', 'expansion_i_adjective']);
-      }
-    }
-    if (!hasNa) {
-      expansionNaForms = [];
-      if (saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_na')) {
-        deleteExpansionSettingIfPresent(['expansion_na', 'expansion_naAdj', 'expansion_na_adjective']);
-      }
-    }
-    if (!hasIchidan) {
-      expansionIchidanForms = [];
-      if (saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_ichidan')) {
-        deleteExpansionSettingIfPresent(['expansion_ichidan', 'expansion_ichidanVerb', 'expansion_ichidan_verb']);
-      }
-    }
-    if (!hasGodan) {
-      expansionGodanForms = [];
-      if (saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_godan')) {
-        deleteExpansionSettingIfPresent(['expansion_godan', 'expansion_godanVerb', 'expansion_godan_verb']);
-      }
-    }
-    if (!hasIrregular) {
-      expansionIrregularForms = [];
-      if (saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_irregular')) {
-        deleteExpansionSettingIfPresent(['expansion_irregular', 'expansion_irregularVerb', 'expansion_irregular_verb']);
-      }
-    }
-    if (!hasSentenceMath) {
-      expansionSentenceMathForms = [];
-      if (saved && typeof saved === 'object' && (Object.prototype.hasOwnProperty.call(saved, 'expansion_sentence_math') || Object.prototype.hasOwnProperty.call(saved, 'expansion_sentenceMath') || Object.prototype.hasOwnProperty.call(saved, 'expansion_sentence_math_seed') || Object.prototype.hasOwnProperty.call(saved, 'expansion_sentenceMathSeed'))) {
-        deleteExpansionSettingIfPresent(['expansion_sentence_math', 'expansion_sentenceMath', 'expansion_sentence_math_seed', 'expansion_sentenceMathSeed']);
-      }
-    }
   } catch (e) {
     // ignore
   }
 
   renderStudyFilterControl();
-  renderExpansionControls();
 
   // Helpers to read/save per-collection state
   function readCollState() {
@@ -1094,36 +805,6 @@ export function renderData({ store }) {
     collectionSettingsController.set(coll.key, { savedTableSearches: list });
   }
 
-  function persistCollectionExpansions() {
-    const coll = store.collections.getActiveCollection();
-    if (!coll) return;
-    const cfg = getExpansionConfig();
-    const iItems = Array.isArray(cfg?.iItems) ? cfg.iItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-    const naItems = Array.isArray(cfg?.naItems) ? cfg.naItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-    const ichidanItems = Array.isArray(cfg?.ichidanVerbItems) ? cfg.ichidanVerbItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-    const godanItems = Array.isArray(cfg?.godanVerbItems) ? cfg.godanVerbItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-    const irregularItems = Array.isArray(cfg?.irregularVerbItems) ? cfg.irregularVerbItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-    const sentenceMathItems = Array.isArray(cfg?.sentenceMathItems) ? cfg.sentenceMathItems.filter(it => String(it?.kind || '') !== 'action').map(it => String(it?.value || '')) : [];
-
-    const iSave = (expansionIForms === 'all' || (Array.isArray(expansionIForms) && iItems.length > 0 && iItems.length === expansionIForms.length && iItems.every(v => expansionIForms.includes(v)))) ? 'all' : (Array.isArray(expansionIForms) ? expansionIForms.slice() : []);
-    const naSave = (expansionNaForms === 'all' || (Array.isArray(expansionNaForms) && naItems.length > 0 && naItems.length === expansionNaForms.length && naItems.every(v => expansionNaForms.includes(v)))) ? 'all' : (Array.isArray(expansionNaForms) ? expansionNaForms.slice() : []);
-    const ichidanSave = (expansionIchidanForms === 'all' || (Array.isArray(expansionIchidanForms) && ichidanItems.length > 0 && ichidanItems.length === expansionIchidanForms.length && ichidanItems.every(v => expansionIchidanForms.includes(v)))) ? 'all' : (Array.isArray(expansionIchidanForms) ? expansionIchidanForms.slice() : []);
-    const godanSave = (expansionGodanForms === 'all' || (Array.isArray(expansionGodanForms) && godanItems.length > 0 && godanItems.length === expansionGodanForms.length && godanItems.every(v => expansionGodanForms.includes(v)))) ? 'all' : (Array.isArray(expansionGodanForms) ? expansionGodanForms.slice() : []);
-    const irregularSave = (expansionIrregularForms === 'all' || (Array.isArray(expansionIrregularForms) && irregularItems.length > 0 && irregularItems.length === expansionIrregularForms.length && irregularItems.every(v => expansionIrregularForms.includes(v)))) ? 'all' : (Array.isArray(expansionIrregularForms) ? expansionIrregularForms.slice() : []);
-    const sentenceMathSave = (expansionSentenceMathForms === 'all' || (Array.isArray(expansionSentenceMathForms) && sentenceMathItems.length > 0 && sentenceMathItems.length === expansionSentenceMathForms.length && sentenceMathItems.every(v => expansionSentenceMathForms.includes(v)))) ? 'all' : (Array.isArray(expansionSentenceMathForms) ? expansionSentenceMathForms.slice() : []);
-
-
-    collectionSettingsController.set(coll.key, {
-      expansion_i: iSave,
-      expansion_na: naSave,
-      expansion_ichidan: ichidanSave,
-      expansion_godan: godanSave,
-      expansion_irregular: irregularSave,
-      expansion_sentence_math: sentenceMathSave,
-      expansion_sentence_math_seed: Date.now(),
-    });
-  }
-
   // pruneStudyIndicesToFilters removed — studyIndices/studyStart no longer used.
 
   const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
@@ -1169,55 +850,6 @@ export function renderData({ store }) {
     return Array.isArray(view?.entries) ? view.entries : [];
   }
 
-  function getUnexpandedFilteredBaseEntries() {
-    const coll = store?.collections?.getActiveCollection?.() || active;
-    const collState = readCollState() || {};
-    const collStateNoExpansion = {
-      ...collState,
-      expansion_i: [],
-      expansion_na: [],
-      expansion_ichidan: [],
-      expansion_godan: [],
-      expansion_irregular: [],
-      expansion_sentence_math: [],
-      expansion_sentenceMath: [],
-      expansion_sentence_math_seed: 0,
-      expansion_sentenceMathSeed: 0,
-      expansion_iAdj: [],
-      expansion_naAdj: [],
-      expansion_i_adjective: [],
-      expansion_na_adjective: [],
-      expansion_ichidanVerb: [],
-      expansion_godanVerb: [],
-      expansion_irregularVerb: [],
-      expansion_ichidan_verb: [],
-      expansion_godan_verb: [],
-      expansion_irregular_verb: [],
-    };
-    try {
-      const view = store.collections.getCollectionViewForCollection(coll, collStateNoExpansion, { windowSize: 10, entries: baseEntries });
-      return Array.isArray(view?.entries) ? view.entries : [];
-    } catch (e) {
-      return Array.isArray(baseEntries) ? baseEntries : [];
-    }
-  }
-
-  function getExpandedEntriesWithoutFilters() {
-    const coll = store?.collections?.getActiveCollection?.() || active;
-    const collState = readCollState() || {};
-    const collStateNoFilters = {
-      ...collState,
-      studyFilter: 'null,focus,learned',
-      heldTableSearch: '',
-    };
-    try {
-      const view = store.collections.getCollectionViewForCollection(coll, collStateNoFilters, { windowSize: 10, entries: baseEntries });
-      return Array.isArray(view?.entries) ? view.entries : [];
-    } catch (e) {
-      return [];
-    }
-  }
-
   // Background: request entries augmented with related collection counts/samples.
   Promise.resolve().then(async () => {
     try {
@@ -1227,7 +859,6 @@ export function renderData({ store }) {
         const augmented = await store.collections.getCollectionEntriesWithRelated(active.key, { sample: 2 });
         if (Array.isArray(augmented) && augmented.length) {
           baseEntries = augmented.slice();
-          try { renderExpansionControls(); } catch (e) {}
           try { renderTable(); } catch (e) {}
           try { markStudyRows(); } catch (e) {}
           try { updateStudyLabel(); } catch (e) {}
@@ -1659,9 +1290,7 @@ export function renderData({ store }) {
       const corner = root.querySelector('#data-card .card-corner-caption');
       if (corner) {
         const visible = visibleEntries.length;
-        const expandedUnfiltered = getExpandedEntriesWithoutFilters();
-        const total = Array.isArray(expandedUnfiltered) ? expandedUnfiltered.length : visible;
-        const unexpandedBaseEntries = getUnexpandedFilteredBaseEntries();
+        const total = visible;
         const base = (visible < total) ? `${visible}/${total} Entries` : `${total} Entries`;
 
         // Architecture note: treat collection state as the source of truth for held filters.
@@ -1681,36 +1310,6 @@ export function renderData({ store }) {
 
         // Ask CollectionsManager for expansion deltas on the held/study-filtered,
         // unexpanded base entries.
-        try {
-          const stats = (typeof store?.collections?.getCollectionExpansionDeltas === 'function')
-            ? store.collections.getCollectionExpansionDeltas(unexpandedBaseEntries, {
-                iForms: expansionIForms,
-                naForms: expansionNaForms,
-                ichidanForms: expansionIchidanForms,
-                godanForms: expansionGodanForms,
-                irregularForms: expansionIrregularForms,
-                sentenceMathForms: expansionSentenceMathForms,
-              })
-            : null;
-          const iDelta = Math.max(0, Math.round(Number(stats?.iDelta) || 0));
-          const naDelta = Math.max(0, Math.round(Number(stats?.naDelta) || 0));
-          const ichidanDelta = Math.max(0, Math.round(Number(stats?.ichidanDelta) || 0));
-          const godanDelta = Math.max(0, Math.round(Number(stats?.godanDelta) || 0));
-          const irregularDelta = Math.max(0, Math.round(Number(stats?.irregularDelta) || 0));
-          const sentenceMathDelta = Math.max(0, Math.round(Number(stats?.sentenceMathDelta) || 0));
-          if (iDelta) parts.push(`+${iDelta} i-adj`);
-          if (naDelta) parts.push(`+${naDelta} na-adj`);
-          if (ichidanDelta) parts.push(`+${ichidanDelta} ichidan`);
-          if (godanDelta) parts.push(`+${godanDelta} godan`);
-          if (irregularDelta) parts.push(`+${irregularDelta} irregular`);
-          if (sentenceMathDelta) parts.push(`+${sentenceMathDelta} math`);
-          if (iDelta || naDelta || ichidanDelta || godanDelta || irregularDelta || sentenceMathDelta) {
-            titleParts.push(`Expansion delta: +${iDelta} i-adj, +${naDelta} na-adj, +${ichidanDelta} ichidan, +${godanDelta} godan, +${irregularDelta} irregular, +${sentenceMathDelta} math`);
-          }
-        } catch (e) {
-          // ignore
-        }
-
         corner.textContent = parts.join(' • ');
         corner.title = titleParts.join('\n');
       }
@@ -1801,63 +1400,6 @@ export function renderData({ store }) {
           if (!sameStringArray(nextSavedSearches, savedTableSearches)) {
             savedTableSearches = nextSavedSearches;
           }
-          const nextI = normalizeFormList(saved?.expansion_i ?? saved?.expansion_iAdj ?? []);
-          const nextNa = normalizeFormList(saved?.expansion_na ?? saved?.expansion_naAdj ?? []);
-          const nextIchidan = normalizeFormList(saved?.expansion_ichidan ?? saved?.expansion_ichidanVerb ?? []);
-          const nextGodan = normalizeFormList(saved?.expansion_godan ?? saved?.expansion_godanVerb ?? []);
-          const nextIrregular = normalizeFormList(saved?.expansion_irregular ?? saved?.expansion_irregularVerb ?? []);
-          const nextSentenceMath = normalizeFormList(saved?.expansion_sentence_math ?? saved?.expansion_sentenceMath ?? []);
-
-          const expansionConfig = getExpansionConfig();
-          const hasI = !!expansionConfig?.supports?.i;
-          const hasNa = !!expansionConfig?.supports?.na;
-          const hasIchidan = !!expansionConfig?.supports?.ichidan;
-          const hasGodan = !!expansionConfig?.supports?.godan;
-          const hasIrregular = !!expansionConfig?.supports?.irregular;
-          const hasSentenceMath = !!expansionConfig?.supports?.sentenceMath;
-
-          const cleanedI = hasI ? nextI : [];
-          const cleanedNa = hasNa ? nextNa : [];
-          const cleanedIchidan = hasIchidan ? nextIchidan : [];
-          const cleanedGodan = hasGodan ? nextGodan : [];
-          const cleanedIrregular = hasIrregular ? nextIrregular : [];
-          const cleanedSentenceMath = hasSentenceMath ? nextSentenceMath : [];
-
-          // If settings exist for a kind the collection doesn't contain, delete them.
-          if (!hasI && saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_i')) {
-            deleteExpansionSettingIfPresent(['expansion_i', 'expansion_iAdj', 'expansion_i_adjective']);
-          }
-          if (!hasNa && saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_na')) {
-            deleteExpansionSettingIfPresent(['expansion_na', 'expansion_naAdj', 'expansion_na_adjective']);
-          }
-          if (!hasIchidan && saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_ichidan')) {
-            deleteExpansionSettingIfPresent(['expansion_ichidan', 'expansion_ichidanVerb', 'expansion_ichidan_verb']);
-          }
-          if (!hasGodan && saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_godan')) {
-            deleteExpansionSettingIfPresent(['expansion_godan', 'expansion_godanVerb', 'expansion_godan_verb']);
-          }
-          if (!hasIrregular && saved && typeof saved === 'object' && Object.prototype.hasOwnProperty.call(saved, 'expansion_irregular')) {
-            deleteExpansionSettingIfPresent(['expansion_irregular', 'expansion_irregularVerb', 'expansion_irregular_verb']);
-          }
-          if (!hasSentenceMath && saved && typeof saved === 'object' && (Object.prototype.hasOwnProperty.call(saved, 'expansion_sentence_math') || Object.prototype.hasOwnProperty.call(saved, 'expansion_sentenceMath') || Object.prototype.hasOwnProperty.call(saved, 'expansion_sentence_math_seed') || Object.prototype.hasOwnProperty.call(saved, 'expansion_sentenceMathSeed'))) {
-            deleteExpansionSettingIfPresent(['expansion_sentence_math', 'expansion_sentenceMath', 'expansion_sentence_math_seed', 'expansion_sentenceMathSeed']);
-          }
-
-          const changed =
-            (!sameStringArray(cleanedI, expansionIForms)) ||
-            (!sameStringArray(cleanedNa, expansionNaForms)) ||
-            (!sameStringArray(cleanedIchidan, expansionIchidanForms)) ||
-            (!sameStringArray(cleanedGodan, expansionGodanForms)) ||
-            (!sameStringArray(cleanedIrregular, expansionIrregularForms)) ||
-            (!sameStringArray(cleanedSentenceMath, expansionSentenceMathForms));
-
-          expansionIForms = cleanedI;
-          expansionNaForms = cleanedNa;
-          expansionIchidanForms = cleanedIchidan;
-          expansionGodanForms = cleanedGodan;
-          expansionIrregularForms = cleanedIrregular;
-          expansionSentenceMathForms = cleanedSentenceMath;
-          if (changed) renderExpansionControls();
         } catch (e) {
           // ignore
         }

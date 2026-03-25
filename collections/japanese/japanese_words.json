@@ -18207,6 +18207,4288 @@
         "lemma_takai",
         "collocation"
       ]
+    },
+    {
+      "kanji": "便利",
+      "reading": "べんり",
+      "meaning": "convenient",
+      "type": "na-adjective",
+      "tags": [
+        "benri_forms"
+      ]
+    },
+    {
+      "kanji": "便利じゃない",
+      "reading": "べんりじゃない",
+      "meaning": "not convenient",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "便利だった",
+      "reading": "べんりだった",
+      "meaning": "was convenient",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "便利じゃなかった",
+      "reading": "べんりじゃなかった",
+      "meaning": "was not convenient",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "便利で",
+      "reading": "べんりで",
+      "meaning": "convenient and; because convenient",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "便利に",
+      "reading": "べんりに",
+      "meaning": "conveniently",
+      "type": "adverb",
+      "tags": [
+        "benri_forms",
+        "adverbial"
+      ]
+    },
+    {
+      "kanji": "便利ではない",
+      "reading": "べんりではない",
+      "meaning": "not convenient (formal)",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "便利ではなかった",
+      "reading": "べんりではなかった",
+      "meaning": "was not convenient (formal)",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "past_negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "便利なら",
+      "reading": "べんりなら",
+      "meaning": "if convenient",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "便利だったら",
+      "reading": "べんりだったら",
+      "meaning": "if it was convenient",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "便利じゃなければ",
+      "reading": "べんりじゃなければ",
+      "meaning": "if not convenient",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "conditional",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "便利じゃなかったら",
+      "reading": "べんりじゃなかったら",
+      "meaning": "if it was not convenient",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "conditional",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "便利ではなければ",
+      "reading": "べんりではなければ",
+      "meaning": "if not convenient (formal)",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "conditional",
+        "negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "便利ではなかったら",
+      "reading": "べんりではなかったら",
+      "meaning": "if it was not convenient (formal)",
+      "type": "expression",
+      "tags": [
+        "benri_forms",
+        "conditional",
+        "past_negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "便利になる",
+      "reading": "べんりになる",
+      "meaning": "to become convenient",
+      "type": "godan-verb",
+      "tags": [
+        "benri_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "便利にする",
+      "reading": "べんりにする",
+      "meaning": "to make convenient",
+      "type": "irregular-verb",
+      "tags": [
+        "benri_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "便利すぎる",
+      "reading": "べんりすぎる",
+      "meaning": "to be too convenient",
+      "type": "ichidan-verb",
+      "tags": [
+        "benri_forms",
+        "derived",
+        "excess"
+      ]
+    },
+    {
+      "kanji": "便利そう",
+      "reading": "べんりそう",
+      "meaning": "looks convenient",
+      "type": "na-adjective",
+      "tags": [
+        "benri_forms",
+        "derived",
+        "appearance"
+      ]
+    },
+    {
+      "kanji": "有名",
+      "reading": "ゆうめい",
+      "meaning": "famous",
+      "type": "na-adjective",
+      "tags": [
+        "yuumei_forms"
+      ]
+    },
+    {
+      "kanji": "有名じゃない",
+      "reading": "ゆうめいじゃない",
+      "meaning": "not famous",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "有名だった",
+      "reading": "ゆうめいだった",
+      "meaning": "was famous",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "有名じゃなかった",
+      "reading": "ゆうめいじゃなかった",
+      "meaning": "was not famous",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "有名で",
+      "reading": "ゆうめいで",
+      "meaning": "famous and; because famous",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "有名に",
+      "reading": "ゆうめいに",
+      "meaning": "famously",
+      "type": "adverb",
+      "tags": [
+        "yuumei_forms",
+        "adverbial"
+      ]
+    },
+    {
+      "kanji": "有名ではない",
+      "reading": "ゆうめいではない",
+      "meaning": "not famous (formal)",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "有名ではなかった",
+      "reading": "ゆうめいではなかった",
+      "meaning": "was not famous (formal)",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "past_negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "有名なら",
+      "reading": "ゆうめいなら",
+      "meaning": "if famous",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "有名だったら",
+      "reading": "ゆうめいだったら",
+      "meaning": "if it was famous",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "有名じゃなければ",
+      "reading": "ゆうめいじゃなければ",
+      "meaning": "if not famous",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "conditional",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "有名じゃなかったら",
+      "reading": "ゆうめいじゃなかったら",
+      "meaning": "if it was not famous",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "conditional",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "有名ではなければ",
+      "reading": "ゆうめいではなければ",
+      "meaning": "if not famous (formal)",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "conditional",
+        "negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "有名ではなかったら",
+      "reading": "ゆうめいではなかったら",
+      "meaning": "if it was not famous (formal)",
+      "type": "expression",
+      "tags": [
+        "yuumei_forms",
+        "conditional",
+        "past_negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "有名になる",
+      "reading": "ゆうめいになる",
+      "meaning": "to become famous",
+      "type": "godan-verb",
+      "tags": [
+        "yuumei_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "有名にする",
+      "reading": "ゆうめいにする",
+      "meaning": "to make famous",
+      "type": "irregular-verb",
+      "tags": [
+        "yuumei_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "有名すぎる",
+      "reading": "ゆうめいすぎる",
+      "meaning": "to be too famous",
+      "type": "ichidan-verb",
+      "tags": [
+        "yuumei_forms",
+        "derived",
+        "excess"
+      ]
+    },
+    {
+      "kanji": "有名そう",
+      "reading": "ゆうめいそう",
+      "meaning": "looks famous",
+      "type": "na-adjective",
+      "tags": [
+        "yuumei_forms",
+        "derived",
+        "appearance"
+      ]
+    },
+    {
+      "kanji": "静か",
+      "reading": "しずか",
+      "meaning": "quiet",
+      "type": "na-adjective",
+      "tags": [
+        "shizuka_forms"
+      ]
+    },
+    {
+      "kanji": "静かじゃない",
+      "reading": "しずかじゃない",
+      "meaning": "not quiet",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "静かだった",
+      "reading": "しずかだった",
+      "meaning": "was quiet",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "静かじゃなかった",
+      "reading": "しずかじゃなかった",
+      "meaning": "was not quiet",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "静かで",
+      "reading": "しずかで",
+      "meaning": "quiet and; because quiet",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "静かに",
+      "reading": "しずかに",
+      "meaning": "quietly",
+      "type": "adverb",
+      "tags": [
+        "shizuka_forms",
+        "adverbial"
+      ]
+    },
+    {
+      "kanji": "静かではない",
+      "reading": "しずかではない",
+      "meaning": "not quiet (formal)",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "静かではなかった",
+      "reading": "しずかではなかった",
+      "meaning": "was not quiet (formal)",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "past_negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "静かなら",
+      "reading": "しずかなら",
+      "meaning": "if quiet",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "静かだったら",
+      "reading": "しずかだったら",
+      "meaning": "if it was quiet",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "静かじゃなければ",
+      "reading": "しずかじゃなければ",
+      "meaning": "if not quiet",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "conditional",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "静かじゃなかったら",
+      "reading": "しずかじゃなかったら",
+      "meaning": "if it was not quiet",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "conditional",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "静かではなければ",
+      "reading": "しずかではなければ",
+      "meaning": "if not quiet (formal)",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "conditional",
+        "negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "静かではなかったら",
+      "reading": "しずかではなかったら",
+      "meaning": "if it was not quiet (formal)",
+      "type": "expression",
+      "tags": [
+        "shizuka_forms",
+        "conditional",
+        "past_negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "静かになる",
+      "reading": "しずかになる",
+      "meaning": "to become quiet",
+      "type": "godan-verb",
+      "tags": [
+        "shizuka_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "静かにする",
+      "reading": "しずかにする",
+      "meaning": "to make quiet",
+      "type": "irregular-verb",
+      "tags": [
+        "shizuka_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "静かすぎる",
+      "reading": "しずかすぎる",
+      "meaning": "to be too quiet",
+      "type": "ichidan-verb",
+      "tags": [
+        "shizuka_forms",
+        "derived",
+        "excess"
+      ]
+    },
+    {
+      "kanji": "静かそう",
+      "reading": "しずかそう",
+      "meaning": "looks quiet",
+      "type": "na-adjective",
+      "tags": [
+        "shizuka_forms",
+        "derived",
+        "appearance"
+      ]
+    },
+    {
+      "kanji": "大変",
+      "reading": "たいへん",
+      "meaning": "serious; tough",
+      "type": "na-adjective",
+      "tags": [
+        "taihen_forms"
+      ]
+    },
+    {
+      "kanji": "大変じゃない",
+      "reading": "たいへんじゃない",
+      "meaning": "not serious; tough",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "大変だった",
+      "reading": "たいへんだった",
+      "meaning": "was serious; tough",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "大変じゃなかった",
+      "reading": "たいへんじゃなかった",
+      "meaning": "was not serious; tough",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "大変で",
+      "reading": "たいへんで",
+      "meaning": "serious; tough and; because serious; tough",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "大変に",
+      "reading": "たいへんに",
+      "meaning": "very; greatly",
+      "type": "adverb",
+      "tags": [
+        "taihen_forms",
+        "adverbial"
+      ]
+    },
+    {
+      "kanji": "大変ではない",
+      "reading": "たいへんではない",
+      "meaning": "not serious; tough (formal)",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "大変ではなかった",
+      "reading": "たいへんではなかった",
+      "meaning": "was not serious; tough (formal)",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "past_negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "大変なら",
+      "reading": "たいへんなら",
+      "meaning": "if serious; tough",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "大変だったら",
+      "reading": "たいへんだったら",
+      "meaning": "if it was serious; tough",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "大変じゃなければ",
+      "reading": "たいへんじゃなければ",
+      "meaning": "if not serious; tough",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "conditional",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "大変じゃなかったら",
+      "reading": "たいへんじゃなかったら",
+      "meaning": "if it was not serious; tough",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "conditional",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "大変ではなければ",
+      "reading": "たいへんではなければ",
+      "meaning": "if not serious; tough (formal)",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "conditional",
+        "negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "大変ではなかったら",
+      "reading": "たいへんではなかったら",
+      "meaning": "if it was not serious; tough (formal)",
+      "type": "expression",
+      "tags": [
+        "taihen_forms",
+        "conditional",
+        "past_negative",
+        "formal"
+      ]
+    },
+    {
+      "kanji": "大変になる",
+      "reading": "たいへんになる",
+      "meaning": "to become serious; tough",
+      "type": "godan-verb",
+      "tags": [
+        "taihen_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "大変にする",
+      "reading": "たいへんにする",
+      "meaning": "to make serious; tough",
+      "type": "irregular-verb",
+      "tags": [
+        "taihen_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "大変すぎる",
+      "reading": "たいへんすぎる",
+      "meaning": "to be too serious; tough",
+      "type": "ichidan-verb",
+      "tags": [
+        "taihen_forms",
+        "derived",
+        "excess"
+      ]
+    },
+    {
+      "kanji": "大変そう",
+      "reading": "たいへんそう",
+      "meaning": "looks serious; tough",
+      "type": "na-adjective",
+      "tags": [
+        "taihen_forms",
+        "derived",
+        "appearance"
+      ]
+    },
+    {
+      "kanji": "安い",
+      "reading": "やすい",
+      "meaning": "cheap",
+      "type": "i-adjective",
+      "tags": [
+        "yasui_forms"
+      ]
+    },
+    {
+      "kanji": "安くない",
+      "reading": "やすくない",
+      "meaning": "not cheap",
+      "type": "i-adjective",
+      "tags": [
+        "yasui_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "安かった",
+      "reading": "やすかった",
+      "meaning": "was cheap",
+      "type": "i-adjective",
+      "tags": [
+        "yasui_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "安くなかった",
+      "reading": "やすくなかった",
+      "meaning": "was not cheap",
+      "type": "i-adjective",
+      "tags": [
+        "yasui_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "安くて",
+      "reading": "やすくて",
+      "meaning": "cheap and; because cheap",
+      "type": "expression",
+      "tags": [
+        "yasui_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "安く",
+      "reading": "やすく",
+      "meaning": "cheaply",
+      "type": "adverb",
+      "tags": [
+        "yasui_forms",
+        "adverbial"
+      ]
+    },
+    {
+      "kanji": "安ければ",
+      "reading": "やすければ",
+      "meaning": "if cheap",
+      "type": "expression",
+      "tags": [
+        "yasui_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "安かったら",
+      "reading": "やすかったら",
+      "meaning": "if it was cheap",
+      "type": "expression",
+      "tags": [
+        "yasui_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "安くなければ",
+      "reading": "やすくなければ",
+      "meaning": "if not cheap",
+      "type": "expression",
+      "tags": [
+        "yasui_forms",
+        "conditional",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "安くなかったら",
+      "reading": "やすくなかったら",
+      "meaning": "if it was not cheap",
+      "type": "expression",
+      "tags": [
+        "yasui_forms",
+        "conditional",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "安くなる",
+      "reading": "やすくなる",
+      "meaning": "to become cheap",
+      "type": "godan-verb",
+      "tags": [
+        "yasui_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "安くする",
+      "reading": "やすくする",
+      "meaning": "to make cheap",
+      "type": "irregular-verb",
+      "tags": [
+        "yasui_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "安すぎる",
+      "reading": "やすすぎる",
+      "meaning": "to be too cheap",
+      "type": "ichidan-verb",
+      "tags": [
+        "yasui_forms",
+        "derived",
+        "excess"
+      ]
+    },
+    {
+      "kanji": "安そう",
+      "reading": "やすそう",
+      "meaning": "looks cheap",
+      "type": "na-adjective",
+      "tags": [
+        "yasui_forms",
+        "derived",
+        "appearance"
+      ]
+    },
+    {
+      "kanji": "新しい",
+      "reading": "あたらしい",
+      "meaning": "new",
+      "type": "i-adjective",
+      "tags": [
+        "atarashii_forms"
+      ]
+    },
+    {
+      "kanji": "新しくない",
+      "reading": "あたらしくない",
+      "meaning": "not new",
+      "type": "i-adjective",
+      "tags": [
+        "atarashii_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "新しかった",
+      "reading": "あたらしかった",
+      "meaning": "was new",
+      "type": "i-adjective",
+      "tags": [
+        "atarashii_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "新しくなかった",
+      "reading": "あたらしくなかった",
+      "meaning": "was not new",
+      "type": "i-adjective",
+      "tags": [
+        "atarashii_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "新しくて",
+      "reading": "あたらしくて",
+      "meaning": "new and; because new",
+      "type": "expression",
+      "tags": [
+        "atarashii_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "新しく",
+      "reading": "あたらしく",
+      "meaning": "newly",
+      "type": "adverb",
+      "tags": [
+        "atarashii_forms",
+        "adverbial"
+      ]
+    },
+    {
+      "kanji": "新しければ",
+      "reading": "あたらしければ",
+      "meaning": "if new",
+      "type": "expression",
+      "tags": [
+        "atarashii_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "新しかったら",
+      "reading": "あたらしかったら",
+      "meaning": "if it was new",
+      "type": "expression",
+      "tags": [
+        "atarashii_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "新しくなければ",
+      "reading": "あたらしくなければ",
+      "meaning": "if not new",
+      "type": "expression",
+      "tags": [
+        "atarashii_forms",
+        "conditional",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "新しくなかったら",
+      "reading": "あたらしくなかったら",
+      "meaning": "if it was not new",
+      "type": "expression",
+      "tags": [
+        "atarashii_forms",
+        "conditional",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "新しくなる",
+      "reading": "あたらしくなる",
+      "meaning": "to become new",
+      "type": "godan-verb",
+      "tags": [
+        "atarashii_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "新しくする",
+      "reading": "あたらしくする",
+      "meaning": "to make new",
+      "type": "irregular-verb",
+      "tags": [
+        "atarashii_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "新しすぎる",
+      "reading": "あたらしすぎる",
+      "meaning": "to be too new",
+      "type": "ichidan-verb",
+      "tags": [
+        "atarashii_forms",
+        "derived",
+        "excess"
+      ]
+    },
+    {
+      "kanji": "新しそう",
+      "reading": "あたらしそう",
+      "meaning": "looks new",
+      "type": "na-adjective",
+      "tags": [
+        "atarashii_forms",
+        "derived",
+        "appearance"
+      ]
+    },
+    {
+      "kanji": "古い",
+      "reading": "ふるい",
+      "meaning": "old",
+      "type": "i-adjective",
+      "tags": [
+        "furui_forms"
+      ]
+    },
+    {
+      "kanji": "古くない",
+      "reading": "ふるくない",
+      "meaning": "not old",
+      "type": "i-adjective",
+      "tags": [
+        "furui_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "古かった",
+      "reading": "ふるかった",
+      "meaning": "was old",
+      "type": "i-adjective",
+      "tags": [
+        "furui_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "古くなかった",
+      "reading": "ふるくなかった",
+      "meaning": "was not old",
+      "type": "i-adjective",
+      "tags": [
+        "furui_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "古くて",
+      "reading": "ふるくて",
+      "meaning": "old and; because old",
+      "type": "expression",
+      "tags": [
+        "furui_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "古く",
+      "reading": "ふるく",
+      "meaning": "formerly; in an old way",
+      "type": "adverb",
+      "tags": [
+        "furui_forms",
+        "adverbial"
+      ]
+    },
+    {
+      "kanji": "古ければ",
+      "reading": "ふるければ",
+      "meaning": "if old",
+      "type": "expression",
+      "tags": [
+        "furui_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "古かったら",
+      "reading": "ふるかったら",
+      "meaning": "if it was old",
+      "type": "expression",
+      "tags": [
+        "furui_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "古くなければ",
+      "reading": "ふるくなければ",
+      "meaning": "if not old",
+      "type": "expression",
+      "tags": [
+        "furui_forms",
+        "conditional",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "古くなかったら",
+      "reading": "ふるくなかったら",
+      "meaning": "if it was not old",
+      "type": "expression",
+      "tags": [
+        "furui_forms",
+        "conditional",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "古くなる",
+      "reading": "ふるくなる",
+      "meaning": "to become old",
+      "type": "godan-verb",
+      "tags": [
+        "furui_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "古くする",
+      "reading": "ふるくする",
+      "meaning": "to make old",
+      "type": "irregular-verb",
+      "tags": [
+        "furui_forms",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "古すぎる",
+      "reading": "ふるすぎる",
+      "meaning": "to be too old",
+      "type": "ichidan-verb",
+      "tags": [
+        "furui_forms",
+        "derived",
+        "excess"
+      ]
+    },
+    {
+      "kanji": "古そう",
+      "reading": "ふるそう",
+      "meaning": "looks old",
+      "type": "na-adjective",
+      "tags": [
+        "furui_forms",
+        "derived",
+        "appearance"
+      ]
+    },
+    {
+      "kanji": "する",
+      "reading": "する",
+      "meaning": "to do",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms"
+      ]
+    },
+    {
+      "kanji": "しない",
+      "reading": "しない",
+      "meaning": "to not do",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "した",
+      "reading": "した",
+      "meaning": "did",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "しなかった",
+      "reading": "しなかった",
+      "meaning": "did not do",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "して",
+      "reading": "して",
+      "meaning": "do and; please do",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "すれば",
+      "reading": "すれば",
+      "meaning": "if do",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "したら",
+      "reading": "したら",
+      "meaning": "if/when did",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "しよう",
+      "reading": "しよう",
+      "meaning": "let's do",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "できる",
+      "reading": "できる",
+      "meaning": "can do",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "される",
+      "reading": "される",
+      "meaning": "be done",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "させる",
+      "reading": "させる",
+      "meaning": "make/let do",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "しろ",
+      "reading": "しろ",
+      "meaning": "do!",
+      "type": "irregular-verb",
+      "tags": [
+        "suru_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "来る",
+      "reading": "くる",
+      "meaning": "to come",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms"
+      ]
+    },
+    {
+      "kanji": "来ない",
+      "reading": "こない",
+      "meaning": "to not come",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "来た",
+      "reading": "きた",
+      "meaning": "came",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "来なかった",
+      "reading": "こなかった",
+      "meaning": "did not come",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "来て",
+      "reading": "きて",
+      "meaning": "come and; please come",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "来れば",
+      "reading": "くれば",
+      "meaning": "if come",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "来たら",
+      "reading": "きたら",
+      "meaning": "if/when came",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "来よう",
+      "reading": "こよう",
+      "meaning": "let's come",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "来られる",
+      "reading": "こられる",
+      "meaning": "can come",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "来させる",
+      "reading": "こさせる",
+      "meaning": "make/let come",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "来い",
+      "reading": "こい",
+      "meaning": "come!",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "ある",
+      "reading": "ある",
+      "meaning": "to exist; have",
+      "type": "godan-verb",
+      "tags": [
+        "aru_forms"
+      ]
+    },
+    {
+      "kanji": "ない",
+      "reading": "ない",
+      "meaning": "to not exist; have",
+      "type": "godan-verb",
+      "tags": [
+        "aru_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "あった",
+      "reading": "あった",
+      "meaning": "existed; had",
+      "type": "godan-verb",
+      "tags": [
+        "aru_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "なかった",
+      "reading": "なかった",
+      "meaning": "did not exist; have",
+      "type": "godan-verb",
+      "tags": [
+        "aru_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "あって",
+      "reading": "あって",
+      "meaning": "exist; have and; please exist; have",
+      "type": "godan-verb",
+      "tags": [
+        "aru_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "あれば",
+      "reading": "あれば",
+      "meaning": "if exist; have",
+      "type": "godan-verb",
+      "tags": [
+        "aru_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "あったら",
+      "reading": "あったら",
+      "meaning": "if/when existed; had",
+      "type": "godan-verb",
+      "tags": [
+        "aru_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "あろう",
+      "reading": "あろう",
+      "meaning": "let's exist; have",
+      "type": "godan-verb",
+      "tags": [
+        "aru_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "あれ",
+      "reading": "あれ",
+      "meaning": "exist; have!",
+      "type": "godan-verb",
+      "tags": [
+        "aru_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "行く",
+      "reading": "いく",
+      "meaning": "to go",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms"
+      ]
+    },
+    {
+      "kanji": "行かない",
+      "reading": "いかない",
+      "meaning": "to not go",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "行った",
+      "reading": "いった",
+      "meaning": "went",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "行かなかった",
+      "reading": "いかなかった",
+      "meaning": "did not go",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "行って",
+      "reading": "いって",
+      "meaning": "go and; please go",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "行けば",
+      "reading": "いけば",
+      "meaning": "if go",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "行ったら",
+      "reading": "いったら",
+      "meaning": "if/when went",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "行こう",
+      "reading": "いこう",
+      "meaning": "let's go",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "行ける",
+      "reading": "いける",
+      "meaning": "can go",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "行かれる",
+      "reading": "いかれる",
+      "meaning": "be gone to",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "行かせる",
+      "reading": "いかせる",
+      "meaning": "make/let go",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "行け",
+      "reading": "いけ",
+      "meaning": "go!",
+      "type": "godan-verb",
+      "tags": [
+        "iku_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "買う",
+      "reading": "かう",
+      "meaning": "to buy",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms"
+      ]
+    },
+    {
+      "kanji": "買わない",
+      "reading": "かわない",
+      "meaning": "to not buy",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "買った",
+      "reading": "かった",
+      "meaning": "bought",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "買わなかった",
+      "reading": "かわなかった",
+      "meaning": "did not buy",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "買って",
+      "reading": "かって",
+      "meaning": "buy and; please buy",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "買えば",
+      "reading": "かえば",
+      "meaning": "if buy",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "買ったら",
+      "reading": "かったら",
+      "meaning": "if/when bought",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "買おう",
+      "reading": "かおう",
+      "meaning": "let's buy",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "買える",
+      "reading": "かえる",
+      "meaning": "can buy",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "買われる",
+      "reading": "かわれる",
+      "meaning": "be bought",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "買わせる",
+      "reading": "かわせる",
+      "meaning": "make/let buy",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "買え",
+      "reading": "かえ",
+      "meaning": "buy!",
+      "type": "godan-verb",
+      "tags": [
+        "kau_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "使う",
+      "reading": "つかう",
+      "meaning": "to use",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms"
+      ]
+    },
+    {
+      "kanji": "使わない",
+      "reading": "つかわない",
+      "meaning": "to not use",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "使った",
+      "reading": "つかった",
+      "meaning": "used",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "使わなかった",
+      "reading": "つかわなかった",
+      "meaning": "did not use",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "使って",
+      "reading": "つかって",
+      "meaning": "use and; please use",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "使えば",
+      "reading": "つかえば",
+      "meaning": "if use",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "使ったら",
+      "reading": "つかったら",
+      "meaning": "if/when used",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "使おう",
+      "reading": "つかおう",
+      "meaning": "let's use",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "使える",
+      "reading": "つかえる",
+      "meaning": "can use",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "使われる",
+      "reading": "つかわれる",
+      "meaning": "be used",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "使わせる",
+      "reading": "つかわせる",
+      "meaning": "make/let use",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "使え",
+      "reading": "つかえ",
+      "meaning": "use!",
+      "type": "godan-verb",
+      "tags": [
+        "tsukau_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "書く",
+      "reading": "かく",
+      "meaning": "to write",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms"
+      ]
+    },
+    {
+      "kanji": "書かない",
+      "reading": "かかない",
+      "meaning": "to not write",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "書いた",
+      "reading": "かいた",
+      "meaning": "wrote",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "書かなかった",
+      "reading": "かかなかった",
+      "meaning": "did not write",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "書いて",
+      "reading": "かいて",
+      "meaning": "write and; please write",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "書けば",
+      "reading": "かけば",
+      "meaning": "if write",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "書いたら",
+      "reading": "かいたら",
+      "meaning": "if/when wrote",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "書こう",
+      "reading": "かこう",
+      "meaning": "let's write",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "書ける",
+      "reading": "かける",
+      "meaning": "can write",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "書かれる",
+      "reading": "かかれる",
+      "meaning": "be written",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "書かせる",
+      "reading": "かかせる",
+      "meaning": "make/let write",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "書け",
+      "reading": "かけ",
+      "meaning": "write!",
+      "type": "godan-verb",
+      "tags": [
+        "kaku_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "聞く",
+      "reading": "きく",
+      "meaning": "to hear; ask",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms"
+      ]
+    },
+    {
+      "kanji": "聞かない",
+      "reading": "きかない",
+      "meaning": "to not hear; ask",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "聞いた",
+      "reading": "きいた",
+      "meaning": "heard; asked",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "聞かなかった",
+      "reading": "きかなかった",
+      "meaning": "did not hear; ask",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "聞いて",
+      "reading": "きいて",
+      "meaning": "hear; ask and; please hear; ask",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "聞けば",
+      "reading": "きけば",
+      "meaning": "if hear; ask",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "聞いたら",
+      "reading": "きいたら",
+      "meaning": "if/when heard; asked",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "聞こう",
+      "reading": "きこう",
+      "meaning": "let's hear; ask",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "聞ける",
+      "reading": "きける",
+      "meaning": "can hear; ask",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "聞かれる",
+      "reading": "きかれる",
+      "meaning": "be heard; asked",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "聞かせる",
+      "reading": "きかせる",
+      "meaning": "make/let hear; ask",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "聞け",
+      "reading": "きけ",
+      "meaning": "hear; ask!",
+      "type": "godan-verb",
+      "tags": [
+        "kiku_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "泳ぐ",
+      "reading": "およぐ",
+      "meaning": "to swim",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms"
+      ]
+    },
+    {
+      "kanji": "泳がない",
+      "reading": "およがない",
+      "meaning": "to not swim",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "泳いだ",
+      "reading": "およいだ",
+      "meaning": "swam",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "泳がなかった",
+      "reading": "およがなかった",
+      "meaning": "did not swim",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "泳いで",
+      "reading": "およいで",
+      "meaning": "swim and; please swim",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "泳げば",
+      "reading": "およげば",
+      "meaning": "if swim",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "泳いだら",
+      "reading": "およいだら",
+      "meaning": "if/when swam",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "泳ごう",
+      "reading": "およごう",
+      "meaning": "let's swim",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "泳げる",
+      "reading": "およげる",
+      "meaning": "can swim",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "泳がれる",
+      "reading": "およがれる",
+      "meaning": "be swum at",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "泳がせる",
+      "reading": "およがせる",
+      "meaning": "make/let swim",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "泳げ",
+      "reading": "およげ",
+      "meaning": "swim!",
+      "type": "godan-verb",
+      "tags": [
+        "oyogu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "急ぐ",
+      "reading": "いそぐ",
+      "meaning": "to hurry",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms"
+      ]
+    },
+    {
+      "kanji": "急がない",
+      "reading": "いそがない",
+      "meaning": "to not hurry",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "急いだ",
+      "reading": "いそいだ",
+      "meaning": "hurried",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "急がなかった",
+      "reading": "いそがなかった",
+      "meaning": "did not hurry",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "急いで",
+      "reading": "いそいで",
+      "meaning": "hurry and; please hurry",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "急げば",
+      "reading": "いそげば",
+      "meaning": "if hurry",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "急いだら",
+      "reading": "いそいだら",
+      "meaning": "if/when hurried",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "急ごう",
+      "reading": "いそごう",
+      "meaning": "let's hurry",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "急げる",
+      "reading": "いそげる",
+      "meaning": "can hurry",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "急がれる",
+      "reading": "いそがれる",
+      "meaning": "be hurried",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "急がせる",
+      "reading": "いそがせる",
+      "meaning": "make/let hurry",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "急げ",
+      "reading": "いそげ",
+      "meaning": "hurry!",
+      "type": "godan-verb",
+      "tags": [
+        "isogu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "話す",
+      "reading": "はなす",
+      "meaning": "to speak",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms"
+      ]
+    },
+    {
+      "kanji": "話さない",
+      "reading": "はなさない",
+      "meaning": "to not speak",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "話した",
+      "reading": "はなした",
+      "meaning": "spoke",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "話さなかった",
+      "reading": "はなさなかった",
+      "meaning": "did not speak",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "話して",
+      "reading": "はなして",
+      "meaning": "speak and; please speak",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "話せば",
+      "reading": "はなせば",
+      "meaning": "if speak",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "話したら",
+      "reading": "はなしたら",
+      "meaning": "if/when spoke",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "話そう",
+      "reading": "はなそう",
+      "meaning": "let's speak",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "話せる",
+      "reading": "はなせる",
+      "meaning": "can speak",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "話される",
+      "reading": "はなされる",
+      "meaning": "be spoken",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "話させる",
+      "reading": "はなさせる",
+      "meaning": "make/let speak",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "話せ",
+      "reading": "はなせ",
+      "meaning": "speak!",
+      "type": "godan-verb",
+      "tags": [
+        "hanasu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "過ごす",
+      "reading": "すごす",
+      "meaning": "to spend",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms"
+      ]
+    },
+    {
+      "kanji": "過ごさない",
+      "reading": "すごさない",
+      "meaning": "to not spend",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "過ごした",
+      "reading": "すごした",
+      "meaning": "spent",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "過ごさなかった",
+      "reading": "すごさなかった",
+      "meaning": "did not spend",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "過ごして",
+      "reading": "すごして",
+      "meaning": "spend and; please spend",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "過ごせば",
+      "reading": "すごせば",
+      "meaning": "if spend",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "過ごしたら",
+      "reading": "すごしたら",
+      "meaning": "if/when spent",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "過ごそう",
+      "reading": "すごそう",
+      "meaning": "let's spend",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "過ごせる",
+      "reading": "すごせる",
+      "meaning": "can spend",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "過ごされる",
+      "reading": "すごされる",
+      "meaning": "be spent",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "過ごさせる",
+      "reading": "すごさせる",
+      "meaning": "make/let spend",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "過ごせ",
+      "reading": "すごせ",
+      "meaning": "spend!",
+      "type": "godan-verb",
+      "tags": [
+        "sugosu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "待つ",
+      "reading": "まつ",
+      "meaning": "to wait",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms"
+      ]
+    },
+    {
+      "kanji": "待たない",
+      "reading": "またない",
+      "meaning": "to not wait",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "待った",
+      "reading": "まった",
+      "meaning": "waited",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "待たなかった",
+      "reading": "またなかった",
+      "meaning": "did not wait",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "待って",
+      "reading": "まって",
+      "meaning": "wait and; please wait",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "待てば",
+      "reading": "まてば",
+      "meaning": "if wait",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "待ったら",
+      "reading": "まったら",
+      "meaning": "if/when waited",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "待とう",
+      "reading": "まとう",
+      "meaning": "let's wait",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "待てる",
+      "reading": "まてる",
+      "meaning": "can wait",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "待たれる",
+      "reading": "またれる",
+      "meaning": "be waited for",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "待たせる",
+      "reading": "またせる",
+      "meaning": "make/let wait",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "待て",
+      "reading": "まて",
+      "meaning": "wait!",
+      "type": "godan-verb",
+      "tags": [
+        "matsu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "立つ",
+      "reading": "たつ",
+      "meaning": "to stand",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms"
+      ]
+    },
+    {
+      "kanji": "立たない",
+      "reading": "たたない",
+      "meaning": "to not stand",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "立った",
+      "reading": "たった",
+      "meaning": "stood",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "立たなかった",
+      "reading": "たたなかった",
+      "meaning": "did not stand",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "立って",
+      "reading": "たって",
+      "meaning": "stand and; please stand",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "立てば",
+      "reading": "たてば",
+      "meaning": "if stand",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "立ったら",
+      "reading": "たったら",
+      "meaning": "if/when stood",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "立とう",
+      "reading": "たとう",
+      "meaning": "let's stand",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "立てる",
+      "reading": "たてる",
+      "meaning": "can stand",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "立たれる",
+      "reading": "たたれる",
+      "meaning": "be stood by",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "立たせる",
+      "reading": "たたせる",
+      "meaning": "make/let stand",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "立て",
+      "reading": "たて",
+      "meaning": "stand!",
+      "type": "godan-verb",
+      "tags": [
+        "tatsu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "死ぬ",
+      "reading": "しぬ",
+      "meaning": "to die",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms"
+      ]
+    },
+    {
+      "kanji": "死なない",
+      "reading": "しなない",
+      "meaning": "to not die",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "死んだ",
+      "reading": "しんだ",
+      "meaning": "died",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "死ななかった",
+      "reading": "しななかった",
+      "meaning": "did not die",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "死んで",
+      "reading": "しんで",
+      "meaning": "die and; please die",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "死ねば",
+      "reading": "しねば",
+      "meaning": "if die",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "死んだら",
+      "reading": "しんだら",
+      "meaning": "if/when died",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "死のう",
+      "reading": "しのう",
+      "meaning": "let's die",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "死ねる",
+      "reading": "しねる",
+      "meaning": "can die",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "死なれる",
+      "reading": "しなれる",
+      "meaning": "be died on",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "死なせる",
+      "reading": "しなせる",
+      "meaning": "make/let die",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "死ね",
+      "reading": "しね",
+      "meaning": "die!",
+      "type": "godan-verb",
+      "tags": [
+        "shinu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "遊ぶ",
+      "reading": "あそぶ",
+      "meaning": "to play",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms"
+      ]
+    },
+    {
+      "kanji": "遊ばない",
+      "reading": "あそばない",
+      "meaning": "to not play",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "遊んだ",
+      "reading": "あそんだ",
+      "meaning": "played",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "遊ばなかった",
+      "reading": "あそばなかった",
+      "meaning": "did not play",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "遊んで",
+      "reading": "あそんで",
+      "meaning": "play and; please play",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "遊べば",
+      "reading": "あそべば",
+      "meaning": "if play",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "遊んだら",
+      "reading": "あそんだら",
+      "meaning": "if/when played",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "遊ぼう",
+      "reading": "あそぼう",
+      "meaning": "let's play",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "遊べる",
+      "reading": "あそべる",
+      "meaning": "can play",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "遊ばれる",
+      "reading": "あそばれる",
+      "meaning": "be played with",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "遊ばせる",
+      "reading": "あそばせる",
+      "meaning": "make/let play",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "遊べ",
+      "reading": "あそべ",
+      "meaning": "play!",
+      "type": "godan-verb",
+      "tags": [
+        "asobu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "飛ぶ",
+      "reading": "とぶ",
+      "meaning": "to fly",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms"
+      ]
+    },
+    {
+      "kanji": "飛ばない",
+      "reading": "とばない",
+      "meaning": "to not fly",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "飛んだ",
+      "reading": "とんだ",
+      "meaning": "flew",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "飛ばなかった",
+      "reading": "とばなかった",
+      "meaning": "did not fly",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "飛んで",
+      "reading": "とんで",
+      "meaning": "fly and; please fly",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "飛べば",
+      "reading": "とべば",
+      "meaning": "if fly",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "飛んだら",
+      "reading": "とんだら",
+      "meaning": "if/when flew",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "飛ぼう",
+      "reading": "とぼう",
+      "meaning": "let's fly",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "飛べる",
+      "reading": "とべる",
+      "meaning": "can fly",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "飛ばれる",
+      "reading": "とばれる",
+      "meaning": "be flown to",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "飛ばせる",
+      "reading": "とばせる",
+      "meaning": "make/let fly",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "飛べ",
+      "reading": "とべ",
+      "meaning": "fly!",
+      "type": "godan-verb",
+      "tags": [
+        "tobu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "読む",
+      "reading": "よむ",
+      "meaning": "to read",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms"
+      ]
+    },
+    {
+      "kanji": "読まない",
+      "reading": "よまない",
+      "meaning": "to not read",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "読んだ",
+      "reading": "よんだ",
+      "meaning": "read",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "読まなかった",
+      "reading": "よまなかった",
+      "meaning": "did not read",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "読んで",
+      "reading": "よんで",
+      "meaning": "read and; please read",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "読めば",
+      "reading": "よめば",
+      "meaning": "if read",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "読んだら",
+      "reading": "よんだら",
+      "meaning": "if/when read",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "読もう",
+      "reading": "よもう",
+      "meaning": "let's read",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "読める",
+      "reading": "よめる",
+      "meaning": "can read",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "読まれる",
+      "reading": "よまれる",
+      "meaning": "be read",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "読ませる",
+      "reading": "よませる",
+      "meaning": "make/let read",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "読め",
+      "reading": "よめ",
+      "meaning": "read!",
+      "type": "godan-verb",
+      "tags": [
+        "yomu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "飲む",
+      "reading": "のむ",
+      "meaning": "to drink",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms"
+      ]
+    },
+    {
+      "kanji": "飲まない",
+      "reading": "のまない",
+      "meaning": "to not drink",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "飲んだ",
+      "reading": "のんだ",
+      "meaning": "drank",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "飲まなかった",
+      "reading": "のまなかった",
+      "meaning": "did not drink",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "飲んで",
+      "reading": "のんで",
+      "meaning": "drink and; please drink",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "飲めば",
+      "reading": "のめば",
+      "meaning": "if drink",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "飲んだら",
+      "reading": "のんだら",
+      "meaning": "if/when drank",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "飲もう",
+      "reading": "のもう",
+      "meaning": "let's drink",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "飲める",
+      "reading": "のめる",
+      "meaning": "can drink",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "飲まれる",
+      "reading": "のまれる",
+      "meaning": "be drunk",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "飲ませる",
+      "reading": "のませる",
+      "meaning": "make/let drink",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "飲め",
+      "reading": "のめ",
+      "meaning": "drink!",
+      "type": "godan-verb",
+      "tags": [
+        "nomu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "取る",
+      "reading": "とる",
+      "meaning": "to take",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms"
+      ]
+    },
+    {
+      "kanji": "取らない",
+      "reading": "とらない",
+      "meaning": "to not take",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "取った",
+      "reading": "とった",
+      "meaning": "took",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "取らなかった",
+      "reading": "とらなかった",
+      "meaning": "did not take",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "取って",
+      "reading": "とって",
+      "meaning": "take and; please take",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "取れば",
+      "reading": "とれば",
+      "meaning": "if take",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "取ったら",
+      "reading": "とったら",
+      "meaning": "if/when took",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "取ろう",
+      "reading": "とろう",
+      "meaning": "let's take",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "取れる",
+      "reading": "とれる",
+      "meaning": "can take",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "取られる",
+      "reading": "とられる",
+      "meaning": "be taken",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "取らせる",
+      "reading": "とらせる",
+      "meaning": "make/let take",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "取れ",
+      "reading": "とれ",
+      "meaning": "take!",
+      "type": "godan-verb",
+      "tags": [
+        "toru_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "帰る",
+      "reading": "かえる",
+      "meaning": "to return",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms"
+      ]
+    },
+    {
+      "kanji": "帰らない",
+      "reading": "かえらない",
+      "meaning": "to not return",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "帰った",
+      "reading": "かえった",
+      "meaning": "returned",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "帰らなかった",
+      "reading": "かえらなかった",
+      "meaning": "did not return",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "帰って",
+      "reading": "かえって",
+      "meaning": "return and; please return",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "帰れば",
+      "reading": "かえれば",
+      "meaning": "if return",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "帰ったら",
+      "reading": "かえったら",
+      "meaning": "if/when returned",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "帰ろう",
+      "reading": "かえろう",
+      "meaning": "let's return",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "帰れる",
+      "reading": "かえれる",
+      "meaning": "can return",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "帰られる",
+      "reading": "かえられる",
+      "meaning": "be returned to",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "帰らせる",
+      "reading": "かえらせる",
+      "meaning": "make/let return",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "帰れ",
+      "reading": "かえれ",
+      "meaning": "return!",
+      "type": "godan-verb",
+      "tags": [
+        "kaeru_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "見る",
+      "reading": "みる",
+      "meaning": "to see",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms"
+      ]
+    },
+    {
+      "kanji": "見ない",
+      "reading": "みない",
+      "meaning": "to not see",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "見た",
+      "reading": "みた",
+      "meaning": "saw",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "見なかった",
+      "reading": "みなかった",
+      "meaning": "did not see",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "見て",
+      "reading": "みて",
+      "meaning": "see and; please see",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "見れば",
+      "reading": "みれば",
+      "meaning": "if see",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "見たら",
+      "reading": "みたら",
+      "meaning": "if/when saw",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "見よう",
+      "reading": "みよう",
+      "meaning": "let's see",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "見られる",
+      "reading": "みられる",
+      "meaning": "can see",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "見させる",
+      "reading": "みさせる",
+      "meaning": "make/let see",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "見ろ",
+      "reading": "みろ",
+      "meaning": "see!",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "食べる",
+      "reading": "たべる",
+      "meaning": "to eat",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms"
+      ]
+    },
+    {
+      "kanji": "食べない",
+      "reading": "たべない",
+      "meaning": "to not eat",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "食べた",
+      "reading": "たべた",
+      "meaning": "ate",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "食べなかった",
+      "reading": "たべなかった",
+      "meaning": "did not eat",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "食べて",
+      "reading": "たべて",
+      "meaning": "eat and; please eat",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "食べれば",
+      "reading": "たべれば",
+      "meaning": "if eat",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "食べたら",
+      "reading": "たべたら",
+      "meaning": "if/when ate",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "食べよう",
+      "reading": "たべよう",
+      "meaning": "let's eat",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "食べられる",
+      "reading": "たべられる",
+      "meaning": "can eat",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "食べさせる",
+      "reading": "たべさせる",
+      "meaning": "make/let eat",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "食べろ",
+      "reading": "たべろ",
+      "meaning": "eat!",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "起きる",
+      "reading": "おきる",
+      "meaning": "to wake up",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms"
+      ]
+    },
+    {
+      "kanji": "起きない",
+      "reading": "おきない",
+      "meaning": "to not wake up",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "起きた",
+      "reading": "おきた",
+      "meaning": "woke up",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "起きなかった",
+      "reading": "おきなかった",
+      "meaning": "did not wake up",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "起きて",
+      "reading": "おきて",
+      "meaning": "wake up and; please wake up",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "起きれば",
+      "reading": "おきれば",
+      "meaning": "if wake up",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "起きたら",
+      "reading": "おきたら",
+      "meaning": "if/when woke up",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "起きよう",
+      "reading": "おきよう",
+      "meaning": "let's wake up",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "起きられる",
+      "reading": "おきられる",
+      "meaning": "can wake up",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "起きさせる",
+      "reading": "おきさせる",
+      "meaning": "make/let wake up",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "起きろ",
+      "reading": "おきろ",
+      "meaning": "wake up!",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "開ける",
+      "reading": "あける",
+      "meaning": "to open",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms"
+      ]
+    },
+    {
+      "kanji": "開けない",
+      "reading": "あけない",
+      "meaning": "to not open",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "開けた",
+      "reading": "あけた",
+      "meaning": "opened",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "開けなかった",
+      "reading": "あけなかった",
+      "meaning": "did not open",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "開けて",
+      "reading": "あけて",
+      "meaning": "open and; please open",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "開ければ",
+      "reading": "あければ",
+      "meaning": "if open",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "開けたら",
+      "reading": "あけたら",
+      "meaning": "if/when opened",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "開けよう",
+      "reading": "あけよう",
+      "meaning": "let's open",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "開けられる",
+      "reading": "あけられる",
+      "meaning": "can open",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "開けさせる",
+      "reading": "あけさせる",
+      "meaning": "make/let open",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "開けろ",
+      "reading": "あけろ",
+      "meaning": "open!",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "閉める",
+      "reading": "しめる",
+      "meaning": "to close",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms"
+      ]
+    },
+    {
+      "kanji": "閉めない",
+      "reading": "しめない",
+      "meaning": "to not close",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "閉めた",
+      "reading": "しめた",
+      "meaning": "closed",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms",
+        "past"
+      ]
+    },
+    {
+      "kanji": "閉めなかった",
+      "reading": "しめなかった",
+      "meaning": "did not close",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "閉めて",
+      "reading": "しめて",
+      "meaning": "close and; please close",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "閉めれば",
+      "reading": "しめれば",
+      "meaning": "if close",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "閉めたら",
+      "reading": "しめたら",
+      "meaning": "if/when closed",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "閉めよう",
+      "reading": "しめよう",
+      "meaning": "let's close",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms",
+        "volitional"
+      ]
+    },
+    {
+      "kanji": "閉められる",
+      "reading": "しめられる",
+      "meaning": "can close",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms",
+        "potential"
+      ]
+    },
+    {
+      "kanji": "閉めさせる",
+      "reading": "しめさせる",
+      "meaning": "make/let close",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms",
+        "causative"
+      ]
+    },
+    {
+      "kanji": "閉めろ",
+      "reading": "しめろ",
+      "meaning": "close!",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms",
+        "imperative"
+      ]
+    },
+    {
+      "kanji": "来られる",
+      "reading": "こられる",
+      "meaning": "be come upon",
+      "type": "irregular-verb",
+      "tags": [
+        "kuru_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "見られる",
+      "reading": "みられる",
+      "meaning": "be seen",
+      "type": "ichidan-verb",
+      "tags": [
+        "miru_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "食べられる",
+      "reading": "たべられる",
+      "meaning": "be eaten",
+      "type": "ichidan-verb",
+      "tags": [
+        "taberu_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "起きられる",
+      "reading": "おきられる",
+      "meaning": "be woken up",
+      "type": "ichidan-verb",
+      "tags": [
+        "okiru_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "開けられる",
+      "reading": "あけられる",
+      "meaning": "be opened",
+      "type": "ichidan-verb",
+      "tags": [
+        "akeru_forms",
+        "passive"
+      ]
+    },
+    {
+      "kanji": "閉められる",
+      "reading": "しめられる",
+      "meaning": "be closed",
+      "type": "ichidan-verb",
+      "tags": [
+        "shimeru_forms",
+        "passive"
+      ]
     }
   ]
 }

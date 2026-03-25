@@ -147,6 +147,44 @@ function normalizeVisibleConfigIds(raw, appPrefs) {
   return validIds.slice();
 }
 
+function collectionScopedDefaultConfigId(collectionKey = '') {
+  const raw = asString(collectionKey).trim();
+  if (!raw) return 'default';
+  const safe = raw
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return `default-${safe || 'collection'}`;
+}
+
+function ensureCollectionScopedDefaults(appPrefs, defaultPrefs, collectionKey = '') {
+  const scopedKey = asString(collectionKey).trim();
+  const current = (appPrefs && typeof appPrefs === 'object') ? deepClone(appPrefs) : { activeConfigId: '', configs: [] };
+  if (!Array.isArray(current.configs)) current.configs = [];
+  if (!scopedKey) return current;
+
+  const hasScopedConfig = current.configs.some((cfg) => {
+    if (!cfg || typeof cfg !== 'object') return false;
+    return asString(cfg.restrictToCollectionKey).trim() === scopedKey;
+  });
+  if (hasScopedConfig) return current;
+
+  const templateConfigs = Array.isArray(defaultPrefs?.configs) ? defaultPrefs.configs : [];
+  const template = deepClone(templateConfigs[0] || null);
+  if (!template || typeof template !== 'object') return current;
+
+  const nextId = collectionScopedDefaultConfigId(scopedKey);
+  current.configs = current.configs.filter(cfg => asString(cfg?.id).trim() !== nextId);
+  current.configs.push({
+    ...template,
+    id: nextId,
+    name: asString(template.name || 'Default') || 'Default',
+    restrictToCollectionKey: scopedKey,
+  });
+  current.activeConfigId = nextId;
+  return current;
+}
+
 function parseDelayActionId(actionId) {
   const match = /^action\.delay\.(\d+)$/i.exec(asString(actionId).trim());
   if (!match) return 0;
@@ -890,12 +928,17 @@ function createViewFooterControls(items = [], opts = {}) {
     }
     try {
       allFooterPrefs = settingsManager.get(FOOTER_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
-      allAppPrefs = normalizeAppFooterPrefs(allFooterPrefs[appId], baseKeys, { customOnly });
+      const normalizedPrefs = normalizeAppFooterPrefs(allFooterPrefs[appId], baseKeys, { customOnly });
+      allAppPrefs = ensureCollectionScopedDefaults(normalizedPrefs, defaultAppPrefs, getCollectionKey());
       appPrefs = filterAppFooterPrefsForCollection(allAppPrefs, getCollectionKey());
       visibleConfigIds = normalizeVisibleConfigIds(undefined, appPrefs);
+      if (JSON.stringify(allAppPrefs) !== JSON.stringify(normalizedPrefs)) {
+        persistPrefs(allAppPrefs);
+      }
     } catch (e) {
       allFooterPrefs = {};
       allAppPrefs = normalizeAppFooterPrefs(null, baseKeys, { customOnly });
+      allAppPrefs = ensureCollectionScopedDefaults(allAppPrefs, defaultAppPrefs, getCollectionKey());
       appPrefs = filterAppFooterPrefsForCollection(allAppPrefs, getCollectionKey());
       visibleConfigIds = normalizeVisibleConfigIds(undefined, appPrefs);
     }
@@ -945,6 +988,7 @@ function createViewFooterControls(items = [], opts = {}) {
   }
 
   function rebuildFromConfig() {
+    allAppPrefs = ensureCollectionScopedDefaults(allAppPrefs, defaultAppPrefs, getCollectionKey());
     appPrefs = filterAppFooterPrefsForCollection(allAppPrefs, getCollectionKey());
     visibleConfigIds = normalizeVisibleConfigIds(undefined, appPrefs);
     const renderItems = applyFooterConfig(items, appPrefs, actionRegistry, { customOnly });

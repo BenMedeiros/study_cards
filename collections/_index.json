@@ -105,10 +105,10 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-03-25T20:49:08.185Z",
+      "modifiedAt": "2026-03-25T21:32:15.704Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
-      "entriesCount": 2289,
+      "entriesCount": 2712,
       "valid": false,
       "validation": {
         "schema": {
@@ -118,16 +118,577 @@
         "entries": {
           "errors": [
             {
+              "id": "読む",
+              "message": "Duplicate entry key '読む' appears 2 times in file"
+            },
+            {
+              "id": "話す",
+              "message": "Duplicate entry key '話す' appears 2 times in file"
+            },
+            {
+              "id": "買う",
+              "message": "Duplicate entry key '買う' appears 2 times in file"
+            },
+            {
+              "id": "遊ぶ",
+              "message": "Duplicate entry key '遊ぶ' appears 2 times in file"
+            },
+            {
+              "id": "飛ぶ",
+              "message": "Duplicate entry key '飛ぶ' appears 2 times in file"
+            },
+            {
+              "id": "泳ぐ",
+              "message": "Duplicate entry key '泳ぐ' appears 2 times in file"
+            },
+            {
+              "id": "急ぐ",
+              "message": "Duplicate entry key '急ぐ' appears 2 times in file"
+            },
+            {
+              "id": "聞く",
+              "message": "Duplicate entry key '聞く' appears 2 times in file"
+            },
+            {
+              "id": "書く",
+              "message": "Duplicate entry key '書く' appears 2 times in file"
+            },
+            {
+              "id": "行く",
+              "message": "Duplicate entry key '行く' appears 2 times in file"
+            },
+            {
+              "id": "飲む",
+              "message": "Duplicate entry key '飲む' appears 2 times in file"
+            },
+            {
+              "id": "新しい",
+              "message": "Duplicate entry key '新しい' appears 2 times in file"
+            },
+            {
+              "id": "古い",
+              "message": "Duplicate entry key '古い' appears 2 times in file"
+            },
+            {
               "id": "高い",
               "message": "Duplicate entry key '高い' appears 2 times in file"
             },
             {
+              "id": "安い",
+              "message": "Duplicate entry key '安い' appears 2 times in file"
+            },
+            {
+              "id": "見る",
+              "message": "Duplicate entry key '見る' appears 2 times in file"
+            },
+            {
+              "id": "起きる",
+              "message": "Duplicate entry key '起きる' appears 2 times in file"
+            },
+            {
+              "id": "食べる",
+              "message": "Duplicate entry key '食べる' appears 2 times in file"
+            },
+            {
+              "id": "開ける",
+              "message": "Duplicate entry key '開ける' appears 2 times in file"
+            },
+            {
+              "id": "閉める",
+              "message": "Duplicate entry key '閉める' appears 2 times in file"
+            },
+            {
+              "id": "できる",
+              "message": "Duplicate entry key 'できる' appears 2 times in file"
+            },
+            {
+              "id": "取れる",
+              "message": "Duplicate entry key '取れる' appears 2 times in file"
+            },
+            {
+              "id": "する",
+              "message": "Duplicate entry key 'する' appears 2 times in file"
+            },
+            {
+              "id": "便利",
+              "message": "Duplicate entry key '便利' appears 2 times in file"
+            },
+            {
+              "id": "有名",
+              "message": "Duplicate entry key '有名' appears 2 times in file"
+            },
+            {
+              "id": "静か",
+              "message": "Duplicate entry key '静か' appears 2 times in file"
+            },
+            {
+              "id": "大変",
+              "message": "Duplicate entry key '大変' appears 2 times in file"
+            },
+            {
               "id": "高さ",
               "message": "Duplicate entry key '高さ' appears 2 times in file"
+            },
+            {
+              "id": "ある",
+              "message": "Duplicate entry key 'ある' appears 2 times in file"
+            },
+            {
+              "id": "使う",
+              "message": "Duplicate entry key '使う' appears 2 times in file"
+            },
+            {
+              "id": "帰る",
+              "message": "Duplicate entry key '帰る' appears 2 times in file"
+            },
+            {
+              "id": "来る",
+              "message": "Duplicate entry key '来る' appears 2 times in file"
+            },
+            {
+              "id": "取る",
+              "message": "Duplicate entry key '取る' appears 2 times in file"
+            },
+            {
+              "id": "待つ",
+              "message": "Duplicate entry key '待つ' appears 2 times in file"
+            },
+            {
+              "id": "立つ",
+              "message": "Duplicate entry key '立つ' appears 2 times in file"
+            },
+            {
+              "id": "過ごす",
+              "message": "Duplicate entry key '過ごす' appears 2 times in file"
+            },
+            {
+              "id": "来られる",
+              "message": "Duplicate entry key '来られる' appears 2 times in file"
+            },
+            {
+              "id": "見られる",
+              "message": "Duplicate entry key '見られる' appears 2 times in file"
+            },
+            {
+              "id": "食べられる",
+              "message": "Duplicate entry key '食べられる' appears 2 times in file"
+            },
+            {
+              "id": "起きられる",
+              "message": "Duplicate entry key '起きられる' appears 2 times in file"
+            },
+            {
+              "id": "開けられる",
+              "message": "Duplicate entry key '開けられる' appears 2 times in file"
+            },
+            {
+              "id": "閉められる",
+              "message": "Duplicate entry key '閉められる' appears 2 times in file"
             }
           ],
           "warnings": [],
           "duplicates": [
+            {
+              "key": "読む",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 293,
+                  "line": 2074,
+                  "entry": {
+                    "kanji": "読む",
+                    "reading": "よむ",
+                    "meaning": "to read",
+                    "type": "godan-verb",
+                    "ending": "mu"
+                  }
+                },
+                {
+                  "index": 2603,
+                  "line": 21403,
+                  "entry": {
+                    "kanji": "読む",
+                    "reading": "よむ",
+                    "meaning": "to read",
+                    "type": "godan-verb",
+                    "tags": [
+                      "yomu_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "話す",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 301,
+                  "line": 2128,
+                  "entry": {
+                    "kanji": "話す",
+                    "reading": "はなす",
+                    "meaning": "to talk",
+                    "ending": "su",
+                    "type": "godan-verb",
+                    "orthography": "kanji",
+                    "tags": [
+                      "grocery-shopping-story"
+                    ]
+                  }
+                },
+                {
+                  "index": 2519,
+                  "line": 20563,
+                  "entry": {
+                    "kanji": "話す",
+                    "reading": "はなす",
+                    "meaning": "to speak",
+                    "type": "godan-verb",
+                    "tags": [
+                      "hanasu_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "買う",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 303,
+                  "line": 2149,
+                  "entry": {
+                    "kanji": "買う",
+                    "reading": "かう",
+                    "meaning": "to buy",
+                    "ending": "u",
+                    "type": "godan-verb"
+                  }
+                },
+                {
+                  "index": 2447,
+                  "line": 19843,
+                  "entry": {
+                    "kanji": "買う",
+                    "reading": "かう",
+                    "meaning": "to buy",
+                    "type": "godan-verb",
+                    "tags": [
+                      "kau_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "遊ぶ",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 345,
+                  "line": 2565,
+                  "entry": {
+                    "kanji": "遊ぶ",
+                    "reading": "あそぶ",
+                    "meaning": "to play; to hang out; to have fun",
+                    "ending": "bu",
+                    "type": "godan-verb"
+                  }
+                },
+                {
+                  "index": 2579,
+                  "line": 21163,
+                  "entry": {
+                    "kanji": "遊ぶ",
+                    "reading": "あそぶ",
+                    "meaning": "to play",
+                    "type": "godan-verb",
+                    "tags": [
+                      "asobu_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "飛ぶ",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 346,
+                  "line": 2572,
+                  "entry": {
+                    "kanji": "飛ぶ",
+                    "reading": "とぶ",
+                    "meaning": "to fly; to jump; to go fast (e.g., time passes quickly)",
+                    "ending": "bu",
+                    "type": "godan-verb"
+                  }
+                },
+                {
+                  "index": 2591,
+                  "line": 21283,
+                  "entry": {
+                    "kanji": "飛ぶ",
+                    "reading": "とぶ",
+                    "meaning": "to fly",
+                    "type": "godan-verb",
+                    "tags": [
+                      "tobu_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "泳ぐ",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 352,
+                  "line": 2614,
+                  "entry": {
+                    "kanji": "泳ぐ",
+                    "reading": "およぐ",
+                    "meaning": "to swim",
+                    "ending": "gu",
+                    "type": "godan-verb"
+                  }
+                },
+                {
+                  "index": 2495,
+                  "line": 20323,
+                  "entry": {
+                    "kanji": "泳ぐ",
+                    "reading": "およぐ",
+                    "meaning": "to swim",
+                    "type": "godan-verb",
+                    "tags": [
+                      "oyogu_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "急ぐ",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 353,
+                  "line": 2621,
+                  "entry": {
+                    "kanji": "急ぐ",
+                    "reading": "いそぐ",
+                    "meaning": "to hurry",
+                    "ending": "gu",
+                    "type": "godan-verb"
+                  }
+                },
+                {
+                  "index": 2507,
+                  "line": 20443,
+                  "entry": {
+                    "kanji": "急ぐ",
+                    "reading": "いそぐ",
+                    "meaning": "to hurry",
+                    "type": "godan-verb",
+                    "tags": [
+                      "isogu_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "聞く",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 372,
+                  "line": 2754,
+                  "entry": {
+                    "kanji": "聞く",
+                    "reading": "きく",
+                    "meaning": "to ask; to hear",
+                    "type": "godan-verb",
+                    "ending": "ku",
+                    "orthography": "kanji",
+                    "tags": [
+                      "game-center-story"
+                    ]
+                  }
+                },
+                {
+                  "index": 2483,
+                  "line": 20203,
+                  "entry": {
+                    "kanji": "聞く",
+                    "reading": "きく",
+                    "meaning": "to hear; ask",
+                    "type": "godan-verb",
+                    "tags": [
+                      "kiku_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "書く",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 373,
+                  "line": 2765,
+                  "entry": {
+                    "kanji": "書く",
+                    "reading": "かく",
+                    "meaning": "to write",
+                    "type": "godan-verb"
+                  }
+                },
+                {
+                  "index": 2471,
+                  "line": 20083,
+                  "entry": {
+                    "kanji": "書く",
+                    "reading": "かく",
+                    "meaning": "to write",
+                    "type": "godan-verb",
+                    "tags": [
+                      "kaku_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "行く",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 376,
+                  "line": 2783,
+                  "entry": {
+                    "kanji": "行く",
+                    "reading": "いく",
+                    "meaning": "to go",
+                    "type": "godan-verb",
+                    "orthography": "kanji",
+                    "tags": [
+                      "grocery-shopping-story"
+                    ]
+                  }
+                },
+                {
+                  "index": 2435,
+                  "line": 19723,
+                  "entry": {
+                    "kanji": "行く",
+                    "reading": "いく",
+                    "meaning": "to go",
+                    "type": "godan-verb",
+                    "tags": [
+                      "iku_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "飲む",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 393,
+                  "line": 2893,
+                  "entry": {
+                    "kanji": "飲む",
+                    "reading": "のむ",
+                    "meaning": "to drink",
+                    "type": "godan-verb",
+                    "orthography": "kanji",
+                    "tags": [
+                      "game-center-story"
+                    ]
+                  }
+                },
+                {
+                  "index": 2615,
+                  "line": 21523,
+                  "entry": {
+                    "kanji": "飲む",
+                    "reading": "のむ",
+                    "meaning": "to drink",
+                    "type": "godan-verb",
+                    "tags": [
+                      "nomu_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "新しい",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 427,
+                  "line": 3106,
+                  "entry": {
+                    "kanji": "新しい",
+                    "reading": "あたらしい",
+                    "meaning": "new",
+                    "type": "i-adjective"
+                  }
+                },
+                {
+                  "index": 2375,
+                  "line": 19115,
+                  "entry": {
+                    "kanji": "新しい",
+                    "reading": "あたらしい",
+                    "meaning": "new",
+                    "type": "i-adjective",
+                    "tags": [
+                      "atarashii_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "古い",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 428,
+                  "line": 3112,
+                  "entry": {
+                    "kanji": "古い",
+                    "reading": "ふるい",
+                    "meaning": "old",
+                    "type": "i-adjective"
+                  }
+                },
+                {
+                  "index": 2389,
+                  "line": 19259,
+                  "entry": {
+                    "kanji": "古い",
+                    "reading": "ふるい",
+                    "meaning": "old",
+                    "type": "i-adjective",
+                    "tags": [
+                      "furui_forms"
+                    ]
+                  }
+                }
+              ]
+            },
             {
               "key": "高い",
               "count": 2,
@@ -159,6 +720,393 @@
               ]
             },
             {
+              "key": "安い",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 430,
+                  "line": 3124,
+                  "entry": {
+                    "kanji": "安い",
+                    "reading": "やすい",
+                    "meaning": "cheap",
+                    "type": "i-adjective"
+                  }
+                },
+                {
+                  "index": 2361,
+                  "line": 18971,
+                  "entry": {
+                    "kanji": "安い",
+                    "reading": "やすい",
+                    "meaning": "cheap",
+                    "type": "i-adjective",
+                    "tags": [
+                      "yasui_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "見る",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 525,
+                  "line": 3729,
+                  "entry": {
+                    "kanji": "見る",
+                    "reading": "みる",
+                    "meaning": "to see; to look",
+                    "type": "ichidan-verb",
+                    "orthography": "kanji",
+                    "tags": [
+                      "game-center-story"
+                    ]
+                  }
+                },
+                {
+                  "index": 2651,
+                  "line": 21883,
+                  "entry": {
+                    "kanji": "見る",
+                    "reading": "みる",
+                    "meaning": "to see",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "miru_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "起きる",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 526,
+                  "line": 3739,
+                  "entry": {
+                    "kanji": "起きる",
+                    "reading": "おきる",
+                    "meaning": "to wake up; to get up",
+                    "type": "ichidan-verb"
+                  }
+                },
+                {
+                  "index": 2673,
+                  "line": 22103,
+                  "entry": {
+                    "kanji": "起きる",
+                    "reading": "おきる",
+                    "meaning": "to wake up",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "okiru_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "食べる",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 530,
+                  "line": 3763,
+                  "entry": {
+                    "kanji": "食べる",
+                    "reading": "たべる",
+                    "meaning": "to eat",
+                    "type": "ichidan-verb",
+                    "orthography": "kanji",
+                    "tags": [
+                      "grocery-shopping-story"
+                    ]
+                  }
+                },
+                {
+                  "index": 2662,
+                  "line": 21993,
+                  "entry": {
+                    "kanji": "食べる",
+                    "reading": "たべる",
+                    "meaning": "to eat",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "taberu_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "開ける",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 531,
+                  "line": 3773,
+                  "entry": {
+                    "kanji": "開ける",
+                    "reading": "あける",
+                    "meaning": "to open (a door/window/container)",
+                    "type": "ichidan-verb"
+                  }
+                },
+                {
+                  "index": 2684,
+                  "line": 22213,
+                  "entry": {
+                    "kanji": "開ける",
+                    "reading": "あける",
+                    "meaning": "to open",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "akeru_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "閉める",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 533,
+                  "line": 3785,
+                  "entry": {
+                    "kanji": "閉める",
+                    "reading": "しめる",
+                    "meaning": "to close (something)",
+                    "type": "ichidan-verb"
+                  }
+                },
+                {
+                  "index": 2695,
+                  "line": 22323,
+                  "entry": {
+                    "kanji": "閉める",
+                    "reading": "しめる",
+                    "meaning": "to close",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "shimeru_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "できる",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 577,
+                  "line": 4065,
+                  "entry": {
+                    "kanji": "できる",
+                    "reading": "できる",
+                    "meaning": "to be able to; can do; to be made; to be completed",
+                    "type": "ichidan-verb"
+                  }
+                },
+                {
+                  "index": 2411,
+                  "line": 19483,
+                  "entry": {
+                    "kanji": "できる",
+                    "reading": "できる",
+                    "meaning": "can do",
+                    "type": "irregular-verb",
+                    "tags": [
+                      "suru_forms",
+                      "potential"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "取れる",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 581,
+                  "line": 4089,
+                  "entry": {
+                    "kanji": "取れる",
+                    "reading": "とれる",
+                    "meaning": "to come off; to be removed; to be obtained/caught",
+                    "type": "ichidan-verb"
+                  }
+                },
+                {
+                  "index": 2635,
+                  "line": 21723,
+                  "entry": {
+                    "kanji": "取れる",
+                    "reading": "とれる",
+                    "meaning": "can take",
+                    "type": "godan-verb",
+                    "tags": [
+                      "toru_forms",
+                      "potential"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "する",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 605,
+                  "line": 4313,
+                  "entry": {
+                    "kanji": "する",
+                    "reading": "する",
+                    "meaning": "to do",
+                    "type": "irregular-verb"
+                  }
+                },
+                {
+                  "index": 2403,
+                  "line": 19403,
+                  "entry": {
+                    "kanji": "する",
+                    "reading": "する",
+                    "meaning": "to do",
+                    "type": "irregular-verb",
+                    "tags": [
+                      "suru_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "便利",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 640,
+                  "line": 4535,
+                  "entry": {
+                    "kanji": "便利",
+                    "reading": "べんり",
+                    "meaning": "convenient; useful",
+                    "type": "na-adjective"
+                  }
+                },
+                {
+                  "index": 2289,
+                  "line": 18211,
+                  "entry": {
+                    "kanji": "便利",
+                    "reading": "べんり",
+                    "meaning": "convenient",
+                    "type": "na-adjective",
+                    "tags": [
+                      "benri_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "有名",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 642,
+                  "line": 4547,
+                  "entry": {
+                    "kanji": "有名",
+                    "reading": "ゆうめい",
+                    "meaning": "famous; well-known",
+                    "type": "na-adjective"
+                  }
+                },
+                {
+                  "index": 2307,
+                  "line": 18401,
+                  "entry": {
+                    "kanji": "有名",
+                    "reading": "ゆうめい",
+                    "meaning": "famous",
+                    "type": "na-adjective",
+                    "tags": [
+                      "yuumei_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "静か",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 644,
+                  "line": 4559,
+                  "entry": {
+                    "kanji": "静か",
+                    "reading": "しずか",
+                    "meaning": "quiet",
+                    "type": "na-adjective"
+                  }
+                },
+                {
+                  "index": 2325,
+                  "line": 18591,
+                  "entry": {
+                    "kanji": "静か",
+                    "reading": "しずか",
+                    "meaning": "quiet",
+                    "type": "na-adjective",
+                    "tags": [
+                      "shizuka_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "大変",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 658,
+                  "line": 4652,
+                  "entry": {
+                    "kanji": "大変",
+                    "reading": "たいへん",
+                    "meaning": "tough; hard; serious; very (adverbial use also common)",
+                    "type": "na-adjective"
+                  }
+                },
+                {
+                  "index": 2343,
+                  "line": 18781,
+                  "entry": {
+                    "kanji": "大変",
+                    "reading": "たいへん",
+                    "meaning": "serious; tough",
+                    "type": "na-adjective",
+                    "tags": [
+                      "taihen_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
               "key": "高さ",
               "count": 2,
               "occurrences": [
@@ -184,6 +1132,458 @@
                       "takai_forms",
                       "lemma_takai",
                       "derived"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "ある",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1813,
+                  "line": 14176,
+                  "entry": {
+                    "kanji": "ある",
+                    "reading": "ある",
+                    "meaning": "to exist; there is",
+                    "type": "godan-verb"
+                  }
+                },
+                {
+                  "index": 2426,
+                  "line": 19633,
+                  "entry": {
+                    "kanji": "ある",
+                    "reading": "ある",
+                    "meaning": "to exist; have",
+                    "type": "godan-verb",
+                    "tags": [
+                      "aru_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "使う",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1873,
+                  "line": 14573,
+                  "entry": {
+                    "kanji": "使う",
+                    "reading": "つかう",
+                    "meaning": "to use",
+                    "type": "godan-verb",
+                    "orthography": "kanji",
+                    "tags": [
+                      "grocery-shopping-story"
+                    ]
+                  }
+                },
+                {
+                  "index": 2459,
+                  "line": 19963,
+                  "entry": {
+                    "kanji": "使う",
+                    "reading": "つかう",
+                    "meaning": "to use",
+                    "type": "godan-verb",
+                    "tags": [
+                      "tsukau_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "帰る",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1937,
+                  "line": 14976,
+                  "entry": {
+                    "kanji": "帰る",
+                    "reading": "かえる",
+                    "meaning": "to return home",
+                    "type": "godan-verb",
+                    "orthography": "kanji",
+                    "tags": [
+                      "grocery-shopping-story"
+                    ]
+                  }
+                },
+                {
+                  "index": 2639,
+                  "line": 21763,
+                  "entry": {
+                    "kanji": "帰る",
+                    "reading": "かえる",
+                    "meaning": "to return",
+                    "type": "godan-verb",
+                    "tags": [
+                      "kaeru_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "来る",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 1946,
+                  "line": 15034,
+                  "entry": {
+                    "kanji": "来る",
+                    "reading": "くる",
+                    "meaning": "to come",
+                    "type": "irregular-verb",
+                    "orthography": "kanji",
+                    "tags": [
+                      "game-center-story"
+                    ]
+                  }
+                },
+                {
+                  "index": 2415,
+                  "line": 19523,
+                  "entry": {
+                    "kanji": "来る",
+                    "reading": "くる",
+                    "meaning": "to come",
+                    "type": "irregular-verb",
+                    "tags": [
+                      "kuru_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "取る",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 2048,
+                  "line": 16134,
+                  "entry": {
+                    "kanji": "取る",
+                    "reading": "とる",
+                    "meaning": "to take; to get (a prize)",
+                    "type": "godan-verb",
+                    "orthography": "kanji",
+                    "tags": [
+                      "game-center-story"
+                    ]
+                  }
+                },
+                {
+                  "index": 2627,
+                  "line": 21643,
+                  "entry": {
+                    "kanji": "取る",
+                    "reading": "とる",
+                    "meaning": "to take",
+                    "type": "godan-verb",
+                    "tags": [
+                      "toru_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "待つ",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 2159,
+                  "line": 17233,
+                  "entry": {
+                    "kanji": "待つ",
+                    "reading": "まつ",
+                    "meaning": "to wait",
+                    "type": "godan-verb"
+                  }
+                },
+                {
+                  "index": 2543,
+                  "line": 20803,
+                  "entry": {
+                    "kanji": "待つ",
+                    "reading": "まつ",
+                    "meaning": "to wait",
+                    "type": "godan-verb",
+                    "tags": [
+                      "matsu_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "立つ",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 2177,
+                  "line": 17341,
+                  "entry": {
+                    "kanji": "立つ",
+                    "reading": "たつ",
+                    "meaning": "to stand",
+                    "type": "godan-verb"
+                  }
+                },
+                {
+                  "index": 2555,
+                  "line": 20923,
+                  "entry": {
+                    "kanji": "立つ",
+                    "reading": "たつ",
+                    "meaning": "to stand",
+                    "type": "godan-verb",
+                    "tags": [
+                      "tatsu_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "過ごす",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 2257,
+                  "line": 17925,
+                  "entry": {
+                    "kanji": "過ごす",
+                    "reading": "すごす",
+                    "meaning": "to spend (time); to pass",
+                    "type": "godan-verb"
+                  }
+                },
+                {
+                  "index": 2531,
+                  "line": 20683,
+                  "entry": {
+                    "kanji": "過ごす",
+                    "reading": "すごす",
+                    "meaning": "to spend",
+                    "type": "godan-verb",
+                    "tags": [
+                      "sugosu_forms"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "来られる",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 2423,
+                  "line": 19603,
+                  "entry": {
+                    "kanji": "来られる",
+                    "reading": "こられる",
+                    "meaning": "can come",
+                    "type": "irregular-verb",
+                    "tags": [
+                      "kuru_forms",
+                      "potential"
+                    ]
+                  }
+                },
+                {
+                  "index": 2706,
+                  "line": 22433,
+                  "entry": {
+                    "kanji": "来られる",
+                    "reading": "こられる",
+                    "meaning": "be come upon",
+                    "type": "irregular-verb",
+                    "tags": [
+                      "kuru_forms",
+                      "passive"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "見られる",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 2659,
+                  "line": 21963,
+                  "entry": {
+                    "kanji": "見られる",
+                    "reading": "みられる",
+                    "meaning": "can see",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "miru_forms",
+                      "potential"
+                    ]
+                  }
+                },
+                {
+                  "index": 2707,
+                  "line": 22443,
+                  "entry": {
+                    "kanji": "見られる",
+                    "reading": "みられる",
+                    "meaning": "be seen",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "miru_forms",
+                      "passive"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "食べられる",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 2670,
+                  "line": 22073,
+                  "entry": {
+                    "kanji": "食べられる",
+                    "reading": "たべられる",
+                    "meaning": "can eat",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "taberu_forms",
+                      "potential"
+                    ]
+                  }
+                },
+                {
+                  "index": 2708,
+                  "line": 22453,
+                  "entry": {
+                    "kanji": "食べられる",
+                    "reading": "たべられる",
+                    "meaning": "be eaten",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "taberu_forms",
+                      "passive"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "起きられる",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 2681,
+                  "line": 22183,
+                  "entry": {
+                    "kanji": "起きられる",
+                    "reading": "おきられる",
+                    "meaning": "can wake up",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "okiru_forms",
+                      "potential"
+                    ]
+                  }
+                },
+                {
+                  "index": 2709,
+                  "line": 22463,
+                  "entry": {
+                    "kanji": "起きられる",
+                    "reading": "おきられる",
+                    "meaning": "be woken up",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "okiru_forms",
+                      "passive"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "開けられる",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 2692,
+                  "line": 22293,
+                  "entry": {
+                    "kanji": "開けられる",
+                    "reading": "あけられる",
+                    "meaning": "can open",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "akeru_forms",
+                      "potential"
+                    ]
+                  }
+                },
+                {
+                  "index": 2710,
+                  "line": 22473,
+                  "entry": {
+                    "kanji": "開けられる",
+                    "reading": "あけられる",
+                    "meaning": "be opened",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "akeru_forms",
+                      "passive"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "閉められる",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 2703,
+                  "line": 22403,
+                  "entry": {
+                    "kanji": "閉められる",
+                    "reading": "しめられる",
+                    "meaning": "can close",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "shimeru_forms",
+                      "potential"
+                    ]
+                  }
+                },
+                {
+                  "index": 2711,
+                  "line": 22483,
+                  "entry": {
+                    "kanji": "閉められる",
+                    "reading": "しめられる",
+                    "meaning": "be closed",
+                    "type": "ichidan-verb",
+                    "tags": [
+                      "shimeru_forms",
+                      "passive"
                     ]
                   }
                 }

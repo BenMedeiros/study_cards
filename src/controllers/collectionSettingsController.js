@@ -10,8 +10,6 @@ const subs = new Map(); // collKey -> Set(callback)
 import { settingsLogControllers } from '../managers/settingsManager.js';
 
 const DEFAULTS = {
-  expansion_i: [],
-  expansion_na: [],
   heldTableSearch: '',
   savedTableSearches: [],
   isShuffled: false,

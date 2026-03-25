@@ -3,17 +3,6 @@ import { buildHashRoute, parseHashRoute } from '../utils/browser/helpers.js';
 import { timed } from '../utils/browser/timing.js';
 import { compileTableSearchQuery, matchesTableSearch, filterRecordsAndIndicesByTableSearch } from '../utils/browser/tableSearch.js';
 import { extractPathValues } from '../utils/common/collectionParser.mjs';
-import {
-  collectionUsesJapaneseExpansion,
-  getJapaneseExpansionControlConfig,
-  expandJapaneseEntriesAndIndices,
-  getJapaneseExpansionDeltas,
-} from '../collectionExpansions/japaneseExpansion.js';
-import {
-  getJapaneseSentencesMathExpansionControlConfig,
-  expandJapaneseSentencesMathEntriesAndIndices,
-  getJapaneseSentencesMathExpansionDeltas,
-} from '../collectionExpansions/japaneseSentencesMath.js';
 
 export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, collectionDB = null, settings = null }) {
   // Folder metadata helpers/storage used for lazy loads
@@ -225,6 +214,25 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
   function getActiveCollection() {
     return state.collections.find((c) => c.key === state.activeCollectionId) ?? null;
+  }
+
+  function summarizeCollectionStateForTiming(collState = {}) {
+    const stateObj = (collState && typeof collState === 'object') ? collState : {};
+    const parts = [];
+    const studyFilter = String(stateObj.studyFilter || '').trim() || 'all';
+    const held = String(stateObj.heldTableSearch || '').trim();
+    const shuffleSeed = Number.isFinite(Number(stateObj.order_hash_int)) ? Number(stateObj.order_hash_int) : null;
+
+    parts.push(`studyFilter=${studyFilter}`);
+    parts.push(`held=${held ? held.length : 0}`);
+    parts.push(`shuffle=${shuffleSeed === null ? 'off' : 'on'}`);
+    return parts.join(' ');
+  }
+
+  function collectionReadyTimingLabel(prefix, coll = null, collState = {}, extra = {}) {
+    const key = String(coll?.key || extra?.collectionKey || state.activeCollectionId || '').trim() || '(none)';
+    const baseCount = Array.isArray(coll?.entries) ? coll.entries.length : (Number.isFinite(Number(extra?.baseCount)) ? Number(extra.baseCount) : 0);
+    return `${prefix} ${key} base=${baseCount} ${summarizeCollectionStateForTiming(collState)}`.trim();
   }
 
   function syncHashCollectionParam(collectionId) {
@@ -846,28 +854,27 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   async function setActiveCollectionId(id) {
     const nextId = id || null;
     const same = state.activeCollectionId === nextId;
-
-    if (!same && nextId) {
-      const alreadyLoaded = state.collections.some(c => c.key === nextId);
-      if (!alreadyLoaded) {
-        try {
-          await loadCollection(nextId);
-        } catch (err) {
-          return;
+    return timed(`collections.setActiveCollectionId ${String(nextId || '(none)')}`, async () => {
+      if (!same && nextId) {
+        const alreadyLoaded = state.collections.some(c => c.key === nextId);
+        if (!alreadyLoaded) {
+          try {
+            await loadCollection(nextId);
+          } catch (err) {
+            return;
+          }
         }
       }
-    }
 
-    if (!same) state.activeCollectionId = nextId;
-    if (!same && !nextId) state.collections = [];
+      if (!same) state.activeCollectionId = nextId;
+      if (!same && !nextId) state.collections = [];
 
-    try {
-      syncHashCollectionParam(nextId);
-    } catch {
-      // ignore
-    }
+      try {
+        syncHashCollectionParam(nextId);
+      } catch {
+        // ignore
+      }
 
-    
       if (settings && typeof settings.set === 'function') {
         settings.set('shell.activeCollectionId', state.activeCollectionId, { consumerId: 'collectionsManager', silent: true });
 
@@ -888,9 +895,9 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         // SettingsManager should be provided; do not fall back to uiState.shell.
         // If absent, silently ignore per user's preference (no migration/fallback).
       }
-    
 
-    if (!same) emit();
+      if (!same) emit();
+    });
   }
 
   async function syncCollectionFromURL(route) {
@@ -1374,62 +1381,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   }
 
   // ============================================================================
-  // Collection Expansion Integration
-  // ============================================================================
-
-  function getCollectionExpansionConfig(collectionOrKey) {
-    const coll = (typeof collectionOrKey === 'string')
-      ? (state.collections.find(c => c?.key === collectionOrKey) || null)
-      : ((collectionOrKey && typeof collectionOrKey === 'object') ? collectionOrKey : null);
-
-    if (!coll || !collectionUsesJapaneseExpansion(coll)) {
-      return {
-        type: null,
-        supports: { i: false, na: false, ichidan: false, godan: false, irregular: false, sentenceMath: false },
-        iBaseItems: [],
-        naBaseItems: [],
-        ichidanVerbBaseItems: [],
-        godanVerbBaseItems: [],
-        irregularVerbBaseItems: [],
-        iItems: [],
-        naItems: [],
-        ichidanVerbItems: [],
-        godanVerbItems: [],
-        irregularVerbItems: [],
-        sentenceMathBaseItems: [],
-        sentenceMathItems: [],
-      };
-    }
-
-    const morphologyCfg = getJapaneseExpansionControlConfig(coll);
-    const sentenceMathCfg = getJapaneseSentencesMathExpansionControlConfig(coll);
-    return {
-      ...morphologyCfg,
-      supports: {
-        ...(morphologyCfg?.supports || {}),
-        sentenceMath: !!sentenceMathCfg?.supports?.sentenceMath,
-      },
-      sentenceMathBaseItems: Array.isArray(sentenceMathCfg?.sentenceMathBaseItems) ? sentenceMathCfg.sentenceMathBaseItems : [],
-      sentenceMathItems: Array.isArray(sentenceMathCfg?.sentenceMathItems) ? sentenceMathCfg.sentenceMathItems : [],
-    };
-  }
-
-  function getCollectionExpansionDeltas(
-    entries,
-    { iForms = [], naForms = [], ichidanForms = [], godanForms = [], irregularForms = [], sentenceMathForms = [] } = {},
-  ) {
-    const morphology = getJapaneseExpansionDeltas(entries, { iForms, naForms, ichidanForms, godanForms, irregularForms });
-    const sentenceMath = getJapaneseSentencesMathExpansionDeltas(entries, { sentenceMathForms });
-    return {
-      ...morphology,
-      ...sentenceMath,
-      totalDelta:
-        Number(morphology?.totalDelta || 0)
-        + Number(sentenceMath?.sentenceMathDelta || 0),
-    };
-  }
-
-  // ============================================================================
   // Collection View (with shuffle, expansion, filtering)
   // ============================================================================
 
@@ -1521,77 +1472,34 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   }
 
   function getCollectionView(originalEntries, collState = {}, opts = { windowSize: 10, collection: null }) {
-    const n = Array.isArray(originalEntries) ? originalEntries.length : 0;
-    const baseIndices = [];
-    const baseEntriesRaw = [];
-    for (let i = 0; i < n; i++) {
-      const e = originalEntries[i];
-      if (!e) continue;
-      baseIndices.push(i);
-      baseEntriesRaw.push(e);
-    }
-
-    let iForms = collState ? (collState.expansion_i ?? collState.expansion_iAdj ?? collState.expansion_i_adjective ?? []) : [];
-    let naForms = collState ? (collState.expansion_na ?? collState.expansion_naAdj ?? collState.expansion_na_adjective ?? []) : [];
-    let ichidanForms = collState ? (collState.expansion_ichidan ?? collState.expansion_ichidanVerb ?? collState.expansion_ichidan_verb ?? []) : [];
-    let godanForms = collState ? (collState.expansion_godan ?? collState.expansion_godanVerb ?? collState.expansion_godan_verb ?? []) : [];
-    let irregularForms = collState ? (collState.expansion_irregular ?? collState.expansion_irregularVerb ?? collState.expansion_irregular_verb ?? []) : [];
-    let sentenceMathForms = collState ? (collState.expansion_sentence_math ?? collState.expansion_sentenceMath ?? []) : [];
-    const sentenceMathSeed = Number(collState?.expansion_sentence_math_seed ?? collState?.expansion_sentenceMathSeed ?? 0) || 0;
     const collection = (opts?.collection && typeof opts.collection === 'object') ? opts.collection : null;
-
-    // If the collection supports japanese adjective expansion and callers
-    // persisted the sentinel value 'all', expand that sentinel into an
-    // explicit list of available forms based on the expansion config.
-    let expanded = { entries: baseEntriesRaw.slice(), indices: baseIndices.slice() };
-    if (collection && collectionUsesJapaneseExpansion(collection)) {
-      try {
-        const cfg = getCollectionExpansionConfig(collection) || {};
-        if (iForms === 'all' || (Array.isArray(iForms) && iForms.includes('all'))) {
-          iForms = Array.isArray(cfg?.iItems) ? cfg.iItems.map(it => String(it?.value ?? it)) : [];
-        }
-        if (naForms === 'all' || (Array.isArray(naForms) && naForms.includes('all'))) {
-          naForms = Array.isArray(cfg?.naItems) ? cfg.naItems.map(it => String(it?.value ?? it)) : [];
-        }
-        if (ichidanForms === 'all' || (Array.isArray(ichidanForms) && ichidanForms.includes('all'))) {
-          ichidanForms = Array.isArray(cfg?.ichidanVerbItems) ? cfg.ichidanVerbItems.map(it => String(it?.value ?? it)) : [];
-        }
-        if (godanForms === 'all' || (Array.isArray(godanForms) && godanForms.includes('all'))) {
-          godanForms = Array.isArray(cfg?.godanVerbItems) ? cfg.godanVerbItems.map(it => String(it?.value ?? it)) : [];
-        }
-        if (irregularForms === 'all' || (Array.isArray(irregularForms) && irregularForms.includes('all'))) {
-          irregularForms = Array.isArray(cfg?.irregularVerbItems) ? cfg.irregularVerbItems.map(it => String(it?.value ?? it)) : [];
-        }
-        if (sentenceMathForms === 'all' || (Array.isArray(sentenceMathForms) && sentenceMathForms.includes('all'))) {
-          sentenceMathForms = Array.isArray(cfg?.sentenceMathItems) ? cfg.sentenceMathItems.map(it => String(it?.value ?? it)) : [];
-        }
-      } catch (e) {
-        // ignore and fall back to whatever was provided
+    const label = collectionReadyTimingLabel('collections.getCollectionView', collection, collState, {
+      baseCount: Array.isArray(originalEntries) ? originalEntries.length : 0,
+    });
+    return timed(label, () => {
+      const n = Array.isArray(originalEntries) ? originalEntries.length : 0;
+      const baseIndices = [];
+      const baseEntriesRaw = [];
+      for (let i = 0; i < n; i++) {
+        const e = originalEntries[i];
+        if (!e) continue;
+        baseIndices.push(i);
+        baseEntriesRaw.push(e);
       }
 
-      expanded = expandJapaneseEntriesAndIndices(baseEntriesRaw, baseIndices, {
-        iForms,
-        naForms,
-        ichidanForms,
-        godanForms,
-        irregularForms,
-      });
-      expanded = expandJapaneseSentencesMathEntriesAndIndices(expanded.entries, expanded.indices, {
-        sentenceMathForms,
-        generationSeed: sentenceMathSeed,
-      });
-    }
-    const baseEntries = expanded.entries;
-    const expandedIndices = expanded.indices;
-    const m = baseEntries.length;
-    const orderHashInt = (collState && typeof collState.order_hash_int === 'number') ? collState.order_hash_int : null;
-    if (orderHashInt !== null && m > 0) {
-      const perm = seededPermutation(m, orderHashInt);
-      const shuffledEntries = perm.map(i => baseEntries[i]);
-      const shuffledIndices = perm.map(i => expandedIndices[i]);
-      return { entries: shuffledEntries, indices: shuffledIndices, isShuffled: true, order_hash_int: orderHashInt };
-    }
-    return { entries: baseEntries, indices: expandedIndices.slice(), isShuffled: false, order_hash_int: null };
+      const expanded = { entries: baseEntriesRaw.slice(), indices: baseIndices.slice() };
+      const baseEntries = expanded.entries;
+      const expandedIndices = expanded.indices;
+      const m = baseEntries.length;
+      const orderHashInt = (collState && typeof collState.order_hash_int === 'number') ? collState.order_hash_int : null;
+      if (orderHashInt !== null && m > 0) {
+        const perm = seededPermutation(m, orderHashInt);
+        const shuffledEntries = perm.map(i => baseEntries[i]);
+        const shuffledIndices = perm.map(i => expandedIndices[i]);
+        return { entries: shuffledEntries, indices: shuffledIndices, isShuffled: true, order_hash_int: orderHashInt };
+      }
+      return { entries: baseEntries, indices: expandedIndices.slice(), isShuffled: false, order_hash_int: null };
+    });
   }
 
   // Like getCollectionView, but also applies per-collection filters that are stored
@@ -1601,58 +1509,63 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const coll = (collection && typeof collection === 'object') ? collection : null;
     const baseEntries = Array.isArray(coll?.entries) ? coll.entries : (Array.isArray(opts?.entries) ? opts.entries : []);
     const stateObj = (collState && typeof collState === 'object') ? collState : {};
+    const label = collectionReadyTimingLabel('collections.getCollectionViewForCollection', coll, stateObj, {
+      baseCount: baseEntries.length,
+    });
+    return timed(label, () => {
+      const view = getCollectionView(baseEntries, stateObj, { ...opts, collection: coll });
+      let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
+      let nextIndices = Array.isArray(view.indices) ? view.indices.slice() : [];
 
-    const view = getCollectionView(baseEntries, stateObj, { ...opts, collection: coll });
-    let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
-    let nextIndices = Array.isArray(view.indices) ? view.indices.slice() : [];
-
-    // Apply per-collection studyFilter (state set: null/focus/learned)
-    const { includeStates, skipLearned, focusOnly } = parseStudyFilterState(stateObj);
-    {
-      const adapter = progressAdapterForCollection(coll);
-      const filtered = applyStudyFilterToView(nextEntries, nextIndices, { includeStates }, adapter);
-      nextEntries = filtered.entries;
-      nextIndices = filtered.indices;
-    }
-
-    // Apply persisted held table-search filter (Data view "Hold Filter")
-    try {
-      const held = String(stateObj?.heldTableSearch || '').trim();
-      if (held) {
-        const fields = Array.isArray(opts?.tableSearchFields) && opts.tableSearchFields.length
-          ? opts.tableSearchFields
-          : (Array.isArray(coll?.metadata?.fields) ? coll.metadata.fields : null);
-        const globalFields = Array.isArray(opts?.tableGlobalSearchFields) && opts.tableGlobalSearchFields.length
-          ? opts.tableGlobalSearchFields
-          : fields;
-        const filtered = filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields, globalFields, collection: coll });
+      const { includeStates, skipLearned, focusOnly } = parseStudyFilterState(stateObj);
+      {
+        const adapter = progressAdapterForCollection(coll);
+        const filtered = applyStudyFilterToView(nextEntries, nextIndices, { includeStates }, adapter);
         nextEntries = filtered.entries;
         nextIndices = filtered.indices;
       }
-    } catch {
-      // ignore
-    }
 
-    return {
-      ...view,
-      entries: nextEntries,
-      indices: nextIndices,
-      includeStates,
-      skipLearned,
-      focusOnly,
-    };
+      try {
+        const held = String(stateObj?.heldTableSearch || '').trim();
+        if (held) {
+          const fields = Array.isArray(opts?.tableSearchFields) && opts.tableSearchFields.length
+            ? opts.tableSearchFields
+            : (Array.isArray(coll?.metadata?.fields) ? coll.metadata.fields : null);
+          const globalFields = Array.isArray(opts?.tableGlobalSearchFields) && opts.tableGlobalSearchFields.length
+            ? opts.tableGlobalSearchFields
+            : fields;
+          const filtered = filterEntriesAndIndicesByTableSearch(nextEntries, nextIndices, { query: held, fields, globalFields, collection: coll });
+          nextEntries = filtered.entries;
+          nextIndices = filtered.indices;
+        }
+      } catch {
+        // ignore
+      }
+
+      return {
+        ...view,
+        entries: nextEntries,
+        indices: nextIndices,
+        includeStates,
+        skipLearned,
+        focusOnly,
+      };
+    });
   }
 
   // Convenience: fetch the active collection, load its persisted state,
   // and return the fully-filtered view. Apps can call this directly.
   function getActiveCollectionView(opts = { windowSize: 10 }) {
     const coll = getActiveCollection();
-    if (!coll) {
-      return { collection: null, collState: {}, view: { entries: [], indices: [], isShuffled: false, order_hash_int: null, skipLearned: false, focusOnly: false } };
-    }
-    const collState = loadCollectionState(coll.key) || {};
-    const view = getCollectionViewForCollection(coll, collState, opts);
-    return { collection: coll, collState, view };
+    const collState = coll ? (loadCollectionState(coll.key) || {}) : {};
+    const label = collectionReadyTimingLabel('collections.getActiveCollectionView', coll, collState);
+    return timed(label, () => {
+      if (!coll) {
+        return { collection: null, collState: {}, view: { entries: [], indices: [], isShuffled: false, order_hash_int: null, skipLearned: false, focusOnly: false } };
+      }
+      const view = getCollectionViewForCollection(coll, collState, opts);
+      return { collection: coll, collState, view };
+    });
   }
 
   // Alias with the naming you described: returns just the filtered set/view.
@@ -1733,71 +1646,26 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
   function setStudyFilter(collKey, { states = [], skipLearned = false, focusOnly = false } = {}) {
     const coll = collKey ? getCollections().find(c => c?.key === collKey) : getActiveCollection();
     if (!coll) return false;
-    saveCollectionState(coll.key, { studyFilter: serializeStudyFilter({ states, skipLearned: !!skipLearned, focusOnly: !!focusOnly }) });
-    emit();
-    return true;
+    return timed(`collections.setStudyFilter ${coll.key}`, () => {
+      saveCollectionState(coll.key, { studyFilter: serializeStudyFilter({ states, skipLearned: !!skipLearned, focusOnly: !!focusOnly }) });
+      emit();
+      return true;
+    });
   }
 
   function setHeldTableSearch(collKey, { hold = false, query = '' } = {}) {
     const coll = collKey ? getCollections().find(c => c?.key === collKey) : getActiveCollection();
     if (!coll) return false;
-    const q = String(query || '').trim();
-    // Persist only the held query. The system now always applies the held query
-    // (no per-collection "hold" toggle is stored).
-    saveCollectionState(coll.key, {
-      heldTableSearch: q,
+    return timed(`collections.setHeldTableSearch ${coll.key}`, () => {
+      const q = String(query || '').trim();
+      // Persist only the held query. The system now always applies the held query
+      // (no per-collection "hold" toggle is stored).
+      saveCollectionState(coll.key, {
+        heldTableSearch: q,
+      });
+      emit();
+      return true;
     });
-    emit();
-    return true;
-  }
-
-  function setCollectionExpansionForms(
-    collKey,
-    {
-      iForms = [],
-      naForms = [],
-      ichidanForms = [],
-      godanForms = [],
-      irregularForms = [],
-      sentenceMathForms = [],
-      iForm = '',
-      naForm = '',
-      ichidanForm = '',
-      godanForm = '',
-      irregularForm = '',
-      sentenceMathForm = '',
-      sentenceMathSeed = 0,
-    } = {},
-  ) {
-    const coll = collKey ? getCollections().find(c => c?.key === collKey) : getActiveCollection();
-    if (!coll) return false;
-
-    const normalizeList = (v, fallbackSingle) => {
-      if (v === 'all') return 'all';
-      if (Array.isArray(v)) return v.map(x => String(x || '').trim()).filter(Boolean);
-      const s = String(fallbackSingle || '').trim();
-      if (!s) return [];
-      return s.split(/[,|\s]+/g).map(x => String(x || '').trim()).filter(Boolean);
-    };
-
-    const i = normalizeList(iForms, iForm);
-    const na = normalizeList(naForms, naForm);
-    const ichidan = normalizeList(ichidanForms, ichidanForm);
-    const godan = normalizeList(godanForms, godanForm);
-    const irregular = normalizeList(irregularForms, irregularForm);
-    const sentenceMath = normalizeList(sentenceMathForms, sentenceMathForm);
-    const seed = Number(sentenceMathSeed) || 0;
-    saveCollectionState(coll.key, {
-      expansion_i: i,
-      expansion_na: na,
-      expansion_ichidan: ichidan,
-      expansion_godan: godan,
-      expansion_irregular: irregular,
-      expansion_sentence_math: sentenceMath,
-      expansion_sentence_math_seed: seed,
-    });
-    emit();
-    return true;
   }
 
   function clearLearnedForCollection(collKey) {
@@ -1835,8 +1703,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     deleteCollectionStateKeys,
     getInheritedFolderMetadata,
     collectionSetsDirPath,
-    getCollectionExpansionConfig,
-
     // Debug/read-only runtime inspection helpers (Entity Explorer)
     debugListRuntimeMaps,
     debugGetRuntimeMapDump,
@@ -1848,7 +1714,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     getEntryStudyKey,
     entryMatchesTableSearch,
     filterEntriesAndIndicesByTableSearch,
-    getCollectionExpansionDeltas,
     getCollectionEntriesWithRelated,
 
     // Collection actions (state modifications)
@@ -1856,7 +1721,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     clearCollectionShuffle,
     setStudyFilter,
     setHeldTableSearch,
-    setCollectionExpansionForms,
     clearLearnedForCollection,
   };
 }
