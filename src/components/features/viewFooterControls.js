@@ -2,7 +2,6 @@ import { getGlobalSettingsManager } from '../../managers/settingsManager.js';
 import { openViewFooterSettingsDialog } from '../dialogs/viewFooterSettingsDialog.js';
 
 const FOOTER_CONFIGS_SETTING_ID = 'apps.viewFooter.configs';
-const FOOTER_ROW_CONFIGS_SETTING_ID = 'apps.viewFooter.rowConfigsByCollection';
 
 // Autoplay constraints (mirror of settings dialog)
 const AUTOPLAY_MIN_MS = 500;
@@ -61,9 +60,7 @@ function normalizeCustomButtons(raw = []) {
       if (!act || typeof act !== 'object') continue;
       const actionId = asString(act.actionId).trim();
       if (!actionId) continue;
-      const delayMsNum = Number(act.delayMs);
-      const delayMs = Number.isFinite(delayMsNum) ? Math.max(0, Math.round(delayMsNum)) : 0;
-      actions.push({ actionId, delayMs });
+      actions.push({ actionId });
     }
     out.push({
       id,
@@ -147,18 +144,14 @@ function getConfigById(appPrefs, configId) {
 function normalizeVisibleConfigIds(raw, appPrefs) {
   const configs = Array.isArray(appPrefs?.configs) ? appPrefs.configs : [];
   const validIds = configs.map(cfg => asString(cfg?.id).trim()).filter(Boolean);
-  const validSet = new Set(validIds);
-  if (typeof raw === 'undefined') return validIds.slice();
-  if (!Array.isArray(raw)) return validIds.slice();
-  const out = [];
-  const seen = new Set();
-  for (const value of raw) {
-    const id = asString(value).trim();
-    if (!id || seen.has(id) || !validSet.has(id)) continue;
-    seen.add(id);
-    out.push(id);
-  }
-  return out;
+  return validIds.slice();
+}
+
+function parseDelayActionId(actionId) {
+  const match = /^action\.delay\.(\d+)$/i.exec(asString(actionId).trim());
+  if (!match) return 0;
+  const delayMs = Math.round(Number(match[1]) || 0);
+  return Number.isFinite(delayMs) ? Math.max(0, delayMs) : 0;
 }
 
 function isConfigAvailableForCollection(config, collectionKey = '') {
@@ -285,8 +278,7 @@ function createCustomButtonDescriptor(button, actionRegistry, disableHotkeys = f
       if (!step || typeof step !== 'object') continue;
       const actionId = asString(step.actionId).trim();
       if (!actionId) continue;
-      const delayMsNum = Number(step.delayMs);
-      const delayMs = Number.isFinite(delayMsNum) ? Math.max(0, Math.round(delayMsNum)) : 0;
+      const delayMs = parseDelayActionId(actionId);
       if (delayMs === 0 && actionId.startsWith('link.')) {
         const entry = actionRegistry.get(actionId);
         if (entry && typeof entry.invoke === 'function') {
@@ -302,10 +294,10 @@ function createCustomButtonDescriptor(button, actionRegistry, disableHotkeys = f
       const actionId = asString(step.actionId).trim();
       if (!actionId) continue;
       if (invokedImmediate.has(actionId)) continue;
-      const delayMsNum = Number(step.delayMs);
-      const delayMs = Number.isFinite(delayMsNum) ? Math.max(0, Math.round(delayMsNum)) : 0;
+      const delayMs = parseDelayActionId(actionId);
       if (delayMs > 0) {
         await new Promise((resolve) => setTimeout(resolve, delayMs));
+        continue;
       }
       const entry = actionRegistry.get(actionId);
       if (!entry || typeof entry.invoke !== 'function') continue;
@@ -536,7 +528,6 @@ function createViewFooterControls(items = [], opts = {}) {
   const baseKeys = baseControlItems.map(it => String(it.key || '').trim()).filter(Boolean);
   const customOnly = !!(opts && opts.customOnly);
   let allFooterPrefs = {};
-  let allRowConfigPrefs = {};
   const defaultAppPrefs = normalizeAppFooterPrefs(opts?.defaultPrefs || null, baseKeys, { customOnly });
   let allAppPrefs = normalizeAppFooterPrefs(null, baseKeys, { customOnly });
   let appPrefs = filterAppFooterPrefsForCollection(allAppPrefs, '');
@@ -553,10 +544,6 @@ function createViewFooterControls(items = [], opts = {}) {
     } catch (e) {
       return '';
     }
-  }
-
-  function getRowConfigScopeKey() {
-    return getCollectionKey() || '__default__';
   }
 
   function cancelAutoplay() {
@@ -905,11 +892,9 @@ function createViewFooterControls(items = [], opts = {}) {
       allFooterPrefs = settingsManager.get(FOOTER_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
       allAppPrefs = normalizeAppFooterPrefs(allFooterPrefs[appId], baseKeys, { customOnly });
       appPrefs = filterAppFooterPrefsForCollection(allAppPrefs, getCollectionKey());
-      allRowConfigPrefs = settingsManager.get(FOOTER_ROW_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
-      visibleConfigIds = normalizeVisibleConfigIds(allRowConfigPrefs?.[appId]?.[getRowConfigScopeKey()], appPrefs);
+      visibleConfigIds = normalizeVisibleConfigIds(undefined, appPrefs);
     } catch (e) {
       allFooterPrefs = {};
-      allRowConfigPrefs = {};
       allAppPrefs = normalizeAppFooterPrefs(null, baseKeys, { customOnly });
       appPrefs = filterAppFooterPrefsForCollection(allAppPrefs, getCollectionKey());
       visibleConfigIds = normalizeVisibleConfigIds(undefined, appPrefs);
@@ -924,27 +909,6 @@ function createViewFooterControls(items = [], opts = {}) {
       const current = settingsManager.get(FOOTER_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
       const merged = { ...(current || {}), [appId]: deepClone(allAppPrefs) };
       settingsManager.set(FOOTER_CONFIGS_SETTING_ID, merged, { consumerId: `footer.${appId}` });
-    } catch (e) {
-      // ignore persistence failures
-    }
-  }
-
-  function persistVisibleConfigIds(nextIds, prefsForValidation = appPrefs) {
-    if (!settingsManager || typeof settingsManager.set !== 'function') return;
-    try {
-      const current = settingsManager.get(FOOTER_ROW_CONFIGS_SETTING_ID, { consumerId: `footer.${appId}` }) || {};
-      const currentApp = (current && typeof current[appId] === 'object' && current[appId]) ? current[appId] : {};
-      const normalizedIds = normalizeVisibleConfigIds(nextIds, prefsForValidation);
-      const merged = {
-        ...(current || {}),
-        [appId]: {
-          ...currentApp,
-          [getRowConfigScopeKey()]: normalizedIds,
-        },
-      };
-      settingsManager.set(FOOTER_ROW_CONFIGS_SETTING_ID, merged, { consumerId: `footer.${appId}` });
-      allRowConfigPrefs = merged;
-      visibleConfigIds = normalizedIds;
     } catch (e) {
       // ignore persistence failures
     }
@@ -982,7 +946,7 @@ function createViewFooterControls(items = [], opts = {}) {
 
   function rebuildFromConfig() {
     appPrefs = filterAppFooterPrefsForCollection(allAppPrefs, getCollectionKey());
-    visibleConfigIds = normalizeVisibleConfigIds(allRowConfigPrefs?.[appId]?.[getRowConfigScopeKey()], appPrefs);
+    visibleConfigIds = normalizeVisibleConfigIds(undefined, appPrefs);
     const renderItems = applyFooterConfig(items, appPrefs, actionRegistry, { customOnly });
     buildButtons(renderItems);
     rebuildSettingsRowButtons();
@@ -1062,16 +1026,8 @@ function createViewFooterControls(items = [], opts = {}) {
         appPrefs: allAppPrefs,
         defaultAppPrefs: deepClone(defaultAppPrefs),
         customOnly,
-        visibleConfigIds: visibleConfigIds.slice(),
         collectionLabel: getCollectionKey(),
         currentCollectionKey: getCollectionKey(),
-        onVisibleConfigsChange: (nextIds, nextPrefs) => {
-          const prefsForValidation = nextPrefs
-            ? filterAppFooterPrefsForCollection(normalizeAppFooterPrefs(nextPrefs, baseKeys, { customOnly }), getCollectionKey())
-            : appPrefs;
-          persistVisibleConfigIds(nextIds, prefsForValidation);
-          rebuildSettingsRowButtons();
-        },
         onChange: (nextPrefs) => {
           persistPrefs(nextPrefs);
           rebuildFromConfig();
@@ -1089,17 +1045,14 @@ function createViewFooterControls(items = [], opts = {}) {
     try {
       unregSettings = settingsManager.registerConsumer({
         consumerId: `footer.${appId}`,
-        settings: [FOOTER_CONFIGS_SETTING_ID, FOOTER_ROW_CONFIGS_SETTING_ID],
+        settings: [FOOTER_CONFIGS_SETTING_ID],
         onChange: ({ settingId, next }) => {
           try {
             if (settingId === FOOTER_CONFIGS_SETTING_ID) {
               const all = (next && typeof next === 'object') ? next : {};
               allAppPrefs = normalizeAppFooterPrefs(all[appId], baseKeys, { customOnly });
               appPrefs = filterAppFooterPrefsForCollection(allAppPrefs, getCollectionKey());
-              visibleConfigIds = normalizeVisibleConfigIds(allRowConfigPrefs?.[appId]?.[getRowConfigScopeKey()], appPrefs);
-            } else if (settingId === FOOTER_ROW_CONFIGS_SETTING_ID) {
-              allRowConfigPrefs = (next && typeof next === 'object') ? next : {};
-              visibleConfigIds = normalizeVisibleConfigIds(allRowConfigPrefs?.[appId]?.[getRowConfigScopeKey()], appPrefs);
+              visibleConfigIds = normalizeVisibleConfigIds(undefined, appPrefs);
             } else {
               return;
             }

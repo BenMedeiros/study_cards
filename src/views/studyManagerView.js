@@ -961,6 +961,16 @@ export function renderStudyManager({ store, onNavigate, route }) {
     setCollapsed(!!collapsedCards[key]);
   }
 
+  function ensureSelectedCollectionReport() {
+    const targetCollectionId = String(selectedCollectionId || '').trim();
+    if (!targetCollectionId || pendingEnsureCollectionId === targetCollectionId) return;
+    pendingEnsureCollectionId = targetCollectionId;
+    void ensureCollectionLoaded(targetCollectionId).then(() => {
+      if (String(selectedCollectionId || '').trim() !== targetCollectionId) return;
+      try { studyManagerController.ensureCollections([targetCollectionId]); } catch {}
+    });
+  }
+
   function renderControls() {
     controls.removeControl && controls.removeControl('collection');
     controls.removeControl && controls.removeControl('refresh');
@@ -979,11 +989,9 @@ export function renderStudyManager({ store, onNavigate, route }) {
         const nextId = String(next || '').trim();
         if (!nextId || nextId === selectedCollectionId) return;
         selectedCollectionId = nextId;
-        pendingEnsureCollectionId = nextId;
         renderControls();
         renderBody();
-        await ensureCollectionLoaded(selectedCollectionId);
-        try { studyManagerController.ensureCollections([selectedCollectionId]); } catch {}
+        ensureSelectedCollectionReport();
       },
     });
 
@@ -1010,6 +1018,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
     body.innerHTML = '';
 
     if (!snapshot?.ready) {
+      ensureSelectedCollectionReport();
       body.append(card({ id: 'study-manager-loading-card', title: 'Study Manager', subtitle: 'Building study summaries in the background...' }));
       return;
     }
@@ -1018,10 +1027,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
     if (!report) {
       try {
         if (selectedCollectionId && !snapshot?.isComputing && pendingEnsureCollectionId !== selectedCollectionId) {
-          pendingEnsureCollectionId = selectedCollectionId;
-          void ensureCollectionLoaded(selectedCollectionId).then(() => {
-            try { studyManagerController.ensureCollections([selectedCollectionId]); } catch {}
-          });
+          ensureSelectedCollectionReport();
         }
       } catch {}
       body.append(card({

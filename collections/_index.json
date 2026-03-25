@@ -105,19 +105,91 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-03-24T18:02:56.260Z",
+      "modifiedAt": "2026-03-25T20:49:08.185Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
-      "entriesCount": 2271,
-      "valid": true,
+      "entriesCount": 2289,
+      "valid": false,
       "validation": {
         "schema": {
           "errors": [],
           "warnings": []
         },
         "entries": {
-          "errors": [],
-          "warnings": []
+          "errors": [
+            {
+              "id": "高い",
+              "message": "Duplicate entry key '高い' appears 2 times in file"
+            },
+            {
+              "id": "高さ",
+              "message": "Duplicate entry key '高さ' appears 2 times in file"
+            }
+          ],
+          "warnings": [],
+          "duplicates": [
+            {
+              "key": "高い",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 429,
+                  "line": 3118,
+                  "entry": {
+                    "kanji": "高い",
+                    "reading": "たかい",
+                    "meaning": "tall; expensive",
+                    "type": "i-adjective"
+                  }
+                },
+                {
+                  "index": 2271,
+                  "line": 18009,
+                  "entry": {
+                    "kanji": "高い",
+                    "reading": "たかい",
+                    "meaning": "high; tall; expensive",
+                    "type": "i-adjective",
+                    "tags": [
+                      "takai_forms",
+                      "lemma_takai"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "key": "高さ",
+              "count": 2,
+              "occurrences": [
+                {
+                  "index": 671,
+                  "line": 4733,
+                  "entry": {
+                    "kanji": "高さ",
+                    "reading": "たかさ",
+                    "meaning": "height",
+                    "type": "noun"
+                  }
+                },
+                {
+                  "index": 2285,
+                  "line": 18167,
+                  "entry": {
+                    "kanji": "高さ",
+                    "reading": "たかさ",
+                    "meaning": "height",
+                    "type": "noun",
+                    "tags": [
+                      "takai_forms",
+                      "lemma_takai",
+                      "derived"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
         }
       },
       "schemaSource": "inline"

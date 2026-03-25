@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-24T19:17:16.889Z",
+  "generatedAt": "2026-03-25T20:16:39.918Z",
   "scannedCollections": 13,
   "collectionsWithRelations": 2,
   "relationCount": 4,
@@ -173,9 +173,9 @@
   "outputPath": "scripts/outputs/report_missing_related_collection_data_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-03-24T19:17:16.860Z",
-    "finishedAt": "2026-03-24T19:17:16.890Z",
-    "durationMs": 30,
-    "durationSeconds": 0.03
+    "startedAt": "2026-03-25T20:16:39.881Z",
+    "finishedAt": "2026-03-25T20:16:39.919Z",
+    "durationMs": 38,
+    "durationSeconds": 0.038
   }
 }

@@ -22,6 +22,7 @@ function inferNamespace(raw) {
 function resolveGroupedActionMeta(action) {
   const fnName = asString(action?.fnName).trim();
   const actionField = asString(action?.actionField).trim();
+  const actionId = asString(action?.id).trim();
 
   if (fnName === 'entry.speakField') {
     const fieldKey = actionField.startsWith('entry.') ? actionField.slice('entry.'.length) : '';
@@ -57,6 +58,44 @@ function resolveGroupedActionMeta(action) {
     };
   }
 
+  if (fnName === 'action.delay') {
+    return {
+      groupKey: 'action.delay',
+      groupFnName: 'action.delay',
+      optionLabel: actionField || actionId,
+      optionSort: actionField || actionId,
+    };
+  }
+
+  if (
+    fnName === 'manager.studyProgress.setState'
+    || ['setStateFocus', 'setStateLearned', 'setStateNull'].includes(actionId)
+  ) {
+    return {
+      groupKey: 'manager.studyProgress.setState',
+      groupFnName: 'manager.studyProgress.setState',
+      optionLabel: actionField || actionId,
+      optionSort: actionField || actionId,
+    };
+  }
+
+  if (
+    fnName === 'manager.studyProgress.toggleState'
+    || fnName === 'manager.studyProgress.toggleKanjiFocus'
+    || fnName === 'manager.studyProgress.toggleKanjiLearned'
+    || ['practice', 'learned'].includes(actionId)
+  ) {
+    const toggleKey = actionId === 'practice' ? 'focus'
+      : actionId === 'learned' ? 'learned'
+      : (fnName.endsWith('Focus') ? 'focus' : 'learned');
+    return {
+      groupKey: 'manager.studyProgress.toggleState',
+      groupFnName: 'manager.studyProgress.toggleState',
+      optionLabel: toggleKey,
+      optionSort: toggleKey,
+    };
+  }
+
   return null;
 }
 
@@ -86,6 +125,8 @@ export function openViewFooterCustomButtonDialog({
         actionField = field ? `entry.${field}` : 'entry';
       } else if (id === 'prev' || id === 'next') {
         actionField = 'app.kanjiStudyCardView';
+      } else if (/^action\.delay\./i.test(id)) {
+        actionField = 'sequence';
       } else if (/^(learned|practice)$/i.test(id) || /^toggle/i.test(id) || /^setstate/i.test(id) || /^togglekanji/i.test(id)) {
         actionField = 'manager.studyProgress';
       } else if (rawNs) {
@@ -138,6 +179,11 @@ export function openViewFooterCustomButtonDialog({
           type: 'group',
           key: grouped.groupKey,
           fnName: grouped.groupFnName,
+          multi: ![
+            'action.delay',
+            'manager.studyProgress.setState',
+            'manager.studyProgress.toggleState',
+          ].includes(grouped.groupKey),
           options: [],
         };
         groupedByKey.set(grouped.groupKey, row);
@@ -153,7 +199,14 @@ export function openViewFooterCustomButtonDialog({
 
     for (const row of displayRows) {
       if (row.type !== 'group') continue;
-      row.options.sort((a, b) => String(a.optionSort || '').localeCompare(String(b.optionSort || '')));
+      row.options.sort((a, b) => {
+        if (row.key === 'action.delay') {
+          const aNum = Number(String(a.optionSort || '').replace(/[^0-9.]/g, '')) || 0;
+          const bNum = Number(String(b.optionSort || '').replace(/[^0-9.]/g, '')) || 0;
+          return aNum - bNum;
+        }
+        return String(a.optionSort || '').localeCompare(String(b.optionSort || ''));
+      });
     }
 
     const backdrop = el('div', { className: 'view-footer-hotkey-backdrop' });
@@ -171,6 +224,13 @@ export function openViewFooterCustomButtonDialog({
 
     const availableTitle = el('div', { className: 'hint', text: 'Available Actions' });
     const availableListEl = el('div', { className: 'view-footer-custom-available-list' });
+    let validationMessage = '';
+
+    function setValidationMessage(message = '') {
+      validationMessage = asString(message).trim();
+      availableTitle.textContent = validationMessage || 'Available Actions';
+      availableTitle.style.color = validationMessage ? 'var(--danger, #dc2626)' : '';
+    }
 
     const actions = el('div', { className: 'view-footer-hotkey-actions' });
     const cancelBtn = el('button', { className: 'btn small', text: 'Cancel' });
@@ -210,27 +270,52 @@ export function openViewFooterCustomButtonDialog({
               label: asString(opt.optionLabel),
             }));
           if (!groupedItems.length) continue;
+          const initialSingleValue = rowData.multi === false ? asString(groupedItems[0]?.value).trim() : '';
           const dropdown = createDropdown({
             items: groupedItems,
+            value: initialSingleValue,
             values: [],
-            multi: true,
-            commitOnClose: true,
+            multi: rowData.multi !== false,
+            commitOnClose: false,
             includeAllNone: true,
             className: 'view-footer-custom-group-dropdown',
             closeOverlaysOnOpen: false,
             portalZIndex: 1400,
+            onChange: () => {
+              setValidationMessage('');
+              syncSelectButton();
+            },
           });
           fieldCell.appendChild(dropdown);
 
           const selectBtn = el('button', { className: 'btn small', text: 'Select' });
           selectBtn.type = 'button';
+          const getChosen = () => (
+            rowData.multi === false
+              ? [asString(dropdown?.getValue ? dropdown.getValue() : '').trim()].filter(Boolean)
+              : (dropdown?.getValues ? dropdown.getValues() : [])
+                .map(value => asString(value).trim())
+                .filter(Boolean)
+          );
+          const syncSelectButton = () => {
+            const chosen = getChosen();
+            selectBtn.disabled = chosen.length === 0;
+          };
           selectBtn.addEventListener('click', () => {
-            const chosen = (dropdown?.getValues ? dropdown.getValues() : [])
-              .map(value => asString(value).trim())
-              .filter(Boolean);
-            if (!chosen.length) return;
+            const chosen = getChosen();
+            if (!chosen.length) {
+              setValidationMessage('Select an action before adding it.');
+              syncSelectButton();
+              return;
+            }
+            setValidationMessage('');
+            if (rowData.multi === false) {
+              close({ actionId: chosen[0] });
+              return;
+            }
             close({ actionIds: chosen });
           });
+          syncSelectButton();
 
           row.append(left, fieldCell, selectBtn);
           availableListEl.appendChild(row);

@@ -7,9 +7,61 @@ import { normalizeRelatedCollectionsConfig } from '../utils/common/collectionPar
 
 const STUDY_STATES = ['null', 'focus', 'learned'];
 const STUDY_STATS_APP_ID = 'kanji';
+const COOPERATIVE_YIELD_INTERVAL = 250;
 
 function nowIso() {
   return new Date().toISOString();
+}
+
+function nowPerfMs() {
+  try {
+    if (typeof performance !== 'undefined' && performance && typeof performance.now === 'function') {
+      return performance.now();
+    }
+  } catch {}
+  return Date.now();
+}
+
+function yieldToMainThread() {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 0);
+  });
+}
+
+async function runLoggedStudyManagerPhase(phase, details, work) {
+  const phaseName = String(phase || '').trim() || 'unknown';
+  const payload = (details && typeof details === 'object') ? details : {};
+  const startedAtMs = nowPerfMs();
+  try {
+    console.log('[studyManager.phase] run:start', {
+      phase: phaseName,
+      ...payload,
+    });
+  } catch (e) {}
+
+  try {
+    const result = typeof work === 'function' ? await work() : null;
+    try {
+      console.log('[studyManager.phase] run:finish', {
+        phase: phaseName,
+        ...payload,
+        status: 'ready',
+        elapsedMs: Math.round((nowPerfMs() - startedAtMs) * 100) / 100,
+      });
+    } catch (e) {}
+    return result;
+  } catch (error) {
+    try {
+      console.log('[studyManager.phase] run:finish', {
+        phase: phaseName,
+        ...payload,
+        status: 'error',
+        elapsedMs: Math.round((nowPerfMs() - startedAtMs) * 100) / 100,
+        error: error?.message || String(error),
+      });
+    } catch (e) {}
+    throw error;
+  }
 }
 
 function buildRecommendationRoute(collectionId, fieldKey, value) {
@@ -620,7 +672,7 @@ const studyManagerController = (() => {
     return out;
   }
 
-  function computeFilterStatsForCollection(collection, filters, progressSummary) {
+  async function computeFilterStatsForCollection(collection, filters, progressSummary) {
     const collectionKey = String(collection?.key || '').trim();
     const collStateRaw = store?.collections?.loadCollectionState?.(collectionKey) || {};
     const collState = (collStateRaw && typeof collStateRaw === 'object') ? collStateRaw : {};
@@ -656,6 +708,8 @@ const studyManagerController = (() => {
     const filterStats = new Map();
     const entrySetByFilter = new Map();
     const clauseSetByFilter = new Map();
+    let processedEntries = 0;
+    let processedFilters = 0;
 
     for (const filterKey of filters) {
       let matchedIndices = indices;
@@ -689,6 +743,10 @@ const studyManagerController = (() => {
         else notSeenCount += 1;
         timesSeenTotal += timesSeen;
         totalEntries += 1;
+        processedEntries += 1;
+        if (processedEntries % COOPERATIVE_YIELD_INTERVAL === 0) {
+          await yieldToMainThread();
+        }
       }
       filterStats.set(filterKey, {
         filterKey,
@@ -698,6 +756,10 @@ const studyManagerController = (() => {
         timesSeenTotal,
         stateCounts,
       });
+      processedFilters += 1;
+      if (processedFilters % Math.max(1, Math.floor(COOPERATIVE_YIELD_INTERVAL / 10)) === 0) {
+        await yieldToMainThread();
+      }
     }
 
     const relationGraph = buildRelationGraph(filters, clauseSetByFilter);
@@ -741,11 +803,86 @@ const studyManagerController = (() => {
     };
   }
 
-  function buildCollectionReport(collection, progressSummary, sessionAgg) {
+  async function buildLoggedReportResult({
+    reportId,
+    builder = '',
+    collectionId = '',
+    inputs = null,
+    query = null,
+    outputBuilder = null,
+  } = {}) {
+    const normalizedReportId = String(reportId || '').trim();
+    const normalizedBuilder = String(builder || '').trim();
+    const normalizedCollectionId = String(collectionId || '').trim();
+    const startedAtMs = nowPerfMs();
+    try {
+      console.log('[studyManager.report] run:start', {
+        reportId: normalizedReportId,
+        collectionId: normalizedCollectionId,
+        builder: normalizedBuilder,
+      });
+    } catch (e) {}
+
+    try {
+      const output = typeof outputBuilder === 'function' ? await outputBuilder() : null;
+      const result = makeReportResult({
+        reportId: normalizedReportId,
+        builder: normalizedBuilder,
+        collectionId: normalizedCollectionId,
+        generatedAtIso: nowIso(),
+        inputs,
+        query,
+        output,
+      });
+      try {
+        console.log('[studyManager.report] run:finish', {
+          reportId: normalizedReportId,
+          collectionId: normalizedCollectionId,
+          builder: normalizedBuilder,
+          status: 'ready',
+          elapsedMs: Math.round((nowPerfMs() - startedAtMs) * 100) / 100,
+        });
+      } catch (e) {}
+      return result;
+    } catch (error) {
+      try {
+        console.log('[studyManager.report] run:finish', {
+          reportId: normalizedReportId,
+          collectionId: normalizedCollectionId,
+          builder: normalizedBuilder,
+          status: 'error',
+          elapsedMs: Math.round((nowPerfMs() - startedAtMs) * 100) / 100,
+          error: error?.message || String(error),
+        });
+      } catch (e) {}
+      throw error;
+    }
+  }
+
+  function summarizeCollectionReportCounts(report) {
+    const reportResults = (report?.reportResults && typeof report.reportResults === 'object') ? report.reportResults : {};
+    const recommendationSets = (reportResults?.recommendationSets && typeof reportResults.recommendationSets === 'object')
+      ? reportResults.recommendationSets
+      : {};
+    const fixedReportIds = Object.keys(reportResults).filter((key) => key && key !== 'recommendationSets');
+    const recommendationReportIds = Object.keys(recommendationSets).filter(Boolean);
+    return {
+      fixedReportCount: fixedReportIds.length,
+      recommendationReportCount: recommendationReportIds.length,
+      totalReportCount: fixedReportIds.length + recommendationReportIds.length,
+      fixedReportIds,
+      recommendationReportIds,
+    };
+  }
+
+  async function buildCollectionReport(collection, progressSummary, sessionAgg) {
     const collectionId = String(collection?.key || '').trim();
     const collectionName = String(collection?.metadata?.name || collectionId).trim();
     const entryCount = Array.isArray(collection?.entries) ? collection.entries.length : 0;
-    const filters = buildCollectionFilters(collectionId, sessionAgg);
+    const filters = await runLoggedStudyManagerPhase('buildCollectionFilters', {
+      collectionId,
+      entryCount,
+    }, () => buildCollectionFilters(collectionId, sessionAgg));
     const collState = store?.collections?.loadCollectionState?.(collectionId) || {};
     const savedFilterSet = new Set(
       (Array.isArray(collState?.savedTableSearches) ? collState.savedTableSearches : [])
@@ -776,7 +913,11 @@ const studyManagerController = (() => {
     if (canReuse) {
       derived = prev.derived;
     } else {
-      derived = computeFilterStatsForCollection(collection, filters, progressSummary || makeProgressSummary(collectionId));
+      derived = await runLoggedStudyManagerPhase('computeFilterStatsForCollection', {
+        collectionId,
+        entryCount,
+        filterCount: filters.length,
+      }, () => computeFilterStatsForCollection(collection, filters, progressSummary || makeProgressSummary(collectionId)));
       cacheByCollection.set(collectionId, {
         entryCount,
         progressSignature,
@@ -797,89 +938,109 @@ const studyManagerController = (() => {
       return Math.max(0, Math.round(Number(directByFilter.get(filterKey)?.sessionCount) || 0));
     }
 
-    const studyTimeByFilter = [];
-    const studyTimeByFilterKey = {};
-    for (const filterKey of filters) {
-      const stats = derived.filterStats.get(filterKey) || {
-        filterKey,
-        totalEntries: 0,
-        seenCount: 0,
-        notSeenCount: 0,
-        timesSeenTotal: 0,
-        stateCounts: makeStateCounts(),
-      };
-      const directDurationMs = getDirectDurationMs(filterKey);
-      const directSessionCount = getDirectSessionCount(filterKey);
+    const { studyTimeByFilter, studyTimeByFilterKey } = await runLoggedStudyManagerPhase('buildStudyTimeByFilterRows', {
+      collectionId,
+      filterCount: filters.length,
+    }, async () => {
+      const nextStudyTimeByFilter = [];
+      const nextStudyTimeByFilterKey = {};
+      let processedFilters = 0;
+      for (const filterKey of filters) {
+        const stats = derived.filterStats.get(filterKey) || {
+          filterKey,
+          totalEntries: 0,
+          seenCount: 0,
+          notSeenCount: 0,
+          timesSeenTotal: 0,
+          stateCounts: makeStateCounts(),
+        };
+        const directDurationMs = getDirectDurationMs(filterKey);
+        const directSessionCount = getDirectSessionCount(filterKey);
 
-      let rolledDownDurationMs = directDurationMs;
-      let rolledDownSessionCount = directSessionCount;
-      for (const childKey of (relationGraph.descendantsMemo.get(filterKey) || [])) {
-        rolledDownDurationMs += getDirectDurationMs(childKey);
-        rolledDownSessionCount += getDirectSessionCount(childKey);
+        let rolledDownDurationMs = directDurationMs;
+        let rolledDownSessionCount = directSessionCount;
+        for (const childKey of (relationGraph.descendantsMemo.get(filterKey) || [])) {
+          rolledDownDurationMs += getDirectDurationMs(childKey);
+          rolledDownSessionCount += getDirectSessionCount(childKey);
+        }
+
+        let rolledUpDurationMs = directDurationMs;
+        let rolledUpSessionCount = directSessionCount;
+        for (const parentKey of (relationGraph.ancestorsMemo.get(filterKey) || [])) {
+          rolledUpDurationMs += getDirectDurationMs(parentKey);
+          rolledUpSessionCount += getDirectSessionCount(parentKey);
+        }
+
+        const directRec = directByFilter.get(filterKey) || null;
+        const appsCount = directRec?.apps instanceof Map ? directRec.apps.size : 0;
+        const lastSessionIso = directRec?.lastEndIso || null;
+        const parents = Array.from(relationGraph.parents.get(filterKey) || []);
+        const children = Array.from(relationGraph.children.get(filterKey) || []);
+        const clauseParts = derived.clauseSetByFilter.get(filterKey) || [];
+
+        const row = {
+          filterKey,
+          filterLabel: makeFilterLabel(filterKey),
+          clauseParts,
+          totalEntries: Math.max(0, Math.round(Number(stats.totalEntries) || 0)),
+          seenCount: Math.max(0, Math.round(Number(stats.seenCount) || 0)),
+          notSeenCount: Math.max(0, Math.round(Number(stats.notSeenCount) || 0)),
+          timesSeenTotal: Math.max(0, Math.round(Number(stats.timesSeenTotal) || 0)),
+          stateNullCount: Math.max(0, Math.round(Number(stats.stateCounts?.null) || 0)),
+          stateFocusCount: Math.max(0, Math.round(Number(stats.stateCounts?.focus) || 0)),
+          stateLearnedCount: Math.max(0, Math.round(Number(stats.stateCounts?.learned) || 0)),
+          learnedPct: (Math.max(0, Math.round(Number(stats.totalEntries) || 0)) > 0)
+            ? ((Math.max(0, Math.round(Number(stats.stateCounts?.learned) || 0)) / Math.max(1, Math.round(Number(stats.totalEntries) || 0))) * 100)
+            : 0,
+          directDurationMs,
+          directSessionCount,
+          rolledDownDurationMs,
+          rolledDownSessionCount,
+          rolledUpDurationMs,
+          rolledUpSessionCount,
+          lastSessionIso,
+          parentCount: parents.length,
+          childCount: children.length,
+          appsCount,
+          isSavedFilter: filterKey ? savedFilterSet.has(filterKey) : false,
+          parents: parents.map((k) => ({ filterKey: k, filterLabel: makeFilterLabel(k) })),
+          children: children.map((k) => ({ filterKey: k, filterLabel: makeFilterLabel(k) })),
+        };
+
+        nextStudyTimeByFilter.push(row);
+        nextStudyTimeByFilterKey[filterKey] = row;
+        processedFilters += 1;
+        if (processedFilters % Math.max(1, Math.floor(COOPERATIVE_YIELD_INTERVAL / 5)) === 0) {
+          await yieldToMainThread();
+        }
       }
 
-      let rolledUpDurationMs = directDurationMs;
-      let rolledUpSessionCount = directSessionCount;
-      for (const parentKey of (relationGraph.ancestorsMemo.get(filterKey) || [])) {
-        rolledUpDurationMs += getDirectDurationMs(parentKey);
-        rolledUpSessionCount += getDirectSessionCount(parentKey);
-      }
-
-      const directRec = directByFilter.get(filterKey) || null;
-      const appsCount = directRec?.apps instanceof Map ? directRec.apps.size : 0;
-      const lastSessionIso = directRec?.lastEndIso || null;
-      const parents = Array.from(relationGraph.parents.get(filterKey) || []);
-      const children = Array.from(relationGraph.children.get(filterKey) || []);
-      const clauseParts = derived.clauseSetByFilter.get(filterKey) || [];
-
-      const row = {
-        filterKey,
-        filterLabel: makeFilterLabel(filterKey),
-        clauseParts,
-        totalEntries: Math.max(0, Math.round(Number(stats.totalEntries) || 0)),
-        seenCount: Math.max(0, Math.round(Number(stats.seenCount) || 0)),
-        notSeenCount: Math.max(0, Math.round(Number(stats.notSeenCount) || 0)),
-        timesSeenTotal: Math.max(0, Math.round(Number(stats.timesSeenTotal) || 0)),
-        stateNullCount: Math.max(0, Math.round(Number(stats.stateCounts?.null) || 0)),
-        stateFocusCount: Math.max(0, Math.round(Number(stats.stateCounts?.focus) || 0)),
-        stateLearnedCount: Math.max(0, Math.round(Number(stats.stateCounts?.learned) || 0)),
-        learnedPct: (Math.max(0, Math.round(Number(stats.totalEntries) || 0)) > 0)
-          ? ((Math.max(0, Math.round(Number(stats.stateCounts?.learned) || 0)) / Math.max(1, Math.round(Number(stats.totalEntries) || 0))) * 100)
-          : 0,
-        directDurationMs,
-        directSessionCount,
-        rolledDownDurationMs,
-        rolledDownSessionCount,
-        rolledUpDurationMs,
-        rolledUpSessionCount,
-        lastSessionIso,
-        parentCount: parents.length,
-        childCount: children.length,
-        appsCount,
-        isSavedFilter: filterKey ? savedFilterSet.has(filterKey) : false,
-        parents: parents.map((k) => ({ filterKey: k, filterLabel: makeFilterLabel(k) })),
-        children: children.map((k) => ({ filterKey: k, filterLabel: makeFilterLabel(k) })),
+      nextStudyTimeByFilter.sort((a, b) => {
+        if (b.rolledDownDurationMs !== a.rolledDownDurationMs) return b.rolledDownDurationMs - a.rolledDownDurationMs;
+        if (b.directDurationMs !== a.directDurationMs) return b.directDurationMs - a.directDurationMs;
+        return a.filterLabel.localeCompare(b.filterLabel);
+      });
+      return {
+        studyTimeByFilter: nextStudyTimeByFilter,
+        studyTimeByFilterKey: nextStudyTimeByFilterKey,
       };
-
-      studyTimeByFilter.push(row);
-      studyTimeByFilterKey[filterKey] = row;
-    }
-
-    studyTimeByFilter.sort((a, b) => {
-      if (b.rolledDownDurationMs !== a.rolledDownDurationMs) return b.rolledDownDurationMs - a.rolledDownDurationMs;
-      if (b.directDurationMs !== a.directDurationMs) return b.directDurationMs - a.directDurationMs;
-      return a.filterLabel.localeCompare(b.filterLabel);
     });
 
     const groupByAppId = Array.from(appTotals.entries())
       .map(([appId, durationMs]) => ({ appId, durationMs: Math.max(0, Math.round(Number(durationMs) || 0)) }))
       .sort((a, b) => b.durationMs - a.durationMs);
 
-    const studyTimeByDate = buildStudyTimeByDate({
+    const studyTimeByDate = await runLoggedStudyManagerPhase('buildStudyTimeByDate', {
+      collectionId,
+      dayCount: sessionAgg?.byDay instanceof Map ? sessionAgg.byDay.size : 0,
+    }, () => buildStudyTimeByDate({
       byDay: sessionAgg?.byDay,
       filterMap: studyTimeByFilterKey,
-    });
-    const studyTimeByDateSummary = buildStudyTimeByDateSummary({ collectionId, studyTimeByDate });
+    }));
+    const studyTimeByDateSummary = await runLoggedStudyManagerPhase('buildStudyTimeByDateSummary', {
+      collectionId,
+      sourceDayCount: studyTimeByDate.length,
+    }, () => buildStudyTimeByDateSummary({ collectionId, studyTimeByDate }));
     const getEntryKey = (entry) => String(store?.collections?.getEntryStudyKey?.(entry) || '').trim();
     const getProgressRecord = (entryKey) => {
       if (!entryKey) return null;
@@ -891,24 +1052,31 @@ const studyManagerController = (() => {
       return null;
     };
 
-    const recommendationSets = [];
-    const kanjiRecommendations = buildWordLearningRecommendations({
-      collection,
-      getEntryKey,
-      getProgressRecord,
-    });
-    if (kanjiRecommendations) recommendationSets.push(kanjiRecommendations);
-
-    const relatedRecommendationConfigs = buildRelatedCollectionRecommendationConfigs(collection);
-    for (const reportConfig of relatedRecommendationConfigs) {
-      const set = buildGroupedLearningRecommendations({
+    const recommendationSets = await runLoggedStudyManagerPhase('buildRecommendationSets', {
+      collectionId,
+      entryCount,
+    }, async () => {
+      const nextRecommendationSets = [];
+      await yieldToMainThread();
+      const kanjiRecommendations = buildWordLearningRecommendations({
         collection,
         getEntryKey,
         getProgressRecord,
-        reportConfig,
       });
-      if (set && Array.isArray(set.items) && set.items.length) recommendationSets.push(set);
-    }
+      if (kanjiRecommendations) nextRecommendationSets.push(kanjiRecommendations);
+
+      const relatedRecommendationConfigs = buildRelatedCollectionRecommendationConfigs(collection);
+      for (const reportConfig of relatedRecommendationConfigs) {
+        const set = buildGroupedLearningRecommendations({
+          collection,
+          getEntryKey,
+          getProgressRecord,
+          reportConfig,
+        });
+        if (set && Array.isArray(set.items) && set.items.length) nextRecommendationSets.push(set);
+      }
+      return nextRecommendationSets;
+    });
 
     const recommendations = recommendationSets[0] || null;
 
@@ -960,11 +1128,10 @@ const studyManagerController = (() => {
       },
     };
     const reportResults = {
-      collectionSummary: makeReportResult({
+      collectionSummary: await buildLoggedReportResult({
         reportId: 'collectionSummary',
         builder: 'inline:buildCollectionSummary',
         collectionId,
-        generatedAtIso,
         inputs: {
           entryCount,
           progressRecordCount: Math.max(0, Math.round(Number(progressSummary?.progressRecordCount) || 0)),
@@ -972,89 +1139,84 @@ const studyManagerController = (() => {
           trackedFilterCount: studyTimeByFilter.length,
         },
         query: queries.collectionSummary,
-        output: collectionSummary,
+        outputBuilder: () => collectionSummary,
       }),
-      studyTimeByFilter: makeReportResult({
+      studyTimeByFilter: await buildLoggedReportResult({
         reportId: 'studyTimeByFilter',
         builder: 'inline:buildStudyTimeByFilter',
         collectionId,
-        generatedAtIso,
         inputs: {
           filterUniverseCount: filters.length,
           savedFilterCount: savedFilterSet.size,
           appCount: appTotals.size,
         },
         query: queries.studyTimeByFilter,
-        output: studyTimeByFilter,
+        outputBuilder: () => studyTimeByFilter,
       }),
-      groupByAppId: makeReportResult({
+      groupByAppId: await buildLoggedReportResult({
         reportId: 'groupByAppId',
         builder: 'inline:buildGroupByAppId',
         collectionId,
-        generatedAtIso,
         inputs: {
           distinctAppCount: appTotals.size,
         },
         query: queries.groupByAppId,
-        output: groupByAppId,
+        outputBuilder: () => groupByAppId,
       }),
-      studyTimeByDate: makeReportResult({
+      studyTimeByDate: await buildLoggedReportResult({
         reportId: 'studyTimeByDate',
         builder: 'src/reports/studyManager/buildStudyTimeByDate.js',
         collectionId,
-        generatedAtIso,
         inputs: {
           dayCount: sessionAgg?.byDay instanceof Map ? sessionAgg.byDay.size : 0,
           filterLookupCount: Object.keys(studyTimeByFilterKey).length,
         },
         query: queries.studyTimeByDate,
-        output: studyTimeByDate,
+        outputBuilder: () => studyTimeByDate,
       }),
-      studyTimeByDateSummary: makeReportResult({
+      studyTimeByDateSummary: await buildLoggedReportResult({
         reportId: 'studyTimeByDateSummary',
         builder: 'src/reports/studyManager/buildStudyTimeByDateSummary.js',
         collectionId,
-        generatedAtIso,
         inputs: {
           sourceDayCount: studyTimeByDate.length,
           windowDays: studyTimeByDateSummary.windowDays,
         },
         query: queries.studyTimeByDateSummary,
-        output: studyTimeByDateSummary,
+        outputBuilder: () => studyTimeByDateSummary,
       }),
-      recommendations: makeReportResult({
+      recommendations: await buildLoggedReportResult({
         reportId: 'recommendations',
         builder: 'src/reports/studyManager/buildWordLearningRecommendations.js',
         collectionId,
-        generatedAtIso,
         inputs: {
           category: String(collection?.metadata?.category || '').trim(),
           entryCount,
         },
         query: null,
-        output: recommendations,
+        outputBuilder: () => recommendations,
       }),
-      recommendationSets: recommendationSets.reduce((out, set) => {
-        const id = String(set?.config?.id || '').trim();
-        if (!id) return out;
-        out[id] = makeReportResult({
-          reportId: id,
-          builder: id === 'kanjiCoverage'
-            ? 'src/reports/studyManager/buildWordLearningRecommendations.js'
-            : 'src/reports/studyManager/buildGroupedLearningRecommendations.js',
-          collectionId,
-          generatedAtIso,
-          inputs: {
-            category: String(collection?.metadata?.category || '').trim(),
-            entryCount,
-            recommendationId: id,
-          },
-          query: null,
-          output: set,
-        });
-        return out;
-      }, {}),
+      recommendationSets: {},
     };
+
+    for (const set of recommendationSets) {
+      const id = String(set?.config?.id || '').trim();
+      if (!id) continue;
+      reportResults.recommendationSets[id] = await buildLoggedReportResult({
+        reportId: id,
+        builder: id === 'kanjiCoverage'
+          ? 'src/reports/studyManager/buildWordLearningRecommendations.js'
+          : 'src/reports/studyManager/buildGroupedLearningRecommendations.js',
+        collectionId,
+        inputs: {
+          category: String(collection?.metadata?.category || '').trim(),
+          entryCount,
+          recommendationId: id,
+        },
+        query: null,
+        outputBuilder: () => set,
+      });
+    }
 
     return {
       collectionId,
@@ -1109,8 +1271,14 @@ const studyManagerController = (() => {
     emit();
 
     try {
-      processSessionsIncremental();
-      const progressByCollection = buildProgressByCollection();
+      await runLoggedStudyManagerPhase('processSessionsIncremental', {
+        reason,
+        targetCollectionCount: targetIds.length,
+      }, () => processSessionsIncremental());
+      const progressByCollection = await runLoggedStudyManagerPhase('buildProgressByCollection', {
+        reason,
+        targetCollectionCount: targetIds.length,
+      }, () => buildProgressByCollection());
       const collections = listAvailableCollections();
       const availableRefs = buildAvailableCollectionRefs(collections);
       const byId = new Map(collections.map((coll) => [String(coll?.key || '').trim(), coll]));
@@ -1123,10 +1291,22 @@ const studyManagerController = (() => {
         if (!coll) continue;
         const progressSummary = progressByCollection.get(key) || makeProgressSummary(key);
         const sessionAgg = sessionByCollection.get(key) || makeSessionAggregate(key);
-        const report = buildCollectionReport(coll, progressSummary, sessionAgg);
+        const report = await runLoggedStudyManagerPhase('buildCollectionReport', {
+          reason,
+          collectionId: key,
+        }, () => buildCollectionReport(coll, progressSummary, sessionAgg));
         reportMap[key] = report;
       }
       const reports = sortReports(Object.values(reportMap));
+      const reportCountsByCollection = Object.fromEntries(
+        reports
+          .map((report) => {
+            const collectionId = String(report?.collectionId || '').trim();
+            if (!collectionId) return null;
+            return [collectionId, summarizeCollectionReportCounts(report)];
+          })
+          .filter(Boolean)
+      );
 
       snapshot = {
         ...snapshot,
@@ -1152,7 +1332,8 @@ const studyManagerController = (() => {
           reason,
           collectionIds: targetIds.slice(),
           totalAvailableCollections: collections.length,
-          cachedReports: reports.length,
+          cachedCollectionReports: reports.length,
+          reportCountsByCollection,
           status: 'ready',
         });
       } catch (e) {}
@@ -1231,11 +1412,6 @@ const studyManagerController = (() => {
     pollMs = Math.max(5_000, Math.round(Number(pollIntervalMs) || 20_000));
     if (initialized) return;
     initialized = true;
-
-    requestRefresh('init', {
-      delayMs: 0,
-      collectionIds: [store?.collections?.getActiveCollectionId?.()],
-    });
   }
 
   function dispose() {

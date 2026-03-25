@@ -18005,6 +18005,208 @@
       "reading": "しゃいんきょういく",
       "meaning": "employee training",
       "type": "noun"
+    },
+    {
+      "kanji": "高い",
+      "reading": "たかい",
+      "meaning": "high; tall; expensive",
+      "type": "i-adjective",
+      "tags": [
+        "takai_forms",
+        "lemma_takai"
+      ]
+    },
+    {
+      "kanji": "高くない",
+      "reading": "たかくない",
+      "meaning": "not high/tall/expensive",
+      "type": "i-adjective",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "高かった",
+      "reading": "たかかった",
+      "meaning": "was high/tall/expensive",
+      "type": "i-adjective",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "past"
+      ]
+    },
+    {
+      "kanji": "高くなかった",
+      "reading": "たかくなかった",
+      "meaning": "was not high/tall/expensive",
+      "type": "i-adjective",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "高くて",
+      "reading": "たかくて",
+      "meaning": "high/tall/expensive and; because high/tall/expensive",
+      "type": "expression",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "te_form"
+      ]
+    },
+    {
+      "kanji": "高く",
+      "reading": "たかく",
+      "meaning": "highly; expensively",
+      "type": "adverb",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "adverbial"
+      ]
+    },
+    {
+      "kanji": "高ければ",
+      "reading": "たかければ",
+      "meaning": "if high/tall/expensive",
+      "type": "expression",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "conditional"
+      ]
+    },
+    {
+      "kanji": "高かったら",
+      "reading": "たかかったら",
+      "meaning": "if it was high/tall/expensive",
+      "type": "expression",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "conditional",
+        "past"
+      ]
+    },
+    {
+      "kanji": "高くなければ",
+      "reading": "たかくなければ",
+      "meaning": "if not high/tall/expensive",
+      "type": "expression",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "conditional",
+        "negative"
+      ]
+    },
+    {
+      "kanji": "高くなかったら",
+      "reading": "たかくなかったら",
+      "meaning": "if it was not high/tall/expensive",
+      "type": "expression",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "conditional",
+        "past_negative"
+      ]
+    },
+    {
+      "kanji": "高くなる",
+      "reading": "たかくなる",
+      "meaning": "to become high/tall/expensive",
+      "type": "godan-verb",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "高くする",
+      "reading": "たかくする",
+      "meaning": "to make high/tall/expensive",
+      "type": "irregular-verb",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "高すぎる",
+      "reading": "たかすぎる",
+      "meaning": "to be too high/tall/expensive",
+      "type": "ichidan-verb",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "derived",
+        "excess"
+      ]
+    },
+    {
+      "kanji": "高そう",
+      "reading": "たかそう",
+      "meaning": "looks high/tall/expensive",
+      "type": "na-adjective",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "derived",
+        "appearance"
+      ]
+    },
+    {
+      "kanji": "高さ",
+      "reading": "たかさ",
+      "meaning": "height",
+      "type": "noun",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "高め",
+      "reading": "たかめ",
+      "meaning": "rather high; on the high side",
+      "type": "na-adjective",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "derived"
+      ]
+    },
+    {
+      "kanji": "背が高い",
+      "reading": "せがたかい",
+      "meaning": "to be tall",
+      "type": "phrase-sentence",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "collocation"
+      ]
+    },
+    {
+      "kanji": "値段が高い",
+      "reading": "ねだんがたかい",
+      "meaning": "to be expensive",
+      "type": "phrase-sentence",
+      "tags": [
+        "takai_forms",
+        "lemma_takai",
+        "collocation"
+      ]
     }
   ]
 }

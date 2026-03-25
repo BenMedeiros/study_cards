@@ -40,6 +40,15 @@ function _nowIso() {
   return new Date().toISOString();
 }
 
+function _nowPerfMs() {
+  try {
+    if (typeof performance !== 'undefined' && performance && typeof performance.now === 'function') {
+      return performance.now();
+    }
+  } catch {}
+  return Date.now();
+}
+
 function _buildArrayElementLineNumbers(jsonText, targetKey) {
   if (typeof jsonText !== 'string' || !targetKey) return [];
 
@@ -328,6 +337,38 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
     state.finishedAt = _nowIso();
   }
 
+  async function _runLoggedValidationReport(reportId, builder) {
+    const normalizedReportId = String(reportId || '').trim();
+    const startedAtMs = _nowPerfMs();
+    try {
+      console.log('[validation.report] run:start', {
+        reportId: normalizedReportId,
+      });
+    } catch (e) {}
+
+    try {
+      const result = typeof builder === 'function' ? await builder() : null;
+      try {
+        console.log('[validation.report] run:finish', {
+          reportId: normalizedReportId,
+          status: 'ready',
+          elapsedMs: Math.round((_nowPerfMs() - startedAtMs) * 100) / 100,
+        });
+      } catch (e) {}
+      return result;
+    } catch (error) {
+      try {
+        console.log('[validation.report] run:finish', {
+          reportId: normalizedReportId,
+          status: 'error',
+          elapsedMs: Math.round((_nowPerfMs() - startedAtMs) * 100) / 100,
+          error: error?.message || String(error),
+        });
+      } catch (e) {}
+      throw error;
+    }
+  }
+
   async function _loadCollectionsForValidation() {
     const rows = await listAvailableCollections();
     const records = [];
@@ -381,7 +422,7 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
     const { records, loadErrors } = await _loadCollectionsForValidation();
 
     try {
-      const duplicatedKeysResult = buildDuplicatedKeysReport({ records, loadErrors });
+      const duplicatedKeysResult = await _runLoggedValidationReport('duplicated_keys', () => buildDuplicatedKeysReport({ records, loadErrors }));
       if (runId === validationRunCounter) {
         _markValidationReady(validations.duplicated_keys, duplicatedKeysResult, loadErrors);
         _notifyValidationStateChanged();
@@ -394,7 +435,7 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
     }
 
     try {
-      const missingRelatedResult = buildMissingRelatedCollectionDataReport({ records, loadErrors });
+      const missingRelatedResult = await _runLoggedValidationReport('missing_related_collection_data', () => buildMissingRelatedCollectionDataReport({ records, loadErrors }));
       if (runId === validationRunCounter) {
         _markValidationReady(validations.missing_related_collection_data, missingRelatedResult, loadErrors);
         _notifyValidationStateChanged();

@@ -141,6 +141,14 @@ export function createKanjiStudyFooterActionsController({
   const runSetStateNull = progressCall('setStateNull');
   const runSetStateFocus = progressCall('setStateFocus');
 
+  const delayActionDefinitions = [
+    { id: 'action.delay.500', fnName: 'action.delay', actionField: '.5s', invoke: () => {} },
+    { id: 'action.delay.1000', fnName: 'action.delay', actionField: '1s', invoke: () => {} },
+    { id: 'action.delay.1500', fnName: 'action.delay', actionField: '1.5s', invoke: () => {} },
+    { id: 'action.delay.2000', fnName: 'action.delay', actionField: '2s', invoke: () => {} },
+    { id: 'action.delay.2500', fnName: 'action.delay', actionField: '2.5s', invoke: () => {} },
+  ];
+
   function getCurrentProgressFlags() {
     try {
       const mgr = run.kanjiProgress;
@@ -317,13 +325,12 @@ export function createKanjiStudyFooterActionsController({
     // actionField indicates which entry field will be spoken.
     ...speakFieldActionDefinitions,
 
-    // Progress-related functions use a fully-qualified fnName to make it
-    // clearer where the operation is performed.
-    { id: 'learned', fnName: 'manager.studyProgress.toggleKanjiLearned', actionField: 'entry.studyKey', invoke: runToggleLearned },
-    { id: 'practice', fnName: 'manager.studyProgress.toggleKanjiFocus', actionField: 'entry.studyKey', invoke: runTogglePractice },
-    { id: 'setStateLearned', fnName: 'manager.studyProgress.setStateLearned', actionField: 'entry.studyKey', invoke: runSetStateLearned },
-    { id: 'setStateNull', fnName: 'manager.studyProgress.setStateNull', actionField: 'entry.studyKey', invoke: runSetStateNull },
-    { id: 'setStateFocus', fnName: 'manager.studyProgress.setStateFocus', actionField: 'entry.studyKey', invoke: runSetStateFocus },
+    // Progress-related functions are grouped in the custom-button picker.
+    { id: 'learned', fnName: 'manager.studyProgress.toggleState', actionField: 'learned', invoke: runToggleLearned },
+    { id: 'practice', fnName: 'manager.studyProgress.toggleState', actionField: 'focus', invoke: runTogglePractice },
+    { id: 'setStateLearned', fnName: 'manager.studyProgress.setState', actionField: 'learned', invoke: runSetStateLearned },
+    { id: 'setStateNull', fnName: 'manager.studyProgress.setState', actionField: 'null', invoke: runSetStateNull },
+    { id: 'setStateFocus', fnName: 'manager.studyProgress.setState', actionField: 'focus', invoke: runSetStateFocus },
 
     // Generic link actions that reuse a single link-opening helper. Each
     // definition includes a `linkKey` which maps into LINK_TEMPLATES.
@@ -344,6 +351,7 @@ export function createKanjiStudyFooterActionsController({
     { id: 'link.google', fnName: 'link.open[google]', actionField: 'entry.studyKey', invoke: withSearchUrl(LINK_TEMPLATES['google']) },
     { id: 'link.jisho', fnName: 'link.open[jisho]', actionField: 'entry.studyKey', invoke: withSearchUrl(LINK_TEMPLATES['jisho']) },
     { id: 'link.wiktionary', fnName: 'link.open[wiktionary]', actionField: 'entry.studyKey', invoke: withSearchUrl(LINK_TEMPLATES['wiktionary']) },
+    ...delayActionDefinitions,
     ...entryFieldActionDefinitions,
   ];
 

@@ -99,9 +99,7 @@ function normalizeCustomButtons(raw = []) {
       if (!step || typeof step !== 'object') continue;
       const actionId = asString(step.actionId).trim();
       if (!actionId) continue;
-      const delayNum = Number(step.delayMs);
-      const delayMs = Number.isFinite(delayNum) ? Math.max(0, Math.round(delayNum)) : 0;
-      actions.push({ actionId, delayMs });
+      actions.push({ actionId });
     }
     out.push({
       id,
@@ -445,10 +443,8 @@ export function openViewFooterSettingsDialog({
   appPrefs = null,
   defaultAppPrefs = null,
   customOnly = false,
-  visibleConfigIds = null,
   collectionLabel = '',
   currentCollectionKey = '',
-  onVisibleConfigsChange = null,
   onChange = null,
 } = {}) {
   const controls = normalizeBaseControls(baseControls);
@@ -458,7 +454,6 @@ export function openViewFooterSettingsDialog({
   let selectedConfigId = prefs.activeConfigId;
   let isDirty = false;
   let expandedRows = new Set();
-  let shownConfigIds = Array.isArray(visibleConfigIds) ? visibleConfigIds.map(id => asString(id).trim()).filter(Boolean) : [];
   let isConfigListCollapsed = false;
   const availableActionList = Array.isArray(availableActions) ? availableActions.slice() : [];
   const availableActionById = new Map(availableActionList.map(a => [asString(a.id).trim(), a]));
@@ -485,19 +480,6 @@ export function openViewFooterSettingsDialog({
     const nextId = asString(available[0]?.id).trim();
     selectedConfigId = nextId;
     prefs.activeConfigId = nextId;
-  }
-
-  function syncShownConfigIds() {
-    const validIds = new Set(availableConfigs().map(cfg => asString(cfg?.id).trim()).filter(Boolean));
-    const next = [];
-    const seen = new Set();
-    for (const id of shownConfigIds) {
-      const key = asString(id).trim();
-      if (!key || seen.has(key) || !validIds.has(key)) continue;
-      seen.add(key);
-      next.push(key);
-    }
-    shownConfigIds = next;
   }
 
   function getDefaultTemplateConfig() {
@@ -542,23 +524,28 @@ export function openViewFooterSettingsDialog({
     const actionField = asString(action?.actionField).trim();
     if (!fnName) return asString(action?.id).trim();
     if (!actionField) return fnName;
+    if (fnName === 'action.delay') return `${fnName}[${actionField}]`;
+    if (/^manager\.studyProgress\.(setState|toggleState)$/.test(fnName)) return `${fnName}[${actionField}]`;
     if (fnName === 'entry.speakField') return `${fnName}[${actionField}]`;
     if (/^app\.kanjiStudyCardView\.entryFields\.(setOff|setOn|toggle)$/.test(fnName)) return `${fnName}[${actionField}]`;
     if (fnName === 'link.open') return `${fnName}[${actionField}]`;
     return fnName;
   }
 
-  function emitSave(nextPrefs = prefs) {
-    try {
-      if (typeof onChange === 'function') onChange(deepClone(nextPrefs));
-    } catch (e) {
-      // ignore
+  function enforceCollectionScope(targetPrefs = prefs) {
+    if (!normalizedCollectionKey || !Array.isArray(targetPrefs?.configs)) return targetPrefs;
+    for (const cfg of targetPrefs.configs) {
+      if (!cfg || typeof cfg !== 'object') continue;
+      if (asString(cfg.restrictToCollectionKey).trim()) continue;
+      cfg.restrictToCollectionKey = normalizedCollectionKey;
     }
+    return targetPrefs;
   }
 
-  function emitVisibleConfigsChange(nextIds = shownConfigIds, nextPrefs = prefs) {
+  function emitSave(nextPrefs = prefs) {
     try {
-      if (typeof onVisibleConfigsChange === 'function') onVisibleConfigsChange(deepClone(nextIds), deepClone(nextPrefs));
+      const payload = deepClone(enforceCollectionScope(nextPrefs));
+      if (typeof onChange === 'function') onChange(payload);
     } catch (e) {
       // ignore
     }
@@ -637,12 +624,11 @@ export function openViewFooterSettingsDialog({
       controls: {},
       customButtons: customOnly ? normalizeCustomButtons(defaultCfg?.customButtons || []) : [],
       hotkeysDisabled: !!(defaultCfg && defaultCfg.hotkeysDisabled),
+      restrictToCollectionKey: normalizedCollectionKey,
     };
     prefs.configs.push(next);
     prefs.activeConfigId = id;
     selectedConfigId = id;
-    if (!shownConfigIds.includes(id)) shownConfigIds.push(id);
-    emitVisibleConfigsChange(shownConfigIds);
     markDirty();
   }
 
@@ -654,11 +640,10 @@ export function openViewFooterSettingsDialog({
     const next = ensureDefaultConfig(deepClone(src));
     next.id = id;
     next.name = `${src.name || 'Config'} Copy`;
+    next.restrictToCollectionKey = normalizedCollectionKey;
     prefs.configs.push(next);
     prefs.activeConfigId = id;
     selectedConfigId = id;
-    if (!shownConfigIds.includes(id)) shownConfigIds.push(id);
-    emitVisibleConfigsChange(shownConfigIds);
     markDirty();
   }
 
@@ -666,8 +651,6 @@ export function openViewFooterSettingsDialog({
     const current = selectedConfig();
     if (!current) return;
     prefs.configs = prefs.configs.filter(c => c.id !== current.id);
-    shownConfigIds = shownConfigIds.filter(id => id !== current.id);
-    emitVisibleConfigsChange(shownConfigIds);
     const nextActive = (prefs.configs[0] && asString(prefs.configs[0].id).trim()) || '';
     prefs.activeConfigId = nextActive;
     selectedConfigId = nextActive;
@@ -739,11 +722,10 @@ export function openViewFooterSettingsDialog({
     const actions = Array.isArray(source.actions)
       ? source.actions.map(a => ({
         actionId: asString(a && a.actionId).trim(),
-        delayMs: Math.max(0, Math.round(Number(a && a.delayMs) || 0)),
       })).filter(a => a.actionId)
       : [];
     for (const actionId of actionIds) {
-      actions.push({ actionId, delayMs: 0 });
+      actions.push({ actionId });
     }
 
     const normalized = {
@@ -870,14 +852,6 @@ export function openViewFooterSettingsDialog({
   const rightTop = el('div', { className: 'view-footer-editor-top' });
   const nameLabel = el('div', { className: 'hint', text: 'Config Name' });
   const nameInput = el('input', { className: 'view-footer-config-name', attrs: { type: 'text', maxlength: '64' } });
-  const showOnFooterBarLabel = el('label', { className: 'view-footer-header-toggle' });
-  const showOnFooterBarInput = el('input', { attrs: { type: 'checkbox' } });
-  const showOnFooterBarText = el('span', { text: 'Show on footer bar' });
-  showOnFooterBarLabel.append(showOnFooterBarInput, showOnFooterBarText);
-  const restrictToCollectionLabel = el('label', { className: 'view-footer-header-toggle' });
-  const restrictToCollectionInput = el('input', { attrs: { type: 'checkbox' } });
-  const restrictToCollectionText = el('span', { text: 'Restrict to this collection' });
-  restrictToCollectionLabel.append(restrictToCollectionInput, restrictToCollectionText);
   const addEmptyBtn = el('button', { className: 'btn small', text: 'Add Empty' });
   addEmptyBtn.type = 'button';
   const addCustomBtn = el('button', { className: 'btn small', text: 'Add Button' });
@@ -892,7 +866,7 @@ export function openViewFooterSettingsDialog({
   expandCollapseAllBtn.type = 'button';
   const validationWarning = el('div', { className: 'view-footer-validation-warning hint' });
 
-  rightTop.append(nameLabel, nameInput, showOnFooterBarLabel, restrictToCollectionLabel, expandCollapseAllBtn, saveBtn);
+  rightTop.append(nameLabel, nameInput, expandCollapseAllBtn, saveBtn);
 
   const controlsTitle = el('div', { className: 'hint', text: 'Controls' });
   const controlsList = el('div', { className: 'view-footer-controls-editor-list' });
@@ -976,10 +950,6 @@ export function openViewFooterSettingsDialog({
     const cfg = selectedConfig();
     if (!cfg) {
       nameInput.value = '';
-      showOnFooterBarInput.checked = false;
-      showOnFooterBarInput.disabled = true;
-      restrictToCollectionInput.checked = false;
-      restrictToCollectionInput.disabled = true;
       dupBtn.disabled = true;
       delBtn.disabled = true;
       controlsList.innerHTML = '';
@@ -990,12 +960,6 @@ export function openViewFooterSettingsDialog({
 
     ensureSelectedOrder(cfg);
     nameInput.value = cfg.name || cfg.id;
-    syncShownConfigIds();
-    const cfgId = asString(cfg.id).trim();
-    showOnFooterBarInput.disabled = !cfgId;
-    showOnFooterBarInput.checked = !!cfgId && shownConfigIds.includes(cfgId);
-    restrictToCollectionInput.disabled = !normalizedCollectionKey;
-    restrictToCollectionInput.checked = !!normalizedCollectionKey && asString(cfg.restrictToCollectionKey).trim() === normalizedCollectionKey;
     dupBtn.disabled = false;
     delBtn.disabled = false;
     renderValidationWarning();
@@ -1170,7 +1134,6 @@ export function openViewFooterSettingsDialog({
         header.append(
           el('div', { className: 'view-footer-action-name', text: '' }),
           el('div', { className: 'view-footer-action-name', text: 'Function' }),
-          el('div', { className: 'view-footer-action-name', text: 'Delay' }),
           el('div', { className: 'view-footer-action-name', text: 'Remove' }),
         );
         actionWrap.appendChild(header);
@@ -1307,29 +1270,23 @@ export function openViewFooterSettingsDialog({
           const mapped = availableActionById.get(actionId) || null;
           const stepRow = el('div', { className: 'view-footer-action-row view-footer-custom-action-row' });
 
-          const stepDelayWrap = el('div', { className: 'view-footer-action-inline-controls' });
-          const stepMinus = el('button', { className: 'btn small', text: '-' });
-          stepMinus.type = 'button';
-          const stepDelayValue = el('div', { className: 'view-footer-custom-delay-value', text: `${(Math.max(0, Math.round(Number(step.delayMs) || 0)) / 1000).toFixed(1)}s` });
-          const stepPlus = el('button', { className: 'btn small', text: '+' });
-          stepPlus.type = 'button';
-          stepDelayWrap.append(stepMinus, stepDelayValue, stepPlus);
-
           const dragHandle = el('button', { className: 'btn small view-footer-drag-handle', text: '⋮⋮' });
           dragHandle.type = 'button';
           dragHandle.title = 'Drag to reorder';
           dragHandle.setAttribute('aria-label', 'Drag to reorder');
           dragHandle.draggable = true;
           const fnText = el('div', { className: 'view-footer-action-fn', text: formatCustomActionLabel(mapped || { id: actionId, fnName: actionId }) });
-          const removeStepBtn = el('button', { className: 'btn small danger', text: 'Remove' });
+          const removeStepBtn = el('button', { className: 'btn small danger view-footer-remove-step-btn' });
           removeStepBtn.type = 'button';
+          removeStepBtn.title = 'Remove action';
+          removeStepBtn.setAttribute('aria-label', 'Remove action');
+          removeStepBtn.appendChild(el('span', { className: 'view-footer-close-icon' }));
 
           const writeCustomActions = (updater) => {
             const nextBtn = deepClone(getCustomButton(cfg, key) || customBtn) || {};
             const nextActions = Array.isArray(nextBtn.actions)
               ? nextBtn.actions.map(a => ({
                 actionId: asString(a && a.actionId).trim(),
-                delayMs: Math.max(0, Math.round(Number(a && a.delayMs) || 0)),
               })).filter(a => a.actionId)
               : [];
             updater(nextActions);
@@ -1338,20 +1295,6 @@ export function openViewFooterSettingsDialog({
             markDirty();
             renderEditor();
           };
-
-          stepMinus.addEventListener('click', () => {
-            writeCustomActions((arr) => {
-              if (!arr[stepIndex]) return;
-              arr[stepIndex].delayMs = Math.max(0, Math.round(Number(arr[stepIndex].delayMs || 0) - AUTOPLAY_STEP_MS));
-            });
-          });
-
-          stepPlus.addEventListener('click', () => {
-            writeCustomActions((arr) => {
-              if (!arr[stepIndex]) return;
-              arr[stepIndex].delayMs = Math.max(0, Math.round(Number(arr[stepIndex].delayMs || 0) + AUTOPLAY_STEP_MS));
-            });
-          });
 
           dragHandle.addEventListener('dragstart', (e) => {
             draggedCustomActionIndex = stepIndex;
@@ -1480,8 +1423,7 @@ export function openViewFooterSettingsDialog({
             });
           });
 
-          // order: Drag, Function, Delay, Remove
-          stepRow.append(dragHandle, fnText, stepDelayWrap, removeStepBtn);
+          stepRow.append(dragHandle, fnText, removeStepBtn);
           actionWrap.appendChild(stepRow);
         }
 
@@ -1491,8 +1433,6 @@ export function openViewFooterSettingsDialog({
             el('div', { className: 'view-footer-action-name', text: '—' }),
             el('div', { className: 'view-footer-action-name', text: 'No actions yet.' }),
             el('div', { className: 'view-footer-action-name', text: '—' }),
-            el('div', { className: 'view-footer-action-name', text: '—' }),
-            el('div', { className: 'view-footer-action-name', text: '—' } ),
           );
           actionWrap.appendChild(emptyRow);
         }
@@ -1840,7 +1780,6 @@ export function openViewFooterSettingsDialog({
 
   function renderAll() {
     ensureSelectedConfigIsAvailable();
-    syncShownConfigIds();
     renderConfigList();
     renderEditor();
     try { updateDisableHotkeysText(); } catch (e) {}
@@ -1896,29 +1835,6 @@ export function openViewFooterSettingsDialog({
     if (window.innerWidth > 900) return;
     isConfigListCollapsed = !isConfigListCollapsed;
     updateConfigListCollapseUi();
-  });
-
-  showOnFooterBarInput.addEventListener('change', () => {
-    const cfg = selectedConfig();
-    const cfgId = asString(cfg?.id).trim();
-    if (!cfgId) return;
-    syncShownConfigIds();
-    if (showOnFooterBarInput.checked) {
-      if (!shownConfigIds.includes(cfgId)) shownConfigIds.push(cfgId);
-    } else {
-      shownConfigIds = shownConfigIds.filter(id => id !== cfgId);
-    }
-    emitVisibleConfigsChange(shownConfigIds);
-    renderEditor();
-  });
-
-  restrictToCollectionInput.addEventListener('change', () => {
-    const cfg = selectedConfig();
-    if (!cfg) return;
-    if (restrictToCollectionInput.checked && normalizedCollectionKey) cfg.restrictToCollectionKey = normalizedCollectionKey;
-    else delete cfg.restrictToCollectionKey;
-    markDirty();
-    renderAll();
   });
 
   addEmptyBtn.addEventListener('click', () => {
