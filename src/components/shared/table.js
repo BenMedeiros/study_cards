@@ -664,9 +664,9 @@ export function createTable({ store = null, headers, rows, className = '', id, c
 
     function applyFilter(q) {
       const total = Array.isArray(originalRows) ? originalRows.length : 0;
-      const label = `table.applyFilter (${total})`;
-      return timed(label, () => {
         const rawQuery = String(q || '').trim();
+      const label = `table.applyFilter (${total}) q=${rawQuery.length}`;
+      return timed(label, () => {
         if (!rawQuery) {
           if (_lastAppliedEvalQuery === '') {
             try { clearBtn.disabled = true; } catch (e) {}
@@ -761,7 +761,7 @@ export function createTable({ store = null, headers, rows, className = '', id, c
           const has = rawQuery.length > 0;
           clearBtn.disabled = !has;
         } catch (e) {}
-      });
+      }, { onlyRoot: true });
     }
 
     // Emitted when the user explicitly applies the search (Enter/Clear).
@@ -811,9 +811,10 @@ export function createTable({ store = null, headers, rows, className = '', id, c
           if (autoClean) {
             const cleaned = cleanSearchQuery(searchInput.value);
             searchInput.value = cleaned;
-            applyFilter(cleaned);
+            if (_lastAppliedEvalQuery !== String(cleaned || '').trim()) applyFilter(cleaned);
           } else {
-            applyFilter(searchInput.value);
+            const raw = String(searchInput.value || '').trim();
+            if (_lastAppliedEvalQuery !== raw) applyFilter(raw);
           }
           emitSearchQueryChange({ via: 'enter' });
           emitSearchApplied({ via: 'enter' });
@@ -957,7 +958,7 @@ export function createTable({ store = null, headers, rows, className = '', id, c
       }
     } catch (e) {}
     sortAndRender();
-  });
+  }, { onlyRoot: true });
 
   // Sorting helper
   function sortAndRender() {
@@ -990,7 +991,7 @@ export function createTable({ store = null, headers, rows, className = '', id, c
       if (j === sortCol) th.setAttribute('aria-sort', sortDir === 'asc' ? 'ascending' : 'descending');
       else th.setAttribute('aria-sort', 'none');
     });
-    });
+    }, { onlyRoot: true });
   }
 
   table.append(thead, tbody);

@@ -1,10 +1,10 @@
-import { renderCollectionsManager } from './views/collectionsView.js';
-import { renderManageCollections } from './views/manageCollectionsView.js';
-import { renderStudyManager } from './views/studyManagerView.js';
+import { renderCollectionsManager } from './views/collectionsView/collectionsView.js';
+import { renderManageCollections } from './views/manageCollectionsView/manageCollectionsView.js';
+import { renderStudyManager } from './views/studyManagerView/studyManagerView.js';
 import { parseHashRoute } from './utils/browser/helpers.js';
-import { renderData } from './views/dataView.js';
+import { renderData } from './views/dataView/dataView.js';
 import { renderKanjiStudyCard } from './views/kanjiStudyCardView/kanjiStudyCardView.js';
-import { renderEntityExplorer } from './views/entityExplorerView.js';
+import { renderEntityExplorer } from './views/entityExplorerView/entityExplorerView.js';
 import { createCollectionBrowserDropdown } from './components/features/collectionBrowser.js';
 import { openRightClickMenu, registerRightClickContext } from './components/shared/rightClickMenu.js';
 import { createShellTitleContextMenu } from './components/features/shellTitleContextMenu.js';
@@ -12,14 +12,14 @@ import { createShellFooter } from './components/features/shellFooter.js';
 import { speak } from './utils/browser/speech.js';
 import { createDropdown } from './components/shared/dropdown.js';
 import { timed } from './utils/browser/timing.js';
-import collectionSettingsController from './controllers/collectionSettingsController.js';
+import collectionSettingsManager from './managers/collectionSettingsManager.js';
 
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
   el.id = 'shell-root';
 
   // Initialize controllers with store
-  collectionSettingsController.init({ store });
+  collectionSettingsManager.init({ store });
 
   // Register shell as a settings consumer for persisted shell settings.
   try {
@@ -481,7 +481,7 @@ export function createAppShell({ store, onNavigate }) {
           // Fetch any per-collection UI state (held filter / studyFilter)
           let held = '';
           let sf = '';
-          const st = collectionSettingsController.get(activeStudySession.collectionId) || {};
+          const st = collectionSettingsManager.get(activeStudySession.collectionId) || {};
           held = String(st?.heldTableSearch || '').trim();
           sf = String(st?.studyFilter || '').trim();
 

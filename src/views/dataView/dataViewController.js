@@ -1,4 +1,4 @@
-import controllerFactory from './controller.js';
+import controllerUtils from '../../utils/common/controllerUtils.mjs';
 
 const VIEW = 'dataView';
 
@@ -164,7 +164,7 @@ function validateDataTableSettings(v) {
 }
 
 function create(collKey) {
-  const base = controllerFactory.createViewController(
+  const base = controllerUtils.createViewController(
     collKey,
     VIEW,
     cloneJson(DEFAULT_VIEW, DEFAULT_VIEW),

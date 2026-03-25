@@ -2,13 +2,13 @@ import { nowMs } from '../../utils/browser/helpers.js';
 import { speak, getLanguageCode } from '../../utils/browser/speech.js';
 
 import { createViewHeaderTools } from '../../components/features/viewHeaderTools.js';
-import { createViewFooterControls } from '../../components/features/viewFooterControls.js';
+import { createViewFooterControls } from './viewFooterControls.js';
 import { CARD_REGISTRY } from './cards/index.js';
 import { addStudyFilter } from '../../components/features/studyControls.js';
 import { addShuffleControls } from '../../components/features/collectionControls.js';
 import kanjiStudyController from './kanjiStudyController.js';
 import { openGenericFlatCardConfigDialog } from './genericFlatCardConfigDialog.js';
-import { createKanjiStudyFooterActionsController } from '../../controllers/actionsController.js';
+import { createKanjiStudyFooterActionsController } from './actionsController.js';
 
 const GENERIC_CARD_SETTINGS_KEY = 'genericFlatCard';
 

@@ -8,7 +8,7 @@ const SHELL_LS_KEY = 'study_cards:v1';
 // Convention: per-app UI state is stored under the namespaced blob at
 // `study_cards:v1` -> `apps` using the app/view's module name as the key.
 // Example: the entity explorer view persists its settings under
-// `apps.entityExplorer` (see src/views/entityExplorerView.js).
+// `apps.entityExplorer` (see src/views/entityExplorerView/entityExplorerView.js).
 
 function loadLocalKey(key) {
   try {

@@ -1,11 +1,11 @@
-import { createTable } from '../components/shared/table.js';
-import { card } from '../utils/browser/ui.js';
-import { validateCollection } from '../utils/browser/validation.js';
-import { formatDurationMs, formatIsoShort } from '../utils/browser/helpers.js';
-import collectionSettingsController from '../controllers/collectionSettingsController.js';
-import kanjiStudyController from './kanjiStudyCardView/kanjiStudyController.js';
-import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
-import collectionsViewController from '../controllers/collectionsViewController.js';
+import { createTable } from '../../components/shared/table.js';
+import { card } from '../../utils/browser/ui.js';
+import { validateCollection } from '../../utils/browser/validation.js';
+import { formatDurationMs, formatIsoShort } from '../../utils/browser/helpers.js';
+import collectionSettingsManager from '../../managers/collectionSettingsManager.js';
+import kanjiStudyController from '../kanjiStudyCardView/kanjiStudyController.js';
+import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
+import collectionsViewController from './collectionsViewController.js';
 import {
   normalizeTableSettings,
   applyTableColumnSettings,
@@ -13,7 +13,7 @@ import {
   applyTableActionSettings,
   buildTableColumnItems,
   attachCardTableSettingsButton,
-} from '../utils/browser/tableSettings.js';
+} from '../../utils/browser/tableSettings.js';
 
 const TABLE_ACTION_ITEMS = [
   { key: 'clear', label: 'Clear' },
@@ -76,7 +76,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     if (store?.collections) {
       const candidates = [c.path, c.id, c.key, c.path && c.path.replace(/^\.?\/*collections\/*/, ''), c.path && c.path.replace(/^\/*/, '')].filter(Boolean);
       for (const k of candidates) {
-        const s = collectionSettingsController.get(k) || {};
+        const s = collectionSettingsManager.get(k) || {};
         if (s && Object.keys(s).length) { meta = s; break; }
       }
       if (!meta || !Object.keys(meta).length) meta = c.value || c.metadata || {};
@@ -183,7 +183,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
         onClick: async (rowData, rowIndex, { tr }) => {
           const id = tr?.dataset?.rowId || rowData.__id;
           try {
-            await collectionSettingsController.applyDefaults(id);
+            await collectionSettingsManager.applyDefaults(id);
             console.log('Apply Defaults: applied defaults for', id);
           } catch (e) {
             console.error('Apply Defaults: failed for', id, e);
@@ -197,7 +197,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
       onClick: (rowData, rowIndex, { tr }) => {
         const id = tr?.dataset?.rowId || rowData.__id;
         // Reset top-level collection settings
-        collectionSettingsController.set(id, { order_hash_int: null, isShuffled: false, studyFilter: '', defaultViewMode: null, heldTableSearch: '' });
+        collectionSettingsManager.set(id, { order_hash_int: null, isShuffled: false, studyFilter: '', defaultViewMode: null, heldTableSearch: '' });
         // Reset the remaining study view index.
         kanjiStudyController.create(id).set({ currentIndex: 0 });
         // update the row cells in-place so UI reflects cleared settings

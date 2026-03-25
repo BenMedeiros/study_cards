@@ -1,6 +1,6 @@
 // Helper to add shuffle/clear-shuffle/clear-learned controls to a headerTools instance.
 // Usage: addShuffleControls(headerTools, { store, onShuffle, onClearShuffle, onClearLearned, includeClearShuffle=true, includeClearLearned=true })
-import collectionSettingsController from '../../controllers/collectionSettingsController.js';
+import collectionSettingsManager from '../../managers/collectionSettingsManager.js';
 
 export function addShuffleControls(headerTools, { store, onShuffle, onClearShuffle, onClearLearned, includeClearShuffle = true, includeClearLearned = true } = {}) {
   if (!headerTools || typeof headerTools.addElement !== 'function') return null;
@@ -18,7 +18,7 @@ export function addShuffleControls(headerTools, { store, onShuffle, onClearShuff
       const seed = (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues)
         ? (window.crypto.getRandomValues(new Uint32Array(1))[0] >>> 0)
         : (Math.floor(Math.random() * 0x100000000) >>> 0);
-      collectionSettingsController.set(coll.key, { order_hash_int: seed, isShuffled: true });
+      collectionSettingsManager.set(coll.key, { order_hash_int: seed, isShuffled: true });
     }
   });
 
@@ -28,7 +28,7 @@ export function addShuffleControls(headerTools, { store, onShuffle, onClearShuff
       // Always clear persisted shuffle state first so views don't immediately reapply it.
       const coll = store.collections.getActiveCollection();
       if (!coll) return;
-      collectionSettingsController.set(coll.key, { order_hash_int: null, isShuffled: false });
+      collectionSettingsManager.set(coll.key, { order_hash_int: null, isShuffled: false });
       if (typeof onClearShuffle === 'function') { onClearShuffle(); return; }
     }
   });

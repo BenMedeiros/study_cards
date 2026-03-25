@@ -1,4 +1,4 @@
-import controllerFactory from '../../controllers/controller.js';
+import controllerUtils from '../../utils/common/controllerUtils.mjs';
 import { CARD_REGISTRY } from './cards/index.js';
 
 const VIEW = 'kanjiStudyCardView';
@@ -103,7 +103,7 @@ function create(collKey) {
     },
   };
 
-  const base = controllerFactory.createViewController(collKey, VIEW, DEFAULT_VIEW, validators);
+  const base = controllerUtils.createViewController(collKey, VIEW, DEFAULT_VIEW, validators);
 
   // keep a local collection reference once ready so we can resolve metadata-driven maps
   let _collectionRef = null;

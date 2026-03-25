@@ -1,9 +1,9 @@
-import { cleanSearchQuery, splitTopLevel } from '../utils/browser/tableSearch.js';
-import { buildStudyTimeByDate } from '../reports/studyManager/buildStudyTimeByDate.js';
-import { buildStudyTimeByDateSummary } from '../reports/studyManager/buildStudyTimeByDateSummary.js';
-import { buildGroupedLearningRecommendations } from '../reports/studyManager/buildGroupedLearningRecommendations.js';
-import { buildWordLearningRecommendations } from '../reports/studyManager/buildWordLearningRecommendations.js';
-import { normalizeRelatedCollectionsConfig } from '../utils/common/collectionParser.mjs';
+import { cleanSearchQuery, splitTopLevel } from '../../utils/browser/tableSearch.js';
+import { buildStudyTimeByDate } from '../../reports/studyManager/buildStudyTimeByDate.js';
+import { buildStudyTimeByDateSummary } from '../../reports/studyManager/buildStudyTimeByDateSummary.js';
+import { buildGroupedLearningRecommendations } from '../../reports/studyManager/buildGroupedLearningRecommendations.js';
+import { buildWordLearningRecommendations } from '../../reports/studyManager/buildWordLearningRecommendations.js';
+import { normalizeRelatedCollectionsConfig } from '../../utils/common/collectionParser.mjs';
 
 const STUDY_STATES = ['null', 'focus', 'learned'];
 const STUDY_STATS_APP_ID = 'kanji';
@@ -435,7 +435,7 @@ const studyManagerController = (() => {
 
   const managerMeta = {
     owner: 'studyManager',
-    module: 'src/controllers/studyManagerController.js',
+    module: 'src/views/studyManagerView/studyManagerController.js',
     scheduleFunction: 'requestRefresh',
     runFunction: 'recompute',
     createdAt: nowIso(),
@@ -1435,7 +1435,6 @@ const studyManagerController = (() => {
 })();
 
 export default studyManagerController;
-
 
 
 

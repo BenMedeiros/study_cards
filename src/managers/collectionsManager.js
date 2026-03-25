@@ -1499,7 +1499,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         return { entries: shuffledEntries, indices: shuffledIndices, isShuffled: true, order_hash_int: orderHashInt };
       }
       return { entries: baseEntries, indices: expandedIndices.slice(), isShuffled: false, order_hash_int: null };
-    });
+    }, { onlyRoot: true });
   }
 
   // Like getCollectionView, but also applies per-collection filters that are stored
@@ -1511,7 +1511,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const stateObj = (collState && typeof collState === 'object') ? collState : {};
     const label = collectionReadyTimingLabel('collections.getCollectionViewForCollection', coll, stateObj, {
       baseCount: baseEntries.length,
-    });
+    }, { onlyRoot: true });
     return timed(label, () => {
       const view = getCollectionView(baseEntries, stateObj, { ...opts, collection: coll });
       let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
@@ -1550,7 +1550,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         skipLearned,
         focusOnly,
       };
-    });
+    }, { onlyRoot: true });
   }
 
   // Convenience: fetch the active collection, load its persisted state,
@@ -1565,7 +1565,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       }
       const view = getCollectionViewForCollection(coll, collState, opts);
       return { collection: coll, collState, view };
-    });
+    }, { onlyRoot: true });
   }
 
   // Alias with the naming you described: returns just the filtered set/view.

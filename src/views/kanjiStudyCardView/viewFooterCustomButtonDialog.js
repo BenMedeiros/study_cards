@@ -1,5 +1,5 @@
 import { el } from '../../utils/browser/ui.js';
-import { createDropdown } from '../shared/dropdown.js';
+import { createDropdown } from '../../components/shared/dropdown.js';
 
 function asString(v) {
   return (v == null) ? '' : String(v);

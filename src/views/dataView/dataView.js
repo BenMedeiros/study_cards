@@ -1,17 +1,18 @@
-import { createTable } from '../components/shared/table.js';
-import { card } from '../utils/browser/ui.js';
-import { el } from '../utils/browser/ui.js';
-import { createViewHeaderTools } from '../components/features/viewHeaderTools.js';
-import { addShuffleControls } from '../components/features/collectionControls.js';
-import { addStudyFilter } from '../components/features/studyControls.js';
-import collectionSettingsController from '../controllers/collectionSettingsController.js';
-import { createDropdown } from '../components/shared/dropdown.js';
-import { confirmDialog } from '../components/dialogs/confirmDialog.js';
-import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
-import dataViewController from '../controllers/dataViewController.js';
-import { parseHashRoute, buildHashRoute } from '../utils/browser/helpers.js';
-import { buildTableColumnItems } from '../utils/browser/tableSettings.js';
-import { extractPathValues } from '../utils/common/collectionParser.mjs';
+import { createTable } from '../../components/shared/table.js';
+import { card } from '../../utils/browser/ui.js';
+import { el } from '../../utils/browser/ui.js';
+import { createViewHeaderTools } from '../../components/features/viewHeaderTools.js';
+import { addShuffleControls } from '../../components/features/collectionControls.js';
+import { addStudyFilter } from '../../components/features/studyControls.js';
+import collectionSettingsManager from '../../managers/collectionSettingsManager.js';
+import { createDropdown } from '../../components/shared/dropdown.js';
+import { confirmDialog } from '../../components/dialogs/confirmDialog.js';
+import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
+import dataViewController from './dataViewController.js';
+import { parseHashRoute, buildHashRoute } from '../../utils/browser/helpers.js';
+import { buildTableColumnItems } from '../../utils/browser/tableSettings.js';
+import { extractPathValues } from '../../utils/common/collectionParser.mjs';
+import { timed } from '../../utils/browser/timing.js';
 
 export function renderData({ store }) {
   const root = document.createElement('div');
@@ -386,7 +387,7 @@ export function renderData({ store }) {
     dataTableSettings = normalized;
     try {
       if (dataViewCtrl) await dataViewCtrl.setTableSettings(normalized);
-      else if (active?.key) collectionSettingsController.setView(active.key, 'dataView', { dataTable: normalized });
+      else if (active?.key) collectionSettingsManager.setView(active.key, 'dataView', { dataTable: normalized });
     } catch (e) {
       // ignore persistence errors; keep UI state
     }
@@ -729,7 +730,7 @@ export function renderData({ store }) {
   function readCollState() {
     const coll = store.collections.getActiveCollection();
     if (!coll) return null;
-    return collectionSettingsController.get(coll.key) || {};
+    return collectionSettingsManager.get(coll.key) || {};
   }
 
   function getEntryKanjiValue(entry) {
@@ -788,7 +789,7 @@ export function renderData({ store }) {
     const coll = store.collections.getActiveCollection();
     if (!coll) return;
     // Persist only the held query; system always applies the held query.
-    collectionSettingsController.set(coll.key, { heldTableSearch: String(query || '') });
+    collectionSettingsManager.set(coll.key, { heldTableSearch: String(query || '') });
   }
 
   function persistSavedTableSearches(nextList) {
@@ -796,13 +797,13 @@ export function renderData({ store }) {
     if (!coll) return;
     const list = normalizeSavedSearchList(nextList);
     if (!list.length) {
-      collectionSettingsController.set(coll.key, { savedTableSearches: [] });
+      collectionSettingsManager.set(coll.key, { savedTableSearches: [] });
       savedTableSearches = [];
       return;
     }
 
     savedTableSearches = list;
-    collectionSettingsController.set(coll.key, { savedTableSearches: list });
+    collectionSettingsManager.set(coll.key, { savedTableSearches: list });
   }
 
   // pruneStudyIndicesToFilters removed — studyIndices/studyStart no longer used.
@@ -810,6 +811,7 @@ export function renderData({ store }) {
   const fields = Array.isArray(active.metadata.fields) ? active.metadata.fields : [];
   let baseEntries = Array.isArray(active.entries) ? active.entries.slice() : [];
   let lastRenderedEntries = [];
+  let lastRenderedView = null;
 
   function getAvailableSearchHeaders(entries = baseEntries) {
     const allDerivedColumns = getAvailableDerivedColumns(entries);
@@ -846,6 +848,7 @@ export function renderData({ store }) {
   }
 
   function getCurrentVisibleEntries() {
+    if (Array.isArray(lastRenderedView?.entries)) return lastRenderedView.entries.slice();
     const view = getCurrentCollectionView();
     return Array.isArray(view?.entries) ? view.entries : [];
   }
@@ -940,26 +943,32 @@ export function renderData({ store }) {
   ];
 
   function renderTable() {
-    const view = getCurrentCollectionView();
-    const visibleEntries = Array.isArray(view?.entries) ? view.entries : [];
-    const visibleIdxs = Array.isArray(view?.indices) ? view.indices : [];
-    lastRenderedEntries = visibleEntries.slice();
+    const coll = store?.collections?.getActiveCollection?.() || active;
+    const collKey = String(coll?.key || active?.key || '(no-collection)');
+    const heldQuery = String(heldTableSearch || '').trim();
+    const label = `dataView.renderTable ${collKey} held=${heldQuery.length}`;
+    return timed(label, () => {
+      const view = getCurrentCollectionView();
+      const visibleEntries = Array.isArray(view?.entries) ? view.entries : [];
+      const visibleIdxs = Array.isArray(view?.indices) ? view.indices : [];
+      lastRenderedView = view;
+      lastRenderedEntries = visibleEntries.slice();
 
-    const adapter = getProgressAdapter();
-    const allDerivedColumns = getAvailableDerivedColumns(baseEntries);
-    const selectedDerivedColumns = getSelectedDerivedColumns(allDerivedColumns);
-    const selectedSourceKeySet = new Set(selectedDerivedColumns.map(def => String(def?.key || '').trim()).filter(Boolean));
-    const allHeaders = [
-      ...baseHeaders,
-      ...allDerivedColumns.map(def => ({ key: def.key, label: def.label, type: def.type, description: def.description || '', sourceKind: def.sourceKind || '' })),
-    ];
-    const selectedHeaders = [
-      ...baseHeaders,
-      ...selectedDerivedColumns.map(def => ({ key: def.key, label: def.label, type: def.type, description: def.description || '', sourceKind: def.sourceKind || '' })),
-    ];
+      const adapter = getProgressAdapter();
+      const allDerivedColumns = getAvailableDerivedColumns(baseEntries);
+      const selectedDerivedColumns = getSelectedDerivedColumns(allDerivedColumns);
+      const selectedSourceKeySet = new Set(selectedDerivedColumns.map(def => String(def?.key || '').trim()).filter(Boolean));
+      const allHeaders = [
+        ...baseHeaders,
+        ...allDerivedColumns.map(def => ({ key: def.key, label: def.label, type: def.type, description: def.description || '', sourceKind: def.sourceKind || '' })),
+      ];
+      const selectedHeaders = [
+        ...baseHeaders,
+        ...selectedDerivedColumns.map(def => ({ key: def.key, label: def.label, type: def.type, description: def.description || '', sourceKind: def.sourceKind || '' })),
+      ];
 
-    const allRows = [];
-    const rows = visibleEntries.map((entry, i) => {
+      const allRows = [];
+      const rows = visibleEntries.map((entry, i) => {
       const key = adapter.getKey(entry);
       const learned = adapter.isLearned(key);
       const focus = adapter.isFocus(key);
@@ -992,69 +1001,69 @@ export function renderData({ store }) {
       try { row.__id = String(i); } catch (e) {}
       allRows.push(allRow);
       return row;
-    });
+      });
 
     // Preserve previous sort state when recreating the table (so applying held search doesn't lose sort)
-    let initialSortKey = null;
-    let initialSortDir = 'asc';
-    try {
-      const existing = tableMount.querySelector('table');
-      if (existing) {
-        const thSorted = existing.querySelector('th[aria-sort="ascending"], th[aria-sort="descending"]');
-        if (thSorted && thSorted.dataset && thSorted.dataset.field) {
-          initialSortKey = String(thSorted.dataset.field || '') || null;
-          initialSortDir = thSorted.getAttribute('aria-sort') === 'descending' ? 'desc' : 'asc';
+      let initialSortKey = null;
+      let initialSortDir = 'asc';
+      try {
+        const existing = tableMount.querySelector('table');
+        if (existing) {
+          const thSorted = existing.querySelector('th[aria-sort="ascending"], th[aria-sort="descending"]');
+          if (thSorted && thSorted.dataset && thSorted.dataset.field) {
+            initialSortKey = String(thSorted.dataset.field || '') || null;
+            initialSortDir = thSorted.getAttribute('aria-sort') === 'descending' ? 'desc' : 'asc';
+          }
         }
-      }
-    } catch (e) {}
+      } catch (e) {}
 
-    const configured = applyDataTableColumnSettings({ headers: selectedHeaders, rows });
-    const selectedHeaderMetaByKey = new Map(selectedHeaders.map(h => [String(h?.key || '').trim(), h]));
-    latestDataTableColumns = buildTableColumnItems(selectedHeaders, rows, {
-      schemaFields: Array.isArray(fields) ? fields : [],
-    }).map((item) => ({
-      ...item,
-      description: item.description || String(selectedHeaderMetaByKey.get(item.key)?.description || '').trim(),
-      sourceKind: String(selectedHeaderMetaByKey.get(item.key)?.sourceKind || '').trim(),
-    }));
-    latestDataTableRelatedSources = allDerivedColumns.filter(def => def.sourceKind === 'related').map(def => ({
-      key: def.key,
-      label: def.label,
-      relationName: def.relationName,
-      relationLabel: def.relationLabel,
-      description: def.description || '',
-      type: def.type || '',
-      groupedType: def.groupedType || '',
-      sourceMode: def.sourceMode || '',
-      availableModes: Array.isArray(def.availableModes) ? def.availableModes.slice() : [],
-      sourceKind: 'related',
-      selected: selectedSourceKeySet.has(def.key),
-      defaultSelected: def.defaultSelected !== false,
-    }));
-    latestDataTableStudySources = STUDY_PROGRESS_COLUMN_DEFS.map(def => ({ ...def, selected: selectedSourceKeySet.has(def.key) }));
+      const configured = applyDataTableColumnSettings({ headers: selectedHeaders, rows });
+      const selectedHeaderMetaByKey = new Map(selectedHeaders.map(h => [String(h?.key || '').trim(), h]));
+      latestDataTableColumns = buildTableColumnItems(selectedHeaders, rows, {
+        schemaFields: Array.isArray(fields) ? fields : [],
+      }).map((item) => ({
+        ...item,
+        description: item.description || String(selectedHeaderMetaByKey.get(item.key)?.description || '').trim(),
+        sourceKind: String(selectedHeaderMetaByKey.get(item.key)?.sourceKind || '').trim(),
+      }));
+      latestDataTableRelatedSources = allDerivedColumns.filter(def => def.sourceKind === 'related').map(def => ({
+        key: def.key,
+        label: def.label,
+        relationName: def.relationName,
+        relationLabel: def.relationLabel,
+        description: def.description || '',
+        type: def.type || '',
+        groupedType: def.groupedType || '',
+        sourceMode: def.sourceMode || '',
+        availableModes: Array.isArray(def.availableModes) ? def.availableModes.slice() : [],
+        sourceKind: 'related',
+        selected: selectedSourceKeySet.has(def.key),
+        defaultSelected: def.defaultSelected !== false,
+      }));
+      latestDataTableStudySources = STUDY_PROGRESS_COLUMN_DEFS.map(def => ({ ...def, selected: selectedSourceKeySet.has(def.key) }));
 
-    const tbl = createTable({
-      store,
-      headers: configured.headers,
-      rows: configured.rows,
-      searchHeaders: allHeaders,
-      searchRows: allRows,
-      id: 'data-table',
-      collection: active?.key || null,
-      sourceMetadata: active?.metadata || null,
-      columnRenderSettings: (dataTableSettings?.columns?.stylesByKey || {}),
-      tableRenderSettings: dataTableSettings?.table || {},
-      sortable: true,
-      searchable: true,
-      initialSortKey,
-      initialSortDir,
-    });
-    tableMount.innerHTML = '';
-    tableMount.append(tbl);
-    applyDataTableColumnStyles(tbl);
+      const tbl = createTable({
+        store,
+        headers: configured.headers,
+        rows: configured.rows,
+        searchHeaders: allHeaders,
+        searchRows: allRows,
+        id: 'data-table',
+        collection: active?.key || null,
+        sourceMetadata: active?.metadata || null,
+        columnRenderSettings: (dataTableSettings?.columns?.stylesByKey || {}),
+        tableRenderSettings: dataTableSettings?.table || {},
+        sortable: true,
+        searchable: true,
+        initialSortKey,
+        initialSortDir,
+      });
+      tableMount.innerHTML = '';
+      tableMount.append(tbl);
+      applyDataTableColumnStyles(tbl);
 
     // Insert Hold Filter switch next to Copy JSON.
-    try {
+      try {
       const wrapper = tableMount.querySelector('.table-wrapper');
       const searchWrap = wrapper ? wrapper.querySelector('.table-search') : null;
       const searchInput = searchWrap ? searchWrap.querySelector('.table-search-input') : null;
@@ -1280,13 +1289,13 @@ export function renderData({ store }) {
           } catch (e) {}
         });
       }
-    } catch (e) {
-      // ignore
-    }
+      } catch (e) {
+        // ignore
+      }
 
     // Update corner caption if present.
     // Show the *persisted* (held) filter, not the table's ephemeral local filter.
-    try {
+      try {
       const corner = root.querySelector('#data-card .card-corner-caption');
       if (corner) {
         const visible = visibleEntries.length;
@@ -1313,9 +1322,10 @@ export function renderData({ store }) {
         corner.textContent = parts.join(' • ');
         corner.title = titleParts.join('\n');
       }
-    } catch (e) {
-      // ignore
-    }
+      } catch (e) {
+        // ignore
+      }
+    });
   }
 
   // Highlight rows that are part of the current study subset

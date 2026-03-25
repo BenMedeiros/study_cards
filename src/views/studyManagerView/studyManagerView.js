@@ -1,18 +1,18 @@
-import { createTable } from '../components/shared/table.js';
-import { createJsonViewer } from '../components/shared/jsonViewer.js';
-import { card, el } from '../utils/browser/ui.js';
-import { createViewHeaderTools } from '../components/features/viewHeaderTools.js';
-import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
-import { formatIsoShort } from '../utils/browser/helpers.js';
-import studyManagerController from '../controllers/studyManagerController.js';
-import studyManagerViewController from '../controllers/studyManagerViewController.js';
+import { createTable } from '../../components/shared/table.js';
+import { createJsonViewer } from '../../components/shared/jsonViewer.js';
+import { card, el } from '../../utils/browser/ui.js';
+import { createViewHeaderTools } from '../../components/features/viewHeaderTools.js';
+import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
+import { formatIsoShort } from '../../utils/browser/helpers.js';
+import studyManagerController from './studyManagerController.js';
+import studyManagerViewController from './studyManagerViewController.js';
 import {
   normalizeTableSettings,
   applyTableColumnSettings,
   applyTableColumnStyles,
   applyTableActionSettings,
   buildTableColumnItems,
-} from '../utils/browser/tableSettings.js';
+} from '../../utils/browser/tableSettings.js';
 
 const TABLE_ACTION_ITEMS = [
   { key: 'clear', label: 'Clear' },

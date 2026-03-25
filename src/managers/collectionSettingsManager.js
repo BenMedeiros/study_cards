@@ -1,4 +1,4 @@
-// Simple Collection Settings Controller
+// Simple Collection Settings Manager
 // Responsibilities:
 // - Provide an in-memory API for per-collection settings
 // - Persist changes via store.collections.saveCollectionState
@@ -7,7 +7,7 @@
 let _store = null;
 const cache = new Map();
 const subs = new Map(); // collKey -> Set(callback)
-import { settingsLogControllers } from '../managers/settingsManager.js';
+import { settingsLogControllers } from './settingsManager.js';
 
 const DEFAULTS = {
   heldTableSearch: '',
@@ -58,7 +58,7 @@ function applyCollectionDefaults(collKey, target) {
 function applyDefaults(collKey) {
   if (!collKey) throw new Error('collKey required');
   if (!_store) throw new Error('controller not initialized');
-  settingsLogControllers('collectionSettingsController.applyDefaults', { collKey });
+  settingsLogControllers('collectionSettingsManager.applyDefaults', { collKey });
   const current = get(collKey) || {};
   const next = { ...current };
   applyCollectionDefaults(collKey, next);
@@ -80,7 +80,7 @@ function applyDefaults(collKey) {
 
 function init({ store }) {
   _store = store;
-  settingsLogControllers('collectionSettingsController.init', { storePresent: !!store });
+  settingsLogControllers('collectionSettingsManager.init', { storePresent: !!store });
 }
 
 function _load(collKey) {
@@ -101,7 +101,7 @@ function get(collKey) {
 function set(collKey, patch) {
   if (!collKey) return null;
   if (!_store) throw new Error('controller not initialized');
-  settingsLogControllers('collectionSettingsController.set', { collKey, patch });
+  settingsLogControllers('collectionSettingsManager.set', { collKey, patch });
   const current = get(collKey) || {};
   const next = { ...current, ...patch };
   _store.collections.saveCollectionState(collKey, patch);
@@ -117,7 +117,7 @@ function getView(collKey, viewName) {
 
 function setView(collKey, viewName, patch) {
   if (!collKey) return null;
-  settingsLogControllers('collectionSettingsController.setView', { collKey, viewName, patch });
+  settingsLogControllers('collectionSettingsManager.setView', { collKey, viewName, patch });
   const current = get(collKey) || {};
   const curView = (current[viewName] && typeof current[viewName] === 'object') ? current[viewName] : {};
   const nextView = { ...curView, ...patch };
@@ -131,7 +131,7 @@ function setView(collKey, viewName, patch) {
 
 function replaceView(collKey, viewName, nextView) {
   if (!collKey) return null;
-  settingsLogControllers('collectionSettingsController.replaceView', { collKey, viewName, nextView });
+  settingsLogControllers('collectionSettingsManager.replaceView', { collKey, viewName, nextView });
   const current = get(collKey) || {};
   const safeNextView = (nextView && typeof nextView === 'object' && !Array.isArray(nextView)) ? { ...nextView } : {};
   const patchObj = { [viewName]: safeNextView };
@@ -145,7 +145,7 @@ function replaceView(collKey, viewName, nextView) {
 function subscribe(collKey, cb) {
   if (!collKey) throw new Error('collKey required');
   if (typeof cb !== 'function') throw new Error('callback required');
-  settingsLogControllers('collectionSettingsController.subscribe', { collKey });
+  settingsLogControllers('collectionSettingsManager.subscribe', { collKey });
   let set = subs.get(collKey);
   if (!set) { set = new Set(); subs.set(collKey, set); }
   set.add(cb);
@@ -155,9 +155,9 @@ function subscribe(collKey, cb) {
 function _notify(collKey, newState, patch) {
   const set = subs.get(collKey);
   if (!set) return;
-  settingsLogControllers('collectionSettingsController._notify.start', { collKey, subscribers: set.size, patch });
+  settingsLogControllers('collectionSettingsManager._notify.start', { collKey, subscribers: set.size, patch });
   for (const cb of Array.from(set)) cb(newState, patch);
-  settingsLogControllers('collectionSettingsController._notify.complete', { collKey, subscribers: set.size });
+  settingsLogControllers('collectionSettingsManager._notify.complete', { collKey, subscribers: set.size });
 }
 
 function getStore() {
@@ -174,7 +174,7 @@ async function fetchCollection(collKey) {
   if (!collKey) throw new Error('collKey required');
   const store = getStore();
   if (!store) throw new Error('controller not initialized');
-  settingsLogControllers('collectionSettingsController.fetchCollection', { collKey });
+  settingsLogControllers('collectionSettingsManager.fetchCollection', { collKey });
   // Prefer collections.loadCollection (manager API); fall back to collectionDB.getCollection
   if (store.collections && typeof store.collections.loadCollection === 'function') {
     return await store.collections.loadCollection(collKey);

@@ -1,19 +1,19 @@
-import { el } from '../utils/browser/ui.js';
-import * as idb from '../utils/browser/idb.js';
-import { createViewHeaderTools } from '../components/features/viewHeaderTools.js';
-import { createDropdown } from '../components/shared/dropdown.js';
-import { createTable } from '../components/shared/table.js';
-import { createJsonViewer } from '../components/shared/jsonViewer.js';
-import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
-import entityExplorerViewController from '../controllers/entityExplorerViewController.js';
-import studyManagerController from '../controllers/studyManagerController.js';
+import { el } from '../../utils/browser/ui.js';
+import * as idb from '../../utils/browser/idb.js';
+import { createViewHeaderTools } from '../../components/features/viewHeaderTools.js';
+import { createDropdown } from '../../components/shared/dropdown.js';
+import { createTable } from '../../components/shared/table.js';
+import { createJsonViewer } from '../../components/shared/jsonViewer.js';
+import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
+import entityExplorerViewController from './entityExplorerViewController.js';
+import studyManagerController from '../studyManagerView/studyManagerController.js';
 import {
   normalizeTableSettings,
   applyTableColumnSettings,
   applyTableColumnStyles,
   applyTableActionSettings,
   buildTableColumnItems,
-} from '../utils/browser/tableSettings.js';
+} from '../../utils/browser/tableSettings.js';
 
 const TABLE_ACTION_ITEMS = [
   { key: 'clear', label: 'Clear' },

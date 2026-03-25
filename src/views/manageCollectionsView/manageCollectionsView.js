@@ -1,13 +1,13 @@
-import { createTable } from '../components/shared/table.js';
-import { card, el } from '../utils/browser/ui.js';
-import { createDropdown } from '../components/shared/dropdown.js';
-import { createJsonViewer } from '../components/shared/jsonViewer.js';
-import { buildImportFeedback } from '../utils/common/collectionImportFeedback.mjs';
-import { validateEntriesAgainstSchema } from '../utils/common/validation.mjs';
-import { parseCollectionImportInput } from '../utils/common/collectionImport.mjs';
-import { openTableSettingsDialog } from '../components/dialogs/tableSettingsDialog.js';
-import { openAiPromptsEditorDialog } from '../components/dialogs/aiPromptsEditor.js';
-import manageCollectionsViewController from '../controllers/manageCollectionsViewController.js';
+import { createTable } from '../../components/shared/table.js';
+import { card, el } from '../../utils/browser/ui.js';
+import { createDropdown } from '../../components/shared/dropdown.js';
+import { createJsonViewer } from '../../components/shared/jsonViewer.js';
+import { buildImportFeedback } from '../../utils/common/collectionImportFeedback.mjs';
+import { validateEntriesAgainstSchema } from '../../utils/common/validation.mjs';
+import { parseCollectionImportInput } from '../../utils/common/collectionImport.mjs';
+import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
+import { openAiPromptsEditorDialog } from '../../components/dialogs/aiPromptsEditor.js';
+import manageCollectionsViewController from './manageCollectionsViewController.js';
 import {
   normalizeTableSettings,
   applyTableColumnSettings,
@@ -15,13 +15,13 @@ import {
   applyTableActionSettings,
   buildTableColumnItems,
   attachCardTableSettingsButton,
-} from '../utils/browser/tableSettings.js';
+} from '../../utils/browser/tableSettings.js';
 import {
   buildManageCollectionsAiPrompt,
   buildManageCollectionsMissingRecordsPrompt,
   createBalancedMissingBatches,
   prepareManageCollectionsPromptPayload,
-} from '../templates/aiPromptsManageCollections.js';
+} from '../../templates/aiPromptsManageCollections.js';
 
 const TABLE_ACTION_ITEMS = [
   { key: 'clear', label: 'Clear' },

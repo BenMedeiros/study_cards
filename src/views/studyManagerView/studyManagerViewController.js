@@ -1,5 +1,5 @@
-import controllerFactory from './controller.js';
-import { normalizeTableSettings, createDefaultTableSettings, cloneTableSettings } from '../utils/browser/tableSettings.js';
+import controllerUtils from '../../utils/common/controllerUtils.mjs';
+import { normalizeTableSettings, createDefaultTableSettings, cloneTableSettings } from '../../utils/browser/tableSettings.js';
 
 const VIEW = 'studyManagerView';
 const DEFAULT_ACTION_ORDER = ['clear', 'copyJson', 'copyFullJson'];
@@ -148,7 +148,7 @@ function validateCards(v) {
 }
 
 function create(collKey) {
-  const base = controllerFactory.createViewController(
+  const base = controllerUtils.createViewController(
     collKey,
     VIEW,
     cloneTableSettings(DEFAULT_VIEW, DEFAULT_VIEW),

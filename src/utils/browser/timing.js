@@ -86,6 +86,11 @@ export function timed(label, fn, opts = {}) {
     return (typeof fn === 'function') ? fn() : undefined;
   }
 
+  const onlyRoot = !!opts.onlyRoot;
+  if (onlyRoot && _stack.length > 0) {
+    return fn();
+  }
+
   const name = String(label || 'operation');
   const prefix = _indent();
   const start = nowMs();

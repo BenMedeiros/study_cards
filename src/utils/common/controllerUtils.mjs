@@ -1,5 +1,5 @@
-import collectionSettingsController from './collectionSettingsController.js';
-import { settingsLogControllers } from '../managers/settingsManager.js';
+import collectionSettingsManager from '../../managers/collectionSettingsManager.js';
+import { settingsLogControllers } from '../../managers/settingsManager.js';
 
 // Generic view controller factory. Handles common lifecycles: fetching collection,
 // ready promise, get/set/reset, subscribe/unsubscribe, and dispose.
@@ -11,14 +11,14 @@ function createViewController(collKey, viewName, defaults = {}, validators = {})
   const localSubs = new Set();
   let collection = null;
   settingsLogControllers('controller.create', { collKey, viewName });
-  const ready = collectionSettingsController.fetchCollection(collKey).then(c => { collection = c; settingsLogControllers('controller.ready', { collKey, viewName }); return c; });
+  const ready = collectionSettingsManager.fetchCollection(collKey).then(c => { collection = c; settingsLogControllers('controller.ready', { collKey, viewName }); return c; });
 
   function _ensureNotDisposed() { if (disposed) throw new Error('controller disposed'); }
 
   function get() {
     _ensureNotDisposed();
     settingsLogControllers('controller.get', { collKey, viewName });
-    const persisted = collectionSettingsController.getView(collKey, viewName) || {};
+    const persisted = collectionSettingsManager.getView(collKey, viewName) || {};
     return { ...defaults, ...persisted };
   }
 
@@ -35,7 +35,7 @@ function createViewController(collKey, viewName, defaults = {}, validators = {})
         if (res && typeof res.then === 'function') await res;
       }
     }
-    const res = collectionSettingsController.setView(collKey, viewName, patch);
+    const res = collectionSettingsManager.setView(collKey, viewName, patch);
     settingsLogControllers('controller.set.complete', { collKey, viewName, patch });
     return res;
   }
@@ -43,14 +43,14 @@ function createViewController(collKey, viewName, defaults = {}, validators = {})
   function reset() {
     _ensureNotDisposed();
     settingsLogControllers('controller.reset', { collKey, viewName });
-    return collectionSettingsController.setView(collKey, viewName, { ...defaults });
+    return collectionSettingsManager.setView(collKey, viewName, { ...defaults });
   }
 
   function subscribe(cb) {
     _ensureNotDisposed();
     if (typeof cb !== 'function') throw new Error('callback required');
     settingsLogControllers('controller.subscribe', { collKey, viewName });
-    const unsub = collectionSettingsController.subscribe(collKey, (newState, patch) => {
+    const unsub = collectionSettingsManager.subscribe(collKey, (newState, patch) => {
       const viewState = (newState && newState[viewName]) || {};
       const viewPatch = (patch && patch[viewName]) || {};
       cb(viewState, viewPatch, newState, patch);
@@ -68,7 +68,7 @@ function createViewController(collKey, viewName, defaults = {}, validators = {})
       const vfn = validators && validators[k];
       if (typeof vfn === 'function') vfn(nextState[k], collection);
     }
-    const res = collectionSettingsController.replaceView(collKey, viewName, nextState);
+    const res = collectionSettingsManager.replaceView(collKey, viewName, nextState);
     settingsLogControllers('controller.replace.complete', { collKey, viewName, nextState });
     return res;
   }

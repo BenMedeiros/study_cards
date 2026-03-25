@@ -5,7 +5,7 @@ import { createStudyProgressManager } from './managers/studyProgressManager.js';
 import { createCollectionsManager } from './managers/collectionsManager.js';
 import createCollectionDatabaseManager from './managers/collectionDatabaseManager.js';
 import { createSettingsManager, setGlobalSettingsManager } from './managers/settingsManager.js';
-import studyManagerController from './controllers/studyManagerController.js';
+import studyManagerController from './views/studyManagerView/studyManagerController.js';
 
 function safeClone(value) {
   try { return JSON.parse(JSON.stringify(value)); } catch { return null; }

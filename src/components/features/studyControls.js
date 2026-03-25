@@ -1,6 +1,6 @@
 // Helper to add a study-filter dropdown into a view headerTools
 // Usage: addStudyFilter(headerTools, { getCurrentCollectionKey, onChange })
-import collectionSettingsController from '../../controllers/collectionSettingsController.js';
+import collectionSettingsManager from '../../managers/collectionSettingsManager.js';
 
 export function addStudyFilter(headerTools, { getCurrentCollectionKey, onChange } = {}) {
   if (!headerTools || typeof headerTools.addElement !== 'function') return null;
@@ -30,7 +30,7 @@ export function addStudyFilter(headerTools, { getCurrentCollectionKey, onChange 
   let initialStudyFilterValues = ['null', 'focus', 'learned'];
   const key = (typeof getCurrentCollectionKey === 'function') ? getCurrentCollectionKey() : null;
   if (key) {
-    const st = collectionSettingsController.get(key) || {};
+    const st = collectionSettingsManager.get(key) || {};
     const saved = typeof st.studyFilter === 'string' ? String(st.studyFilter).trim() : null;
     if (saved) {
       if (saved === 'all') initialStudyFilterValues = ['null', 'focus', 'learned'];
@@ -48,7 +48,7 @@ export function addStudyFilter(headerTools, { getCurrentCollectionKey, onChange 
       const ordered = orderStudyStates(chosen);
       const key = (typeof getCurrentCollectionKey === 'function') ? getCurrentCollectionKey() : null;
       if (key) {
-        collectionSettingsController.set(key, { studyFilter: ordered.join(',') });
+        collectionSettingsManager.set(key, { studyFilter: ordered.join(',') });
       }
       if (typeof onChange === 'function') onChange(ordered);
     },
