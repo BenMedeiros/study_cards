@@ -812,6 +812,50 @@ export function renderData({ store }) {
   let baseEntries = Array.isArray(active.entries) ? active.entries.slice() : [];
   let lastRenderedEntries = [];
   let lastRenderedView = null;
+  let isViewActive = true;
+  let pendingStoreRefresh = false;
+  let lastRefreshSnapshot = null;
+
+  function sameEntryRefs(a = [], b = []) {
+    if (!Array.isArray(a) || !Array.isArray(b)) return false;
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
+
+  function captureRefreshSnapshot() {
+    const coll = store?.collections?.getActiveCollection?.() || active;
+    const saved = readCollState() || {};
+    const nextTable = normalizeDataTableSettingsLocal(saved?.dataView?.dataTable ?? dataTableSettings);
+    const nextSavedSearches = normalizeSavedSearchList(
+      saved?.savedTableSearches ?? saved?.saved_table_searches ?? saved?.savedTableSearch ?? saved?.savedFiltersTableSearch ?? []
+    );
+    return {
+      collRef: coll || null,
+      activeEntriesRef: Array.isArray(coll?.entries) ? coll.entries : null,
+      held: String(saved?.heldTableSearch || '').trim(),
+      studyFilter: String(saved?.studyFilter || '').trim(),
+      skipLearned: !!saved?.skipLearned,
+      focusOnly: !!saved?.focusOnly,
+      savedSearches: nextSavedSearches,
+      tableSettings: nextTable,
+    };
+  }
+
+  function sameRefreshSnapshot(a, b) {
+    if (!a || !b) return false;
+    if (a.collRef !== b.collRef) return false;
+    if (a.activeEntriesRef !== b.activeEntriesRef) return false;
+    if (a.held !== b.held) return false;
+    if (a.studyFilter !== b.studyFilter) return false;
+    if (a.skipLearned !== b.skipLearned) return false;
+    if (a.focusOnly !== b.focusOnly) return false;
+    if (!sameStringArray(a.savedSearches, b.savedSearches)) return false;
+    if (!sameDataTableSettings(a.tableSettings, b.tableSettings)) return false;
+    return true;
+  }
 
   function getAvailableSearchHeaders(entries = baseEntries) {
     const allDerivedColumns = getAvailableDerivedColumns(entries);
@@ -861,6 +905,7 @@ export function renderData({ store }) {
       if (store?.collections && typeof store.collections.getCollectionEntriesWithRelated === 'function') {
         const augmented = await store.collections.getCollectionEntriesWithRelated(active.key, { sample: 2 });
         if (Array.isArray(augmented) && augmented.length) {
+          if (sameEntryRefs(baseEntries, augmented)) return;
           baseEntries = augmented.slice();
           try { renderTable(); } catch (e) {}
           try { markStudyRows(); } catch (e) {}
@@ -1381,51 +1426,76 @@ export function renderData({ store }) {
   // (initial render will occur after the data card is created and mounted)
 
   // Subscribe to store changes and update markings when session state changes
-  let unsub = null;
-  if (store && typeof store.subscribe === 'function') {
+  function syncFromStoreAndRender() {
+    pendingStoreRefresh = false;
+    const snapshot = captureRefreshSnapshot();
+    // update label and highlighting when collection/session state changes
     try {
-      unsub = store.subscribe(() => {
-        // update label and highlighting when collection/session state changes
-        try {
-          const saved = readCollState();
-          const nextTable = normalizeDataTableSettingsLocal(saved?.dataView?.dataTable ?? dataTableSettings);
-          if (!sameDataTableSettings(nextTable, dataTableSettings)) dataTableSettings = nextTable;
-          if (typeof saved?.studyFilter === 'string') {
-            const parsed = parseStudyFilter(saved.studyFilter);
-            studyFilterStates = orderStudyStates(parsed.states);
-          } else {
-            const skipLearned = !!saved?.skipLearned;
-            const focusOnly = !!saved?.focusOnly;
-            if (focusOnly) studyFilterStates = ['focus'];
-            else if (skipLearned) studyFilterStates = ['null', 'focus'];
-            else studyFilterStates = STUDY_STATE_ORDER.slice();
-          }
+      const saved = readCollState();
+      const nextTable = snapshot.tableSettings;
+      if (!sameDataTableSettings(nextTable, dataTableSettings)) dataTableSettings = nextTable;
+      if (typeof saved?.studyFilter === 'string') {
+        const parsed = parseStudyFilter(saved.studyFilter);
+        studyFilterStates = orderStudyStates(parsed.states);
+      } else {
+        const skipLearned = !!saved?.skipLearned;
+        const focusOnly = !!saved?.focusOnly;
+        if (focusOnly) studyFilterStates = ['focus'];
+        else if (skipLearned) studyFilterStates = ['null', 'focus'];
+        else studyFilterStates = STUDY_STATE_ORDER.slice();
+      }
 
-          const held = String(saved?.heldTableSearch || '').trim();
-          heldTableSearch = held;
+      const held = String(saved?.heldTableSearch || '').trim();
+      heldTableSearch = held;
 
-          const nextSavedSearches = normalizeSavedSearchList(
-            saved?.savedTableSearches ?? saved?.saved_table_searches ?? saved?.savedTableSearch ?? saved?.savedFiltersTableSearch ?? []
-          );
-          if (!sameStringArray(nextSavedSearches, savedTableSearches)) {
-            savedTableSearches = nextSavedSearches;
-          }
-        } catch (e) {
-          // ignore
-        }
-        updateFilterButtons();
-        renderTable();
-        updateStudyLabel();
-        markStudyRows();
-        updateControlStates();
-      });
-    } catch (e) { /* ignore */ }
+      const nextSavedSearches = normalizeSavedSearchList(
+        saved?.savedTableSearches ?? saved?.saved_table_searches ?? saved?.savedTableSearch ?? saved?.savedFiltersTableSearch ?? []
+      );
+      if (!sameStringArray(nextSavedSearches, savedTableSearches)) {
+        savedTableSearches = nextSavedSearches;
+      }
+    } catch (e) {
+      // ignore
+    }
+    lastRefreshSnapshot = snapshot;
+    updateFilterButtons();
+    renderTable();
+    updateStudyLabel();
+    markStudyRows();
+    updateControlStates();
   }
+
+  const unsubs = [];
+  const onRelevantStateChanged = () => {
+    const nextSnapshot = captureRefreshSnapshot();
+    if (sameRefreshSnapshot(nextSnapshot, lastRefreshSnapshot)) return;
+    if (!isViewActive) {
+      pendingStoreRefresh = true;
+      return;
+    }
+    syncFromStoreAndRender();
+  };
+  try {
+    if (store?.collections && typeof store.collections.subscribe === 'function') {
+      unsubs.push(store.collections.subscribe(() => {
+        onRelevantStateChanged();
+      }));
+    }
+  } catch (e) {}
+  try {
+    if (store?.kanjiProgress && typeof store.kanjiProgress.subscribe === 'function') {
+      unsubs.push(store.kanjiProgress.subscribe(() => {
+        onRelevantStateChanged();
+      }));
+    }
+  } catch (e) {}
 
   // Cleanup subscription when this view is removed from DOM
   const mo = new MutationObserver(() => {
     if (!document.body.contains(root)) {
-      if (typeof unsub === 'function') unsub();
+      for (const unsub of unsubs) {
+        try { if (typeof unsub === 'function') unsub(); } catch (e) {}
+      }
       try { if (dataViewCtrl && typeof dataViewCtrl.dispose === 'function') dataViewCtrl.dispose(); } catch (e) {}
       mo.disconnect();
     }
@@ -1434,7 +1504,7 @@ export function renderData({ store }) {
 
   const dataCard = card({
     id: 'data-card',
-    cornerCaption: `${getCurrentVisibleEntries().length} Entries`,
+    cornerCaption: 'Entries',
     children: [tableMount]
   });
 
@@ -1456,6 +1526,15 @@ export function renderData({ store }) {
   root.append(
     dataCard
   );
+  root.__activate = () => {
+    isViewActive = true;
+    const nextSnapshot = captureRefreshSnapshot();
+    if (!sameRefreshSnapshot(nextSnapshot, lastRefreshSnapshot)) pendingStoreRefresh = true;
+    if (pendingStoreRefresh) syncFromStoreAndRender();
+  };
+  root.__deactivate = () => {
+    isViewActive = false;
+  };
   // initial UI updates now that the card is mounted and corner caption exists
   updateFilterButtons();
   renderTable();

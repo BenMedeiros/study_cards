@@ -29,7 +29,7 @@ function saveLocalKey(key, obj) {
   }
 }
 
-export function createPersistenceManager({ uiState, emitter, studyProgressKey = 'study_progress', studyTimeKey = 'study_time' }) {
+export function createPersistenceManager({ uiState, studyProgressKey = 'study_progress', studyTimeKey = 'study_time' }) {
   let persistenceReady = false;
   let idbAvailable = false;
   let idbBroken = false;
@@ -252,7 +252,6 @@ export function createPersistenceManager({ uiState, emitter, studyProgressKey = 
     uiState.collections = (loaded.collections && typeof loaded.collections === 'object') ? loaded.collections : {};
     uiState.kv = kvNormalized;
 
-    emitter?.emit?.();
     return { shell: uiState.shell || {}, apps: uiState.apps || {}, collections: uiState.collections || {}, kv: uiState.kv || {} };
   }
 

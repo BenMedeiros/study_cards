@@ -1,4 +1,3 @@
-import { createEmitter } from './utils/browser/emitter.js';
 import { createPersistenceManager } from './managers/persistenceManager.js';
 import { createUIStateManager } from './managers/uiStateManager.js';
 import { createStudyProgressManager } from './managers/studyProgressManager.js';
@@ -34,9 +33,19 @@ export function createStore() {
 
   // Non-persisted, session-scoped analysis data shared across the app.
   const analysisState = {};
+  const analysisSubscribers = new Set();
 
-  const emitter = createEmitter();
-  const analysisEmitter = createEmitter();
+  function notifyAnalysisSubscribers() {
+    for (const cb of Array.from(analysisSubscribers)) {
+      try { cb(); } catch (e) {}
+    }
+  }
+
+  function subscribeAnalysis(fn) {
+    if (typeof fn !== 'function') return () => {};
+    analysisSubscribers.add(fn);
+    return () => { analysisSubscribers.delete(fn); };
+  }
 
   function getAnalysisState() {
     return safeClone(analysisState) || {};
@@ -58,8 +67,7 @@ export function createStore() {
       analysisState[normalizedKey] = cloned === null && value !== null ? value : cloned;
     }
     if (!silent) {
-      analysisEmitter.emit();
-      emitter.emit();
+      notifyAnalysisSubscribers();
     }
   }
 
@@ -68,8 +76,7 @@ export function createStore() {
     for (const key of Object.keys(analysisState)) delete analysisState[key];
     Object.assign(analysisState, normalized);
     if (!silent) {
-      analysisEmitter.emit();
-      emitter.emit();
+      notifyAnalysisSubscribers();
     }
   }
 
@@ -78,17 +85,16 @@ export function createStore() {
     if (!normalized) return;
     Object.assign(analysisState, normalized);
     if (!silent) {
-      analysisEmitter.emit();
-      emitter.emit();
+      notifyAnalysisSubscribers();
     }
   }
 
-  const persistence = createPersistenceManager({ uiState, emitter, studyProgressKey: 'study_progress', studyTimeKey: 'study_time' });
+  const persistence = createPersistenceManager({ uiState, studyProgressKey: 'study_progress', studyTimeKey: 'study_time' });
 
-  const studyProgress = createStudyProgressManager({ uiState, persistence, emitter, studyProgressKey: 'study_progress', studyTimeKey: 'study_time' });
+  const studyProgress = createStudyProgressManager({ uiState, persistence, studyProgressKey: 'study_progress', studyTimeKey: 'study_time' });
   const kanjiProgress = studyProgress;
   const studyTime = studyProgress;
-  const ui = createUIStateManager({ uiState, persistence, emitter });
+  const ui = createUIStateManager({ uiState, persistence });
 
   const settings = createSettingsManager({
     getShellState: ui.getShellState,
@@ -112,14 +118,10 @@ export function createStore() {
   try {
     studyManagerController.subscribe((snapshot) => {
       setAnalysisEntry('studyManager', snapshot || null, { silent: true });
-      analysisEmitter.emit();
+      notifyAnalysisSubscribers();
     });
   } catch (e) {}
-  const collections = createCollectionsManager({ state, uiState, persistence, emitter, progressManager: kanjiProgress, collectionDB, settings });
-
-  function subscribe(fn) {
-    return emitter.subscribe(fn);
-  }
+  const collections = createCollectionsManager({ state, uiState, persistence, progressManager: kanjiProgress, collectionDB, settings });
 
   async function initialize() {
     try {
@@ -165,18 +167,16 @@ export function createStore() {
       state.collections = [];
       state.activeCollectionId = null;
     }
-
-    emitter.emit();
     persistence.installFlushGuards();
   }
 
   const api = {
-    subscribe,
     initialize,
     settings,
     collectionDB,
     collections: {
       getCollections: collections.getCollections,
+      subscribe: collections.subscribe,
       getAvailableCollections: collections.getAvailableCollections,
       getActiveCollectionId: collections.getActiveCollectionId,
       getActiveCollection: collections.getActiveCollection,
@@ -302,7 +302,7 @@ export function createStore() {
     analysis: {
       getState: getAnalysisState,
       getEntry: getAnalysisEntry,
-      subscribe: analysisEmitter.subscribe,
+      subscribe: subscribeAnalysis,
       setState: setAnalysisState,
       mergeState: mergeAnalysisState,
       setEntry: setAnalysisEntry,
@@ -323,6 +323,7 @@ export function createStore() {
       createCardProgressTracker: kanjiProgress.createCardProgressTracker,
       getActiveCardProgressStatus: kanjiProgress.getActiveCardProgressStatus,
       getFocusKanjiValues: kanjiProgress.getFocusKanjiValues,
+      subscribe: kanjiProgress.subscribe,
     },
 
     studyTime: {

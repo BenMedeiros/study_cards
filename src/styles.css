@@ -1553,6 +1553,49 @@ input[type="number"].button::-webkit-inner-spin-button {
   gap: 0.35rem;
 }
 
+.kanji-study-card-config-select {
+  min-width: 12rem;
+  max-width: 100%;
+}
+
+.kanji-study-card-config-select.custom-dropdown {
+  width: 100%;
+}
+
+.kanji-study-card-config-select .custom-dropdown-button {
+  width: 100%;
+}
+
+.kanji-study-card-config-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.kanji-study-card-config-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 0 0 auto;
+}
+
+.kanji-study-card-config-json-btn {
+  position: static;
+}
+
+.kanji-study-card-config-json-viewer .json-content {
+  max-height: 52vh;
+  overflow: auto;
+  background: rgba(2, 6, 23, 0.92);
+  border-radius: 0.45rem;
+  padding: 0.35rem 0.35rem 0.5rem 0.35rem;
+}
+
+.kanji-study-card-config-json-viewer .json-tree {
+  background: rgba(2, 6, 23, 0.96);
+}
+
 .kanji-study-card-config-move:disabled {
   opacity: 0.4;
   cursor: not-allowed;
@@ -4314,6 +4357,7 @@ h2 {
 .card .table-card-settings-btn {
   position: absolute;
   top: 0.34rem;
+  right: 1rem;
   z-index: 2;
   font-size: 0.66rem;
   line-height: 1;

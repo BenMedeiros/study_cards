@@ -1,4 +1,4 @@
-export function createUIStateManager({ uiState, persistence, emitter }) {
+export function createUIStateManager({ uiState, persistence }) {
   // ============================================================================
   // Shell State (routes, voice settings, global UI state)
   // ============================================================================
@@ -95,8 +95,6 @@ export function createUIStateManager({ uiState, persistence, emitter }) {
 
       persistence.markDirty({ shell: true });
       persistence.scheduleFlush({ immediate: !!opts.immediate });
-      const notify = (opts.notify ?? !opts.silent) !== false;
-      if (notify) emitter.emit();
     } catch {
       // ignore
     }
@@ -126,8 +124,6 @@ export function createUIStateManager({ uiState, persistence, emitter }) {
 
       persistence.markDirty({ apps: true });
       persistence.scheduleFlush({ immediate: !!opts.immediate });
-      const notify = (opts.notify ?? !opts.silent) !== false;
-      if (notify) emitter.emit();
     } catch {
       // ignore
     }

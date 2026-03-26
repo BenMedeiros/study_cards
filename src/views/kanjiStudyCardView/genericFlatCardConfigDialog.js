@@ -1,4 +1,6 @@
 import { el } from '../../utils/browser/ui.js';
+import { createDropdown } from '../../components/shared/dropdown.js';
+import { createJsonViewer } from '../../components/shared/jsonViewer.js';
 
 function normalizeFieldItems(fields) {
   const items = Array.isArray(fields) ? fields : [];
@@ -6,7 +8,7 @@ function normalizeFieldItems(fields) {
   const seen = new Set();
   for (const raw of items) {
     const key = String(raw?.key ?? raw?.value ?? '').trim();
-    if (!key || seen.has(key)) continue;
+    if (!key || key.startsWith('__') || raw?.kind === 'action' || seen.has(key)) continue;
     seen.add(key);
     const label = String(raw?.label ?? raw?.left ?? key).trim() || key;
     out.push({ key, label });
@@ -34,17 +36,45 @@ function buildInitialState(items, selectedFields) {
   return out;
 }
 
+function getLayoutValue(layout, slotKey, fallbackLayout) {
+  const slot = String(slotKey || '').trim();
+  if (!slot) return '';
+  if (layout && typeof layout === 'object' && Object.prototype.hasOwnProperty.call(layout, slot)) {
+    return String(layout[slot] || '').trim();
+  }
+  if (fallbackLayout && typeof fallbackLayout === 'object' && Object.prototype.hasOwnProperty.call(fallbackLayout, slot)) {
+    return String(fallbackLayout[slot] || '').trim();
+  }
+  return '';
+}
+
 export function openGenericFlatCardConfigDialog({
   title = 'Generic Card Settings',
   fields = [],
   selectedFields = [],
+  layoutSlots = [],
+  selectedLayout = {},
+  defaultLayout = {},
 } = {}) {
   const items = normalizeFieldItems(fields);
+  const slots = Array.isArray(layoutSlots)
+    ? layoutSlots.map((raw) => ({
+      key: String(raw?.key || '').trim(),
+      label: String(raw?.label || raw?.key || '').trim(),
+      allowEmpty: raw?.allowEmpty !== false,
+    })).filter((item) => item.key)
+    : [];
   const mount = document.body || document.documentElement;
   if (!mount) return Promise.resolve(null);
 
   return new Promise((resolve) => {
     let state = buildInitialState(items, selectedFields);
+    let layoutState = slots.map((slot) => ({
+      ...slot,
+      value: getLayoutValue(selectedLayout, slot.key, defaultLayout),
+    }));
+    const isLayoutMode = slots.length > 0;
+    let isJsonMode = false;
 
     const backdrop = el('div', { className: 'kanji-study-card-config-backdrop' });
     const dialog = el('div', {
@@ -60,12 +90,26 @@ export function openGenericFlatCardConfigDialog({
     const titleEl = el('h2', { text: String(title || 'Generic Card Settings') });
     const subtitleEl = el('p', {
       className: 'hint',
-      text: 'Choose which fields appear on the generic card and arrange their top-to-bottom order.',
+      text: isLayoutMode
+        ? 'Choose which collection field appears in each fixed position on the card.'
+        : 'Choose which fields appear on the generic card and arrange their top-to-bottom order.',
     });
     const summaryEl = el('div', { className: 'kanji-study-card-config-summary' });
+    const jsonBtn = el('button', {
+      className: 'btn small table-card-settings-btn kanji-study-card-config-json-btn',
+      text: 'JSON',
+      attrs: {
+        type: 'button',
+        title: 'Toggle JSON viewer for this card config',
+      },
+    });
+    const headerActions = el('div', {
+      className: 'kanji-study-card-config-header-actions',
+      children: [jsonBtn],
+    });
     const header = el('div', {
       className: 'kanji-study-card-config-header',
-      children: [el('div', { children: [titleEl, subtitleEl, summaryEl] })],
+      children: [el('div', { children: [titleEl, subtitleEl, summaryEl] }), headerActions],
     });
 
     const list = el('div', { className: 'kanji-study-card-config-list' });
@@ -99,13 +143,90 @@ export function openGenericFlatCardConfigDialog({
       return state.filter((item) => item.enabled).map((item) => item.key);
     }
 
+    function getSelectedLayout() {
+      const out = {};
+      layoutState.forEach((item) => {
+        out[item.key] = String(item.value || '').trim();
+      });
+      return out;
+    }
+
+    function getCurrentConfigSnapshot() {
+      return isLayoutMode
+        ? { layout: getSelectedLayout() }
+        : { fields: getSelectedFieldOrder() };
+    }
+
     function render() {
-      const visibleCount = state.filter((item) => item.enabled).length;
-      summaryEl.textContent = `${visibleCount} visible of ${state.length}`;
+      jsonBtn.classList.toggle('is-active', isJsonMode);
+      jsonBtn.setAttribute('aria-pressed', isJsonMode ? 'true' : 'false');
+      if (isLayoutMode) {
+        const mappedCount = layoutState.filter((item) => item.value).length;
+        summaryEl.textContent = `${mappedCount} mapped of ${layoutState.length}`;
+      } else {
+        const visibleCount = state.filter((item) => item.enabled).length;
+        summaryEl.textContent = `${visibleCount} visible of ${state.length}`;
+      }
       list.innerHTML = '';
 
-      if (!state.length) {
+      if (isJsonMode) {
+        const viewer = createJsonViewer(getCurrentConfigSnapshot(), {
+          expanded: true,
+          maxChars: 200000,
+          maxLines: 10000,
+          previewLen: 400,
+        });
+        viewer.classList.add('kanji-study-card-config-json-viewer');
+        list.append(viewer);
+        return;
+      }
+
+      if (isLayoutMode && !layoutState.length) {
+        list.append(el('p', { className: 'hint kanji-study-card-config-empty', text: 'No card positions are available for this card.' }));
+        return;
+      }
+      if (!items.length) {
         list.append(el('p', { className: 'hint kanji-study-card-config-empty', text: 'No schema fields are available for this collection.' }));
+        return;
+      }
+
+      if (isLayoutMode) {
+        layoutState.forEach((item, index) => {
+          const dropdown = createDropdown({
+            items: [
+              ...(item.allowEmpty ? [{ value: '', label: 'None' }] : []),
+              ...items.map((fieldItem) => ({
+                value: fieldItem.key,
+                label: fieldItem.label,
+                right: fieldItem.key,
+              })),
+            ],
+            value: String(item.value || '').trim(),
+            className: 'kanji-study-card-config-select',
+            closeOverlaysOnOpen: false,
+            onChange: (nextValue) => {
+              layoutState[index] = { ...item, value: String(nextValue || '').trim() };
+              render();
+            },
+          });
+
+          list.append(el('div', {
+            className: 'kanji-study-card-config-item',
+            children: [
+              el('div', {
+                className: 'kanji-study-card-config-item-copy',
+                children: [
+                  el('div', { className: 'kanji-study-card-config-item-label', text: item.label }),
+                  el('div', { className: 'kanji-study-card-config-item-key hint', text: item.key }),
+                ],
+              }),
+              el('div', {
+                className: 'kanji-study-card-config-item-controls',
+                children: [dropdown],
+              }),
+            ],
+          }));
+        });
         return;
       }
 
@@ -184,12 +305,26 @@ export function openGenericFlatCardConfigDialog({
       cleanup(null);
     }
 
+    jsonBtn.addEventListener('click', () => {
+      isJsonMode = !isJsonMode;
+      render();
+    });
     resetBtn.addEventListener('click', () => {
-      state = items.map((item) => ({ ...item, enabled: true }));
+      if (isLayoutMode) {
+        layoutState = slots.map((slot) => ({
+          ...slot,
+          value: String(defaultLayout?.[slot.key] || '').trim(),
+        }));
+      }
+      else state = items.map((item) => ({ ...item, enabled: true }));
       render();
     });
     cancelBtn.addEventListener('click', () => cleanup(null));
-    saveBtn.addEventListener('click', () => cleanup({ fields: getSelectedFieldOrder() }));
+    saveBtn.addEventListener('click', () => cleanup(
+      isLayoutMode
+        ? { layout: getSelectedLayout() }
+        : { fields: getSelectedFieldOrder() }
+    ));
 
     backdrop.append(dialog);
     mount.append(backdrop);

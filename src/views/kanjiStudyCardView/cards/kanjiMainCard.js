@@ -2,8 +2,46 @@
 // The card uses the existing project CSS classes (from src/styles.css).
 import { settingsLog } from '../../../managers/settingsManager.js';
 
-export function createKanjiMainCard({ entry = null, indexText = '', handlers = {} } = {}) {
-  settingsLog('[Card:Main] createKanjiMainCard()', { entry, indexText });
+function normalizeAvailableFields(fields) {
+  const items = Array.isArray(fields) ? fields : [];
+  const out = [];
+  const seen = new Set();
+  for (const raw of items) {
+    const key = String(raw?.key ?? raw?.value ?? '').trim();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      key,
+      label: String(raw?.label ?? raw?.left ?? key).trim() || key,
+    });
+  }
+  return out;
+}
+
+function normalizeCardConfig(config) {
+  if (!config || typeof config !== 'object' || Array.isArray(config)) return {};
+  const next = {};
+  if (config.layout && typeof config.layout === 'object' && !Array.isArray(config.layout)) {
+    next.layout = {};
+    for (const [slotKey, fieldKey] of Object.entries(config.layout)) {
+      const slot = String(slotKey || '').trim();
+      const field = String(fieldKey || '').trim();
+      if (!slot) continue;
+      next.layout[slot] = field;
+    }
+  }
+  return next;
+}
+
+const DEFAULT_LAYOUT = {
+  topLeft: 'type',
+  main: 'kanji',
+  bottomLeft: 'reading',
+  bottomRight: 'meaning',
+};
+
+export function createKanjiMainCard({ entry = null, indexText = '', config = {}, handlers = {} } = {}) {
+  settingsLog('[Card:Main] createKanjiMainCard()', { entry, indexText, config });
   const root = document.createElement('div');
   root.className = 'card kanji-card';
 
@@ -11,9 +49,15 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   wrapper.className = 'kanji-card-wrapper';
   wrapper.tabIndex = 0;
 
+  const topRight = document.createElement('div');
+  topRight.className = 'kanji-study-card-top-right';
+
   const corner = document.createElement('div');
   corner.className = 'card-corner-caption';
   corner.textContent = indexText || '';
+
+  const actions = document.createElement('div');
+  actions.className = 'kanji-study-card-actions';
 
   const body = document.createElement('div');
   // Keep this as a generic body container (avoid duplicating IDs)
@@ -35,10 +79,39 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   const bottomRight = document.createElement('div');
   bottomRight.className = 'kanji-bottom-right';
 
+  topRight.append(corner, actions);
   mainWrap.appendChild(main);
   body.append(topLeft, mainWrap, bottomLeft, bottomRight);
-  wrapper.append(corner, body);
+  wrapper.append(topRight, body);
   root.appendChild(wrapper);
+
+  let currentEntry = entry;
+  let availableFields = normalizeAvailableFields(config?.availableFields);
+  let cardConfig = normalizeCardConfig(config?.cardConfig);
+  const fieldVisibility = {};
+
+  const openConfig = (handlers && typeof handlers.onOpenConfig === 'function')
+    ? handlers.onOpenConfig
+    : (config && typeof config.onOpenConfig === 'function' ? config.onOpenConfig : null);
+  if (typeof openConfig === 'function') {
+    const configBtn = document.createElement('button');
+    configBtn.type = 'button';
+    configBtn.className = 'icon-button kanji-study-card-config-btn';
+    configBtn.title = 'Configure card';
+    configBtn.setAttribute('aria-label', 'Configure card');
+    configBtn.textContent = '⚙';
+    configBtn.addEventListener('click', () => {
+      try {
+        openConfig({
+          cardId: String(config?.cardId || 'main').trim() || 'main',
+          entry: currentEntry,
+          cardConfig: { ...cardConfig, layout: { ...(cardConfig.layout || {}) } },
+          availableFields: availableFields.slice(),
+        });
+      } catch (e) {}
+    });
+    actions.appendChild(configBtn);
+  }
 
   function resolvePath(obj, path) {
     if (!obj || !path) return '';
@@ -51,14 +124,35 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
     return (cur == null) ? '' : String(cur);
   }
 
+  function resolveField(entryObj, fieldKey) {
+    const key = String(fieldKey || '').trim();
+    if (!key) return '';
+    return resolvePath(entryObj, key);
+  }
+
+  function getLayoutField(slotKey) {
+    const slot = String(slotKey || '').trim();
+    if (!slot) return '';
+    if (cardConfig?.layout && Object.prototype.hasOwnProperty.call(cardConfig.layout, slot)) {
+      return String(cardConfig.layout[slot] || '').trim();
+    }
+    return DEFAULT_LAYOUT[slot] || '';
+  }
+
+  function applyVisibility() {
+    for (const [fieldKey, isVisible] of Object.entries(fieldVisibility)) {
+      setFieldVisible(fieldKey, !!isVisible);
+    }
+  }
+
   function setEntry(e) {
     settingsLog('[Card:Main] setEntry()', e);
-    const entryObj = e || {};
-    // Common field names used in this project: kanji/character/text, reading/kana, meaning/definition
-    const kanji = resolvePath(entryObj, 'kanji') || resolvePath(entryObj, 'character') || resolvePath(entryObj, 'text') || '';
-    const reading = resolvePath(entryObj, 'reading') || resolvePath(entryObj, 'kana') || '';
-    const meaning = resolvePath(entryObj, 'meaning') || resolvePath(entryObj, 'definition') || resolvePath(entryObj, 'gloss') || '';
-    const pos = resolvePath(entryObj, 'type') || resolvePath(entryObj, 'pos') || resolvePath(entryObj, 'partOfSpeech') || '';
+    currentEntry = e || {};
+    const entryObj = currentEntry;
+    const kanji = resolveField(entryObj, getLayoutField('main'));
+    const reading = resolveField(entryObj, getLayoutField('bottomLeft'));
+    const meaning = resolveField(entryObj, getLayoutField('bottomRight'));
+    const pos = resolveField(entryObj, getLayoutField('topLeft'));
 
     // Auto-scale font size based on kanji text length (mirror previous logic)
     const length = (kanji || '').length;
@@ -68,10 +162,15 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
     else if (length > 4) fontSize = 4;
     main.style.fontSize = `${fontSize}rem`;
 
+    topLeft.style.visibility = '';
+    main.style.visibility = '';
+    bottomLeft.style.visibility = '';
+    bottomRight.style.visibility = '';
     main.textContent = kanji;
     topLeft.textContent = pos;
     bottomLeft.textContent = reading;
     bottomRight.textContent = meaning;
+    applyVisibility();
   }
 
   function setIndexText(t) {
@@ -81,17 +180,23 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   // Control visibility via inline style (visibility:hidden) per-field.
   function setFieldVisible(field, visible) {
     const v = !!visible;
-    switch (String(field || '').toLowerCase()) {
-      case 'type':
+    const key = String(field || '').trim();
+    const topLeftField = getLayoutField('topLeft');
+    const mainField = getLayoutField('main');
+    const bottomLeftField = getLayoutField('bottomLeft');
+    const bottomRightField = getLayoutField('bottomRight');
+    fieldVisibility[key] = v;
+    switch (key) {
+      case topLeftField:
         topLeft.style.visibility = v ? '' : 'hidden';
         break;
-      case 'kanji':
+      case mainField:
         main.style.visibility = v ? '' : 'hidden';
         break;
-      case 'reading':
+      case bottomLeftField:
         bottomLeft.style.visibility = v ? '' : 'hidden';
         break;
-      case 'meaning':
+      case bottomRightField:
         bottomRight.style.visibility = v ? '' : 'hidden';
         break;
       default:
@@ -105,6 +210,15 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
     for (const k of Object.keys(map)) {
       setFieldVisible(k, !!map[k]);
     }
+  }
+
+  function setConfig(nextConfig) {
+    cardConfig = normalizeCardConfig(nextConfig);
+    setEntry(currentEntry);
+  }
+
+  function setAvailableFields(nextFields) {
+    availableFields = normalizeAvailableFields(nextFields);
   }
 
   function destroy() {
@@ -121,5 +235,5 @@ export function createKanjiMainCard({ entry = null, indexText = '', handlers = {
   setEntry(entry);
   setIndexText(indexText);
 
-  return { el: root, setEntry, setIndexText, setFieldVisible, setFieldsVisible, destroy };
+  return { el: root, setEntry, setIndexText, setFieldVisible, setFieldsVisible, setConfig, setAvailableFields, destroy };
 }

@@ -26,8 +26,8 @@ function normalizeCardConfig(config) {
   return next;
 }
 
-export function createGenericFlatCard({ entry = null, config = {}, handlers = {} } = {}) {
-  settingsLog('[Card:Generic] createGenericFlatCard()', { entry, config });
+export function createGenericFlatCard({ entry = null, indexText = '', config = {}, handlers = {} } = {}) {
+  settingsLog('[Card:Generic] createGenericFlatCard()', { entry, indexText, config });
   const root = document.createElement('div');
   root.className = 'card generic-flat-card';
 
@@ -36,7 +36,7 @@ export function createGenericFlatCard({ entry = null, config = {}, handlers = {}
 
   const corner = document.createElement('div');
   corner.className = 'card-corner-caption';
-  corner.textContent = String(config?.cornerCaption || '').trim();
+  corner.textContent = String(indexText || config?.cornerCaption || '').trim();
 
   const actions = document.createElement('div');
   actions.className = 'kanji-study-card-actions';
@@ -162,6 +162,10 @@ export function createGenericFlatCard({ entry = null, config = {}, handlers = {}
     root.style.display = visible ? '' : 'none';
   }
 
+  function setIndexText(text) {
+    corner.textContent = String(text || '').trim();
+  }
+
   function setConfig(nextConfig) {
     cardConfig = normalizeCardConfig(nextConfig);
     setEntry(currentEntry);
@@ -178,6 +182,7 @@ export function createGenericFlatCard({ entry = null, config = {}, handlers = {}
 
   // initialize
   setEntry(entry);
+  setIndexText(indexText || config?.cornerCaption || '');
 
-  return { el: root, setEntry, setFieldVisible, setFieldsVisible, setVisible, setConfig, setAvailableFields, destroy };
+  return { el: root, setEntry, setFieldVisible, setFieldsVisible, setVisible, setIndexText, setConfig, setAvailableFields, destroy };
 }

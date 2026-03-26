@@ -11,6 +11,13 @@ import { openGenericFlatCardConfigDialog } from './genericFlatCardConfigDialog.j
 import { createKanjiStudyFooterActionsController } from './actionsController.js';
 
 const GENERIC_CARD_SETTINGS_KEY = 'genericFlatCard';
+const MAIN_CARD_SETTINGS_KEY = 'main';
+const DEFAULT_MAIN_CARD_LAYOUT = {
+  topLeft: 'type',
+  main: 'kanji',
+  bottomLeft: 'reading',
+  bottomRight: 'meaning',
+};
 
 function normalizeCardFieldList(fields) {
   if (!Array.isArray(fields)) return null;
@@ -26,7 +33,32 @@ function normalizeKanjiStudyCardsConfig(cards) {
     const nextConfig = {};
     const fields = normalizeCardFieldList(rawConfig.fields);
     if (fields) nextConfig.fields = fields;
+    if (Array.isArray(rawConfig.controls)) {
+      nextConfig.controls = Array.from(new Set(rawConfig.controls.map((item) => String(item || '').trim()).filter(Boolean)));
+    }
+    if (rawConfig.layout && typeof rawConfig.layout === 'object' && !Array.isArray(rawConfig.layout)) {
+      nextConfig.layout = {};
+      for (const [slotKey, fieldKey] of Object.entries(rawConfig.layout)) {
+        const slot = String(slotKey || '').trim();
+        const field = String(fieldKey || '').trim();
+        if (!slot) continue;
+        nextConfig.layout[slot] = field;
+      }
+    }
     out[key] = nextConfig;
+  }
+  return out;
+}
+
+function normalizeLayoutConfig(layout, allowedFields) {
+  const allowed = allowedFields instanceof Set ? allowedFields : new Set();
+  if (!layout || typeof layout !== 'object' || Array.isArray(layout)) return {};
+  const out = {};
+  for (const [slotKey, fieldKey] of Object.entries(layout)) {
+    const slot = String(slotKey || '').trim();
+    const field = String(fieldKey || '').trim();
+    if (!slot || (field && !allowed.has(field))) continue;
+    out[slot] = field;
   }
   return out;
 }
@@ -177,7 +209,9 @@ export function renderKanjiStudyCard({ store }) {
               cardsConfigState = normalizeKanjiStudyCardsConfig(
                 (viewState && viewState.cards !== undefined) ? viewState.cards : viewPatch.cards
               );
+              applyMainCardConfig();
               applyGenericCardConfig();
+              applyJsonCardConfig();
             }
 
             // related fields changed
@@ -295,8 +329,6 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   // derive entry field items from collection schema keys (authoritative)
-  const activeColl = store?.collections?.getActiveCollection?.() || null;
-  const metadata = activeColl?.metadata || {};
   function buildEntryFieldItemsFromSchema(meta, sampleEntry) {
     const candidates = Array.isArray(meta?.schema) ? meta.schema : (Array.isArray(meta?.fields) ? meta.fields : []);
     const out = [];
@@ -324,20 +356,65 @@ export function renderKanjiStudyCard({ store }) {
 
     return out;
   }
-  const sampleEntry = (Array.isArray(res?.view?.entries) && res.view.entries.length)
-    ? res.view.entries[0]
-    : ((Array.isArray(coll?.entries) && coll.entries.length) ? coll.entries[0] : null);
-  const entryFieldItems = buildEntryFieldItemsFromSchema(metadata, sampleEntry);
+
+  function getCurrentEntryFieldItems() {
+    const activeColl = store?.collections?.getActiveCollection?.() || null;
+    const activeMetadata = activeColl?.metadata || {};
+    const activeRes = store?.collections?.getActiveCollectionView
+      ? store.collections.getActiveCollectionView({ windowSize: 0 })
+      : null;
+    const sampleEntry = (Array.isArray(activeRes?.view?.entries) && activeRes.view.entries.length)
+      ? activeRes.view.entries[0]
+      : ((Array.isArray(activeColl?.entries) && activeColl.entries.length) ? activeColl.entries[0] : null);
+    return buildEntryFieldItemsFromSchema(activeMetadata, sampleEntry);
+  }
+
+  let entryFieldItems = getCurrentEntryFieldItems();
+
+  function refreshEntryFieldItems() {
+    entryFieldItems = getCurrentEntryFieldItems();
+    return entryFieldItems;
+  }
 
   function getGenericCardAvailableFields() {
-    return entryFieldItems.map((item) => ({
+    return refreshEntryFieldItems().map((item) => ({
       key: String(item?.value || '').trim(),
       label: String(item?.left || item?.value || '').trim() || String(item?.value || '').trim(),
-    })).filter((item) => item.key);
+    })).filter((item) => item.key && !item.key.startsWith('__'));
   }
 
   function getGenericCardConfig() {
-    return cardsConfigState[GENERIC_CARD_SETTINGS_KEY] || {};
+    const config = cardsConfigState[GENERIC_CARD_SETTINGS_KEY] || {};
+    const allowed = new Set(getGenericCardAvailableFields().map((item) => item.key));
+    const fields = Array.isArray(config.fields)
+      ? config.fields.map((field) => String(field || '').trim()).filter((field) => allowed.has(field))
+      : undefined;
+    return fields ? { ...config, fields } : { ...config };
+  }
+
+  function getMainCardConfig() {
+    const config = cardsConfigState[MAIN_CARD_SETTINGS_KEY] || {};
+    const allowed = new Set(getGenericCardAvailableFields().map((item) => item.key));
+    return {
+      ...config,
+      layout: normalizeLayoutConfig(config.layout, allowed),
+    };
+  }
+
+  function getJsonCardConfig() {
+    const config = cardsConfigState.json || {};
+    const allowed = new Set(['maximize', 'wrap', 'copy', 'toggle']);
+    const controls = Array.isArray(config.controls)
+      ? config.controls.map((item) => String(item || '').trim()).filter((item) => allowed.has(item))
+      : undefined;
+    return controls ? { ...config, controls } : { ...config };
+  }
+
+  function applyMainCardConfig() {
+    const mainCardApi = getCardApi('main', { createIfMissing: false });
+    if (!mainCardApi) return;
+    if (typeof mainCardApi.setAvailableFields === 'function') mainCardApi.setAvailableFields(getGenericCardAvailableFields());
+    if (typeof mainCardApi.setConfig === 'function') mainCardApi.setConfig(getMainCardConfig());
   }
 
   function applyGenericCardConfig() {
@@ -347,17 +424,60 @@ export function renderKanjiStudyCard({ store }) {
     if (typeof genericCardApi.setConfig === 'function') genericCardApi.setConfig(getGenericCardConfig());
   }
 
+  function applyJsonCardConfig() {
+    const jsonCardApi = getCardApi('json', { createIfMissing: false });
+    if (!jsonCardApi) return;
+    if (typeof jsonCardApi.setConfig === 'function') jsonCardApi.setConfig(getJsonCardConfig());
+  }
+
+  async function openMainCardSettings() {
+    const active = store?.collections?.getActiveCollection?.();
+    const key = String(active?.key || '').trim();
+    if (!key) return;
+    const availableFields = getGenericCardAvailableFields();
+    const currentConfig = getMainCardConfig();
+    const fallbackLayout = {
+      topLeft: availableFields.some((field) => field.key === 'type') ? 'type' : '',
+      main: availableFields.some((field) => field.key === 'kanji') ? 'kanji' : (availableFields.some((field) => field.key === 'lemma') ? 'lemma' : ''),
+      bottomLeft: availableFields.some((field) => field.key === 'reading') ? 'reading' : (availableFields.some((field) => field.key === 'gender') ? 'gender' : ''),
+      bottomRight: availableFields.some((field) => field.key === 'meaning') ? 'meaning' : '',
+    };
+    const next = await openGenericFlatCardConfigDialog({
+      title: 'Main Card Settings',
+      fields: availableFields,
+      layoutSlots: [
+        { key: 'topLeft', label: 'Top Left' },
+        { key: 'main', label: 'Main' },
+        { key: 'bottomLeft', label: 'Bottom Left' },
+        { key: 'bottomRight', label: 'Bottom Right' },
+      ],
+      selectedLayout: currentConfig.layout || fallbackLayout,
+      defaultLayout: fallbackLayout,
+    });
+    if (!next) return;
+    const layout = next.layout && typeof next.layout === 'object' ? { ...next.layout } : {};
+    cardsConfigState = {
+      ...cardsConfigState,
+      [MAIN_CARD_SETTINGS_KEY]: { ...currentConfig, layout },
+    };
+    applyMainCardConfig();
+    try {
+      (kanjiController || kanjiStudyController.create(key)).setCardConfig(MAIN_CARD_SETTINGS_KEY, { ...currentConfig, layout });
+    } catch (e) {}
+  }
+
   async function openGenericCardSettings() {
     const active = store?.collections?.getActiveCollection?.();
     const key = String(active?.key || '').trim();
     if (!key) return;
     const availableFields = getGenericCardAvailableFields();
     const currentConfig = getGenericCardConfig();
+    const allowed = new Set(availableFields.map((field) => field.key));
     const next = await openGenericFlatCardConfigDialog({
       title: 'Generic Card Settings',
       fields: availableFields,
       selectedFields: Array.isArray(currentConfig.fields)
-        ? currentConfig.fields.slice()
+        ? currentConfig.fields.filter((field) => allowed.has(String(field || '').trim()))
         : availableFields.map((field) => field.key),
     });
     if (!next) return;
@@ -372,7 +492,41 @@ export function renderKanjiStudyCard({ store }) {
     } catch (e) {}
   }
 
+  async function openJsonCardSettings() {
+    const active = store?.collections?.getActiveCollection?.();
+    const key = String(active?.key || '').trim();
+    if (!key) return;
+    const availableControls = [
+      { key: 'maximize', label: 'Maximize' },
+      { key: 'wrap', label: 'Wrap' },
+      { key: 'copy', label: 'Copy' },
+      { key: 'toggle', label: 'Collapse Toggle' },
+    ];
+    const currentConfig = getJsonCardConfig();
+    const next = await openGenericFlatCardConfigDialog({
+      title: 'JSON Card Settings',
+      fields: availableControls,
+      selectedFields: Array.isArray(currentConfig.controls)
+        ? currentConfig.controls.slice()
+        : availableControls.map((item) => item.key),
+    });
+    if (!next) return;
+    const controls = Array.isArray(next.fields)
+      ? next.fields.map((item) => String(item || '').trim()).filter(Boolean)
+      : [];
+    cardsConfigState = {
+      ...cardsConfigState,
+      json: { ...currentConfig, controls },
+    };
+    applyJsonCardConfig();
+    try {
+      (kanjiController || kanjiStudyController.create(key)).setCardConfig('json', { ...currentConfig, controls });
+    } catch (e) {}
+  }
+
+  applyMainCardConfig();
   applyGenericCardConfig();
+  applyJsonCardConfig();
 
   // create entry-level dropdown
   const entryFieldsRec = headerTools.addElement({
@@ -391,7 +545,7 @@ export function renderKanjiStudyCard({ store }) {
   entryFieldsControl = entryFieldsRec && entryFieldsRec.control ? entryFieldsRec.control : null;
 
   // For each related-collection declared in the collection metadata, add a dropdown.
-  const relatedDefs = Array.isArray(metadata?.relatedCollections) ? metadata.relatedCollections.slice() : [];
+  const relatedDefs = Array.isArray(coll?.metadata?.relatedCollections) ? coll.metadata.relatedCollections.slice() : [];
   const relatedDropdownControls = {};
   const RELATED_DEFAULT_ITEMS = [
     { value: 'english', left: 'English' },
@@ -584,6 +738,17 @@ export function renderKanjiStudyCard({ store }) {
         onNext: () => {},
         onPrev: () => {},
       }});
+    } else if (cardKey === 'main') {
+      api = cardDef.factory({
+        entry: null,
+        indexText: '',
+        config: { cardId: MAIN_CARD_SETTINGS_KEY },
+        handlers: {
+          onOpenConfig: () => { openMainCardSettings(); },
+        },
+      });
+      if (api && typeof api.setAvailableFields === 'function') api.setAvailableFields(getGenericCardAvailableFields());
+      if (api && typeof api.setConfig === 'function') api.setConfig(getMainCardConfig());
     } else if (cardKey === 'generic') {
       api = cardDef.factory({
         entry: null,
@@ -595,6 +760,16 @@ export function renderKanjiStudyCard({ store }) {
       });
       if (api && typeof api.setAvailableFields === 'function') api.setAvailableFields(getGenericCardAvailableFields());
       if (api && typeof api.setConfig === 'function') api.setConfig(getGenericCardConfig());
+    } else if (cardKey === 'json') {
+      api = cardDef.factory({
+        entry: null,
+        indexText: '',
+        config: { cardId: 'json' },
+        handlers: {
+          onOpenConfig: () => { openJsonCardSettings(); },
+        },
+      });
+      if (api && typeof api.setConfig === 'function') api.setConfig(getJsonCardConfig());
     } else {
       api = cardDef.factory({ entry: null, indexText: '' });
     }
@@ -751,6 +926,7 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   function refreshEntriesFromStore() {
+    refreshEntryFieldItems();
     const res = store.collections.getActiveCollectionView({ windowSize: 10 });
     const active = res?.collection || null;
     const view = res?.view || {};
@@ -773,7 +949,9 @@ export function renderKanjiStudyCard({ store }) {
         cardsConfigState = normalizeKanjiStudyCardsConfig(appState.cards);
         if (Array.isArray(appState.displayCards)) displayCardSelection = appState.displayCards.slice();
         else if (appState.displayCards === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
+        applyMainCardConfig();
         applyGenericCardConfig();
+        applyJsonCardConfig();
 
         // apply resolved maps if controller provided them
         try {
@@ -951,6 +1129,8 @@ export function renderKanjiStudyCard({ store }) {
       if (k === 'main' || k === 'related') continue;
       if (!displaySet.has(k) || !cardsToRefresh.has(k)) continue;
       const api = cardApis[k];
+      if (api && typeof api.setIndexText === 'function') api.setIndexText(caption);
+      if (k === 'json' && typeof api.setConfig === 'function') api.setConfig(getJsonCardConfig());
       if (api && typeof api.setEntry === 'function') api.setEntry(entry);
     }
     
@@ -970,21 +1150,43 @@ export function renderKanjiStudyCard({ store }) {
 
 
   // React to store changes (e.g., virtual set finishing its background resolution)
-  let unsub = null;
-  if (store && typeof store.subscribe === 'function') {
-    let lastKey = store?.collections?.getActiveCollection?.()?.key || null;
-    unsub = store.subscribe(() => {
-      const active = store?.collections?.getActiveCollection?.();
-      const key = active?.key || null;
-      // Refresh when active collection changes or when entries may have been updated.
-      if (key !== lastKey) {
-        lastKey = key;
-        uiStateRestored = false;
-      }
-      refreshEntriesFromStore();
-      render();
-    });
+  let isViewActive = true;
+  let pendingStoreRefresh = false;
+  function syncFromStoreAndRender() {
+    pendingStoreRefresh = false;
+    refreshEntriesFromStore();
+    render();
   }
+
+  const unsubs = [];
+  let lastKey = store?.collections?.getActiveCollection?.()?.key || null;
+  const onRelevantStateChanged = () => {
+    if (!isViewActive) {
+      pendingStoreRefresh = true;
+      return;
+    }
+    const active = store?.collections?.getActiveCollection?.();
+    const key = active?.key || null;
+    if (key !== lastKey) {
+      lastKey = key;
+      uiStateRestored = false;
+    }
+    syncFromStoreAndRender();
+  };
+  try {
+    if (store?.collections && typeof store.collections.subscribe === 'function') {
+      unsubs.push(store.collections.subscribe(() => {
+        onRelevantStateChanged();
+      }));
+    }
+  } catch (e) {}
+  try {
+    if (store?.kanjiProgress && typeof store.kanjiProgress.subscribe === 'function') {
+      unsubs.push(store.kanjiProgress.subscribe(() => {
+        onRelevantStateChanged();
+      }));
+    }
+  } catch (e) {}
 
   
 
@@ -1001,6 +1203,13 @@ export function renderKanjiStudyCard({ store }) {
   frag.appendChild(headerTools);
   frag.appendChild(el);
   frag.appendChild(footerControls.el);
+  el.__activate = () => {
+    isViewActive = true;
+    if (pendingStoreRefresh) syncFromStoreAndRender();
+  };
+  el.__deactivate = () => {
+    isViewActive = false;
+  };
   // mark mounted flags; the fragment will be appended by the shell into
   // `#shell-main` synchronously when this function returns.
   __mountedHeaderInShell = true;
@@ -1060,7 +1269,9 @@ export function renderKanjiStudyCard({ store }) {
     if (!document.body.contains(el)) {
       // finalize any remaining credit when navigating away/unmounting
       progressTracker?.teardown?.();
-      if (typeof unsub === 'function') unsub();
+      for (const unsub of unsubs) {
+        try { if (typeof unsub === 'function') unsub(); } catch (e) {}
+      }
       
       // cleanup header/footer moved into shell
       if (__mountedHeaderInShell && headerTools && headerTools.parentNode) headerTools.parentNode.removeChild(headerTools);

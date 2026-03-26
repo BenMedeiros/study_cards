@@ -62,7 +62,6 @@ const CATALOG = Object.freeze((() => {
     'shell.showFooterCaptions': { type: { kind: 'boolean' }, default: false },
     'shell.compactNav': { type: { kind: 'boolean' }, default: false },
     'shell.timingEnabled': { type: { kind: 'boolean' }, default: false },
-    'shell.logEmits': { type: { kind: 'boolean' }, default: false },
     'shell.logSettings': { type: { kind: 'boolean' }, default: false },
 
     // Manager-specific log toggles for collectionDatabaseManager

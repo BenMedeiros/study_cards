@@ -1,10 +1,10 @@
 export function createStudyProgressManager({
   uiState,
   persistence,
-  emitter,
   studyProgressKey = 'study_progress',
   studyTimeKey = 'study_time',
 } = {}) {
+  const subscribers = new Set();
   let trackerSeq = 0;
   let activeTrackerStatus = {
     trackerId: null,
@@ -30,6 +30,23 @@ export function createStudyProgressManager({
   function normalizeAppId(v, fallback = 'kanjiStudyCardView') {
     const s = normalizeValue(v || fallback);
     return s || 'kanjiStudyCardView';
+  }
+
+  function subscribe(cb) {
+    if (typeof cb !== 'function') return () => {};
+    subscribers.add(cb);
+    return () => { subscribers.delete(cb); };
+  }
+
+  function notifySubscribers(event = {}) {
+    const payload = {
+      type: String(event?.type || 'progress.changed'),
+      timestamp: Date.now(),
+      ...event,
+    };
+    for (const cb of Array.from(subscribers)) {
+      try { cb(payload); } catch (e) {}
+    }
   }
 
   function makeStudyId(collectionKey, entryKey) {
@@ -137,7 +154,15 @@ export function createStudyProgressManager({
     persistence.scheduleFlush({ immediate: !!immediate });
 
     const shouldNotify = (notify ?? !silent) !== false;
-    if (shouldNotify) emitter.emit();
+    if (shouldNotify) {
+      notifySubscribers({
+        type: 'progress.record.changed',
+        collectionKey: c,
+        entryKey: e,
+        studyId: id,
+        record: next,
+      });
+    }
     return next;
   }
 
@@ -546,7 +571,7 @@ export function createStudyProgressManager({
       if (!changed) return;
       persistence.markDirty({ kvKey: studyProgressKey });
       persistence.scheduleFlush({ immediate: true });
-      emitter.emit();
+      notifySubscribers({ type: 'progress.collection.clearedLearned', collectionKey: coll });
     } catch {
       // ignore
     }
@@ -573,7 +598,11 @@ export function createStudyProgressManager({
 
       persistence.markDirty({ kvKey: studyProgressKey });
       persistence.scheduleFlush({ immediate: true });
-      emitter.emit();
+      notifySubscribers({
+        type: 'progress.collection.clearedLearnedValues',
+        collectionKey: coll,
+        entryKeys: Array.from(toClear),
+      });
     } catch {
       // ignore
     }
@@ -618,7 +647,6 @@ export function createStudyProgressManager({
     if (rec.sessions.length > MAX_SESSIONS) rec.sessions.splice(0, rec.sessions.length - MAX_SESSIONS);
 
     try { persistence.appendStudySession(session); } catch {}
-    emitter.emit();
   }
 
   function getStudyTimeRecord() { return ensureStudyTimeRecord(); }
@@ -729,6 +757,7 @@ export function createStudyProgressManager({
     createCardProgressTracker,
     getActiveCardProgressStatus,
     getFocusKanjiValues,
+    subscribe,
 
     // Study time
     ensureStudyTimeRecord,

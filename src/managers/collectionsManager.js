@@ -4,7 +4,8 @@ import { timed } from '../utils/browser/timing.js';
 import { compileTableSearchQuery, matchesTableSearch, filterRecordsAndIndicesByTableSearch } from '../utils/browser/tableSearch.js';
 import { extractPathValues } from '../utils/common/collectionParser.mjs';
 
-export function createCollectionsManager({ state, uiState, persistence, emitter, progressManager, collectionDB = null, settings = null }) {
+export function createCollectionsManager({ state, uiState, persistence, progressManager, collectionDB = null, settings = null }) {
+  const subscribers = new Set();
   // Folder metadata helpers/storage used for lazy loads
   let folderMetadataMap = null;
   const metadataCache = {};
@@ -39,6 +40,53 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
   // Folder-level entry index cache used to resolve set terms to real entries.
   const folderEntryIndexCache = new Map();
+  const collectionRevisionMap = new Map();
+  const collectionViewCache = new Map();
+  const sourceArrayIds = new WeakMap();
+  let nextSourceArrayId = 1;
+
+  function getCollectionRevision(key) {
+    const k = String(key || '').trim();
+    if (!k) return 0;
+    return collectionRevisionMap.get(k) || 0;
+  }
+
+  function bumpCollectionRevision(key) {
+    const k = String(key || '').trim();
+    if (!k) return 0;
+    const next = getCollectionRevision(k) + 1;
+    collectionRevisionMap.set(k, next);
+    return next;
+  }
+
+  function clearCollectionViewCache(key = '') {
+    const prefix = String(key || '').trim();
+    if (!prefix) {
+      collectionViewCache.clear();
+      return;
+    }
+    for (const cacheKey of collectionViewCache.keys()) {
+      if (cacheKey.startsWith(`${prefix}|`)) collectionViewCache.delete(cacheKey);
+    }
+  }
+
+  function getSourceArrayId(arr) {
+    if (!Array.isArray(arr)) return 'na';
+    let id = sourceArrayIds.get(arr);
+    if (!id) {
+      id = nextSourceArrayId++;
+      sourceArrayIds.set(arr, id);
+    }
+    return id;
+  }
+
+  function fieldListKey(fields = null) {
+    if (!Array.isArray(fields) || !fields.length) return '';
+    return fields.map((field) => {
+      if (typeof field === 'string') return String(field).trim();
+      return String(field?.key || '').trim();
+    }).filter(Boolean).join('|');
+  }
 
   function normalizeRelatedCollectionsConfig(v) {
     const arr = Array.isArray(v) ? v : [];
@@ -200,8 +248,22 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     return { error: `Unknown runtime map: ${id}` };
   }
 
-  function emit() {
-    emitter.emit();
+  function subscribe(cb) {
+    if (typeof cb !== 'function') return () => {};
+    subscribers.add(cb);
+    return () => { subscribers.delete(cb); };
+  }
+
+  function notifySubscribers(event = {}) {
+    const payload = {
+      type: String(event?.type || 'collections.changed'),
+      timestamp: Date.now(),
+      activeCollectionId: state.activeCollectionId,
+      ...event,
+    };
+    for (const cb of Array.from(subscribers)) {
+      try { cb(payload); } catch (e) {}
+    }
   }
 
   function getCollections() {
@@ -528,7 +590,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     record.metadata = record.metadata || {};
     if (fields) record.metadata.fields = fields;
 
-      emit();
+      notifySubscribers({ type: 'collections.virtualSet.resolved', collectionKey: record?.key || null });
     });
   }
 
@@ -773,7 +835,10 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         // ignore
       }
 
-      emit();
+      notifySubscribers({
+        type: 'collections.index.loaded',
+        availableCollectionPaths: paths.slice(),
+      });
 
       return paths;
     });
@@ -826,6 +891,8 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
       const record = { ...data, key };
       state.collections = [record];
+      bumpCollectionRevision(key);
+      clearCollectionViewCache(key);
 
       try {
         const top = topFolderOfKey(key);
@@ -834,7 +901,13 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         // ignore
       }
 
-      if (opts.notify !== false) emit();
+      if (opts.notify !== false) {
+        notifySubscribers({
+          type: 'collections.loaded',
+          collectionKey: key,
+          activeCollectionChanged: state.activeCollectionId === key,
+        });
+      }
       return record;
     });
 
@@ -853,6 +926,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
   async function setActiveCollectionId(id) {
     const nextId = id || null;
+    const prevId = state.activeCollectionId;
     const same = state.activeCollectionId === nextId;
     return timed(`collections.setActiveCollectionId ${String(nextId || '(none)')}`, async () => {
       if (!same && nextId) {
@@ -867,7 +941,10 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       }
 
       if (!same) state.activeCollectionId = nextId;
-      if (!same && !nextId) state.collections = [];
+      if (!same && !nextId) {
+        state.collections = [];
+        clearCollectionViewCache();
+      }
 
       try {
         syncHashCollectionParam(nextId);
@@ -896,7 +973,14 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         // If absent, silently ignore per user's preference (no migration/fallback).
       }
 
-      if (!same) emit();
+      if (!same) {
+        notifySubscribers({
+          type: 'collections.active.changed',
+          collectionKey: nextId,
+          prevCollectionKey: prevId,
+          activeCollectionChanged: true,
+        });
+      }
     });
   }
 
@@ -953,6 +1037,13 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
 
       persistence.markDirty({ collectionId: collId });
       persistence.scheduleFlush();
+      if (opts.notify !== false) {
+        notifySubscribers({
+          type: 'collections.state.changed',
+          collectionKey: String(collId || '').trim() || null,
+          patch: (patch && typeof patch === 'object') ? { ...patch } : {},
+        });
+      }
     } catch {
       // ignore
     }
@@ -1001,7 +1092,11 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       uiState.collections[id] = next;
       persistence.markDirty({ collectionId: id });
       persistence.scheduleFlush();
-      emit();
+      notifySubscribers({
+        type: 'collections.state.changed',
+        collectionKey: id,
+        deletedKeys: Array.isArray(keys) ? keys.map((k) => String(k || '')).filter(Boolean) : [],
+      });
     } catch {
       // ignore
     }
@@ -1297,6 +1392,17 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const q = String(query || '').trim();
     const label = `collections.filterEntriesAndIndicesByTableSearch (${arr.length}) q=${q.length}`;
     return timed(label, () => {
+      try {
+        console.info('[CollectionsManager] tableSearch request', {
+          collectionKey: String(collection?.key || '').trim() || null,
+          query: q,
+          queryLength: q.length,
+          entriesCount: arr.length,
+          indicesCount: idx.length,
+          fields: Array.isArray(fields) ? fields.map((field) => (typeof field === 'string' ? String(field).trim() : String(field?.key || '').trim())).filter(Boolean) : [],
+          globalFields: Array.isArray(globalFields) ? globalFields.map((field) => (typeof field === 'string' ? String(field).trim() : String(field?.key || '').trim())).filter(Boolean) : [],
+        });
+      } catch (e) {}
       if (!q) return { entries: arr.slice(), indices: idx.slice() };
       const compiled = compileTableSearchQuery(q);
       if (!collection) {
@@ -1509,10 +1615,40 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const coll = (collection && typeof collection === 'object') ? collection : null;
     const baseEntries = Array.isArray(coll?.entries) ? coll.entries : (Array.isArray(opts?.entries) ? opts.entries : []);
     const stateObj = (collState && typeof collState === 'object') ? collState : {};
+    const collKey = String(coll?.key || '').trim();
+    const cacheKey = [
+      collKey || '(none)',
+      `rev=${getCollectionRevision(collKey)}`,
+      `src=${getSourceArrayId(Array.isArray(opts?.entries) ? opts.entries : baseEntries)}`,
+      `n=${baseEntries.length}`,
+      `shuffle=${String(stateObj?.order_hash_int ?? '')}`,
+      `study=${String(stateObj?.studyFilter || '')}`,
+      `held=${String(stateObj?.heldTableSearch || '').trim()}`,
+      `fields=${fieldListKey(opts?.tableSearchFields)}`,
+      `globals=${fieldListKey(opts?.tableGlobalSearchFields)}`,
+    ].join('|');
     const label = collectionReadyTimingLabel('collections.getCollectionViewForCollection', coll, stateObj, {
       baseCount: baseEntries.length,
     }, { onlyRoot: true });
     return timed(label, () => {
+      const cached = collectionViewCache.get(cacheKey);
+      if (cached) {
+        try {
+          console.info('[CollectionsManager] collectionView cache hit', {
+            collectionKey: collKey || null,
+            heldTableSearch: String(stateObj?.heldTableSearch || '').trim(),
+            studyFilter: String(stateObj?.studyFilter || '').trim(),
+            entriesCount: Array.isArray(cached?.entries) ? cached.entries.length : 0,
+          });
+        } catch (e) {}
+        return {
+          ...cached,
+          entries: Array.isArray(cached?.entries) ? cached.entries.slice() : [],
+          indices: Array.isArray(cached?.indices) ? cached.indices.slice() : [],
+          includeStates: Array.isArray(cached?.includeStates) ? cached.includeStates.slice() : [],
+        };
+      }
+
       const view = getCollectionView(baseEntries, stateObj, { ...opts, collection: coll });
       let nextEntries = Array.isArray(view.entries) ? view.entries.slice() : [];
       let nextIndices = Array.isArray(view.indices) ? view.indices.slice() : [];
@@ -1542,7 +1678,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         // ignore
       }
 
-      return {
+      const result = {
         ...view,
         entries: nextEntries,
         indices: nextIndices,
@@ -1550,6 +1686,17 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
         skipLearned,
         focusOnly,
       };
+      collectionViewCache.set(cacheKey, {
+        ...result,
+        entries: nextEntries.slice(),
+        indices: nextIndices.slice(),
+        includeStates: includeStates.slice(),
+      });
+      if (collectionViewCache.size > 100) {
+        const oldestKey = collectionViewCache.keys().next().value;
+        if (oldestKey) collectionViewCache.delete(oldestKey);
+      }
+      return result;
     }, { onlyRoot: true });
   }
 
@@ -1590,19 +1737,17 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       if (!coll || !coll.key) return [];
 
       const baseEntries = Array.isArray(coll.entries) ? coll.entries : [];
-      const out = [];
       const relations = normalizeRelatedCollectionsConfig(coll?.metadata?.relatedCollections);
+      if (!relations.length) return baseEntries.slice();
       for (const e of baseEntries) {
-        const relatedCounts = getEntryRelatedCounts(e, coll);
-        const relatedSamples = {};
         for (const rel of relations) {
           const arr = Array.isArray(e?.relatedCollections?.[rel.name]) ? e.relatedCollections[rel.name] : [];
-          relatedSamples[rel.name] = sampleN > 0 ? arr.slice(0, sampleN) : [];
+          if (sampleN > 0 && arr.length > sampleN) {
+            return baseEntries.map((entry) => ({ ...entry }));
+          }
         }
-
-        out.push({ ...e, /* related counts/samples are available via entry.relatedCollections */ });
       }
-      return out;
+      return baseEntries.slice();
     } catch (err) {
       return [];
     }
@@ -1631,7 +1776,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       : (Math.floor(Math.random() * 0x100000000) >>> 0);
 
     saveCollectionState(coll.key, { order_hash_int: seed, isShuffled: true });
-    emit();
     return seed;
   }
 
@@ -1639,7 +1783,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     const coll = collKey ? getCollections().find(c => c?.key === collKey) : getActiveCollection();
     if (!coll) return false;
     saveCollectionState(coll.key, { order_hash_int: null, isShuffled: false });
-    emit();
     return true;
   }
 
@@ -1648,7 +1791,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     if (!coll) return false;
     return timed(`collections.setStudyFilter ${coll.key}`, () => {
       saveCollectionState(coll.key, { studyFilter: serializeStudyFilter({ states, skipLearned: !!skipLearned, focusOnly: !!focusOnly }) });
-      emit();
       return true;
     });
   }
@@ -1663,7 +1805,6 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
       saveCollectionState(coll.key, {
         heldTableSearch: q,
       });
-      emit();
       return true;
     });
   }
@@ -1689,6 +1830,7 @@ export function createCollectionsManager({ state, uiState, persistence, emitter,
     isCollectionSetVirtualKey,
     parseCollectionSetVirtualKey,
     loadSeedCollections,
+    subscribe,
     getCollections,
     getAvailableCollections,
     getActiveCollectionId,

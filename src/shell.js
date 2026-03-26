@@ -32,7 +32,6 @@ export function createAppShell({ store, onNavigate }) {
         'shell.hideShellFooter',
         'shell.hideViewHeaderTools',
         'shell.hideViewFooterControls',
-        'shell.logEmits',
         'shell.logSettings',
       ],
       onChange: ({ settingId, next } = {}) => {
@@ -58,7 +57,6 @@ export function createAppShell({ store, onNavigate }) {
       'shell.hideShellFooter',
       'shell.hideViewHeaderTools',
       'shell.hideViewFooterControls',
-      'shell.logEmits',
       'shell.logSettings',
     ],
     updateShellLayoutVars: () => {
@@ -381,6 +379,11 @@ export function createAppShell({ store, onNavigate }) {
   const main = document.createElement('main');
   main.className = 'main';
   main.id = 'shell-main';
+  const cachedMainHost = document.createElement('div');
+  cachedMainHost.id = 'shell-main-cached';
+  const transientMainHost = document.createElement('div');
+  transientMainHost.id = 'shell-main-transient';
+  main.append(cachedMainHost, transientMainHost);
 
   header.append(headerInner);
   header.append(nav);
@@ -448,16 +451,63 @@ export function createAppShell({ store, onNavigate }) {
     shellFooter.renderFromStore({ activeCollection: cached.activeCollection, activeId: cached.activeId });
   } catch (e) {}
 
-  // Initialize global emit-logging flag from persisted shell state so
-  // the UI checkbox reflects and controls the runtime flag consistently.
-  try {
-    const shellLogEmits = (store && store.settings && typeof store.settings.get === 'function') ? !!store.settings.get('shell.logEmits', { consumerId: 'shell' }) : false;
-    if (typeof window !== 'undefined') window.__LOG_EMITS__ = !!shellLogEmits;
-  } catch (e) {}
-
   // Study time tracking (app x collection)
   let activeStudySession = null;
   let activeRoutePathname = null;
+  const cachedRoutePaths = new Set(['/kanji', '/data']);
+  const cachedRouteMounts = new Map();
+
+  function forEachLifecycleNode(root, fn) {
+    if (!root || typeof fn !== 'function') return;
+    const visit = (node) => {
+      try { fn(node); } catch (e) {}
+    };
+    visit(root);
+    try {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+      let current = walker.nextNode();
+      while (current) {
+        visit(current);
+        current = walker.nextNode();
+      }
+    } catch (e) {}
+  }
+
+  function activateCachedRouteMount(mount) {
+    forEachLifecycleNode(mount, (node) => {
+      if (typeof node?.__activate === 'function') node.__activate();
+      if (typeof node?.__register === 'function') node.__register();
+    });
+  }
+
+  function deactivateCachedRouteMount(mount) {
+    forEachLifecycleNode(mount, (node) => {
+      if (typeof node?.__deactivate === 'function') node.__deactivate();
+      if (typeof node?.__unregister === 'function') node.__unregister();
+    });
+  }
+
+  function hideAllCachedRouteMounts() {
+    for (const mount of cachedRouteMounts.values()) {
+      deactivateCachedRouteMount(mount);
+      mount.hidden = true;
+      mount.style.display = 'none';
+    }
+  }
+
+  function getCachedRouteMount(path, renderFn) {
+    if (cachedRouteMounts.has(path)) return cachedRouteMounts.get(path);
+    const mount = document.createElement('div');
+    mount.className = 'shell-cached-route';
+    mount.dataset.routePath = path;
+    mount.hidden = true;
+    mount.style.display = 'none';
+    const content = renderFn();
+    if (content) mount.append(content);
+    cachedMainHost.append(mount);
+    cachedRouteMounts.set(path, mount);
+    return mount;
+  }
 
   function routePathToAppId(pathname) {
     const p = String(pathname || '').trim();
@@ -956,6 +1006,10 @@ export function createAppShell({ store, onNavigate }) {
   function renderRoute(route) {
     const path = String(route?.pathname || '/');
     return timed(`shell.renderRoute ${path}`, () => {
+      renderHeader();
+      hideAllCachedRouteMounts();
+      transientMainHost.innerHTML = '';
+
       // Study-time bookkeeping: close previous view session and start the next.
       try {
         const nextPath = String(route?.pathname || '/');
@@ -965,35 +1019,40 @@ export function createAppShell({ store, onNavigate }) {
         }
       } catch (e) {}
 
-      renderHeader();
-      main.innerHTML = '';
-
       if (route.pathname === '/kanji') {
-        main.append(timed('view.renderKanjiStudyCard', () => renderKanjiStudyCard({ store })));
+        try { console.info(cachedRouteMounts.has('/kanji') ? 'shell.renderRoute /kanji cache hit' : 'shell.renderRoute /kanji cache miss'); } catch (e) {}
+        const mount = getCachedRouteMount('/kanji', () => timed('view.renderKanjiStudyCard', () => renderKanjiStudyCard({ store })));
+        mount.hidden = false;
+        mount.style.display = '';
+        activateCachedRouteMount(mount);
         return;
       }
       if (route.pathname === '/explorer') {
-        main.append(timed('view.renderEntityExplorer', () => renderEntityExplorer({ store })));
+        transientMainHost.append(timed('view.renderEntityExplorer', () => renderEntityExplorer({ store })));
         return;
       }
 
       if (route.pathname === '/data') {
-        main.append(timed('view.renderData', () => renderData({ store })));
+        try { console.info(cachedRouteMounts.has('/data') ? 'shell.renderRoute /data cache hit' : 'shell.renderRoute /data cache miss'); } catch (e) {}
+        const mount = getCachedRouteMount('/data', () => timed('view.renderData', () => renderData({ store })));
+        mount.hidden = false;
+        mount.style.display = '';
+        activateCachedRouteMount(mount);
         return;
       }
 
       if (route.pathname === '/study-manager') {
-        main.append(timed('view.renderStudyManager', () => renderStudyManager({ store, onNavigate, route })));
+        transientMainHost.append(timed('view.renderStudyManager', () => renderStudyManager({ store, onNavigate, route })));
         return;
       }
 
       if (route.pathname === '/collections') {
-        main.append(timed('view.renderCollectionsManager', () => renderCollectionsManager({ store, onNavigate, route })));
+        transientMainHost.append(timed('view.renderCollectionsManager', () => renderCollectionsManager({ store, onNavigate, route })));
         return;
       }
 
       if (route.pathname === '/manage-collections') {
-        main.append(timed('view.renderManageCollections', () => renderManageCollections({ store, onNavigate, route })));
+        transientMainHost.append(timed('view.renderManageCollections', () => renderManageCollections({ store, onNavigate, route })));
         return;
       }
 
@@ -1006,53 +1065,33 @@ export function createAppShell({ store, onNavigate }) {
       np.className = 'hint';
       np.textContent = `No route for ${route.pathname}`;
       nf.append(nh, np);
-      main.append(nf);
+      transientMainHost.append(nf);
     });
   }
 
-  store.subscribe(() => {
-    // Refresh cached values then re-render header
-    try {
-      // Ensure runtime emit-logging matches persisted shell state when persistence finishes loading.
-      try {
-        const shellLogEmits = (store && store.settings && typeof store.settings.get === 'function') ? !!store.settings.get('shell.logEmits', { consumerId: 'shell' }) : false;
-        if (typeof window !== 'undefined') window.__LOG_EMITS__ = !!shellLogEmits;
-      } catch (e) {}
-      const prevActiveId = cached.activeId;
-      cached.collections = Array.isArray(store?.collections?.getCollections?.()) ? store.collections.getCollections() : cached.collections;
-      cached.activeId = typeof store?.collections?.getActiveCollectionId === 'function' ? store.collections.getActiveCollectionId() : cached.activeId;
-      cached.activeCollection = typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : cached.activeCollection;
-      cached.voiceState = getVoiceState();
-
-      // Re-apply persisted shell UI prefs (these may be loaded asynchronously
-      // by the persistence manager). Do not re-persist here — only apply
-      // visual state based on what's in the store.
-      try {
-        if (store && store.settings && typeof store.settings.get === 'function') {
-          try {
-            const sc = !!store.settings.get('shell.showFooterCaptions', { consumerId: 'shell' });
-            if (sc) document.body.classList.add('using-keyboard');
-            else document.body.classList.remove('using-keyboard');
-            captionsVisible = sc;
-          } catch (e) {}
-
-          try { document.body.classList.toggle('hide-shell-footer', !!store.settings.get('shell.hideShellFooter', { consumerId: 'shell' })); } catch (e) {}
-          try { document.body.classList.toggle('hide-view-footer-controls', !!store.settings.get('shell.hideViewFooterControls', { consumerId: 'shell' })); } catch (e) {}
-          try { document.body.classList.toggle('hide-view-header-tools', !!store.settings.get('shell.hideViewHeaderTools', { consumerId: 'shell' })); } catch (e) {}
-        }
-      } catch (e) {}
-
-      // If the active collection changed while staying in the same view,
-      // split the study session so time is attributed to the correct collection.
-      if (prevActiveId !== cached.activeId && activeRoutePathname) {
-        swapStudySessionFor(activeRoutePathname);
+  if (store?.collections && typeof store.collections.subscribe === 'function') {
+    store.collections.subscribe((event = {}) => {
+      const type = String(event?.type || '').trim();
+      if (type && type !== 'collections.index.loaded' && type !== 'collections.loaded' && type !== 'collections.active.changed') {
+        return;
       }
-    } catch (err) {}
-    renderHeader();
-    try {
-      shellFooter.renderFromStore({ activeCollection: cached.activeCollection, activeId: cached.activeId });
-    } catch (e) {}
-  });
+      try {
+        const prevActiveId = cached.activeId;
+        cached.collections = Array.isArray(store?.collections?.getCollections?.()) ? store.collections.getCollections() : cached.collections;
+        cached.activeId = typeof store?.collections?.getActiveCollectionId === 'function' ? store.collections.getActiveCollectionId() : cached.activeId;
+        cached.activeCollection = typeof store?.collections?.getActiveCollection === 'function' ? store.collections.getActiveCollection() : cached.activeCollection;
+        cached.voiceState = getVoiceState();
+
+        if (prevActiveId !== cached.activeId && activeRoutePathname) {
+          swapStudySessionFor(activeRoutePathname);
+        }
+      } catch (err) {}
+      renderHeader();
+      try {
+        shellFooter.renderFromStore({ activeCollection: cached.activeCollection, activeId: cached.activeId });
+      } catch (e) {}
+    });
+  }
 
   return { el, renderHeader, renderRoute, getCurrentRoute };
 }

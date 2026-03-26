@@ -23,6 +23,18 @@ function cloneCardsConfig(cards) {
     if (Array.isArray(rawConfig.fields)) {
       nextConfig.fields = Array.from(new Set(rawConfig.fields.map((field) => String(field || '').trim()).filter(Boolean)));
     }
+    if (Array.isArray(rawConfig.controls)) {
+      nextConfig.controls = Array.from(new Set(rawConfig.controls.map((item) => String(item || '').trim()).filter(Boolean)));
+    }
+    if (rawConfig.layout && typeof rawConfig.layout === 'object' && !Array.isArray(rawConfig.layout)) {
+      nextConfig.layout = {};
+      for (const [slotKey, fieldKey] of Object.entries(rawConfig.layout)) {
+        const slot = String(slotKey || '').trim();
+        const field = String(fieldKey || '').trim();
+        if (!slot) continue;
+        nextConfig.layout[slot] = field;
+      }
+    }
     out[key] = nextConfig;
   }
   return out;
@@ -76,18 +88,44 @@ function _validateEntryFields(fields, collection) {
 function _validateCards(cards, collection) {
   if (!cards || typeof cards !== 'object' || Array.isArray(cards)) throw new Error('cards must be an object');
   const fieldKeys = new Set(getCollectionFieldKeys(collection));
+  const allowedMainLayoutSlots = new Set(['topLeft', 'main', 'bottomLeft', 'bottomRight']);
+  const allowedJsonControls = new Set(['maximize', 'wrap', 'copy', 'toggle']);
   for (const [cardKey, rawConfig] of Object.entries(cards)) {
     const key = String(cardKey || '').trim();
     if (!key) continue;
     if (!rawConfig || typeof rawConfig !== 'object' || Array.isArray(rawConfig)) {
       throw new Error(`cards.${key} must be an object`);
     }
-    if (!Object.prototype.hasOwnProperty.call(rawConfig, 'fields')) continue;
-    if (!Array.isArray(rawConfig.fields)) throw new Error(`cards.${key}.fields must be an array`);
-    for (const fieldKey of rawConfig.fields) {
-      const field = String(fieldKey || '').trim();
-      if (!field) throw new Error(`cards.${key}.fields entries must be non-empty strings`);
-      if (!fieldKeys.has(field)) throw new Error(`cards.${key}.fields entry not in collection schema: ${field}`);
+    if (Object.prototype.hasOwnProperty.call(rawConfig, 'fields')) {
+      if (!Array.isArray(rawConfig.fields)) throw new Error(`cards.${key}.fields must be an array`);
+      for (const fieldKey of rawConfig.fields) {
+        const field = String(fieldKey || '').trim();
+        if (!field) throw new Error(`cards.${key}.fields entries must be non-empty strings`);
+        if (!fieldKeys.has(field)) throw new Error(`cards.${key}.fields entry not in collection schema: ${field}`);
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(rawConfig, 'controls')) {
+      if (!Array.isArray(rawConfig.controls)) throw new Error(`cards.${key}.controls must be an array`);
+      for (const controlKey of rawConfig.controls) {
+        const control = String(controlKey || '').trim();
+        if (!allowedJsonControls.has(control)) throw new Error(`cards.${key}.controls entry not supported: ${control}`);
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(rawConfig, 'layout')) {
+      if (!rawConfig.layout || typeof rawConfig.layout !== 'object' || Array.isArray(rawConfig.layout)) {
+        throw new Error(`cards.${key}.layout must be an object`);
+      }
+      for (const [slotKey, fieldKey] of Object.entries(rawConfig.layout)) {
+        const slot = String(slotKey || '').trim();
+        const field = String(fieldKey || '').trim();
+        if (!slot) throw new Error(`cards.${key}.layout slot keys must be non-empty strings`);
+        if (key === 'main' && !allowedMainLayoutSlots.has(slot)) {
+          throw new Error(`cards.${key}.layout slot not supported: ${slot}`);
+        }
+        if (field && !fieldKeys.has(field)) {
+          throw new Error(`cards.${key}.layout entry not in collection schema: ${field}`);
+        }
+      }
     }
   }
 }

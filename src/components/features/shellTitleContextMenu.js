@@ -105,23 +105,6 @@ export function createShellTitleContextMenu({
       });
     } catch (e) {}
 
-    // Emit logging toggle
-    try {
-      const emitsEnabled = !!_read('shell.logEmits', false);
-      items.push({
-        label: `${emitsEnabled ? '☑' : '☐'} Log Emits`,
-        onClick: () => {
-          try {
-            const cur = !!_read('shell.logEmits', false);
-            const next = !cur;
-            try { window.__LOG_EMITS__ = !!next; } catch (e) {}
-            _write('shell.logEmits', !!next, { immediate: true });
-            try { console.info(`[Emitter] emits logging ${next ? 'enabled' : 'disabled'}`); } catch (e) {}
-          } catch (e) {}
-        }
-      });
-    } catch (e) {}
-
     // SettingsManager read/write logging toggle
     try {
       const settingsLogsEnabled = !!_read('shell.logSettings', false);

@@ -1124,6 +1124,7 @@ function createViewFooterControls(items = [], opts = {}) {
 
   setTimeout(register, 0);
 
+  footerControls.__register = register;
   footerControls.__unregister = unregister;
 
   return {

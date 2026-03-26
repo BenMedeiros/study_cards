@@ -269,6 +269,9 @@ export function createJsonViewer(value, opts = {}) {
 
   const showToggle = opts.showToggle !== false;
   const showWrap = opts.showWrap !== false;
+  const requestedControls = Array.isArray(opts.controls)
+    ? opts.controls.map((item) => String(item || '').trim()).filter(Boolean)
+    : ['maximize', 'wrap', 'copy', 'toggle'];
   const toggle = document.createElement('button');
   toggle.type = 'button';
   toggle.className = 'json-toggle';
@@ -389,8 +392,7 @@ export function createJsonViewer(value, opts = {}) {
     } catch (e) {}
   });
 
-  // attach buttons according to options
-  if (opts.showMaximize !== false) controls.appendChild(maxBtn);
+  const showMaximize = opts.showMaximize !== false;
 
   // wrap toggle (icon) - handled here so per-view wrapping is local
   if (showWrap) {
@@ -408,11 +410,17 @@ export function createJsonViewer(value, opts = {}) {
         wrapMainBtn.setAttribute('aria-pressed', wrapping ? 'true' : 'false');
         try { wrapper.dispatchEvent(new CustomEvent('json-wrap-toggle', { detail: { wrapping }, bubbles: true })); } catch (e) {}
       });
-      controls.appendChild(wrapMainBtn);
   }
-
-  if (opts.showCopy !== false) controls.appendChild(copyMainBtn);
-  if (showToggle) controls.appendChild(toggle);
+  const controlNodes = {
+    maximize: showMaximize ? maxBtn : null,
+    wrap: showWrap ? wrapMainBtn : null,
+    copy: opts.showCopy !== false ? copyMainBtn : null,
+    toggle: showToggle ? toggle : null,
+  };
+  requestedControls.forEach((controlKey) => {
+    const node = controlNodes[controlKey];
+    if (node) controls.appendChild(node);
+  });
 
   // Modal dialog helper for maximize
   function openMaximizedView() {

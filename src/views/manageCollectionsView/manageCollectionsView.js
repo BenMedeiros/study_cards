@@ -1530,8 +1530,8 @@ export function renderManageCollections({ store, onNavigate }) {
   try { renderAiPrompts(); } catch (e) {}
   Promise.resolve().then(loadCurrent);
 
-  const unsubscribe = (typeof store?.subscribe === 'function')
-    ? store.subscribe(() => {
+  const unsubscribe = (typeof store?.collections?.subscribe === 'function')
+    ? store.collections.subscribe(() => {
         const active = store?.collections?.getActiveCollection?.();
         const nextKey = String(active?.key || active?.path || '').trim();
         if (nextKey && nextKey !== collectionKey) {
