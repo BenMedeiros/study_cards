@@ -1,0 +1,299 @@
+/* Manage Collections view */
+.manage-collections-view .mc-layout {
+  display: grid;
+  grid-template-columns: min(50%, 40rem) 1fr;
+  gap: 0.75rem;
+}
+
+.manage-collections-view p {
+  margin: 0;
+}
+
+.manage-collections-view :is(.mc-key-input, .mc-version-select, .mc-label-input) {
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.5rem;
+  border: var(--border-1);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.manage-collections-view .mc-key-input,
+.manage-collections-view .mc-version-select {
+  min-width: 16rem;
+}
+
+.manage-collections-view .mc-key-input {
+  min-width: 18rem;
+}
+
+.manage-collections-view .mc-label {
+  color: var(--muted);
+  font-size: var(--font-size-md);
+  margin-right: 0.35rem;
+}
+
+.manage-collections-view .mc-json-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.manage-collections-view .mc-json-title {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.manage-collections-view .mc-json-mode-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.manage-collections-view .mc-import {
+  width: 100%;
+  min-height: 12rem;
+  resize: vertical;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.6rem;
+  border: var(--border-1);
+  background: var(--surface-void-soft);
+  color: var(--text);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-md);
+  line-height: 1.45;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+.manage-collections-view .mc-import.mc-drag-over {
+  border-color: var(--accent-border-emphasis);
+  background: var(--accent-bg-muted);
+  box-shadow: 0 0 0 2px var(--accent-bg-strong);
+  cursor: copy;
+}
+
+.manage-collections-view .mc-label-input {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.manage-collections-view .mc-actions-row {
+  margin-top: 0.6rem;
+  display: inline-flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.manage-collections-view .mc-ai-prompts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.manage-collections-view .mc-ai-prompt-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.manage-collections-view .mc-ai-prompt-actions {
+  margin-top: 0;
+}
+
+/* When the label input is placed inside the actions row, show it inline */
+.manage-collections-view .mc-actions-row .mc-label-input {
+  width: auto;
+  margin-top: 0;
+  min-width: 18rem;
+  flex: 1 1 auto;
+}
+
+.manage-collections-view .mc-status {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  white-space: pre-wrap;
+}
+
+.manage-collections-view .mc-warnings {
+  margin-top: 0.45rem;
+  color: var(--status-warning-text-soft);
+  white-space: pre-wrap;
+  font-size: var(--font-size-md);
+}
+
+.manage-collections-view .mc-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.manage-collections-view .mc-history .table tbody tr.mc-history-row-active td {
+  background: var(--accent-bg-muted);
+  font-weight: 600;
+}
+
+.manage-collections-view .mc-history .table tbody tr.mc-history-row-active:hover td {
+  background: var(--accent-bg-strong);
+}
+
+.manage-collections-view .mc-history .table tbody tr.mc-history-row-active td:first-child {
+  box-shadow: inset 3px 0 0 var(--accent-border-max);
+}
+
+.manage-collections-view .mc-diff-list {
+  max-height: 28rem;
+  overflow-y: auto;
+}
+
+.manage-collections-view .mc-details {
+  border: var(--border-1);
+  border-radius: 0.6rem;
+  background: var(--surface-void-soft);
+  overflow: hidden;
+}
+
+.manage-collections-view .mc-details[open] {
+  background: var(--surface-void-raised);
+}
+
+.manage-collections-view .mc-details-summary {
+  cursor: pointer;
+  list-style: none;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem 0.65rem;
+  color: var(--text);
+}
+
+/* Save Diff error state: make button visually red when invalid entries exist */
+.manage-collections-view .mc-save-invalid.btn.primary:not(:disabled) {
+  background: linear-gradient(180deg, var(--status-danger) 0%, var(--status-danger-dark) 100%);
+  border-color: var(--status-danger-border);
+  color: var(--accent-contrast);
+}
+
+.manage-collections-view .mc-save-invalid.btn.primary:not(:disabled):hover {
+  filter: brightness(1.05);
+}
+
+.manage-collections-view .mc-save-invalid.btn.primary:disabled {
+  opacity: 0.9;
+  cursor: not-allowed;
+}
+
+.manage-collections-view .mc-details-summary::-webkit-details-marker {
+  display: none;
+}
+
+.manage-collections-view .mc-details-summary-left {
+  font-weight: 600;
+}
+
+.manage-collections-view .mc-details-summary-right {
+  color: var(--muted);
+  font-size: var(--font-size-md);
+  text-align: right;
+  max-width: 32rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.manage-collections-view .mc-diff-body {
+  padding: 0.6rem 0.65rem 0.7rem;
+  border-top: var(--border-1);
+}
+
+.manage-collections-view .mc-diff-actions {
+  display: inline-flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.55rem;
+}
+
+.manage-collections-view .mc-diff-cols {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  gap: 0.65rem;
+}
+
+.manage-collections-view .mc-single-col {
+  display: block;
+}
+
+.manage-collections-view .mc-diff-col-title {
+  color: var(--muted);
+  font-size: var(--font-size-md);
+  margin-bottom: 0.35rem;
+}
+
+.manage-collections-view .mc-pre {
+  margin: 0;
+  overflow: auto;
+  white-space: pre;
+  font-size: var(--font-size-md);
+  line-height: 1.45;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.5rem;
+  border: var(--border-1);
+  background: var(--surface-void);
+}
+
+.manage-collections-view .mc-fields {
+  margin-top: 0.6rem;
+}
+
+.manage-collections-view .mc-fields-title {
+  color: var(--muted);
+  font-size: var(--font-size-md);
+  margin-bottom: 0.25rem;
+}
+
+.manage-collections-view .mc-fields-list {
+  color: var(--text);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-md);
+  opacity: 0.9;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (min-width: 900px) {
+  .manage-collections-view .mc-left,
+  .manage-collections-view .mc-right {
+    overflow-y: auto;
+    height: 35rem;
+    padding: 0rem 0.2rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .manage-collections-view {
+    overflow-y: auto;
+  }
+
+  .manage-collections-view .mc-layout {
+    display: block;
+  }
+
+  .manage-collections-view .mc-key-input {
+    min-width: 12rem;
+  }
+
+  .manage-collections-view .mc-version-select {
+    min-width: 12rem;
+  }
+
+  .manage-collections-view .mc-json {
+    max-height: 45vh;
+  }
+
+  .manage-collections-view .mc-diff-cols {
+    grid-template-columns: 1fr;
+  }
+}

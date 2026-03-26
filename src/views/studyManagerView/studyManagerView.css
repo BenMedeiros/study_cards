@@ -1,0 +1,240 @@
+.study-manager-view .study-manager-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.study-manager-view [hidden] {
+  display: none !important;
+}
+
+.study-manager-view .study-manager-summary-grid,
+.study-manager-view .study-manager-drill-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.5rem;
+}
+
+@media (max-width: 700px) {
+  .study-manager-view .study-manager-summary-grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+.study-manager-view .study-manager-metric {
+  border: var(--border-1);
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.55rem;
+  background: var(--surface-card);
+}
+
+.study-manager-view .study-manager-metric-label {
+  color: var(--muted);
+  font-size: var(--font-size-xs);
+}
+
+.study-manager-view .study-manager-metric-value {
+  font-size: var(--font-size-md);
+  line-height: 1.2;
+}
+
+.study-manager-view .study-manager-related-wrap {
+  margin-top: 0.55rem;
+}
+
+.study-manager-view .study-manager-related-title {
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.study-manager-view .study-manager-related-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.study-manager-view .study-manager-related-btn {
+  max-width: 100%;
+  text-align: left;
+}
+
+@media (max-width: 900px) {
+  .study-manager-view .table-wrapper {
+    max-height: 39vh;
+  }
+}
+
+.study-manager-view .study-manager-filter-link {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--border-strong);
+}
+
+.study-manager-view .study-manager-filter-link:hover {
+  border-bottom-color: var(--border-stronger);
+}
+
+.study-manager-view .study-manager-insight-title {
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.study-manager-view .study-manager-route-action,
+.study-manager-view .study-manager-day-filter-link,
+.study-manager-view .study-manager-rec-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color: var(--text);
+  border: var(--border-1);
+  border-radius: 999px;
+  padding: 0.22rem 0.5rem;
+  background: var(--surface-card);
+}
+
+.study-manager-view .study-manager-route-action-meta {
+  color: var(--muted);
+  font-size: var(--font-size-2xs);
+}
+
+.study-manager-view #study-manager-recommendations-card {
+  overflow-y: visible;
+}
+
+.study-manager-view .study-manager-day-list,
+.study-manager-view .study-manager-rec-list {
+  display: grid;
+  gap: 0.5rem;
+  max-height: 39vh;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+}
+
+.study-manager-view .study-manager-day-row,
+.study-manager-view .study-manager-rec-row {
+  border: var(--border-1);
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  background: var(--surface-card-muted);
+}
+
+.study-manager-view .study-manager-day-head,
+.study-manager-view .study-manager-rec-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.study-manager-view .study-manager-day-label {
+  font-size: var(--font-size-md);
+}
+
+.study-manager-view .study-manager-day-meta,
+.study-manager-view .study-manager-rec-samples {
+  color: var(--muted);
+  font-size: var(--font-size-xs);
+}
+
+.study-manager-view .study-manager-day-filters {
+  margin-top: 0.45rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.study-manager-view .study-manager-day-filter-link.is-disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+
+.study-manager-view .study-manager-day-empty {
+  margin-top: 0.45rem;
+}
+
+.study-manager-view .study-manager-recommendations-section + .study-manager-recommendations-section {
+  margin-top: 0.8rem;
+}
+
+.study-manager-view .study-manager-collapsible-title {
+  cursor: pointer;
+  user-select: none;
+}
+
+.study-manager-card-top-right {
+  position: absolute;
+  top: 0.34rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.study-manager-card-top-right .card-corner-caption {
+  position: static;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.study-manager-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.study-manager-card-btn {
+  position: static;
+}
+
+.study-manager-json-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--surface-scrim-heavy);
+  z-index: 99999;
+}
+
+.study-manager-json-dialog {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(1100px, 96vw);
+  max-height: 88vh;
+  z-index: 100000;
+  overflow: hidden;
+}
+
+.study-manager-json-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.study-manager-json-body {
+  max-height: 68vh;
+  overflow: auto;
+}
+
+.study-manager-json-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.study-manager-json-viewer {
+  max-height: none;
+}
+
+.study-manager-json-viewer .json-content {
+  background: var(--surface-void-strong);
+}

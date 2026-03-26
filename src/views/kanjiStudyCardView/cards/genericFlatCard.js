@@ -29,7 +29,7 @@ function normalizeCardConfig(config) {
 export function createGenericFlatCard({ entry = null, indexText = '', config = {}, handlers = {} } = {}) {
   settingsLog('[Card:Generic] createGenericFlatCard()', { entry, indexText, config });
   const root = document.createElement('div');
-  root.className = 'card generic-flat-card';
+  root.className = 'card kanji-study-card generic-flat-card';
 
   const topRight = document.createElement('div');
   topRight.className = 'kanji-study-card-top-right';

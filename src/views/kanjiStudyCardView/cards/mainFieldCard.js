@@ -37,7 +37,7 @@ function normalizeCardConfig(config) {
 export function createMainFieldCard({ entry = null, indexText = '', config = {}, handlers = {} } = {}) {
   settingsLog('[Card:Main] createMainFieldCard()', { entry, indexText, config });
   const root = document.createElement('div');
-  root.className = 'card main-field-card';
+  root.className = 'card kanji-study-card main-field-card';
 
   const wrapper = document.createElement('div');
   wrapper.className = 'main-field-card-wrapper';

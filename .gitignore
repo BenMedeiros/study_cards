@@ -1,5 +1,11 @@
 node_modules/
 data/settings.local.json
+/.secrets.json
+/.env.json
+
+# Firebase admin local exports
+/firebase/exports/*
+!/firebase/exports/.gitkeep
 
 # Ignore all generated collections except scripts
 /_collections/*

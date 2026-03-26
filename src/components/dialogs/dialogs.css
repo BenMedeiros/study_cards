@@ -1,0 +1,519 @@
+/* Reusable dialog shells */
+:is(.confirm-backdrop, .table-settings-backdrop) {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+:is(.confirm-backdrop.show, .table-settings-backdrop.show) {
+  opacity: 1;
+}
+
+:is(.confirm-dialog, .table-settings-dialog) {
+  background: var(--panel);
+  color: var(--text);
+  border: var(--border-1);
+  opacity: 0;
+}
+
+/* Generic confirm dialog */
+.confirm-backdrop {
+  background: var(--surface-scrim);
+  z-index: 1300;
+}
+
+.confirm-dialog {
+  z-index: 1301;
+  min-width: 22rem;
+  max-width: min(32rem, 92vw);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-dialog);
+  padding: 0.9rem;
+  transform: translate(-50%, -50%) scale(0.98);
+  transition: opacity 120ms ease, transform 120ms cubic-bezier(.2, .9, .3, 1);
+  overflow-x: auto;
+  max-height: 90vh;
+}
+
+.confirm-dialog.open {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.confirm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.confirm-title {
+  font-weight: 750;
+  font-size: var(--font-size-lg);
+}
+
+.confirm-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.confirm-message {
+  line-height: 1.35;
+}
+
+.confirm-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Make JSON inside confirm dialogs use the same mono styling as the
+   Entity Explorer so previews/examples look consistent. */
+.confirm-body .json-content,
+.confirm-dialog .json-content,
+.confirm-body .json-view,
+.confirm-dialog .json-view,
+.confirm-body .mono,
+.confirm-dialog .mono {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-md);
+  color: var(--text);
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.confirm-body pre,
+.confirm-dialog pre {
+  margin: 0;
+  background: transparent;
+  padding: 0.25rem 0.4rem;
+  border-radius: 0.25rem;
+}
+
+/* Data table settings dialog */
+.table-settings-backdrop {
+  z-index: 1400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem;
+  background: var(--surface-scrim-strong);
+}
+
+.table-settings-dialog {
+  width: min(980px, 95vw);
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 0.8rem;
+  box-shadow: var(--shadow-dialog-soft);
+  padding: 0.72rem;
+  transform: translateY(6px) scale(0.985);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.table-settings-dialog.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.table-settings-title {
+  margin: 0;
+  font-size: var(--font-size-base);
+}
+
+.table-settings-info {
+  margin-top: 0.28rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.45rem;
+}
+
+.table-settings-info .hint {
+  font-size: var(--font-size-xs);
+  padding: 0.1rem 0.38rem;
+  border-radius: 999px;
+  background: var(--border-subtle);
+  border: var(--border-1);
+}
+
+.table-settings-global-msg {
+  margin-top: 0.35rem;
+  color: var(--status-danger-text-soft);
+  min-height: 1em;
+}
+
+.table-settings-section {
+  margin-top: 0.5rem;
+  border: var(--border-1);
+  border-radius: 0.56rem;
+  background: var(--surface-card-muted);
+}
+
+.table-settings-section-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  justify-content: flex-start;
+  padding: 0.33rem 0.5rem;
+  border: 0;
+  border-bottom: var(--border-1);
+  border-radius: 0.56rem 0.56rem 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--text);
+  background: var(--surface-card-muted);
+}
+
+.table-settings-section-toggle-icon {
+  width: 0.8rem;
+  color: var(--muted);
+  font-size: var(--font-size-xs);
+}
+
+.table-settings-section-body {
+  padding: 0.44rem;
+}
+
+.table-settings-row {
+  border: var(--border-1);
+  border-radius: 0.5rem;
+  background: var(--surface-card-muted);
+  padding: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.table-settings-row-head,
+.table-settings-row-simple {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.table-settings-row-left {
+  min-width: 0;
+}
+
+.table-settings-row-left strong {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--font-size-md);
+}
+
+.table-settings-row-left .hint {
+  font-size: var(--font-size-xs);
+}
+
+.table-settings-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+  flex-wrap: wrap;
+}
+
+.table-settings-col-type {
+  font-size: var(--font-size-2xs);
+  color: var(--muted);
+}
+
+.table-settings-col-stats {
+  margin-top: 0.15rem;
+  font-size: var(--font-size-2xs);
+}
+
+.table-settings-desc-toggle {
+  margin-top: 0.18rem;
+  font-size: var(--font-size-2xs);
+  line-height: 1;
+  padding: 0.14rem 0.34rem;
+  min-height: 1.3rem;
+}
+
+.table-settings-col-desc {
+  margin-top: 0.2rem;
+  font-size: var(--font-size-2xs);
+  line-height: 1.22;
+  border: var(--border-1);
+  border-radius: 0.36rem;
+  padding: 0.24rem 0.3rem;
+  background: var(--surface-field-softer);
+  white-space: pre-wrap;
+}
+
+.table-settings-row-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.24rem;
+}
+
+.table-settings-row-right .btn.small {
+  font-size: var(--font-size-xs);
+  line-height: 1;
+  padding: 0.18rem 0.4rem;
+  min-height: 1.5rem;
+}
+
+.table-settings-hide-control {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05rem;
+  min-width: 1.7rem;
+}
+
+.table-settings-hide-control input[type='checkbox'] {
+  margin: 0;
+}
+
+.table-settings-hide-label {
+  color: var(--muted);
+  font-size: var(--font-size-2xs);
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  line-height: 1;
+}
+
+.table-settings-style-grid {
+  margin-top: 0.36rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.table-settings-sources-intro {
+  margin-bottom: 0.4rem;
+}
+
+.table-settings-source-row {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.table-settings-source-group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.table-settings-source-group-head strong {
+  font-size: var(--font-size-body);
+}
+
+.table-settings-source-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 0.45rem;
+}
+
+.table-settings-source-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 0.4rem;
+  padding: 0.38rem 0.45rem;
+  border: var(--border-1);
+  border-radius: 0.42rem;
+  background: var(--surface-field-soft);
+}
+
+.table-settings-source-option input[type='checkbox'] {
+  margin: 0.1rem 0 0;
+}
+
+.table-settings-source-option-text {
+  min-width: 0;
+  display: grid;
+  gap: 0.18rem;
+}
+
+.table-settings-source-option-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.table-settings-source-option-top strong {
+  font-size: var(--font-size-sm);
+}
+
+.table-settings-source-option-desc {
+  font-size: var(--font-size-2xs);
+  line-height: 1.25;
+}
+
+.table-settings-source-controls {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.table-settings-source-mode {
+  display: grid;
+  gap: 0.14rem;
+}
+
+.table-settings-source-mode select {
+  width: 100%;
+}
+
+.table-settings-row-table {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.table-settings-table-grid {
+  margin-top: 0.36rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.table-settings-table-grid .table-settings-bool {
+  grid-column: 1 / -1;
+}
+
+.table-settings-style-item {
+  display: grid;
+  gap: 0.16rem;
+}
+
+.table-settings-json-settings {
+  margin-top: 0.32rem;
+  border: var(--border-1);
+  border-radius: 0.42rem;
+  background: var(--surface-card-faint);
+  padding: 0.3rem 0.35rem;
+  display: grid;
+  gap: 0.28rem;
+}
+
+.table-settings-bool {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.table-settings-bool input[type='checkbox'] {
+  margin: 0;
+}
+
+.table-settings-bool-label,
+.table-settings-bool-compact .table-settings-bool-label {
+  font-size: var(--font-size-2xs);
+}
+
+.table-settings-bool-label {
+  color: var(--text);
+}
+
+.table-settings-bool-compact .table-settings-bool-label {
+  color: var(--muted);
+}
+
+.table-settings-json-buttons {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.table-settings-json-buttons-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.34rem 0.5rem;
+}
+
+.table-settings-style-label {
+  color: var(--muted);
+  font-size: var(--font-size-2xs);
+}
+
+.table-settings-style-item input {
+  width: 100%;
+  background: var(--surface-field-float);
+  border: var(--border-1);
+  color: var(--text);
+  border-radius: 0.36rem;
+  padding: 0.2rem 0.34rem;
+  font-size: var(--font-size-xs);
+}
+
+.table-settings-wordbreak-dropdown {
+  width: 100%;
+}
+
+.table-settings-wordbreak-dropdown .dropdown-btn {
+  min-height: 1.7rem;
+  font-size: var(--font-size-xs);
+  padding: 0.18rem 0.34rem;
+}
+
+.table-settings-style-item input.invalid {
+  border-color: var(--status-danger-invalid-border);
+  box-shadow: 0 0 0 1px var(--status-danger-invalid-ring);
+}
+
+.table-settings-row-msg {
+  margin-top: 0.24rem;
+  font-size: var(--font-size-2xs);
+  color: var(--status-danger-text-soft);
+  text-wrap: auto;
+}
+
+.table-settings-actions {
+  margin-top: 0.58rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+.table-card-settings-btn,
+.data-table-settings-btn {
+  position: absolute;
+  top: 0.34rem;
+  z-index: 2;
+  font-size: var(--font-size-2xs);
+  line-height: 1;
+  padding: 0.2rem 0.42rem;
+}
+
+.table-card-settings-btn {
+  right: 1rem;
+}
+
+.table-card-settings-btn.is-active {
+  background: var(--surface-card-highlight);
+}
+
+.data-table-settings-btn {
+  right: 8.2rem;
+}
+
+@media (min-width: 900px) {
+  .table-settings-row {
+    display: grid;
+    grid-template-columns: 35% 35% 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .table-settings-table-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-settings-dialog {
+    width: 100%;
+    max-height: 92vh;
+  }
+
+  .data-table-settings-btn {
+    right: 7rem;
+  }
+}

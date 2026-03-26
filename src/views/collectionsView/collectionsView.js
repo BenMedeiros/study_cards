@@ -6,6 +6,7 @@ import collectionSettingsManager from '../../managers/collectionSettingsManager.
 import kanjiStudyController from '../kanjiStudyCardView/kanjiStudyController.js';
 import { openSpeechSettingsDialog } from '../../components/dialogs/speechSettingsDialog.js';
 import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
+import { syncCollectionSettingSnapshot } from '../../integrations/firebase/collectionSettingsFirestoreSync.js';
 import collectionsViewController from './collectionsViewController.js';
 import {
   normalizeTableSettings,
@@ -72,6 +73,7 @@ function getCollectionFieldOptions(collection) {
 export function renderCollectionsManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
   root.id = 'collections-root';
+  root.className = 'collections-view';
 
   const collections = store.collections.getAvailableCollections();
 
@@ -253,6 +255,29 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
           await controller.setSpeech(nextSpeech);
         } catch (e) {
           console.error('Configure Speech: failed for', id, e);
+        }
+      }
+    },
+    {
+      label: 'Snapshot collection_settings',
+      title: 'Upload this collection_settings row to Firestore for the signed-in user',
+      className: 'btn-snapshot-collection-settings',
+      onClick: async (rowData, rowIndex, { tr }) => {
+        const id = tr?.dataset?.rowId || rowData.__id;
+        try {
+          const col = collections.find(c => (c.id === id || c.key === id || c.path === id || c.name === id));
+          const candidates = [
+            col?.path,
+            col?.id,
+            col?.key,
+            col?.path && col.path.replace(/^\.?\/*collections\/*/, ''),
+            col?.path && col.path.replace(/^\/*/, ''),
+            id,
+          ].filter(Boolean);
+          const result = await syncCollectionSettingSnapshot(candidates);
+          console.log('Snapshot collection_settings: synced', result.collectionId, 'to users/' + result.userId + '/collection_settings/' + result.docId);
+        } catch (e) {
+          console.error('Snapshot collection_settings: failed for', id, e);
         }
       }
     },

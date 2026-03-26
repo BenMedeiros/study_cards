@@ -17,6 +17,7 @@ import { timed } from '../../utils/browser/timing.js';
 export function renderData({ store }) {
   const root = document.createElement('div');
   root.id = 'data-root';
+  root.className = 'data-view';
   const active = store.collections.getActiveCollection();
 
   function normalizeRelatedCollectionsConfig(v) {

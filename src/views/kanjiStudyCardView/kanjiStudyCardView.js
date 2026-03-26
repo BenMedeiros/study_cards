@@ -144,6 +144,7 @@ function getDefaultMainCardFlow(collectionKey) {
 export function renderKanjiStudyCard({ store }) {
   const el = document.createElement('div');
   el.id = 'kanji-study-root';
+  el.className = 'kanji-study-card-view';
 
   // Register as a settings consumer for persisted app settings.
   store?.settings?.registerConsumer?.({

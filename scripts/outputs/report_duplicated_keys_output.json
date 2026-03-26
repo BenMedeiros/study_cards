@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-03-25T20:16:39.114Z",
+  "generatedAt": "2026-03-26T19:17:19.393Z",
   "scannedCollections": 13,
-  "collectionsWithProblems": 2,
+  "collectionsWithProblems": 3,
   "collectionsWithInvalidEntryKey": 1,
   "collectionsWithSchemaMismatch": 0,
   "totalInvalidEntries": 2,
-  "totalDuplicateValues": 1,
-  "totalDuplicateEntries": 2,
+  "totalDuplicateValues": 43,
+  "totalDuplicateEntries": 86,
   "reports_clean": [
     {
       "collectionName": "Greek Alphabet",
@@ -65,19 +65,6 @@
       "collectionPath": "collections/japanese/japanese_sentences.json",
       "entryKey": "ja",
       "entryCount": 214,
-      "hasValidEntryKeyMetadata": true,
-      "schemaHasEntryKey": true,
-      "invalidEntryCount": 0,
-      "duplicateValueCount": 0,
-      "duplicateEntryCount": 0,
-      "invalidEntries": [],
-      "duplicates": []
-    },
-    {
-      "collectionName": "All Japanese Words",
-      "collectionPath": "collections/japanese/japanese_words.json",
-      "entryKey": "kanji",
-      "entryCount": 2271,
       "hasValidEntryKeyMetadata": true,
       "schemaHasEntryKey": true,
       "invalidEntryCount": 0,
@@ -180,6 +167,692 @@
       "duplicates": []
     },
     {
+      "collectionName": "All Japanese Words",
+      "collectionPath": "collections/japanese/japanese_words.json",
+      "entryKey": "kanji",
+      "entryCount": 2712,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": true,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 42,
+      "duplicateEntryCount": 84,
+      "invalidEntries": [],
+      "duplicates": [
+        {
+          "value": "ある",
+          "count": 2,
+          "entries": [
+            {
+              "index": 1813,
+              "lineNumber": 14176,
+              "label": "ある"
+            },
+            {
+              "index": 2426,
+              "lineNumber": 19633,
+              "label": "ある"
+            }
+          ]
+        },
+        {
+          "value": "する",
+          "count": 2,
+          "entries": [
+            {
+              "index": 605,
+              "lineNumber": 4313,
+              "label": "する"
+            },
+            {
+              "index": 2403,
+              "lineNumber": 19403,
+              "label": "する"
+            }
+          ]
+        },
+        {
+          "value": "できる",
+          "count": 2,
+          "entries": [
+            {
+              "index": 577,
+              "lineNumber": 4065,
+              "label": "できる"
+            },
+            {
+              "index": 2411,
+              "lineNumber": 19483,
+              "label": "できる"
+            }
+          ]
+        },
+        {
+          "value": "安い",
+          "count": 2,
+          "entries": [
+            {
+              "index": 430,
+              "lineNumber": 3124,
+              "label": "安い"
+            },
+            {
+              "index": 2361,
+              "lineNumber": 18971,
+              "label": "安い"
+            }
+          ]
+        },
+        {
+          "value": "飲む",
+          "count": 2,
+          "entries": [
+            {
+              "index": 393,
+              "lineNumber": 2893,
+              "label": "飲む"
+            },
+            {
+              "index": 2615,
+              "lineNumber": 21523,
+              "label": "飲む"
+            }
+          ]
+        },
+        {
+          "value": "泳ぐ",
+          "count": 2,
+          "entries": [
+            {
+              "index": 352,
+              "lineNumber": 2614,
+              "label": "泳ぐ"
+            },
+            {
+              "index": 2495,
+              "lineNumber": 20323,
+              "label": "泳ぐ"
+            }
+          ]
+        },
+        {
+          "value": "過ごす",
+          "count": 2,
+          "entries": [
+            {
+              "index": 2257,
+              "lineNumber": 17925,
+              "label": "過ごす"
+            },
+            {
+              "index": 2531,
+              "lineNumber": 20683,
+              "label": "過ごす"
+            }
+          ]
+        },
+        {
+          "value": "開けられる",
+          "count": 2,
+          "entries": [
+            {
+              "index": 2692,
+              "lineNumber": 22293,
+              "label": "開けられる"
+            },
+            {
+              "index": 2710,
+              "lineNumber": 22473,
+              "label": "開けられる"
+            }
+          ]
+        },
+        {
+          "value": "開ける",
+          "count": 2,
+          "entries": [
+            {
+              "index": 531,
+              "lineNumber": 3773,
+              "label": "開ける"
+            },
+            {
+              "index": 2684,
+              "lineNumber": 22213,
+              "label": "開ける"
+            }
+          ]
+        },
+        {
+          "value": "帰る",
+          "count": 2,
+          "entries": [
+            {
+              "index": 1937,
+              "lineNumber": 14976,
+              "label": "帰る"
+            },
+            {
+              "index": 2639,
+              "lineNumber": 21763,
+              "label": "帰る"
+            }
+          ]
+        },
+        {
+          "value": "起きられる",
+          "count": 2,
+          "entries": [
+            {
+              "index": 2681,
+              "lineNumber": 22183,
+              "label": "起きられる"
+            },
+            {
+              "index": 2709,
+              "lineNumber": 22463,
+              "label": "起きられる"
+            }
+          ]
+        },
+        {
+          "value": "起きる",
+          "count": 2,
+          "entries": [
+            {
+              "index": 526,
+              "lineNumber": 3739,
+              "label": "起きる"
+            },
+            {
+              "index": 2673,
+              "lineNumber": 22103,
+              "label": "起きる"
+            }
+          ]
+        },
+        {
+          "value": "急ぐ",
+          "count": 2,
+          "entries": [
+            {
+              "index": 353,
+              "lineNumber": 2621,
+              "label": "急ぐ"
+            },
+            {
+              "index": 2507,
+              "lineNumber": 20443,
+              "label": "急ぐ"
+            }
+          ]
+        },
+        {
+          "value": "見られる",
+          "count": 2,
+          "entries": [
+            {
+              "index": 2659,
+              "lineNumber": 21963,
+              "label": "見られる"
+            },
+            {
+              "index": 2707,
+              "lineNumber": 22443,
+              "label": "見られる"
+            }
+          ]
+        },
+        {
+          "value": "見る",
+          "count": 2,
+          "entries": [
+            {
+              "index": 525,
+              "lineNumber": 3729,
+              "label": "見る"
+            },
+            {
+              "index": 2651,
+              "lineNumber": 21883,
+              "label": "見る"
+            }
+          ]
+        },
+        {
+          "value": "古い",
+          "count": 2,
+          "entries": [
+            {
+              "index": 428,
+              "lineNumber": 3112,
+              "label": "古い"
+            },
+            {
+              "index": 2389,
+              "lineNumber": 19259,
+              "label": "古い"
+            }
+          ]
+        },
+        {
+          "value": "行く",
+          "count": 2,
+          "entries": [
+            {
+              "index": 376,
+              "lineNumber": 2783,
+              "label": "行く"
+            },
+            {
+              "index": 2435,
+              "lineNumber": 19723,
+              "label": "行く"
+            }
+          ]
+        },
+        {
+          "value": "高い",
+          "count": 2,
+          "entries": [
+            {
+              "index": 429,
+              "lineNumber": 3118,
+              "label": "高い"
+            },
+            {
+              "index": 2271,
+              "lineNumber": 18009,
+              "label": "高い"
+            }
+          ]
+        },
+        {
+          "value": "高さ",
+          "count": 2,
+          "entries": [
+            {
+              "index": 671,
+              "lineNumber": 4733,
+              "label": "高さ"
+            },
+            {
+              "index": 2285,
+              "lineNumber": 18167,
+              "label": "高さ"
+            }
+          ]
+        },
+        {
+          "value": "使う",
+          "count": 2,
+          "entries": [
+            {
+              "index": 1873,
+              "lineNumber": 14573,
+              "label": "使う"
+            },
+            {
+              "index": 2459,
+              "lineNumber": 19963,
+              "label": "使う"
+            }
+          ]
+        },
+        {
+          "value": "取る",
+          "count": 2,
+          "entries": [
+            {
+              "index": 2048,
+              "lineNumber": 16134,
+              "label": "取る"
+            },
+            {
+              "index": 2627,
+              "lineNumber": 21643,
+              "label": "取る"
+            }
+          ]
+        },
+        {
+          "value": "取れる",
+          "count": 2,
+          "entries": [
+            {
+              "index": 581,
+              "lineNumber": 4089,
+              "label": "取れる"
+            },
+            {
+              "index": 2635,
+              "lineNumber": 21723,
+              "label": "取れる"
+            }
+          ]
+        },
+        {
+          "value": "書く",
+          "count": 2,
+          "entries": [
+            {
+              "index": 373,
+              "lineNumber": 2765,
+              "label": "書く"
+            },
+            {
+              "index": 2471,
+              "lineNumber": 20083,
+              "label": "書く"
+            }
+          ]
+        },
+        {
+          "value": "食べられる",
+          "count": 2,
+          "entries": [
+            {
+              "index": 2670,
+              "lineNumber": 22073,
+              "label": "食べられる"
+            },
+            {
+              "index": 2708,
+              "lineNumber": 22453,
+              "label": "食べられる"
+            }
+          ]
+        },
+        {
+          "value": "食べる",
+          "count": 2,
+          "entries": [
+            {
+              "index": 530,
+              "lineNumber": 3763,
+              "label": "食べる"
+            },
+            {
+              "index": 2662,
+              "lineNumber": 21993,
+              "label": "食べる"
+            }
+          ]
+        },
+        {
+          "value": "新しい",
+          "count": 2,
+          "entries": [
+            {
+              "index": 427,
+              "lineNumber": 3106,
+              "label": "新しい"
+            },
+            {
+              "index": 2375,
+              "lineNumber": 19115,
+              "label": "新しい"
+            }
+          ]
+        },
+        {
+          "value": "静か",
+          "count": 2,
+          "entries": [
+            {
+              "index": 644,
+              "lineNumber": 4559,
+              "label": "静か"
+            },
+            {
+              "index": 2325,
+              "lineNumber": 18591,
+              "label": "静か"
+            }
+          ]
+        },
+        {
+          "value": "待つ",
+          "count": 2,
+          "entries": [
+            {
+              "index": 2159,
+              "lineNumber": 17233,
+              "label": "待つ"
+            },
+            {
+              "index": 2543,
+              "lineNumber": 20803,
+              "label": "待つ"
+            }
+          ]
+        },
+        {
+          "value": "大変",
+          "count": 2,
+          "entries": [
+            {
+              "index": 658,
+              "lineNumber": 4652,
+              "label": "大変"
+            },
+            {
+              "index": 2343,
+              "lineNumber": 18781,
+              "label": "大変"
+            }
+          ]
+        },
+        {
+          "value": "読む",
+          "count": 2,
+          "entries": [
+            {
+              "index": 293,
+              "lineNumber": 2074,
+              "label": "読む"
+            },
+            {
+              "index": 2603,
+              "lineNumber": 21403,
+              "label": "読む"
+            }
+          ]
+        },
+        {
+          "value": "買う",
+          "count": 2,
+          "entries": [
+            {
+              "index": 303,
+              "lineNumber": 2149,
+              "label": "買う"
+            },
+            {
+              "index": 2447,
+              "lineNumber": 19843,
+              "label": "買う"
+            }
+          ]
+        },
+        {
+          "value": "飛ぶ",
+          "count": 2,
+          "entries": [
+            {
+              "index": 346,
+              "lineNumber": 2572,
+              "label": "飛ぶ"
+            },
+            {
+              "index": 2591,
+              "lineNumber": 21283,
+              "label": "飛ぶ"
+            }
+          ]
+        },
+        {
+          "value": "聞く",
+          "count": 2,
+          "entries": [
+            {
+              "index": 372,
+              "lineNumber": 2754,
+              "label": "聞く"
+            },
+            {
+              "index": 2483,
+              "lineNumber": 20203,
+              "label": "聞く"
+            }
+          ]
+        },
+        {
+          "value": "閉められる",
+          "count": 2,
+          "entries": [
+            {
+              "index": 2703,
+              "lineNumber": 22403,
+              "label": "閉められる"
+            },
+            {
+              "index": 2711,
+              "lineNumber": 22483,
+              "label": "閉められる"
+            }
+          ]
+        },
+        {
+          "value": "閉める",
+          "count": 2,
+          "entries": [
+            {
+              "index": 533,
+              "lineNumber": 3785,
+              "label": "閉める"
+            },
+            {
+              "index": 2695,
+              "lineNumber": 22323,
+              "label": "閉める"
+            }
+          ]
+        },
+        {
+          "value": "便利",
+          "count": 2,
+          "entries": [
+            {
+              "index": 640,
+              "lineNumber": 4535,
+              "label": "便利"
+            },
+            {
+              "index": 2289,
+              "lineNumber": 18211,
+              "label": "便利"
+            }
+          ]
+        },
+        {
+          "value": "有名",
+          "count": 2,
+          "entries": [
+            {
+              "index": 642,
+              "lineNumber": 4547,
+              "label": "有名"
+            },
+            {
+              "index": 2307,
+              "lineNumber": 18401,
+              "label": "有名"
+            }
+          ]
+        },
+        {
+          "value": "遊ぶ",
+          "count": 2,
+          "entries": [
+            {
+              "index": 345,
+              "lineNumber": 2565,
+              "label": "遊ぶ"
+            },
+            {
+              "index": 2579,
+              "lineNumber": 21163,
+              "label": "遊ぶ"
+            }
+          ]
+        },
+        {
+          "value": "来られる",
+          "count": 2,
+          "entries": [
+            {
+              "index": 2423,
+              "lineNumber": 19603,
+              "label": "来られる"
+            },
+            {
+              "index": 2706,
+              "lineNumber": 22433,
+              "label": "来られる"
+            }
+          ]
+        },
+        {
+          "value": "来る",
+          "count": 2,
+          "entries": [
+            {
+              "index": 1946,
+              "lineNumber": 15034,
+              "label": "来る"
+            },
+            {
+              "index": 2415,
+              "lineNumber": 19523,
+              "label": "来る"
+            }
+          ]
+        },
+        {
+          "value": "立つ",
+          "count": 2,
+          "entries": [
+            {
+              "index": 2177,
+              "lineNumber": 17341,
+              "label": "立つ"
+            },
+            {
+              "index": 2555,
+              "lineNumber": 20923,
+              "label": "立つ"
+            }
+          ]
+        },
+        {
+          "value": "話す",
+          "count": 2,
+          "entries": [
+            {
+              "index": 301,
+              "lineNumber": 2128,
+              "label": "話す"
+            },
+            {
+              "index": 2519,
+              "lineNumber": 20563,
+              "label": "話す"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "collectionName": "All Spanish Words",
       "collectionPath": "collections/spanish/spanish_words.json",
       "entryKey": "lemma",
@@ -214,9 +887,9 @@
   "outputPath": "scripts/outputs/report_duplicated_keys_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-03-25T20:16:38.843Z",
-    "finishedAt": "2026-03-25T20:16:39.116Z",
-    "durationMs": 273,
-    "durationSeconds": 0.273
+    "startedAt": "2026-03-26T19:17:19.327Z",
+    "finishedAt": "2026-03-26T19:17:19.394Z",
+    "durationMs": 67,
+    "durationSeconds": 0.067
   }
 }

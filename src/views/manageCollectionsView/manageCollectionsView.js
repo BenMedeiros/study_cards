@@ -155,6 +155,7 @@ function getCollectionPathLabel(value) {
 export function renderManageCollections({ store, onNavigate }) {
   const root = document.createElement('div');
   root.id = 'manage-collections-root';
+  root.className = 'manage-collections-view';
 
   // Header tools removed — collection selection and version controls
   // are handled elsewhere (collection browser / Activate action).

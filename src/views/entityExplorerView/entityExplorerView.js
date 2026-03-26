@@ -139,6 +139,7 @@ function getAllFromDbInstance(db, storeName) {
 export function renderEntityExplorer({ store }) {
   const root = document.createElement('div');
   root.id = 'entity-explorer-root';
+  root.className = 'entity-explorer-view';
 
   const activeCollection = store?.collections?.getActiveCollection?.();
   const settingsCollectionKey = String(activeCollection?.key || activeCollection?.path || '').trim();

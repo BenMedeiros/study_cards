@@ -14,7 +14,7 @@ const DEFAULT_CONTROLS = ['maximize', 'wrap', 'copy', 'toggle'];
 // Simple card that renders the full entry using the reusable JSON viewer.
 export function createJsonViewerCard({ entry = null, indexText = '', config = {}, handlers = {} } = {}) {
   const root = document.createElement('div');
-  root.className = 'card json-viewer-card';
+  root.className = 'card kanji-study-card json-viewer-card';
 
   const topRight = document.createElement('div');
   topRight.className = 'kanji-study-card-top-right';

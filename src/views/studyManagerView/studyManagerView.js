@@ -138,17 +138,17 @@ function openStudyManagerJsonDialog({ title = 'JSON', data = null } = {}) {
   if (jsonContent) {
     try { jsonContent.style.maxHeight = '68vh'; } catch (e) {}
     try { jsonContent.style.overflow = 'auto'; } catch (e) {}
-    try { jsonContent.style.background = 'rgba(2, 6, 23, 0.92)'; } catch (e) {}
+    try { jsonContent.style.background = 'var(--surface-void-strong)'; } catch (e) {}
     try { jsonContent.style.borderRadius = '0.45rem'; } catch (e) {}
     try { jsonContent.style.padding = '0.35rem 0.35rem 0.5rem 0.35rem'; } catch (e) {}
   }
   const jsonTree = viewer.querySelector('.json-tree');
   if (jsonTree) {
-    try { jsonTree.style.background = 'rgba(2, 6, 23, 0.96)'; } catch (e) {}
+    try { jsonTree.style.background = 'var(--surface-void-stronger)'; } catch (e) {}
   }
   const jsonPre = viewer.querySelector('.json-view');
   if (jsonPre) {
-    try { jsonPre.style.background = 'rgba(2, 6, 23, 0.96)'; } catch (e) {}
+    try { jsonPre.style.background = 'var(--surface-void-stronger)'; } catch (e) {}
   }
 
   const body = el('div', { className: 'study-manager-json-body', children: [viewer] });
@@ -737,6 +737,7 @@ function buildAppsTable({ store, report, tableSettings }) {
 export function renderStudyManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
   root.id = 'study-manager-root';
+  root.className = 'study-manager-view';
 
   let snapshot = studyManagerController.getSnapshot() || {};
   let pendingSnapshot = null;
