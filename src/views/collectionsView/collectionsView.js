@@ -4,6 +4,7 @@ import { validateCollection } from '../../utils/browser/validation.js';
 import { formatDurationMs, formatIsoShort } from '../../utils/browser/helpers.js';
 import collectionSettingsManager from '../../managers/collectionSettingsManager.js';
 import kanjiStudyController from '../kanjiStudyCardView/kanjiStudyController.js';
+import { openSpeechSettingsDialog } from '../../components/dialogs/speechSettingsDialog.js';
 import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
 import collectionsViewController from './collectionsViewController.js';
 import {
@@ -20,6 +21,54 @@ const TABLE_ACTION_ITEMS = [
   { key: 'copyJson', label: 'Copy JSON' },
   { key: 'copyFullJson', label: 'Copy Full JSON' },
 ];
+
+function asString(v) {
+  return (v == null) ? '' : String(v);
+}
+
+function getSampleTextForField(collection, fieldKey) {
+  const entries = Array.isArray(collection?.entries) ? collection.entries : [];
+  for (const entry of entries) {
+    if (!entry || typeof entry !== 'object') continue;
+    const raw = entry[fieldKey];
+    if (raw == null) continue;
+    if (typeof raw === 'string' || typeof raw === 'number' || typeof raw === 'boolean') {
+      const text = String(raw).trim();
+      if (text) return text;
+      continue;
+    }
+    if (Array.isArray(raw)) {
+      const text = raw
+        .map((item) => (item == null ? '' : String(item).trim()))
+        .filter(Boolean)
+        .join(', ');
+      if (text) return text;
+      continue;
+    }
+  }
+  return '';
+}
+
+function getCollectionFieldOptions(collection) {
+  const metadata = (collection?.metadata && typeof collection.metadata === 'object') ? collection.metadata : {};
+  const defs = Array.isArray(metadata.fields)
+    ? metadata.fields
+    : (Array.isArray(metadata.schema) ? metadata.schema : []);
+  const out = [];
+  const seen = new Set();
+  for (const def of defs) {
+    const fieldKey = asString((def && typeof def === 'object') ? (def.key || def.name) : def).trim();
+    if (!fieldKey || seen.has(fieldKey)) continue;
+    seen.add(fieldKey);
+    out.push({
+      fieldKey,
+      label: `entry.${fieldKey}`,
+      sampleText: getSampleTextForField(collection, fieldKey),
+      collectionKey: asString(collection?.path || collection?.key || collection?.id).trim(),
+    });
+  }
+  return out;
+}
 export function renderCollectionsManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
   root.id = 'collections-root';
@@ -176,6 +225,37 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
         } catch (e) { console.error('Validate: unexpected error', e); }
       }
     },
+    {
+      label: 'Configure Speech',
+      title: 'Configure per-collection speech settings',
+      className: 'btn-configure-speech',
+      onClick: async (rowData, rowIndex, { tr }) => {
+        const id = tr?.dataset?.rowId || rowData.__id;
+        try {
+          const col = collections.find(c => (c.id === id || c.key === id || c.path === id || c.name === id));
+          if (!col) return;
+          const collKey = col.path || col.key || col.id || id;
+          let collectionObj = col;
+          try {
+            if (store?.collections?.loadCollection) {
+              const loaded = await store.collections.loadCollection(collKey).catch(() => null);
+              if (loaded && typeof loaded === 'object') collectionObj = loaded;
+            }
+          } catch (e) {}
+          const fields = getCollectionFieldOptions(collectionObj);
+          const controller = kanjiStudyController.create(collKey);
+          const nextSpeech = await openSpeechSettingsDialog({
+            fields,
+            speechConfig: controller.getSpeech(),
+            collectionKey: collKey,
+          });
+          if (!nextSpeech) return;
+          await controller.setSpeech(nextSpeech);
+        } catch (e) {
+          console.error('Configure Speech: failed for', id, e);
+        }
+      }
+    },
       {
         label: 'Apply Defaults',
         title: 'Apply collection defaults',
@@ -199,7 +279,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
         // Reset top-level collection settings
         collectionSettingsManager.set(id, { order_hash_int: null, isShuffled: false, studyFilter: '', defaultViewMode: null, heldTableSearch: '' });
         // Reset the remaining study view index.
-        kanjiStudyController.create(id).set({ currentIndex: 0 });
+        kanjiStudyController.create(id).set({ currentIndex: 0, speech: {} });
         // update the row cells in-place so UI reflects cleared settings
         if (tr) {
           const ci = tr.querySelector('[data-field="currentIndex"]'); if (ci) ci.textContent = '';

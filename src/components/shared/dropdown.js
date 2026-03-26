@@ -317,7 +317,26 @@ export function createDropdown({
 
   function isSelectableItem(it) {
     const kind = String(it?.kind || '').trim();
-    return kind !== 'divider' && kind !== 'action';
+    return kind !== 'divider' && kind !== 'action' && !it?.disabled;
+  }
+
+  function isDisabledItem(it) {
+    return !!it?.disabled;
+  }
+
+  function findNextEnabledIndex(items, startIndex, step) {
+    const dir = step >= 0 ? 1 : -1;
+    let idx = Number(startIndex);
+    if (!Number.isFinite(idx)) idx = dir > 0 ? -1 : items.length;
+    while (true) {
+      idx += dir;
+      if (idx < 0 || idx >= items.length) return -1;
+      const item = items[idx];
+      const kind = String(item?.dataset?.kind || item?.kind || '').trim();
+      if (kind === 'divider') continue;
+      if (item?.dataset?.disabled === 'true' || item?.disabled) continue;
+      return idx;
+    }
   }
 
   function selectableValues() {
@@ -386,6 +405,10 @@ export function createDropdown({
     const itemValue = String(item?.value ?? '');
     const kind = String(item?.kind || '').trim();
     if (kind) option.dataset.kind = kind;
+    if (isDisabledItem(item)) {
+      option.dataset.disabled = 'true';
+      option.setAttribute('aria-disabled', 'true');
+    }
 
     // Divider row (non-interactive)
     if (kind === 'divider') {
@@ -405,6 +428,7 @@ export function createDropdown({
     option.dataset.value = item.value;
     
     option.addEventListener('click', () => {
+      if (isDisabledItem(item)) return;
       // Action rows (None / All) for multi-select
       if (multi && kind === 'action') {
         const action = String(item?.action || '').trim().toLowerCase();
@@ -525,8 +549,8 @@ export function createDropdown({
       // Setup keyboard navigation for the opened menu
       Promise.resolve().then(() => {
         const options = Array.from(menu.querySelectorAll('.custom-dropdown-option'));
-        const selIndex = options.findIndex(o => o.classList.contains('selected'));
-        const initIndex = selIndex >= 0 ? selIndex : (options.length ? 0 : -1);
+        const selIndex = options.findIndex(o => o.classList.contains('selected') && o?.dataset?.disabled !== 'true');
+        const initIndex = selIndex >= 0 ? selIndex : findNextEnabledIndex(options, -1, 1);
         if (initIndex >= 0) {
           options.forEach(o => o.classList.remove('keyboard-focus'));
           options[initIndex].classList.add('keyboard-focus');
@@ -544,12 +568,14 @@ export function createDropdown({
           if (opts.length === 0) return;
           let idx = Number(container.dataset.kbIndex);
           if (!Number.isFinite(idx) || idx < 0 || idx >= opts.length) {
-            const s = opts.findIndex(o => o.classList.contains('selected'));
-            idx = s >= 0 ? s : 0;
+            const s = opts.findIndex(o => o.classList.contains('selected') && o?.dataset?.disabled !== 'true');
+            idx = s >= 0 ? s : findNextEnabledIndex(opts, -1, 1);
+            if (idx < 0) return;
           }
 
           if (key === 'ArrowDown') {
-            idx = Math.min(idx + 1, opts.length - 1);
+            idx = findNextEnabledIndex(opts, idx, 1);
+            if (idx < 0) return;
             opts.forEach(o => o.classList.remove('keyboard-focus'));
             opts[idx].classList.add('keyboard-focus');
             opts[idx].scrollIntoView({ block: 'nearest' });
@@ -558,7 +584,8 @@ export function createDropdown({
           }
 
           if (key === 'ArrowUp') {
-            idx = Math.max(idx - 1, 0);
+            idx = findNextEnabledIndex(opts, idx, -1);
+            if (idx < 0) return;
             opts.forEach(o => o.classList.remove('keyboard-focus'));
             opts[idx].classList.add('keyboard-focus');
             opts[idx].scrollIntoView({ block: 'nearest' });
@@ -602,10 +629,10 @@ export function createDropdown({
     } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
       if (multi) return;
-      const currentIndex = normalizedItems.findIndex(item => item.value === value);
-      const nextIndex = e.key === 'ArrowDown' 
-        ? Math.min(currentIndex + 1, normalizedItems.length - 1)
-        : Math.max(currentIndex - 1, 0);
+      const currentIndex = normalizedItems.findIndex(item => item.value === value && !isDisabledItem(item));
+      const nextIndex = e.key === 'ArrowDown'
+        ? findNextEnabledIndex(normalizedItems, currentIndex, 1)
+        : findNextEnabledIndex(normalizedItems, currentIndex, -1);
       
       const nextItem = normalizedItems[nextIndex];
       if (nextItem && onChange) {

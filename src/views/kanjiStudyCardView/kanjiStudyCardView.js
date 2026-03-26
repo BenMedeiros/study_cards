@@ -1,8 +1,9 @@
 import { nowMs } from '../../utils/browser/helpers.js';
-import { speak, getLanguageCode } from '../../utils/browser/speech.js';
+import { speak } from '../../utils/browser/speech.js';
 
 import { createViewHeaderTools } from '../../components/features/viewHeaderTools.js';
 import { createViewFooterControls } from './viewFooterControls.js';
+import { getDefaultSpeechConfigForCollection } from './kanjiStudyController.js';
 import { CARD_REGISTRY } from './cards/index.js';
 import { addStudyFilter } from '../../components/features/studyControls.js';
 import { addShuffleControls } from '../../components/features/collectionControls.js';
@@ -12,11 +13,49 @@ import { createKanjiStudyFooterActionsController } from './actionsController.js'
 
 const GENERIC_CARD_SETTINGS_KEY = 'genericFlatCard';
 const MAIN_CARD_SETTINGS_KEY = 'main';
+const MAIN_CARD_FLOW_VALUES = new Set(['row', 'column']);
 const DEFAULT_MAIN_CARD_LAYOUT = {
   topLeft: 'type',
   main: 'kanji',
+  mainSecondary: '',
   bottomLeft: 'reading',
   bottomRight: 'meaning',
+};
+const COLLECTION_CARD_DEFAULTS = {
+  'spanish/spanish_words.json': {
+    genericFlatCard: {
+      fields: ['lemma', 'meaning', 'type', 'semanticClass', 'gender', 'tags'],
+    },
+    main: {
+      layout: {
+        topLeft: 'type',
+        main: 'lemma',
+        bottomLeft: 'gender',
+        bottomRight: 'meaning',
+      },
+    },
+  },
+  'greek/greek_mythology.json': {
+    main: {
+      layout: {
+        topLeft: 'englishName',
+        main: 'greekName',
+        bottomLeft: 'japaneseName',
+        bottomRight: 'latinName',
+      },
+    },
+  },
+  'greek/greek_alphabet.json': {
+    main: {
+      layout: {
+        topLeft: 'order',
+        main: 'lowercase',
+        mainSecondary: 'uppercase',
+        bottomRight: 'classical_greek_name',
+      },
+      mainFlow: 'row',
+    },
+  },
 };
 
 function normalizeCardFieldList(fields) {
@@ -45,6 +84,8 @@ function normalizeKanjiStudyCardsConfig(cards) {
         nextConfig.layout[slot] = field;
       }
     }
+    const mainFlow = String(rawConfig.mainFlow || '').trim().toLowerCase();
+    if (MAIN_CARD_FLOW_VALUES.has(mainFlow)) nextConfig.mainFlow = mainFlow;
     out[key] = nextConfig;
   }
   return out;
@@ -61,6 +102,43 @@ function normalizeLayoutConfig(layout, allowedFields) {
     out[slot] = field;
   }
   return out;
+}
+
+function getCollectionScopedCardDefaults(collectionKey) {
+  const key = String(collectionKey || '').trim();
+  return COLLECTION_CARD_DEFAULTS[key] || {};
+}
+
+function getDefaultGenericCardFields(collectionKey, availableFields) {
+  const allowed = new Set((Array.isArray(availableFields) ? availableFields : []).map((item) => String(item?.key || '').trim()).filter(Boolean));
+  const collectionDefaults = getCollectionScopedCardDefaults(collectionKey);
+  const configured = Array.isArray(collectionDefaults?.[GENERIC_CARD_SETTINGS_KEY]?.fields)
+    ? collectionDefaults[GENERIC_CARD_SETTINGS_KEY].fields
+    : null;
+  if (configured) {
+    return configured.map((field) => String(field || '').trim()).filter((field) => allowed.has(field));
+  }
+  return Array.from(allowed);
+}
+
+function getDefaultMainCardLayout(collectionKey, availableFields) {
+  const allowed = new Set((Array.isArray(availableFields) ? availableFields : []).map((item) => String(item?.key || '').trim()).filter(Boolean));
+  const collectionDefaults = getCollectionScopedCardDefaults(collectionKey);
+  const configured = normalizeLayoutConfig(collectionDefaults?.[MAIN_CARD_SETTINGS_KEY]?.layout, allowed);
+  if (Object.keys(configured).length) return configured;
+  return {
+    topLeft: allowed.has('type') ? 'type' : '',
+    main: allowed.has('kanji') ? 'kanji' : (allowed.has('lemma') ? 'lemma' : ''),
+    mainSecondary: '',
+    bottomLeft: allowed.has('reading') ? 'reading' : (allowed.has('gender') ? 'gender' : ''),
+    bottomRight: allowed.has('meaning') ? 'meaning' : '',
+  };
+}
+
+function getDefaultMainCardFlow(collectionKey) {
+  const collectionDefaults = getCollectionScopedCardDefaults(collectionKey);
+  const mainFlow = String(collectionDefaults?.[MAIN_CARD_SETTINGS_KEY]?.mainFlow || '').trim().toLowerCase();
+  return MAIN_CARD_FLOW_VALUES.has(mainFlow) ? mainFlow : 'row';
 }
 
 export function renderKanjiStudyCard({ store }) {
@@ -83,6 +161,40 @@ export function renderKanjiStudyCard({ store }) {
   function getCurrentCollectionKey() {
     const active = store?.collections?.getActiveCollection?.();
     return String(active?.key || '').trim();
+  }
+
+  function getSpeechSettings() {
+    try {
+      const collectionKey = getCurrentCollectionKey();
+      return (kanjiController && typeof kanjiController.getSpeech === 'function')
+        ? (kanjiController.getSpeech() || {})
+        : ((kanjiController?.get?.() || {}).speech || getDefaultSpeechConfigForCollection(collectionKey));
+    } catch (e) {
+      try { return getDefaultSpeechConfigForCollection(getCurrentCollectionKey()); } catch (e2) {}
+      return {};
+    }
+  }
+
+  function setSpeechSettings(nextSpeech) {
+    if (!kanjiController) return;
+    if (typeof kanjiController.setSpeech === 'function') {
+      kanjiController.setSpeech(nextSpeech || {}).catch(() => {});
+      return;
+    }
+    persistViewState({ speech: nextSpeech || {} });
+  }
+
+  function speakText(text, { fieldKey = '', lang = '' } = {}) {
+    const value = String(text || '').trim();
+    if (!value) return;
+    const options = {};
+    const normalizedFieldKey = String(fieldKey || '').trim();
+    const normalizedLang = String(lang || '').trim();
+    if (normalizedFieldKey) options.fieldKey = normalizedFieldKey;
+    if (normalizedLang) options.lang = normalizedLang;
+    const collectionKey = String(getCurrentCollectionKey() || '').trim();
+    if (collectionKey) options.collectionKey = collectionKey;
+    speak(value, options);
   }
 
   const progressTracker = store?.kanjiProgress?.createCardProgressTracker?.({
@@ -384,20 +496,30 @@ export function renderKanjiStudyCard({ store }) {
   }
 
   function getGenericCardConfig() {
+    const collectionKey = getCurrentCollectionKey();
     const config = cardsConfigState[GENERIC_CARD_SETTINGS_KEY] || {};
-    const allowed = new Set(getGenericCardAvailableFields().map((item) => item.key));
+    const availableFields = getGenericCardAvailableFields();
+    const allowed = new Set(availableFields.map((item) => item.key));
     const fields = Array.isArray(config.fields)
       ? config.fields.map((field) => String(field || '').trim()).filter((field) => allowed.has(field))
       : undefined;
-    return fields ? { ...config, fields } : { ...config };
+    if (fields) return { ...config, fields };
+    return { ...config, fields: getDefaultGenericCardFields(collectionKey, availableFields) };
   }
 
   function getMainCardConfig() {
+    const collectionKey = getCurrentCollectionKey();
     const config = cardsConfigState[MAIN_CARD_SETTINGS_KEY] || {};
-    const allowed = new Set(getGenericCardAvailableFields().map((item) => item.key));
+    const availableFields = getGenericCardAvailableFields();
+    const allowed = new Set(availableFields.map((item) => item.key));
+    const layout = normalizeLayoutConfig(config.layout, allowed);
+    const mainFlow = MAIN_CARD_FLOW_VALUES.has(String(config.mainFlow || '').trim().toLowerCase())
+      ? String(config.mainFlow || '').trim().toLowerCase()
+      : getDefaultMainCardFlow(collectionKey);
     return {
       ...config,
-      layout: normalizeLayoutConfig(config.layout, allowed),
+      layout: Object.keys(layout).length ? layout : getDefaultMainCardLayout(collectionKey, availableFields),
+      mainFlow,
     };
   }
 
@@ -436,33 +558,70 @@ export function renderKanjiStudyCard({ store }) {
     if (!key) return;
     const availableFields = getGenericCardAvailableFields();
     const currentConfig = getMainCardConfig();
-    const fallbackLayout = {
-      topLeft: availableFields.some((field) => field.key === 'type') ? 'type' : '',
-      main: availableFields.some((field) => field.key === 'kanji') ? 'kanji' : (availableFields.some((field) => field.key === 'lemma') ? 'lemma' : ''),
-      bottomLeft: availableFields.some((field) => field.key === 'reading') ? 'reading' : (availableFields.some((field) => field.key === 'gender') ? 'gender' : ''),
-      bottomRight: availableFields.some((field) => field.key === 'meaning') ? 'meaning' : '',
-    };
+    const fallbackLayout = getDefaultMainCardLayout(key, availableFields);
     const next = await openGenericFlatCardConfigDialog({
       title: 'Main Card Settings',
+      subtitle: 'Choose the fixed card positions. Use the One/Two toggle on Center Primary to control whether the center has one panel or two.',
       fields: availableFields,
       layoutSlots: [
         { key: 'topLeft', label: 'Top Left' },
-        { key: 'main', label: 'Main' },
+        { key: 'main', label: 'Center Primary' },
+        {
+          key: 'mainSecondary',
+          label: 'Center Secondary',
+          showWhen: { option: 'centerMode', equals: 'two' },
+        },
         { key: 'bottomLeft', label: 'Bottom Left' },
         { key: 'bottomRight', label: 'Bottom Right' },
       ],
+      optionControls: [
+        {
+          key: 'centerMode',
+          label: 'Center Panels',
+          attachToLayoutKey: 'main',
+          renderAs: 'toggle',
+          items: [
+            { value: 'one', label: 'One' },
+            { value: 'two', label: 'Two' },
+          ],
+        },
+        {
+          key: 'mainFlow',
+          label: 'Center Flow',
+          items: [
+            { value: 'row', label: 'Row' },
+            { value: 'column', label: 'Column' },
+          ],
+          showWhen: { option: 'centerMode', equals: 'two' },
+        },
+      ],
       selectedLayout: currentConfig.layout || fallbackLayout,
       defaultLayout: fallbackLayout,
+      selectedOptions: {
+        centerMode: String(currentConfig?.layout?.mainSecondary || '').trim() ? 'two' : 'one',
+        mainFlow: currentConfig.mainFlow || getDefaultMainCardFlow(key),
+      },
+      defaultOptions: {
+        centerMode: String(fallbackLayout?.mainSecondary || '').trim() ? 'two' : 'one',
+        mainFlow: getDefaultMainCardFlow(key),
+      },
+      namespace: 'kanjiStudyCardView.cards.mainFieldCard.js',
+      collection: key,
     });
     if (!next) return;
     const layout = next.layout && typeof next.layout === 'object' ? { ...next.layout } : {};
+    const centerMode = String(next.centerMode || '').trim().toLowerCase() === 'two' ? 'two' : 'one';
+    if (centerMode !== 'two') layout.mainSecondary = '';
+    const mainFlow = MAIN_CARD_FLOW_VALUES.has(String(next.mainFlow || '').trim().toLowerCase())
+      ? String(next.mainFlow || '').trim().toLowerCase()
+      : getDefaultMainCardFlow(key);
     cardsConfigState = {
       ...cardsConfigState,
-      [MAIN_CARD_SETTINGS_KEY]: { ...currentConfig, layout },
+      [MAIN_CARD_SETTINGS_KEY]: { ...currentConfig, layout, mainFlow },
     };
     applyMainCardConfig();
     try {
-      (kanjiController || kanjiStudyController.create(key)).setCardConfig(MAIN_CARD_SETTINGS_KEY, { ...currentConfig, layout });
+      (kanjiController || kanjiStudyController.create(key)).setCardConfig(MAIN_CARD_SETTINGS_KEY, { ...currentConfig, layout, mainFlow });
     } catch (e) {}
   }
 
@@ -478,7 +637,9 @@ export function renderKanjiStudyCard({ store }) {
       fields: availableFields,
       selectedFields: Array.isArray(currentConfig.fields)
         ? currentConfig.fields.filter((field) => allowed.has(String(field || '').trim()))
-        : availableFields.map((field) => field.key),
+        : getDefaultGenericCardFields(key, availableFields),
+      namespace: 'kanjiStudyCardView.cards.genericFlatCard.js',
+      collection: key,
     });
     if (!next) return;
     const fields = normalizeCardFieldList(next.fields) || [];
@@ -509,6 +670,8 @@ export function renderKanjiStudyCard({ store }) {
       selectedFields: Array.isArray(currentConfig.controls)
         ? currentConfig.controls.slice()
         : availableControls.map((item) => item.key),
+      namespace: 'kanjiStudyCardView.cards.jsonViewerCard.js',
+      collection: key,
     });
     if (!next) return;
     const controls = Array.isArray(next.fields)
@@ -613,8 +776,7 @@ export function renderKanjiStudyCard({ store }) {
     if (!entry || !field) return;
     const text = getFieldValue(entry, [field]);
     if (!text) return;
-    const lang = getLanguageCode(field);
-    speak(text, lang);
+    speakText(text, { fieldKey: field });
   }
 
   function getSearchTerm() {
@@ -711,6 +873,8 @@ export function renderKanjiStudyCard({ store }) {
     defaultPrefs: footerActions.defaultPrefs,
     customOnly: true,
     getCollectionKey: getCurrentCollectionKey,
+    getSpeechConfig: getSpeechSettings,
+    setSpeechConfig: setSpeechSettings,
   });
 
   // Load default view mode from settings
@@ -729,15 +893,14 @@ export function renderKanjiStudyCard({ store }) {
 
     let api = null;
     if (cardKey === 'related') {
-      api = cardDef.factory({ entry: null, indexText: '', handlers: {
-        onSpeak: (text) => {
-          if (!text) return;
-          const lang = getLanguageCode('reading');
-          speak(text, lang);
-        },
-        onNext: () => {},
-        onPrev: () => {},
-      }});
+        api = cardDef.factory({ entry: null, indexText: '', handlers: {
+          onSpeak: (text) => {
+            if (!text) return;
+            speakText(text, { fieldKey: 'reading' });
+          },
+          onNext: () => {},
+          onPrev: () => {},
+        }});
     } else if (cardKey === 'main') {
       api = cardDef.factory({
         entry: null,
@@ -891,11 +1054,11 @@ export function renderKanjiStudyCard({ store }) {
   function renderCard(body, entry) {
     body.innerHTML = '';
 
-    // main kanji centered
+    // main primary field centered
     const kanjiWrap = document.createElement('div');
-    kanjiWrap.className = 'kanji-main-wrap';
+    kanjiWrap.className = 'main-field-card-main-wrap';
     const kanjiMain = document.createElement('div');
-    kanjiMain.className = 'kanji-main';
+    kanjiMain.className = 'main-field-card-main';
     const text = getFieldValue(entry, ['kanji', 'character', 'text']) || '';
     kanjiMain.textContent = text;
     // Auto-scale font size based on text length (3 tiers)
@@ -909,17 +1072,17 @@ export function renderKanjiStudyCard({ store }) {
 
     // top-left type
     const topLeft = document.createElement('div');
-    topLeft.className = 'kanji-top-left';
+    topLeft.className = 'main-field-card-top-left';
     topLeft.textContent = getFieldValue(entry, ['type']) || '';
 
     // bottom-left reading
     const bottomLeft = document.createElement('div');
-    bottomLeft.className = 'kanji-bottom-left';
+    bottomLeft.className = 'main-field-card-bottom-left';
     bottomLeft.textContent = getFieldValue(entry, ['reading', 'kana', 'onyomi', 'kunyomi']) || '';
 
     // bottom-right meaning
     const bottomRight = document.createElement('div');
-    bottomRight.className = 'kanji-bottom-right';
+    bottomRight.className = 'main-field-card-bottom-right';
     bottomRight.textContent = getFieldValue(entry, ['meaning', 'definition', 'gloss']) || '';
 
     body.append(topLeft, kanjiWrap, bottomLeft, bottomRight);
@@ -1101,7 +1264,7 @@ export function renderKanjiStudyCard({ store }) {
       : displaySet;
     const liveMainCardApi = displaySet.has('main') ? getCardApi('main') : null;
     const liveRelatedCardApi = displaySet.has('related') ? getCardApi('related') : null;
-    const wrapper = liveMainCardApi?.el?.querySelector('.kanji-card-wrapper') || null;
+    const wrapper = liveMainCardApi?.el?.querySelector('.main-field-card-wrapper') || null;
 
     if (wrapper) {
       if (defaultViewMode === 'kanji-only') wrapper.classList.add('kanji-only');

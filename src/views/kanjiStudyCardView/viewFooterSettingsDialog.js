@@ -2,6 +2,7 @@ import { el, safeId } from '../../utils/browser/ui.js';
 import { openViewFooterCustomButtonDialog } from './viewFooterCustomButtonDialog.js';
 import { confirmDialog } from '../../components/dialogs/confirmDialog.js';
 import { createDropdown } from '../../components/shared/dropdown.js';
+import { getLanguageCode } from '../../utils/browser/speech.js';
 
 // Autoplay constraints
 const AUTOPLAY_MIN_MS = 500;
@@ -445,6 +446,7 @@ export function openViewFooterSettingsDialog({
   customOnly = false,
   collectionLabel = '',
   currentCollectionKey = '',
+  getSpeechConfig = null,
   onChange = null,
 } = {}) {
   const controls = normalizeBaseControls(baseControls);
@@ -459,6 +461,23 @@ export function openViewFooterSettingsDialog({
   const availableActionById = new Map(availableActionList.map(a => [asString(a.id).trim(), a]));
   const templatePrefs = normalizeAppPrefs(defaultAppPrefs, controls, { customOnly: !!customOnly });
   const normalizedCollectionKey = asString(currentCollectionKey || collectionLabel).trim();
+
+  function normalizeActionFieldKey(fieldKey = '') {
+    const raw = asString(fieldKey).trim();
+    if (!raw) return '';
+    return raw.startsWith('entry.') ? raw.slice('entry.'.length).trim() : raw;
+  }
+
+  function resolveSpeakFieldLang(fieldKey = '') {
+    const key = normalizeActionFieldKey(fieldKey);
+    if (!key) return '';
+    try {
+      const speechConfig = (typeof getSpeechConfig === 'function') ? (getSpeechConfig() || {}) : {};
+      const fieldLang = asString(speechConfig?.fields?.[key]?.lang).trim();
+      if (fieldLang) return fieldLang;
+    } catch (e) {}
+    return asString(getLanguageCode(key, normalizedCollectionKey)).trim();
+  }
 
   function isConfigAvailableForCollection(config, collectionKey = normalizedCollectionKey) {
     const restrictedKey = asString(config?.restrictToCollectionKey).trim();
@@ -526,7 +545,10 @@ export function openViewFooterSettingsDialog({
     if (!actionField) return fnName;
     if (fnName === 'action.delay') return `${fnName}[${actionField}]`;
     if (/^manager\.studyProgress\.(setState|toggleState)$/.test(fnName)) return `${fnName}[${actionField}]`;
-    if (fnName === 'entry.speakField') return `${fnName}[${actionField}]`;
+    if (fnName === 'entry.speakField') {
+      const lang = resolveSpeakFieldLang(actionField);
+      return lang ? `${fnName}[${actionField}][${lang}]` : `${fnName}[${actionField}]`;
+    }
     if (/^app\.kanjiStudyCardView\.entryFields\.(setOff|setOn|toggle)$/.test(fnName)) return `${fnName}[${actionField}]`;
     if (fnName === 'link.open') return `${fnName}[${actionField}]`;
     return fnName;

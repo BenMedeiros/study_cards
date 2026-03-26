@@ -1,7 +1,7 @@
 // Factory for creating a Kanji related-item card element with internal carousel controls.
 // Uses existing CSS classes defined in src/styles.css.
 import { settingsLog } from '../../../managers/settingsManager.js';
-import { speak, getLanguageCode } from '../../../utils/browser/speech.js';
+import { speak } from '../../../utils/browser/speech.js';
 
 export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {} } = {}) {
   settingsLog('[Card:Related] createKanjiRelatedCard()', { entry });
@@ -342,7 +342,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
         const text = String(chunk?.ja || '').trim();
         if (!text) return;
         if (handlers.onSpeak) handlers.onSpeak(text, { index: currentIndex, chunkIndex: i, entry });
-        else speak(text, getLanguageCode('reading'));
+        else speak(text, { fieldKey: 'reading' });
       });
 
       const gloss = document.createElement('div');
@@ -433,7 +433,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
         const text = String(sentence.ja || '').trim();
         if (!text) return;
         if (handlers.onSpeak) handlers.onSpeak(text, { index: currentIndex, sentenceIndex: i, entry });
-        else speak(text, getLanguageCode('reading'));
+        else speak(text, { fieldKey: 'reading' });
       });
 
       sentenceTop.append(sentenceJa, sentenceSpeakBtn);
@@ -613,7 +613,7 @@ export function createKanjiRelatedCard({ entry = null, handlers = {}, config = {
     const text = String(item?.jp || '').trim();
     if (!text) return;
     if (handlers.onSpeak) handlers.onSpeak(text, { index: currentIndex, entry });
-    else speak(text, getLanguageCode('reading'));
+    else speak(text, { fieldKey: 'reading' });
   });
 
   function update(newEntry) {

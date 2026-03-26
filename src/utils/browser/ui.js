@@ -73,8 +73,11 @@ export function createSpeakerButton({ text, lang, collectionCategory, fieldKey }
   btn.style.marginLeft = '8px';
 
   btn.addEventListener('click', () => {
-    const languageCode = lang || getLanguageCode(fieldKey, collectionCategory);
-    speak(text, languageCode);
+    speak(text, {
+      fieldKey,
+      collectionCategory,
+      lang: lang || getLanguageCode(fieldKey, collectionCategory),
+    });
   });
 
   return btn;

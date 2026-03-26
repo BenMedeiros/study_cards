@@ -1650,7 +1650,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   }
 }
 
-.kanji-card {
+.main-field-card {
   min-height: 15rem;
   width: min(30rem, 100%);
   margin: 0 auto;
@@ -1696,7 +1696,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   margin-bottom: 0;
 }
 
-.kanji-card .kanji-top-left {
+.main-field-card .main-field-card-top-left {
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
@@ -1709,7 +1709,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   gap: 0.5rem;
 }
 
-.kanji-card .kanji-main {
+.main-field-card .main-field-card-main {
   font-size: 5rem;
   line-height: 1;
   font-weight: 400;
@@ -1718,8 +1718,8 @@ input[type="number"].button::-webkit-inner-spin-button {
   word-break: keep-all;
 }
 
-.kanji-card .kanji-bottom-left,
-.kanji-card .kanji-bottom-right {
+.main-field-card .main-field-card-bottom-left,
+.main-field-card .main-field-card-bottom-right {
   position: absolute;
   bottom: 0.75rem;
   font-size: 1.25rem;
@@ -1727,17 +1727,17 @@ input[type="number"].button::-webkit-inner-spin-button {
   max-width: 60%;
 }
 
-.kanji-card .kanji-bottom-left {
+.main-field-card .main-field-card-bottom-left {
   left: 0.75rem;
 }
 
-.kanji-card .kanji-bottom-right {
+.main-field-card .main-field-card-bottom-right {
   right: 0rem;
 }
 
 
 /* Make sure icon button in top-right fits visually */
-.kanji-card .kanji-top-left .icon-button {
+.main-field-card .main-field-card-top-left .icon-button {
   padding: 0.25rem;
   font-size: 1rem;
 }
@@ -1945,6 +1945,16 @@ input[type="number"].button::-webkit-inner-spin-button {
   display: inline-flex;
   gap: 0.25rem;
   align-items: flex-start;
+}
+
+.kanji-study-card-config-inline-toggle .btn[aria-pressed="true"] {
+  background: rgba(96, 165, 250, 0.16);
+  border-color: rgba(96, 165, 250, 0.5);
+  color: var(--text);
+}
+
+.kanji-study-card-config-inline-toggle .btn[aria-pressed="false"] {
+  opacity: 0.7;
 }
 
 .autoplay-controls {
@@ -2822,6 +2832,16 @@ select:hover {
 
 .custom-dropdown-option:hover {
   background: rgba(96, 165, 250, 0.15);
+}
+
+.custom-dropdown-option[data-disabled="true"] {
+  cursor: not-allowed;
+  color: var(--muted);
+  opacity: 0.68;
+}
+
+.custom-dropdown-option[data-disabled="true"]:hover {
+  background: transparent;
 }
 
 /* Keyboard-focused option when navigating dropdowns via arrow keys */

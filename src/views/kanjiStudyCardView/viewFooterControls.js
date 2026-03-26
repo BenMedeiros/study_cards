@@ -1072,6 +1072,7 @@ function createViewFooterControls(items = [], opts = {}) {
         customOnly,
         collectionLabel: getCollectionKey(),
         currentCollectionKey: getCollectionKey(),
+        getSpeechConfig: (typeof opts.getSpeechConfig === 'function') ? opts.getSpeechConfig : null,
         onChange: (nextPrefs) => {
           persistPrefs(nextPrefs);
           rebuildFromConfig();

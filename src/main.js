@@ -2,6 +2,7 @@ import { createAppShell } from './shell.js';
 import { installHashRouter, navigateTo } from './router.js';
 import { createStore } from './store.js';
 import { setVoiceSettingsGetter } from './utils/browser/speech.js';
+import { getDefaultSpeechConfigForCollection } from './views/kanjiStudyCardView/kanjiStudyController.js';
 import { isTimingEnabled, setTimingEnabled, timed } from './utils/browser/timing.js';
 
 const root = document.getElementById('app');
@@ -16,6 +17,13 @@ window.__TIMING__ = {
   setEnabled: setTimingEnabled,
 };
 setVoiceSettingsGetter(() => {
+  const activeCollectionKey = String(store?.collections?.getActiveCollectionId?.() || '').trim();
+  const activeCollectionState = activeCollectionKey
+    ? (store?.collections?.loadCollectionState?.(activeCollectionKey) || null)
+    : null;
+  const viewSpeech = activeCollectionState?.kanjiStudyCardView?.speech;
+  if (viewSpeech && typeof viewSpeech === 'object') return viewSpeech;
+  if (activeCollectionKey) return getDefaultSpeechConfigForCollection(activeCollectionKey);
   return (store?.shell && typeof store.shell.getVoiceSettings === 'function')
     ? (store.shell.getVoiceSettings() || null)
     : null;

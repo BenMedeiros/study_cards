@@ -21,15 +21,114 @@ function loadPersistedVoiceSettings() {
   }
 }
 
-function isJapaneseLang(lang) {
-  return String(lang || '').toLowerCase().startsWith('ja');
+function normalizeLangTag(lang) {
+  const raw = String(lang || '').trim();
+  if (!raw) return '';
+  const parts = raw.replace(/_/g, '-').split('-').filter(Boolean);
+  if (!parts.length) return '';
+  if (parts.length === 1) return parts[0].toLowerCase();
+  return `${parts[0].toLowerCase()}-${parts.slice(1).join('-').toUpperCase()}`;
+}
+
+function normalizeSpeechSettings(raw) {
+  const src = (raw && typeof raw === 'object') ? raw : {};
+  const out = {};
+
+  if (src.fields && typeof src.fields === 'object' && !Array.isArray(src.fields)) {
+    out.fields = {};
+    for (const [fieldKey, value] of Object.entries(src.fields)) {
+      if (!value || typeof value !== 'object' || Array.isArray(value)) continue;
+      const normalizedFieldKey = String(fieldKey || '').trim();
+      if (!normalizedFieldKey) continue;
+      const next = {};
+      if (value.lang != null) {
+        const normalizedLang = normalizeLangTag(value.lang);
+        if (normalizedLang) next.lang = normalizedLang;
+      }
+      for (const key of ['rate', 'pitch', 'volume', 'voiceURI', 'voiceName']) {
+        if (value[key] == null || value[key] === '') continue;
+        next[key] = value[key];
+      }
+      if (Object.keys(next).length) out.fields[normalizedFieldKey] = next;
+    }
+  }
+
+  if (src.languages && typeof src.languages === 'object' && !Array.isArray(src.languages)) {
+    out.languages = {};
+    for (const [langKey, value] of Object.entries(src.languages)) {
+      if (!value || typeof value !== 'object' || Array.isArray(value)) continue;
+      const normalizedLang = normalizeLangTag(langKey);
+      if (!normalizedLang) continue;
+      const next = {};
+      for (const key of ['rate', 'pitch', 'volume', 'voiceURI', 'voiceName']) {
+        if (value[key] == null || value[key] === '') continue;
+        next[key] = value[key];
+      }
+      if (Object.keys(next).length) out.languages[normalizedLang] = next;
+    }
+  }
+
+  // Backward compatibility with legacy shell.voice settings.
+  if (!out.languages) out.languages = {};
+  if (src.engVoice && typeof src.engVoice === 'object') {
+    out.languages['en-US'] = { ...(out.languages['en-US'] || {}), ...src.engVoice };
+  }
+  if (src.jpVoice && typeof src.jpVoice === 'object') {
+    out.languages['ja-JP'] = { ...(out.languages['ja-JP'] || {}), ...src.jpVoice };
+  }
+
+  return out;
+}
+
+function getFieldSpeechSettings(allSettings, fieldKey) {
+  const key = String(fieldKey || '').trim();
+  if (!key) return null;
+  const fields = (allSettings?.fields && typeof allSettings.fields === 'object') ? allSettings.fields : null;
+  if (!fields) return null;
+  const direct = fields[key];
+  return (direct && typeof direct === 'object') ? direct : null;
+}
+
+function getLanguageSpeechSettings(allSettings, lang) {
+  const normalizedLang = normalizeLangTag(lang);
+  if (!normalizedLang) return null;
+  const languages = (allSettings?.languages && typeof allSettings.languages === 'object') ? allSettings.languages : null;
+  if (!languages) return null;
+  if (languages[normalizedLang] && typeof languages[normalizedLang] === 'object') {
+    return languages[normalizedLang];
+  }
+  const prefix = normalizedLang.split('-')[0];
+  if (!prefix) return null;
+  for (const [key, value] of Object.entries(languages)) {
+    if (String(key || '').toLowerCase().startsWith(`${prefix.toLowerCase()}-`) && value && typeof value === 'object') {
+      return value;
+    }
+  }
+  return null;
+}
+
+function hasLanguageSupport(lang) {
+  const normalizedLang = normalizeLangTag(lang);
+  if (!normalizedLang) return false;
+  const prefix = normalizedLang.split('-')[0];
+  const voices = window.speechSynthesis?.getVoices?.() || [];
+  return voices.some((voice) => {
+    const candidate = normalizeLangTag(voice?.lang);
+    if (!candidate) return false;
+    if (candidate.toLowerCase() === normalizedLang.toLowerCase()) return true;
+    return candidate.split('-')[0] === prefix;
+  });
+}
+
+function getAvailableVoices() {
+  return window.speechSynthesis?.getVoices?.() || [];
 }
 
 function resolveVoice({ voiceURI, voiceName, lang }) {
   const synth = window.speechSynthesis;
   if (!synth) return null;
 
-  const voices = synth.getVoices?.() || [];
+  const voices = getAvailableVoices();
   if (!voices.length) return null;
 
   if (voiceURI) {
@@ -59,7 +158,7 @@ export function speak(text, langOrOptions = 'en-US', maybeOptions = null) {
   // Cancel any ongoing speech
   window.speechSynthesis.cancel();
 
-  const persistedAll = loadPersistedVoiceSettings();
+  const persistedAll = normalizeSpeechSettings(loadPersistedVoiceSettings());
 
   let options = {};
   if (langOrOptions && typeof langOrOptions === 'object') {
@@ -71,27 +170,42 @@ export function speak(text, langOrOptions = 'en-US', maybeOptions = null) {
     }
   }
 
-  const baseLang = (options.lang || (typeof langOrOptions === 'string' ? langOrOptions : null) || 'en-US');
-  const persisted = persistedAll
-    ? (isJapaneseLang(baseLang) ? persistedAll.jpVoice : persistedAll.engVoice)
-    : null;
+  const fieldKey = String(options.fieldKey || options.field || '').trim();
+  const collectionCategory = String(
+    options.collectionCategory
+    || options.collectionKey
+    || options.collection
+    || ''
+  ).trim();
+  const explicitLang = normalizeLangTag(options.lang || (typeof langOrOptions === 'string' ? langOrOptions : ''));
+  const fieldPersisted = getFieldSpeechSettings(persistedAll, fieldKey);
+  const inferredFieldLang = normalizeLangTag(
+    fieldPersisted?.lang
+    || (fieldKey ? getLanguageCode(fieldKey, collectionCategory) : '')
+  );
+  const baseLang = explicitLang || inferredFieldLang || 'en-US';
+  const languagePersisted = getLanguageSpeechSettings(persistedAll, baseLang);
 
-  // Merge: explicit options > persisted per-language settings
-  const merged = { ...(persisted || {}), ...options };
-  const lang = merged.lang || baseLang;
+  // Merge order: per-language defaults, then per-field overrides, then explicit call options.
+  const merged = { ...(languagePersisted || {}), ...(fieldPersisted || {}), ...options };
+  const lang = normalizeLangTag(merged.lang || baseLang || 'en-US');
 
   // Normalize text for better pronunciation
   const normalizedText = normalizeForSpeech(text, lang);
 
   const utterance = new SpeechSynthesisUtterance(normalizedText);
-  utterance.lang = lang;
+  const voices = getAvailableVoices();
+  const canHonorLang = !!(lang && (!voices.length || hasLanguageSupport(lang)));
+  if (lang && canHonorLang) {
+    utterance.lang = lang;
+  }
 
   // Defaults chosen for clarity
   utterance.rate = clampNumber(merged.rate, { min: 0.5, max: 1.5, fallback: 0.9 });
   utterance.pitch = clampNumber(merged.pitch, { min: 0.1, max: 1.5, fallback: 1 });
   utterance.volume = clampNumber(merged.volume, { min: 0.1, max: 1, fallback: 1 });
 
-  const voice = resolveVoice({ voiceURI: merged.voiceURI, voiceName: merged.voiceName, lang });
+  const voice = resolveVoice({ voiceURI: merged.voiceURI, voiceName: merged.voiceName, lang: (voices.length && canHonorLang) ? lang : null });
   if (voice) utterance.voice = voice;
   
   window.speechSynthesis.speak(utterance);
@@ -104,14 +218,56 @@ function normalizeForSpeech(text, lang) {
 }
 
 export function getLanguageCode(fieldKey, collectionCategory) {
-  // Map field names to language codes
+  const key = String(fieldKey || '').trim();
+  if (!key) return 'en-US';
+  const collectionKey = String(collectionCategory || '').trim().replace(/\\/g, '/').toLowerCase();
+
   const languageMap = {
-    'greekName': 'en-US', // Use English for Greek names (Anglicized pronunciation)
-    'latinName': 'en-US', // Use English for Latin names
-    'kanji': 'ja-JP',     // Japanese
-    'reading': 'ja-JP',   // Japanese
-    'japaneseName': 'ja-JP', // Japanese
+    kanji: 'ja-JP',
+    reading: 'ja-JP',
+    japaneseName: 'ja-JP',
+    example_jp: 'ja-JP',
   };
-  
-  return languageMap[fieldKey] || 'en-US';
+  if (languageMap[key]) return languageMap[key];
+
+  const normalized = key.toLowerCase();
+  const isGreekCollection = collectionKey.includes('/greek/') || collectionKey.startsWith('greek/');
+  const isSpanishCollection = collectionKey.includes('/spanish/') || collectionKey.startsWith('spanish/');
+
+  if (isGreekCollection) {
+    if (
+      normalized.includes('greek')
+      || normalized === 'lowercase'
+      || normalized === 'uppercase'
+    ) return 'el-GR';
+
+    if (normalized.includes('latin')) return 'it-IT';
+  }
+
+  if (isSpanishCollection) {
+    if (
+      normalized.includes('spanish')
+      || normalized === 'es'
+      || normalized === 'lemma'
+    ) return 'es-ES';
+  }
+
+  if (
+    normalized.includes('kanji')
+    || normalized.includes('kana')
+    || normalized.includes('reading')
+    || normalized.includes('japanese')
+    || normalized === 'jp'
+    || normalized === 'ja'
+  ) return 'ja-JP';
+
+  if (
+    normalized.includes('english')
+    || normalized.includes('meaning')
+    || normalized.includes('definition')
+    || normalized.includes('gloss')
+    || normalized === 'en'
+  ) return 'en-US';
+
+  return 'en-US';
 }

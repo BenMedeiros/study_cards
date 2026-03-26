@@ -50,11 +50,17 @@ function getLayoutValue(layout, slotKey, fallbackLayout) {
 
 export function openGenericFlatCardConfigDialog({
   title = 'Generic Card Settings',
+  subtitle = '',
   fields = [],
   selectedFields = [],
   layoutSlots = [],
   selectedLayout = {},
   defaultLayout = {},
+  optionControls = [],
+  selectedOptions = {},
+  defaultOptions = {},
+  namespace = '',
+  collection = '',
 } = {}) {
   const items = normalizeFieldItems(fields);
   const slots = Array.isArray(layoutSlots)
@@ -62,7 +68,23 @@ export function openGenericFlatCardConfigDialog({
       key: String(raw?.key || '').trim(),
       label: String(raw?.label || raw?.key || '').trim(),
       allowEmpty: raw?.allowEmpty !== false,
+      showWhen: raw?.showWhen || null,
     })).filter((item) => item.key)
+    : [];
+  const controls = Array.isArray(optionControls)
+    ? optionControls.map((raw) => ({
+      key: String(raw?.key || '').trim(),
+      label: String(raw?.label || raw?.key || '').trim(),
+      showWhen: raw?.showWhen || null,
+      attachToLayoutKey: String(raw?.attachToLayoutKey || '').trim(),
+      renderAs: String(raw?.renderAs || '').trim(),
+      items: Array.isArray(raw?.items)
+        ? raw.items.map((item) => ({
+          value: String(item?.value || '').trim(),
+          label: String(item?.label || item?.value || '').trim(),
+        })).filter((item) => item.value)
+        : [],
+    })).filter((item) => item.key && item.items.length)
     : [];
   const mount = document.body || document.documentElement;
   if (!mount) return Promise.resolve(null);
@@ -73,7 +95,11 @@ export function openGenericFlatCardConfigDialog({
       ...slot,
       value: getLayoutValue(selectedLayout, slot.key, defaultLayout),
     }));
-    const isLayoutMode = slots.length > 0;
+    let optionState = controls.map((control) => ({
+      ...control,
+      value: getLayoutValue(selectedOptions, control.key, defaultOptions) || control.items[0]?.value || '',
+    }));
+    const isLayoutMode = slots.length > 0 || controls.length > 0;
     let isJsonMode = false;
 
     const backdrop = el('div', { className: 'kanji-study-card-config-backdrop' });
@@ -90,9 +116,9 @@ export function openGenericFlatCardConfigDialog({
     const titleEl = el('h2', { text: String(title || 'Generic Card Settings') });
     const subtitleEl = el('p', {
       className: 'hint',
-      text: isLayoutMode
+      text: String(subtitle || '').trim() || (isLayoutMode
         ? 'Choose which collection field appears in each fixed position on the card.'
-        : 'Choose which fields appear on the generic card and arrange their top-to-bottom order.',
+        : 'Choose which fields appear on the generic card and arrange their top-to-bottom order.'),
     });
     const summaryEl = el('div', { className: 'kanji-study-card-config-summary' });
     const jsonBtn = el('button', {
@@ -151,18 +177,99 @@ export function openGenericFlatCardConfigDialog({
       return out;
     }
 
+    function getSelectedOptionValue(optionKey) {
+      const key = String(optionKey || '').trim();
+      if (!key) return '';
+      const found = optionState.find((item) => item.key === key);
+      return String(found?.value || '').trim();
+    }
+
+    function matchesVisibilityRule(rule) {
+      if (!rule || typeof rule !== 'object' || Array.isArray(rule)) return true;
+      const optionKey = String(rule.option || '').trim();
+      if (!optionKey) return true;
+      const actual = getSelectedOptionValue(optionKey);
+      if (Object.prototype.hasOwnProperty.call(rule, 'equals')) return actual === String(rule.equals || '').trim();
+      if (Array.isArray(rule.oneOf)) return rule.oneOf.map((item) => String(item || '').trim()).includes(actual);
+      return true;
+    }
+
+    function isLayoutItemVisible(item) {
+      return matchesVisibilityRule(item?.showWhen);
+    }
+
+    function isOptionItemVisible(item) {
+      return matchesVisibilityRule(item?.showWhen);
+    }
+
+    function getAttachedOptionItems(layoutKey) {
+      const key = String(layoutKey || '').trim();
+      if (!key) return [];
+      return optionState
+        .map((item, index) => ({ ...item, index }))
+        .filter((item) => item.attachToLayoutKey === key && isOptionItemVisible(item));
+    }
+
+    function renderOptionControl(item, index) {
+      if (item.renderAs === 'toggle' && item.items.length) {
+        return el('div', {
+          className: 'btn-group kanji-study-card-config-inline-toggle',
+          children: item.items.map((toggleItem) => {
+            const selected = String(item.value || '').trim() === String(toggleItem.value || '').trim();
+            const btn = el('button', {
+              className: `btn small${selected ? ' is-active' : ''}`,
+              text: toggleItem.label,
+              attrs: {
+                type: 'button',
+                'aria-pressed': selected ? 'true' : 'false',
+                title: `${item.label}: ${toggleItem.label}`,
+              },
+            });
+            btn.addEventListener('click', () => {
+              optionState[index] = { ...item, value: String(toggleItem.value || '').trim() };
+              render();
+            });
+            return btn;
+          }),
+        });
+      }
+
+      return createDropdown({
+        items: item.items,
+        value: String(item.value || '').trim(),
+        className: 'kanji-study-card-config-select',
+        closeOverlaysOnOpen: false,
+        onChange: (nextValue) => {
+          optionState[index] = { ...item, value: String(nextValue || '').trim() };
+          render();
+        },
+      });
+    }
+
     function getCurrentConfigSnapshot() {
-      return isLayoutMode
-        ? { layout: getSelectedLayout() }
+      const payload = isLayoutMode
+        ? {
+          layout: getSelectedLayout(),
+          ...Object.fromEntries(optionState.map((item) => [item.key, String(item.value || '').trim()])),
+        }
         : { fields: getSelectedFieldOrder() };
+      return {
+        namespace: String(namespace || '').trim(),
+        collection: String(collection || '').trim(),
+        ...payload,
+      };
     }
 
     function render() {
       jsonBtn.classList.toggle('is-active', isJsonMode);
       jsonBtn.setAttribute('aria-pressed', isJsonMode ? 'true' : 'false');
       if (isLayoutMode) {
-        const mappedCount = layoutState.filter((item) => item.value).length;
-        summaryEl.textContent = `${mappedCount} mapped of ${layoutState.length}`;
+        const visibleLayoutState = layoutState.filter((item) => isLayoutItemVisible(item));
+        const visibleOptionState = optionState.filter((item) => isOptionItemVisible(item));
+        const mappedCount = visibleLayoutState.filter((item) => item.value).length;
+        const configuredCount = visibleOptionState.filter((item) => item.value).length;
+        const totalCount = visibleLayoutState.length + visibleOptionState.length;
+        summaryEl.textContent = `${mappedCount + configuredCount} configured of ${totalCount}`;
       } else {
         const visibleCount = state.filter((item) => item.enabled).length;
         summaryEl.textContent = `${visibleCount} visible of ${state.length}`;
@@ -181,7 +288,7 @@ export function openGenericFlatCardConfigDialog({
         return;
       }
 
-      if (isLayoutMode && !layoutState.length) {
+      if (isLayoutMode && !layoutState.length && !optionState.length) {
         list.append(el('p', { className: 'hint kanji-study-card-config-empty', text: 'No card positions are available for this card.' }));
         return;
       }
@@ -192,6 +299,8 @@ export function openGenericFlatCardConfigDialog({
 
       if (isLayoutMode) {
         layoutState.forEach((item, index) => {
+          if (!isLayoutItemVisible(item)) return;
+          const attachedControls = getAttachedOptionItems(item.key);
           const dropdown = createDropdown({
             items: [
               ...(item.allowEmpty ? [{ value: '', label: 'None' }] : []),
@@ -222,7 +331,31 @@ export function openGenericFlatCardConfigDialog({
               }),
               el('div', {
                 className: 'kanji-study-card-config-item-controls',
-                children: [dropdown],
+                children: [
+                  ...attachedControls.map((control) => renderOptionControl(control, control.index)),
+                  dropdown,
+                ],
+              }),
+            ],
+          }));
+        });
+        optionState.forEach((item, index) => {
+          if (!isOptionItemVisible(item)) return;
+          if (item.attachToLayoutKey) return;
+
+          list.append(el('div', {
+            className: 'kanji-study-card-config-item',
+            children: [
+              el('div', {
+                className: 'kanji-study-card-config-item-copy',
+                children: [
+                  el('div', { className: 'kanji-study-card-config-item-label', text: item.label }),
+                  el('div', { className: 'kanji-study-card-config-item-key hint', text: item.key }),
+                ],
+              }),
+              el('div', {
+                className: 'kanji-study-card-config-item-controls',
+                children: [renderOptionControl(item, index)],
               }),
             ],
           }));
@@ -315,6 +448,10 @@ export function openGenericFlatCardConfigDialog({
           ...slot,
           value: String(defaultLayout?.[slot.key] || '').trim(),
         }));
+        optionState = controls.map((control) => ({
+          ...control,
+          value: getLayoutValue(defaultOptions, control.key, defaultOptions) || control.items[0]?.value || '',
+        }));
       }
       else state = items.map((item) => ({ ...item, enabled: true }));
       render();
@@ -322,7 +459,10 @@ export function openGenericFlatCardConfigDialog({
     cancelBtn.addEventListener('click', () => cleanup(null));
     saveBtn.addEventListener('click', () => cleanup(
       isLayoutMode
-        ? { layout: getSelectedLayout() }
+        ? {
+          layout: getSelectedLayout(),
+          ...Object.fromEntries(optionState.map((item) => [item.key, String(item.value || '').trim()])),
+        }
         : { fields: getSelectedFieldOrder() }
     ));
 

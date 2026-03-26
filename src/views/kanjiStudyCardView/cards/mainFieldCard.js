@@ -1,5 +1,4 @@
-// Factory for creating a Kanji main card element.
-// The card uses the existing project CSS classes (from src/styles.css).
+// Factory for creating the main fixed-layout study card.
 import { settingsLog } from '../../../managers/settingsManager.js';
 
 function normalizeAvailableFields(fields) {
@@ -30,23 +29,18 @@ function normalizeCardConfig(config) {
       next.layout[slot] = field;
     }
   }
+  const mainFlow = String(config.mainFlow || '').trim().toLowerCase();
+  if (mainFlow === 'row' || mainFlow === 'column') next.mainFlow = mainFlow;
   return next;
 }
 
-const DEFAULT_LAYOUT = {
-  topLeft: 'type',
-  main: 'kanji',
-  bottomLeft: 'reading',
-  bottomRight: 'meaning',
-};
-
-export function createKanjiMainCard({ entry = null, indexText = '', config = {}, handlers = {} } = {}) {
-  settingsLog('[Card:Main] createKanjiMainCard()', { entry, indexText, config });
+export function createMainFieldCard({ entry = null, indexText = '', config = {}, handlers = {} } = {}) {
+  settingsLog('[Card:Main] createMainFieldCard()', { entry, indexText, config });
   const root = document.createElement('div');
-  root.className = 'card kanji-card';
+  root.className = 'card main-field-card';
 
   const wrapper = document.createElement('div');
-  wrapper.className = 'kanji-card-wrapper';
+  wrapper.className = 'main-field-card-wrapper';
   wrapper.tabIndex = 0;
 
   const topRight = document.createElement('div');
@@ -60,27 +54,34 @@ export function createKanjiMainCard({ entry = null, indexText = '', config = {},
   actions.className = 'kanji-study-card-actions';
 
   const body = document.createElement('div');
-  // Keep this as a generic body container (avoid duplicating IDs)
-  body.className = 'kanji-body';
+  body.className = 'main-field-card-body';
 
   const topLeft = document.createElement('div');
-  topLeft.className = 'kanji-top-left';
+  topLeft.className = 'main-field-card-top-left';
 
   const mainWrap = document.createElement('div');
-  mainWrap.className = 'kanji-main-wrap';
+  mainWrap.className = 'main-field-card-main-wrap';
 
   const main = document.createElement('div');
-  main.className = 'kanji-main';
+  main.className = 'main-field-card-main';
   main.style.fontSize = '5rem';
 
+  const mainSecondary = document.createElement('div');
+  mainSecondary.className = 'main-field-card-main';
+  mainSecondary.style.fontSize = '5rem';
+
   const bottomLeft = document.createElement('div');
-  bottomLeft.className = 'kanji-bottom-left';
+  bottomLeft.className = 'main-field-card-bottom-left';
 
   const bottomRight = document.createElement('div');
-  bottomRight.className = 'kanji-bottom-right';
+  bottomRight.className = 'main-field-card-bottom-right';
 
   topRight.append(corner, actions);
-  mainWrap.appendChild(main);
+  mainWrap.style.display = 'grid';
+  mainWrap.style.alignItems = 'center';
+  mainWrap.style.justifyContent = 'center';
+  mainWrap.style.gap = '0.75rem';
+  mainWrap.append(main, mainSecondary);
   body.append(topLeft, mainWrap, bottomLeft, bottomRight);
   wrapper.append(topRight, body);
   root.appendChild(wrapper);
@@ -136,7 +137,7 @@ export function createKanjiMainCard({ entry = null, indexText = '', config = {},
     if (cardConfig?.layout && Object.prototype.hasOwnProperty.call(cardConfig.layout, slot)) {
       return String(cardConfig.layout[slot] || '').trim();
     }
-    return DEFAULT_LAYOUT[slot] || '';
+    return '';
   }
 
   function applyVisibility() {
@@ -149,27 +150,40 @@ export function createKanjiMainCard({ entry = null, indexText = '', config = {},
     settingsLog('[Card:Main] setEntry()', e);
     currentEntry = e || {};
     const entryObj = currentEntry;
-    const kanji = resolveField(entryObj, getLayoutField('main'));
-    const reading = resolveField(entryObj, getLayoutField('bottomLeft'));
-    const meaning = resolveField(entryObj, getLayoutField('bottomRight'));
-    const pos = resolveField(entryObj, getLayoutField('topLeft'));
+    const mainValue = resolveField(entryObj, getLayoutField('main'));
+    const mainSecondaryValue = resolveField(entryObj, getLayoutField('mainSecondary'));
+    const bottomLeftValue = resolveField(entryObj, getLayoutField('bottomLeft'));
+    const bottomRightValue = resolveField(entryObj, getLayoutField('bottomRight'));
+    const topLeftValue = resolveField(entryObj, getLayoutField('topLeft'));
 
-    // Auto-scale font size based on kanji text length (mirror previous logic)
-    const length = (kanji || '').length;
+    const centerValues = [mainValue, mainSecondaryValue].filter((value) => String(value || '').trim());
+    const longestCenterLength = centerValues.reduce((max, value) => Math.max(max, String(value || '').length), 0);
+    const mainFlow = String(cardConfig?.mainFlow || 'row').trim().toLowerCase() === 'column' ? 'column' : 'row';
+    const hasSecondary = !!String(getLayoutField('mainSecondary') || '').trim();
+
+    // Auto-scale center field(s) based on text length.
+    const length = longestCenterLength;
     let fontSize = 5; // rem
     if (length > 6) fontSize = 3.5;
     else if (length > 5) fontSize = 3.75;
     else if (length > 4) fontSize = 4;
     main.style.fontSize = `${fontSize}rem`;
+    mainSecondary.style.fontSize = `${fontSize}rem`;
+    mainWrap.style.gridAutoFlow = mainFlow;
+    mainWrap.style.gridTemplateColumns = mainFlow === 'row' ? 'repeat(2, auto)' : 'auto';
+    mainWrap.style.gridTemplateRows = mainFlow === 'column' ? 'repeat(2, auto)' : 'auto';
 
     topLeft.style.visibility = '';
     main.style.visibility = '';
+    mainSecondary.style.visibility = '';
     bottomLeft.style.visibility = '';
     bottomRight.style.visibility = '';
-    main.textContent = kanji;
-    topLeft.textContent = pos;
-    bottomLeft.textContent = reading;
-    bottomRight.textContent = meaning;
+    main.textContent = mainValue;
+    mainSecondary.textContent = mainSecondaryValue;
+    mainSecondary.style.display = hasSecondary ? '' : 'none';
+    topLeft.textContent = topLeftValue;
+    bottomLeft.textContent = bottomLeftValue;
+    bottomRight.textContent = bottomRightValue;
     applyVisibility();
   }
 
@@ -183,6 +197,7 @@ export function createKanjiMainCard({ entry = null, indexText = '', config = {},
     const key = String(field || '').trim();
     const topLeftField = getLayoutField('topLeft');
     const mainField = getLayoutField('main');
+    const mainSecondaryField = getLayoutField('mainSecondary');
     const bottomLeftField = getLayoutField('bottomLeft');
     const bottomRightField = getLayoutField('bottomRight');
     fieldVisibility[key] = v;
@@ -192,6 +207,9 @@ export function createKanjiMainCard({ entry = null, indexText = '', config = {},
         break;
       case mainField:
         main.style.visibility = v ? '' : 'hidden';
+        break;
+      case mainSecondaryField:
+        mainSecondary.style.visibility = v ? '' : 'hidden';
         break;
       case bottomLeftField:
         bottomLeft.style.visibility = v ? '' : 'hidden';

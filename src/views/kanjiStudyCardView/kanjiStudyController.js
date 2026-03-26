@@ -11,7 +11,115 @@ const DEFAULT_VIEW = {
   relatedFields: {},
   displayCards: 'all',
   cards: {},
+  speech: {},
 };
+
+const SPEECH_LANGUAGE_DEFAULTS_BY_COLLECTION = {
+  'japanese/japanese_words.json': {
+    kanji: 'ja-JP',
+    reading: 'ja-JP',
+  },
+  'japanese/japanese_sentences.json': {
+    ja: 'ja-JP',
+  },
+  'japanese/japanese_paragraphs.json': {
+    ja: 'ja-JP',
+  },
+  'japanese/japanese_grammar.json': {
+    example_jp: 'ja-JP',
+  },
+  'greek/greek_mythology.json': {
+    greekName: 'el-GR',
+    greekPronunciation: 'el-GR',
+    latinName: 'it-IT',
+    latinPronunciation: 'it-IT',
+    japaneseName: 'ja-JP',
+  },
+  'greek/greek_alphabet.json': {
+    lowercase: 'el-GR',
+    uppercase: 'el-GR',
+    classical_greek_name: 'el-GR',
+  },
+  'spanish/spanish_words.json': {
+    lemma: 'es-ES',
+  },
+  'pokemon.json': {
+    japaneseName: 'ja-JP',
+  },
+};
+
+function buildSpeechConfigFromLanguageDefaults(raw = null) {
+  const src = (raw && typeof raw === 'object' && !Array.isArray(raw)) ? raw : {};
+  const fields = {};
+  for (const [fieldKey, lang] of Object.entries(src)) {
+    const key = String(fieldKey || '').trim();
+    const normalizedLang = String(lang || '').trim();
+    if (!key || !normalizedLang) continue;
+    fields[key] = { lang: normalizedLang };
+  }
+  return Object.keys(fields).length ? { fields } : {};
+}
+
+function cloneSpeechConfig(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  const out = {};
+  if (raw.fields && typeof raw.fields === 'object' && !Array.isArray(raw.fields)) {
+    out.fields = {};
+    for (const [fieldKey, value] of Object.entries(raw.fields)) {
+      const key = String(fieldKey || '').trim();
+      if (!key || !value || typeof value !== 'object' || Array.isArray(value)) continue;
+      const next = {};
+      if (value.lang != null) {
+        const lang = String(value.lang || '').trim();
+        if (lang) next.lang = lang;
+      }
+      for (const prop of ['rate', 'pitch', 'volume', 'voiceURI', 'voiceName']) {
+        if (value[prop] == null || value[prop] === '') continue;
+        next[prop] = value[prop];
+      }
+      if (Object.keys(next).length) out.fields[key] = next;
+    }
+  }
+  if (raw.languages && typeof raw.languages === 'object' && !Array.isArray(raw.languages)) {
+    out.languages = {};
+    for (const [langKey, value] of Object.entries(raw.languages)) {
+      const key = String(langKey || '').trim();
+      if (!key || !value || typeof value !== 'object' || Array.isArray(value)) continue;
+      const next = {};
+      for (const prop of ['rate', 'pitch', 'volume', 'voiceURI', 'voiceName']) {
+        if (value[prop] == null || value[prop] === '') continue;
+        next[prop] = value[prop];
+      }
+      if (Object.keys(next).length) out.languages[key] = next;
+    }
+  }
+  return out;
+}
+
+function mergeSpeechConfig(baseRaw, overrideRaw) {
+  const base = cloneSpeechConfig(baseRaw);
+  const override = cloneSpeechConfig(overrideRaw);
+  const out = { ...base, ...override };
+  if (base.fields || override.fields) {
+    out.fields = { ...(base.fields || {}), ...(override.fields || {}) };
+  }
+  if (base.languages || override.languages) {
+    out.languages = { ...(base.languages || {}), ...(override.languages || {}) };
+  }
+  return cloneSpeechConfig(out);
+}
+
+export function getDefaultSpeechConfigForCollection(collKey) {
+  const key = String(collKey || '').trim();
+  return cloneSpeechConfig(buildSpeechConfigFromLanguageDefaults(SPEECH_LANGUAGE_DEFAULTS_BY_COLLECTION[key]));
+}
+
+function getDefaultViewForCollection(collKey) {
+  return {
+    ...DEFAULT_VIEW,
+    speech: getDefaultSpeechConfigForCollection(collKey),
+  };
+}
 
 function cloneCardsConfig(cards) {
   if (!cards || typeof cards !== 'object' || Array.isArray(cards)) return {};
@@ -131,17 +239,21 @@ function _validateCards(cards, collection) {
 }
 
 function create(collKey) {
+  const collectionDefaults = getDefaultViewForCollection(collKey);
   const validators = {
     displayCards: (v) => _validateDisplayCards(v),
     entryFields: (v, collection) => _validateEntryFields(v, collection),
     cards: (v, collection) => _validateCards(v, collection),
+    speech: (v) => {
+      if (!v || typeof v !== 'object' || Array.isArray(v)) throw new Error('speech must be an object');
+    },
     currentIndex: (v) => {
       const n = Number(v);
       if (!Number.isInteger(n) || n < 0) throw new Error('currentIndex must be an integer >= 0');
     },
   };
 
-  const base = controllerUtils.createViewController(collKey, VIEW, DEFAULT_VIEW, validators);
+  const base = controllerUtils.createViewController(collKey, VIEW, collectionDefaults, validators);
 
   // keep a local collection reference once ready so we can resolve metadata-driven maps
   let _collectionRef = null;
@@ -201,11 +313,23 @@ function create(collKey) {
       const s = base.get();
       try { return { ...s, resolved: _computeResolved(s) }; } catch (e) { return s; }
     },
-    set: base.set,
-    reset: base.reset,
+    set: async (patch) => {
+      if (!patch || typeof patch !== 'object' || Array.isArray(patch)) throw new Error('patch object required');
+      const nextPatch = { ...patch };
+      if (Object.prototype.hasOwnProperty.call(nextPatch, 'speech')) {
+        nextPatch.speech = cloneSpeechConfig(nextPatch.speech);
+      }
+      return base.set(nextPatch);
+    },
+    reset: () => base.replace(collectionDefaults),
     setEntryFields: (fields) => base.set({ entryFields: fields }),
     setDisplayCards: (cards) => base.set({ displayCards: cards }),
     setCards: (cards) => base.set({ cards: cloneCardsConfig(cards) }),
+    setSpeech: (speech) => base.set({ speech: cloneSpeechConfig(speech) }),
+    getSpeech: () => {
+      const current = base.get() || {};
+      return mergeSpeechConfig(collectionDefaults.speech, current.speech);
+    },
     setCardConfig: (cardKey, config) => {
       const key = String(cardKey || '').trim();
       if (!key) throw new Error('cardKey required');
