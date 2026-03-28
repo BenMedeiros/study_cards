@@ -427,6 +427,8 @@ export function renderManageCollections({ store, onNavigate }) {
   let historyTableSettings = manageCollectionsViewController.getDefaultHistoryTableSettings();
   let historyTableCtrl = null;
   const aiPromptCollectionCache = new Map();
+  let isViewActive = true;
+  let pendingReload = false;
 
   function ensureHistoryTableController(collKey) {
     const key = String(collKey || '').trim();
@@ -1537,9 +1539,14 @@ export function renderManageCollections({ store, onNavigate }) {
         const nextKey = String(active?.key || active?.path || '').trim();
         if (nextKey && nextKey !== collectionKey) {
           collectionKey = nextKey;
+          if (!isViewActive) {
+            pendingReload = true;
+            return;
+          }
           Promise.resolve().then(loadCurrent);
           return;
         }
+        if (!isViewActive) return;
         try { renderAiPrompts(); } catch (e) {}
       })
     : null;
@@ -1552,5 +1559,17 @@ export function renderManageCollections({ store, onNavigate }) {
     }
   });
   mo.observe(document.body, { childList: true, subtree: true });
+  root.__activate = () => {
+    isViewActive = true;
+    if (pendingReload) {
+      pendingReload = false;
+      void loadCurrent();
+      return;
+    }
+    try { renderAiPrompts(); } catch (e) {}
+  };
+  root.__deactivate = () => {
+    isViewActive = false;
+  };
   return root;
 }

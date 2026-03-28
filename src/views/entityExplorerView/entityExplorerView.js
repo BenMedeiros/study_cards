@@ -150,6 +150,8 @@ export function renderEntityExplorer({ store }) {
   let latestTableSourceInfo = '';
   let analysisStateUnsub = null;
   let sessionViewerExpose = null;
+  let isViewActive = true;
+  let pendingManagerRefresh = false;
 
   function readSavedEntityExplorerSettings() {
     try {
@@ -388,6 +390,10 @@ export function renderEntityExplorer({ store }) {
             try {
               const activeManager = String((managerDropdown?.getValue && managerDropdown.getValue()) || initialManager || 'idb');
               if (activeManager !== 'session') return;
+              if (!isViewActive) {
+                pendingManagerRefresh = true;
+                return;
+              }
               expose.setJson?.(getSessionStateSnapshot());
               updateCollapseAllBtnState();
             } catch (e) {}
@@ -638,6 +644,16 @@ export function renderEntityExplorer({ store }) {
     }
   });
   mo.observe(document.body, { childList: true, subtree: true });
+  root.__activate = () => {
+    isViewActive = true;
+    if (!pendingManagerRefresh) return;
+    pendingManagerRefresh = false;
+    const manager = String((managerDropdown?.getValue && managerDropdown.getValue()) || initialManager || 'idb');
+    void loadAndRenderManager(manager);
+  };
+  root.__deactivate = () => {
+    isViewActive = false;
+  };
   return root;
 }
 

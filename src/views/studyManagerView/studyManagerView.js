@@ -748,6 +748,16 @@ export function renderStudyManager({ store, onNavigate, route }) {
   let recommendationsMinimumEntryCount = 5;
   let recommendationsViewMode = 'cards';
   const collapsedCards = Object.create(null);
+  let isViewActive = true;
+
+  function applyRoute(nextRoute) {
+    const nextCollectionId = String(nextRoute?.query?.get('collection') || store?.collections?.getActiveCollectionId?.() || '').trim();
+    if (!nextCollectionId || nextCollectionId === selectedCollectionId) return;
+    selectedCollectionId = nextCollectionId;
+    renderControls();
+    renderBody();
+    ensureSelectedCollectionReport();
+  }
 
   let tableSettingsCtrl = null;
   let tableSettingsCollectionId = '';
@@ -1284,6 +1294,10 @@ export function renderStudyManager({ store, onNavigate, route }) {
     const nextSnap = next || {};
     const reason = String(nextSnap?.reason || '').trim();
     const allowLiveRender = (!snapshot?.ready) || reason === 'init' || reason === 'manual' || reason === 'ensureCollections';
+    if (!isViewActive) {
+      pendingSnapshot = nextSnap;
+      return;
+    }
     if (allowLiveRender) {
       snapshot = nextSnap;
       pendingSnapshot = null;
@@ -1302,6 +1316,21 @@ export function renderStudyManager({ store, onNavigate, route }) {
     }
   });
   mo.observe(document.body, { childList: true, subtree: true });
+  root.__activate = () => {
+    isViewActive = true;
+    if (pendingSnapshot) {
+      snapshot = pendingSnapshot;
+      pendingSnapshot = null;
+      renderControls();
+      renderBody();
+    }
+  };
+  root.__deactivate = () => {
+    isViewActive = false;
+  };
+  root.__updateRoute = (nextRoute) => {
+    applyRoute(nextRoute);
+  };
 
   return root;
 }

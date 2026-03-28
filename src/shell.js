@@ -474,7 +474,7 @@ export function createAppShell({ store, onNavigate }) {
   // Study time tracking (app x collection)
   let activeStudySession = null;
   let activeRoutePathname = null;
-  const cachedRoutePaths = new Set(['/kanji', '/data']);
+  const cachedRoutePaths = new Set(['/kanji', '/data', '/explorer', '/study-manager', '/collections', '/manage-collections']);
   const cachedRouteMounts = new Map();
 
   function forEachLifecycleNode(root, fn) {
@@ -497,6 +497,12 @@ export function createAppShell({ store, onNavigate }) {
     forEachLifecycleNode(mount, (node) => {
       if (typeof node?.__activate === 'function') node.__activate();
       if (typeof node?.__register === 'function') node.__register();
+    });
+  }
+
+  function updateCachedRouteMount(mount, route) {
+    forEachLifecycleNode(mount, (node) => {
+      if (typeof node?.__updateRoute === 'function') node.__updateRoute(route);
     });
   }
 
@@ -785,11 +791,17 @@ export function createAppShell({ store, onNavigate }) {
         const mount = getCachedRouteMount('/kanji', () => timed('view.renderKanjiStudyCard', () => renderKanjiStudyCard({ store })));
         mount.hidden = false;
         mount.style.display = '';
+        updateCachedRouteMount(mount, route);
         activateCachedRouteMount(mount);
         return;
       }
       if (route.pathname === '/explorer') {
-        transientMainHost.append(timed('view.renderEntityExplorer', () => renderEntityExplorer({ store })));
+        try { console.info(cachedRouteMounts.has('/explorer') ? 'shell.renderRoute /explorer cache hit' : 'shell.renderRoute /explorer cache miss'); } catch (e) {}
+        const mount = getCachedRouteMount('/explorer', () => timed('view.renderEntityExplorer', () => renderEntityExplorer({ store })));
+        mount.hidden = false;
+        mount.style.display = '';
+        updateCachedRouteMount(mount, route);
+        activateCachedRouteMount(mount);
         return;
       }
 
@@ -798,22 +810,38 @@ export function createAppShell({ store, onNavigate }) {
         const mount = getCachedRouteMount('/data', () => timed('view.renderData', () => renderData({ store })));
         mount.hidden = false;
         mount.style.display = '';
+        updateCachedRouteMount(mount, route);
         activateCachedRouteMount(mount);
         return;
       }
 
       if (route.pathname === '/study-manager') {
-        transientMainHost.append(timed('view.renderStudyManager', () => renderStudyManager({ store, onNavigate, route })));
+        try { console.info(cachedRouteMounts.has('/study-manager') ? 'shell.renderRoute /study-manager cache hit' : 'shell.renderRoute /study-manager cache miss'); } catch (e) {}
+        const mount = getCachedRouteMount('/study-manager', () => timed('view.renderStudyManager', () => renderStudyManager({ store, onNavigate, route })));
+        mount.hidden = false;
+        mount.style.display = '';
+        updateCachedRouteMount(mount, route);
+        activateCachedRouteMount(mount);
         return;
       }
 
       if (route.pathname === '/collections') {
-        transientMainHost.append(timed('view.renderCollectionsManager', () => renderCollectionsManager({ store, onNavigate, route })));
+        try { console.info(cachedRouteMounts.has('/collections') ? 'shell.renderRoute /collections cache hit' : 'shell.renderRoute /collections cache miss'); } catch (e) {}
+        const mount = getCachedRouteMount('/collections', () => timed('view.renderCollectionsManager', () => renderCollectionsManager({ store, onNavigate, route })));
+        mount.hidden = false;
+        mount.style.display = '';
+        updateCachedRouteMount(mount, route);
+        activateCachedRouteMount(mount);
         return;
       }
 
       if (route.pathname === '/manage-collections') {
-        transientMainHost.append(timed('view.renderManageCollections', () => renderManageCollections({ store, onNavigate, route })));
+        try { console.info(cachedRouteMounts.has('/manage-collections') ? 'shell.renderRoute /manage-collections cache hit' : 'shell.renderRoute /manage-collections cache miss'); } catch (e) {}
+        const mount = getCachedRouteMount('/manage-collections', () => timed('view.renderManageCollections', () => renderManageCollections({ store, onNavigate, route })));
+        mount.hidden = false;
+        mount.style.display = '';
+        updateCachedRouteMount(mount, route);
+        activateCachedRouteMount(mount);
         return;
       }
 
