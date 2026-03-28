@@ -879,6 +879,13 @@ function createViewFooterControls(items = [], opts = {}) {
       try {
         el.addEventListener('click', (e) => {
           try {
+            console.info('[viewFooter] button click handler', {
+              appId,
+              key: String(it?.key || ''),
+              text: String(it?.text || ''),
+            });
+          } catch (err) {}
+          try {
             if (it && it.autoplay && it.autoplay.enabled) {
               // toggle autoplay for this control
               if (currentAutoplay && currentAutoplay.key === it.key) {
@@ -1000,11 +1007,19 @@ function createViewFooterControls(items = [], opts = {}) {
   rebuildFromConfig();
 
   function handler(e) {
+    if (e?.repeat) return false;
     if (!shortcuts) return false;
     const key = e.key;
     let target = shortcuts[key] || shortcuts[String(key).toUpperCase()];
     if (!target) return false;
     try {
+      try {
+        console.info('[viewFooter] shortcut handler', {
+          appId,
+          key: String(key || ''),
+          repeat: !!e?.repeat,
+        });
+      } catch (err) {}
       if (typeof target === 'function') target(e);
       else if (target instanceof Element) target.click();
       return true;

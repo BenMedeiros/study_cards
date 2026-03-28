@@ -154,7 +154,27 @@ export function createStudyProgressManager({
     persistence.scheduleFlush({ immediate: !!immediate });
 
     const shouldNotify = (notify ?? !silent) !== false;
+    try {
+      console.info('[studyProgress] setBaseRecord', {
+        collectionKey: c,
+        entryKey: e,
+        appId: String(appId || ''),
+        immediate: !!immediate,
+        silent: !!silent,
+        shouldNotify,
+        state: next?.state ?? null,
+        timesSeen: Number(next?.timesSeen || 0),
+        timeMs: Number(next?.timeMs || 0),
+      });
+    } catch (e) {}
     if (shouldNotify) {
+      try {
+        console.info('[studyProgress] notifying subscribers', {
+          type: 'progress.record.changed',
+          collectionKey: c,
+          entryKey: e,
+        });
+      } catch (e) {}
       notifySubscribers({
         type: 'progress.record.changed',
         collectionKey: c,
@@ -273,7 +293,7 @@ export function createStudyProgressManager({
       timeMs: Math.max(0, Math.round(Number(prev.timeMs) || 0)),
       lastSeenIso: nowIso,
     };
-    return setBaseRecord(k, next, { ...opts, collectionKey, appId, notify: (opts.notify ?? (opts.silent === false)) });
+    return setBaseRecord(k, next, { ...opts, collectionKey, appId });
   }
 
   function addStudyTimeMs(v, deltaMs, opts = {}) {
@@ -292,7 +312,27 @@ export function createStudyProgressManager({
       timeMs: Math.max(0, Math.round(Number(prev.timeMs) || 0)) + d,
       lastSeenIso: nowIso,
     };
-    return setBaseRecord(k, next, { ...opts, collectionKey, appId, notify: (opts.notify ?? (opts.silent === false)) });
+    return setBaseRecord(k, next, { ...opts, collectionKey, appId });
+  }
+
+  function commitCardProgress(v, { collectionKey, appId, markSeen = false, addTimeMs = 0, immediate = false } = {}) {
+    const k = normalizeKanjiValue(v);
+    if (!k) return null;
+    const collKey = normalizeCollectionKey(collectionKey, 'japanese.words');
+    const app = normalizeAppId(appId, 'kanjiStudyCardView');
+    const addMs = Math.max(0, Math.round(Number(addTimeMs) || 0));
+    if (!markSeen && addMs <= 0) return getKanjiProgressRecord(k, { collectionKey: collKey });
+
+    const base = getBaseRecord(k, { collectionKey: collKey }).record || {};
+    const next = ensureAppStats(base, app);
+    const nowIso = new Date().toISOString();
+    const prev = cloneObject(next.apps[app]);
+    next.apps[app] = {
+      timesSeen: Math.max(0, Math.round(Number(prev.timesSeen) || 0)) + (markSeen ? 1 : 0),
+      timeMs: Math.max(0, Math.round(Number(prev.timeMs) || 0)) + addMs,
+      lastSeenIso: nowIso,
+    };
+    return setBaseRecord(k, next, { collectionKey: collKey, appId: app, immediate, notify: true });
   }
 
   function createCardProgressTracker({
@@ -308,7 +348,8 @@ export function createStudyProgressManager({
     const timing = {
       key: null,
       startedAtMs: null,
-      creditedThisViewMs: 0,
+      viewedThisViewMs: 0,
+      committedThisViewMs: 0,
       seenMarkedThisView: false,
     };
 
@@ -354,7 +395,16 @@ export function createStudyProgressManager({
 
     function currentElapsedMs() {
       const running = (timing.startedAtMs == null) ? 0 : Math.max(0, Math.round(nowTick() - timing.startedAtMs));
-      return Math.max(0, Math.round(timing.creditedThisViewMs + running));
+      return Math.max(0, Math.round(timing.viewedThisViewMs + running));
+    }
+
+    function pauseTiming() {
+      if (timing.startedAtMs == null) return 0;
+      const elapsed = Math.max(0, Math.round(nowTick() - timing.startedAtMs));
+      timing.startedAtMs = null;
+      timing.viewedThisViewMs += elapsed;
+      publishTrackerStatus();
+      return elapsed;
     }
 
     function publishTrackerStatus(extra = {}) {
@@ -377,40 +427,37 @@ export function createStudyProgressManager({
         isRunning: active ? (timing.startedAtMs != null) : false,
         statusWallMs: Date.now(),
         startedAtMs: active ? timing.startedAtMs : null,
-        creditedThisViewMs: active ? Math.max(0, Math.round(timing.creditedThisViewMs || 0)) : 0,
+        creditedThisViewMs: active ? Math.max(0, Math.round(timing.viewedThisViewMs || 0)) : 0,
       });
     }
 
     function flush({ immediate = false } = {}) {
       const key = timing.key;
       if (!key) return;
-      if (timing.startedAtMs == null) return;
-
-      const elapsed = Math.max(0, Math.round(nowTick() - timing.startedAtMs));
-      const totalViewedThisViewMs = timing.creditedThisViewMs + elapsed;
+      pauseTiming();
+      const totalViewedThisViewMs = Math.max(0, Math.round(timing.viewedThisViewMs || 0));
       const collectionKey = resolveCollectionKey();
       let didRecordSeen = false;
       let didAddTime = false;
 
-      if (!timing.seenMarkedThisView && totalViewedThisViewMs >= minViewToCountMs) {
-        timing.seenMarkedThisView = true;
-        try {
-          recordSeen(key, { collectionKey, appId, silent: true, immediate });
-          didRecordSeen = true;
-        } catch {}
-      }
+      const shouldRecordSeen = !timing.seenMarkedThisView && totalViewedThisViewMs >= minViewToCountMs;
 
       if (totalViewedThisViewMs < minViewToCountMs) {
-        timing.startedAtMs = null;
         publishTrackerStatus();
         return;
       }
 
-      const remaining = Math.max(0, maxCreditPerCardMs - timing.creditedThisViewMs);
-      const add = Math.round(Math.min(elapsed, remaining));
-      timing.startedAtMs = null;
+      const remaining = Math.max(0, maxCreditPerCardMs - timing.committedThisViewMs);
+      const uncommittedViewedMs = Math.max(0, totalViewedThisViewMs - timing.committedThisViewMs);
+      const add = Math.round(Math.min(uncommittedViewedMs, remaining));
+      didRecordSeen = shouldRecordSeen;
+      didAddTime = add > 0;
       if (add <= 0) {
-        if (didRecordSeen) {
+        if (shouldRecordSeen) {
+          try {
+            commitCardProgress(key, { collectionKey, appId, markSeen: true, addTimeMs: 0, immediate });
+            timing.seenMarkedThisView = true;
+          } catch {}
           publishTrackerStatus({
             lastCommitAtMs: Date.now(),
             lastCommitDeltaMs: 0,
@@ -422,10 +469,16 @@ export function createStudyProgressManager({
         return;
       }
 
-      timing.creditedThisViewMs += add;
+      timing.committedThisViewMs += add;
       try {
-        addStudyTimeMs(key, add, { collectionKey, appId, silent: true, immediate });
-        didAddTime = true;
+        commitCardProgress(key, {
+          collectionKey,
+          appId,
+          markSeen: shouldRecordSeen,
+          addTimeMs: add,
+          immediate,
+        });
+        if (shouldRecordSeen) timing.seenMarkedThisView = true;
       } catch {}
 
       if (didRecordSeen || didAddTime) {
@@ -442,30 +495,32 @@ export function createStudyProgressManager({
     function maybeResume() {
       if (!timing.key) return;
       if (timing.startedAtMs != null) return;
-      if (timing.creditedThisViewMs >= maxCreditPerCardMs) return;
+      if (currentElapsedMs() >= maxCreditPerCardMs) return;
       if (!canRun()) return;
       timing.startedAtMs = nowTick();
       publishTrackerStatus();
     }
 
-    function beginForKey(nextKey) {
+    function beginForKey(nextKey, { flushCurrent = true } = {}) {
       const key = normalizeEntryKey(nextKey);
-      flush();
+      if (flushCurrent) flush();
       timing.key = key || null;
       timing.startedAtMs = null;
-      timing.creditedThisViewMs = 0;
+      timing.viewedThisViewMs = 0;
+      timing.committedThisViewMs = 0;
       timing.seenMarkedThisView = false;
       publishTrackerStatus();
       if (timing.key) maybeResume();
     }
 
-    function syncToCurrent() {
+    function syncToCurrent({ flushCurrent = true } = {}) {
       const current = resolveEntryKey();
       if (!current) {
-        flush();
+        if (flushCurrent) flush();
         timing.key = null;
         timing.startedAtMs = null;
-        timing.creditedThisViewMs = 0;
+        timing.viewedThisViewMs = 0;
+        timing.committedThisViewMs = 0;
         timing.seenMarkedThisView = false;
         publishTrackerStatus({
           active: false,
@@ -478,9 +533,9 @@ export function createStudyProgressManager({
         return;
       }
       if (timing.key !== current) {
-        beginForKey(current);
+        beginForKey(current, { flushCurrent });
       } else if (!canRun()) {
-        flush();
+        pauseTiming();
       } else {
         maybeResume();
         publishTrackerStatus();
@@ -490,12 +545,12 @@ export function createStudyProgressManager({
     function onVisibilityChange() {
       try {
         if (typeof document !== 'undefined' && document.visibilityState === 'visible') maybeResume();
-        else flush({ immediate: true });
+        else pauseTiming();
       } catch {
-        flush({ immediate: true });
+        pauseTiming();
       }
     }
-    function onWindowBlur() { flush({ immediate: true }); }
+    function onWindowBlur() { pauseTiming(); }
     function onWindowFocus() { maybeResume(); }
 
     try { document.addEventListener('visibilitychange', onVisibilityChange); } catch {}
@@ -509,7 +564,8 @@ export function createStudyProgressManager({
       try { window.removeEventListener('focus', onWindowFocus); } catch {}
       timing.key = null;
       timing.startedAtMs = null;
-      timing.creditedThisViewMs = 0;
+      timing.viewedThisViewMs = 0;
+      timing.committedThisViewMs = 0;
       timing.seenMarkedThisView = false;
       const currentTrackerId = normalizeValue(activeTrackerStatus?.trackerId);
       if (currentTrackerId && currentTrackerId !== trackerId) return;

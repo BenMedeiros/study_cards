@@ -1,4 +1,4 @@
-import { idbGet, idbPut, idbGetAll, idbGetAllByIndex } from '../utils/browser/idb.js';
+import { idbGet, idbPut, idbDelete, idbGetAll, idbGetAllByIndex } from '../utils/browser/idb.js';
 import { timed } from '../utils/browser/timing.js';
 import { normalizeFolderPath } from '../utils/browser/helpers.js';
 import { getGlobalSettingsManager } from './settingsManager.js';
@@ -950,6 +950,58 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
     return rec;
   }
 
+  async function deleteRevision(collectionKey, revisionId, { cascade = true } = {}) {
+    const key = String(collectionKey || '').trim();
+    const rid = String(revisionId || '').trim();
+    if (!key) throw new Error('collectionKey required');
+    if (!rid) throw new Error('revisionId required');
+    if (rid === '__system__') throw new Error('System revision cannot be deleted');
+
+    const revisions = normalizeRevisionSet(await listUserRevisions(key));
+    const revisionsById = new Map(revisions.map((record) => [record.id, record]));
+    const target = revisionsById.get(rid) || null;
+    if (!target) throw new Error(`Revision not found: ${rid}`);
+
+    const toDelete = new Set([rid]);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const record of revisions) {
+        const parentId = String(record?.parentId || '').trim();
+        if (!parentId || !toDelete.has(parentId) || toDelete.has(record.id)) continue;
+        if (!cascade) throw new Error(`Revision ${rid} has dependent revisions and cannot be deleted without cascade`);
+        toDelete.add(record.id);
+        changed = true;
+      }
+    }
+
+    await Promise.all(Array.from(toDelete, (deleteId) => idbDelete('user_collections', deleteId)));
+
+    const activeRevisionId = _getActiveRevisionId(key);
+    if (activeRevisionId && toDelete.has(activeRevisionId)) {
+      let nextActiveRevisionId = null;
+      const seen = new Set();
+      let cursor = revisionsById.get(activeRevisionId) || null;
+      while (cursor && !seen.has(cursor.id)) {
+        seen.add(cursor.id);
+        const parentId = String(cursor.parentId || '').trim();
+        if (!parentId) break;
+        if (!toDelete.has(parentId)) {
+          nextActiveRevisionId = parentId;
+          break;
+        }
+        cursor = revisionsById.get(parentId) || null;
+      }
+      _setActiveRevisionId(key, nextActiveRevisionId);
+    }
+
+    void _scheduleValidationRun({ reason: 'deleteRevision' }).catch(() => {});
+    return {
+      deletedIds: Array.from(toDelete),
+      activeRevisionId: _getActiveRevisionId(key),
+    };
+  }
+
   function getActiveRevisionId(collectionKey) {
     return _getActiveRevisionId(collectionKey);
   }
@@ -987,6 +1039,7 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
     previewInputChanges,
     commitPatch,
     commitSnapshot,
+    deleteRevision,
     validations,
 
     // internal map exposed for debugging

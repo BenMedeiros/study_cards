@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-26T19:17:19.393Z",
-  "scannedCollections": 13,
+  "generatedAt": "2026-03-28T21:41:38.720Z",
+  "scannedCollections": 14,
   "collectionsWithProblems": 3,
   "collectionsWithInvalidEntryKey": 1,
   "collectionsWithSchemaMismatch": 0,
@@ -137,6 +137,19 @@
       "duplicateEntryCount": 0,
       "invalidEntries": [],
       "duplicates": []
+    },
+    {
+      "collectionName": "Spanish Sentences",
+      "collectionPath": "collections/spanish/spanish_sentences.json",
+      "entryKey": "es",
+      "entryCount": 1,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": true,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
     }
   ],
   "reports_review": [
@@ -170,7 +183,7 @@
       "collectionName": "All Japanese Words",
       "collectionPath": "collections/japanese/japanese_words.json",
       "entryKey": "kanji",
-      "entryCount": 2712,
+      "entryCount": 2731,
       "hasValidEntryKeyMetadata": true,
       "schemaHasEntryKey": true,
       "invalidEntryCount": 0,
@@ -184,12 +197,12 @@
           "entries": [
             {
               "index": 1813,
-              "lineNumber": 14176,
+              "lineNumber": 14073,
               "label": "ある"
             },
             {
               "index": 2426,
-              "lineNumber": 19633,
+              "lineNumber": 19368,
               "label": "ある"
             }
           ]
@@ -200,12 +213,12 @@
           "entries": [
             {
               "index": 605,
-              "lineNumber": 4313,
+              "lineNumber": 4251,
               "label": "する"
             },
             {
               "index": 2403,
-              "lineNumber": 19403,
+              "lineNumber": 19138,
               "label": "する"
             }
           ]
@@ -216,12 +229,12 @@
           "entries": [
             {
               "index": 577,
-              "lineNumber": 4065,
+              "lineNumber": 4003,
               "label": "できる"
             },
             {
               "index": 2411,
-              "lineNumber": 19483,
+              "lineNumber": 19218,
               "label": "できる"
             }
           ]
@@ -232,12 +245,12 @@
           "entries": [
             {
               "index": 430,
-              "lineNumber": 3124,
+              "lineNumber": 3070,
               "label": "安い"
             },
             {
               "index": 2361,
-              "lineNumber": 18971,
+              "lineNumber": 18706,
               "label": "安い"
             }
           ]
@@ -248,12 +261,12 @@
           "entries": [
             {
               "index": 393,
-              "lineNumber": 2893,
+              "lineNumber": 2841,
               "label": "飲む"
             },
             {
               "index": 2615,
-              "lineNumber": 21523,
+              "lineNumber": 21258,
               "label": "飲む"
             }
           ]
@@ -264,12 +277,12 @@
           "entries": [
             {
               "index": 352,
-              "lineNumber": 2614,
+              "lineNumber": 2565,
               "label": "泳ぐ"
             },
             {
               "index": 2495,
-              "lineNumber": 20323,
+              "lineNumber": 20058,
               "label": "泳ぐ"
             }
           ]
@@ -280,12 +293,12 @@
           "entries": [
             {
               "index": 2257,
-              "lineNumber": 17925,
+              "lineNumber": 17660,
               "label": "過ごす"
             },
             {
               "index": 2531,
-              "lineNumber": 20683,
+              "lineNumber": 20418,
               "label": "過ごす"
             }
           ]
@@ -296,12 +309,12 @@
           "entries": [
             {
               "index": 2692,
-              "lineNumber": 22293,
+              "lineNumber": 22028,
               "label": "開けられる"
             },
             {
               "index": 2710,
-              "lineNumber": 22473,
+              "lineNumber": 22208,
               "label": "開けられる"
             }
           ]
@@ -312,12 +325,12 @@
           "entries": [
             {
               "index": 531,
-              "lineNumber": 3773,
+              "lineNumber": 3714,
               "label": "開ける"
             },
             {
               "index": 2684,
-              "lineNumber": 22213,
+              "lineNumber": 21948,
               "label": "開ける"
             }
           ]
@@ -328,12 +341,12 @@
           "entries": [
             {
               "index": 1937,
-              "lineNumber": 14976,
+              "lineNumber": 14860,
               "label": "帰る"
             },
             {
               "index": 2639,
-              "lineNumber": 21763,
+              "lineNumber": 21498,
               "label": "帰る"
             }
           ]
@@ -344,12 +357,12 @@
           "entries": [
             {
               "index": 2681,
-              "lineNumber": 22183,
+              "lineNumber": 21918,
               "label": "起きられる"
             },
             {
               "index": 2709,
-              "lineNumber": 22463,
+              "lineNumber": 22198,
               "label": "起きられる"
             }
           ]
@@ -360,12 +373,12 @@
           "entries": [
             {
               "index": 526,
-              "lineNumber": 3739,
+              "lineNumber": 3681,
               "label": "起きる"
             },
             {
               "index": 2673,
-              "lineNumber": 22103,
+              "lineNumber": 21838,
               "label": "起きる"
             }
           ]
@@ -376,12 +389,12 @@
           "entries": [
             {
               "index": 353,
-              "lineNumber": 2621,
+              "lineNumber": 2572,
               "label": "急ぐ"
             },
             {
               "index": 2507,
-              "lineNumber": 20443,
+              "lineNumber": 20178,
               "label": "急ぐ"
             }
           ]
@@ -392,12 +405,12 @@
           "entries": [
             {
               "index": 2659,
-              "lineNumber": 21963,
+              "lineNumber": 21698,
               "label": "見られる"
             },
             {
               "index": 2707,
-              "lineNumber": 22443,
+              "lineNumber": 22178,
               "label": "見られる"
             }
           ]
@@ -408,12 +421,12 @@
           "entries": [
             {
               "index": 525,
-              "lineNumber": 3729,
+              "lineNumber": 3672,
               "label": "見る"
             },
             {
               "index": 2651,
-              "lineNumber": 21883,
+              "lineNumber": 21618,
               "label": "見る"
             }
           ]
@@ -424,12 +437,12 @@
           "entries": [
             {
               "index": 428,
-              "lineNumber": 3112,
+              "lineNumber": 3058,
               "label": "古い"
             },
             {
               "index": 2389,
-              "lineNumber": 19259,
+              "lineNumber": 18994,
               "label": "古い"
             }
           ]
@@ -440,12 +453,12 @@
           "entries": [
             {
               "index": 376,
-              "lineNumber": 2783,
+              "lineNumber": 2733,
               "label": "行く"
             },
             {
               "index": 2435,
-              "lineNumber": 19723,
+              "lineNumber": 19458,
               "label": "行く"
             }
           ]
@@ -456,12 +469,12 @@
           "entries": [
             {
               "index": 429,
-              "lineNumber": 3118,
+              "lineNumber": 3064,
               "label": "高い"
             },
             {
               "index": 2271,
-              "lineNumber": 18009,
+              "lineNumber": 17744,
               "label": "高い"
             }
           ]
@@ -472,12 +485,12 @@
           "entries": [
             {
               "index": 671,
-              "lineNumber": 4733,
+              "lineNumber": 4670,
               "label": "高さ"
             },
             {
               "index": 2285,
-              "lineNumber": 18167,
+              "lineNumber": 17902,
               "label": "高さ"
             }
           ]
@@ -488,12 +501,12 @@
           "entries": [
             {
               "index": 1873,
-              "lineNumber": 14573,
+              "lineNumber": 14461,
               "label": "使う"
             },
             {
               "index": 2459,
-              "lineNumber": 19963,
+              "lineNumber": 19698,
               "label": "使う"
             }
           ]
@@ -504,12 +517,12 @@
           "entries": [
             {
               "index": 2048,
-              "lineNumber": 16134,
+              "lineNumber": 15946,
               "label": "取る"
             },
             {
               "index": 2627,
-              "lineNumber": 21643,
+              "lineNumber": 21378,
               "label": "取る"
             }
           ]
@@ -520,12 +533,12 @@
           "entries": [
             {
               "index": 581,
-              "lineNumber": 4089,
+              "lineNumber": 4027,
               "label": "取れる"
             },
             {
               "index": 2635,
-              "lineNumber": 21723,
+              "lineNumber": 21458,
               "label": "取れる"
             }
           ]
@@ -536,12 +549,12 @@
           "entries": [
             {
               "index": 373,
-              "lineNumber": 2765,
+              "lineNumber": 2715,
               "label": "書く"
             },
             {
               "index": 2471,
-              "lineNumber": 20083,
+              "lineNumber": 19818,
               "label": "書く"
             }
           ]
@@ -552,12 +565,12 @@
           "entries": [
             {
               "index": 2670,
-              "lineNumber": 22073,
+              "lineNumber": 21808,
               "label": "食べられる"
             },
             {
               "index": 2708,
-              "lineNumber": 22453,
+              "lineNumber": 22188,
               "label": "食べられる"
             }
           ]
@@ -568,12 +581,12 @@
           "entries": [
             {
               "index": 530,
-              "lineNumber": 3763,
+              "lineNumber": 3705,
               "label": "食べる"
             },
             {
               "index": 2662,
-              "lineNumber": 21993,
+              "lineNumber": 21728,
               "label": "食べる"
             }
           ]
@@ -584,12 +597,12 @@
           "entries": [
             {
               "index": 427,
-              "lineNumber": 3106,
+              "lineNumber": 3052,
               "label": "新しい"
             },
             {
               "index": 2375,
-              "lineNumber": 19115,
+              "lineNumber": 18850,
               "label": "新しい"
             }
           ]
@@ -600,12 +613,12 @@
           "entries": [
             {
               "index": 644,
-              "lineNumber": 4559,
+              "lineNumber": 4497,
               "label": "静か"
             },
             {
               "index": 2325,
-              "lineNumber": 18591,
+              "lineNumber": 18326,
               "label": "静か"
             }
           ]
@@ -616,12 +629,12 @@
           "entries": [
             {
               "index": 2159,
-              "lineNumber": 17233,
+              "lineNumber": 16968,
               "label": "待つ"
             },
             {
               "index": 2543,
-              "lineNumber": 20803,
+              "lineNumber": 20538,
               "label": "待つ"
             }
           ]
@@ -632,12 +645,12 @@
           "entries": [
             {
               "index": 658,
-              "lineNumber": 4652,
+              "lineNumber": 4589,
               "label": "大変"
             },
             {
               "index": 2343,
-              "lineNumber": 18781,
+              "lineNumber": 18516,
               "label": "大変"
             }
           ]
@@ -648,12 +661,12 @@
           "entries": [
             {
               "index": 293,
-              "lineNumber": 2074,
+              "lineNumber": 2026,
               "label": "読む"
             },
             {
               "index": 2603,
-              "lineNumber": 21403,
+              "lineNumber": 21138,
               "label": "読む"
             }
           ]
@@ -664,12 +677,12 @@
           "entries": [
             {
               "index": 303,
-              "lineNumber": 2149,
+              "lineNumber": 2100,
               "label": "買う"
             },
             {
               "index": 2447,
-              "lineNumber": 19843,
+              "lineNumber": 19578,
               "label": "買う"
             }
           ]
@@ -680,12 +693,12 @@
           "entries": [
             {
               "index": 346,
-              "lineNumber": 2572,
+              "lineNumber": 2523,
               "label": "飛ぶ"
             },
             {
               "index": 2591,
-              "lineNumber": 21283,
+              "lineNumber": 21018,
               "label": "飛ぶ"
             }
           ]
@@ -696,12 +709,12 @@
           "entries": [
             {
               "index": 372,
-              "lineNumber": 2754,
+              "lineNumber": 2705,
               "label": "聞く"
             },
             {
               "index": 2483,
-              "lineNumber": 20203,
+              "lineNumber": 19938,
               "label": "聞く"
             }
           ]
@@ -712,12 +725,12 @@
           "entries": [
             {
               "index": 2703,
-              "lineNumber": 22403,
+              "lineNumber": 22138,
               "label": "閉められる"
             },
             {
               "index": 2711,
-              "lineNumber": 22483,
+              "lineNumber": 22218,
               "label": "閉められる"
             }
           ]
@@ -728,12 +741,12 @@
           "entries": [
             {
               "index": 533,
-              "lineNumber": 3785,
+              "lineNumber": 3726,
               "label": "閉める"
             },
             {
               "index": 2695,
-              "lineNumber": 22323,
+              "lineNumber": 22058,
               "label": "閉める"
             }
           ]
@@ -744,12 +757,12 @@
           "entries": [
             {
               "index": 640,
-              "lineNumber": 4535,
+              "lineNumber": 4473,
               "label": "便利"
             },
             {
               "index": 2289,
-              "lineNumber": 18211,
+              "lineNumber": 17946,
               "label": "便利"
             }
           ]
@@ -760,12 +773,12 @@
           "entries": [
             {
               "index": 642,
-              "lineNumber": 4547,
+              "lineNumber": 4485,
               "label": "有名"
             },
             {
               "index": 2307,
-              "lineNumber": 18401,
+              "lineNumber": 18136,
               "label": "有名"
             }
           ]
@@ -776,12 +789,12 @@
           "entries": [
             {
               "index": 345,
-              "lineNumber": 2565,
+              "lineNumber": 2516,
               "label": "遊ぶ"
             },
             {
               "index": 2579,
-              "lineNumber": 21163,
+              "lineNumber": 20898,
               "label": "遊ぶ"
             }
           ]
@@ -792,12 +805,12 @@
           "entries": [
             {
               "index": 2423,
-              "lineNumber": 19603,
+              "lineNumber": 19338,
               "label": "来られる"
             },
             {
               "index": 2706,
-              "lineNumber": 22433,
+              "lineNumber": 22168,
               "label": "来られる"
             }
           ]
@@ -808,12 +821,12 @@
           "entries": [
             {
               "index": 1946,
-              "lineNumber": 15034,
+              "lineNumber": 14917,
               "label": "来る"
             },
             {
               "index": 2415,
-              "lineNumber": 19523,
+              "lineNumber": 19258,
               "label": "来る"
             }
           ]
@@ -824,12 +837,12 @@
           "entries": [
             {
               "index": 2177,
-              "lineNumber": 17341,
+              "lineNumber": 17076,
               "label": "立つ"
             },
             {
               "index": 2555,
-              "lineNumber": 20923,
+              "lineNumber": 20658,
               "label": "立つ"
             }
           ]
@@ -840,12 +853,12 @@
           "entries": [
             {
               "index": 301,
-              "lineNumber": 2128,
+              "lineNumber": 2080,
               "label": "話す"
             },
             {
               "index": 2519,
-              "lineNumber": 20563,
+              "lineNumber": 20298,
               "label": "話す"
             }
           ]
@@ -855,7 +868,7 @@
     {
       "collectionName": "All Spanish Words",
       "collectionPath": "collections/spanish/spanish_words.json",
-      "entryKey": "lemma",
+      "entryKey": "term",
       "entryCount": 631,
       "hasValidEntryKeyMetadata": true,
       "schemaHasEntryKey": true,
@@ -870,12 +883,12 @@
           "entries": [
             {
               "index": 26,
-              "lineNumber": 251,
+              "lineNumber": 102,
               "label": "café"
             },
             {
               "index": 194,
-              "lineNumber": 1427,
+              "lineNumber": 270,
               "label": "café"
             }
           ]
@@ -887,9 +900,9 @@
   "outputPath": "scripts/outputs/report_duplicated_keys_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-03-26T19:17:19.327Z",
-    "finishedAt": "2026-03-26T19:17:19.394Z",
-    "durationMs": 67,
-    "durationSeconds": 0.067
+    "startedAt": "2026-03-28T21:41:38.656Z",
+    "finishedAt": "2026-03-28T21:41:38.721Z",
+    "durationMs": 65,
+    "durationSeconds": 0.065
   }
 }

@@ -14,6 +14,10 @@ import { createKanjiStudyFooterActionsController } from './actionsController.js'
 const GENERIC_CARD_SETTINGS_KEY = 'genericFlatCard';
 const MAIN_CARD_SETTINGS_KEY = 'main';
 const MAIN_CARD_FLOW_VALUES = new Set(['row', 'column']);
+const SCRUB_THRESHOLD_MIN_MS = 500;
+const SCRUB_THRESHOLD_MAX_MS = 2000;
+const SCRUB_THRESHOLD_STEP_MS = 100;
+const SCRUB_THRESHOLD_DEFAULT_MS = 2000;
 const DEFAULT_MAIN_CARD_LAYOUT = {
   topLeft: 'type',
   main: 'kanji',
@@ -24,14 +28,25 @@ const DEFAULT_MAIN_CARD_LAYOUT = {
 const COLLECTION_CARD_DEFAULTS = {
   'spanish/spanish_words.json': {
     genericFlatCard: {
-      fields: ['lemma', 'meaning', 'type', 'semanticClass', 'gender', 'tags'],
+      fields: ['term', 'meaning', 'type', 'semanticClass', 'gender', 'tags'],
     },
     main: {
       layout: {
         topLeft: 'type',
-        main: 'lemma',
+        main: 'term',
         bottomLeft: 'gender',
         bottomRight: 'meaning',
+      },
+    },
+  },
+  'spanish/spanish_sentences.json': {
+    genericFlatCard: {
+      fields: ['es', 'en', 'notes', 'chunks'],
+    },
+    main: {
+      layout: {
+        main: 'es',
+        bottomRight: 'en',
       },
     },
   },
@@ -128,10 +143,10 @@ function getDefaultMainCardLayout(collectionKey, availableFields) {
   if (Object.keys(configured).length) return configured;
   return {
     topLeft: allowed.has('type') ? 'type' : '',
-    main: allowed.has('kanji') ? 'kanji' : (allowed.has('lemma') ? 'lemma' : ''),
+    main: allowed.has('kanji') ? 'kanji' : (allowed.has('term') ? 'term' : (allowed.has('lemma') ? 'lemma' : (allowed.has('es') ? 'es' : ''))),
     mainSecondary: '',
     bottomLeft: allowed.has('reading') ? 'reading' : (allowed.has('gender') ? 'gender' : ''),
-    bottomRight: allowed.has('meaning') ? 'meaning' : '',
+    bottomRight: allowed.has('meaning') ? 'meaning' : (allowed.has('en') ? 'en' : ''),
   };
 }
 
@@ -139,6 +154,46 @@ function getDefaultMainCardFlow(collectionKey) {
   const collectionDefaults = getCollectionScopedCardDefaults(collectionKey);
   const mainFlow = String(collectionDefaults?.[MAIN_CARD_SETTINGS_KEY]?.mainFlow || '').trim().toLowerCase();
   return MAIN_CARD_FLOW_VALUES.has(mainFlow) ? mainFlow : 'row';
+}
+
+function inferRelatedFieldItems(collection = null, relationName = '') {
+  const name = String(relationName || '').trim();
+  if (!name) return [];
+  const entries = Array.isArray(collection?.entries) ? collection.entries : [];
+  const keys = new Set();
+  for (const entry of entries) {
+    const records = Array.isArray(entry?.relatedCollections?.[name]) ? entry.relatedCollections[name] : [];
+    for (const record of records) {
+      if (!record || typeof record !== 'object' || Array.isArray(record)) continue;
+      for (const key of Object.keys(record)) {
+        const fieldKey = String(key || '').trim();
+        if (!fieldKey || fieldKey === 'relatedCollections') continue;
+        keys.add(fieldKey);
+      }
+    }
+  }
+  return Array.from(keys).map((fieldKey) => ({ value: fieldKey, left: fieldKey }));
+}
+
+function normalizeScrubThresholdMs(value) {
+  const n = Math.round(Number(value) || 0);
+  if (!Number.isFinite(n)) return SCRUB_THRESHOLD_DEFAULT_MS;
+  const clamped = Math.min(SCRUB_THRESHOLD_MAX_MS, Math.max(SCRUB_THRESHOLD_MIN_MS, n));
+  const snapped = Math.round(clamped / SCRUB_THRESHOLD_STEP_MS) * SCRUB_THRESHOLD_STEP_MS;
+  return Math.min(SCRUB_THRESHOLD_MAX_MS, Math.max(SCRUB_THRESHOLD_MIN_MS, snapped));
+}
+
+function createScrubThresholdItems() {
+  const out = [];
+  for (let ms = SCRUB_THRESHOLD_MIN_MS; ms <= SCRUB_THRESHOLD_MAX_MS; ms += SCRUB_THRESHOLD_STEP_MS) {
+    const seconds = (ms / 1000).toFixed(1);
+    out.push({
+      value: String(ms),
+      left: `${seconds}s`,
+      label: `${seconds}s`,
+    });
+  }
+  return out;
 }
 
 export function renderKanjiStudyCard({ store }) {
@@ -221,6 +276,22 @@ export function renderKanjiStudyCard({ store }) {
   let kanjiController = null;
   let kanjiUnsub = null;
   let entryFieldsControl = null;
+  let scrubThresholdControl = null;
+  let scrubHoldDelayMs = SCRUB_THRESHOLD_DEFAULT_MS;
+  let pendingLocalControllerIndex = null;
+  const scrubState = {
+    active: false,
+    pendingIndex: 0,
+    key: '',
+  };
+  const scrubHoldState = {
+    key: '',
+    startedAtMs: 0,
+  };
+  const arrowPressState = {
+    key: '',
+    handledInitialPress: false,
+  };
 
   // Helpers
   function getFieldValue(entry, keys) {
@@ -279,6 +350,11 @@ export function renderKanjiStudyCard({ store }) {
               const raw = viewState && typeof viewState.currentIndex === 'number' ? viewState.currentIndex : (typeof viewPatch.currentIndex === 'number' ? viewPatch.currentIndex : undefined);
               if (typeof raw === 'number') {
                 const clamped = Math.min(Math.max(0, raw), Math.max(0, entries.length - 1));
+                if (pendingLocalControllerIndex != null && clamped === pendingLocalControllerIndex) {
+                  pendingLocalControllerIndex = null;
+                  return;
+                }
+                pendingLocalControllerIndex = null;
                 if (clamped !== index) {
                   index = clamped;
                   shownAt = nowMs();
@@ -308,6 +384,18 @@ export function renderKanjiStudyCard({ store }) {
                 for (const it of entryFieldItems) map[String(it.value || '')] = setLocal.has(String(it.value || ''));
                 applyEntryFieldVisibility(map);
               }
+            }
+
+            if (viewPatch && Object.prototype.hasOwnProperty.call(viewPatch, 'scrubHoldDelayMs')) {
+              const rawDelay = (viewState && viewState.scrubHoldDelayMs !== undefined)
+                ? viewState.scrubHoldDelayMs
+                : viewPatch.scrubHoldDelayMs;
+              scrubHoldDelayMs = normalizeScrubThresholdMs(rawDelay);
+              try {
+                if (scrubThresholdControl && typeof scrubThresholdControl.setValue === 'function') {
+                  scrubThresholdControl.setValue(String(scrubHoldDelayMs));
+                }
+              } catch (e) {}
             }
 
             // display card selection changed
@@ -473,12 +561,8 @@ export function renderKanjiStudyCard({ store }) {
   function getCurrentEntryFieldItems() {
     const activeColl = store?.collections?.getActiveCollection?.() || null;
     const activeMetadata = activeColl?.metadata || {};
-    const activeRes = store?.collections?.getActiveCollectionView
-      ? store.collections.getActiveCollectionView({ windowSize: 0 })
-      : null;
-    const sampleEntry = (Array.isArray(activeRes?.view?.entries) && activeRes.view.entries.length)
-      ? activeRes.view.entries[0]
-      : ((Array.isArray(activeColl?.entries) && activeColl.entries.length) ? activeColl.entries[0] : null);
+    const currentEntry = (Array.isArray(entries) && entries.length && entries[index]) ? entries[index] : null;
+    const sampleEntry = currentEntry || ((Array.isArray(activeColl?.entries) && activeColl.entries.length) ? activeColl.entries[0] : null);
     return buildEntryFieldItemsFromSchema(activeMetadata, sampleEntry);
   }
 
@@ -708,6 +792,23 @@ export function renderKanjiStudyCard({ store }) {
   });
   entryFieldsControl = entryFieldsRec && entryFieldsRec.control ? entryFieldsRec.control : null;
 
+  const scrubThresholdItems = createScrubThresholdItems();
+  const scrubThresholdRec = headerTools.addElement({
+    type: 'dropdown',
+    key: 'scrubThreshold',
+    items: scrubThresholdItems,
+    value: String(scrubHoldDelayMs),
+    multi: false,
+    onChange: (nextValue) => {
+      scrubHoldDelayMs = normalizeScrubThresholdMs(nextValue);
+      persistViewState({ scrubHoldDelayMs });
+      try { if (scrubThresholdControl && typeof scrubThresholdControl.setValue === 'function') scrubThresholdControl.setValue(String(scrubHoldDelayMs)); } catch (e) {}
+    },
+    className: 'data-expansion-dropdown',
+    caption: 'scrub.threshold'
+  });
+  scrubThresholdControl = scrubThresholdRec && scrubThresholdRec.control ? scrubThresholdRec.control : null;
+
   // For each related-collection declared in the collection metadata, add a dropdown.
   const relatedDefs = Array.isArray(coll?.metadata?.relatedCollections) ? coll.metadata.relatedCollections.slice() : [];
   const relatedDropdownControls = {};
@@ -720,7 +821,8 @@ export function renderKanjiStudyCard({ store }) {
   for (const rel of relatedDefs) {
     const name = String(rel?.name || '').trim();
     if (!name) continue;
-    const items = Array.isArray(rel.fields) ? rel.fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f) })) : RELATED_DEFAULT_ITEMS.slice();
+    const inferredItems = inferRelatedFieldItems(coll, name);
+    const items = inferredItems.length ? inferredItems : RELATED_DEFAULT_ITEMS.slice();
     const sel = relatedFieldSelections[name] || 'all';
     const rec = headerTools.addElement({
       type: 'dropdown', key: `related.${name}.fields`, items, multi: true,
@@ -750,23 +852,140 @@ export function renderKanjiStudyCard({ store }) {
     return (footerControls.buttons && footerControls.buttons[key]) || null;
   }
 
+  function isEditableTarget(target) {
+    const el = target instanceof Element ? target : null;
+    if (!el) return false;
+    if (el.closest('[role="dialog"][aria-modal="true"]')) return true;
+    if (el.closest('input, textarea, select, [contenteditable="true"], [contenteditable=""]')) return true;
+    return false;
+  }
+
+  function getIndexCaption(nextIndex = index) {
+    const total = Array.isArray(entries) ? entries.length : 0;
+    if (!total) return 'Empty';
+    return `${Math.max(0, Number(nextIndex) + 1)} / ${total}`;
+  }
+
+  function setDisplayedCardCaptions(text) {
+    const caption = String(text || '').trim();
+    for (const api of Object.values(cardApis || {})) {
+      if (api && typeof api.setIndexText === 'function') {
+        try { api.setIndexText(caption); } catch (e) {}
+      }
+    }
+  }
+
+  function setScrubPlaceholderActive(active, caption = '') {
+    const isActive = !!active;
+    for (const [cardKey, api] of Object.entries(cardApis || {})) {
+      const root = api?.el;
+      if (!root) continue;
+      root.classList.toggle('scrub-preview', isActive);
+      if (!isActive) continue;
+      const targets = [];
+      if (cardKey === 'main') {
+        targets.push(...root.querySelectorAll('.main-field-card-top-left, .main-field-card-main, .main-field-card-bottom-left, .main-field-card-bottom-right'));
+      } else if (cardKey === 'related') {
+        targets.push(...root.querySelectorAll('.kanji-related-text, .kanji-related-notes, .kanji-related-empty'));
+      } else if (cardKey === 'generic') {
+        targets.push(...root.querySelectorAll('.kanji-full-value'));
+      } else if (cardKey === 'json') {
+        targets.push(...root.querySelectorAll('.json-viewer-body'));
+      } else {
+        targets.push(root);
+      }
+      for (const node of targets) {
+        if (!(node instanceof HTMLElement)) continue;
+        node.textContent = '...';
+      }
+      try { if (typeof api.setIndexText === 'function') api.setIndexText(caption); } catch (e) {}
+    }
+  }
+
+  function showScrubPreview() {
+    if (!scrubState.active) return;
+    const caption = getIndexCaption(scrubState.pendingIndex);
+    setDisplayedCardCaptions(caption);
+    setScrubPlaceholderActive(true, caption);
+  }
+
+  function hideScrubPreview() {
+    setScrubPlaceholderActive(false);
+  }
+
+  function beginScrub(key) {
+    scrubState.active = true;
+    scrubState.pendingIndex = index;
+    scrubState.key = String(key || '');
+    showScrubPreview();
+  }
+
+  function stepScrub(delta) {
+    const total = Array.isArray(entries) ? entries.length : 0;
+    if (!total) return;
+    if (!scrubState.active) return;
+    const raw = Math.round(Number(scrubState.pendingIndex) + Number(delta || 0));
+    scrubState.pendingIndex = ((raw % total) + total) % total;
+    showScrubPreview();
+  }
+
+  function settleScrub() {
+    if (!scrubState.active) return false;
+    const targetIndex = scrubState.pendingIndex;
+    scrubState.active = false;
+    scrubState.key = '';
+    hideScrubPreview();
+    if (targetIndex === index) {
+      setDisplayedCardCaptions(getIndexCaption(index));
+      return true;
+    }
+    goToIndex(targetIndex);
+    return true;
+  }
+
   function goToIndex(newIndex) {
     const total = Array.isArray(entries) ? entries.length : 0;
     if (!total) return;
     const raw = Math.round(Number(newIndex));
     if (!Number.isFinite(raw)) return;
     const nextIndex = ((raw % total) + total) % total;
+    try {
+      console.info('[kanjiStudy] goToIndex', {
+        fromIndex: index,
+        toIndex: nextIndex,
+        currentEntryKey: getCurrentEntryKey(),
+        targetEntryKey: String(store?.collections?.getEntryStudyKey?.(entries[nextIndex]) || '').trim(),
+      });
+    } catch (e) {}
     try { progressTracker?.flush?.(); } catch (e) {}
     index = nextIndex;
     shownAt = nowMs();
     if (kanjiController && typeof kanjiController.setCurrentIndex === 'function') {
+      pendingLocalControllerIndex = index;
       kanjiController.setCurrentIndex(index);
     }
-    render({ skipRefresh: true });
+    try { progressTracker?.syncToCurrent?.({ flushCurrent: false }); } catch (e) {}
+    render({ skipRefresh: true, skipTrackerSync: true });
   }
 
-  function showPrev() { goToIndex(index - 1); }
-  function showNext() { goToIndex(index + 1); }
+  function showPrev() {
+    try {
+      console.info('[kanjiStudy] showPrev', {
+        index,
+        entryKey: getCurrentEntryKey(),
+      });
+    } catch (e) {}
+    goToIndex(index - 1);
+  }
+  function showNext() {
+    try {
+      console.info('[kanjiStudy] showNext', {
+        index,
+        entryKey: getCurrentEntryKey(),
+      });
+    } catch (e) {}
+    goToIndex(index + 1);
+  }
 
   let footerControls = null;
   // Auto-speak setting removed from UI.
@@ -852,10 +1071,10 @@ export function renderKanjiStudyCard({ store }) {
     getCurrentEntryKey,
     onProgressChanged: ({ actionName }) => {
       updateMarkButtons();
-      const view = store?.collections?.getActiveCollectionView?.({ windowSize: 10 })?.view;
       const isLearnedToggle = actionName === 'toggleKanjiLearned';
       const isPracticeToggle = actionName === 'toggleKanjiFocus';
       if (!isLearnedToggle && !isPracticeToggle) return;
+      const view = store?.collections?.getActiveCollectionView?.({ windowSize: 10 })?.view;
 
       const needsRefresh = (isLearnedToggle && !!view?.skipLearned) || (isPracticeToggle && !!view?.focusOnly);
       if (!needsRefresh) return;
@@ -1106,6 +1325,12 @@ export function renderKanjiStudyCard({ store }) {
       try {
         const appState = (kanjiController && typeof kanjiController.get === 'function') ? (kanjiController.get() || {}) : {};
         if (typeof appState.currentIndex === 'number') index = appState.currentIndex;
+        scrubHoldDelayMs = normalizeScrubThresholdMs(appState.scrubHoldDelayMs);
+        try {
+          if (scrubThresholdControl && typeof scrubThresholdControl.setValue === 'function') {
+            scrubThresholdControl.setValue(String(scrubHoldDelayMs));
+          }
+        } catch (e) {}
         if (appState.entryFields !== undefined) entryFieldSelection = appState.entryFields === 'all' ? 'all' : (Array.isArray(appState.entryFields) ? appState.entryFields.slice() : appState.entryFields);
         if (appState.relatedFields && typeof appState.relatedFields === 'object') {
           for (const k of Object.keys(appState.relatedFields)) relatedFieldSelections[k] = Array.isArray(appState.relatedFields[k]) ? appState.relatedFields[k].slice() : appState.relatedFields[k];
@@ -1244,19 +1469,36 @@ export function renderKanjiStudyCard({ store }) {
     }
   }
 
-  function render({ skipRefresh = false, forceCardKeys = null } = {}) {
+  function render({ skipRefresh = false, forceCardKeys = null, skipTrackerSync = false } = {}) {
     if (!skipRefresh && !isShuffled) {
       refreshEntriesFromStore();
     }
+    if (!scrubState.active) hideScrubPreview();
     const sb = headerTools.getControl && headerTools.getControl('shuffle'); if (sb) sb.setAttribute('aria-pressed', String(!!isShuffled));
     // render
 
     // If the underlying entry changed due to refresh, keep timing aligned.
     // (e.g., store updates, filter changes, virtual set resolution)
-    progressTracker?.syncToCurrent?.();
+    if (!skipTrackerSync) {
+      progressTracker?.syncToCurrent?.();
+    }
 
     const entry = entries[index];
     const total = entries.length;
+    const entryLabel = entry ? String(store?.collections?.getEntryStudyKey?.(entry) || getPrimaryKanjiValue(entry) || '').trim() : '';
+
+    function logCardUpdate(cardKey, reason = 'setEntry') {
+      try {
+        console.info(`[kanjiStudy] updating ${String(cardKey || '')} to ${entryLabel || '(empty)'}`, {
+          cardKey: String(cardKey || ''),
+          entryKey: entryLabel || '',
+          index,
+          total,
+          reason,
+          skipRefresh: !!skipRefresh,
+        });
+      } catch (e) {}
+    }
 
     // update view mode class on the wrapper (maintains previous behavior)
     const displaySet = applyDisplayCardVisibility();
@@ -1278,13 +1520,16 @@ export function renderKanjiStudyCard({ store }) {
     if (displaySet.has('main') && liveMainCardApi && cardsToRefresh.has('main')) {
       liveMainCardApi.setIndexText(caption);
       if (!entry) {
+        logCardUpdate('main', 'setEntry(null)');
         liveMainCardApi.setEntry(null);
       } else {
+        logCardUpdate('main');
         liveMainCardApi.setEntry(entry);
       }
     }
 
     if (displaySet.has('related') && liveRelatedCardApi && typeof liveRelatedCardApi.setEntry === 'function' && cardsToRefresh.has('related')) {
+      logCardUpdate('related');
       liveRelatedCardApi.setEntry(entry);
     }
 
@@ -1295,7 +1540,10 @@ export function renderKanjiStudyCard({ store }) {
       const api = cardApis[k];
       if (api && typeof api.setIndexText === 'function') api.setIndexText(caption);
       if (k === 'json' && typeof api.setConfig === 'function') api.setConfig(getJsonCardConfig());
-      if (api && typeof api.setEntry === 'function') api.setEntry(entry);
+      if (api && typeof api.setEntry === 'function') {
+        logCardUpdate(k);
+        api.setEntry(entry);
+      }
     }
     
     // (reveal toggle removed)
@@ -1324,7 +1572,11 @@ export function renderKanjiStudyCard({ store }) {
 
   const unsubs = [];
   let lastKey = store?.collections?.getActiveCollection?.()?.key || null;
-  const onRelevantStateChanged = () => {
+  const onRelevantStateChanged = (event = null) => {
+    const eventType = String(event?.type || '').trim();
+    if (eventType === 'collections.progress.changed') {
+      return;
+    }
     if (!isViewActive) {
       pendingStoreRefresh = true;
       return;
@@ -1339,15 +1591,8 @@ export function renderKanjiStudyCard({ store }) {
   };
   try {
     if (store?.collections && typeof store.collections.subscribe === 'function') {
-      unsubs.push(store.collections.subscribe(() => {
-        onRelevantStateChanged();
-      }));
-    }
-  } catch (e) {}
-  try {
-    if (store?.kanjiProgress && typeof store.kanjiProgress.subscribe === 'function') {
-      unsubs.push(store.kanjiProgress.subscribe(() => {
-        onRelevantStateChanged();
+      unsubs.push(store.collections.subscribe((event) => {
+        onRelevantStateChanged(event);
       }));
     }
   } catch (e) {}
@@ -1372,6 +1617,7 @@ export function renderKanjiStudyCard({ store }) {
     if (pendingStoreRefresh) syncFromStoreAndRender();
   };
   el.__deactivate = () => {
+    settleScrub();
     isViewActive = false;
   };
   // mark mounted flags; the fragment will be appended by the shell into
@@ -1416,8 +1662,72 @@ export function renderKanjiStudyCard({ store }) {
   } catch (e) {}
   // Details toggle removed from header tools
 
-  // Keyboard handling for footer shortcuts is handled by the footer component
-  // (it registers an app-level key handler using id 'kanjiStudy').
+  function onScrubKeyDownCapture(e) {
+    if (!isViewActive) return;
+    if (document.querySelector('[role="dialog"][aria-modal="true"]')) return;
+    if (isEditableTarget(e.target)) return;
+    const key = String(e?.key || '');
+    if (key !== 'ArrowLeft' && key !== 'ArrowRight') return;
+    const total = Array.isArray(entries) ? entries.length : 0;
+    if (!total) return;
+    const now = Date.now();
+    if (!e?.repeat) {
+      if (arrowPressState.key === key && arrowPressState.handledInitialPress) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      arrowPressState.key = key;
+      arrowPressState.handledInitialPress = true;
+      scrubHoldState.key = key;
+      scrubHoldState.startedAtMs = now;
+      return;
+    }
+    if (scrubHoldState.key !== key) {
+      scrubHoldState.key = key;
+      scrubHoldState.startedAtMs = now;
+      return;
+    }
+    if ((now - Number(scrubHoldState.startedAtMs || 0)) < scrubHoldDelayMs) {
+      return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
+    if (!scrubState.active) beginScrub(key);
+    scrubState.key = key;
+    stepScrub(key === 'ArrowRight' ? 1 : -1);
+  }
+
+  function onScrubKeyUpCapture(e) {
+    const key = String(e?.key || '');
+    if (key !== 'ArrowLeft' && key !== 'ArrowRight') return;
+    if (arrowPressState.key === key) {
+      arrowPressState.key = '';
+      arrowPressState.handledInitialPress = false;
+    }
+    if (scrubHoldState.key === key) {
+      scrubHoldState.key = '';
+      scrubHoldState.startedAtMs = 0;
+    }
+    if (!scrubState.active) return;
+    e.preventDefault();
+    e.stopPropagation();
+    settleScrub();
+  }
+
+  function onScrubWindowBlur() {
+    arrowPressState.key = '';
+    arrowPressState.handledInitialPress = false;
+    scrubHoldState.key = '';
+    scrubHoldState.startedAtMs = 0;
+    settleScrub();
+  }
+
+  try { document.addEventListener('keydown', onScrubKeyDownCapture, true); } catch (e) {}
+  try { document.addEventListener('keyup', onScrubKeyUpCapture, true); } catch (e) {}
+  try { window.addEventListener('blur', onScrubWindowBlur); } catch (e) {}
+
+  // Keyboard handling for non-arrow footer shortcuts is still handled by the footer component.
 
 
 
@@ -1432,7 +1742,11 @@ export function renderKanjiStudyCard({ store }) {
 
     if (!document.body.contains(el)) {
       // finalize any remaining credit when navigating away/unmounting
+      settleScrub();
       progressTracker?.teardown?.();
+      try { document.removeEventListener('keydown', onScrubKeyDownCapture, true); } catch (e) {}
+      try { document.removeEventListener('keyup', onScrubKeyUpCapture, true); } catch (e) {}
+      try { window.removeEventListener('blur', onScrubWindowBlur); } catch (e) {}
       for (const unsub of unsubs) {
         try { if (typeof unsub === 'function') unsub(); } catch (e) {}
       }

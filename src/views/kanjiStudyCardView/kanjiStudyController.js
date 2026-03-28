@@ -41,7 +41,10 @@ const SPEECH_LANGUAGE_DEFAULTS_BY_COLLECTION = {
     classical_greek_name: 'el-GR',
   },
   'spanish/spanish_words.json': {
-    lemma: 'es-ES',
+    term: 'es-ES',
+  },
+  'spanish/spanish_sentences.json': {
+    es: 'es-ES',
   },
   'pokemon.json': {
     japaneseName: 'ja-JP',
@@ -94,6 +97,25 @@ function cloneSpeechConfig(raw) {
     }
   }
   return out;
+}
+
+function inferRelatedFieldKeys(collection = null, relationName = '') {
+  const name = String(relationName || '').trim();
+  if (!name) return [];
+  const entries = Array.isArray(collection?.entries) ? collection.entries : [];
+  const keys = new Set();
+  for (const entry of entries) {
+    const records = Array.isArray(entry?.relatedCollections?.[name]) ? entry.relatedCollections[name] : [];
+    for (const record of records) {
+      if (!record || typeof record !== 'object' || Array.isArray(record)) continue;
+      for (const key of Object.keys(record)) {
+        const fieldKey = String(key || '').trim();
+        if (!fieldKey || fieldKey === 'relatedCollections') continue;
+        keys.add(fieldKey);
+      }
+    }
+  }
+  return Array.from(keys);
 }
 
 function mergeSpeechConfig(baseRaw, overrideRaw) {
@@ -283,7 +305,7 @@ function create(collKey) {
     for (const rd of relatedDefs) {
       const name = String(rd?.name || '').trim();
       if (!name) continue;
-      const relFields = Array.isArray(rd.fields) ? rd.fields.map(f => String(f.key || f)) : [];
+      const relFields = inferRelatedFieldKeys(collection, name);
       relatedFieldMaps[name] = {};
       const sel = effective.relatedFields && Object.prototype.hasOwnProperty.call(effective.relatedFields, name) ? effective.relatedFields[name] : 'all';
       if (sel === 'all') {

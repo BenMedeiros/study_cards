@@ -249,6 +249,7 @@ export function getLanguageCode(fieldKey, collectionCategory) {
       normalized.includes('spanish')
       || normalized === 'es'
       || normalized === 'lemma'
+      || normalized === 'term'
     ) return 'es-ES';
   }
 

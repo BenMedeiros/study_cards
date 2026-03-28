@@ -327,6 +327,28 @@
   gap: 0.35rem;
 }
 
+.kanji-study-card.scrub-preview .main-field-card-top-left,
+.kanji-study-card.scrub-preview .main-field-card-main,
+.kanji-study-card.scrub-preview .main-field-card-bottom-left,
+.kanji-study-card.scrub-preview .main-field-card-bottom-right,
+.kanji-study-card.scrub-preview .kanji-related-text,
+.kanji-study-card.scrub-preview .kanji-related-notes,
+.kanji-study-card.scrub-preview .kanji-related-empty,
+.kanji-study-card.scrub-preview .kanji-full-value,
+.kanji-study-card.scrub-preview .json-viewer-body {
+  animation: kanji-study-scrub-pulse 0.9s ease-in-out infinite alternate;
+  opacity: 0.8;
+}
+
+@keyframes kanji-study-scrub-pulse {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .kanji-study-card-config-btn {
   font-size: var(--font-size-md);
   line-height: 1;

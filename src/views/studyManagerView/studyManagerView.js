@@ -20,6 +20,15 @@ const TABLE_ACTION_ITEMS = [
   { key: 'copyFullJson', label: 'Copy Full JSON' },
 ];
 
+const REPORT_REFRESH_ITEMS = [
+  { id: 'collectionSummary', label: 'Summary' },
+  { id: 'studyTimeByFilter', label: 'Filters' },
+  { id: 'groupByAppId', label: 'Apps' },
+  { id: 'studyTimeByDate', label: 'By Date' },
+  { id: 'studyTimeByDateSummary', label: 'Daily Summary' },
+  { id: 'recommendations', label: 'Recommendations' },
+];
+
 function asNumber(v) {
   return Math.max(0, Math.round(Number(v) || 0));
 }
@@ -96,6 +105,25 @@ function attachCardCornerButton({
   btn.textContent = String(text || 'Action');
   btn.title = String(title || text || 'Action');
   btn.addEventListener('click', () => { onClick(); });
+  topRight.actions.append(btn);
+  return btn;
+}
+
+function attachDisabledCardCornerButton({
+  cardEl,
+  text = 'Action',
+  title = '',
+  className = 'btn small table-card-settings-btn study-manager-card-btn',
+} = {}) {
+  if (!cardEl) return null;
+  const topRight = ensureCardTopRightArea(cardEl);
+  if (!topRight?.actions) return null;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = className;
+  btn.textContent = String(text || 'Action');
+  btn.title = String(title || text || 'Action');
+  btn.disabled = true;
   topRight.actions.append(btn);
   return btn;
 }
@@ -182,6 +210,17 @@ function appendCardHint(cardEl, text, beforeEl = null) {
     cardEl.append(hintEl);
   }
   return hintEl;
+}
+
+function makePendingCard({ id, title, subtitle = 'Loading…', caption = '' } = {}) {
+  return card({ id, title, subtitle, cornerCaption: caption });
+}
+
+function formatWaitingForReports(reportIds) {
+  const items = Array.isArray(reportIds) ? reportIds.map((item) => String(item || '').trim()).filter(Boolean) : [];
+  if (!items.length) return 'Waiting for report.';
+  if (items.length === 1) return `Waiting for report: ${items[0]}`;
+  return `Waiting for reports: ${items.join(', ')}`;
 }
 
 function buildDataRoute(collectionId, filterKey, studyFilter = '') {
@@ -738,6 +777,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
   root.id = 'study-manager-root';
   root.className = 'study-manager-view';
+  const AUTO_RUN_REPORTS = false;
 
   let snapshot = studyManagerController.getSnapshot() || {};
   let pendingSnapshot = null;
@@ -761,6 +801,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
 
   let tableSettingsCtrl = null;
   let tableSettingsCollectionId = '';
+  let pendingTableSettingsBootstrapId = '';
   let filtersTableSettings = studyManagerViewController.getDefaultFiltersTableSettings();
   let appsTableSettings = studyManagerViewController.getDefaultAppsTableSettings();
   let recommendationsTableSettingsById = Object.create(null);
@@ -889,6 +930,23 @@ export function renderStudyManager({ store, onNavigate, route }) {
       groupByAppId: { collapsed: !!collapsedCards.groupByAppId },
     };
     try { if (tableSettingsCtrl) await tableSettingsCtrl.setCardsState(nextCards); } catch (e) {}
+    syncSelectedCollectionReportPriority(getReport(snapshot));
+  }
+
+  function scheduleTableSettingsBootstrap(collId) {
+    const key = String(collId || '').trim();
+    if (!key) return;
+    if (tableSettingsCtrl && tableSettingsCollectionId === key) return;
+    if (pendingTableSettingsBootstrapId === key) return;
+    pendingTableSettingsBootstrapId = key;
+    setTimeout(() => {
+      if (pendingTableSettingsBootstrapId !== key) return;
+      pendingTableSettingsBootstrapId = '';
+      if (!isViewActive) return;
+      if (String(selectedCollectionId || '').trim() !== key) return;
+      ensureTableSettingsController(key);
+      renderBody();
+    }, 0);
   }
 
   const controls = createViewHeaderTools({ elements: [] });
@@ -940,12 +998,52 @@ export function renderStudyManager({ store, onNavigate, route }) {
     return reportMap[selectedCollectionId] || null;
   }
 
+  function getReportStatus(report, reportId) {
+    return String(report?.reportStatus?.[reportId] || '').trim() || 'pending';
+  }
+
+  function makePlaceholderReport(collectionId) {
+    const collectionKey = String(collectionId || '').trim();
+    const selected = getSelectableCollections().find((item) => String(item?.collectionId || '').trim() === collectionKey) || null;
+    return {
+      collectionId: collectionKey,
+      collectionName: String(selected?.collectionName || collectionKey || '').trim(),
+      reportStatus: {
+        collectionSummary: 'pending',
+        studyTimeByFilter: 'pending',
+        groupByAppId: 'pending',
+        studyTimeByDate: 'pending',
+        studyTimeByDateSummary: 'pending',
+        recommendations: 'pending',
+      },
+      reportResults: { recommendationSets: {} },
+      recommendationSets: [],
+      queries: {},
+    };
+  }
+
+  function syncSelectedCollectionReportPriority(report = null) {
+    if (!AUTO_RUN_REPORTS) return;
+    const collectionId = String(report?.collectionId || selectedCollectionId || '').trim();
+    if (!collectionId || typeof studyManagerController?.setReportPriority !== 'function') return;
+    const priorityReportIds = [];
+    if (!collapsedCards.summary) priorityReportIds.push('collectionSummary');
+    if (!collapsedCards.studyTimeByFilter) priorityReportIds.push('studyTimeByFilter');
+    if (!collapsedCards.groupByAppId) priorityReportIds.push('groupByAppId');
+    if (!collapsedCards.studyTimeByDate) {
+      priorityReportIds.push('studyTimeByDate');
+      priorityReportIds.push('studyTimeByDateSummary');
+    }
+    if (!collapsedCards.recommendations) priorityReportIds.push('recommendations');
+    studyManagerController.setReportPriority(collectionId, priorityReportIds);
+  }
+
   function applyCollapsibleCard(cardEl, key) {
     if (!cardEl || !key) return;
     const titleEl = Array.from(cardEl.children).find((child) => child?.tagName === 'H2');
     if (!titleEl) return;
 
-    function setCollapsed(collapsed) {
+    function setCollapsed(collapsed, { persist = true } = {}) {
       collapsedCards[key] = !!collapsed;
       cardEl.classList.toggle('study-manager-card-collapsed', !!collapsed);
       for (const child of Array.from(cardEl.children)) {
@@ -954,7 +1052,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
         child.hidden = !!collapsed;
       }
       titleEl.setAttribute('aria-expanded', String(!collapsed));
-      void persistCardsState();
+      if (persist) void persistCardsState();
     }
 
     titleEl.classList.add('study-manager-collapsible-title');
@@ -969,10 +1067,11 @@ export function renderStudyManager({ store, onNavigate, route }) {
       setCollapsed(!collapsedCards[key]);
     });
 
-    setCollapsed(!!collapsedCards[key]);
+    setCollapsed(!!collapsedCards[key], { persist: false });
   }
 
   function ensureSelectedCollectionReport() {
+    if (!AUTO_RUN_REPORTS) return;
     const targetCollectionId = String(selectedCollectionId || '').trim();
     if (!targetCollectionId || pendingEnsureCollectionId === targetCollectionId) return;
     pendingEnsureCollectionId = targetCollectionId;
@@ -984,10 +1083,18 @@ export function renderStudyManager({ store, onNavigate, route }) {
 
   function renderControls() {
     controls.removeControl && controls.removeControl('collection');
-    controls.removeControl && controls.removeControl('refresh');
+    controls.removeControl && controls.removeControl('refresh-all');
+    REPORT_REFRESH_ITEMS.forEach((item) => {
+      controls.removeControl && controls.removeControl(`refresh-${item.id}`);
+    });
 
     const collections = getSelectableCollections();
     if (!collections.length) return;
+    const isRefreshing = !!snapshot?.isComputing;
+    const requestedReportIds = Array.isArray(snapshot?.activeRequestedReportIds)
+      ? snapshot.activeRequestedReportIds.map((item) => String(item || '').trim()).filter(Boolean)
+      : [];
+    const isRefreshAllActive = isRefreshing && !requestedReportIds.length;
 
     controls.addElement({
       type: 'dropdown',
@@ -1008,9 +1115,9 @@ export function renderStudyManager({ store, onNavigate, route }) {
 
     controls.addElement({
       type: 'button',
-      key: 'refresh',
+      key: 'refresh-all',
       caption: 'data',
-      label: snapshot?.isComputing ? 'Refreshing...' : 'Refresh',
+      label: isRefreshAllActive ? 'Refreshing...' : 'Refresh All',
       className: 'btn small',
       onClick: () => {
         if (pendingSnapshot) {
@@ -1021,51 +1128,88 @@ export function renderStudyManager({ store, onNavigate, route }) {
         }
         try { studyManagerController.requestRefresh('manual', { delayMs: 0, collectionIds: [selectedCollectionId] }); } catch {}
       },
-      disabled: !!snapshot?.isComputing,
+      disabled: isRefreshing,
+    });
+
+    REPORT_REFRESH_ITEMS.forEach((item) => {
+      const isActive = isRefreshing && requestedReportIds.includes(item.id);
+      controls.addElement({
+        type: 'button',
+        key: `refresh-${item.id}`,
+        caption: 'report',
+        label: isActive ? 'Refreshing...' : item.label,
+        className: 'btn small',
+        onClick: () => {
+          if (pendingSnapshot) {
+            snapshot = pendingSnapshot;
+            pendingSnapshot = null;
+            renderControls();
+            renderBody();
+          }
+          try {
+            studyManagerController.requestRefresh('manual', {
+              delayMs: 0,
+              collectionIds: [selectedCollectionId],
+              reportIds: [item.id],
+            });
+          } catch {}
+        },
+        disabled: isRefreshing,
+      });
     });
   }
 
   function renderBody() {
     body.innerHTML = '';
 
-    if (!snapshot?.ready) {
-      ensureSelectedCollectionReport();
-      body.append(card({ id: 'study-manager-loading-card', title: 'Study Manager', subtitle: 'Building study summaries in the background...' }));
-      return;
-    }
-
-    const report = getReport(snapshot);
-    if (!report) {
-      try {
-        if (selectedCollectionId && !snapshot?.isComputing && pendingEnsureCollectionId !== selectedCollectionId) {
-          ensureSelectedCollectionReport();
-        }
-      } catch {}
+    syncSelectedCollectionReportPriority(null);
+    const report = getReport(snapshot) || makePlaceholderReport(selectedCollectionId);
+    if (!report?.collectionId) {
       body.append(card({
         id: 'study-manager-empty-card',
         title: 'Study Manager',
-        subtitle: selectedCollectionId
-          ? `Building study summary for ${selectedCollectionId}...`
-          : 'No collection study data available yet.',
+        subtitle: 'No collection selected.',
       }));
       return;
     }
     pendingEnsureCollectionId = '';
 
+    if (AUTO_RUN_REPORTS) ensureTableSettingsController(report.collectionId);
+    else scheduleTableSettingsBootstrap(report.collectionId);
+    syncSelectedCollectionReportPriority(report);
+
     const summary = report.collectionSummary || {};
-    ensureTableSettingsController(report.collectionId);
-    const dailySummaryCard = buildDailySummaryCard({ report });
-    const dailyActivityCard = buildDailyActivityCard({
-      report,
-      onNavigate,
-      hideRepeatedFilters: hideRepeatedDateFilters,
-      onToggleHideRepeated: () => {
-        hideRepeatedDateFilters = !hideRepeatedDateFilters;
-        void persistCardsState();
-        renderBody();
-      },
-    });
-    const recommendationCardObjs = getRecommendationSets(report).map((recommendationSet) => {
+    const isSummaryReady = getReportStatus(report, 'collectionSummary') === 'ready' && !!report.collectionSummary;
+    const isDailySummaryReady = getReportStatus(report, 'studyTimeByDateSummary') === 'ready' && !!report.studyTimeByDateSummary;
+    const isDailyActivityReady = getReportStatus(report, 'studyTimeByDate') === 'ready' && Array.isArray(report.studyTimeByDate);
+    const isRecommendationsReady = getReportStatus(report, 'recommendations') === 'ready';
+    const isFiltersReady = getReportStatus(report, 'studyTimeByFilter') === 'ready' && Array.isArray(report.studyTimeByFilter);
+    const isAppsReady = getReportStatus(report, 'groupByAppId') === 'ready' && Array.isArray(report.groupByAppId);
+
+    const dailySummaryCard = isDailySummaryReady
+      ? buildDailySummaryCard({ report })
+      : makePendingCard({
+          id: 'study-manager-daily-summary-card',
+          title: 'Daily Study Summary',
+          subtitle: formatWaitingForReports(['studyTimeByDateSummary']),
+        });
+    const dailyActivityCard = isDailyActivityReady
+      ? buildDailyActivityCard({
+          report,
+          onNavigate,
+          hideRepeatedFilters: hideRepeatedDateFilters,
+          onToggleHideRepeated: () => {
+            hideRepeatedDateFilters = !hideRepeatedDateFilters;
+            void persistCardsState();
+            renderBody();
+          },
+        })
+      : makePendingCard({
+          id: 'study-manager-daily-card',
+          title: 'Study Time By Date',
+          subtitle: formatWaitingForReports(['studyTimeByDate']),
+        });
+    const recommendationCardObjs = (isRecommendationsReady ? getRecommendationSets(report) : []).map((recommendationSet) => {
       const recommendationId = String(recommendationSet?.config?.id || '').trim();
       const recommendationReportResult = report?.reportResults?.recommendationSets?.[recommendationId]
         || (recommendationId === 'kanjiCoverage' ? report?.reportResults?.recommendations : null)
@@ -1083,120 +1227,192 @@ export function renderStudyManager({ store, onNavigate, route }) {
       });
     }).filter(Boolean);
     const recommendationCards = recommendationCardObjs.map((item) => item?.card).filter(Boolean);
-    const summaryCard = card({
-      id: 'study-manager-summary-card',
-      title: 'Study Summary',
-      cornerCaption: snapshot.updatedAtIso ? formatIsoShort(snapshot.updatedAtIso) : '',
-      children: [
-        el('div', {
-          className: 'study-manager-summary-grid',
+    const summaryCard = isSummaryReady
+      ? card({
+          id: 'study-manager-summary-card',
+          title: 'Study Summary',
+          cornerCaption: snapshot.updatedAtIso ? formatIsoShort(snapshot.updatedAtIso) : '',
           children: [
-            renderMetric('Collection', report.collectionName || report.collectionId),
-            renderMetric('Entries', String(asNumber(summary.entryCount))),
-            renderMetric('Time', formatMinutes(asNumber(summary.totalStudyDurationMs))),
-            renderMetric('Sessions', String(asNumber(summary.totalStudySessions))),
-            renderMetric('Entries Seen', String(asNumber(summary.seenCount))),
-            renderMetric('Not Seen', String(asNumber(summary.notSeenCount))),
-            renderMetric('Null', String(asNumber(summary.stateCounts?.null))),
-            renderMetric('Focus', String(asNumber(summary.stateCounts?.focus))),
-            renderMetric('Learned', String(asNumber(summary.stateCounts?.learned))),
-            renderMetric('Tracked Filters', String(asNumber(summary.filterCount))),
-          ],
+            el('div', {
+              className: 'study-manager-summary-grid',
+              children: [
+                renderMetric('Collection', report.collectionName || report.collectionId),
+                renderMetric('Entries', String(asNumber(summary.entryCount))),
+                renderMetric('Time', formatMinutes(asNumber(summary.totalStudyDurationMs))),
+                renderMetric('Sessions', String(asNumber(summary.totalStudySessions))),
+                renderMetric('Entries Seen', String(asNumber(summary.seenCount))),
+                renderMetric('Not Seen', String(asNumber(summary.notSeenCount))),
+                renderMetric('Null', String(asNumber(summary.stateCounts?.null))),
+                renderMetric('Focus', String(asNumber(summary.stateCounts?.focus))),
+                renderMetric('Learned', String(asNumber(summary.stateCounts?.learned))),
+                renderMetric('Tracked Filters', String(asNumber(summary.filterCount))),
+              ],
+            }),
+          ].filter(Boolean),
+        })
+      : makePendingCard({
+          id: 'study-manager-summary-card',
+          title: 'Study Summary',
+          subtitle: formatWaitingForReports(['collectionSummary']),
+        });
+    if (isSummaryReady) {
+      attachCardCornerButton({
+        cardEl: summaryCard,
+        text: 'JSON',
+        title: 'Open JSON viewer for this card',
+        onClick: () => openStudyManagerJsonDialog({
+          title: 'Study Summary JSON',
+          data: report?.reportResults?.collectionSummary || null,
         }),
-      ].filter(Boolean),
-    });
-    attachCardCornerButton({
-      cardEl: summaryCard,
-      text: 'JSON',
-      title: 'Open JSON viewer for this card',
-      onClick: () => openStudyManagerJsonDialog({
-        title: 'Study Summary JSON',
-        data: report?.reportResults?.collectionSummary || null,
-      }),
-    });
+      });
+    } else {
+      attachDisabledCardCornerButton({
+        cardEl: summaryCard,
+        text: 'JSON',
+        title: 'Report not ready yet',
+      });
+    }
 
-    const filtersTableObj = buildFilterTable({ store, report, onNavigate, tableSettings: filtersTableSettings });
-    const filtersCard = makeTableCard({
-      id: 'study-manager-filters-card',
-      title: 'Study Time By Filter',
-      caption: `${report.studyTimeByFilter?.length || 0} filters`,
-      table: filtersTableObj.table,
-    });
-    attachCardCornerButton({
-      cardEl: filtersCard,
-      text: 'JSON',
-      title: 'Open JSON viewer for this card',
-      onClick: () => openStudyManagerJsonDialog({
-        title: 'Study Time By Filter JSON',
-        data: report?.reportResults?.studyTimeByFilter || null,
-      }),
-    });
-    attachCardCornerButton({
-      cardEl: filtersCard,
-      text: 'Table',
-      title: 'Table settings',
-      onClick: async () => {
-        const next = await openTableSettingsDialog({
-          tableName: 'Study Manager Filters Table',
-          sourceInfo: `${report.collectionId} | ${filtersTableObj.sourceInfo}`,
-          columns: buildTableColumnItems(filtersTableObj.headers, filtersTableObj.rows),
-          actions: TABLE_ACTION_ITEMS,
-          settings: filtersTableSettings,
+    const filtersTableObj = isFiltersReady
+      ? buildFilterTable({ store, report, onNavigate, tableSettings: filtersTableSettings })
+      : null;
+    const filtersCard = isFiltersReady
+      ? makeTableCard({
+          id: 'study-manager-filters-card',
+          title: 'Study Time By Filter',
+          caption: `${report.studyTimeByFilter?.length || 0} filters`,
+          table: filtersTableObj.table,
+        })
+      : makePendingCard({
+          id: 'study-manager-filters-card',
+          title: 'Study Time By Filter',
+          subtitle: formatWaitingForReports(['studyTimeByFilter']),
         });
-        if (next) await persistFiltersTableSettings(next);
-      },
-    });
+    if (isFiltersReady) {
+      attachCardCornerButton({
+        cardEl: filtersCard,
+        text: 'JSON',
+        title: 'Open JSON viewer for this card',
+        onClick: () => openStudyManagerJsonDialog({
+          title: 'Study Time By Filter JSON',
+          data: report?.reportResults?.studyTimeByFilter || null,
+        }),
+      });
+      attachCardCornerButton({
+        cardEl: filtersCard,
+        text: 'Table',
+        title: 'Table settings',
+        onClick: async () => {
+          const next = await openTableSettingsDialog({
+            tableName: 'Study Manager Filters Table',
+            sourceInfo: `${report.collectionId} | ${filtersTableObj.sourceInfo}`,
+            columns: buildTableColumnItems(filtersTableObj.headers, filtersTableObj.rows),
+            actions: TABLE_ACTION_ITEMS,
+            settings: filtersTableSettings,
+          });
+          if (next) await persistFiltersTableSettings(next);
+        },
+      });
+    } else {
+      attachDisabledCardCornerButton({
+        cardEl: filtersCard,
+        text: 'JSON',
+        title: 'Report not ready yet',
+      });
+      attachDisabledCardCornerButton({
+        cardEl: filtersCard,
+        text: 'Table',
+        title: 'Report not ready yet',
+      });
+    }
 
-    const appsTableObj = buildAppsTable({ store, report, tableSettings: appsTableSettings });
-    const appsCard = makeTableCard({
-      id: 'study-manager-apps-card',
-      title: 'Group By App Id',
-      caption: `${report.groupByAppId?.length || 0} apps`,
-      table: appsTableObj.table,
-    });
-    attachCardCornerButton({
-      cardEl: appsCard,
-      text: 'JSON',
-      title: 'Open JSON viewer for this card',
-      onClick: () => openStudyManagerJsonDialog({
-        title: 'Group By App Id JSON',
-        data: report?.reportResults?.groupByAppId || null,
-      }),
-    });
-    attachCardCornerButton({
-      cardEl: appsCard,
-      text: 'Table',
-      title: 'Table settings',
-      onClick: async () => {
-        const next = await openTableSettingsDialog({
-          tableName: 'Study Manager Apps Table',
-          sourceInfo: `${report.collectionId} | ${appsTableObj.sourceInfo}`,
-          columns: buildTableColumnItems(appsTableObj.headers, appsTableObj.rows),
-          actions: TABLE_ACTION_ITEMS,
-          settings: appsTableSettings,
+    const appsTableObj = isAppsReady
+      ? buildAppsTable({ store, report, tableSettings: appsTableSettings })
+      : null;
+    const appsCard = isAppsReady
+      ? makeTableCard({
+          id: 'study-manager-apps-card',
+          title: 'Group By App Id',
+          caption: `${report.groupByAppId?.length || 0} apps`,
+          table: appsTableObj.table,
+        })
+      : makePendingCard({
+          id: 'study-manager-apps-card',
+          title: 'Group By App Id',
+          subtitle: formatWaitingForReports(['groupByAppId']),
         });
-        if (next) await persistAppsTableSettings(next);
-      },
-    });
+    if (isAppsReady) {
+      attachCardCornerButton({
+        cardEl: appsCard,
+        text: 'JSON',
+        title: 'Open JSON viewer for this card',
+        onClick: () => openStudyManagerJsonDialog({
+          title: 'Group By App Id JSON',
+          data: report?.reportResults?.groupByAppId || null,
+        }),
+      });
+      attachCardCornerButton({
+        cardEl: appsCard,
+        text: 'Table',
+        title: 'Table settings',
+        onClick: async () => {
+          const next = await openTableSettingsDialog({
+            tableName: 'Study Manager Apps Table',
+            sourceInfo: `${report.collectionId} | ${appsTableObj.sourceInfo}`,
+            columns: buildTableColumnItems(appsTableObj.headers, appsTableObj.rows),
+            actions: TABLE_ACTION_ITEMS,
+            settings: appsTableSettings,
+          });
+          if (next) await persistAppsTableSettings(next);
+        },
+      });
+    } else {
+      attachDisabledCardCornerButton({
+        cardEl: appsCard,
+        text: 'JSON',
+        title: 'Report not ready yet',
+      });
+      attachDisabledCardCornerButton({
+        cardEl: appsCard,
+        text: 'Table',
+        title: 'Report not ready yet',
+      });
+    }
 
-    attachCardCornerButton({
-      cardEl: dailySummaryCard,
-      text: 'JSON',
-      title: 'Open JSON viewer for this card',
-      onClick: () => openStudyManagerJsonDialog({
-        title: 'Daily Study Summary JSON',
-        data: report?.reportResults?.studyTimeByDateSummary || null,
-      }),
-    });
-    attachCardCornerButton({
-      cardEl: dailyActivityCard,
-      text: 'JSON',
-      title: 'Open JSON viewer for this card',
-      onClick: () => openStudyManagerJsonDialog({
-        title: 'Study Time By Date JSON',
-        data: report?.reportResults?.studyTimeByDate || null,
-      }),
-    });
+    if (isDailySummaryReady) {
+      attachCardCornerButton({
+        cardEl: dailySummaryCard,
+        text: 'JSON',
+        title: 'Open JSON viewer for this card',
+        onClick: () => openStudyManagerJsonDialog({
+          title: 'Daily Study Summary JSON',
+          data: report?.reportResults?.studyTimeByDateSummary || null,
+        }),
+      });
+    } else {
+      attachDisabledCardCornerButton({
+        cardEl: dailySummaryCard,
+        text: 'JSON',
+        title: 'Report not ready yet',
+      });
+    }
+    if (isDailyActivityReady) {
+      attachCardCornerButton({
+        cardEl: dailyActivityCard,
+        text: 'JSON',
+        title: 'Open JSON viewer for this card',
+        onClick: () => openStudyManagerJsonDialog({
+          title: 'Study Time By Date JSON',
+          data: report?.reportResults?.studyTimeByDate || null,
+        }),
+      });
+    } else {
+      attachDisabledCardCornerButton({
+        cardEl: dailyActivityCard,
+        text: 'JSON',
+        title: 'Report not ready yet',
+      });
+    }
     recommendationCardObjs.forEach((recommendationsCardObj) => {
       const recommendationsCard = recommendationsCardObj?.card || null;
       const recommendationState = recommendationsCardObj?.state || null;
@@ -1267,6 +1483,21 @@ export function renderStudyManager({ store, onNavigate, route }) {
       });
     });
 
+    const recommendationsPendingCard = !isRecommendationsReady
+      ? makePendingCard({
+          id: 'study-manager-recommendations-card-pending',
+          title: 'Recommendations',
+          subtitle: formatWaitingForReports(['recommendations']),
+        })
+      : null;
+    if (recommendationsPendingCard) {
+      attachDisabledCardCornerButton({
+        cardEl: recommendationsPendingCard,
+        text: 'JSON',
+        title: 'Report not ready yet',
+      });
+    }
+
     [
       ['summary', summaryCard],
       ['dailySummary', dailySummaryCard],
@@ -1276,6 +1507,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
     ].forEach(([key, cardEl]) => {
       if (cardEl) applyCollapsibleCard(cardEl, key);
     });
+    if (recommendationsPendingCard) applyCollapsibleCard(recommendationsPendingCard, 'recommendations');
     recommendationCards.forEach((cardEl, index) => {
       const id = String(recommendationCardObjs[index]?.state?.config?.id || '').trim() || `set-${index}`;
       if (typeof collapsedCards[`recommendations:${id}`] === 'undefined') {
@@ -1284,7 +1516,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
       applyCollapsibleCard(cardEl, `recommendations:${id}`);
     });
 
-    body.append(...[summaryCard, dailySummaryCard, dailyActivityCard, ...recommendationCards, filtersCard, appsCard].filter(Boolean));
+    body.append(...[summaryCard, dailySummaryCard, dailyActivityCard, ...(recommendationsPendingCard ? [recommendationsPendingCard] : recommendationCards), filtersCard, appsCard].filter(Boolean));
   }
 
   renderControls();

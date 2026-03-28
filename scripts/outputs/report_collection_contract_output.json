@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-03-26T19:17:20.452Z",
+  "generatedAt": "2026-03-28T21:41:39.835Z",
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_collection_contract_output.json",
   "runTiming": {
-    "startedAt": "2026-03-26T19:17:20.397Z",
-    "finishedAt": "2026-03-26T19:17:20.453Z",
-    "durationMs": 56,
-    "durationSeconds": 0.056
+    "startedAt": "2026-03-28T21:41:39.776Z",
+    "finishedAt": "2026-03-28T21:41:39.836Z",
+    "durationMs": 60,
+    "durationSeconds": 0.06
   },
-  "scannedCollections": 12,
+  "scannedCollections": 13,
   "collectionsWithProblems": 2,
   "parseErrors": [],
   "reports_clean": [
@@ -161,6 +161,26 @@
       "entryErrorCount": 0,
       "entryWarningCount": 0,
       "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/spanish/spanish_sentences.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "es",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [
+        {
+          "message": "Field 'notes' has unknown type 'array<string>'."
+        },
+        {
+          "message": "Field 'chunks' has unknown type 'array<sentenceChunk>'."
+        }
+      ],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
     }
   ],
   "reports_review": [
@@ -181,7 +201,7 @@
       "collectionPath": "collections/spanish/spanish_words.json",
       "valid": false,
       "arrayKey": "entries",
-      "entryKeyField": "lemma",
+      "entryKeyField": "term",
       "collectionErrors": [],
       "collectionWarnings": [],
       "schemaErrors": [],

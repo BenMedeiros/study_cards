@@ -447,15 +447,27 @@ export function createTable({ store = null, headers, rows, className = '', id, c
       td.dataset.field = 'actions';
       td.classList.add('col-actions');
       for (const act of rowActions) {
+        const actionContext = { tr, td, table };
         const btn = document.createElement('button');
         btn.type = 'button';
         if (act.className) btn.className = act.className;
         btn.classList.add('btn');
         btn.textContent = act.label || act.title || '';
-        if (act.title) btn.title = act.title;
+        const resolvedTitle = (typeof act.getTitle === 'function')
+          ? act.getTitle(rowData, rowIndex, actionContext)
+          : act.title;
+        if (resolvedTitle) btn.title = resolvedTitle;
+        const isDisabled = (typeof act.isDisabled === 'function')
+          ? !!act.isDisabled(rowData, rowIndex, actionContext)
+          : !!act.disabled;
+        if (isDisabled) {
+          btn.disabled = true;
+          btn.setAttribute('aria-disabled', 'true');
+        }
         btn.addEventListener('click', () => {
+          if (btn.disabled) return;
           try {
-            if (typeof act.onClick === 'function') act.onClick(rowData, rowIndex, { tr, td, table });
+            if (typeof act.onClick === 'function') act.onClick(rowData, rowIndex, actionContext);
           } catch (e) {}
         });
         td.append(btn);

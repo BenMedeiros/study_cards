@@ -200,6 +200,7 @@ export function createStore() {
       getCollectionViewForCollection: collections.getCollectionViewForCollection,
       getActiveCollectionView: collections.getActiveCollectionView,
       getActiveCollectionFilteredSet: collections.getActiveCollectionFilteredSet,
+      getCollectionRevision: collections.getCollectionRevision,
       getEntryStudyKey: collections.getEntryStudyKey,
       entryMatchesTableSearch: collections.entryMatchesTableSearch,
       filterEntriesAndIndicesByTableSearch: collections.filterEntriesAndIndicesByTableSearch,

@@ -40,7 +40,7 @@
     },
     {
       "path": "japanese/japanese_grammar.json",
-      "modifiedAt": "2026-03-15T16:15:58.074Z",
+      "modifiedAt": "2026-03-28T19:06:50.924Z",
       "name": "Japanese Grammar",
       "description": "Consolidated Japanese grammar patterns with quick examples and links to sentence and paragraph usage.",
       "entriesCount": 317,
@@ -82,7 +82,7 @@
     },
     {
       "path": "japanese/japanese_sentences.json",
-      "modifiedAt": "2026-03-15T01:12:21.414Z",
+      "modifiedAt": "2026-03-28T21:24:39.807Z",
       "name": "Japanese Sentences",
       "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
       "entriesCount": 214,
@@ -105,10 +105,10 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-03-25T21:32:15.704Z",
+      "modifiedAt": "2026-03-28T21:27:02.157Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
-      "entriesCount": 2712,
+      "entriesCount": 2731,
       "valid": false,
       "validation": {
         "schema": {
@@ -294,7 +294,7 @@
               "occurrences": [
                 {
                   "index": 293,
-                  "line": 2074,
+                  "line": 2026,
                   "entry": {
                     "kanji": "読む",
                     "reading": "よむ",
@@ -305,7 +305,7 @@
                 },
                 {
                   "index": 2603,
-                  "line": 21403,
+                  "line": 21138,
                   "entry": {
                     "kanji": "読む",
                     "reading": "よむ",
@@ -324,14 +324,13 @@
               "occurrences": [
                 {
                   "index": 301,
-                  "line": 2128,
+                  "line": 2080,
                   "entry": {
                     "kanji": "話す",
                     "reading": "はなす",
                     "meaning": "to talk",
                     "ending": "su",
                     "type": "godan-verb",
-                    "orthography": "kanji",
                     "tags": [
                       "grocery-shopping-story"
                     ]
@@ -339,7 +338,7 @@
                 },
                 {
                   "index": 2519,
-                  "line": 20563,
+                  "line": 20298,
                   "entry": {
                     "kanji": "話す",
                     "reading": "はなす",
@@ -358,7 +357,7 @@
               "occurrences": [
                 {
                   "index": 303,
-                  "line": 2149,
+                  "line": 2100,
                   "entry": {
                     "kanji": "買う",
                     "reading": "かう",
@@ -369,7 +368,7 @@
                 },
                 {
                   "index": 2447,
-                  "line": 19843,
+                  "line": 19578,
                   "entry": {
                     "kanji": "買う",
                     "reading": "かう",
@@ -388,7 +387,7 @@
               "occurrences": [
                 {
                   "index": 345,
-                  "line": 2565,
+                  "line": 2516,
                   "entry": {
                     "kanji": "遊ぶ",
                     "reading": "あそぶ",
@@ -399,7 +398,7 @@
                 },
                 {
                   "index": 2579,
-                  "line": 21163,
+                  "line": 20898,
                   "entry": {
                     "kanji": "遊ぶ",
                     "reading": "あそぶ",
@@ -418,7 +417,7 @@
               "occurrences": [
                 {
                   "index": 346,
-                  "line": 2572,
+                  "line": 2523,
                   "entry": {
                     "kanji": "飛ぶ",
                     "reading": "とぶ",
@@ -429,7 +428,7 @@
                 },
                 {
                   "index": 2591,
-                  "line": 21283,
+                  "line": 21018,
                   "entry": {
                     "kanji": "飛ぶ",
                     "reading": "とぶ",
@@ -448,7 +447,7 @@
               "occurrences": [
                 {
                   "index": 352,
-                  "line": 2614,
+                  "line": 2565,
                   "entry": {
                     "kanji": "泳ぐ",
                     "reading": "およぐ",
@@ -459,7 +458,7 @@
                 },
                 {
                   "index": 2495,
-                  "line": 20323,
+                  "line": 20058,
                   "entry": {
                     "kanji": "泳ぐ",
                     "reading": "およぐ",
@@ -478,7 +477,7 @@
               "occurrences": [
                 {
                   "index": 353,
-                  "line": 2621,
+                  "line": 2572,
                   "entry": {
                     "kanji": "急ぐ",
                     "reading": "いそぐ",
@@ -489,7 +488,7 @@
                 },
                 {
                   "index": 2507,
-                  "line": 20443,
+                  "line": 20178,
                   "entry": {
                     "kanji": "急ぐ",
                     "reading": "いそぐ",
@@ -508,14 +507,13 @@
               "occurrences": [
                 {
                   "index": 372,
-                  "line": 2754,
+                  "line": 2705,
                   "entry": {
                     "kanji": "聞く",
                     "reading": "きく",
                     "meaning": "to ask; to hear",
                     "type": "godan-verb",
                     "ending": "ku",
-                    "orthography": "kanji",
                     "tags": [
                       "game-center-story"
                     ]
@@ -523,7 +521,7 @@
                 },
                 {
                   "index": 2483,
-                  "line": 20203,
+                  "line": 19938,
                   "entry": {
                     "kanji": "聞く",
                     "reading": "きく",
@@ -542,7 +540,7 @@
               "occurrences": [
                 {
                   "index": 373,
-                  "line": 2765,
+                  "line": 2715,
                   "entry": {
                     "kanji": "書く",
                     "reading": "かく",
@@ -552,7 +550,7 @@
                 },
                 {
                   "index": 2471,
-                  "line": 20083,
+                  "line": 19818,
                   "entry": {
                     "kanji": "書く",
                     "reading": "かく",
@@ -571,13 +569,12 @@
               "occurrences": [
                 {
                   "index": 376,
-                  "line": 2783,
+                  "line": 2733,
                   "entry": {
                     "kanji": "行く",
                     "reading": "いく",
                     "meaning": "to go",
                     "type": "godan-verb",
-                    "orthography": "kanji",
                     "tags": [
                       "grocery-shopping-story"
                     ]
@@ -585,7 +582,7 @@
                 },
                 {
                   "index": 2435,
-                  "line": 19723,
+                  "line": 19458,
                   "entry": {
                     "kanji": "行く",
                     "reading": "いく",
@@ -604,13 +601,12 @@
               "occurrences": [
                 {
                   "index": 393,
-                  "line": 2893,
+                  "line": 2841,
                   "entry": {
                     "kanji": "飲む",
                     "reading": "のむ",
                     "meaning": "to drink",
                     "type": "godan-verb",
-                    "orthography": "kanji",
                     "tags": [
                       "game-center-story"
                     ]
@@ -618,7 +614,7 @@
                 },
                 {
                   "index": 2615,
-                  "line": 21523,
+                  "line": 21258,
                   "entry": {
                     "kanji": "飲む",
                     "reading": "のむ",
@@ -637,7 +633,7 @@
               "occurrences": [
                 {
                   "index": 427,
-                  "line": 3106,
+                  "line": 3052,
                   "entry": {
                     "kanji": "新しい",
                     "reading": "あたらしい",
@@ -647,7 +643,7 @@
                 },
                 {
                   "index": 2375,
-                  "line": 19115,
+                  "line": 18850,
                   "entry": {
                     "kanji": "新しい",
                     "reading": "あたらしい",
@@ -666,7 +662,7 @@
               "occurrences": [
                 {
                   "index": 428,
-                  "line": 3112,
+                  "line": 3058,
                   "entry": {
                     "kanji": "古い",
                     "reading": "ふるい",
@@ -676,7 +672,7 @@
                 },
                 {
                   "index": 2389,
-                  "line": 19259,
+                  "line": 18994,
                   "entry": {
                     "kanji": "古い",
                     "reading": "ふるい",
@@ -695,7 +691,7 @@
               "occurrences": [
                 {
                   "index": 429,
-                  "line": 3118,
+                  "line": 3064,
                   "entry": {
                     "kanji": "高い",
                     "reading": "たかい",
@@ -705,7 +701,7 @@
                 },
                 {
                   "index": 2271,
-                  "line": 18009,
+                  "line": 17744,
                   "entry": {
                     "kanji": "高い",
                     "reading": "たかい",
@@ -725,7 +721,7 @@
               "occurrences": [
                 {
                   "index": 430,
-                  "line": 3124,
+                  "line": 3070,
                   "entry": {
                     "kanji": "安い",
                     "reading": "やすい",
@@ -735,7 +731,7 @@
                 },
                 {
                   "index": 2361,
-                  "line": 18971,
+                  "line": 18706,
                   "entry": {
                     "kanji": "安い",
                     "reading": "やすい",
@@ -754,13 +750,12 @@
               "occurrences": [
                 {
                   "index": 525,
-                  "line": 3729,
+                  "line": 3672,
                   "entry": {
                     "kanji": "見る",
                     "reading": "みる",
                     "meaning": "to see; to look",
                     "type": "ichidan-verb",
-                    "orthography": "kanji",
                     "tags": [
                       "game-center-story"
                     ]
@@ -768,7 +763,7 @@
                 },
                 {
                   "index": 2651,
-                  "line": 21883,
+                  "line": 21618,
                   "entry": {
                     "kanji": "見る",
                     "reading": "みる",
@@ -787,7 +782,7 @@
               "occurrences": [
                 {
                   "index": 526,
-                  "line": 3739,
+                  "line": 3681,
                   "entry": {
                     "kanji": "起きる",
                     "reading": "おきる",
@@ -797,7 +792,7 @@
                 },
                 {
                   "index": 2673,
-                  "line": 22103,
+                  "line": 21838,
                   "entry": {
                     "kanji": "起きる",
                     "reading": "おきる",
@@ -816,13 +811,12 @@
               "occurrences": [
                 {
                   "index": 530,
-                  "line": 3763,
+                  "line": 3705,
                   "entry": {
                     "kanji": "食べる",
                     "reading": "たべる",
                     "meaning": "to eat",
                     "type": "ichidan-verb",
-                    "orthography": "kanji",
                     "tags": [
                       "grocery-shopping-story"
                     ]
@@ -830,7 +824,7 @@
                 },
                 {
                   "index": 2662,
-                  "line": 21993,
+                  "line": 21728,
                   "entry": {
                     "kanji": "食べる",
                     "reading": "たべる",
@@ -849,7 +843,7 @@
               "occurrences": [
                 {
                   "index": 531,
-                  "line": 3773,
+                  "line": 3714,
                   "entry": {
                     "kanji": "開ける",
                     "reading": "あける",
@@ -859,7 +853,7 @@
                 },
                 {
                   "index": 2684,
-                  "line": 22213,
+                  "line": 21948,
                   "entry": {
                     "kanji": "開ける",
                     "reading": "あける",
@@ -878,7 +872,7 @@
               "occurrences": [
                 {
                   "index": 533,
-                  "line": 3785,
+                  "line": 3726,
                   "entry": {
                     "kanji": "閉める",
                     "reading": "しめる",
@@ -888,7 +882,7 @@
                 },
                 {
                   "index": 2695,
-                  "line": 22323,
+                  "line": 22058,
                   "entry": {
                     "kanji": "閉める",
                     "reading": "しめる",
@@ -907,7 +901,7 @@
               "occurrences": [
                 {
                   "index": 577,
-                  "line": 4065,
+                  "line": 4003,
                   "entry": {
                     "kanji": "できる",
                     "reading": "できる",
@@ -917,7 +911,7 @@
                 },
                 {
                   "index": 2411,
-                  "line": 19483,
+                  "line": 19218,
                   "entry": {
                     "kanji": "できる",
                     "reading": "できる",
@@ -937,7 +931,7 @@
               "occurrences": [
                 {
                   "index": 581,
-                  "line": 4089,
+                  "line": 4027,
                   "entry": {
                     "kanji": "取れる",
                     "reading": "とれる",
@@ -947,7 +941,7 @@
                 },
                 {
                   "index": 2635,
-                  "line": 21723,
+                  "line": 21458,
                   "entry": {
                     "kanji": "取れる",
                     "reading": "とれる",
@@ -967,7 +961,7 @@
               "occurrences": [
                 {
                   "index": 605,
-                  "line": 4313,
+                  "line": 4251,
                   "entry": {
                     "kanji": "する",
                     "reading": "する",
@@ -977,7 +971,7 @@
                 },
                 {
                   "index": 2403,
-                  "line": 19403,
+                  "line": 19138,
                   "entry": {
                     "kanji": "する",
                     "reading": "する",
@@ -996,7 +990,7 @@
               "occurrences": [
                 {
                   "index": 640,
-                  "line": 4535,
+                  "line": 4473,
                   "entry": {
                     "kanji": "便利",
                     "reading": "べんり",
@@ -1006,7 +1000,7 @@
                 },
                 {
                   "index": 2289,
-                  "line": 18211,
+                  "line": 17946,
                   "entry": {
                     "kanji": "便利",
                     "reading": "べんり",
@@ -1025,7 +1019,7 @@
               "occurrences": [
                 {
                   "index": 642,
-                  "line": 4547,
+                  "line": 4485,
                   "entry": {
                     "kanji": "有名",
                     "reading": "ゆうめい",
@@ -1035,7 +1029,7 @@
                 },
                 {
                   "index": 2307,
-                  "line": 18401,
+                  "line": 18136,
                   "entry": {
                     "kanji": "有名",
                     "reading": "ゆうめい",
@@ -1054,7 +1048,7 @@
               "occurrences": [
                 {
                   "index": 644,
-                  "line": 4559,
+                  "line": 4497,
                   "entry": {
                     "kanji": "静か",
                     "reading": "しずか",
@@ -1064,7 +1058,7 @@
                 },
                 {
                   "index": 2325,
-                  "line": 18591,
+                  "line": 18326,
                   "entry": {
                     "kanji": "静か",
                     "reading": "しずか",
@@ -1083,7 +1077,7 @@
               "occurrences": [
                 {
                   "index": 658,
-                  "line": 4652,
+                  "line": 4589,
                   "entry": {
                     "kanji": "大変",
                     "reading": "たいへん",
@@ -1093,7 +1087,7 @@
                 },
                 {
                   "index": 2343,
-                  "line": 18781,
+                  "line": 18516,
                   "entry": {
                     "kanji": "大変",
                     "reading": "たいへん",
@@ -1112,7 +1106,7 @@
               "occurrences": [
                 {
                   "index": 671,
-                  "line": 4733,
+                  "line": 4670,
                   "entry": {
                     "kanji": "高さ",
                     "reading": "たかさ",
@@ -1122,7 +1116,7 @@
                 },
                 {
                   "index": 2285,
-                  "line": 18167,
+                  "line": 17902,
                   "entry": {
                     "kanji": "高さ",
                     "reading": "たかさ",
@@ -1143,7 +1137,7 @@
               "occurrences": [
                 {
                   "index": 1813,
-                  "line": 14176,
+                  "line": 14073,
                   "entry": {
                     "kanji": "ある",
                     "reading": "ある",
@@ -1153,7 +1147,7 @@
                 },
                 {
                   "index": 2426,
-                  "line": 19633,
+                  "line": 19368,
                   "entry": {
                     "kanji": "ある",
                     "reading": "ある",
@@ -1172,13 +1166,12 @@
               "occurrences": [
                 {
                   "index": 1873,
-                  "line": 14573,
+                  "line": 14461,
                   "entry": {
                     "kanji": "使う",
                     "reading": "つかう",
                     "meaning": "to use",
                     "type": "godan-verb",
-                    "orthography": "kanji",
                     "tags": [
                       "grocery-shopping-story"
                     ]
@@ -1186,7 +1179,7 @@
                 },
                 {
                   "index": 2459,
-                  "line": 19963,
+                  "line": 19698,
                   "entry": {
                     "kanji": "使う",
                     "reading": "つかう",
@@ -1205,13 +1198,12 @@
               "occurrences": [
                 {
                   "index": 1937,
-                  "line": 14976,
+                  "line": 14860,
                   "entry": {
                     "kanji": "帰る",
                     "reading": "かえる",
                     "meaning": "to return home",
                     "type": "godan-verb",
-                    "orthography": "kanji",
                     "tags": [
                       "grocery-shopping-story"
                     ]
@@ -1219,7 +1211,7 @@
                 },
                 {
                   "index": 2639,
-                  "line": 21763,
+                  "line": 21498,
                   "entry": {
                     "kanji": "帰る",
                     "reading": "かえる",
@@ -1238,13 +1230,12 @@
               "occurrences": [
                 {
                   "index": 1946,
-                  "line": 15034,
+                  "line": 14917,
                   "entry": {
                     "kanji": "来る",
                     "reading": "くる",
                     "meaning": "to come",
                     "type": "irregular-verb",
-                    "orthography": "kanji",
                     "tags": [
                       "game-center-story"
                     ]
@@ -1252,7 +1243,7 @@
                 },
                 {
                   "index": 2415,
-                  "line": 19523,
+                  "line": 19258,
                   "entry": {
                     "kanji": "来る",
                     "reading": "くる",
@@ -1271,13 +1262,12 @@
               "occurrences": [
                 {
                   "index": 2048,
-                  "line": 16134,
+                  "line": 15946,
                   "entry": {
                     "kanji": "取る",
                     "reading": "とる",
                     "meaning": "to take; to get (a prize)",
                     "type": "godan-verb",
-                    "orthography": "kanji",
                     "tags": [
                       "game-center-story"
                     ]
@@ -1285,7 +1275,7 @@
                 },
                 {
                   "index": 2627,
-                  "line": 21643,
+                  "line": 21378,
                   "entry": {
                     "kanji": "取る",
                     "reading": "とる",
@@ -1304,7 +1294,7 @@
               "occurrences": [
                 {
                   "index": 2159,
-                  "line": 17233,
+                  "line": 16968,
                   "entry": {
                     "kanji": "待つ",
                     "reading": "まつ",
@@ -1314,7 +1304,7 @@
                 },
                 {
                   "index": 2543,
-                  "line": 20803,
+                  "line": 20538,
                   "entry": {
                     "kanji": "待つ",
                     "reading": "まつ",
@@ -1333,7 +1323,7 @@
               "occurrences": [
                 {
                   "index": 2177,
-                  "line": 17341,
+                  "line": 17076,
                   "entry": {
                     "kanji": "立つ",
                     "reading": "たつ",
@@ -1343,7 +1333,7 @@
                 },
                 {
                   "index": 2555,
-                  "line": 20923,
+                  "line": 20658,
                   "entry": {
                     "kanji": "立つ",
                     "reading": "たつ",
@@ -1362,7 +1352,7 @@
               "occurrences": [
                 {
                   "index": 2257,
-                  "line": 17925,
+                  "line": 17660,
                   "entry": {
                     "kanji": "過ごす",
                     "reading": "すごす",
@@ -1372,7 +1362,7 @@
                 },
                 {
                   "index": 2531,
-                  "line": 20683,
+                  "line": 20418,
                   "entry": {
                     "kanji": "過ごす",
                     "reading": "すごす",
@@ -1391,7 +1381,7 @@
               "occurrences": [
                 {
                   "index": 2423,
-                  "line": 19603,
+                  "line": 19338,
                   "entry": {
                     "kanji": "来られる",
                     "reading": "こられる",
@@ -1405,7 +1395,7 @@
                 },
                 {
                   "index": 2706,
-                  "line": 22433,
+                  "line": 22168,
                   "entry": {
                     "kanji": "来られる",
                     "reading": "こられる",
@@ -1425,7 +1415,7 @@
               "occurrences": [
                 {
                   "index": 2659,
-                  "line": 21963,
+                  "line": 21698,
                   "entry": {
                     "kanji": "見られる",
                     "reading": "みられる",
@@ -1439,7 +1429,7 @@
                 },
                 {
                   "index": 2707,
-                  "line": 22443,
+                  "line": 22178,
                   "entry": {
                     "kanji": "見られる",
                     "reading": "みられる",
@@ -1459,7 +1449,7 @@
               "occurrences": [
                 {
                   "index": 2670,
-                  "line": 22073,
+                  "line": 21808,
                   "entry": {
                     "kanji": "食べられる",
                     "reading": "たべられる",
@@ -1473,7 +1463,7 @@
                 },
                 {
                   "index": 2708,
-                  "line": 22453,
+                  "line": 22188,
                   "entry": {
                     "kanji": "食べられる",
                     "reading": "たべられる",
@@ -1493,7 +1483,7 @@
               "occurrences": [
                 {
                   "index": 2681,
-                  "line": 22183,
+                  "line": 21918,
                   "entry": {
                     "kanji": "起きられる",
                     "reading": "おきられる",
@@ -1507,7 +1497,7 @@
                 },
                 {
                   "index": 2709,
-                  "line": 22463,
+                  "line": 22198,
                   "entry": {
                     "kanji": "起きられる",
                     "reading": "おきられる",
@@ -1527,7 +1517,7 @@
               "occurrences": [
                 {
                   "index": 2692,
-                  "line": 22293,
+                  "line": 22028,
                   "entry": {
                     "kanji": "開けられる",
                     "reading": "あけられる",
@@ -1541,7 +1531,7 @@
                 },
                 {
                   "index": 2710,
-                  "line": 22473,
+                  "line": 22208,
                   "entry": {
                     "kanji": "開けられる",
                     "reading": "あけられる",
@@ -1561,7 +1551,7 @@
               "occurrences": [
                 {
                   "index": 2703,
-                  "line": 22403,
+                  "line": 22138,
                   "entry": {
                     "kanji": "閉められる",
                     "reading": "しめられる",
@@ -1575,7 +1565,7 @@
                 },
                 {
                   "index": 2711,
-                  "line": 22483,
+                  "line": 22218,
                   "entry": {
                     "kanji": "閉められる",
                     "reading": "しめられる",
@@ -1690,10 +1680,32 @@
       "schemaSource": "inline"
     },
     {
+      "path": "spanish/spanish_sentences.json",
+      "modifiedAt": "2026-03-28T18:55:24.105Z",
+      "name": "Spanish Sentences",
+      "description": "Spanish learner sentences with English translations and chunk references into the Spanish words collection.",
+      "entriesCount": 1,
+      "valid": true,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": [
+            "Field 'notes' has unknown type 'array<string>'.",
+            "Field 'chunks' has unknown type 'array<sentenceChunk>'."
+          ]
+        },
+        "entries": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "schemaSource": "inline"
+    },
+    {
       "path": "spanish/spanish_words.json",
-      "modifiedAt": "2026-03-21T13:25:31.292Z",
+      "modifiedAt": "2026-03-28T19:06:50.916Z",
       "name": "All Spanish Words",
-      "description": "First-generation Spanish vocabulary entries in canonical dictionary form, with English glosses and lightweight grammatical metadata.",
+      "description": "First-generation Spanish vocabulary entries as learner-useful terms, with English glosses and lightweight grammatical metadata.",
       "entriesCount": 631,
       "valid": false,
       "validation": {
@@ -1716,9 +1728,9 @@
               "occurrences": [
                 {
                   "index": 26,
-                  "line": 251,
+                  "line": 102,
                   "entry": {
-                    "lemma": "café",
+                    "term": "café",
                     "meaning": "coffee",
                     "type": "noun",
                     "semanticClass": "food",
@@ -1727,9 +1739,9 @@
                 },
                 {
                   "index": 194,
-                  "line": 1427,
+                  "line": 270,
                   "entry": {
-                    "lemma": "café",
+                    "term": "café",
                     "meaning": "cafe",
                     "type": "noun",
                     "semanticClass": "city",

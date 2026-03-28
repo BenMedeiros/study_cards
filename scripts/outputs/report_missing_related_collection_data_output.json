@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-26T19:17:19.909Z",
-  "scannedCollections": 13,
-  "collectionsWithRelations": 2,
-  "relationCount": 4,
+  "generatedAt": "2026-03-28T21:41:39.273Z",
+  "scannedCollections": 14,
+  "collectionsWithRelations": 3,
+  "relationCount": 5,
   "missingRelationCount": 4,
-  "missingRefTotal": 118,
+  "missingRefTotal": 105,
   "reports": [
     {
       "sourceName": "Japanese Grammar",
@@ -118,28 +118,7 @@
           "thisKey": "kanji",
           "foreignKey": "chunks[].refs[]",
           "relatedPath": "collections/japanese/japanese_sentences.json",
-          "missing": [
-            "[LG] webOS TV OLED55B7A",
-            "Nになってから",
-            "Vたくない",
-            "Vたら",
-            "Vている",
-            "Vてから",
-            "Vてください",
-            "Vてしまう",
-            "Vてはいけません",
-            "Vないでください",
-            "Vのは～だ",
-            "Vよう",
-            "Vることが多い",
-            "Vるつもりだ",
-            "Vると",
-            "アイデア",
-            "インク",
-            "オリンポス山",
-            "お寺",
-            "から"
-          ]
+          "missing": []
         },
         {
           "name": "paragraphs",
@@ -167,15 +146,36 @@
           ]
         }
       ]
+    },
+    {
+      "sourceName": "All Spanish Words",
+      "sourcePath": "collections/spanish/spanish_words.json",
+      "relations": [
+        {
+          "name": "sentences",
+          "thisKey": "term",
+          "foreignKey": "chunks[].refs[]",
+          "relatedPath": "collections/spanish/spanish_sentences.json",
+          "missing": [
+            "económico",
+            "empresa",
+            "gobierno",
+            "inflación",
+            "medida",
+            "nuevo",
+            "pequeño"
+          ]
+        }
+      ]
     }
   ],
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_missing_related_collection_data_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-03-26T19:17:19.879Z",
-    "finishedAt": "2026-03-26T19:17:19.909Z",
-    "durationMs": 30,
-    "durationSeconds": 0.03
+    "startedAt": "2026-03-28T21:41:39.242Z",
+    "finishedAt": "2026-03-28T21:41:39.274Z",
+    "durationMs": 32,
+    "durationSeconds": 0.032
   }
 }

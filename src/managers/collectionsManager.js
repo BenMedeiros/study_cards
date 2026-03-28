@@ -266,6 +266,36 @@ export function createCollectionsManager({ state, uiState, persistence, progress
     }
   }
 
+  try {
+    if (progressManager && typeof progressManager.subscribe === 'function') {
+      progressManager.subscribe((event = {}) => {
+        const collectionKey = String(event?.collectionKey || '').trim();
+        try {
+          console.info('[collectionsManager] progress event received', {
+            type: String(event?.type || ''),
+            collectionKey,
+            entryKey: String(event?.entryKey || '').trim() || null,
+          });
+        } catch (e) {}
+        if (!collectionKey) return;
+        bumpCollectionRevision(collectionKey);
+        clearCollectionViewCache(collectionKey);
+        try {
+          console.info('[collectionsManager] progress event invalidated collection view cache', {
+            collectionKey,
+            revision: getCollectionRevision(collectionKey),
+          });
+        } catch (e) {}
+        notifySubscribers({
+          type: 'collections.progress.changed',
+          collectionKey,
+          progressEventType: String(event?.type || 'progress.changed'),
+          entryKey: String(event?.entryKey || '').trim() || null,
+        });
+      });
+    }
+  } catch (e) {}
+
   function getCollections() {
     return state.collections;
   }
@@ -1149,6 +1179,42 @@ export function createCollectionsManager({ state, uiState, persistence, progress
     return out;
   }
 
+  function getCollectionRecordArray(collection = null) {
+    if (!collection || typeof collection !== 'object') return [];
+    for (const key of ['entries', 'sentences', 'paragraphs', 'items', 'cards']) {
+      if (Array.isArray(collection[key])) return collection[key];
+    }
+    for (const [key, value] of Object.entries(collection)) {
+      if (key === 'metadata' || key === 'schema') continue;
+      if (Array.isArray(value)) return value;
+    }
+    return [];
+  }
+
+  function getRelatedFieldKeys(collection = null, relation = null, records = null) {
+    const explicit = Array.isArray(relation?.fields)
+      ? relation.fields.map((field) => String(field?.key || field || '').trim()).filter(Boolean)
+      : [];
+    if (explicit.length) return explicit;
+
+    const keys = new Set();
+    const buckets = Array.isArray(records)
+      ? records
+      : getCollectionRecordArray(collection).flatMap((entry) => (
+        Array.isArray(entry?.relatedCollections?.[relation?.name]) ? entry.relatedCollections[relation.name] : []
+      ));
+
+    for (const record of buckets) {
+      if (!record || typeof record !== 'object' || Array.isArray(record)) continue;
+      for (const key of Object.keys(record)) {
+        const fieldKey = String(key || '').trim();
+        if (!fieldKey || fieldKey === 'relatedCollections') continue;
+        keys.add(fieldKey);
+      }
+    }
+    return Array.from(keys);
+  }
+
   function getEntryRelatedFieldMap(entry, collection) {
     const coll = (collection && typeof collection === 'object') ? collection : null;
     const relations = normalizeRelatedCollectionsConfig(coll?.metadata?.relatedCollections);
@@ -1156,9 +1222,8 @@ export function createCollectionsManager({ state, uiState, persistence, progress
     for (const relation of relations) {
       const records = Array.isArray(entry?.relatedCollections?.[relation.name]) ? entry.relatedCollections[relation.name] : [];
       out[`${relation.name}.count`] = records.length;
-      const fieldDefs = Array.isArray(relation.fields) ? relation.fields : [];
-      for (const field of fieldDefs) {
-        const fieldKey = String(field?.key || '').trim();
+      const fieldKeys = getRelatedFieldKeys(collection, relation, records);
+      for (const fieldKey of fieldKeys) {
         if (!fieldKey) continue;
         const values = [];
         for (const record of records) {
@@ -1176,9 +1241,8 @@ export function createCollectionsManager({ state, uiState, persistence, progress
     const out = [];
     for (const relation of relations) {
       out.push({ key: `${relation.name}.count`, type: 'number' });
-      const fieldDefs = Array.isArray(relation.fields) ? relation.fields : [];
-      for (const field of fieldDefs) {
-        const fieldKey = String(field?.key || '').trim();
+      const fieldKeys = getRelatedFieldKeys(coll, relation);
+      for (const fieldKey of fieldKeys) {
         if (!fieldKey) continue;
         out.push({ key: `${relation.name}.${fieldKey}`, type: 'array<string>' });
       }
@@ -1853,6 +1917,7 @@ export function createCollectionsManager({ state, uiState, persistence, progress
     getCollectionViewForCollection,
     getActiveCollectionView,
     getActiveCollectionFilteredSet,
+    getCollectionRevision,
     getEntryStudyKey,
     entryMatchesTableSearch,
     filterEntriesAndIndicesByTableSearch,

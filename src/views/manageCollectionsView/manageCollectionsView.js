@@ -2,12 +2,13 @@ import { createTable } from '../../components/shared/table.js';
 import { card, el } from '../../utils/browser/ui.js';
 import { createDropdown } from '../../components/shared/dropdown.js';
 import { createJsonViewer } from '../../components/shared/jsonViewer.js';
+import { confirmDialog } from '../../components/dialogs/confirmDialog.js';
 import { buildImportFeedback } from '../../utils/common/collectionImportFeedback.mjs';
 import { validateEntriesAgainstSchema } from '../../utils/common/validation.mjs';
 import { parseCollectionImportInput } from '../../utils/common/collectionImport.mjs';
 import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
-import { openAiPromptsEditorDialog } from '../../components/dialogs/aiPromptsEditor.js';
 import manageCollectionsViewController from './manageCollectionsViewController.js';
+import { openAiPromptBatchTargetDialog } from './aiPromptConfigDialog.js';
 import {
   normalizeTableSettings,
   applyTableColumnSettings,
@@ -17,18 +18,19 @@ import {
   attachCardTableSettingsButton,
 } from '../../utils/browser/tableSettings.js';
 import {
-  buildManageCollectionsAiPrompt,
-  buildManageCollectionsMissingRecordsPrompt,
   createBalancedMissingBatches,
-  prepareManageCollectionsPromptPayload,
-} from '../../templates/aiPromptsManageCollections.js';
+  buildCollectionPromptText,
+  buildMissingRelationPromptText,
+  loadCollectionPromptDocument,
+  normalizeCollectionPromptKey,
+} from './collectionPromptDocuments.js';
 
 const TABLE_ACTION_ITEMS = [
   { key: 'clear', label: 'Clear' },
   { key: 'copyJson', label: 'Copy JSON' },
   { key: 'copyFullJson', label: 'Copy Full JSON' },
 ];
-const AI_PROMPT_MISSING_BATCH_TARGET = 20;
+const DEFAULT_AI_PROMPT_MISSING_BATCH_TARGET = manageCollectionsViewController.getDefaultAiPromptBatchTarget();
 
 function safeJsonStringify(v, space = 2) {
   try { return JSON.stringify(v, null, space); } catch { return String(v ?? ''); }
@@ -124,6 +126,49 @@ function makeDetailsItem({ summaryLeft, summaryRight, children = [] } = {}) {
   });
   details.append(summary, ...children.filter(Boolean));
   return details;
+}
+
+function ensureCardTopRightArea(cardEl) {
+  if (!cardEl) return null;
+
+  let area = cardEl.querySelector('.mc-card-top-right');
+  if (!area) {
+    area = el('div', { className: 'mc-card-top-right' });
+    cardEl.append(area);
+  }
+
+  const caption = cardEl.querySelector('.card-corner-caption');
+  if (caption && caption.parentNode !== area) area.append(caption);
+
+  let actions = area.querySelector('.mc-card-actions');
+  if (!actions) {
+    actions = el('div', { className: 'mc-card-actions' });
+    area.append(actions);
+  }
+
+  return { area, actions };
+}
+
+function attachCardCornerIconButton({
+  cardEl,
+  text = '⚙',
+  title = 'Configure',
+  onClick,
+  className = 'icon-button mc-ai-prompt-config-btn',
+} = {}) {
+  if (!cardEl || typeof onClick !== 'function') return null;
+  const topRight = ensureCardTopRightArea(cardEl);
+  if (!topRight?.actions) return null;
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = className;
+  btn.textContent = String(text || '⚙');
+  btn.title = String(title || 'Configure');
+  btn.setAttribute('aria-label', String(title || 'Configure'));
+  btn.addEventListener('click', () => { onClick(); });
+  topRight.actions.append(btn);
+  return btn;
 }
 
 function getEntryKeyField(collection, arrayKey) {
@@ -337,45 +382,24 @@ export function renderManageCollections({ store, onNavigate }) {
     cornerCaption: '',
     className: 'mc-card',
     children: [
-      el('p', { className: 'hint', text: 'Copy a general import prompt for this collection or generate missing-record batches for related collections.' }),
+      el('p', { className: 'hint', text: 'Copy the predefined sidecar prompt for this collection or generate missing-record batches for related collections.' }),
       aiPromptBody,
     ]
   });
-  const aiPromptsEditorBtn = document.createElement('button');
-  aiPromptsEditorBtn.type = 'button';
-  aiPromptsEditorBtn.className = 'btn small table-card-settings-btn';
-  aiPromptsEditorBtn.textContent = 'AI⚙️';
-  aiPromptsEditorBtn.title = 'Open AI prompt editor';
-  aiPromptsEditorBtn.addEventListener('click', () => {
-    void (async () => {
-      const { report } = getActiveCollectionMissingReport();
-      const relation = Array.isArray(report?.relations)
-        ? report.relations.find((entry) => Array.isArray(entry?.missing) && entry.missing.length > 0) || null
-        : null;
-      const targetCollectionKey = normalizeValidationCollectionPath(relation?.relatedPath);
-      const targetCollection = targetCollectionKey ? await loadAiPromptCollection(targetCollectionKey) : null;
-      openAiPromptsEditorDialog({
-        collection: currentCollection || null,
-        collectionKey: collectionKey || '',
-        validationPreview: relation ? {
-          report,
-          relation,
-          sourceCollectionKey: normalizeValidationCollectionPath(report?.sourcePath) || collectionKey || '',
-          targetCollectionKey: targetCollectionKey || '',
-          targetCollection: targetCollection || null,
-          missingValues: Array.isArray(relation?.missing) ? relation.missing : [],
-        } : null,
+  attachCardCornerIconButton({
+    cardEl: aiPromptsCard,
+    text: '⚙',
+    title: 'Configure AI prompt batch size',
+    onClick: async () => {
+      const nextValue = await openAiPromptBatchTargetDialog({
+        currentValue: aiPromptBatchTarget,
+        defaultValue: DEFAULT_AI_PROMPT_MISSING_BATCH_TARGET,
       });
-    })();
+      if (nextValue == null) return;
+      await persistAiPromptBatchTarget(nextValue);
+      setStatus(`AI prompt batch size set to ${nextValue}.`);
+    },
   });
-  const aiPromptsCorner = aiPromptsCard.querySelector('.card-corner-caption');
-  if (aiPromptsCorner) {
-    try {
-      const w = Math.max(96, (aiPromptsCorner.offsetWidth || 0) + 16);
-      aiPromptsEditorBtn.style.right = `${w}px`;
-    } catch (e) {}
-    aiPromptsCorner.insertAdjacentElement('afterend', aiPromptsEditorBtn);
-  }
 
   // persistent diff cards will be appended directly into the right column
 
@@ -425,8 +449,8 @@ export function renderManageCollections({ store, onNavigate }) {
   let revisions = [];
   let activeRevisionId = null;
   let historyTableSettings = manageCollectionsViewController.getDefaultHistoryTableSettings();
+  let aiPromptBatchTarget = DEFAULT_AI_PROMPT_MISSING_BATCH_TARGET;
   let historyTableCtrl = null;
-  const aiPromptCollectionCache = new Map();
   let isViewActive = true;
   let pendingReload = false;
 
@@ -442,9 +466,11 @@ export function renderManageCollections({ store, onNavigate }) {
     try {
       historyTableCtrl = manageCollectionsViewController.create(key);
       historyTableSettings = normalizeTableSettings(historyTableCtrl.getHistoryTableSettings());
+      aiPromptBatchTarget = historyTableCtrl.getAiPromptBatchTarget();
     } catch (e) {
       historyTableCtrl = null;
       historyTableSettings = manageCollectionsViewController.getDefaultHistoryTableSettings();
+      aiPromptBatchTarget = DEFAULT_AI_PROMPT_MISSING_BATCH_TARGET;
     }
   }
 
@@ -453,6 +479,13 @@ export function renderManageCollections({ store, onNavigate }) {
     historyTableSettings = normalized;
     try { if (historyTableCtrl) await historyTableCtrl.setHistoryTableSettings(normalized); } catch (e) {}
     renderHistory();
+  }
+
+  async function persistAiPromptBatchTarget(nextValue) {
+    const normalized = Math.min(500, Math.max(1, Math.round(Number(nextValue) || DEFAULT_AI_PROMPT_MISSING_BATCH_TARGET)));
+    aiPromptBatchTarget = normalized;
+    try { if (historyTableCtrl) await historyTableCtrl.setAiPromptBatchTarget(normalized); } catch (e) {}
+    renderAiPrompts();
   }
 
   // last parsed raw text (trimmed). Used to disable Parse when unchanged.
@@ -491,17 +524,6 @@ export function renderManageCollections({ store, onNavigate }) {
     try { if (store?.shell && typeof store.shell.setFooterLeftWarnings === 'function') store.shell.setFooterLeftWarnings(arr); } catch (e) {}
   }
 
-  async function loadAiPromptCollection(key) {
-    const normalized = normalizeValidationCollectionPath(key);
-    if (!normalized) return null;
-    if (aiPromptCollectionCache.has(normalized)) return aiPromptCollectionCache.get(normalized);
-    const pending = Promise.resolve()
-      .then(() => store?.collectionDB?.getCollection?.(normalized, { force: false }))
-      .catch(() => null);
-    aiPromptCollectionCache.set(normalized, pending);
-    return pending;
-  }
-
   function getValidationsSnapshot() {
     try {
       return store?.analysis?.getEntry?.('validationManager')
@@ -523,16 +545,17 @@ export function renderManageCollections({ store, onNavigate }) {
 
   async function copyGenericAiPrompt() {
     try {
-      const src = (currentJsonMode === 'preview' && previewResult?.merged) ? previewResult.merged : currentCollection;
-      if (!src) { setStatus('No collection loaded to build AI prompt.'); return; }
-      const promptPayload = prepareManageCollectionsPromptPayload({ collection: src, safeJsonStringify });
-      const promptText = buildManageCollectionsAiPrompt({
-        collection: src,
-        collectionKey,
-        metadata: promptPayload.metadata,
-        examples: promptPayload.examples,
-        safeJsonStringify,
-      });
+      const normalizedKey = normalizeCollectionPromptKey(collectionKey);
+      if (!normalizedKey) {
+        setStatus('No collection key available for AI prompt lookup.');
+        return;
+      }
+      const promptDocument = await loadCollectionPromptDocument(normalizedKey);
+      if (!promptDocument?.exists || !promptDocument.bodyText) {
+        setStatus(`No prompt document found for ${normalizedKey}. Expected ${promptDocument?.path || `${normalizedKey}.prompt.md`}.`);
+        return;
+      }
+      const promptText = buildCollectionPromptText({ promptDocument });
       await copyToClipboard(promptText);
       setStatus('Copied generic AI prompt to clipboard.');
     } catch (e) {
@@ -542,26 +565,27 @@ export function renderManageCollections({ store, onNavigate }) {
 
   async function copyMissingRelationBatchPrompt(report, relation, batch, batchIndex, batchCount) {
     try {
+      const promptCollectionKey = normalizeValidationCollectionPath(report?.sourcePath) || collectionKey;
       const relatedKey = normalizeValidationCollectionPath(relation?.relatedPath);
-      if (!relatedKey) {
-        setStatus('Missing related collection path for AI prompt.');
+      if (!promptCollectionKey) {
+        setStatus('Missing source collection path for AI prompt.');
         return;
       }
-      const targetCollection = await loadAiPromptCollection(relatedKey);
-      if (!targetCollection) {
-        setStatus(`Failed to load related collection: ${relatedKey}`);
+      const promptDocument = await loadCollectionPromptDocument(promptCollectionKey);
+      if (!promptDocument?.exists || !promptDocument.bodyText) {
+        setStatus(`No prompt document found for source collection: ${promptDocument?.path || promptCollectionKey}`);
         return;
       }
-      const promptText = buildManageCollectionsMissingRecordsPrompt({
-        targetCollection,
+      const promptText = buildMissingRelationPromptText({
+        promptDocument,
         targetCollectionKey: relatedKey,
-        sourceCollectionKey: normalizeValidationCollectionPath(report?.sourcePath) || collectionKey,
+        sourceCollectionKey: promptCollectionKey,
         relation,
         missingValues: batch,
         safeJsonStringify,
       });
       await copyToClipboard(promptText);
-      setStatus(`Copied missing-record AI prompt for ${relation?.name || relatedKey} batch ${batchIndex + 1}/${batchCount}.`);
+      setStatus(`Copied missing-record AI prompt for ${relation?.name || promptCollectionKey} batch ${batchIndex + 1}/${batchCount}.`);
     } catch (e) {
       setStatus(`Failed to copy missing-record AI prompt: ${e?.message || e}`);
     }
@@ -579,7 +603,7 @@ export function renderManageCollections({ store, onNavigate }) {
         el('div', {
           children: [
             el('div', { text: 'General import prompt' }),
-            el('div', { className: 'hint', text: 'Uses this collection’s metadata and representative examples.' }),
+            el('div', { className: 'hint', text: 'Copies the collection’s `.prompt.md` text. Leave the Prompt Request placeholder in place, then fill it when you use the prompt.' }),
           ]
         }),
       ]
@@ -624,12 +648,12 @@ export function renderManageCollections({ store, onNavigate }) {
 
     aiPromptBody.append(el('div', {
       className: 'hint',
-      text: `Balanced batches target about ${AI_PROMPT_MISSING_BATCH_TARGET} missing references per prompt.`
+      text: `Balanced batches target about ${aiPromptBatchTarget} missing references per prompt document.`
     }));
 
     for (const relation of relationReports) {
       const missing = Array.isArray(relation?.missing) ? relation.missing.slice() : [];
-      const batches = createBalancedMissingBatches(missing, AI_PROMPT_MISSING_BATCH_TARGET);
+      const batches = createBalancedMissingBatches(missing, aiPromptBatchTarget);
       const buttons = el('div', { className: 'mc-actions-row mc-ai-prompt-actions' });
 
       batches.forEach((batch, batchIndex) => {
@@ -1079,6 +1103,30 @@ export function renderManageCollections({ store, onNavigate }) {
       return `${collectionPart}.${kind}.${idPart}.json`;
     }
 
+    function findRevisionRecord(revisionId) {
+      const rid = String(revisionId || '').trim();
+      if (!rid) return null;
+      return (Array.isArray(revisions) ? revisions.find((record) => record && record.id === rid) : null) || null;
+    }
+
+    function getRevisionCascadeIds(revisionId) {
+      const rid = String(revisionId || '').trim();
+      if (!rid) return [];
+      const out = new Set([rid]);
+      let changed = true;
+      while (changed) {
+        changed = false;
+        for (const record of (Array.isArray(revisions) ? revisions : [])) {
+          const recordId = String(record?.id || '').trim();
+          const parentId = String(record?.parentId || '').trim();
+          if (!recordId || !parentId || out.has(recordId) || !out.has(parentId)) continue;
+          out.add(recordId);
+          changed = true;
+        }
+      }
+      return Array.from(out);
+    }
+
     const rows = (Array.isArray(revisions) ? revisions.slice().reverse() : []).map(r => {
       const label = r.label || (r.kind === 'system' ? 'System base' : '');
       const active = ((r.id && activeRevisionId && r.id === activeRevisionId) || (r.kind === 'system' && !activeRevisionId)) ? 'active' : '';
@@ -1165,6 +1213,58 @@ export function renderManageCollections({ store, onNavigate }) {
           const payload = buildPatchExportPayload(rec);
           await copyToClipboard(safeJsonStringify(payload, 2));
           setStatus('Copied patch JSON.');
+        }
+      },
+      {
+        label: 'Delete',
+        title: 'Delete this revision',
+        className: 'btn small danger',
+        getTitle: (rowData, rowIndex, { tr }) => {
+          const rid = tr?.dataset?.rowId || rowData.__id;
+          const rec = findRevisionRecord(rid);
+          if (rec?.kind === 'system' || rid === '__system__') return 'Base/system revision cannot be deleted';
+          return 'Delete this revision';
+        },
+        isDisabled: (rowData, rowIndex, { tr }) => {
+          const rid = tr?.dataset?.rowId || rowData.__id;
+          const rec = findRevisionRecord(rid);
+          return rec?.kind === 'system' || rid === '__system__';
+        },
+        onClick: async (rowData, rowIndex, { tr }) => {
+          const rid = tr?.dataset?.rowId || rowData.__id;
+          if (!rid || rid === '__system__') return;
+          const rec = findRevisionRecord(rid);
+          if (!rec || rec.kind === 'system') return;
+
+          const cascadeIds = getRevisionCascadeIds(rid);
+          const deleteCount = cascadeIds.length;
+          const ok = await confirmDialog({
+            title: 'Delete revision?',
+            message: `Delete ${rec.label || shortId(rid, 16)}?`,
+            detail: deleteCount > 1
+              ? `This will also delete ${deleteCount - 1} dependent revision${deleteCount - 1 === 1 ? '' : 's'} in the same branch.`
+              : 'This revision will be removed from local history.',
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            danger: true,
+          });
+          if (!ok) return;
+
+          try {
+            const result = await store.collectionDB.deleteRevision(collectionKey, rid);
+
+            if (store?.collections?.getActiveCollectionId?.() === collectionKey && typeof store?.collections?.loadCollection === 'function') {
+              await store.collections.loadCollection(collectionKey, { force: true });
+            }
+
+            await loadHistory();
+            await loadCurrent();
+
+            const deletedCount = Array.isArray(result?.deletedIds) ? result.deletedIds.length : deleteCount;
+            setStatus(`Deleted ${deletedCount} revision${deletedCount === 1 ? '' : 's'}.`);
+          } catch (e) {
+            setStatus(`Failed to delete revision: ${e?.message || e}`);
+          }
         }
       }
     ];
@@ -1257,6 +1357,7 @@ export function renderManageCollections({ store, onNavigate }) {
     snapshotToggleBtn.disabled = true;
 
     activeRevisionId = store.collectionDB.getActiveRevisionId(collectionKey);
+    ensureHistoryTableController(collectionKey);
 
     try {
       currentCollection = await store.collectionDB.getCollection(collectionKey, { force: true });
@@ -1551,9 +1652,17 @@ export function renderManageCollections({ store, onNavigate }) {
       })
     : null;
 
+  const unsubscribeAnalysis = (typeof store?.analysis?.subscribe === 'function')
+    ? store.analysis.subscribe(() => {
+        if (!isViewActive) return;
+        try { renderAiPrompts(); } catch (e) {}
+      })
+    : null;
+
   const mo = new MutationObserver(() => {
     if (!document.body.contains(root)) {
       try { if (typeof unsubscribe === 'function') unsubscribe(); } catch (e) {}
+      try { if (typeof unsubscribeAnalysis === 'function') unsubscribeAnalysis(); } catch (e) {}
       try { if (historyTableCtrl && typeof historyTableCtrl.dispose === 'function') historyTableCtrl.dispose(); } catch (e) {}
       mo.disconnect();
     }

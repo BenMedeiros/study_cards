@@ -98,11 +98,8 @@ function singularizeWord(value) {
 }
 
 function detectRelatedRecordLabelField(relation, record = null) {
-  const relationFields = Array.isArray(relation?.fields)
-    ? relation.fields.map((field) => String(field?.key || '').trim()).filter(Boolean)
-    : [];
   const recordFields = record && typeof record === 'object' ? Object.keys(record) : [];
-  const fieldKeys = relationFields.length ? relationFields : recordFields;
+  const fieldKeys = recordFields;
   const candidates = ['japanese', 'ja', 'paragraph', 'text', 'title', 'name', 'id'];
   for (const key of candidates) {
     if (fieldKeys.includes(key)) return key;
@@ -427,11 +424,31 @@ const studyManagerController = (() => {
   let isComputing = false;
   let pendingReason = null;
   let pendingCollectionIds = null;
+  let pendingReportIds = null;
 
   let sessionCursor = 0;
   const sessionByCollection = new Map();
   const cacheByCollection = new Map();
+  const reportPriorityByCollection = new Map();
   const subs = new Set();
+
+  const FIXED_REPORT_IDS = [
+    'collectionSummary',
+    'studyTimeByFilter',
+    'groupByAppId',
+    'studyTimeByDate',
+    'studyTimeByDateSummary',
+    'recommendations',
+  ];
+
+  const REPORT_DEPENDENCIES = {
+    collectionSummary: ['studyTimeByFilter'],
+    studyTimeByFilter: [],
+    groupByAppId: [],
+    studyTimeByDate: ['studyTimeByFilter'],
+    studyTimeByDateSummary: ['studyTimeByDate'],
+    recommendations: [],
+  };
 
   const managerMeta = {
     owner: 'studyManager',
@@ -460,6 +477,8 @@ const studyManagerController = (() => {
     meta: clonePlain(managerMeta) || { ...managerMeta },
     ready: false,
     isComputing: false,
+    activeReportIds: [],
+    activeRequestedReportIds: [],
     updatedAtIso: null,
     reason: '',
     collections: {},
@@ -533,6 +552,41 @@ const studyManagerController = (() => {
     return pendingCollectionIds.slice();
   }
 
+  function normalizeReportIds(reportIds, { fallbackToAll = false } = {}) {
+    const normalized = Array.isArray(reportIds)
+      ? reportIds.map((item) => String(item || '').trim()).filter((id) => FIXED_REPORT_IDS.includes(id))
+      : [];
+    if (normalized.length) return Array.from(new Set(normalized));
+    return fallbackToAll ? FIXED_REPORT_IDS.slice() : [];
+  }
+
+  function expandRequestedReportIds(reportIds) {
+    const requested = normalizeReportIds(reportIds, { fallbackToAll: true });
+    const ordered = [];
+    const seen = new Set();
+    function addWithDeps(reportId) {
+      const id = String(reportId || '').trim();
+      if (!id || seen.has(id) || !Object.prototype.hasOwnProperty.call(REPORT_DEPENDENCIES, id)) return;
+      seen.add(id);
+      for (const depId of REPORT_DEPENDENCIES[id] || []) addWithDeps(depId);
+      ordered.push(id);
+    }
+    for (const reportId of requested) addWithDeps(reportId);
+    return ordered;
+  }
+
+  function mergePendingReportIds(nextReportIds) {
+    const incoming = normalizeReportIds(nextReportIds, { fallbackToAll: false });
+    if (!incoming.length) {
+      pendingReportIds = null;
+      return null;
+    }
+    const merged = new Set(Array.isArray(pendingReportIds) ? pendingReportIds : []);
+    for (const id of incoming) merged.add(id);
+    pendingReportIds = Array.from(merged);
+    return pendingReportIds.slice();
+  }
+
   function buildAvailableCollectionRefs(collections) {
     return collections
       .map((coll) => ({
@@ -541,6 +595,68 @@ const studyManagerController = (() => {
       }))
       .filter((coll) => coll.collectionId)
       .sort((a, b) => String(a.collectionName || a.collectionId).localeCompare(String(b.collectionName || b.collectionId)));
+  }
+
+  function makeEmptyReportStatus() {
+    return {
+      collectionSummary: 'pending',
+      studyTimeByFilter: 'pending',
+      groupByAppId: 'pending',
+      studyTimeByDate: 'pending',
+      studyTimeByDateSummary: 'pending',
+      recommendations: 'pending',
+    };
+  }
+
+  function makeEmptyCollectionReport(collection) {
+    const collectionId = String(collection?.key || '').trim();
+    const collectionName = String(collection?.metadata?.name || collectionId).trim();
+    return {
+      collectionId,
+      collectionName,
+      queries: {},
+      reportResults: {
+        recommendationSets: {},
+      },
+      reportStatus: makeEmptyReportStatus(),
+      collectionSummary: null,
+      studyTimeByFilter: null,
+      studyTimeByFilterKey: null,
+      groupByAppId: null,
+      studyTimeByDate: null,
+      studyTimeByDateSummary: null,
+      recommendations: null,
+      recommendationSets: [],
+      updatedAtIso: null,
+    };
+  }
+
+  function getPriorityReportIds(collectionId) {
+    const key = String(collectionId || '').trim();
+    const requested = Array.isArray(reportPriorityByCollection.get(key))
+      ? reportPriorityByCollection.get(key).map((item) => String(item || '').trim()).filter(Boolean)
+      : [];
+    const ordered = [];
+    const seen = new Set();
+    function addWithDeps(reportId) {
+      const id = String(reportId || '').trim();
+      if (!id || seen.has(id) || !Object.prototype.hasOwnProperty.call(REPORT_DEPENDENCIES, id)) return;
+      seen.add(id);
+      for (const depId of REPORT_DEPENDENCIES[id] || []) addWithDeps(depId);
+      ordered.push(id);
+    }
+    for (const reportId of requested) addWithDeps(reportId);
+    for (const reportId of FIXED_REPORT_IDS) addWithDeps(reportId);
+    return ordered;
+  }
+
+  function setReportPriority(collectionId, reportIds = []) {
+    const key = String(collectionId || '').trim();
+    if (!key) return;
+    const normalized = Array.isArray(reportIds)
+      ? reportIds.map((item) => String(item || '').trim()).filter(Boolean)
+      : [];
+    reportPriorityByCollection.set(key, normalized);
   }
 
   function sortReports(reports) {
@@ -606,14 +722,19 @@ const studyManagerController = (() => {
     }
   }
 
-  function processSessionsIncremental() {
+  async function processSessionsIncremental() {
     const sessions = store?.studyTime?.getStudyTimeRecord?.()?.sessions;
     const arr = Array.isArray(sessions) ? sessions : [];
     if (arr.length < sessionCursor) {
       sessionByCollection.clear();
       sessionCursor = 0;
     }
-    for (let i = sessionCursor; i < arr.length; i++) ingestSession(arr[i]);
+    let processed = 0;
+    for (let i = sessionCursor; i < arr.length; i++) {
+      ingestSession(arr[i]);
+      processed += 1;
+      if (processed % COOPERATIVE_YIELD_INTERVAL === 0) await yieldToMainThread();
+    }
     sessionCursor = arr.length;
   }
 
@@ -875,14 +996,91 @@ const studyManagerController = (() => {
     };
   }
 
-  async function buildCollectionReport(collection, progressSummary, sessionAgg) {
+  async function buildCollectionReport(collection, progressSummary, sessionAgg, { existingReport = null, onPartial = null, requestedReportIds = null } = {}) {
     const collectionId = String(collection?.key || '').trim();
     const collectionName = String(collection?.metadata?.name || collectionId).trim();
     const entryCount = Array.isArray(collection?.entries) ? collection.entries.length : 0;
-    const filters = await runLoggedStudyManagerPhase('buildCollectionFilters', {
+    const report = existingReport && typeof existingReport === 'object'
+      ? {
+          ...makeEmptyCollectionReport(collection),
+          ...existingReport,
+          collectionId,
+          collectionName,
+          queries: { ...((existingReport?.queries && typeof existingReport.queries === 'object') ? existingReport.queries : {}) },
+          reportResults: {
+            ...((existingReport?.reportResults && typeof existingReport.reportResults === 'object') ? existingReport.reportResults : {}),
+            recommendationSets: {
+              ...((existingReport?.reportResults?.recommendationSets && typeof existingReport.reportResults.recommendationSets === 'object')
+                ? existingReport.reportResults.recommendationSets
+                : {}),
+            },
+          },
+          reportStatus: {
+            ...makeEmptyReportStatus(),
+            ...((existingReport?.reportStatus && typeof existingReport.reportStatus === 'object') ? existingReport.reportStatus : {}),
+          },
+        }
+      : makeEmptyCollectionReport(collection);
+    const requestedReportIdSet = new Set(expandRequestedReportIds(requestedReportIds));
+    const prioritizedReportIds = new Set(getPriorityReportIds(collectionId));
+    const directByFilter = sessionAgg?.directByFilter || new Map();
+    const appTotals = sessionAgg?.appTotals || new Map();
+    function publishPartial() {
+      report.updatedAtIso = nowIso();
+      if (typeof onPartial === 'function') onPartial(report);
+    }
+    const baseQueries = {
+      collectionSummary: {
+        data: ['study_progress', 'study_time_sessions'],
+        where: { collectionId, appId: STUDY_STATS_APP_ID },
+      },
+      studyTimeByFilter: {
+        data: 'study_time_sessions',
+        where: { collectionId, appId: STUDY_STATS_APP_ID },
+        groupBy: ['heldTableSearch'],
+      },
+      groupByAppId: {
+        data: 'study_time_sessions',
+        where: { collectionId },
+        groupBy: ['appId'],
+      },
+    };
+    report.queries = { ...report.queries, ...baseQueries };
+    const shouldBuildGroupByAppId = requestedReportIdSet.has('groupByAppId');
+    const shouldBuildStudyTimeByFilter = requestedReportIdSet.has('studyTimeByFilter');
+    const shouldBuildStudyTimeByDate = requestedReportIdSet.has('studyTimeByDate');
+    const shouldBuildStudyTimeByDateSummary = requestedReportIdSet.has('studyTimeByDateSummary');
+    const shouldBuildCollectionSummary = requestedReportIdSet.has('collectionSummary');
+    const shouldBuildRecommendations = requestedReportIdSet.has('recommendations');
+
+    const buildAppsFirst = shouldBuildGroupByAppId && prioritizedReportIds.has('groupByAppId');
+    if (buildAppsFirst) {
+      report.reportStatus.groupByAppId = 'running';
+      report.groupByAppId = Array.from(appTotals.entries())
+        .map(([appId, durationMs]) => ({ appId, durationMs: Math.max(0, Math.round(Number(durationMs) || 0)) }))
+        .sort((a, b) => b.durationMs - a.durationMs);
+      report.reportResults.groupByAppId = await buildLoggedReportResult({
+        reportId: 'groupByAppId',
+        builder: 'inline:buildGroupByAppId',
+        collectionId,
+        inputs: {
+          distinctAppCount: appTotals.size,
+        },
+        query: baseQueries.groupByAppId,
+        outputBuilder: () => report.groupByAppId,
+      });
+      report.queries.groupByAppId = baseQueries.groupByAppId;
+      report.reportStatus.groupByAppId = 'ready';
+      publishPartial();
+      await yieldToMainThread();
+    }
+    const needsFilterDerivedData = shouldBuildStudyTimeByFilter || shouldBuildStudyTimeByDate || shouldBuildStudyTimeByDateSummary || shouldBuildCollectionSummary;
+    const filters = needsFilterDerivedData
+      ? await runLoggedStudyManagerPhase('buildCollectionFilters', {
       collectionId,
       entryCount,
-    }, () => buildCollectionFilters(collectionId, sessionAgg));
+      }, () => buildCollectionFilters(collectionId, sessionAgg))
+      : [];
     const collState = store?.collections?.loadCollectionState?.(collectionId) || {};
     const savedFilterSet = new Set(
       (Array.isArray(collState?.savedTableSearches) ? collState.savedTableSearches : [])
@@ -910,7 +1108,9 @@ const studyManagerController = (() => {
       prev.filtersSignature === filters.join('\n');
 
     let derived = null;
-    if (canReuse) {
+    if (!needsFilterDerivedData) {
+      derived = null;
+    } else if (canReuse) {
       derived = prev.derived;
     } else {
       derived = await runLoggedStudyManagerPhase('computeFilterStatsForCollection', {
@@ -926,9 +1126,7 @@ const studyManagerController = (() => {
       });
     }
 
-    const directByFilter = sessionAgg?.directByFilter || new Map();
-    const appTotals = sessionAgg?.appTotals || new Map();
-    const relationGraph = derived.relationGraph;
+    const relationGraph = derived?.relationGraph || null;
 
     function getDirectDurationMs(filterKey) {
       return Math.max(0, Math.round(Number(directByFilter.get(filterKey)?.durationMs) || 0));
@@ -938,7 +1136,11 @@ const studyManagerController = (() => {
       return Math.max(0, Math.round(Number(directByFilter.get(filterKey)?.sessionCount) || 0));
     }
 
-    const { studyTimeByFilter, studyTimeByFilterKey } = await runLoggedStudyManagerPhase('buildStudyTimeByFilterRows', {
+    let studyTimeByFilter = Array.isArray(report.studyTimeByFilter) ? report.studyTimeByFilter : [];
+    let studyTimeByFilterKey = (report.studyTimeByFilterKey && typeof report.studyTimeByFilterKey === 'object') ? report.studyTimeByFilterKey : {};
+    if (shouldBuildStudyTimeByFilter) {
+      report.reportStatus.studyTimeByFilter = 'running';
+      ({ studyTimeByFilter, studyTimeByFilterKey } = await runLoggedStudyManagerPhase('buildStudyTimeByFilterRows', {
       collectionId,
       filterCount: filters.length,
     }, async () => {
@@ -1024,23 +1226,94 @@ const studyManagerController = (() => {
         studyTimeByFilter: nextStudyTimeByFilter,
         studyTimeByFilterKey: nextStudyTimeByFilterKey,
       };
-    });
+      }));
 
-    const groupByAppId = Array.from(appTotals.entries())
-      .map(([appId, durationMs]) => ({ appId, durationMs: Math.max(0, Math.round(Number(durationMs) || 0)) }))
-      .sort((a, b) => b.durationMs - a.durationMs);
+      report.studyTimeByFilter = studyTimeByFilter;
+      report.studyTimeByFilterKey = studyTimeByFilterKey;
+      report.queries.studyTimeByFilter = baseQueries.studyTimeByFilter;
+      report.reportResults.studyTimeByFilter = makeReportResult({
+      reportId: 'studyTimeByFilter',
+      builder: 'inline:buildStudyTimeByFilter',
+      collectionId,
+      inputs: {
+        filterUniverseCount: filters.length,
+        savedFilterCount: savedFilterSet.size,
+        appCount: appTotals.size,
+      },
+      query: baseQueries.studyTimeByFilter,
+      output: studyTimeByFilter,
+      });
+      report.reportStatus.studyTimeByFilter = 'ready';
+      publishPartial();
+      await yieldToMainThread();
+    }
 
-    const studyTimeByDate = await runLoggedStudyManagerPhase('buildStudyTimeByDate', {
+    const groupByAppId = Array.isArray(report.groupByAppId)
+      ? report.groupByAppId
+      : Array.from(appTotals.entries())
+          .map(([appId, durationMs]) => ({ appId, durationMs: Math.max(0, Math.round(Number(durationMs) || 0)) }))
+          .sort((a, b) => b.durationMs - a.durationMs);
+
+    let studyTimeByDate = Array.isArray(report.studyTimeByDate) ? report.studyTimeByDate : [];
+    if (shouldBuildStudyTimeByDate) {
+      report.reportStatus.studyTimeByDate = 'running';
+      studyTimeByDate = await runLoggedStudyManagerPhase('buildStudyTimeByDate', {
       collectionId,
       dayCount: sessionAgg?.byDay instanceof Map ? sessionAgg.byDay.size : 0,
     }, () => buildStudyTimeByDate({
       byDay: sessionAgg?.byDay,
       filterMap: studyTimeByFilterKey,
-    }));
-    const studyTimeByDateSummary = await runLoggedStudyManagerPhase('buildStudyTimeByDateSummary', {
+      }));
+      report.studyTimeByDate = studyTimeByDate;
+      report.queries.studyTimeByDate = {
+      data: 'study_time_sessions',
+      where: { collectionId, appId: STUDY_STATS_APP_ID },
+      groupBy: ['dayStamp', 'heldTableSearch'],
+      };
+      report.reportResults.studyTimeByDate = makeReportResult({
+      reportId: 'studyTimeByDate',
+      builder: 'src/reports/studyManager/buildStudyTimeByDate.js',
+      collectionId,
+      inputs: {
+        dayCount: sessionAgg?.byDay instanceof Map ? sessionAgg.byDay.size : 0,
+        filterLookupCount: Object.keys(studyTimeByFilterKey).length,
+      },
+      query: report.queries.studyTimeByDate,
+      output: studyTimeByDate,
+      });
+      report.reportStatus.studyTimeByDate = 'ready';
+      publishPartial();
+      await yieldToMainThread();
+    }
+    let studyTimeByDateSummary = report.studyTimeByDateSummary || null;
+    if (shouldBuildStudyTimeByDateSummary) {
+      report.reportStatus.studyTimeByDateSummary = 'running';
+      studyTimeByDateSummary = await runLoggedStudyManagerPhase('buildStudyTimeByDateSummary', {
       collectionId,
       sourceDayCount: studyTimeByDate.length,
     }, () => buildStudyTimeByDateSummary({ collectionId, studyTimeByDate }));
+      report.studyTimeByDateSummary = studyTimeByDateSummary;
+      report.queries.studyTimeByDateSummary = {
+      data: 'study_time_sessions',
+      where: { collectionId, appId: STUDY_STATS_APP_ID },
+      groupBy: ['dayStamp'],
+      windowDays: studyTimeByDateSummary.windowDays,
+      };
+      report.reportResults.studyTimeByDateSummary = makeReportResult({
+      reportId: 'studyTimeByDateSummary',
+      builder: 'src/reports/studyManager/buildStudyTimeByDateSummary.js',
+      collectionId,
+      inputs: {
+        sourceDayCount: studyTimeByDate.length,
+        windowDays: studyTimeByDateSummary.windowDays,
+      },
+      query: report.queries.studyTimeByDateSummary,
+      output: studyTimeByDateSummary,
+      });
+      report.reportStatus.studyTimeByDateSummary = 'ready';
+      publishPartial();
+      await yieldToMainThread();
+    }
     const getEntryKey = (entry) => String(store?.collections?.getEntryStudyKey?.(entry) || '').trim();
     const getProgressRecord = (entryKey) => {
       if (!entryKey) return null;
@@ -1052,7 +1325,50 @@ const studyManagerController = (() => {
       return null;
     };
 
-    const recommendationSets = await runLoggedStudyManagerPhase('buildRecommendationSets', {
+    const topFilter = studyTimeByFilterKey[''] || studyTimeByFilter[0] || null;
+    if (shouldBuildCollectionSummary) {
+      report.reportStatus.collectionSummary = 'running';
+      const collectionSummary = {
+      entryCount,
+      progressRecordCount: Math.max(0, Math.round(Number(progressSummary?.progressRecordCount) || 0)),
+      seenCount: topFilter ? topFilter.seenCount : 0,
+      notSeenCount: topFilter ? topFilter.notSeenCount : entryCount,
+      stateCounts: topFilter
+        ? {
+            null: topFilter.stateNullCount,
+            focus: topFilter.stateFocusCount,
+            learned: topFilter.stateLearnedCount,
+          }
+        : makeStateCounts(),
+      totalStudyDurationMs: Math.max(0, Math.round(Number(sessionAgg?.totalDurationMs) || 0)),
+      totalStudySessions: Math.max(0, Math.round(Number(sessionAgg?.totalSessions) || 0)),
+      lastSessionIso: String(sessionAgg?.lastEndIso || '') || null,
+      filterCount: studyTimeByFilter.length,
+      };
+
+      report.collectionSummary = collectionSummary;
+      report.queries.collectionSummary = baseQueries.collectionSummary;
+      report.reportResults.collectionSummary = makeReportResult({
+      reportId: 'collectionSummary',
+      builder: 'inline:buildCollectionSummary',
+      collectionId,
+      inputs: {
+        entryCount,
+        progressRecordCount: Math.max(0, Math.round(Number(progressSummary?.progressRecordCount) || 0)),
+        totalStudySessions: Math.max(0, Math.round(Number(sessionAgg?.totalSessions) || 0)),
+        trackedFilterCount: studyTimeByFilter.length,
+      },
+      query: baseQueries.collectionSummary,
+      output: collectionSummary,
+      });
+      report.reportStatus.collectionSummary = 'ready';
+      publishPartial();
+      await yieldToMainThread();
+    }
+
+    if (shouldBuildRecommendations) {
+      report.reportStatus.recommendations = 'running';
+      const recommendationSets = await runLoggedStudyManagerPhase('buildRecommendationSets', {
       collectionId,
       entryCount,
     }, async () => {
@@ -1078,131 +1394,25 @@ const studyManagerController = (() => {
       return nextRecommendationSets;
     });
 
-    const recommendations = recommendationSets[0] || null;
-
-    const topFilter = studyTimeByFilterKey[''] || studyTimeByFilter[0] || null;
-    const collectionSummary = {
-      entryCount,
-      progressRecordCount: Math.max(0, Math.round(Number(progressSummary?.progressRecordCount) || 0)),
-      seenCount: topFilter ? topFilter.seenCount : 0,
-      notSeenCount: topFilter ? topFilter.notSeenCount : entryCount,
-      stateCounts: topFilter
-        ? {
-            null: topFilter.stateNullCount,
-            focus: topFilter.stateFocusCount,
-            learned: topFilter.stateLearnedCount,
-          }
-        : makeStateCounts(),
-      totalStudyDurationMs: Math.max(0, Math.round(Number(sessionAgg?.totalDurationMs) || 0)),
-      totalStudySessions: Math.max(0, Math.round(Number(sessionAgg?.totalSessions) || 0)),
-      lastSessionIso: String(sessionAgg?.lastEndIso || '') || null,
-      filterCount: studyTimeByFilter.length,
-    };
-
-    const generatedAtIso = nowIso();
-    const queries = {
-      collectionSummary: {
-        data: ['study_progress', 'study_time_sessions'],
-        where: { collectionId, appId: STUDY_STATS_APP_ID },
+      const recommendations = recommendationSets[0] || null;
+      report.recommendations = recommendations;
+      report.recommendationSets = recommendationSets;
+      report.reportResults.recommendations = makeReportResult({
+      reportId: 'recommendations',
+      builder: 'src/reports/studyManager/buildWordLearningRecommendations.js',
+      collectionId,
+      inputs: {
+        category: String(collection?.metadata?.category || '').trim(),
+        entryCount,
       },
-      studyTimeByFilter: {
-        data: 'study_time_sessions',
-        where: { collectionId, appId: STUDY_STATS_APP_ID },
-        groupBy: ['heldTableSearch'],
-      },
-      groupByAppId: {
-        data: 'study_time_sessions',
-        where: { collectionId },
-        groupBy: ['appId'],
-      },
-      studyTimeByDate: {
-        data: 'study_time_sessions',
-        where: { collectionId, appId: STUDY_STATS_APP_ID },
-        groupBy: ['dayStamp', 'heldTableSearch'],
-      },
-      studyTimeByDateSummary: {
-        data: 'study_time_sessions',
-        where: { collectionId, appId: STUDY_STATS_APP_ID },
-        groupBy: ['dayStamp'],
-        windowDays: studyTimeByDateSummary.windowDays,
-      },
-    };
-    const reportResults = {
-      collectionSummary: await buildLoggedReportResult({
-        reportId: 'collectionSummary',
-        builder: 'inline:buildCollectionSummary',
-        collectionId,
-        inputs: {
-          entryCount,
-          progressRecordCount: Math.max(0, Math.round(Number(progressSummary?.progressRecordCount) || 0)),
-          totalStudySessions: Math.max(0, Math.round(Number(sessionAgg?.totalSessions) || 0)),
-          trackedFilterCount: studyTimeByFilter.length,
-        },
-        query: queries.collectionSummary,
-        outputBuilder: () => collectionSummary,
-      }),
-      studyTimeByFilter: await buildLoggedReportResult({
-        reportId: 'studyTimeByFilter',
-        builder: 'inline:buildStudyTimeByFilter',
-        collectionId,
-        inputs: {
-          filterUniverseCount: filters.length,
-          savedFilterCount: savedFilterSet.size,
-          appCount: appTotals.size,
-        },
-        query: queries.studyTimeByFilter,
-        outputBuilder: () => studyTimeByFilter,
-      }),
-      groupByAppId: await buildLoggedReportResult({
-        reportId: 'groupByAppId',
-        builder: 'inline:buildGroupByAppId',
-        collectionId,
-        inputs: {
-          distinctAppCount: appTotals.size,
-        },
-        query: queries.groupByAppId,
-        outputBuilder: () => groupByAppId,
-      }),
-      studyTimeByDate: await buildLoggedReportResult({
-        reportId: 'studyTimeByDate',
-        builder: 'src/reports/studyManager/buildStudyTimeByDate.js',
-        collectionId,
-        inputs: {
-          dayCount: sessionAgg?.byDay instanceof Map ? sessionAgg.byDay.size : 0,
-          filterLookupCount: Object.keys(studyTimeByFilterKey).length,
-        },
-        query: queries.studyTimeByDate,
-        outputBuilder: () => studyTimeByDate,
-      }),
-      studyTimeByDateSummary: await buildLoggedReportResult({
-        reportId: 'studyTimeByDateSummary',
-        builder: 'src/reports/studyManager/buildStudyTimeByDateSummary.js',
-        collectionId,
-        inputs: {
-          sourceDayCount: studyTimeByDate.length,
-          windowDays: studyTimeByDateSummary.windowDays,
-        },
-        query: queries.studyTimeByDateSummary,
-        outputBuilder: () => studyTimeByDateSummary,
-      }),
-      recommendations: await buildLoggedReportResult({
-        reportId: 'recommendations',
-        builder: 'src/reports/studyManager/buildWordLearningRecommendations.js',
-        collectionId,
-        inputs: {
-          category: String(collection?.metadata?.category || '').trim(),
-          entryCount,
-        },
-        query: null,
-        outputBuilder: () => recommendations,
-      }),
-      recommendationSets: {},
-    };
-
-    for (const set of recommendationSets) {
-      const id = String(set?.config?.id || '').trim();
-      if (!id) continue;
-      reportResults.recommendationSets[id] = await buildLoggedReportResult({
+      query: null,
+      output: recommendations,
+      });
+      report.reportResults.recommendationSets = {};
+      for (const set of recommendationSets) {
+        const id = String(set?.config?.id || '').trim();
+        if (!id) continue;
+        report.reportResults.recommendationSets[id] = makeReportResult({
         reportId: id,
         builder: id === 'kanjiCoverage'
           ? 'src/reports/studyManager/buildWordLearningRecommendations.js'
@@ -1214,32 +1424,44 @@ const studyManagerController = (() => {
           recommendationId: id,
         },
         query: null,
-        outputBuilder: () => set,
-      });
+        output: set,
+        });
+      }
+      report.reportStatus.recommendations = 'ready';
+      publishPartial();
+      await yieldToMainThread();
     }
 
-    return {
-      collectionId,
-      collectionName,
-      queries,
-      reportResults,
-      collectionSummary,
-      studyTimeByFilter,
-      studyTimeByFilterKey,
-      groupByAppId,
-      studyTimeByDate,
-      studyTimeByDateSummary,
-      recommendations,
-      recommendationSets,
-      updatedAtIso: generatedAtIso,
-    };
+    if (shouldBuildGroupByAppId && !buildAppsFirst) {
+      report.reportStatus.groupByAppId = 'running';
+      report.groupByAppId = groupByAppId;
+      report.reportResults.groupByAppId = await buildLoggedReportResult({
+        reportId: 'groupByAppId',
+        builder: 'inline:buildGroupByAppId',
+        collectionId,
+        inputs: {
+          distinctAppCount: appTotals.size,
+        },
+        query: baseQueries.groupByAppId,
+        outputBuilder: () => groupByAppId,
+      });
+      report.queries.groupByAppId = baseQueries.groupByAppId;
+      report.reportStatus.groupByAppId = 'ready';
+      publishPartial();
+      await yieldToMainThread();
+    }
+
+    report.updatedAtIso = nowIso();
+    publishPartial();
+    return report;
   }
 
-  async function recompute(reason = 'recompute', { collectionIds = null } = {}) {
+  async function recompute(reason = 'recompute', { collectionIds = null, reportIds = null } = {}) {
     if (!store) return;
     if (isComputing) {
       pendingReason = reason || 'pending';
       mergePendingCollectionIds(collectionIds);
+      mergePendingReportIds(reportIds);
       syncSnapshotMeta({
         state: 'queued',
         rerunRequested: true,
@@ -1252,7 +1474,10 @@ const studyManagerController = (() => {
       return;
     }
     const targetIds = normalizeCollectionIds(collectionIds || pendingCollectionIds, { fallbackToActive: true });
+    const activeRequestedReportIds = normalizeReportIds(reportIds || pendingReportIds, { fallbackToAll: false });
+    const activeReportIds = expandRequestedReportIds(activeRequestedReportIds);
     pendingCollectionIds = null;
+    pendingReportIds = null;
     if (!targetIds.length) return;
     isComputing = true;
     try { console.log('[studyManager] run:start', { reason, collectionIds: targetIds.slice() }); } catch (e) {}
@@ -1267,18 +1492,16 @@ const studyManagerController = (() => {
       runCount: Math.max(0, Math.round(Number(managerMeta.runCount) || 0)) + 1,
       lastTargetCollectionCount: targetIds.length,
     });
-    snapshot = { ...snapshot, isComputing: true, reason: String(reason || 'recompute') };
+    snapshot = {
+      ...snapshot,
+      isComputing: true,
+      activeReportIds,
+      activeRequestedReportIds,
+      reason: String(reason || 'recompute'),
+    };
     emit();
 
     try {
-      await runLoggedStudyManagerPhase('processSessionsIncremental', {
-        reason,
-        targetCollectionCount: targetIds.length,
-      }, () => processSessionsIncremental());
-      const progressByCollection = await runLoggedStudyManagerPhase('buildProgressByCollection', {
-        reason,
-        targetCollectionCount: targetIds.length,
-      }, () => buildProgressByCollection());
       const collections = listAvailableCollections();
       const availableRefs = buildAvailableCollectionRefs(collections);
       const byId = new Map(collections.map((coll) => [String(coll?.key || '').trim(), coll]));
@@ -1289,12 +1512,62 @@ const studyManagerController = (() => {
       for (const key of targetIds) {
         const coll = byId.get(key);
         if (!coll) continue;
+        reportMap[key] = reportMap[key] && typeof reportMap[key] === 'object'
+          ? {
+              ...makeEmptyCollectionReport(coll),
+              ...reportMap[key],
+              collectionId: String(coll?.key || '').trim(),
+              collectionName: String(coll?.metadata?.name || coll?.key || '').trim(),
+            }
+          : makeEmptyCollectionReport(coll);
+      }
+      snapshot = {
+        ...snapshot,
+        ready: true,
+        isComputing: true,
+        activeReportIds,
+        activeRequestedReportIds,
+        updatedAtIso: nowIso(),
+        reason: String(reason || ''),
+        availableCollections: availableRefs,
+        collections: reportMap,
+      };
+      emit();
+      await runLoggedStudyManagerPhase('processSessionsIncremental', {
+        reason,
+        targetCollectionCount: targetIds.length,
+      }, () => processSessionsIncremental());
+      const progressByCollection = await runLoggedStudyManagerPhase('buildProgressByCollection', {
+        reason,
+        targetCollectionCount: targetIds.length,
+      }, () => buildProgressByCollection());
+      for (const key of targetIds) {
+        const coll = byId.get(key);
+        if (!coll) continue;
         const progressSummary = progressByCollection.get(key) || makeProgressSummary(key);
         const sessionAgg = sessionByCollection.get(key) || makeSessionAggregate(key);
         const report = await runLoggedStudyManagerPhase('buildCollectionReport', {
           reason,
           collectionId: key,
-        }, () => buildCollectionReport(coll, progressSummary, sessionAgg));
+        }, () => buildCollectionReport(coll, progressSummary, sessionAgg, {
+          existingReport: reportMap[key],
+          requestedReportIds: activeReportIds,
+          onPartial: (nextReport) => {
+            reportMap[key] = nextReport;
+            snapshot = {
+              ...snapshot,
+              ready: true,
+              isComputing: true,
+              activeReportIds,
+              activeRequestedReportIds,
+              updatedAtIso: nowIso(),
+              reason: String(reason || ''),
+              availableCollections: availableRefs,
+              collections: reportMap,
+            };
+            emit();
+          },
+        }));
         reportMap[key] = report;
       }
       const reports = sortReports(Object.values(reportMap));
@@ -1312,6 +1585,8 @@ const studyManagerController = (() => {
         ...snapshot,
         ready: true,
         isComputing: false,
+        activeReportIds: [],
+        activeRequestedReportIds: [],
         updatedAtIso: nowIso(),
         reason: String(reason || ''),
         availableCollections: availableRefs,
@@ -1349,6 +1624,8 @@ const studyManagerController = (() => {
       snapshot = {
         ...snapshot,
         isComputing: false,
+        activeReportIds: [],
+        activeRequestedReportIds: [],
         reason: String(reason || 'recompute'),
       };
       emit();
@@ -1374,6 +1651,7 @@ const studyManagerController = (() => {
         requestRefresh(nextReason, {
           delayMs: 150,
           collectionIds: Array.isArray(pendingCollectionIds) ? pendingCollectionIds.slice() : null,
+          reportIds: Array.isArray(pendingReportIds) ? pendingReportIds.slice() : null,
         });
       } else if (managerMeta.state !== 'error') {
         syncSnapshotMeta({
@@ -1385,11 +1663,13 @@ const studyManagerController = (() => {
     }
   }
 
-  function requestRefresh(reason = 'refresh', { delayMs = 350, collectionIds = null } = {}) {
+  function requestRefresh(reason = 'refresh', { delayMs = 350, collectionIds = null, reportIds = null } = {}) {
     if (!store) return;
     if (debounceTimer) clearTimeout(debounceTimer);
     const targetIds = normalizeCollectionIds(collectionIds, { fallbackToActive: true });
+    const nextReportIds = normalizeReportIds(reportIds, { fallbackToAll: false });
     pendingCollectionIds = targetIds.slice();
+    pendingReportIds = nextReportIds.length ? nextReportIds.slice() : null;
     syncSnapshotMeta({
       state: isComputing ? 'queued' : 'scheduled',
       lastScheduledAt: nowIso(),
@@ -1402,7 +1682,7 @@ const studyManagerController = (() => {
     emit();
     debounceTimer = setTimeout(() => {
       debounceTimer = null;
-      recompute(reason, { collectionIds: targetIds });
+      recompute(reason, { collectionIds: targetIds, reportIds: nextReportIds });
     }, Math.max(0, Math.round(Number(delayMs) || 0)));
   }
 
@@ -1430,11 +1710,9 @@ const studyManagerController = (() => {
     getSnapshot,
     subscribe,
     requestRefresh,
+    setReportPriority,
     ensureCollections: (collectionIds, opts = {}) => requestRefresh('ensureCollections', { delayMs: 0, collectionIds, ...(opts || {}) }),
   };
 })();
 
 export default studyManagerController;
-
-
-

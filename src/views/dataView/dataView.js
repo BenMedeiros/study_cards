@@ -833,6 +833,9 @@ export function renderData({ store }) {
     const nextSavedSearches = normalizeSavedSearchList(
       saved?.savedTableSearches ?? saved?.saved_table_searches ?? saved?.savedTableSearch ?? saved?.savedFiltersTableSearch ?? []
     );
+    const progressRevision = (coll?.key && typeof store?.collections?.getCollectionRevision === 'function')
+      ? Number(store.collections.getCollectionRevision(coll.key) || 0)
+      : 0;
     return {
       collRef: coll || null,
       activeEntriesRef: Array.isArray(coll?.entries) ? coll.entries : null,
@@ -840,6 +843,7 @@ export function renderData({ store }) {
       studyFilter: String(saved?.studyFilter || '').trim(),
       skipLearned: !!saved?.skipLearned,
       focusOnly: !!saved?.focusOnly,
+      progressRevision,
       savedSearches: nextSavedSearches,
       tableSettings: nextTable,
     };
@@ -853,6 +857,7 @@ export function renderData({ store }) {
     if (a.studyFilter !== b.studyFilter) return false;
     if (a.skipLearned !== b.skipLearned) return false;
     if (a.focusOnly !== b.focusOnly) return false;
+    if (a.progressRevision !== b.progressRevision) return false;
     if (!sameStringArray(a.savedSearches, b.savedSearches)) return false;
     if (!sameDataTableSettings(a.tableSettings, b.tableSettings)) return false;
     return true;
@@ -1471,6 +1476,14 @@ export function renderData({ store }) {
     const nextSnapshot = captureRefreshSnapshot();
     if (sameRefreshSnapshot(nextSnapshot, lastRefreshSnapshot)) return;
     if (!isViewActive) {
+      try {
+        console.info('[dataView] marked dirty while inactive', {
+          collectionKey: String(store?.collections?.getActiveCollection?.()?.key || ''),
+          held: String(nextSnapshot?.held || ''),
+          studyFilter: String(nextSnapshot?.studyFilter || ''),
+          progressRevision: Number(nextSnapshot?.progressRevision || 0),
+        });
+      } catch (e) {}
       pendingStoreRefresh = true;
       return;
     }
@@ -1479,13 +1492,6 @@ export function renderData({ store }) {
   try {
     if (store?.collections && typeof store.collections.subscribe === 'function') {
       unsubs.push(store.collections.subscribe(() => {
-        onRelevantStateChanged();
-      }));
-    }
-  } catch (e) {}
-  try {
-    if (store?.kanjiProgress && typeof store.kanjiProgress.subscribe === 'function') {
-      unsubs.push(store.kanjiProgress.subscribe(() => {
         onRelevantStateChanged();
       }));
     }
@@ -1530,8 +1536,29 @@ export function renderData({ store }) {
   root.__activate = () => {
     isViewActive = true;
     const nextSnapshot = captureRefreshSnapshot();
-    if (!sameRefreshSnapshot(nextSnapshot, lastRefreshSnapshot)) pendingStoreRefresh = true;
-    if (pendingStoreRefresh) syncFromStoreAndRender();
+    if (!sameRefreshSnapshot(nextSnapshot, lastRefreshSnapshot)) {
+      try {
+        console.info('[dataView] activate detected dirty snapshot', {
+          collectionKey: String(store?.collections?.getActiveCollection?.()?.key || ''),
+          held: String(nextSnapshot?.held || ''),
+          studyFilter: String(nextSnapshot?.studyFilter || ''),
+          progressRevision: Number(nextSnapshot?.progressRevision || 0),
+          lastProgressRevision: Number(lastRefreshSnapshot?.progressRevision || 0),
+        });
+      } catch (e) {}
+      pendingStoreRefresh = true;
+    }
+    if (pendingStoreRefresh) {
+      try {
+        console.info('[dataView] submitting table search since marked dirty', {
+          collectionKey: String(store?.collections?.getActiveCollection?.()?.key || ''),
+          held: String(nextSnapshot?.held || ''),
+          studyFilter: String(nextSnapshot?.studyFilter || ''),
+          progressRevision: Number(nextSnapshot?.progressRevision || 0),
+        });
+      } catch (e) {}
+      syncFromStoreAndRender();
+    }
   };
   root.__deactivate = () => {
     isViewActive = false;

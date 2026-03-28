@@ -11,57 +11,13 @@
         "name": "sentences",
         "path": "japanese/japanese_sentences.json",
         "this_key": "kanji",
-        "foreign_key": "chunks[].refs[]",
-        "fields": [
-          {
-            "key": "japanese",
-            "label": "Japanese"
-          },
-          {
-            "key": "english",
-            "label": "English"
-          },
-          {
-            "key": "notes",
-            "label": "Notes"
-          },
-          {
-            "key": "chunks",
-            "label": "Chunks"
-          }
-        ]
+        "foreign_key": "chunks[].refs[]"
       },
       {
         "name": "paragraphs",
         "path": "japanese/japanese_paragraphs.json",
         "this_key": "kanji",
-        "foreign_key": "sentences[].chunks[].refs[]",
-        "fields": [
-          {
-            "key": "title",
-            "label": "Title"
-          },
-          {
-            "key": "japanese",
-            "label": "Japanese"
-          },
-          {
-            "key": "english",
-            "label": "English"
-          },
-          {
-            "key": "notes",
-            "label": "Notes"
-          },
-          {
-            "key": "sentences",
-            "label": "Sentences"
-          },
-          {
-            "key": "chunks",
-            "label": "Chunks"
-          }
-        ]
+        "foreign_key": "sentences[].chunks[].refs[]"
       }
     ],
     "schema": [
@@ -154,7 +110,6 @@
       "reading": "ぜったい",
       "meaning": "absolutely; definitely",
       "type": "adverb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -257,8 +212,7 @@
       "type": "adverb",
       "tags": [
         "game-center-story"
-      ],
-      "orthography": "hiragana"
+      ]
     },
     {
       "kanji": "ずっと",
@@ -271,8 +225,7 @@
         "jlpt_n3",
         "spoken",
         "written"
-      ],
-      "orthography": "hiragana"
+      ]
     },
     {
       "kanji": "沢山",
@@ -461,7 +414,6 @@
       "reading": "ひとつ",
       "meaning": "one (thing)",
       "type": "counter",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -2131,7 +2083,6 @@
       "meaning": "to talk",
       "ending": "su",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -2757,7 +2708,6 @@
       "meaning": "to ask; to hear",
       "type": "godan-verb",
       "ending": "ku",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -2785,7 +2735,6 @@
       "reading": "いく",
       "meaning": "to go",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -2813,7 +2762,6 @@
       "reading": "つく",
       "meaning": "to arrive",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -2895,7 +2843,6 @@
       "reading": "のむ",
       "meaning": "to drink",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -3080,7 +3027,6 @@
       "reading": "はいる",
       "meaning": "to enter; to go in",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -3210,7 +3156,6 @@
       "reading": "おもい",
       "meaning": "heavy",
       "type": "i-adjective",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -3304,7 +3249,6 @@
       "reading": "たのしい",
       "meaning": "fun; enjoyable",
       "type": "i-adjective",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -3604,7 +3548,6 @@
       "reading": "かわいい",
       "meaning": "cute",
       "type": "i-adjective",
-      "orthography": "hiragana",
       "tags": [
         "game-center-story"
       ]
@@ -3731,7 +3674,6 @@
       "reading": "みる",
       "meaning": "to see; to look",
       "type": "ichidan-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -3765,7 +3707,6 @@
       "reading": "たべる",
       "meaning": "to eat",
       "type": "ichidan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -3817,7 +3758,6 @@
       "reading": "わすれる",
       "meaning": "to forget",
       "type": "ichidan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -3881,7 +3821,6 @@
       "reading": "きめる",
       "meaning": "to decide",
       "type": "ichidan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -3891,7 +3830,6 @@
       "reading": "はじめる",
       "meaning": "to begin",
       "type": "ichidan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -4606,7 +4544,6 @@
       "reading": "まじめ",
       "meaning": "serious; earnest; diligent",
       "type": "na-adjective",
-      "orthography": "kanji",
       "tags": [
         "gidk48",
         "jlpt_n3",
@@ -4789,7 +4726,6 @@
       "reading": "ちかく",
       "meaning": "nearby; vicinity",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -4829,7 +4765,6 @@
       "reading": "かいもの",
       "meaning": "shopping",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -5170,8 +5105,7 @@
       "tags": [
         "gidk48",
         "origin:Japanese"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "進化",
@@ -6134,7 +6068,6 @@
       "reading": "かぞく",
       "meaning": "family",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -6150,7 +6083,6 @@
       "reading": "はは",
       "meaning": "mother",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -6160,7 +6092,6 @@
       "reading": "ちち",
       "meaning": "father",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -6182,7 +6113,6 @@
       "reading": "おとうと",
       "meaning": "younger brother",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -6249,7 +6179,6 @@
       "reading": "えき",
       "meaning": "station",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -6355,7 +6284,6 @@
       "reading": "みせ",
       "meaning": "store",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -6440,7 +6368,6 @@
       "reading": "きょう",
       "meaning": "today",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -6510,7 +6437,6 @@
       "reading": "あさ",
       "meaning": "morning",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -6776,7 +6702,6 @@
       "reading": "やさい",
       "meaning": "vegetables",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -6939,7 +6864,6 @@
       "reading": "かべ",
       "meaning": "wall",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -7325,7 +7249,6 @@
       "reading": "ゆうしょく",
       "meaning": "dinner",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -7394,8 +7317,7 @@
       "type": "noun",
       "tags": [
         "grocery-shopping-story"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "相談",
@@ -7486,7 +7408,6 @@
       "reading": "じゅんび",
       "meaning": "preparation",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -7757,8 +7678,7 @@
       "type": "noun",
       "tags": [
         "grocery-shopping-story"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "上",
@@ -7777,7 +7697,6 @@
       "reading": "なか",
       "meaning": "inside",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -8444,7 +8363,6 @@
       "reading": "まいにち",
       "meaning": "every day",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -9437,8 +9355,7 @@
       "type": "noun",
       "tags": [
         "grocery-shopping-story"
-      ],
-      "orthography": "katakana"
+      ]
     },
     {
       "kanji": "デザート",
@@ -9573,8 +9490,7 @@
       "type": "noun",
       "tags": [
         "grocery-shopping-story"
-      ],
-      "orthography": "katakana"
+      ]
     },
     {
       "kanji": "ビル",
@@ -9674,8 +9590,7 @@
       "type": "noun",
       "tags": [
         "game-center-story"
-      ],
-      "orthography": "katakana"
+      ]
     },
     {
       "kanji": "カード",
@@ -9711,8 +9626,7 @@
       "type": "noun",
       "tags": [
         "game-center-story"
-      ],
-      "orthography": "katakana"
+      ]
     },
     {
       "kanji": "スポーツ",
@@ -9984,8 +9898,7 @@
       "type": "noun",
       "tags": [
         "grocery-shopping-story"
-      ],
-      "orthography": "katakana"
+      ]
     },
     {
       "kanji": "ピザ",
@@ -10048,8 +9961,7 @@
       "type": "noun",
       "tags": [
         "grocery-shopping-story"
-      ],
-      "orthography": "katakana"
+      ]
     },
     {
       "kanji": "キャンディ",
@@ -11393,8 +11305,7 @@
       "type": "noun",
       "tags": [
         "game-center-story"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "音",
@@ -11796,7 +11707,6 @@
       "reading": "チェック",
       "meaning": "check; checking",
       "type": "noun",
-      "orthography": "katakana",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -12264,8 +12174,7 @@
         "animal",
         "compound"
       ],
-      "status": "",
-      "orthography": "kanji"
+      "status": ""
     },
     {
       "kanji": "蟻地獄",
@@ -12461,8 +12370,7 @@
         "food",
         "animal_related"
       ],
-      "status": "",
-      "orthography": "both"
+      "status": ""
     },
     {
       "kanji": "雀蜂",
@@ -12473,8 +12381,7 @@
         "animal",
         "dangerous_insect"
       ],
-      "status": "",
-      "orthography": "kanji"
+      "status": ""
     },
     {
       "kanji": "蜂の巣",
@@ -12485,8 +12392,7 @@
         "animal_related",
         "compound_phrase"
       ],
-      "status": "",
-      "orthography": "both"
+      "status": ""
     },
     {
       "kanji": "蟻",
@@ -12802,8 +12708,7 @@
       "type": "noun",
       "tags": [
         "colors"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "黒",
@@ -12822,8 +12727,7 @@
       "type": "noun",
       "tags": [
         "colors"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "茶色",
@@ -12842,8 +12746,7 @@
       "type": "noun",
       "tags": [
         "colors"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "紫",
@@ -12852,8 +12755,7 @@
       "type": "noun",
       "tags": [
         "colors"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "桃色",
@@ -12862,8 +12764,7 @@
       "type": "noun",
       "tags": [
         "colors"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "金色",
@@ -12872,8 +12773,7 @@
       "type": "noun",
       "tags": [
         "colors"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "銀色",
@@ -12882,8 +12782,7 @@
       "type": "noun",
       "tags": [
         "colors"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "透明",
@@ -12892,8 +12791,7 @@
       "type": "na-adjective",
       "tags": [
         "colors"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "半透明",
@@ -13115,8 +13013,7 @@
       "type": "noun",
       "tags": [
         "manga-overview"
-      ],
-      "orthography": "kanji"
+      ]
     },
     {
       "kanji": "古本屋",
@@ -14226,7 +14123,6 @@
       "reading": "すこし",
       "meaning": "a little",
       "type": "adverb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -14302,7 +14198,6 @@
       "reading": "じゃがいも",
       "meaning": "potato",
       "type": "noun",
-      "orthography": "hiragana",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -14318,7 +14213,6 @@
       "reading": "すぐ",
       "meaning": "immediately",
       "type": "adverb",
-      "orthography": "hiragana",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -14382,7 +14276,6 @@
       "reading": "みんな",
       "meaning": "everyone",
       "type": "noun",
-      "orthography": "hiragana",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -14404,7 +14297,6 @@
       "reading": "ゆっくり",
       "meaning": "slowly; at ease",
       "type": "adverb",
-      "orthography": "hiragana",
       "tags": [
         "origin:Japanese",
         "spoken"
@@ -14481,7 +14373,6 @@
       "reading": "けんた",
       "meaning": "Kenta (given name)",
       "type": "proper-noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -14497,7 +14388,6 @@
       "reading": "いう",
       "meaning": "to say",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -14507,7 +14397,6 @@
       "reading": "ごご",
       "meaning": "afternoon (p.m.)",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -14517,7 +14406,6 @@
       "reading": "あと",
       "meaning": "after; later",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -14575,7 +14463,6 @@
       "reading": "つかう",
       "meaning": "to use",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -14729,7 +14616,6 @@
       "reading": "はしる",
       "meaning": "to run",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -14811,7 +14697,6 @@
       "reading": "いれる",
       "meaning": "to put in",
       "type": "ichidan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -14863,7 +14748,6 @@
       "reading": "もの",
       "meaning": "thing; item",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -14978,7 +14862,6 @@
       "reading": "かえる",
       "meaning": "to return home",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15036,7 +14919,6 @@
       "reading": "くる",
       "meaning": "to come",
       "type": "irregular-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -15080,7 +14962,6 @@
       "reading": "うれしそう",
       "meaning": "looking happy",
       "type": "na-adjective",
-      "orthography": "hiragana",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15090,7 +14971,6 @@
       "reading": "おいしい",
       "meaning": "delicious",
       "type": "i-adjective",
-      "orthography": "hiragana",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15100,7 +14980,6 @@
       "reading": "おかし",
       "meaning": "sweets; snacks",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15121,7 +15000,6 @@
       "reading": "かご",
       "meaning": "basket",
       "type": "noun",
-      "orthography": "hiragana",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15131,7 +15009,6 @@
       "reading": "クレーンゲーム",
       "meaning": "claw crane game",
       "type": "noun",
-      "orthography": "katakana",
       "tags": [
         "game-center-story"
       ]
@@ -15141,7 +15018,6 @@
       "reading": "ゲームセンター",
       "meaning": "game center; arcade",
       "type": "noun",
-      "orthography": "katakana",
       "tags": [
         "game-center-story"
       ]
@@ -15151,7 +15027,6 @@
       "reading": "このさきずっと",
       "meaning": "from here on forever; all the way ahead",
       "type": "expression",
-      "orthography": "both",
       "tags": [
         "time_expression",
         "future",
@@ -15166,7 +15041,6 @@
       "reading": "これからもずっと",
       "meaning": "forever from now on; from here on too",
       "type": "expression",
-      "orthography": "hiragana",
       "tags": [
         "time_expression",
         "duration",
@@ -15182,7 +15056,6 @@
       "reading": "これまでもずっと",
       "meaning": "up to now as well, all along",
       "type": "expression",
-      "orthography": "hiragana",
       "tags": [
         "time_expression",
         "duration",
@@ -15207,7 +15080,6 @@
       "reading": "さけ",
       "meaning": "salmon",
       "type": "noun",
-      "orthography": "hiragana",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15227,7 +15099,6 @@
       "reading": "ずっとあと",
       "meaning": "much later; far later",
       "type": "expression",
-      "orthography": "hiragana",
       "tags": [
         "time_expression",
         "jlpt_n3",
@@ -15241,7 +15112,6 @@
       "reading": "ずっとあとで",
       "meaning": "much later on",
       "type": "expression",
-      "orthography": "hiragana",
       "tags": [
         "time_expression",
         "future",
@@ -15255,7 +15125,6 @@
       "reading": "ずっとあとに",
       "meaning": "much later; at a far later point",
       "type": "expression",
-      "orthography": "hiragana",
       "tags": [
         "time_expression",
         "future",
@@ -15269,7 +15138,6 @@
       "reading": "ずっとむかし",
       "meaning": "long, long ago",
       "type": "expression",
-      "orthography": "both",
       "tags": [
         "time_expression",
         "past",
@@ -15284,7 +15152,6 @@
       "reading": "ずっとさき",
       "meaning": "far ahead; much further on",
       "type": "expression",
-      "orthography": "both",
       "tags": [
         "time_expression",
         "space_expression",
@@ -15299,7 +15166,6 @@
       "reading": "ずっとまえ",
       "meaning": "long ago; far back",
       "type": "expression",
-      "orthography": "hiragana",
       "tags": [
         "time_expression",
         "jlpt_n3",
@@ -15313,7 +15179,6 @@
       "reading": "ずっとまえから",
       "meaning": "since long ago; for a long time already",
       "type": "expression",
-      "orthography": "hiragana",
       "tags": [
         "time_expression",
         "duration",
@@ -15328,7 +15193,6 @@
       "reading": "ずっとまえに",
       "meaning": "a long time ago",
       "type": "expression",
-      "orthography": "hiragana",
       "tags": [
         "time_expression",
         "past",
@@ -15365,7 +15229,6 @@
       "reading": "なかなか",
       "meaning": "not easily; quite; fairly",
       "type": "adverb",
-      "orthography": "hiragana",
       "tags": [
         "game-center-story"
       ]
@@ -15375,7 +15238,6 @@
       "reading": "にぎやか",
       "meaning": "lively; bustling",
       "type": "na-adjective",
-      "orthography": "hiragana",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15385,7 +15247,6 @@
       "reading": "にんじん",
       "meaning": "carrot",
       "type": "noun",
-      "orthography": "hiragana",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15395,7 +15256,6 @@
       "reading": "ぬいぐるみ",
       "meaning": "stuffed toy; plush",
       "type": "noun",
-      "orthography": "hiragana",
       "tags": [
         "game-center-story"
       ]
@@ -15405,7 +15265,6 @@
       "reading": "ぶつかる",
       "meaning": "to bump into; to collide",
       "type": "godan-verb",
-      "orthography": "hiragana",
       "tags": [
         "game-center-story"
       ]
@@ -15425,7 +15284,6 @@
       "reading": "リズム",
       "meaning": "rhythm",
       "type": "noun",
-      "orthography": "katakana",
       "tags": [
         "game-center-story"
       ]
@@ -15435,7 +15293,6 @@
       "reading": "レースゲーム",
       "meaning": "racing game",
       "type": "noun",
-      "orthography": "katakana",
       "tags": [
         "game-center-story"
       ]
@@ -15445,7 +15302,6 @@
       "reading": "レジ",
       "meaning": "cash register; checkout",
       "type": "noun",
-      "orthography": "katakana",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15487,7 +15343,6 @@
       "reading": "いちにち",
       "meaning": "one day",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15497,7 +15352,6 @@
       "reading": "いちばん",
       "meaning": "number one; the most",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -15507,7 +15361,6 @@
       "reading": "うんてんする",
       "meaning": "to drive",
       "type": "irregular-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -15527,7 +15380,6 @@
       "reading": "えきまえ",
       "meaning": "in front of the station",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -15537,7 +15389,6 @@
       "reading": "おす",
       "meaning": "to push; to press",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -15547,7 +15398,6 @@
       "reading": "こがねいろ",
       "meaning": "golden",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -15557,7 +15407,6 @@
       "reading": "きみどり",
       "meaning": "yellow-green",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -15567,7 +15416,6 @@
       "reading": "おんがくゲーム",
       "meaning": "music rhythm game",
       "type": "noun",
-      "orthography": "both",
       "tags": [
         "game-center-story"
       ]
@@ -15577,7 +15425,6 @@
       "reading": "なんども",
       "meaning": "many times; repeatedly",
       "type": "adverb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -15597,7 +15444,6 @@
       "reading": "がしゅう",
       "meaning": "art book; collection of illustrations",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -15607,7 +15453,6 @@
       "reading": "かい",
       "meaning": "times; occurrence; counter for occurrences",
       "type": "counter",
-      "orthography": "kanji",
       "tags": [
         "counter_related",
         "origin:Sino-Japanese"
@@ -15618,7 +15463,6 @@
       "reading": "まわす",
       "meaning": "to turn; to spin; to rotate something",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "transitive",
         "origin:Japanese"
@@ -15629,7 +15473,6 @@
       "reading": "まわる",
       "meaning": "to turn; to go around; to rotate",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "intransitive",
         "origin:Japanese"
@@ -15640,7 +15483,6 @@
       "reading": "かいすう",
       "meaning": "number of times; frequency",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "counter_related",
         "origin:Sino-Japanese"
@@ -15651,7 +15493,6 @@
       "reading": "かいてん",
       "meaning": "rotation; spinning",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "origin:Sino-Japanese",
         "technical"
@@ -15662,7 +15503,6 @@
       "reading": "かいふく",
       "meaning": "recovery; restoration",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "origin:Sino-Japanese",
         "formal"
@@ -15718,7 +15558,6 @@
       "reading": "がいでん",
       "meaning": "side story; spinoff tale",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -15728,7 +15567,6 @@
       "reading": "たのしそう",
       "meaning": "seems fun; looks like enjoying it",
       "type": "na-adjective",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -15738,7 +15576,6 @@
       "reading": "かんけつ",
       "meaning": "completion; finished (series)",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -15748,7 +15585,6 @@
       "reading": "かんぜんばん",
       "meaning": "complete edition",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -15768,7 +15604,6 @@
       "reading": "あいだ",
       "meaning": "interval; while; during",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -15778,7 +15613,6 @@
       "reading": "きゅうけいスペース",
       "meaning": "rest area; break space",
       "type": "noun",
-      "orthography": "both",
       "tags": [
         "game-center-story"
       ]
@@ -15788,7 +15622,6 @@
       "reading": "さかなうりば",
       "meaning": "fish section",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15798,7 +15631,6 @@
       "reading": "そらいろ",
       "meaning": "sky blue",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -15808,7 +15640,6 @@
       "reading": "げんさく",
       "meaning": "original work; source material",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -15818,7 +15649,6 @@
       "reading": "げんていばん",
       "meaning": "limited edition",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -15828,7 +15658,6 @@
       "reading": "むかう",
       "meaning": "to head toward",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -15838,7 +15667,6 @@
       "reading": "べにいろ",
       "meaning": "crimson",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -15848,7 +15676,6 @@
       "reading": "いきたがる",
       "meaning": "to want to go (third-person desire)",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15934,7 +15761,6 @@
       "reading": "こうこうせい",
       "meaning": "high school student",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -15944,7 +15770,6 @@
       "reading": "あわせる",
       "meaning": "to match; to align",
       "type": "ichidan-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -15954,7 +15779,6 @@
       "reading": "いままでずっと",
       "meaning": "all this time until now",
       "type": "expression",
-      "orthography": "both",
       "tags": [
         "time_expression",
         "duration",
@@ -15969,7 +15793,6 @@
       "reading": "いまもずっと",
       "meaning": "still all this time even now",
       "type": "expression",
-      "orthography": "both",
       "tags": [
         "time_expression",
         "duration",
@@ -15984,7 +15807,6 @@
       "reading": "こんかい",
       "meaning": "this time",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "time_expression",
         "origin:Sino-Japanese"
@@ -15995,7 +15817,6 @@
       "reading": "こんいろ",
       "meaning": "navy blue",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16015,7 +15836,6 @@
       "reading": "つくる",
       "meaning": "to make",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16025,7 +15845,6 @@
       "reading": "さくしゃ",
       "meaning": "author; creator",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16035,7 +15854,6 @@
       "reading": "さくらいろ",
       "meaning": "cherry blossom pink",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16045,7 +15863,6 @@
       "reading": "やまぶきいろ",
       "meaning": "golden yellow",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16055,7 +15872,6 @@
       "reading": "しばらく",
       "meaning": "for a while",
       "type": "adverb",
-      "orthography": "hiragana",
       "tags": [
         "game-center-story"
       ]
@@ -16065,7 +15881,6 @@
       "reading": "かみばん",
       "meaning": "print edition (paper version)",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16095,7 +15910,6 @@
       "reading": "もつ",
       "meaning": "to hold; to carry",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16115,7 +15929,6 @@
       "reading": "うしなう",
       "meaning": "to lose",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "transitive",
         "origin:Japanese"
@@ -16126,7 +15939,6 @@
       "reading": "わかくさいろ",
       "meaning": "fresh green",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16136,7 +15948,6 @@
       "reading": "とる",
       "meaning": "to take; to get (a prize)",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -16146,7 +15957,6 @@
       "reading": "しゅいろ",
       "meaning": "vermilion",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16166,7 +15976,6 @@
       "reading": "おわる",
       "meaning": "to finish",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16176,7 +15985,6 @@
       "reading": "じゅうはん",
       "meaning": "reprint (additional printing)",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16186,7 +15994,6 @@
       "reading": "しゅっぱんしゃ",
       "meaning": "publishing company; publisher",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16196,7 +16003,6 @@
       "reading": "しょはん",
       "meaning": "first edition; first printing",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16206,7 +16012,6 @@
       "reading": "かつ",
       "meaning": "to win",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -16216,7 +16021,6 @@
       "reading": "しょうがくせい",
       "meaning": "elementary school student",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16226,7 +16030,6 @@
       "reading": "わらう",
       "meaning": "to smile; to laugh",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16236,7 +16039,6 @@
       "reading": "ぞうげいろ",
       "meaning": "ivory",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16246,7 +16048,6 @@
       "reading": "しんらい",
       "meaning": "trust; confidence",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "origin:Sino-Japanese",
         "formal"
@@ -16257,7 +16058,6 @@
       "reading": "しんちょう",
       "meaning": "careful; cautious",
       "type": "na-adjective",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -16267,7 +16067,6 @@
       "reading": "しんかん",
       "meaning": "new release (book/volume)",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16277,7 +16076,6 @@
       "reading": "しんせん",
       "meaning": "fresh",
       "type": "na-adjective",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16287,7 +16085,6 @@
       "reading": "しんそうばん",
       "meaning": "newly designed edition; reissue with new cover/layout",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16297,7 +16094,6 @@
       "reading": "しんぴん",
       "meaning": "new item; brand-new (condition)",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16307,7 +16103,6 @@
       "reading": "ふかみどり",
       "meaning": "deep green",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16317,7 +16112,6 @@
       "reading": "まっきいろ",
       "meaning": "bright yellow",
       "type": "na-adjective",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16327,7 +16121,6 @@
       "reading": "まっくろ",
       "meaning": "pitch black",
       "type": "na-adjective",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16337,7 +16130,6 @@
       "reading": "まっさお",
       "meaning": "deep blue; pale blue",
       "type": "na-adjective",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16347,7 +16139,6 @@
       "reading": "まっか",
       "meaning": "bright red",
       "type": "na-adjective",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16357,7 +16148,6 @@
       "reading": "まっしろ",
       "meaning": "pure white",
       "type": "na-adjective",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16367,7 +16157,6 @@
       "reading": "まんなか",
       "meaning": "middle; center",
       "type": "noun",
-      "orthography": "hiragana",
       "tags": [
         "gidk48",
         "origin:Japanese"
@@ -16378,7 +16167,6 @@
       "reading": "まうえ",
       "meaning": "directly above",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "gidk48",
         "origin:Japanese"
@@ -16389,7 +16177,6 @@
       "reading": "まよなか",
       "meaning": "midnight; dead of night",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "gidk48",
         "origin:Japanese"
@@ -16400,7 +16187,6 @@
       "reading": "みずいろ",
       "meaning": "light blue",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16422,7 +16208,6 @@
       "reading": "あおむらさき",
       "meaning": "bluish purple",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16432,7 +16217,6 @@
       "reading": "あおみどり",
       "meaning": "blue-green",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16442,7 +16226,6 @@
       "reading": "あかむらさき",
       "meaning": "reddish purple",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16452,7 +16235,6 @@
       "reading": "きる",
       "meaning": "to cut",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16462,7 +16244,6 @@
       "reading": "まえよりずっと",
       "meaning": "much more than before",
       "type": "expression",
-      "orthography": "both",
       "tags": [
         "comparison",
         "degree",
@@ -16477,7 +16258,6 @@
       "reading": "ぜんかん",
       "meaning": "all volumes (entire series set)",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16487,7 +16267,6 @@
       "reading": "ぜんかんせっと",
       "meaning": "complete set (all volumes)",
       "type": "noun",
-      "orthography": "both",
       "tags": [
         "manga-overview"
       ]
@@ -16497,7 +16276,6 @@
       "reading": "はしりすぎる",
       "meaning": "to run/drive too fast; to overdo running",
       "type": "ichidan-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -16507,7 +16285,6 @@
       "reading": "はやく",
       "meaning": "fast; quickly",
       "type": "adverb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -16517,7 +16294,6 @@
       "reading": "たいせんする",
       "meaning": "to compete; to face off",
       "type": "irregular-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -16527,7 +16303,6 @@
       "reading": "ふくろ",
       "meaning": "bag",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16557,7 +16332,6 @@
       "reading": "だいすき",
       "meaning": "love; like a lot",
       "type": "na-adjective",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -16567,7 +16341,6 @@
       "reading": "たんこうぼん",
       "meaning": "collected volume; tankobon",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16587,7 +16360,6 @@
       "reading": "さがす",
       "meaning": "to search; to look for",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "search",
         "common"
@@ -16714,7 +16486,6 @@
       "reading": "ちゅうこ",
       "meaning": "used; secondhand",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16746,7 +16517,6 @@
       "reading": "ちょうせんする",
       "meaning": "to challenge; to try",
       "type": "irregular-verb",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -16789,7 +16559,6 @@
       "reading": "でんししょせき",
       "meaning": "e-book; electronic book",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16799,7 +16568,6 @@
       "reading": "でんしばん",
       "meaning": "digital edition",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16819,7 +16587,6 @@
       "reading": "どようび",
       "meaning": "Saturday",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16840,7 +16607,6 @@
       "reading": "どうじんし",
       "meaning": "doujinshi; fan/self-published comic",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16850,7 +16616,6 @@
       "reading": "どういろ",
       "meaning": "copper-colored",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16860,7 +16625,6 @@
       "reading": "とくそうばん",
       "meaning": "special edition (with extras)",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16870,7 +16634,6 @@
       "reading": "とくばい",
       "meaning": "special sale",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16880,7 +16643,6 @@
       "reading": "にじいろ",
       "meaning": "rainbow-colored",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16890,7 +16652,6 @@
       "reading": "にほんごばん",
       "meaning": "Japanese-language edition",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16900,7 +16661,6 @@
       "reading": "にゅうはくしょく",
       "meaning": "milky white",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16920,7 +16680,6 @@
       "reading": "こいはいいろ",
       "meaning": "dark gray",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16930,7 +16689,6 @@
       "reading": "かいものリスト",
       "meaning": "shopping list",
       "type": "noun",
-      "orthography": "both",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16940,7 +16698,6 @@
       "reading": "うりば",
       "meaning": "sales floor; section",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -16950,7 +16707,6 @@
       "reading": "うすはいいろ",
       "meaning": "light gray",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16960,7 +16716,6 @@
       "reading": "はだいろ",
       "meaning": "skin color",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -16970,7 +16725,6 @@
       "reading": "ばんかい",
       "meaning": "recovery; making up for a loss or mistake",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "origin:Sino-Japanese",
         "written",
@@ -16982,7 +16736,6 @@
       "reading": "ばんがいへん",
       "meaning": "extra chapter; special side episode",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -16992,7 +16745,6 @@
       "reading": "みさき",
       "meaning": "Misaki (given name)",
       "type": "proper-noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -17002,7 +16754,6 @@
       "reading": "ぶんこばん",
       "meaning": "bunko edition (pocket paperback format)",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -17012,7 +16763,6 @@
       "reading": "ならぶ",
       "meaning": "to be lined up",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -17022,7 +16772,6 @@
       "reading": "もえぎいろ",
       "meaning": "yellow-green",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -17033,7 +16782,6 @@
       "reading": "はち",
       "meaning": "bee; wasp",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "common_animal"
       ]
@@ -17043,7 +16791,6 @@
       "reading": "まいしゅう",
       "meaning": "every week",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -17053,7 +16800,6 @@
       "reading": "また",
       "meaning": "again; also",
       "type": "adverb",
-      "orthography": "hiragana",
       "tags": [
         "game-center-story"
       ]
@@ -17063,7 +16809,6 @@
       "reading": "まんが",
       "meaning": "manga; comic",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -17073,7 +16818,6 @@
       "reading": "むしょく",
       "meaning": "colorless",
       "type": "na-adjective",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -17083,7 +16827,6 @@
       "reading": "むすめ",
       "meaning": "daughter",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -17093,7 +16836,6 @@
       "reading": "まよう",
       "meaning": "to hesitate; to be unsure",
       "type": "godan-verb",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -17103,7 +16845,6 @@
       "reading": "ゆうはん",
       "meaning": "evening meal; dinner",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -17113,7 +16854,6 @@
       "reading": "ゆうがた",
       "meaning": "evening; late afternoon",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -17123,7 +16863,6 @@
       "reading": "よう",
       "meaning": "for use; purpose",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "grocery-shopping-story"
       ]
@@ -17133,7 +16872,6 @@
       "reading": "あいいろ",
       "meaning": "indigo",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "colors"
       ]
@@ -17143,7 +16881,6 @@
       "reading": "りょう",
       "meaning": "Ryo (given name)",
       "type": "proper-noun",
-      "orthography": "kanji",
       "tags": [
         "game-center-story"
       ]
@@ -17153,7 +16890,6 @@
       "reading": "れんさい",
       "meaning": "serialization; serialized publication",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "manga-overview"
       ]
@@ -17163,7 +16899,6 @@
       "reading": "ばんかい",
       "meaning": "Bankai; final release (fictional term)",
       "type": "noun",
-      "orthography": "kanji",
       "tags": [
         "fiction",
         "manga_anime",
@@ -22489,6 +22224,28 @@
         "shimeru_forms",
         "passive"
       ]
-    }
+    },
+
+  {"kanji":"Nになってから","reading":"エヌになってから","meaning":"after becoming N","type":"expression","tags":["grammar","jlpt_n4"]},
+  {"kanji":"Vたくない","reading":"ブイたくない","meaning":"do not want to V","type":"expression","tags":["grammar","desire"]},
+  {"kanji":"Vたら","reading":"ブイたら","meaning":"if; when (after doing V)","type":"expression","tags":["grammar","conditional"]},
+  {"kanji":"Vている","reading":"ブイている","meaning":"be doing; ongoing state","type":"expression","tags":["grammar","aspect"]},
+  {"kanji":"Vてから","reading":"ブイてから","meaning":"after doing V","type":"expression","tags":["grammar","sequence"]},
+  {"kanji":"Vてください","reading":"ブイてください","meaning":"please do V","type":"expression","tags":["grammar","request"]},
+  {"kanji":"Vてしまう","reading":"ブイてしまう","meaning":"finish completely; unfortunately do","type":"expression","tags":["grammar","completion"]},
+  {"kanji":"Vてはいけません","reading":"ブイてはいけません","meaning":"must not do V","type":"expression","tags":["grammar","prohibition"]},
+  {"kanji":"Vないでください","reading":"ブイないでください","meaning":"please do not V","type":"expression","tags":["grammar","request_negative"]},
+  {"kanji":"Vのは～だ","reading":"ブイのは〜だ","meaning":"the fact that V is ~","type":"expression","tags":["grammar","nominalization"]},
+  {"kanji":"Vよう","reading":"ブイよう","meaning":"let's; volitional form","type":"expression","tags":["grammar","volitional"]},
+  {"kanji":"Vることが多い","reading":"ブイることがおおい","meaning":"often do V","type":"expression","tags":["grammar","frequency"]},
+  {"kanji":"Vるつもりだ","reading":"ブイるつもりだ","meaning":"intend to do V","type":"expression","tags":["grammar","intention"]},
+  {"kanji":"Vると","reading":"ブイると","meaning":"when; if (natural consequence)","type":"expression","tags":["grammar","conditional"]},
+  {"kanji":"アイデア","reading":"アイデア","meaning":"idea","type":"noun","semanticClass":"concept"},
+  {"kanji":"インク","reading":"インク","meaning":"ink","type":"noun","semanticClass":"object"},
+  {"kanji":"オリンポス山","reading":"オリンポスさん","meaning":"Mount Olympus","type":"proper-noun","semanticClass":"place"},
+  {"kanji":"お寺","reading":"おてら","meaning":"temple (Buddhist)","type":"noun","semanticClass":"place"},
+  {"kanji":"から","reading":"から","meaning":"from; because","type":"particle","semanticClass":"grammar"}
+
+
   ]
 }
