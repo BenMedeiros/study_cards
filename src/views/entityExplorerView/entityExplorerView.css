@@ -1,6 +1,8 @@
 /* Entity Explorer */
 .entity-explorer-view .entity-explorer-content {
   padding: 0.5rem;
+  min-height: 0;
+  overflow: auto;
 }
 
 .entity-explorer-view .entity-explorer-controls-row {
@@ -48,11 +50,6 @@
 /* Toggle wrapping for JSON views: default is unwrapped (`pre`). When
    the entity explorer root has `.json-wrap`, make `.json-view` use
    `pre-wrap` so long lines wrap. */
-.entity-explorer-view.json-wrap .json-view {
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
 .entity-explorer-view.json-wrap .json-tree .json-tree-line {
   white-space: normal;
   word-break: break-word;

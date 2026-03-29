@@ -202,7 +202,8 @@
   width: 60%;
 }
 
-.autoplay-actions {
+.autoplay-actions,
+.autoplay-sequence {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -211,13 +212,6 @@
 
 .autoplay-actions .btn {
   text-align: left;
-}
-
-.autoplay-sequence {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
 }
 
 .sequence-item {

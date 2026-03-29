@@ -217,6 +217,15 @@ a:hover {
   width: 100%;
 }
 
+#shell-main,
+#shell-main-cached,
+#shell-main-transient,
+.shell-cached-route {
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+}
+
 
 /* Thin footer below the main content for small buttons/stats */
 .shell-footer {
@@ -624,7 +633,42 @@ input[type="number"].button::-webkit-inner-spin-button {
 #shell-main {
   padding: 0.5rem;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+}
+
+#shell-main-cached,
+#shell-main-transient {
+  display: grid;
+}
+
+#shell-main > *,
+#shell-main-cached > *,
+#shell-main-transient > * {
+  grid-area: 1 / 1;
+}
+
+.shell-cached-route,
+#shell-main-transient > * {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+}
+
+.shell-cached-route > :only-child,
+#shell-main-transient > :only-child {
+  grid-row: 1 / -1;
+}
+
+.data-view,
+.study-manager-view,
+.entity-explorer-view {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.collections-view,
+.manage-collections-view {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
 }
 
 
@@ -655,22 +699,17 @@ input[type="number"].button::-webkit-inner-spin-button {
   font-size: var(--font-size-md);
 }
 
-#collections-card {
-  max-height: 34rem;
+.data-view > .card,
+.collections-view > .card {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0;
+  overflow: hidden;
 }
 
 @media (max-width: 700px) {
   .shell-footer {
     overflow-x: scroll;
-  }
-
-  .card {
-    max-height: 35rem;
-  }
-
-  #collections-card,
-  #data-card {
-    max-height: -webkit-fill-available;
   }
 }
 
@@ -934,15 +973,22 @@ input[type="number"].button::-webkit-inner-spin-button {
   width: 100%;
   overflow-x: auto;
   overflow-y: auto;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   position: relative;
   margin-top: 15px;
-  max-height: calc(100vh - 12rem);
 }
 
-.data-view .table-wrapper {
-  /* subtract height for shell and header-tools */
-  max-height: calc(100vh - 19rem);
+#collections-card > .table-wrapper,
+#data-table-mount,
+#data-table-mount > .table-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#data-table-mount {
+  display: flex;
+  flex-direction: column;
 }
 
 /* Search box for tables */
@@ -1701,7 +1747,6 @@ h2 {
   margin: 0;
   font-size: var(--font-size-base);
 }
-
 
 
 

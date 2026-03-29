@@ -3,6 +3,8 @@
   flex-direction: column;
   gap: 1rem;
   min-width: 0;
+  min-height: 0;
+  overflow: auto;
 }
 
 .study-manager-view [hidden] {
@@ -61,12 +63,6 @@
   text-align: left;
 }
 
-@media (max-width: 900px) {
-  .study-manager-view .table-wrapper {
-    max-height: 39vh;
-  }
-}
-
 .study-manager-view .study-manager-filter-link {
   color: var(--text);
   text-decoration: none;
@@ -110,9 +106,6 @@
 .study-manager-view .study-manager-rec-list {
   display: grid;
   gap: 0.5rem;
-  max-height: 39vh;
-  overflow-y: auto;
-  padding-right: 0.2rem;
 }
 
 .study-manager-view .study-manager-day-row,

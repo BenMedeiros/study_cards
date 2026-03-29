@@ -3,6 +3,7 @@
   display: grid;
   grid-template-columns: min(50%, 40rem) 1fr;
   gap: 0.75rem;
+  min-height: 0;
 }
 
 .manage-collections-view p {
@@ -372,8 +373,8 @@
 @media (min-width: 900px) {
   .manage-collections-view .mc-left,
   .manage-collections-view .mc-right {
+    min-height: 0;
     overflow-y: auto;
-    height: 35rem;
     padding: 0rem 0.2rem;
   }
 }
@@ -393,10 +394,6 @@
 
   .manage-collections-view .mc-version-select {
     min-width: 12rem;
-  }
-
-  .manage-collections-view .mc-json {
-    max-height: 45vh;
   }
 
   .manage-collections-view .mc-diff-cols {
