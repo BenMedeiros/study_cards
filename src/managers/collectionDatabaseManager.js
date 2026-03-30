@@ -49,6 +49,27 @@ function _nowPerfMs() {
   return Date.now();
 }
 
+function _normalizeCollectionFetchPath(p) {
+  let s = String(p || '').trim();
+  if (!s) return '';
+  s = s.replace(/^\.\//, '');
+  s = s.replace(/^collections\//, '');
+  return s;
+}
+
+function _parseCollectionSchemaRef(ref) {
+  const raw = String(ref || '').trim();
+  if (!raw.startsWith('$ref:')) return null;
+  const body = raw.slice(5).trim();
+  if (!body) return null;
+  const hashIndex = body.indexOf('#');
+  const path = hashIndex >= 0 ? body.slice(0, hashIndex) : body;
+  const typeName = hashIndex >= 0 ? body.slice(hashIndex + 1).trim() : '';
+  const normalizedPath = _normalizeCollectionFetchPath(path);
+  if (!normalizedPath) return null;
+  return { ref: raw, path: normalizedPath, typeName };
+}
+
 function _buildArrayElementLineNumbers(jsonText, targetKey) {
   if (typeof jsonText !== 'string' || !targetKey) return [];
 
@@ -227,6 +248,7 @@ function _appendFetchHistory(history, row, { limit = 100 } = {}) {
 export function createCollectionDatabaseManager({ log = false, onValidationStateChange = null } = {}) {
   let logEnabled = !!log;
   let logReturningCached = false;
+  const sharedSchemaCache = new Map();
 
   try {
     const settings = getGlobalSettingsManager && typeof getGlobalSettingsManager === 'function' ? getGlobalSettingsManager() : null;
@@ -307,6 +329,68 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
       });
     },
   };
+
+  async function _loadSharedSchemaFile(schemaPath) {
+    const normalizedPath = _normalizeCollectionFetchPath(schemaPath);
+    if (!normalizedPath) throw new Error('schemaPath required');
+    if (sharedSchemaCache.has(normalizedPath)) return sharedSchemaCache.get(normalizedPath);
+    const promise = (async () => {
+      const res = await fetch(`./collections/${normalizedPath}`);
+      if (!res.ok) throw new Error(`Failed to load shared schema file ${normalizedPath} (status ${res.status})`);
+      const txt = await res.text();
+      if (!txt) throw new Error(`Shared schema file ${normalizedPath} was empty`);
+      const parsed = JSON.parse(txt);
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        throw new Error(`Shared schema file ${normalizedPath} must be a JSON object`);
+      }
+      return parsed;
+    })();
+    sharedSchemaCache.set(normalizedPath, promise);
+    try {
+      return await promise;
+    } catch (error) {
+      sharedSchemaCache.delete(normalizedPath);
+      throw error;
+    }
+  }
+
+  async function _materializeCollectionSchema(collection, { collectionKey = '' } = {}) {
+    const coll = (collection && typeof collection === 'object') ? collection : null;
+    if (!coll) return coll;
+    if (!coll.metadata || typeof coll.metadata !== 'object') return coll;
+    const schemaRef = _parseCollectionSchemaRef(coll.metadata.schema);
+    if (!schemaRef) return coll;
+
+    const sharedSchema = await _loadSharedSchemaFile(schemaRef.path);
+    const sharedTypes = (sharedSchema && typeof sharedSchema.schemaTypes === 'object' && !Array.isArray(sharedSchema.schemaTypes))
+      ? sharedSchema.schemaTypes
+      : null;
+    if (!sharedTypes) throw new Error(`Shared schema file ${schemaRef.path} does not define schemaTypes`);
+
+    const resolvedType = schemaRef.typeName ? sharedTypes[schemaRef.typeName] : null;
+    if (!resolvedType || typeof resolvedType !== 'object') {
+      throw new Error(`Collection ${collectionKey || '(unknown)'} references missing schema type '${schemaRef.typeName}' in ${schemaRef.path}`);
+    }
+
+    const resolvedFields = Array.isArray(resolvedType.fields) ? resolvedType.fields : null;
+    if (!resolvedFields) {
+      throw new Error(`Schema type '${schemaRef.typeName}' in ${schemaRef.path} does not define a fields array`);
+    }
+
+    const existingSchemaTypes = (coll.metadata.schemaTypes && typeof coll.metadata.schemaTypes === 'object' && !Array.isArray(coll.metadata.schemaTypes))
+      ? coll.metadata.schemaTypes
+      : {};
+
+    coll.metadata.schema = resolvedFields.map((field) => ({ ...field }));
+    coll.metadata.schemaTypes = {
+      ...Object.fromEntries(Object.entries(sharedTypes).map(([key, value]) => [key, _safeClone(value) || value])),
+      ...existingSchemaTypes,
+    };
+    coll.metadata._schemaRef = schemaRef.ref;
+    coll.metadata._schemaSource = schemaRef.path;
+    coll.metadata._schemaType = schemaRef.typeName;
+    return coll;
+  }
 
   function _notifyValidationStateChanged() {
     if (typeof onValidationStateChange !== 'function') return;
@@ -509,12 +593,12 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
     const activeRev = _getActiveRevisionId(key);
     if (!activeRev) {
       try {
-        return await getSystemCollection(key, { force });
+        return await _materializeCollectionSchema(await getSystemCollection(key, { force }), { collectionKey: key });
       } catch (e) {
         const revs = await listUserRevisions(key);
         const latest = revs.length ? revs[revs.length - 1] : null;
         if (latest && latest.id) {
-          return resolveCollectionAtRevision(key, latest.id, { baseBlob: null });
+          return _materializeCollectionSchema(await resolveCollectionAtRevision(key, latest.id, { baseBlob: null }), { collectionKey: key });
         }
         throw e;
       }
@@ -526,7 +610,7 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
     } catch (e) {
       base = null;
     }
-    return resolveCollectionAtRevision(key, activeRev, { baseBlob: base });
+    return _materializeCollectionSchema(await resolveCollectionAtRevision(key, activeRev, { baseBlob: base }), { collectionKey: key });
   }
 
   async function _compileCollectionRelated(collection, key, { force = false } = {}) {
@@ -771,7 +855,7 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
       const cached = await idbGet('system_collections', key).catch(() => null);
       if (!force && cached && idxModified && cached.modifiedAt === idxModified && cached.blob && Array.isArray(cached.entryLineNumbers)) {
         loggerReturningCached('getCollection: returning cached', key);
-        return cached.blob;
+        return _materializeCollectionSchema(cached.blob, { collectionKey: key });
       }
 
       // Fetch from network
@@ -782,12 +866,12 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
         res = await fetch(url);
       } catch (err) {
         logger('getCollection: fetch failed', err?.message || err);
-        if (cached && cached.blob) return cached.blob;
+        if (cached && cached.blob) return _materializeCollectionSchema(cached.blob, { collectionKey: key });
         throw new Error(`Failed to fetch collection ${key}: ${err?.message || err}`);
       }
       if (!res.ok) {
         logger('getCollection: fetch not ok', res.status);
-        if (cached && cached.blob) return cached.blob;
+        if (cached && cached.blob) return _materializeCollectionSchema(cached.blob, { collectionKey: key });
         throw new Error(`Failed to load collection ${key} (status ${res.status})`);
       }
 
@@ -799,11 +883,12 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
         data = JSON.parse(txt);
       } catch (err) {
         logger('getCollection: parse failed', err?.message || err);
-        if (cached && cached.blob) return cached.blob;
+        if (cached && cached.blob) return _materializeCollectionSchema(cached.blob, { collectionKey: key });
         throw new Error(`Invalid JSON in collection ${key}: ${err?.message || err}`);
       }
 
       data = normalizeCollectionBlob(data);
+      data = await _materializeCollectionSchema(data, { collectionKey: key });
       const entryLineNumbers = _buildArrayElementLineNumbers(txt, detectCollectionArrayKey(data).key);
 
       const now = (new Date()).toISOString();
@@ -1048,5 +1133,3 @@ export function createCollectionDatabaseManager({ log = false, onValidationState
 }
 
 export default createCollectionDatabaseManager;
-
-

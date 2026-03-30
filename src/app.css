@@ -219,7 +219,6 @@ a:hover {
 
 #shell-main,
 #shell-main-cached,
-#shell-main-transient,
 .shell-cached-route {
   min-width: 0;
   min-height: 0;
@@ -635,26 +634,22 @@ input[type="number"].button::-webkit-inner-spin-button {
   display: grid;
 }
 
-#shell-main-cached,
-#shell-main-transient {
+#shell-main-cached {
   display: grid;
 }
 
 #shell-main > *,
-#shell-main-cached > *,
-#shell-main-transient > * {
+#shell-main-cached > * {
   grid-area: 1 / 1;
 }
 
-.shell-cached-route,
-#shell-main-transient > * {
+.shell-cached-route {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   height: 100%;
 }
 
-.shell-cached-route > :only-child,
-#shell-main-transient > :only-child {
+.shell-cached-route > :only-child {
   grid-row: 1 / -1;
 }
 
@@ -1747,7 +1742,6 @@ h2 {
   margin: 0;
   font-size: var(--font-size-base);
 }
-
 
 
 

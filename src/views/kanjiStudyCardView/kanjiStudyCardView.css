@@ -59,6 +59,17 @@
   overflow: auto;
 }
 
+.kanji-study-card-config-tabs {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.kanji-study-card-config-tab.is-active {
+  border-color: var(--accent-border-strong);
+  background: var(--accent-bg-strong);
+}
+
 .kanji-study-card-config-list {
   display: flex;
   flex-direction: column;
@@ -151,6 +162,16 @@
 
 .kanji-study-card-config-json-viewer .json-tree {
   background: var(--surface-void-stronger);
+}
+
+.kanji-study-card-config-json-plain {
+  margin: 0;
+  max-height: 52vh;
+  overflow: auto;
+  background: var(--surface-void-strong);
+  border-radius: 0.45rem;
+  padding: 0.65rem;
+  font-size: var(--font-size-xs);
 }
 
 .kanji-study-card-config-move:disabled {
@@ -248,6 +269,34 @@
 
 .kanji-related-notes li:last-child {
   margin-bottom: 0;
+}
+
+.kanji-related-sublist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.kanji-related-subrow {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+}
+
+.kanji-related-subrow-button {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.kanji-related-subrow-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .main-field-card .main-field-card-top-left,

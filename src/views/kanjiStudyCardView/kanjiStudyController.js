@@ -102,20 +102,7 @@ function cloneSpeechConfig(raw) {
 function inferRelatedFieldKeys(collection = null, relationName = '') {
   const name = String(relationName || '').trim();
   if (!name) return [];
-  const entries = Array.isArray(collection?.entries) ? collection.entries : [];
-  const keys = new Set();
-  for (const entry of entries) {
-    const records = Array.isArray(entry?.relatedCollections?.[name]) ? entry.relatedCollections[name] : [];
-    for (const record of records) {
-      if (!record || typeof record !== 'object' || Array.isArray(record)) continue;
-      for (const key of Object.keys(record)) {
-        const fieldKey = String(key || '').trim();
-        if (!fieldKey || fieldKey === 'relatedCollections') continue;
-        keys.add(fieldKey);
-      }
-    }
-  }
-  return Array.from(keys);
+  return ['title', 'japanese', 'english', 'notes', 'sentences', 'chunks'];
 }
 
 function mergeSpeechConfig(baseRaw, overrideRaw) {
@@ -163,6 +150,27 @@ function cloneCardsConfig(cards) {
         const field = String(fieldKey || '').trim();
         if (!slot) continue;
         nextConfig.layout[slot] = field;
+      }
+    }
+    if (Array.isArray(rawConfig.collections)) {
+      nextConfig.collections = Array.from(new Set(rawConfig.collections.map((item) => String(item || '').trim()).filter(Boolean)));
+    }
+    if (rawConfig.relatedCollections && typeof rawConfig.relatedCollections === 'object' && !Array.isArray(rawConfig.relatedCollections)) {
+      nextConfig.relatedCollections = {};
+      for (const [relationName, relationConfig] of Object.entries(rawConfig.relatedCollections)) {
+        const name = String(relationName || '').trim();
+        if (!name || !relationConfig || typeof relationConfig !== 'object' || Array.isArray(relationConfig)) continue;
+        nextConfig.relatedCollections[name] = {};
+        if (Array.isArray(relationConfig.fields)) {
+          nextConfig.relatedCollections[name].fields = Array.from(new Set(relationConfig.fields.map((item) => String(item || '').trim()).filter(Boolean)));
+        }
+        const detailsMode = String(relationConfig.detailsMode || '').trim().toLowerCase();
+        if (detailsMode === 'click' || detailsMode === 'always') {
+          nextConfig.relatedCollections[name].detailsMode = detailsMode;
+        }
+        if (Object.prototype.hasOwnProperty.call(relationConfig, 'collapsePrimaryWhenExpanded')) {
+          nextConfig.relatedCollections[name].collapsePrimaryWhenExpanded = !!relationConfig.collapsePrimaryWhenExpanded;
+        }
       }
     }
     out[key] = nextConfig;
@@ -413,4 +421,3 @@ function create(collKey) {
 async function forCollection(collKey) { const c = create(collKey); await c.ready; return c; }
 
 export default { create, forCollection };
-

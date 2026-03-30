@@ -9,10 +9,12 @@ import { addStudyFilter } from '../../components/features/studyControls.js';
 import { addShuffleControls } from '../../components/features/collectionControls.js';
 import kanjiStudyController from './kanjiStudyController.js';
 import { openGenericFlatCardConfigDialog } from './genericFlatCardConfigDialog.js';
+import { openRelatedCardConfigDialog } from './relatedCardConfigDialog.js';
 import { createKanjiStudyFooterActionsController } from './actionsController.js';
 
 const GENERIC_CARD_SETTINGS_KEY = 'genericFlatCard';
 const MAIN_CARD_SETTINGS_KEY = 'main';
+const RELATED_CARD_SETTINGS_KEY = 'related';
 const MAIN_CARD_FLOW_VALUES = new Set(['row', 'column']);
 const SCRUB_THRESHOLD_MIN_MS = 500;
 const SCRUB_THRESHOLD_MAX_MS = 2000;
@@ -99,6 +101,25 @@ function normalizeKanjiStudyCardsConfig(cards) {
         nextConfig.layout[slot] = field;
       }
     }
+    if (Array.isArray(rawConfig.collections)) {
+      nextConfig.collections = Array.from(new Set(rawConfig.collections.map((item) => String(item || '').trim()).filter(Boolean)));
+    }
+    if (rawConfig.relatedCollections && typeof rawConfig.relatedCollections === 'object' && !Array.isArray(rawConfig.relatedCollections)) {
+      nextConfig.relatedCollections = {};
+      for (const [relationName, relationConfig] of Object.entries(rawConfig.relatedCollections)) {
+        const name = String(relationName || '').trim();
+        if (!name || !relationConfig || typeof relationConfig !== 'object' || Array.isArray(relationConfig)) continue;
+        nextConfig.relatedCollections[name] = {};
+        if (Array.isArray(relationConfig.fields)) {
+          nextConfig.relatedCollections[name].fields = Array.from(new Set(relationConfig.fields.map((item) => String(item || '').trim()).filter(Boolean)));
+        }
+        const detailsMode = String(relationConfig.detailsMode || '').trim().toLowerCase();
+        if (detailsMode === 'click' || detailsMode === 'always') nextConfig.relatedCollections[name].detailsMode = detailsMode;
+        if (Object.prototype.hasOwnProperty.call(relationConfig, 'collapsePrimaryWhenExpanded')) {
+          nextConfig.relatedCollections[name].collapsePrimaryWhenExpanded = !!relationConfig.collapsePrimaryWhenExpanded;
+        }
+      }
+    }
     const mainFlow = String(rawConfig.mainFlow || '').trim().toLowerCase();
     if (MAIN_CARD_FLOW_VALUES.has(mainFlow)) nextConfig.mainFlow = mainFlow;
     out[key] = nextConfig;
@@ -173,6 +194,17 @@ function inferRelatedFieldItems(collection = null, relationName = '') {
     }
   }
   return Array.from(keys).map((fieldKey) => ({ value: fieldKey, left: fieldKey }));
+}
+
+function getDefaultRelatedCardFieldItems() {
+  return [
+    { key: 'title', label: 'Title' },
+    { key: 'japanese', label: 'Japanese' },
+    { key: 'english', label: 'English' },
+    { key: 'notes', label: 'Notes' },
+    { key: 'sentences', label: 'Sentences' },
+    { key: 'chunks', label: 'Chunks' },
+  ];
 }
 
 function normalizeScrubThresholdMs(value) {
@@ -413,6 +445,7 @@ export function renderKanjiStudyCard({ store }) {
               applyMainCardConfig();
               applyGenericCardConfig();
               applyJsonCardConfig();
+              applyRelatedCardConfig();
             }
 
             // related fields changed
@@ -426,7 +459,10 @@ export function renderKanjiStudyCard({ store }) {
                 resolvedRelatedFieldMaps = { ...resolvedRelated };
                 const api = getCardApi('related', { createIfMissing: false });
                 for (const rn of Object.keys(resolvedRelated || {})) {
-                  try { if (api && typeof api.setFieldsVisible === 'function') api.setFieldsVisible(resolvedRelated[rn]); } catch (e) {}
+                  try {
+                    if (api && typeof api.setCollectionFieldsVisible === 'function') api.setCollectionFieldsVisible(rn, resolvedRelated[rn]);
+                    else if (api && typeof api.setFieldsVisible === 'function') api.setFieldsVisible(resolvedRelated[rn]);
+                  } catch (e) {}
                 }
               } else {
                 resolvedRelatedFieldMaps = null;
@@ -435,14 +471,17 @@ export function renderKanjiStudyCard({ store }) {
                 for (const rel of relatedDefs) {
                   const name = String(rel?.name || '').trim();
                   if (!name) continue;
-                  const items = Array.isArray(rel.fields) ? rel.fields.map(f => ({ value: String(f.key || f), left: f.label || String(f.key || f) })) : RELATED_DEFAULT_ITEMS.slice();
+                  const items = RELATED_DEFAULT_ITEMS.slice();
                   const sel = relatedFieldSelections[name] || 'all';
                   const chosen = (sel === 'all') ? items.map(it => String(it.value || '')) : (Array.isArray(sel) ? sel.slice() : []);
-                  if (api && typeof api.setFieldsVisible === 'function') {
+                  if (api && (typeof api.setCollectionFieldsVisible === 'function' || typeof api.setFieldsVisible === 'function')) {
                     const set = new Set(chosen);
                     const map = {};
                     for (const it of items) map[String(it.value || '')] = set.has(String(it.value || ''));
-                    try { api.setFieldsVisible(map); } catch (e) {}
+                    try {
+                      if (typeof api.setCollectionFieldsVisible === 'function') api.setCollectionFieldsVisible(name, map);
+                      else api.setFieldsVisible(map);
+                    } catch (e) {}
                   }
                 }
               }
@@ -499,9 +538,7 @@ export function renderKanjiStudyCard({ store }) {
     for (const rel of relatedDefs) {
       const name = String(rel?.name || '').trim();
       if (!name) continue;
-      const items = Array.isArray(rel.fields)
-        ? rel.fields.map((f) => ({ value: String(f.key || f), left: f.label || String(f.key || f) }))
-        : RELATED_DEFAULT_ITEMS.slice();
+      const items = RELATED_DEFAULT_ITEMS.slice();
       const sel = relatedFieldSelections[name] || 'all';
       const chosen = (sel === 'all') ? items.map((it) => String(it.value || '')) : (Array.isArray(sel) ? sel.slice() : []);
       const set = new Set(chosen);
@@ -517,7 +554,10 @@ export function renderKanjiStudyCard({ store }) {
     if (cardKey === 'related') {
       const relatedMaps = getRelatedFieldVisibilityMaps();
       for (const name of Object.keys(relatedMaps)) {
-        try { if (typeof api.setFieldsVisible === 'function') api.setFieldsVisible(relatedMaps[name]); } catch (e) {}
+        try {
+          if (typeof api.setCollectionFieldsVisible === 'function') api.setCollectionFieldsVisible(name, relatedMaps[name]);
+          else if (typeof api.setFieldsVisible === 'function') api.setFieldsVisible(relatedMaps[name]);
+        } catch (e) {}
       }
       return;
     }
@@ -617,6 +657,52 @@ export function renderKanjiStudyCard({ store }) {
     return controls ? { ...config, controls } : { ...config };
   }
 
+  function getAvailableRelatedCollections() {
+    return relatedDefs
+      .map((rel) => ({
+        key: String(rel?.name || '').trim(),
+        label: String(rel?.label || rel?.name || '').trim() || String(rel?.name || '').trim(),
+      }))
+      .filter((item) => item.key);
+  }
+
+  function getRelatedCollectionFieldItems() {
+    const out = {};
+    for (const rel of relatedDefs) {
+      const key = String(rel?.name || '').trim();
+      if (!key) continue;
+      out[key] = getDefaultRelatedCardFieldItems();
+    }
+    return out;
+  }
+
+  function getRelatedCardConfig() {
+    const config = cardsConfigState[RELATED_CARD_SETTINGS_KEY] || {};
+    const available = getAvailableRelatedCollections();
+    const allowedCollections = new Set(available.map((item) => item.key));
+    const fieldItems = getRelatedCollectionFieldItems();
+    const defaultFields = getDefaultRelatedCardFieldItems().map((item) => item.key);
+    const collections = Array.isArray(config.collections)
+      ? config.collections.map((item) => String(item || '').trim()).filter((item) => allowedCollections.has(item))
+      : available.map((item) => item.key);
+    const relatedCollections = {};
+    for (const collectionName of collections) {
+      const allowedFields = new Set((fieldItems[collectionName] || []).map((item) => item.key));
+      const raw = (config.relatedCollections && typeof config.relatedCollections === 'object' && !Array.isArray(config.relatedCollections))
+        ? config.relatedCollections[collectionName]
+        : null;
+      const fields = Array.isArray(raw?.fields)
+        ? raw.fields.map((item) => String(item || '').trim()).filter((item) => allowedFields.has(item))
+        : defaultFields.slice();
+      relatedCollections[collectionName] = {
+        fields: fields.length ? fields : defaultFields.slice(),
+        detailsMode: String(raw?.detailsMode || '').trim().toLowerCase() === 'always' ? 'always' : 'click',
+        collapsePrimaryWhenExpanded: !!raw?.collapsePrimaryWhenExpanded,
+      };
+    }
+    return { ...config, collections, relatedCollections };
+  }
+
   function applyMainCardConfig() {
     const mainCardApi = getCardApi('main', { createIfMissing: false });
     if (!mainCardApi) return;
@@ -635,6 +721,15 @@ export function renderKanjiStudyCard({ store }) {
     const jsonCardApi = getCardApi('json', { createIfMissing: false });
     if (!jsonCardApi) return;
     if (typeof jsonCardApi.setConfig === 'function') jsonCardApi.setConfig(getJsonCardConfig());
+  }
+
+  function applyRelatedCardConfig() {
+    const relatedCardApi = getCardApi('related', { createIfMissing: false });
+    if (!relatedCardApi) return;
+    if (typeof relatedCardApi.setAvailableCollections === 'function') {
+      relatedCardApi.setAvailableCollections(getAvailableRelatedCollections(), getRelatedCollectionFieldItems());
+    }
+    if (typeof relatedCardApi.setConfig === 'function') relatedCardApi.setConfig(getRelatedCardConfig());
   }
 
   async function openMainCardSettings() {
@@ -772,9 +867,37 @@ export function renderKanjiStudyCard({ store }) {
     } catch (e) {}
   }
 
-  applyMainCardConfig();
-  applyGenericCardConfig();
-  applyJsonCardConfig();
+  async function openRelatedCardSettings() {
+    const active = store?.collections?.getActiveCollection?.();
+    const key = String(active?.key || '').trim();
+    if (!key) return;
+    const availableCollections = getAvailableRelatedCollections();
+    const currentConfig = getRelatedCardConfig();
+    const next = await openRelatedCardConfigDialog({
+      title: 'Related Card Settings',
+      collections: availableCollections,
+      selectedCollections: Array.isArray(currentConfig.collections) ? currentConfig.collections.slice() : availableCollections.map((item) => item.key),
+      collectionFieldItems: getRelatedCollectionFieldItems(),
+      collectionConfigs: currentConfig.relatedCollections || {},
+      namespace: 'kanjiStudyCardView.cards.kanjiExampleCard.js',
+      collection: key,
+    });
+    if (!next) return;
+    const relatedConfig = {
+      collections: Array.isArray(next.collections) ? next.collections.map((item) => String(item || '').trim()).filter(Boolean) : [],
+      relatedCollections: (next.relatedCollections && typeof next.relatedCollections === 'object' && !Array.isArray(next.relatedCollections))
+        ? { ...next.relatedCollections }
+        : {},
+    };
+    cardsConfigState = {
+      ...cardsConfigState,
+      [RELATED_CARD_SETTINGS_KEY]: relatedConfig,
+    };
+    applyRelatedCardConfig();
+    try {
+      (kanjiController || kanjiStudyController.create(key)).setCardConfig(RELATED_CARD_SETTINGS_KEY, relatedConfig);
+    } catch (e) {}
+  }
 
   // create entry-level dropdown
   const entryFieldsRec = headerTools.addElement({
@@ -813,16 +936,18 @@ export function renderKanjiStudyCard({ store }) {
   const relatedDefs = Array.isArray(coll?.metadata?.relatedCollections) ? coll.metadata.relatedCollections.slice() : [];
   const relatedDropdownControls = {};
   const RELATED_DEFAULT_ITEMS = [
+    { value: 'title', left: 'Title' },
     { value: 'english', left: 'English' },
     { value: 'japanese', left: 'Japanese' },
     { value: 'notes', left: 'Notes' },
+    { value: 'sentences', left: 'Sentences' },
+    { value: 'chunks', left: 'Chunks' },
   ];
 
   for (const rel of relatedDefs) {
     const name = String(rel?.name || '').trim();
     if (!name) continue;
-    const inferredItems = inferRelatedFieldItems(coll, name);
-    const items = inferredItems.length ? inferredItems : RELATED_DEFAULT_ITEMS.slice();
+    const items = RELATED_DEFAULT_ITEMS.slice();
     const sel = relatedFieldSelections[name] || 'all';
     const rec = headerTools.addElement({
       type: 'dropdown', key: `related.${name}.fields`, items, multi: true,
@@ -842,6 +967,11 @@ export function renderKanjiStudyCard({ store }) {
     });
     relatedDropdownControls[name] = rec && rec.control ? rec.control : null;
   }
+
+  applyMainCardConfig();
+  applyGenericCardConfig();
+  applyJsonCardConfig();
+  applyRelatedCardConfig();
 
   // No legacy UI load: visual defaults used.
 
@@ -1113,14 +1243,24 @@ export function renderKanjiStudyCard({ store }) {
 
     let api = null;
     if (cardKey === 'related') {
-        api = cardDef.factory({ entry: null, indexText: '', handlers: {
-          onSpeak: (text) => {
-            if (!text) return;
-            speakText(text, { fieldKey: 'reading' });
+        api = cardDef.factory({
+          entry: null,
+          indexText: '',
+          config: { cardId: RELATED_CARD_SETTINGS_KEY },
+          handlers: {
+            onSpeak: (text) => {
+              if (!text) return;
+              speakText(text, { fieldKey: 'reading' });
+            },
+            onNext: () => {},
+            onPrev: () => {},
+            onOpenConfig: () => { openRelatedCardSettings(); },
           },
-          onNext: () => {},
-          onPrev: () => {},
-        }});
+        });
+        if (api && typeof api.setAvailableCollections === 'function') {
+          api.setAvailableCollections(getAvailableRelatedCollections(), getRelatedCollectionFieldItems());
+        }
+        if (api && typeof api.setConfig === 'function') api.setConfig(getRelatedCardConfig());
     } else if (cardKey === 'main') {
       api = cardDef.factory({
         entry: null,
@@ -1341,6 +1481,7 @@ export function renderKanjiStudyCard({ store }) {
         applyMainCardConfig();
         applyGenericCardConfig();
         applyJsonCardConfig();
+        applyRelatedCardConfig();
 
         // apply resolved maps if controller provided them
         try {
@@ -1353,7 +1494,10 @@ export function renderKanjiStudyCard({ store }) {
               resolvedRelatedFieldMaps = { ...appState.resolved.relatedFieldMaps };
               const api = getCardApi('related', { createIfMissing: false });
               for (const rn of Object.keys(appState.resolved.relatedFieldMaps || {})) {
-                try { if (api && typeof api.setFieldsVisible === 'function') api.setFieldsVisible(appState.resolved.relatedFieldMaps[rn]); } catch (e) {}
+                try {
+                  if (api && typeof api.setCollectionFieldsVisible === 'function') api.setCollectionFieldsVisible(rn, appState.resolved.relatedFieldMaps[rn]);
+                  else if (api && typeof api.setFieldsVisible === 'function') api.setFieldsVisible(appState.resolved.relatedFieldMaps[rn]);
+                } catch (e) {}
               }
             }
           } else {
@@ -1366,15 +1510,16 @@ export function renderKanjiStudyCard({ store }) {
             for (const rel of relatedDefs) {
               const name = String(rel?.name || '').trim();
               if (!name) continue;
-              const items = Array.isArray(rel.fields) ? rel.fields.map(f => String(f.key || f)) : RELATED_DEFAULT_ITEMS.map(it => it.value);
+              const items = RELATED_DEFAULT_ITEMS.map(it => it.value);
               const sel = relatedFieldSelections[name] || 'all';
               const chosen = (sel === 'all') ? items.slice() : (Array.isArray(sel) ? sel.slice() : []);
               const api = getCardApi('related', { createIfMissing: false });
-              if (api && typeof api.setFieldsVisible === 'function') {
+              if (api && (typeof api.setCollectionFieldsVisible === 'function' || typeof api.setFieldsVisible === 'function')) {
                 const set = new Set(chosen);
                 const map = {};
                 for (const v of items) map[v] = set.has(v);
-                api.setFieldsVisible(map);
+                if (typeof api.setCollectionFieldsVisible === 'function') api.setCollectionFieldsVisible(name, map);
+                else api.setFieldsVisible(map);
               }
             }
           }
@@ -1530,6 +1675,7 @@ export function renderKanjiStudyCard({ store }) {
 
     if (displaySet.has('related') && liveRelatedCardApi && typeof liveRelatedCardApi.setEntry === 'function' && cardsToRefresh.has('related')) {
       logCardUpdate('related');
+      if (typeof liveRelatedCardApi.setIndexText === 'function') liveRelatedCardApi.setIndexText(caption);
       liveRelatedCardApi.setEntry(entry);
     }
 
@@ -1765,4 +1911,3 @@ export function renderKanjiStudyCard({ store }) {
   // expose fragment so the shell can mount header -> view -> footer in order
   return frag;
 }
-

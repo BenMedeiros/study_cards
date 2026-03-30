@@ -402,9 +402,7 @@ export function createAppShell({ store, onNavigate }) {
   main.id = 'shell-main';
   const cachedMainHost = document.createElement('div');
   cachedMainHost.id = 'shell-main-cached';
-  const transientMainHost = document.createElement('div');
-  transientMainHost.id = 'shell-main-transient';
-  main.append(cachedMainHost, transientMainHost);
+  main.append(cachedMainHost);
 
   header.append(headerInner);
   header.append(nav);
@@ -775,7 +773,6 @@ export function createAppShell({ store, onNavigate }) {
     return timed(`shell.renderRoute ${path}`, () => {
       renderHeader();
       hideAllCachedRouteMounts();
-      transientMainHost.innerHTML = '';
 
       // Study-time bookkeeping: close previous view session and start the next.
       try {
@@ -845,16 +842,7 @@ export function createAppShell({ store, onNavigate }) {
         return;
       }
 
-      // Inline fallback for missing routes (previously used placeholderView)
-      const nf = document.createElement('div');
-      nf.className = 'placeholder-root';
-      const nh = document.createElement('h2');
-      nh.textContent = 'Not Found';
-      const np = document.createElement('div');
-      np.className = 'hint';
-      np.textContent = `No route for ${route.pathname}`;
-      nf.append(nh, np);
-      transientMainHost.append(nf);
+      throw new Error(`Unhandled route: ${route.pathname}`);
     });
   }
 
