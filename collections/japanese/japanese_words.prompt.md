@@ -30,11 +30,8 @@ Prompt Schema Summary:
 - tags: string[]
   Optional machine-friendly tags. Use short snake_case or existing collection-style tags only when useful.
 
-- ending: string
-  Optional. Use for godan verbs when useful to clarify the ending class, especially ambiguous `-ru` verbs.
-
 Samples:
-[{"kanji":"全部","reading":"ぜんぶ","meaning":"all; entirely","type":"noun"},{"kanji":"直ぐ","reading":"すぐ","meaning":"right away; immediately","type":"adverb","tags":["game-center-story"]},{"kanji":"読む","reading":"よむ","meaning":"to read","type":"godan-verb","ending":"mu"},{"kanji":"ビリビリ","reading":"ビリビリ","meaning":"tingle; electric shock feeling (onomatopoeia)","type":"adverb","tags":["origin:Japanese","pokemon-name-root"],"semanticClass":"onomatopoeia"}]
+[{"kanji":"全部","reading":"ぜんぶ","meaning":"all; entirely","type":"noun"},{"kanji":"直ぐ","reading":"すぐ","meaning":"right away; immediately","type":"adverb","tags":["game-center-story"]},{"kanji":"読む","reading":"よむ","meaning":"to read","type":"godan-verb"},{"kanji":"ビリビリ","reading":"ビリビリ","meaning":"tingle; electric shock feeling (onomatopoeia)","type":"adverb","tags":["origin:Japanese","pokemon-name-root"],"semanticClass":"onomatopoeia"}]
 
 Instructions:
 - Follow the schema exactly.
@@ -44,7 +41,7 @@ Instructions:
 - Keep `kanji` as the canonical headword field even when the most common display form is kana or katakana.
 - Use `reading` in kana only.
 - Keep English meanings short and learner-friendly.
-- Use `semanticClass`, `tags`, and `ending` only when they add clear value.
+- Use `semanticClass` and `tags` only when they add clear value.
 - Use `morpheme` only for bound elements mainly used inside compounds rather than normal standalone words.
 - Use `expression`, `descriptive-phrase`, or `phrase-sentence` for fixed multi-word units when a single-word type would be misleading.
 - For verb entries, use dictionary form.

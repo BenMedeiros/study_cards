@@ -1,0 +1,1175 @@
+{
+  "metadata": {
+    "name": "Japanese Songs",
+    "description": "Song lyrics with learner-friendly sentence-level analysis and chunks.",
+    "version": 1,
+    "category": "japanese",
+    "entry_key": "id",
+    "schema": [
+      {
+        "key": "id",
+        "label": "ID",
+        "jp_label": "ID",
+        "type": "string",
+        "required": true,
+        "description": "Stable unique identifier for the song."
+      },
+      {
+        "key": "title",
+        "label": "Title",
+        "jp_label": "タイトル",
+        "type": "string",
+        "required": true,
+        "description": "Title of the song."
+      },
+      {
+        "key": "artist",
+        "label": "Artist",
+        "jp_label": "アーティスト",
+        "type": "string",
+        "required": false,
+        "description": "Artist or band who performs the song."
+      },
+      {
+        "key": "album",
+        "label": "Album",
+        "jp_label": "アルバム",
+        "type": "string",
+        "required": false,
+        "description": "Album name the song is from."
+      },
+      {
+        "key": "releaseYear",
+        "label": "Release Year",
+        "jp_label": "リリース年",
+        "type": "number",
+        "required": false,
+        "description": "Year the song was released."
+      },
+      {
+        "key": "genre",
+        "label": "Genre",
+        "jp_label": "ジャンル",
+        "type": "array<string>",
+        "required": false,
+        "description": "Genre or genres of the song."
+      },
+      {
+        "key": "ja",
+        "label": "Japanese",
+        "jp_label": "日本語",
+        "type": "string",
+        "required": true,
+        "description": "Full song lyrics in Japanese."
+      },
+      {
+        "key": "en",
+        "label": "English",
+        "jp_label": "英訳",
+        "type": "string",
+        "required": true,
+        "description": "English translation of the song lyrics."
+      },
+      {
+        "key": "notes",
+        "label": "Notes",
+        "jp_label": "メモ",
+        "type": "array<string>",
+        "required": false,
+        "description": "Song-level notes about context, cultural background, or themes."
+      },
+      {
+        "key": "tags",
+        "label": "Tags",
+        "jp_label": "タグ",
+        "type": "array<string>",
+        "required": false,
+        "description": "Optional machine-friendly tags for filtering or grouping."
+      },
+      {
+        "key": "sentences",
+        "label": "Lines",
+        "jp_label": "歌詞行",
+        "type": "array<paragraphSentence>",
+        "required": true,
+        "description": "Ordered song lines composing the song. Each line may have its own chunk list."
+      }
+    ],
+    "schemaTypes": {
+      "paragraphSentence": {
+        "description": "A sentence inside a longer learner reading passage.",
+        "fields": [
+          {
+            "key": "ja",
+            "label": "Sentence Japanese",
+            "jp_label": "文日本語",
+            "type": "string",
+            "required": true,
+            "description": "Japanese sentence exactly as it appears in the passage."
+          },
+          {
+            "key": "en",
+            "label": "Sentence English",
+            "jp_label": "文英訳",
+            "type": "string",
+            "required": true,
+            "description": "Natural English translation of the standalone sentence."
+          },
+          {
+            "key": "notes",
+            "label": "Sentence Notes",
+            "jp_label": "文メモ",
+            "type": "array<string>",
+            "required": false,
+            "description": "Sentence-specific nuance or reading notes."
+          },
+          {
+            "key": "pattern",
+            "label": "Pattern",
+            "jp_label": "文型",
+            "type": "string",
+            "required": false,
+            "description": "Reusable grammar pattern highlighted in the sentence."
+          },
+          {
+            "key": "chunks",
+            "label": "Chunks",
+            "jp_label": "チャンク",
+            "type": "array<sentenceChunk>",
+            "required": true,
+            "description": "Ordered learner chunks inside the sentence."
+          }
+        ]
+      },
+      "sentenceChunk": {
+        "description": "A learner reading unit inside a sentence within a paragraph.",
+        "fields": [
+          {
+            "key": "ja",
+            "label": "Chunk Japanese",
+            "jp_label": "チャンク日本語",
+            "type": "string",
+            "required": true,
+            "description": "Japanese surface text for this chunk exactly as it appears."
+          },
+          {
+            "key": "gloss",
+            "label": "Gloss",
+            "jp_label": "意味",
+            "type": "string",
+            "required": true,
+            "description": "Short learner-friendly meaning or paraphrase."
+          },
+          {
+            "key": "focus",
+            "label": "Grammar Focus",
+            "jp_label": "文型",
+            "type": "string",
+            "required": false,
+            "description": "Canonical grammar or reading focus for this chunk."
+          },
+          {
+            "key": "refs",
+            "label": "References",
+            "jp_label": "参照語",
+            "type": "array<string>",
+            "required": true,
+            "description": "Lookup keys for content words or grammar patterns used in this chunk."
+          }
+        ]
+      }
+    }
+  },
+  "entries": [
+    {
+      "id": "the-hero-ikareru-kobushi-ni-hi-o-tsukero",
+      "title": "THE HERO!! ～怒れる拳に火をつけろ～",
+      "artist": "JAM Project",
+      "album": "One Punch Man Opening Theme",
+      "releaseYear": 2015,
+      "genre": [
+        "anime-opening",
+        "rock",
+        "pop"
+      ],
+      "ja": "ONE PUNCH！\n(Three！ Two！ One！ Kill shot！)\n参上！　必勝！　至上最強！！\nなんだってんだ？　フラストレーション　俺は止まらない\n\nONE PUNCH！　完了！　連戦連勝！\n俺は喝！！　常に勝つ！！　圧勝！！\n\nPower！ Get power！　ギリギリ限界まで\n\nHERO　俺を讃える声や　喝采なんて　欲しくはないさ\nHERO　だから　人知れず　悪と闘う\n(Nobody knows who he is.)\n天(そら)覆い　押し寄せる敵　俺は背を向けはしない\nHERO　ならば　揺るぎなき覚悟したため　繰り出せ鉄拳\n\n(Three！ Two！ One！ Fight back！)\n参上！ Go on！　正々堂々！！\nどうなってんだ？　なにも感じねぇ　もはや敵居ねー！\n\nJUSTICE！　執行！　問答無用！\n俺が断つ！！　悪を断つ！！　合掌！！\n\nPower！ Get power！　アドレナリン溢れ出すぜ！\nPower！ Get power！　鍛えた技をぶちかませ！\n\nHERO　どんなに　強い奴も　ちっぽけなガキだったんだ\nHERO　弱き　己乗り越え　強くなる\n(Nobody knows who he is.)\n神宿る　拳掲げて　俺は突き進むだけさ\nHERO　いつか　敗北に汚泥なめるまで　闘うHERO\n\n俺は諦めない　その胸に未来(あす)を描き\n目覚め行く　世界へ今　舞い上がれ　強く高く\nどんな時でも　なにがあっても\n\nHERO　俺を讃える声や　喝采なんて　欲しくはないさ\nHERO　だから　人知れず　悪と闘う\n(Nobody knows who he is.)\n神宿る　拳掲げて　俺は突き進むだけさ\nHERO　いつか　敗北に汚泥なめるまで　闘うHERO\n孤独なHERO",
+      "en": "ONE PUNCH!\n(Three! Two! One! Kill shot!)\nHere I come! Certain victory! The absolute strongest!!\nWhat is this? Frustration—I will not stop.\n\nONE PUNCH! Complete! Battle after battle, victory after victory!\nI roar!! I always win!! Total victory!!\n\nPower! Get power! Right up to the very limit.\n\nHERO—I do not want voices praising me or applause.\nHERO—so I fight evil without anyone knowing.\n(Nobody knows who he is.)\nAs enemies surge in and cover the sky, I will not turn my back.\nHERO—then, with unwavering resolve prepared, unleash the iron fist.\n\n(Three! Two! One! Fight back!)\nHere I come! Go on! Fair and square!!\nWhat is going on? I do not feel anything anymore—there are no enemies left!\n\nJUSTICE! Execute! No questions asked!\nI cut down evil!! I sever evil!! Hands together in prayer!!\n\nPower! Get power! Adrenaline is overflowing!\nPower! Get power! Unleash the techniques you have trained!\n\nHERO—even the strongest guy was once just a tiny kid.\nHERO—overcoming the weak self, one becomes strong.\n(Nobody knows who he is.)\nWith a god dwelling in my raised fist, I simply keep charging ahead.\nHERO—until someday I taste defeat in the mud, I will fight, HERO.\n\nI will not give up; I draw the future in my heart.\nInto the awakening world now—rise up, strong and high.\nAt any time, no matter what happens.\n\nHERO—I do not want voices praising me or applause.\nHERO—so I fight evil without anyone knowing.\n(Nobody knows who he is.)\nWith a god dwelling in my raised fist, I simply keep charging ahead.\nHERO—until someday I taste defeat in the mud, I will fight, HERO.\nA lonely HERO.",
+      "notes": [
+        "Opening theme for One Punch Man anime.",
+        "Features both Japanese and English lyrics mixed throughout.",
+        "High-energy motivational song with anime action theme."
+      ],
+      "tags": [
+        "song-lyrics",
+        "anime-opening",
+        "opm-song-the_hero"
+      ],
+      "sentences": [
+        {
+          "ja": "ONE PUNCH！",
+          "en": "ONE PUNCH!",
+          "chunks": [
+            {
+              "ja": "ONE PUNCH",
+              "gloss": "one punch",
+              "refs": [
+                "パンチ"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "(Three！ Two！ One！ Kill shot！)",
+          "en": "(Three! Two! One! Kill shot!)",
+          "chunks": [
+            {
+              "ja": "Three！ Two！ One！ Kill shot",
+              "gloss": "three, two, one, kill shot",
+              "refs": [
+                "キル",
+                "ショット"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "参上！　必勝！　至上最強！！",
+          "en": "Here I come! Certain victory! The absolute strongest!",
+          "chunks": [
+            {
+              "ja": "参上",
+              "gloss": "dramatic arrival",
+              "refs": [
+                "参上"
+              ]
+            },
+            {
+              "ja": "必勝",
+              "gloss": "certain victory",
+              "refs": [
+                "必勝"
+              ]
+            },
+            {
+              "ja": "至上最強",
+              "gloss": "supremely strongest",
+              "refs": [
+                "至上最強"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "なんだってんだ？　フラストレーション　俺は止まらない",
+          "en": "What is this anyway? Frustration—I will not stop.",
+          "chunks": [
+            {
+              "ja": "なんだってんだ",
+              "gloss": "what the heck is this",
+              "refs": []
+            },
+            {
+              "ja": "フラストレーション",
+              "gloss": "frustration",
+              "refs": [
+                "フラストレーション"
+              ]
+            },
+            {
+              "ja": "俺は止まらない",
+              "gloss": "I will not stop",
+              "refs": [
+                "俺",
+                "止まる"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "ONE PUNCH！　完了！　連戦連勝！",
+          "en": "ONE PUNCH! Complete! Victory after victory!",
+          "chunks": [
+            {
+              "ja": "ONE PUNCH",
+              "gloss": "one punch",
+              "refs": [
+                "パンチ"
+              ]
+            },
+            {
+              "ja": "完了",
+              "gloss": "complete",
+              "refs": [
+                "完了"
+              ]
+            },
+            {
+              "ja": "連戦連勝",
+              "gloss": "battle after battle, victory after victory",
+              "refs": [
+                "連戦連勝"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "俺は喝！！　常に勝つ！！　圧勝！！",
+          "en": "I roar! I always win! Total victory!",
+          "chunks": [
+            {
+              "ja": "俺は喝",
+              "gloss": "I shout",
+              "refs": [
+                "俺",
+                "喝"
+              ]
+            },
+            {
+              "ja": "常に勝つ",
+              "gloss": "always win",
+              "refs": [
+                "常に",
+                "勝つ"
+              ]
+            },
+            {
+              "ja": "圧勝",
+              "gloss": "overwhelming victory",
+              "refs": [
+                "圧勝"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "Power！ Get power！　ギリギリ限界まで",
+          "en": "Power! Get power! Right up to the very limit.",
+          "chunks": [
+            {
+              "ja": "Power！ Get power！",
+              "gloss": "power, get power",
+              "refs": [
+                "パワー"
+              ]
+            },
+            {
+              "ja": "ギリギリ限界まで",
+              "gloss": "up to the absolute limit",
+              "refs": [
+                "ギリギリ",
+                "限界"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "HERO　俺を讃える声や　喝采なんて　欲しくはないさ",
+          "en": "HERO—I do not want voices praising me or applause.",
+          "chunks": [
+            {
+              "ja": "HERO",
+              "gloss": "hero",
+              "refs": [
+                "ヒーロー"
+              ]
+            },
+            {
+              "ja": "俺を讃える声や",
+              "gloss": "voices praising me",
+              "refs": [
+                "俺",
+                "讃える",
+                "声"
+              ]
+            },
+            {
+              "ja": "喝采なんて",
+              "gloss": "things like applause",
+              "refs": [
+                "喝采"
+              ]
+            },
+            {
+              "ja": "欲しくはないさ",
+              "gloss": "I do not want",
+              "refs": [
+                "欲しい"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "HERO　だから　人知れず　悪と闘う",
+          "en": "HERO—so I fight evil without anyone knowing.",
+          "chunks": [
+            {
+              "ja": "HERO",
+              "gloss": "hero",
+              "refs": [
+                "ヒーロー"
+              ]
+            },
+            {
+              "ja": "だから　人知れず",
+              "gloss": "therefore, secretly",
+              "refs": [
+                "人知れず"
+              ]
+            },
+            {
+              "ja": "悪と闘う",
+              "gloss": "fight evil",
+              "refs": [
+                "悪",
+                "闘う"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "(Nobody knows who he is.)",
+          "en": "(Nobody knows who he is.)",
+          "chunks": [
+            {
+              "ja": "Nobody knows who he is",
+              "gloss": "nobody knows who he is",
+              "refs": []
+            }
+          ]
+        },
+        {
+          "ja": "天(そら)覆い　押し寄せる敵　俺は背を向けはしない",
+          "en": "As enemies surge in and cover the sky, I will not turn my back.",
+          "chunks": [
+            {
+              "ja": "天(そら)覆い",
+              "gloss": "covering the sky",
+              "refs": [
+                "天",
+                "覆う"
+              ]
+            },
+            {
+              "ja": "押し寄せる敵",
+              "gloss": "enemies pressing in",
+              "refs": [
+                "押し寄せる",
+                "敵"
+              ]
+            },
+            {
+              "ja": "俺は背を向けはしない",
+              "gloss": "I will not turn my back",
+              "refs": [
+                "俺",
+                "背",
+                "向ける"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "HERO　ならば　揺るぎなき覚悟したため　繰り出せ鉄拳",
+          "en": "HERO—then, with unwavering resolve prepared, unleash the iron fist.",
+          "chunks": [
+            {
+              "ja": "HERO",
+              "gloss": "hero",
+              "refs": [
+                "ヒーロー"
+              ]
+            },
+            {
+              "ja": "ならば",
+              "gloss": "if so, then",
+              "refs": []
+            },
+            {
+              "ja": "揺るぎなき覚悟したため",
+              "gloss": "having prepared unwavering resolve",
+              "refs": [
+                "揺るぎなき",
+                "覚悟"
+              ]
+            },
+            {
+              "ja": "繰り出せ鉄拳",
+              "gloss": "unleash the iron fist",
+              "refs": [
+                "繰り出す",
+                "鉄拳"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "(Three！ Two！ One！ Fight back！)",
+          "en": "(Three! Two! One! Fight back!)",
+          "chunks": [
+            {
+              "ja": "Three！ Two！ One！ Fight back",
+              "gloss": "three, two, one, fight back",
+              "refs": []
+            }
+          ]
+        },
+        {
+          "ja": "参上！ Go on！　正々堂々！！",
+          "en": "Here I come! Go on! Fair and square!",
+          "chunks": [
+            {
+              "ja": "参上",
+              "gloss": "here I come",
+              "refs": [
+                "参上"
+              ]
+            },
+            {
+              "ja": "Go on",
+              "gloss": "go on",
+              "refs": []
+            },
+            {
+              "ja": "正々堂々",
+              "gloss": "fair and square",
+              "refs": [
+                "正々堂々"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "どうなってんだ？　なにも感じねぇ　もはや敵居ねー！",
+          "en": "What is going on? I do not feel anything anymore—there are no enemies left!",
+          "chunks": [
+            {
+              "ja": "どうなってんだ",
+              "gloss": "what is going on",
+              "refs": []
+            },
+            {
+              "ja": "なにも感じねぇ",
+              "gloss": "I do not feel anything",
+              "refs": [
+                "感じる"
+              ]
+            },
+            {
+              "ja": "もはや敵居ねー",
+              "gloss": "there are no enemies left anymore",
+              "refs": [
+                "敵",
+                "居る"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "JUSTICE！　執行！　問答無用！",
+          "en": "JUSTICE! Execute! No questions asked!",
+          "chunks": [
+            {
+              "ja": "JUSTICE",
+              "gloss": "justice",
+              "refs": [
+                "ジャスティス"
+              ]
+            },
+            {
+              "ja": "執行",
+              "gloss": "execution",
+              "refs": [
+                "執行"
+              ]
+            },
+            {
+              "ja": "問答無用",
+              "gloss": "no questions asked",
+              "refs": [
+                "問答無用"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "俺が断つ！！　悪を断つ！！　合掌！！",
+          "en": "I cut it down!! I sever evil!! Prayer hands!!",
+          "chunks": [
+            {
+              "ja": "俺が断つ",
+              "gloss": "I cut it down",
+              "refs": [
+                "俺",
+                "断つ"
+              ]
+            },
+            {
+              "ja": "悪を断つ",
+              "gloss": "cut down evil",
+              "refs": [
+                "悪",
+                "断つ"
+              ]
+            },
+            {
+              "ja": "合掌",
+              "gloss": "hands together in prayer",
+              "refs": [
+                "合掌"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "Power！ Get power！　アドレナリン溢れ出すぜ！",
+          "en": "Power! Get power! Adrenaline is overflowing!",
+          "chunks": [
+            {
+              "ja": "Power！ Get power！",
+              "gloss": "power, get power",
+              "refs": [
+                "パワー"
+              ]
+            },
+            {
+              "ja": "アドレナリン溢れ出すぜ",
+              "gloss": "adrenaline overflows",
+              "refs": [
+                "アドレナリン",
+                "溢れ出す"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "Power！ Get power！　鍛えた技をぶちかませ！",
+          "en": "Power! Get power! Unleash the techniques you have trained!",
+          "chunks": [
+            {
+              "ja": "Power！ Get power！",
+              "gloss": "power, get power",
+              "refs": [
+                "パワー"
+              ]
+            },
+            {
+              "ja": "鍛えた技を",
+              "gloss": "the techniques you trained",
+              "refs": [
+                "鍛える",
+                "技"
+              ]
+            },
+            {
+              "ja": "ぶちかませ",
+              "gloss": "let it rip, smash it in",
+              "refs": [
+                "ぶちかます"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "HERO　どんなに　強い奴も　ちっぽけなガキだったんだ",
+          "en": "HERO—even the strongest guy was once just a tiny kid.",
+          "chunks": [
+            {
+              "ja": "HERO",
+              "gloss": "hero",
+              "refs": [
+                "ヒーロー"
+              ]
+            },
+            {
+              "ja": "どんなに　強い奴も",
+              "gloss": "even a very strong guy",
+              "refs": [
+                "強い",
+                "奴"
+              ]
+            },
+            {
+              "ja": "ちっぽけなガキだったんだ",
+              "gloss": "was just a tiny kid",
+              "refs": [
+                "ちっぽけ",
+                "ガキ"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "HERO　弱き　己乗り越え　強くなる",
+          "en": "HERO—overcoming the weak self, one becomes strong.",
+          "chunks": [
+            {
+              "ja": "HERO",
+              "gloss": "hero",
+              "refs": [
+                "ヒーロー"
+              ]
+            },
+            {
+              "ja": "弱き　己",
+              "gloss": "the weak self",
+              "refs": [
+                "弱い",
+                "己"
+              ]
+            },
+            {
+              "ja": "乗り越え",
+              "gloss": "overcoming",
+              "refs": [
+                "乗り越える"
+              ]
+            },
+            {
+              "ja": "強くなる",
+              "gloss": "become strong",
+              "refs": [
+                "強い",
+                "なる"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "(Nobody knows who he is.)",
+          "en": "(Nobody knows who he is.)",
+          "chunks": [
+            {
+              "ja": "Nobody knows who he is",
+              "gloss": "nobody knows who he is",
+              "refs": []
+            }
+          ]
+        },
+        {
+          "ja": "神宿る　拳掲げて　俺は突き進むだけさ",
+          "en": "With a god dwelling in my raised fist, I simply keep charging ahead.",
+          "chunks": [
+            {
+              "ja": "神宿る",
+              "gloss": "god-dwelling, divinely inhabited",
+              "refs": [
+                "神宿る"
+              ]
+            },
+            {
+              "ja": "拳掲げて",
+              "gloss": "raising my fist",
+              "refs": [
+                "拳",
+                "掲げる"
+              ]
+            },
+            {
+              "ja": "俺は突き進むだけさ",
+              "gloss": "I simply keep charging ahead",
+              "refs": [
+                "俺",
+                "突き進む"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "HERO　いつか　敗北に汚泥なめるまで　闘うHERO",
+          "en": "HERO—until someday I taste defeat in the mud, I will fight, HERO.",
+          "chunks": [
+            {
+              "ja": "HERO",
+              "gloss": "hero",
+              "refs": [
+                "ヒーロー"
+              ]
+            },
+            {
+              "ja": "いつか",
+              "gloss": "someday",
+              "refs": []
+            },
+            {
+              "ja": "敗北に汚泥なめるまで",
+              "gloss": "until tasting defeat in the mud",
+              "refs": [
+                "敗北",
+                "汚泥"
+              ]
+            },
+            {
+              "ja": "闘うHERO",
+              "gloss": "the hero who fights",
+              "refs": [
+                "闘う",
+                "ヒーロー"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "俺は諦めない　その胸に未来(あす)を描き",
+          "en": "I will not give up; I draw the future in my heart.",
+          "chunks": [
+            {
+              "ja": "俺は諦めない",
+              "gloss": "I will not give up",
+              "refs": [
+                "俺",
+                "諦める"
+              ]
+            },
+            {
+              "ja": "その胸に",
+              "gloss": "in that heart",
+              "refs": [
+                "胸"
+              ]
+            },
+            {
+              "ja": "未来(あす)を描き",
+              "gloss": "drawing the future",
+              "refs": [
+                "未来",
+                "描く"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "目覚め行く　世界へ今　舞い上がれ　強く高く",
+          "en": "Into the awakening world now—rise up, strong and high.",
+          "chunks": [
+            {
+              "ja": "目覚め行く",
+              "gloss": "awakening, moving into wakefulness",
+              "refs": [
+                "目覚める"
+              ]
+            },
+            {
+              "ja": "世界へ今",
+              "gloss": "to the world, now",
+              "refs": [
+                "世界",
+                "今"
+              ]
+            },
+            {
+              "ja": "舞い上がれ",
+              "gloss": "rise up, soar",
+              "refs": [
+                "舞い上がる"
+              ]
+            },
+            {
+              "ja": "強く高く",
+              "gloss": "strong and high",
+              "refs": [
+                "強い",
+                "高い"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "どんな時でも　なにがあっても",
+          "en": "At any time, no matter what happens.",
+          "chunks": [
+            {
+              "ja": "どんな時でも",
+              "gloss": "at any time",
+              "refs": [
+                "時"
+              ]
+            },
+            {
+              "ja": "なにがあっても",
+              "gloss": "no matter what happens",
+              "refs": []
+            }
+          ]
+        },
+        {
+          "ja": "HERO　俺を讃える声や　喝采なんて　欲しくはないさ",
+          "en": "HERO—I do not want voices praising me or applause.",
+          "chunks": [
+            {
+              "ja": "HERO",
+              "gloss": "hero",
+              "refs": [
+                "ヒーロー"
+              ]
+            },
+            {
+              "ja": "俺を讃える声や",
+              "gloss": "voices praising me",
+              "refs": [
+                "俺",
+                "讃える",
+                "声"
+              ]
+            },
+            {
+              "ja": "喝采なんて",
+              "gloss": "things like applause",
+              "refs": [
+                "喝采"
+              ]
+            },
+            {
+              "ja": "欲しくはないさ",
+              "gloss": "I do not want",
+              "refs": [
+                "欲しい"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "HERO　だから　人知れず　悪と闘う",
+          "en": "HERO—so I fight evil without anyone knowing.",
+          "chunks": [
+            {
+              "ja": "HERO",
+              "gloss": "hero",
+              "refs": [
+                "ヒーロー"
+              ]
+            },
+            {
+              "ja": "だから　人知れず",
+              "gloss": "therefore, secretly",
+              "refs": [
+                "人知れず"
+              ]
+            },
+            {
+              "ja": "悪と闘う",
+              "gloss": "fight evil",
+              "refs": [
+                "悪",
+                "闘う"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "(Nobody knows who he is.)",
+          "en": "(Nobody knows who he is.)",
+          "chunks": [
+            {
+              "ja": "Nobody knows who he is",
+              "gloss": "nobody knows who he is",
+              "refs": []
+            }
+          ]
+        },
+        {
+          "ja": "神宿る　拳掲げて　俺は突き進むだけさ",
+          "en": "With a god dwelling in my raised fist, I simply keep charging ahead.",
+          "chunks": [
+            {
+              "ja": "神宿る",
+              "gloss": "god-dwelling, divinely inhabited",
+              "refs": [
+                "神宿る"
+              ]
+            },
+            {
+              "ja": "拳掲げて",
+              "gloss": "raising my fist",
+              "refs": [
+                "拳",
+                "掲げる"
+              ]
+            },
+            {
+              "ja": "俺は突き進むだけさ",
+              "gloss": "I simply keep charging ahead",
+              "refs": [
+                "俺",
+                "突き進む"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "HERO　いつか　敗北に汚泥なめるまで　闘うHERO",
+          "en": "HERO—until someday I taste defeat in the mud, I will fight, HERO.",
+          "chunks": [
+            {
+              "ja": "HERO",
+              "gloss": "hero",
+              "refs": [
+                "ヒーロー"
+              ]
+            },
+            {
+              "ja": "いつか",
+              "gloss": "someday",
+              "refs": []
+            },
+            {
+              "ja": "敗北に汚泥なめるまで",
+              "gloss": "until tasting defeat in the mud",
+              "refs": [
+                "敗北",
+                "汚泥"
+              ]
+            },
+            {
+              "ja": "闘うHERO",
+              "gloss": "the hero who fights",
+              "refs": [
+                "闘う",
+                "ヒーロー"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "孤独なHERO",
+          "en": "A lonely HERO.",
+          "chunks": [
+            {
+              "ja": "孤独なHERO",
+              "gloss": "a lonely hero",
+              "refs": [
+                "孤独",
+                "ヒーロー"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kizuna-no-kiseki",
+      "title": "絆ノ奇跡",
+      "artist": "MAN WITH A MISSION & milet",
+      "album": "絆ノ奇跡 / コイコガレ",
+      "releaseYear": 2023,
+      "genre": [
+        "anime",
+        "rock",
+        "pop"
+      ],
+      "ja": "闇夜を駆け抜けて　何処へ向かう\n月明かりだけがただ一つの道標\n痛みも悲しみも拭いきれず\nされどこの胸の炎は消させない\n誰が為に僕たちは\nこの想いを貫いて\n闇を裂き　陽の下で\n光さす日まで\n解き放たれた心に宿した火よ\n舞い上げ、まとえ　今　夜明けの向こう側へ\n君がいるこの世界もう一度愛せるまで\n我が命　果てようとも　繋いで行こう\n絆が紡いで生まれた奇跡を\n喜怒哀楽　夢　揺らめいてる現世\n互いの正義をまた繰り返し振りかざす\n誰が為に繋ぐ命\n交わりもつれる運命\n蛇の道　数多の罪\n全て薙ぎ払え\n解き放て今　僕らが起こした火を\n舞い上げ走れば明日が変わるはず\n君といるこの世界二度と離さずに\n君と共に行く\n瞼を閉じても思い出すあの日を\n打ちのめされても焦がれた未来を\nいつの日か君に捧げてみせよう\n解き放たれた心に宿した火よ\n舞い上げ、まとえ　今　夜明けの向こうへ\n解き放て今　僕らが起こした火を\n舞い上げ走れば\n明日が変わるはず\n君がいたこの世界もう一度愛せるまで\n我が命　果てようとも　繋げていくよ\n絆が紡いで生まれた奇跡を",
+      "en": "Racing through the dark night, where are we heading?\nMoonlight alone is the single guidepost.\nI still cannot fully wipe away the pain or the sorrow,\nand yet I will not let the flame in this chest be extinguished.\nFor whose sake do we\ncarry these feelings through to the end?\nTearing through the darkness, beneath the sun,\nuntil the day the light shines through.\nO fire dwelling in the heart that has been set free,\nrise up and cloak us now, to the far side of dawn.\nUntil I can love this world you are in once more,\neven if my life comes to an end, let us keep connecting onward.\nThe miracle born from bonds spun together.\nJoy, anger, sorrow, delight, dreams, this flickering present world.\nWe once again brandish our own forms of justice again and again.\nFor whose sake are these lives connected?\nIntertwining, entangling fate,\nthe serpent's path, the countless sins,\nsweep it all away.\nSet it free now, the fire we ignited.\nIf we rise up and run, tomorrow should change.\nIn this world where you are, never letting go again,\nI will go on together with you.\nEven when I close my eyes, I remember that day.\nEven if I am beaten down, I remember the future I longed for.\nSomeday I will surely dedicate it to you.\nO fire dwelling in the heart that has been set free,\nrise up and cloak us now, toward the other side of dawn.\nSet it free now, the fire we ignited.\nIf we rise up and run,\ntomorrow should change.\nUntil I can love this world you were in once more,\neven if my life comes to an end, I will keep carrying it on.\nThe miracle born from bonds spun together.",
+      "notes": [
+        "Japanese lyrics were added from a user-provided paste and still include inline reading hints.",
+        "Opening theme song for Demon Slayer: Kimetsu no Yaiba Swordsmith Village Arc."
+      ],
+      "tags": [
+        "song-lyrics",
+        "anime-opening",
+        "demon-slayer",
+        "man-with-a-mission",
+        "milet"
+      ],
+      "sentences": 
+        [
+          {
+            "ja": "闇夜を駆け抜けて　何処へ向かう",
+            "en": "Running through the dark night, where are we heading?",
+            "chunks": [
+              { "ja": "闇夜を駆け抜けて", "gloss": "running through the dark night", "refs": ["闇夜", "駆け抜ける"] },
+              { "ja": "何処へ向かう", "gloss": "where are we heading", "refs": ["何処", "向かう"] }
+            ]
+          },
+          {
+            "ja": "月明かりだけがただ一つの道標",
+            "en": "The moonlight alone is the only guidepost.",
+            "chunks": [
+              { "ja": "月明かりだけが", "gloss": "only the moonlight", "refs": ["月明かり"] },
+              { "ja": "ただ一つの道標", "gloss": "the single guidepost", "refs": ["一つ", "道標"] }
+            ]
+          },
+          {
+            "ja": "痛みも悲しみも拭いきれず",
+            "en": "Unable to fully wipe away pain or sorrow,",
+            "chunks": [
+              { "ja": "痛みも悲しみも", "gloss": "pain and sorrow", "refs": ["痛み", "悲しみ"] },
+              { "ja": "拭いきれず", "gloss": "unable to wipe away completely", "refs": ["拭う"] }
+            ]
+          },
+          {
+            "ja": "されどこの胸の炎は消させない",
+            "en": "Yet I will not let the flame in my heart go out.",
+            "chunks": [
+              { "ja": "されど", "gloss": "yet, nevertheless", "refs": ["されど"] },
+              { "ja": "この胸の炎は", "gloss": "the flame in this chest", "refs": ["胸", "炎"] },
+              { "ja": "消させない", "gloss": "will not let it go out", "refs": ["消す"] }
+            ]
+          },
+          {
+            "ja": "誰が為に僕たちは",
+            "en": "For whose sake are we",
+            "chunks": [
+              { "ja": "誰が為に", "gloss": "for whose sake", "refs": ["誰", "為"] },
+              { "ja": "僕たちは", "gloss": "we", "refs": ["僕"] }
+            ]
+          },
+          {
+            "ja": "この想いを貫いて",
+            "en": "carrying these feelings through.",
+            "chunks": [
+              { "ja": "この想いを", "gloss": "these feelings", "refs": ["想い"] },
+              { "ja": "貫いて", "gloss": "carry through / stay true to", "refs": ["貫く"] }
+            ]
+          },
+          {
+            "ja": "闇を裂き　陽の下で",
+            "en": "Tearing through the darkness, under the sun,",
+            "chunks": [
+              { "ja": "闇を裂き", "gloss": "tear through darkness", "refs": ["闇", "裂く"] },
+              { "ja": "陽の下で", "gloss": "under the sun", "refs": ["陽", "下"] }
+            ]
+          },
+          {
+            "ja": "光さす日まで",
+            "en": "until the day the light shines.",
+            "chunks": [
+              { "ja": "光さす日まで", "gloss": "until the day light shines", "refs": ["光", "日"] }
+            ]
+          },
+          {
+            "ja": "解き放たれた心に宿した火よ",
+            "en": "O fire dwelling in a liberated heart,",
+            "chunks": [
+              { "ja": "解き放たれた心に", "gloss": "in a freed heart", "refs": ["解き放たれる", "心"] },
+              { "ja": "宿した火よ", "gloss": "the fire that dwells", "refs": ["宿す", "火"] }
+            ]
+          },
+          {
+            "ja": "舞い上げ、まとえ　今　夜明けの向こう側へ",
+            "en": "Rise up, wrap yourself in it—now, to the other side of dawn.",
+            "chunks": [
+              { "ja": "舞い上げ、まとえ", "gloss": "rise up, wrap yourself", "refs": ["舞い上がる", "まとう"] },
+              { "ja": "今", "gloss": "now", "refs": ["今"] },
+              { "ja": "夜明けの向こう側へ", "gloss": "to the other side of dawn", "refs": ["夜明け", "向こう側"] }
+            ]
+          },
+          {
+            "ja": "君がいるこの世界もう一度愛せるまで",
+            "en": "Until I can love this world you are in once more,",
+            "chunks": [
+              { "ja": "君がいるこの世界", "gloss": "this world where you are", "refs": ["君", "世界"] },
+              { "ja": "もう一度愛せるまで", "gloss": "until I can love it again", "refs": ["一度", "愛する"] }
+            ]
+          },
+          {
+            "ja": "我が命　果てようとも　繋いで行こう",
+            "en": "Even if my life ends, let us keep going, connected.",
+            "chunks": [
+              { "ja": "我が命　果てようとも", "gloss": "even if my life ends", "refs": ["命", "果てる"] },
+              { "ja": "繋いで行こう", "gloss": "let's stay connected and move forward", "refs": ["繋ぐ", "行く"] }
+            ]
+          }
+        ]
+
+    }
+  ]
+}
