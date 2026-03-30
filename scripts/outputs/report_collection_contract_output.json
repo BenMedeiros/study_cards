@@ -1,17 +1,82 @@
 {
-  "generatedAt": "2026-03-28T21:41:39.835Z",
+  "generatedAt": "2026-03-30T18:58:57.967Z",
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_collection_contract_output.json",
   "runTiming": {
-    "startedAt": "2026-03-28T21:41:39.776Z",
-    "finishedAt": "2026-03-28T21:41:39.836Z",
-    "durationMs": 60,
-    "durationSeconds": 0.06
+    "startedAt": "2026-03-30T18:58:57.919Z",
+    "finishedAt": "2026-03-30T18:58:57.968Z",
+    "durationMs": 49,
+    "durationSeconds": 0.049
   },
-  "scannedCollections": 13,
-  "collectionsWithProblems": 2,
+  "scannedCollections": 18,
+  "collectionsWithProblems": 10,
   "parseErrors": [],
   "reports_clean": [
+    {
+      "collectionPath": "collections/general/languageHistory.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "stage",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/general/numbers.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "letter",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/general/periodic_table.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "atomicNumber",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/general/pokemon.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "pokedexNumber",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/general/programming.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "language",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
     {
       "collectionPath": "collections/greek/greek_alphabet.json",
       "valid": true,
@@ -50,59 +115,36 @@
       "entryErrorCount": 0,
       "entryWarningCount": 0,
       "duplicateCount": 0
-    },
+    }
+  ],
+  "reports_review": [
     {
       "collectionPath": "collections/japanese/japanese_paragraphs.json",
-      "valid": true,
+      "valid": false,
       "arrayKey": "entries",
       "entryKeyField": "id",
-      "collectionErrors": [],
-      "collectionWarnings": [],
-      "schemaErrors": [],
-      "schemaWarnings": [
+      "collectionErrors": [
         {
-          "message": "Field 'notes' has unknown type 'array<string>'."
-        },
-        {
-          "message": "Field 'tags' has unknown type 'array<string>'."
-        },
-        {
-          "message": "Field 'sentences' has unknown type 'array<paragraphSentence>'."
+          "message": "$.metadata.schema must be array; received string."
         }
       ],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
       "entryErrorCount": 0,
       "entryWarningCount": 0,
       "duplicateCount": 0
     },
     {
       "collectionPath": "collections/japanese/japanese_sentences.json",
-      "valid": true,
+      "valid": false,
       "arrayKey": "entries",
       "entryKeyField": "ja",
-      "collectionErrors": [],
-      "collectionWarnings": [],
-      "schemaErrors": [],
-      "schemaWarnings": [
+      "collectionErrors": [
         {
-          "message": "Field 'notes' has unknown type 'array<string>'."
-        },
-        {
-          "message": "Field 'grammarNotes' has unknown type 'array<string>'."
-        },
-        {
-          "message": "Field 'chunks' has unknown type 'array<sentenceChunk>'."
+          "message": "$.metadata.schema must be array; received string."
         }
       ],
-      "entryErrorCount": 0,
-      "entryWarningCount": 0,
-      "duplicateCount": 0
-    },
-    {
-      "collectionPath": "collections/languageHistory.json",
-      "valid": true,
-      "arrayKey": "entries",
-      "entryKeyField": "stage",
-      "collectionErrors": [],
       "collectionWarnings": [],
       "schemaErrors": [],
       "schemaWarnings": [],
@@ -111,11 +153,24 @@
       "duplicateCount": 0
     },
     {
-      "collectionPath": "collections/numbers.json",
-      "valid": true,
-      "arrayKey": "entries",
-      "entryKeyField": "letter",
-      "collectionErrors": [],
+      "collectionPath": "collections/japanese/japanese_sentences.promptPresets.json",
+      "valid": false,
+      "arrayKey": "prompts",
+      "entryKeyField": "id",
+      "collectionErrors": [
+        {
+          "message": "$.metadata is required."
+        },
+        {
+          "message": "$.entries is required."
+        },
+        {
+          "message": "$.version is not allowed by the collection contract."
+        },
+        {
+          "message": "$.prompts is not allowed by the collection contract."
+        }
+      ],
       "collectionWarnings": [],
       "schemaErrors": [],
       "schemaWarnings": [],
@@ -124,11 +179,15 @@
       "duplicateCount": 0
     },
     {
-      "collectionPath": "collections/periodic_table.json",
-      "valid": true,
+      "collectionPath": "collections/japanese/japanese_songs.json",
+      "valid": false,
       "arrayKey": "entries",
-      "entryKeyField": "atomicNumber",
-      "collectionErrors": [],
+      "entryKeyField": "id",
+      "collectionErrors": [
+        {
+          "message": "$.metadata.schema must be array; received string."
+        }
+      ],
       "collectionWarnings": [],
       "schemaErrors": [],
       "schemaWarnings": [],
@@ -137,24 +196,41 @@
       "duplicateCount": 0
     },
     {
-      "collectionPath": "collections/pokemon.json",
-      "valid": true,
+      "collectionPath": "collections/japanese/japanese_words.json",
+      "valid": false,
       "arrayKey": "entries",
-      "entryKeyField": "pokedexNumber",
-      "collectionErrors": [],
+      "entryKeyField": "kanji",
+      "collectionErrors": [
+        {
+          "message": "$.metadata.schema must be array; received string."
+        }
+      ],
       "collectionWarnings": [],
       "schemaErrors": [],
       "schemaWarnings": [],
-      "entryErrorCount": 0,
+      "entryErrorCount": 42,
       "entryWarningCount": 0,
-      "duplicateCount": 0
+      "duplicateCount": 42
     },
     {
-      "collectionPath": "collections/programming.json",
-      "valid": true,
-      "arrayKey": "entries",
-      "entryKeyField": "language",
-      "collectionErrors": [],
+      "collectionPath": "collections/japanese/japanese_words.promptPresets.json",
+      "valid": false,
+      "arrayKey": "prompts",
+      "entryKeyField": "id",
+      "collectionErrors": [
+        {
+          "message": "$.metadata is required."
+        },
+        {
+          "message": "$.entries is required."
+        },
+        {
+          "message": "$.version is not allowed by the collection contract."
+        },
+        {
+          "message": "$.prompts is not allowed by the collection contract."
+        }
+      ],
       "collectionWarnings": [],
       "schemaErrors": [],
       "schemaWarnings": [],
@@ -164,51 +240,89 @@
     },
     {
       "collectionPath": "collections/spanish/spanish_sentences.json",
-      "valid": true,
-      "arrayKey": "entries",
-      "entryKeyField": "es",
-      "collectionErrors": [],
-      "collectionWarnings": [],
-      "schemaErrors": [],
-      "schemaWarnings": [
-        {
-          "message": "Field 'notes' has unknown type 'array<string>'."
-        },
-        {
-          "message": "Field 'chunks' has unknown type 'array<sentenceChunk>'."
-        }
-      ],
-      "entryErrorCount": 0,
-      "entryWarningCount": 0,
-      "duplicateCount": 0
-    }
-  ],
-  "reports_review": [
-    {
-      "collectionPath": "collections/japanese/japanese_words.json",
       "valid": false,
       "arrayKey": "entries",
-      "entryKeyField": "kanji",
-      "collectionErrors": [],
+      "entryKeyField": "es",
+      "collectionErrors": [
+        {
+          "message": "$.metadata.schema must be array; received string."
+        }
+      ],
       "collectionWarnings": [],
       "schemaErrors": [],
       "schemaWarnings": [],
-      "entryErrorCount": 42,
+      "entryErrorCount": 0,
       "entryWarningCount": 0,
-      "duplicateCount": 42
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/spanish/spanish_sentences.promptPresets.json",
+      "valid": false,
+      "arrayKey": "prompts",
+      "entryKeyField": "id",
+      "collectionErrors": [
+        {
+          "message": "$.metadata is required."
+        },
+        {
+          "message": "$.entries is required."
+        },
+        {
+          "message": "$.version is not allowed by the collection contract."
+        },
+        {
+          "message": "$.prompts is not allowed by the collection contract."
+        }
+      ],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
     },
     {
       "collectionPath": "collections/spanish/spanish_words.json",
       "valid": false,
       "arrayKey": "entries",
       "entryKeyField": "term",
-      "collectionErrors": [],
+      "collectionErrors": [
+        {
+          "message": "$.metadata.schema must be array; received string."
+        }
+      ],
       "collectionWarnings": [],
       "schemaErrors": [],
       "schemaWarnings": [],
       "entryErrorCount": 1,
       "entryWarningCount": 0,
       "duplicateCount": 1
+    },
+    {
+      "collectionPath": "collections/spanish/spanish_words.promptPresets.json",
+      "valid": false,
+      "arrayKey": "prompts",
+      "entryKeyField": "id",
+      "collectionErrors": [
+        {
+          "message": "$.metadata is required."
+        },
+        {
+          "message": "$.entries is required."
+        },
+        {
+          "message": "$.version is not allowed by the collection contract."
+        },
+        {
+          "message": "$.prompts is not allowed by the collection contract."
+        }
+      ],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
     }
   ]
 }

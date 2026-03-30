@@ -1,13 +1,78 @@
 {
-  "generatedAt": "2026-03-28T21:41:38.720Z",
-  "scannedCollections": 14,
-  "collectionsWithProblems": 3,
-  "collectionsWithInvalidEntryKey": 1,
-  "collectionsWithSchemaMismatch": 0,
-  "totalInvalidEntries": 2,
+  "generatedAt": "2026-03-30T18:58:56.964Z",
+  "scannedCollections": 21,
+  "collectionsWithProblems": 13,
+  "collectionsWithInvalidEntryKey": 7,
+  "collectionsWithSchemaMismatch": 6,
+  "totalInvalidEntries": 27,
   "totalDuplicateValues": 43,
   "totalDuplicateEntries": 86,
   "reports_clean": [
+    {
+      "collectionName": "Language History",
+      "collectionPath": "collections/general/languageHistory.json",
+      "entryKey": "stage",
+      "entryCount": 12,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": true,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "Letters to Numbers",
+      "collectionPath": "collections/general/numbers.json",
+      "entryKey": "letter",
+      "entryCount": 26,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": true,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "Periodic Table – First 70 Elements",
+      "collectionPath": "collections/general/periodic_table.json",
+      "entryKey": "atomicNumber",
+      "entryCount": 70,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": true,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "Pokémon Starters (Kanto)",
+      "collectionPath": "collections/general/pokemon.json",
+      "entryKey": "pokedexNumber",
+      "entryCount": 151,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": true,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "Programming",
+      "collectionPath": "collections/general/programming.json",
+      "entryKey": "language",
+      "entryCount": 21,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": true,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
     {
       "collectionName": "Greek Alphabet",
       "collectionPath": "collections/greek/greek_alphabet.json",
@@ -46,110 +111,6 @@
       "duplicateEntryCount": 0,
       "invalidEntries": [],
       "duplicates": []
-    },
-    {
-      "collectionName": "Japanese Paragraphs",
-      "collectionPath": "collections/japanese/japanese_paragraphs.json",
-      "entryKey": "id",
-      "entryCount": 5,
-      "hasValidEntryKeyMetadata": true,
-      "schemaHasEntryKey": true,
-      "invalidEntryCount": 0,
-      "duplicateValueCount": 0,
-      "duplicateEntryCount": 0,
-      "invalidEntries": [],
-      "duplicates": []
-    },
-    {
-      "collectionName": "Japanese Sentences",
-      "collectionPath": "collections/japanese/japanese_sentences.json",
-      "entryKey": "ja",
-      "entryCount": 214,
-      "hasValidEntryKeyMetadata": true,
-      "schemaHasEntryKey": true,
-      "invalidEntryCount": 0,
-      "duplicateValueCount": 0,
-      "duplicateEntryCount": 0,
-      "invalidEntries": [],
-      "duplicates": []
-    },
-    {
-      "collectionName": "Language History",
-      "collectionPath": "collections/languageHistory.json",
-      "entryKey": "stage",
-      "entryCount": 12,
-      "hasValidEntryKeyMetadata": true,
-      "schemaHasEntryKey": true,
-      "invalidEntryCount": 0,
-      "duplicateValueCount": 0,
-      "duplicateEntryCount": 0,
-      "invalidEntries": [],
-      "duplicates": []
-    },
-    {
-      "collectionName": "Letters to Numbers",
-      "collectionPath": "collections/numbers.json",
-      "entryKey": "letter",
-      "entryCount": 26,
-      "hasValidEntryKeyMetadata": true,
-      "schemaHasEntryKey": true,
-      "invalidEntryCount": 0,
-      "duplicateValueCount": 0,
-      "duplicateEntryCount": 0,
-      "invalidEntries": [],
-      "duplicates": []
-    },
-    {
-      "collectionName": "Periodic Table – First 70 Elements",
-      "collectionPath": "collections/periodic_table.json",
-      "entryKey": "atomicNumber",
-      "entryCount": 70,
-      "hasValidEntryKeyMetadata": true,
-      "schemaHasEntryKey": true,
-      "invalidEntryCount": 0,
-      "duplicateValueCount": 0,
-      "duplicateEntryCount": 0,
-      "invalidEntries": [],
-      "duplicates": []
-    },
-    {
-      "collectionName": "Pokémon Starters (Kanto)",
-      "collectionPath": "collections/pokemon.json",
-      "entryKey": "pokedexNumber",
-      "entryCount": 151,
-      "hasValidEntryKeyMetadata": true,
-      "schemaHasEntryKey": true,
-      "invalidEntryCount": 0,
-      "duplicateValueCount": 0,
-      "duplicateEntryCount": 0,
-      "invalidEntries": [],
-      "duplicates": []
-    },
-    {
-      "collectionName": "Programming",
-      "collectionPath": "collections/programming.json",
-      "entryKey": "language",
-      "entryCount": 21,
-      "hasValidEntryKeyMetadata": true,
-      "schemaHasEntryKey": true,
-      "invalidEntryCount": 0,
-      "duplicateValueCount": 0,
-      "duplicateEntryCount": 0,
-      "invalidEntries": [],
-      "duplicates": []
-    },
-    {
-      "collectionName": "Spanish Sentences",
-      "collectionPath": "collections/spanish/spanish_sentences.json",
-      "entryKey": "es",
-      "entryCount": 1,
-      "hasValidEntryKeyMetadata": true,
-      "schemaHasEntryKey": true,
-      "invalidEntryCount": 0,
-      "duplicateValueCount": 0,
-      "duplicateEntryCount": 0,
-      "invalidEntries": [],
-      "duplicates": []
     }
   ],
   "reports_review": [
@@ -180,12 +141,120 @@
       "duplicates": []
     },
     {
+      "collectionName": "japanese/_japanese.schemas.json",
+      "collectionPath": "collections/japanese/_japanese.schemas.json",
+      "entryKey": null,
+      "entryCount": 0,
+      "hasValidEntryKeyMetadata": false,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "Japanese Paragraphs",
+      "collectionPath": "collections/japanese/japanese_paragraphs.json",
+      "entryKey": "id",
+      "entryCount": 4,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "Japanese Sentences",
+      "collectionPath": "collections/japanese/japanese_sentences.json",
+      "entryKey": "ja",
+      "entryCount": 214,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "japanese/japanese_sentences.promptPresets.json",
+      "collectionPath": "collections/japanese/japanese_sentences.promptPresets.json",
+      "entryKey": null,
+      "entryCount": 7,
+      "hasValidEntryKeyMetadata": false,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 7,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [
+        {
+          "index": 0,
+          "lineNumber": 4,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 1,
+          "lineNumber": 9,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 2,
+          "lineNumber": 14,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 3,
+          "lineNumber": 19,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 4,
+          "lineNumber": 24,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 5,
+          "lineNumber": 29,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 6,
+          "lineNumber": 34,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        }
+      ],
+      "duplicates": []
+    },
+    {
+      "collectionName": "Japanese Songs",
+      "collectionPath": "collections/japanese/japanese_songs.json",
+      "entryKey": "id",
+      "entryCount": 2,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
       "collectionName": "All Japanese Words",
       "collectionPath": "collections/japanese/japanese_words.json",
       "entryKey": "kanji",
       "entryCount": 2731,
       "hasValidEntryKeyMetadata": true,
-      "schemaHasEntryKey": true,
+      "schemaHasEntryKey": false,
       "invalidEntryCount": 0,
       "duplicateValueCount": 42,
       "duplicateEntryCount": 84,
@@ -197,12 +266,12 @@
           "entries": [
             {
               "index": 1813,
-              "lineNumber": 14073,
+              "lineNumber": 13973,
               "label": "ある"
             },
             {
               "index": 2426,
-              "lineNumber": 19368,
+              "lineNumber": 19268,
               "label": "ある"
             }
           ]
@@ -213,12 +282,12 @@
           "entries": [
             {
               "index": 605,
-              "lineNumber": 4251,
+              "lineNumber": 4151,
               "label": "する"
             },
             {
               "index": 2403,
-              "lineNumber": 19138,
+              "lineNumber": 19038,
               "label": "する"
             }
           ]
@@ -229,12 +298,12 @@
           "entries": [
             {
               "index": 577,
-              "lineNumber": 4003,
+              "lineNumber": 3903,
               "label": "できる"
             },
             {
               "index": 2411,
-              "lineNumber": 19218,
+              "lineNumber": 19118,
               "label": "できる"
             }
           ]
@@ -245,12 +314,12 @@
           "entries": [
             {
               "index": 430,
-              "lineNumber": 3070,
+              "lineNumber": 2970,
               "label": "安い"
             },
             {
               "index": 2361,
-              "lineNumber": 18706,
+              "lineNumber": 18606,
               "label": "安い"
             }
           ]
@@ -261,12 +330,12 @@
           "entries": [
             {
               "index": 393,
-              "lineNumber": 2841,
+              "lineNumber": 2742,
               "label": "飲む"
             },
             {
               "index": 2615,
-              "lineNumber": 21258,
+              "lineNumber": 21158,
               "label": "飲む"
             }
           ]
@@ -277,12 +346,12 @@
           "entries": [
             {
               "index": 352,
-              "lineNumber": 2565,
+              "lineNumber": 2487,
               "label": "泳ぐ"
             },
             {
               "index": 2495,
-              "lineNumber": 20058,
+              "lineNumber": 19958,
               "label": "泳ぐ"
             }
           ]
@@ -293,12 +362,12 @@
           "entries": [
             {
               "index": 2257,
-              "lineNumber": 17660,
+              "lineNumber": 17560,
               "label": "過ごす"
             },
             {
               "index": 2531,
-              "lineNumber": 20418,
+              "lineNumber": 20318,
               "label": "過ごす"
             }
           ]
@@ -309,12 +378,12 @@
           "entries": [
             {
               "index": 2692,
-              "lineNumber": 22028,
+              "lineNumber": 21928,
               "label": "開けられる"
             },
             {
               "index": 2710,
-              "lineNumber": 22208,
+              "lineNumber": 22108,
               "label": "開けられる"
             }
           ]
@@ -325,12 +394,12 @@
           "entries": [
             {
               "index": 531,
-              "lineNumber": 3714,
+              "lineNumber": 3614,
               "label": "開ける"
             },
             {
               "index": 2684,
-              "lineNumber": 21948,
+              "lineNumber": 21848,
               "label": "開ける"
             }
           ]
@@ -341,12 +410,12 @@
           "entries": [
             {
               "index": 1937,
-              "lineNumber": 14860,
+              "lineNumber": 14760,
               "label": "帰る"
             },
             {
               "index": 2639,
-              "lineNumber": 21498,
+              "lineNumber": 21398,
               "label": "帰る"
             }
           ]
@@ -357,12 +426,12 @@
           "entries": [
             {
               "index": 2681,
-              "lineNumber": 21918,
+              "lineNumber": 21818,
               "label": "起きられる"
             },
             {
               "index": 2709,
-              "lineNumber": 22198,
+              "lineNumber": 22098,
               "label": "起きられる"
             }
           ]
@@ -373,12 +442,12 @@
           "entries": [
             {
               "index": 526,
-              "lineNumber": 3681,
+              "lineNumber": 3581,
               "label": "起きる"
             },
             {
               "index": 2673,
-              "lineNumber": 21838,
+              "lineNumber": 21738,
               "label": "起きる"
             }
           ]
@@ -389,12 +458,12 @@
           "entries": [
             {
               "index": 353,
-              "lineNumber": 2572,
+              "lineNumber": 2493,
               "label": "急ぐ"
             },
             {
               "index": 2507,
-              "lineNumber": 20178,
+              "lineNumber": 20078,
               "label": "急ぐ"
             }
           ]
@@ -405,12 +474,12 @@
           "entries": [
             {
               "index": 2659,
-              "lineNumber": 21698,
+              "lineNumber": 21598,
               "label": "見られる"
             },
             {
               "index": 2707,
-              "lineNumber": 22178,
+              "lineNumber": 22078,
               "label": "見られる"
             }
           ]
@@ -421,12 +490,12 @@
           "entries": [
             {
               "index": 525,
-              "lineNumber": 3672,
+              "lineNumber": 3572,
               "label": "見る"
             },
             {
               "index": 2651,
-              "lineNumber": 21618,
+              "lineNumber": 21518,
               "label": "見る"
             }
           ]
@@ -437,12 +506,12 @@
           "entries": [
             {
               "index": 428,
-              "lineNumber": 3058,
+              "lineNumber": 2958,
               "label": "古い"
             },
             {
               "index": 2389,
-              "lineNumber": 18994,
+              "lineNumber": 18894,
               "label": "古い"
             }
           ]
@@ -453,12 +522,12 @@
           "entries": [
             {
               "index": 376,
-              "lineNumber": 2733,
+              "lineNumber": 2634,
               "label": "行く"
             },
             {
               "index": 2435,
-              "lineNumber": 19458,
+              "lineNumber": 19358,
               "label": "行く"
             }
           ]
@@ -469,12 +538,12 @@
           "entries": [
             {
               "index": 429,
-              "lineNumber": 3064,
+              "lineNumber": 2964,
               "label": "高い"
             },
             {
               "index": 2271,
-              "lineNumber": 17744,
+              "lineNumber": 17644,
               "label": "高い"
             }
           ]
@@ -485,12 +554,12 @@
           "entries": [
             {
               "index": 671,
-              "lineNumber": 4670,
+              "lineNumber": 4570,
               "label": "高さ"
             },
             {
               "index": 2285,
-              "lineNumber": 17902,
+              "lineNumber": 17802,
               "label": "高さ"
             }
           ]
@@ -501,12 +570,12 @@
           "entries": [
             {
               "index": 1873,
-              "lineNumber": 14461,
+              "lineNumber": 14361,
               "label": "使う"
             },
             {
               "index": 2459,
-              "lineNumber": 19698,
+              "lineNumber": 19598,
               "label": "使う"
             }
           ]
@@ -517,12 +586,12 @@
           "entries": [
             {
               "index": 2048,
-              "lineNumber": 15946,
+              "lineNumber": 15846,
               "label": "取る"
             },
             {
               "index": 2627,
-              "lineNumber": 21378,
+              "lineNumber": 21278,
               "label": "取る"
             }
           ]
@@ -533,12 +602,12 @@
           "entries": [
             {
               "index": 581,
-              "lineNumber": 4027,
+              "lineNumber": 3927,
               "label": "取れる"
             },
             {
               "index": 2635,
-              "lineNumber": 21458,
+              "lineNumber": 21358,
               "label": "取れる"
             }
           ]
@@ -549,12 +618,12 @@
           "entries": [
             {
               "index": 373,
-              "lineNumber": 2715,
+              "lineNumber": 2616,
               "label": "書く"
             },
             {
               "index": 2471,
-              "lineNumber": 19818,
+              "lineNumber": 19718,
               "label": "書く"
             }
           ]
@@ -565,12 +634,12 @@
           "entries": [
             {
               "index": 2670,
-              "lineNumber": 21808,
+              "lineNumber": 21708,
               "label": "食べられる"
             },
             {
               "index": 2708,
-              "lineNumber": 22188,
+              "lineNumber": 22088,
               "label": "食べられる"
             }
           ]
@@ -581,12 +650,12 @@
           "entries": [
             {
               "index": 530,
-              "lineNumber": 3705,
+              "lineNumber": 3605,
               "label": "食べる"
             },
             {
               "index": 2662,
-              "lineNumber": 21728,
+              "lineNumber": 21628,
               "label": "食べる"
             }
           ]
@@ -597,12 +666,12 @@
           "entries": [
             {
               "index": 427,
-              "lineNumber": 3052,
+              "lineNumber": 2952,
               "label": "新しい"
             },
             {
               "index": 2375,
-              "lineNumber": 18850,
+              "lineNumber": 18750,
               "label": "新しい"
             }
           ]
@@ -613,12 +682,12 @@
           "entries": [
             {
               "index": 644,
-              "lineNumber": 4497,
+              "lineNumber": 4397,
               "label": "静か"
             },
             {
               "index": 2325,
-              "lineNumber": 18326,
+              "lineNumber": 18226,
               "label": "静か"
             }
           ]
@@ -629,12 +698,12 @@
           "entries": [
             {
               "index": 2159,
-              "lineNumber": 16968,
+              "lineNumber": 16868,
               "label": "待つ"
             },
             {
               "index": 2543,
-              "lineNumber": 20538,
+              "lineNumber": 20438,
               "label": "待つ"
             }
           ]
@@ -645,12 +714,12 @@
           "entries": [
             {
               "index": 658,
-              "lineNumber": 4589,
+              "lineNumber": 4489,
               "label": "大変"
             },
             {
               "index": 2343,
-              "lineNumber": 18516,
+              "lineNumber": 18416,
               "label": "大変"
             }
           ]
@@ -661,12 +730,12 @@
           "entries": [
             {
               "index": 293,
-              "lineNumber": 2026,
+              "lineNumber": 1965,
               "label": "読む"
             },
             {
               "index": 2603,
-              "lineNumber": 21138,
+              "lineNumber": 21038,
               "label": "読む"
             }
           ]
@@ -677,12 +746,12 @@
           "entries": [
             {
               "index": 303,
-              "lineNumber": 2100,
+              "lineNumber": 2031,
               "label": "買う"
             },
             {
               "index": 2447,
-              "lineNumber": 19578,
+              "lineNumber": 19478,
               "label": "買う"
             }
           ]
@@ -693,12 +762,12 @@
           "entries": [
             {
               "index": 346,
-              "lineNumber": 2523,
+              "lineNumber": 2451,
               "label": "飛ぶ"
             },
             {
               "index": 2591,
-              "lineNumber": 21018,
+              "lineNumber": 20918,
               "label": "飛ぶ"
             }
           ]
@@ -709,12 +778,12 @@
           "entries": [
             {
               "index": 372,
-              "lineNumber": 2705,
+              "lineNumber": 2607,
               "label": "聞く"
             },
             {
               "index": 2483,
-              "lineNumber": 19938,
+              "lineNumber": 19838,
               "label": "聞く"
             }
           ]
@@ -725,12 +794,12 @@
           "entries": [
             {
               "index": 2703,
-              "lineNumber": 22138,
+              "lineNumber": 22038,
               "label": "閉められる"
             },
             {
               "index": 2711,
-              "lineNumber": 22218,
+              "lineNumber": 22118,
               "label": "閉められる"
             }
           ]
@@ -741,12 +810,12 @@
           "entries": [
             {
               "index": 533,
-              "lineNumber": 3726,
+              "lineNumber": 3626,
               "label": "閉める"
             },
             {
               "index": 2695,
-              "lineNumber": 22058,
+              "lineNumber": 21958,
               "label": "閉める"
             }
           ]
@@ -757,12 +826,12 @@
           "entries": [
             {
               "index": 640,
-              "lineNumber": 4473,
+              "lineNumber": 4373,
               "label": "便利"
             },
             {
               "index": 2289,
-              "lineNumber": 17946,
+              "lineNumber": 17846,
               "label": "便利"
             }
           ]
@@ -773,12 +842,12 @@
           "entries": [
             {
               "index": 642,
-              "lineNumber": 4485,
+              "lineNumber": 4385,
               "label": "有名"
             },
             {
               "index": 2307,
-              "lineNumber": 18136,
+              "lineNumber": 18036,
               "label": "有名"
             }
           ]
@@ -789,12 +858,12 @@
           "entries": [
             {
               "index": 345,
-              "lineNumber": 2516,
+              "lineNumber": 2445,
               "label": "遊ぶ"
             },
             {
               "index": 2579,
-              "lineNumber": 20898,
+              "lineNumber": 20798,
               "label": "遊ぶ"
             }
           ]
@@ -805,12 +874,12 @@
           "entries": [
             {
               "index": 2423,
-              "lineNumber": 19338,
+              "lineNumber": 19238,
               "label": "来られる"
             },
             {
               "index": 2706,
-              "lineNumber": 22168,
+              "lineNumber": 22068,
               "label": "来られる"
             }
           ]
@@ -821,12 +890,12 @@
           "entries": [
             {
               "index": 1946,
-              "lineNumber": 14917,
+              "lineNumber": 14817,
               "label": "来る"
             },
             {
               "index": 2415,
-              "lineNumber": 19258,
+              "lineNumber": 19158,
               "label": "来る"
             }
           ]
@@ -837,12 +906,12 @@
           "entries": [
             {
               "index": 2177,
-              "lineNumber": 17076,
+              "lineNumber": 16976,
               "label": "立つ"
             },
             {
               "index": 2555,
-              "lineNumber": 20658,
+              "lineNumber": 20558,
               "label": "立つ"
             }
           ]
@@ -853,12 +922,12 @@
           "entries": [
             {
               "index": 301,
-              "lineNumber": 2080,
+              "lineNumber": 2013,
               "label": "話す"
             },
             {
               "index": 2519,
-              "lineNumber": 20298,
+              "lineNumber": 20198,
               "label": "話す"
             }
           ]
@@ -866,12 +935,144 @@
       ]
     },
     {
+      "collectionName": "japanese/japanese_words.promptPresets.json",
+      "collectionPath": "collections/japanese/japanese_words.promptPresets.json",
+      "entryKey": null,
+      "entryCount": 6,
+      "hasValidEntryKeyMetadata": false,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 6,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [
+        {
+          "index": 0,
+          "lineNumber": 4,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 1,
+          "lineNumber": 9,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 2,
+          "lineNumber": 14,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 3,
+          "lineNumber": 19,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 4,
+          "lineNumber": 24,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 5,
+          "lineNumber": 29,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        }
+      ],
+      "duplicates": []
+    },
+    {
+      "collectionName": "spanish/_spanish.schemas.json",
+      "collectionPath": "collections/spanish/_spanish.schemas.json",
+      "entryKey": null,
+      "entryCount": 0,
+      "hasValidEntryKeyMetadata": false,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "Spanish Sentences",
+      "collectionPath": "collections/spanish/spanish_sentences.json",
+      "entryKey": "es",
+      "entryCount": 1,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "spanish/spanish_sentences.promptPresets.json",
+      "collectionPath": "collections/spanish/spanish_sentences.promptPresets.json",
+      "entryKey": null,
+      "entryCount": 7,
+      "hasValidEntryKeyMetadata": false,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 7,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [
+        {
+          "index": 0,
+          "lineNumber": 4,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 1,
+          "lineNumber": 9,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 2,
+          "lineNumber": 14,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 3,
+          "lineNumber": 19,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 4,
+          "lineNumber": 24,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 5,
+          "lineNumber": 29,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 6,
+          "lineNumber": 34,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        }
+      ],
+      "duplicates": []
+    },
+    {
       "collectionName": "All Spanish Words",
       "collectionPath": "collections/spanish/spanish_words.json",
       "entryKey": "term",
       "entryCount": 631,
       "hasValidEntryKeyMetadata": true,
-      "schemaHasEntryKey": true,
+      "schemaHasEntryKey": false,
       "invalidEntryCount": 0,
       "duplicateValueCount": 1,
       "duplicateEntryCount": 2,
@@ -883,26 +1084,70 @@
           "entries": [
             {
               "index": 26,
-              "lineNumber": 102,
+              "lineNumber": 202,
               "label": "café"
             },
             {
               "index": 194,
-              "lineNumber": 270,
+              "lineNumber": 1378,
               "label": "café"
             }
           ]
         }
       ]
+    },
+    {
+      "collectionName": "spanish/spanish_words.promptPresets.json",
+      "collectionPath": "collections/spanish/spanish_words.promptPresets.json",
+      "entryKey": null,
+      "entryCount": 5,
+      "hasValidEntryKeyMetadata": false,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 5,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [
+        {
+          "index": 0,
+          "lineNumber": 4,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 1,
+          "lineNumber": 9,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 2,
+          "lineNumber": 14,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 3,
+          "lineNumber": 19,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 4,
+          "lineNumber": 24,
+          "label": "(unlabeled entry)",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        }
+      ],
+      "duplicates": []
     }
   ],
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_duplicated_keys_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-03-28T21:41:38.656Z",
-    "finishedAt": "2026-03-28T21:41:38.721Z",
-    "durationMs": 65,
-    "durationSeconds": 0.065
+    "startedAt": "2026-03-30T18:58:56.909Z",
+    "finishedAt": "2026-03-30T18:58:56.965Z",
+    "durationMs": 56,
+    "durationSeconds": 0.056
   }
 }

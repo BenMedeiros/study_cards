@@ -50,6 +50,46 @@ function isSchemaArray(arr) {
   return arr.some(x => x && typeof x === 'object' && typeof x.key === 'string');
 }
 
+function parseFieldType(type) {
+  const raw = typeof type === 'string' ? type.trim() : '';
+  if (!raw) return { raw: '', isArrayType: false, baseType: '' };
+  const nestedArrayMatch = raw.match(/^array<(.+)>$/);
+  if (nestedArrayMatch) {
+    return { raw, isArrayType: true, baseType: nestedArrayMatch[1].trim() };
+  }
+  const isArrayType = raw.endsWith('[]');
+  const baseType = isArrayType ? raw.slice(0, -2).trim() : raw;
+  return { raw, isArrayType, baseType };
+}
+
+function isCustomSchemaTypeName(typeName) {
+  return typeof typeName === 'string' && /^[A-Za-z_][A-Za-z0-9_]*$/.test(typeName);
+}
+
+function parseSchemaRef(ref) {
+  const raw = String(ref || '').trim();
+  if (!raw.startsWith('$ref:')) return null;
+  const body = raw.slice(5).trim();
+  if (!body) return null;
+  const hashIndex = body.indexOf('#');
+  const schemaPath = hashIndex >= 0 ? body.slice(0, hashIndex).trim() : body;
+  const typeName = hashIndex >= 0 ? body.slice(hashIndex + 1).trim() : '';
+  if (!schemaPath) return null;
+  return { raw, schemaPath, typeName };
+}
+
+function classifyJsonFile(rel, raw) {
+  const base = path.basename(rel);
+  if (rel === '_index.json' || rel === '_collections.schema.json') return 'ignore';
+  if (/\.promptPresets\.json$/i.test(base)) return 'prompt';
+  if (/\.schemas\.json$/i.test(base)) return 'schema';
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    if (Array.isArray(raw.prompts)) return 'prompt';
+    if (raw.schemaTypes && !raw.metadata && !raw.entries) return 'schema';
+  }
+  return 'collection';
+}
+
 function validateSchemaArray(schemaArr) {
   const out = { errors: [], warnings: [] };
   if (!Array.isArray(schemaArr)) {
@@ -65,10 +105,10 @@ function validateSchemaArray(schemaArr) {
     }
     const key = typeof f.key === 'string' ? f.key.trim() : '';
     if (!key) out.errors.push(`Schema item at index ${i} is missing a string 'key'.`);
-    let t = f.type && typeof f.type === 'string' ? f.type.trim() : '';
-    const isArrayType = t.endsWith('[]');
-    const baseType = isArrayType ? t.slice(0, -2) : t;
-    if (t && !allowedTypes.has(baseType)) out.warnings.push(`Field '${key || ('#'+i)}' has unknown type '${t}'.`);
+    const { raw: t, baseType } = parseFieldType(f.type);
+    if (t && !allowedTypes.has(baseType) && !isCustomSchemaTypeName(baseType)) {
+      out.warnings.push(`Field '${key || ('#'+i)}' has unknown type '${t}'.`);
+    }
     if (baseType === 'enum') {
       const vals = f.values;
       if (!vals || typeof vals !== 'object' || Array.isArray(vals) || Object.keys(vals).length === 0) {
@@ -90,9 +130,7 @@ function validateEntryAgainstSchema(entry, schemaArr, entryId) {
     if (!f || typeof f !== 'object') continue;
     const k = typeof f.key === 'string' ? f.key.trim() : '';
     if (!k) continue;
-    let t = f.type && typeof f.type === 'string' ? f.type.trim() : '';
-    const isArrayType = t.endsWith('[]');
-    const baseType = isArrayType ? t.slice(0, -2) : t;
+    const { isArrayType, baseType } = parseFieldType(f.type);
     if (!(k in entry)) continue; // missing fields are allowed
     const v = entry[k];
     if (baseType === 'enum') {
@@ -115,7 +153,7 @@ function validateEntryAgainstSchema(entry, schemaArr, entryId) {
         if (!vals.includes(vs)) errors.push({ id: entryId, field: k, message: `Invalid enum value '${vs}' for '${k}'. Allowed: ${vals.join(', ')}` });
       }
     } else if (isArrayType) {
-      // Validate array types like 'string[]', 'number[]', 'boolean[]', etc.
+      // Validate array types like 'string[]', 'array<string>', etc.
       if (!Array.isArray(v)) {
         errors.push({ id: entryId, field: k, message: `Field '${k}' should be an array of ${baseType === 'string' ? 'strings' : baseType + 's'}.` });
       } else {
@@ -142,39 +180,82 @@ function validateEntryAgainstSchema(entry, schemaArr, entryId) {
   return { errors, warnings };
 }
 
-async function resolveSchema(collectionPath, schemaRef, collectionDir) {
-  // schemaRef can be an array or a string path
+function validatePromptPresetsFile(obj) {
+  const out = { errors: [], warnings: [] };
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+    out.errors.push('Prompt presets file must be a JSON object.');
+    return out;
+  }
+  if (typeof obj.version !== 'number') out.errors.push("Prompt presets file missing required numeric field 'version'.");
+  if (!Array.isArray(obj.prompts)) {
+    out.errors.push("Prompt presets file missing required array field 'prompts'.");
+    return out;
+  }
+  for (let i = 0; i < obj.prompts.length; i++) {
+    const prompt = obj.prompts[i];
+    if (!prompt || typeof prompt !== 'object' || Array.isArray(prompt)) {
+      out.errors.push(`Prompt preset at index ${i} must be an object.`);
+      continue;
+    }
+    if (typeof prompt.id !== 'string' || !prompt.id.trim()) out.errors.push(`Prompt preset at index ${i} is missing string field 'id'.`);
+    if (typeof prompt.details !== 'string' || !prompt.details.trim()) out.errors.push(`Prompt preset '${prompt.id || '#'+i}' is missing string field 'details'.`);
+    if (typeof prompt.example !== 'string' || !prompt.example.trim()) out.errors.push(`Prompt preset '${prompt.id || '#'+i}' is missing string field 'example'.`);
+  }
+  return out;
+}
+
+function validateSharedSchemaRegistry(obj) {
+  const out = { errors: [], warnings: [] };
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+    out.errors.push('Shared schema file must be a JSON object.');
+    return out;
+  }
+  if (typeof obj.version !== 'number') out.errors.push("Shared schema file missing required numeric field 'version'.");
+  if (typeof obj.description !== 'string' || !obj.description.trim()) out.errors.push("Shared schema file missing required string field 'description'.");
+  if (!obj.schemaTypes || typeof obj.schemaTypes !== 'object' || Array.isArray(obj.schemaTypes)) {
+    out.errors.push("Shared schema file missing required object field 'schemaTypes'.");
+    return out;
+  }
+  for (const [typeName, def] of Object.entries(obj.schemaTypes)) {
+    if (!def || typeof def !== 'object' || Array.isArray(def)) {
+      out.errors.push(`Schema type '${typeName}' must be an object.`);
+      continue;
+    }
+    if (!Array.isArray(def.fields)) {
+      out.errors.push(`Schema type '${typeName}' must define a fields array.`);
+      continue;
+    }
+    const sv = validateSchemaArray(def.fields);
+    out.errors.push(...sv.errors.map((msg) => `${typeName}: ${msg}`));
+    out.warnings.push(...sv.warnings.map((msg) => `${typeName}: ${msg}`));
+  }
+  return out;
+}
+
+async function resolveSchema(collectionPath, schemaRef, collectionDir, schemaCache = new Map()) {
   if (Array.isArray(schemaRef)) return { schema: schemaRef, source: 'inline' };
   if (!schemaRef || typeof schemaRef !== 'string') return { schema: null, source: null };
-  // Resolve relative path
-  let rel = String(schemaRef).trim().replace(/^\.\//, '');
-  if (!rel) return { schema: null, source: null };
-  // If rel is absolute-like (starts with '/'), strip leading '/'
-  if (rel.startsWith('/')) rel = rel.slice(1);
+  const parsedRef = parseSchemaRef(schemaRef);
+  if (!parsedRef) return { schema: null, source: null, error: new Error('Unsupported schema ref format') };
+  const rel = parsedRef.schemaPath.replace(/^\.\//, '').replace(/^collections\//, '');
   const candidate = path.join(collectionDir, rel);
   try {
-    const txt = await fs.readFile(candidate, 'utf8');
-    const parsed = JSON.parse(txt);
-    if (Array.isArray(parsed)) return { schema: parsed, source: rel };
-    // if parsed is object, try parsed.metadata.schema or parsed.schema
-    if (parsed && typeof parsed === 'object') {
-      // If the parsed file is a schema file (convention: basename starts with '_' or it declares category),
-      // require that it contains category, description, and schema (array).
-      const base = path.basename(candidate);
-      const looksLikeSchemaFile = base.startsWith('_') || typeof parsed.category === 'string';
-      if (looksLikeSchemaFile) {
-        const missing = [];
-        if (typeof parsed.category === 'undefined' || parsed.category === null) missing.push('category');
-        if (typeof parsed.description === 'undefined' || parsed.description === null) missing.push('description');
-        if (!Array.isArray(parsed.schema)) missing.push('schema');
-        if (missing.length) {
-          return { schema: Array.isArray(parsed.schema) ? parsed.schema : null, source: rel, schemaFileMissing: missing };
-        }
-        return { schema: parsed.schema, source: rel };
-      }
-      if (Array.isArray(parsed.metadata?.schema)) return { schema: parsed.metadata.schema, source: rel };
-      if (Array.isArray(parsed.schema)) return { schema: parsed.schema, source: rel };
+    let parsed = schemaCache.get(candidate);
+    if (!parsed) {
+      const txt = await fs.readFile(candidate, 'utf8');
+      parsed = JSON.parse(txt);
+      schemaCache.set(candidate, parsed);
     }
+    if (Array.isArray(parsed)) return { schema: parsed, source: rel };
+    if (!parsed || typeof parsed !== 'object') return { schema: null, source: rel };
+    if (parsedRef.typeName) {
+      const schemaTypes = parsed.schemaTypes && typeof parsed.schemaTypes === 'object' ? parsed.schemaTypes : null;
+      const typeDef = schemaTypes ? schemaTypes[parsedRef.typeName] : null;
+      const fields = Array.isArray(typeDef?.fields) ? typeDef.fields : null;
+      return { schema: fields, source: `${rel}#${parsedRef.typeName}` };
+    }
+    if (Array.isArray(parsed.metadata?.schema)) return { schema: parsed.metadata.schema, source: rel };
+    if (Array.isArray(parsed.schema)) return { schema: parsed.schema, source: rel };
     return { schema: null, source: rel };
   } catch (e) {
     return { schema: null, source: rel, error: e };
@@ -184,14 +265,12 @@ async function resolveSchema(collectionPath, schemaRef, collectionDir) {
 async function rebuildIndex() {
   const files = await walk(collectionsDir);
   const collections = [];
+  const schemas = [];
+  const prompts = [];
+  const schemaCache = new Map();
 
   for (const f of files) {
     const rel = path.relative(collectionsDir, f).split(path.sep).join('/');
-    // skip top-level _index.json and any _*.json tooling files
-    const base = path.basename(rel);
-    if (rel === '_index.json') continue;
-    if (base.startsWith('_')) continue;
-
     const fullPath = f;
     let modifiedAt = null;
     try { const st = await fs.stat(fullPath); modifiedAt = st.mtime.toISOString(); } catch (e) {}
@@ -205,6 +284,36 @@ async function rebuildIndex() {
       const msg = `Failed to read/parse JSON: ${e.message || e}`;
       console.error(`[rebuild_index] ${rel}: ${msg}`);
       collections.push({ path: rel, error: msg });
+      continue;
+    }
+
+    const kind = classifyJsonFile(rel, raw);
+    if (kind === 'ignore') continue;
+
+    if (kind === 'schema') {
+      const validation = validateSharedSchemaRegistry(raw);
+      const record = {
+        path: rel,
+        modifiedAt,
+        description: typeof raw?.description === 'string' ? raw.description : null,
+        schemaTypeCount: (raw?.schemaTypes && typeof raw.schemaTypes === 'object' && !Array.isArray(raw.schemaTypes)) ? Object.keys(raw.schemaTypes).length : 0,
+        valid: validation.errors.length === 0,
+        validation,
+      };
+      schemas.push(record);
+      continue;
+    }
+
+    if (kind === 'prompt') {
+      const validation = validatePromptPresetsFile(raw);
+      const record = {
+        path: rel,
+        modifiedAt,
+        promptCount: Array.isArray(raw?.prompts) ? raw.prompts.length : 0,
+        valid: validation.errors.length === 0,
+        validation,
+      };
+      prompts.push(record);
       continue;
     }
 
@@ -308,7 +417,7 @@ async function rebuildIndex() {
       continue;
     }
 
-    // Resolve schema: only inline arrays are allowed now
+    // Resolve schema: inline arrays or $ref:...#TypeName shared-schema refs
     let schema = null;
     let schemaSource = null;
     try {
@@ -316,16 +425,24 @@ async function rebuildIndex() {
         schema = metadata.schema;
         schemaSource = 'inline';
       } else if (typeof metadata.schema === 'string') {
-        const msg = 'External schema files are not allowed; metadata.schema must be an inline array in the collection file.';
-        record.validation.schema.errors.push(msg);
-        console.error(`[rebuild_index] ${rel}: ${msg}`);
+        const resolved = await resolveSchema(rel, metadata.schema, collectionsDir, schemaCache);
+        if (resolved?.schema && Array.isArray(resolved.schema)) {
+          schema = resolved.schema;
+          schemaSource = resolved.source || metadata.schema;
+        } else {
+          const msg = resolved?.error
+            ? `Failed to resolve schema ref '${metadata.schema}': ${resolved.error.message || resolved.error}`
+            : `Failed to resolve schema ref '${metadata.schema}'.`;
+          record.validation.schema.errors.push(msg);
+          console.error(`[rebuild_index] ${rel}: ${msg}`);
+        }
       }
     } catch (e) {
       record.validation.schema.errors.push(`Schema processing error: ${e.message || e}`);
     }
 
     if (!schema || !Array.isArray(schema)) {
-      const errMsg = 'No valid schema array found (metadata.schema must be an array or a path to a schema file).';
+      const errMsg = 'No valid schema array found.';
       record.validation.schema.errors.push(errMsg);
       console.error(`[rebuild_index] ${rel}: ${errMsg}`);
       collections.push(record);
@@ -412,11 +529,11 @@ async function rebuildIndex() {
   }
 
   // build index
-  const out = { collections };
+  const out = { schemas, collections, prompts };
   const outPath = path.join(collectionsDir, '_index.json');
   try {
     await fs.writeFile(outPath, JSON.stringify(out, null, 2), 'utf8');
-    console.log(`Wrote index to ${outPath} (${collections.length} collections)`);
+    console.log(`Wrote index to ${outPath} (${collections.length} collections, ${schemas.length} schemas, ${prompts.length} prompts)`);
   } catch (e) {
     console.error('Failed to write _index.json:', e);
     process.exitCode = 1;
