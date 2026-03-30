@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "description": "Shared Spanish collection schema types for reusable sentence and word content models.",
+  "schemaTypes": {
+    "sentenceChunk": {
+      "description": "A learner-facing chunk inside a Spanish sentence.",
+      "fields": [
+        {
+          "key": "es",
+          "label": "Chunk Spanish",
+          "type": "string",
+          "required": true,
+          "description": "Chunk text exactly as it appears in the sentence."
+        },
+        {
+          "key": "en",
+          "label": "English",
+          "type": "string",
+          "required": true,
+          "description": "Short learner-friendly English rendering of the chunk."
+        },
+        {
+          "key": "refs",
+          "label": "References",
+          "type": "array<string>",
+          "required": true,
+          "description": "Referenced terms from the Spanish words collection."
+        }
+      ]
+    },
+    "sentenceEntry": {
+      "description": "Spanish learner sentence with translation and optional learner chunks.",
+      "fields": [
+        {
+          "key": "es",
+          "label": "Spanish",
+          "type": "string",
+          "required": true,
+          "description": "Full Spanish sentence in natural surface form."
+        },
+        {
+          "key": "en",
+          "label": "English",
+          "type": "string",
+          "required": true,
+          "description": "Natural English translation of the full sentence."
+        },
+        {
+          "key": "notes",
+          "label": "Notes",
+          "type": "array<string>",
+          "required": false,
+          "description": "Sentence-specific usage or learner notes."
+        },
+        {
+          "key": "chunks",
+          "label": "Chunks",
+          "type": "array<sentenceChunk>",
+          "required": false,
+          "description": "Ordered learner-friendly chunks that reference terms from the Spanish words collection."
+        }
+      ]
+    },
+    "wordEntry": {
+      "description": "Spanish vocabulary entry as a learner-useful word or expression.",
+      "fields": [
+        {
+          "key": "term",
+          "label": "Term",
+          "description": "Main Spanish study term. Usually a canonical single word, but it may also be a short useful phrase or collocation when that is the most learnable unit.",
+          "type": "string"
+        },
+        {
+          "key": "meaning",
+          "label": "Meaning",
+          "description": "Short English gloss. Keep it compact; put nuance in notes later if needed.",
+          "type": "string"
+        },
+        {
+          "key": "type",
+          "label": "Type",
+          "description": "Basic grammatical classification.",
+          "type": "enum",
+          "values": {
+            "noun": "Common noun.",
+            "proper-noun": "Name of a person, place, organization, etc.",
+            "verb": "Verb in infinitive form.",
+            "adjective": "Adjective in canonical form.",
+            "adverb": "Adverb.",
+            "pronoun": "Pronoun.",
+            "determiner": "Article, demonstrative, possessive, quantifier, etc.",
+            "preposition": "Preposition.",
+            "conjunction": "Conjunction.",
+            "interjection": "Interjection or exclamation.",
+            "expression": "Fixed phrase or multi-word expression."
+          }
+        },
+        {
+          "key": "semanticClass",
+          "label": "Semantic Class",
+          "description": "Semantic category/class of the term. Use plain text rather than an enum so this can scale across parts of speech; examples include home, food, animals, people, city, and time. Use null when not needed.",
+          "type": "string"
+        },
+        {
+          "key": "gender",
+          "label": "Gender",
+          "description": "Gender classification for nouns; use null when not applicable.",
+          "type": "enum",
+          "values": {
+            "m": "Masculine.",
+            "f": "Feminine.",
+            "mf": "Common gender / masculine and feminine forms.",
+            "f_el": "Feminine noun that takes singular `el` before stressed /a/ (for example, `el agua`, `el águila`)."
+          }
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "description": "Optional machine-friendly tags for filtering/grouping.",
+          "type": "string[]"
+        }
+      ]
+    }
+  }
+}

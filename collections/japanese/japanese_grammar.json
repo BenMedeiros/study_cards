@@ -6,20 +6,6 @@
     "category": "japanese",
     "source": "Consolidated from c_collections_in_development/grammar",
     "entry_key": "pattern",
-    "relatedCollections": [
-      {
-        "name": "sentences",
-        "path": "japanese/japanese_sentences.json",
-        "this_key": "pattern",
-        "foreign_key": "chunks[].focus"
-      },
-      {
-        "name": "paragraphs",
-        "path": "japanese/japanese_paragraphs.json",
-        "this_key": "pattern",
-        "foreign_key": "sentences[].chunks[].focus"
-      }
-    ],
     "schema": [
       {
         "key": "pattern",

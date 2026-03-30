@@ -14,695 +14,4125 @@
         "foreign_key": "chunks[].refs[]"
       }
     ],
-    "schema": [
-      {
-        "key": "term",
-        "label": "Term",
-        "description": "Main Spanish study term. Usually a canonical single word, but it may also be a short useful phrase or collocation when that is the most learnable unit.",
-        "type": "string"
-      },
-      {
-        "key": "meaning",
-        "label": "Meaning",
-        "description": "Short English gloss. Keep it compact; put nuance in notes later if needed.",
-        "type": "string"
-      },
-      {
-        "key": "type",
-        "label": "Type",
-        "description": "Basic grammatical classification.",
-        "type": "enum",
-        "values": {
-          "noun": "Common noun.",
-          "proper-noun": "Name of a person, place, organization, etc.",
-          "verb": "Verb in infinitive form.",
-          "adjective": "Adjective in canonical form.",
-          "adverb": "Adverb.",
-          "pronoun": "Pronoun.",
-          "determiner": "Article, demonstrative, possessive, quantifier, etc.",
-          "preposition": "Preposition.",
-          "conjunction": "Conjunction.",
-          "interjection": "Interjection or exclamation.",
-          "expression": "Fixed phrase or multi-word expression."
-        }
-      },
-      {
-        "key": "semanticClass",
-        "label": "Semantic Class",
-        "description": "Semantic category/class of the term. Use plain text rather than an enum so this can scale across parts of speech; examples include home, food, animals, people, city, and time. Use null when not needed.",
-        "type": "string"
-      },
-      {
-        "key": "gender",
-        "label": "Gender",
-        "description": "Gender classification for nouns; use null when not applicable.",
-        "type": "enum",
-        "values": {
-          "m": "Masculine.",
-          "f": "Feminine.",
-          "mf": "Common gender / masculine and feminine forms.",
-          "f_el": "Feminine noun that takes singular `el` before stressed /a/ (for example, `el agua`, `el águila`)."
-        }
-      },
-      {
-        "key": "tags",
-        "label": "Tags",
-        "description": "Optional machine-friendly tags for filtering/grouping.",
-        "type": "string[]"
-      }
-    ]
+    "schema": "$ref:spanish/_spanish.schemas.json#wordEntry"
   },
   "entries": [
-    {"term":"agua","meaning":"water","type":"noun","semanticClass":"food","gender":"f_el"},
-    {"term":"pan","meaning":"bread","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"arroz","meaning":"rice","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"leche","meaning":"milk","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"queso","meaning":"cheese","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"huevo","meaning":"egg","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"carne","meaning":"meat","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"pollo","meaning":"chicken","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"pescado","meaning":"fish","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"manzana","meaning":"apple","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"plátano","meaning":"banana","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"naranja","meaning":"orange","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"uva","meaning":"grape","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"fresa","meaning":"strawberry","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"limón","meaning":"lemon","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"tomate","meaning":"tomato","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"patata","meaning":"potato","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"cebolla","meaning":"onion","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"ajo","meaning":"garlic","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"zanahoria","meaning":"carrot","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"ensalada","meaning":"salad","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"sopa","meaning":"soup","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"azúcar","meaning":"sugar","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"sal","meaning":"salt","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"aceite","meaning":"oil","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"mantequilla","meaning":"butter","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"café","meaning":"coffee","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"té","meaning":"tea","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"jugo","meaning":"juice","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"cerveza","meaning":"beer","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"vino","meaning":"wine","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"quesadilla","meaning":"quesadilla","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"almuerzo","meaning":"lunch","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"cena","meaning":"dinner","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"comida","meaning":"food; meal","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"fruta","meaning":"fruit","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"verdura","meaning":"vegetable","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"postre","meaning":"dessert","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"galleta","meaning":"cookie","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"pastel","meaning":"cake","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"helado","meaning":"ice cream","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"chocolate","meaning":"chocolate","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"miel","meaning":"honey","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"mermelada","meaning":"jam","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"sándwich","meaning":"sandwich","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"pizza","meaning":"pizza","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"hamburguesa","meaning":"hamburger","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"pasta","meaning":"pasta","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"taco","meaning":"taco","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"frijol","meaning":"bean","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"maíz","meaning":"corn","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"harina","meaning":"flour","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"vinagre","meaning":"vinegar","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"pimienta","meaning":"pepper","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"desayuno","meaning":"breakfast","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"yogur","meaning":"yogurt","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"manteca","meaning":"lard; shortening","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"atún","meaning":"tuna","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"jamón","meaning":"ham","type":"noun","semanticClass":"food","gender":"m"},
-    {"term":"salchicha","meaning":"sausage","type":"noun","semanticClass":"food","gender":"f"},
-    {"term":"perro","meaning":"dog","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"gato","meaning":"cat","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"pájaro","meaning":"bird","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"pez","meaning":"fish","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"caballo","meaning":"horse","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"vaca","meaning":"cow","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"cerdo","meaning":"pig","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"oveja","meaning":"sheep","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"ardilla","meaning":"squirrel","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"conejo","meaning":"rabbit","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"ratón","meaning":"mouse","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"tortuga","meaning":"turtle","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"rana","meaning":"frog","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"serpiente","meaning":"snake","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"cabra","meaning":"goat","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"león","meaning":"lion","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"tigre","meaning":"tiger","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"oso","meaning":"bear","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"lobo","meaning":"wolf","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"zorro","meaning":"fox","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"mono","meaning":"monkey","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"elefante","meaning":"elephant","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"jirafa","meaning":"giraffe","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"cebra","meaning":"zebra","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"hipopótamo","meaning":"hippopotamus","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"rinoceronte","meaning":"rhinoceros","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"delfín","meaning":"dolphin","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"ballena","meaning":"whale","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"tiburón","meaning":"shark","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"pulpo","meaning":"octopus","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"pingüino","meaning":"penguin","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"águila","meaning":"eagle","type":"noun","semanticClass":"animals","gender":"f_el"},
-    {"term":"halcón","meaning":"falcon","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"búho","meaning":"owl","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"paloma","meaning":"dove; pigeon","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"gallina","meaning":"hen","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"gallo","meaning":"rooster","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"pato","meaning":"duck","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"cisne","meaning":"swan","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"mariposa","meaning":"butterfly","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"abeja","meaning":"bee","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"hormiga","meaning":"ant","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"mosca","meaning":"fly","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"mosquito","meaning":"mosquito","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"araña","meaning":"spider","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"ciervo","meaning":"deer","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"camello","meaning":"camel","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"cocodrilo","meaning":"crocodile","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"lagarto","meaning":"lizard","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"murciélago","meaning":"bat","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"foca","meaning":"seal","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"medusa","meaning":"jellyfish","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"cangrejo","meaning":"crab","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"langosta","meaning":"lobster","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"calamar","meaning":"squid","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"gusano","meaning":"worm","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"burro","meaning":"donkey","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"mula","meaning":"mule","type":"noun","semanticClass":"animals","gender":"f"},
-    {"term":"chimpancé","meaning":"chimpanzee","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"gorila","meaning":"gorilla","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"koala","meaning":"koala","type":"noun","semanticClass":"animals","gender":"m"},
-    {"term":"casa","meaning":"house; home","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"hogar","meaning":"home","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"apartamento","meaning":"apartment","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"habitación","meaning":"room; bedroom","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"cocina","meaning":"kitchen","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"baño","meaning":"bathroom","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"sala","meaning":"living room; hall","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"comedor","meaning":"dining room","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"puerta","meaning":"door","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"ventana","meaning":"window","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"pared","meaning":"wall","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"techo","meaning":"ceiling; roof","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"suelo","meaning":"floor; ground","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"mesa","meaning":"table","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"silla","meaning":"chair","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"sofá","meaning":"sofa","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"cama","meaning":"bed","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"armario","meaning":"closet; wardrobe","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"espejo","meaning":"mirror","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"lámpara","meaning":"lamp","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"cortina","meaning":"curtain","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"alfombra","meaning":"rug; carpet","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"nevera","meaning":"refrigerator","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"horno","meaning":"oven","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"fregadero","meaning":"sink","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"ducha","meaning":"shower","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"toalla","meaning":"towel","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"jabón","meaning":"soap","type":"noun","semanticClass":"home","gender":"m"},
-    {"term":"llave","meaning":"key","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"escalera","meaning":"stairs; staircase","type":"noun","semanticClass":"home","gender":"f"},
-    {"term":"persona","meaning":"person","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"hombre","meaning":"man","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"mujer","meaning":"woman","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"niño","meaning":"boy; child","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"niña","meaning":"girl","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"bebé","meaning":"baby","type":"noun","semanticClass":"people","gender":"mf"},
-    {"term":"amigo","meaning":"friend","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"amiga","meaning":"friend","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"familia","meaning":"family","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"madre","meaning":"mother","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"padre","meaning":"father","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"hermano","meaning":"brother","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"hermana","meaning":"sister","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"hijo","meaning":"son","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"hija","meaning":"daughter","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"abuelo","meaning":"grandfather","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"abuela","meaning":"grandmother","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"tío","meaning":"uncle","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"tía","meaning":"aunt","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"primo","meaning":"cousin","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"prima","meaning":"cousin","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"vecino","meaning":"neighbor","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"vecina","meaning":"neighbor","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"estudiante","meaning":"student","type":"noun","semanticClass":"people","gender":"mf"},
-    {"term":"profesor","meaning":"teacher; professor","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"profesora","meaning":"teacher; professor","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"doctor","meaning":"doctor","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"doctora","meaning":"doctor","type":"noun","semanticClass":"people","gender":"f"},
-    {"term":"cliente","meaning":"customer; client","type":"noun","semanticClass":"people","gender":"mf"},
-    {"term":"jefe","meaning":"boss; manager","type":"noun","semanticClass":"people","gender":"m"},
-    {"term":"ciudad","meaning":"city","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"pueblo","meaning":"town; village","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"barrio","meaning":"neighborhood","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"calle","meaning":"street","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"avenida","meaning":"avenue","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"plaza","meaning":"plaza; square","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"parque","meaning":"park","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"puente","meaning":"bridge","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"edificio","meaning":"building","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"tienda","meaning":"store; shop","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"mercado","meaning":"market","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"supermercado","meaning":"supermarket","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"restaurante","meaning":"restaurant","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"café","meaning":"cafe","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"hotel","meaning":"hotel","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"banco","meaning":"bank","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"hospital","meaning":"hospital","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"farmacia","meaning":"pharmacy","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"escuela","meaning":"school","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"biblioteca","meaning":"library","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"museo","meaning":"museum","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"iglesia","meaning":"church","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"estación","meaning":"station","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"aeropuerto","meaning":"airport","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"oficina","meaning":"office","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"correos","meaning":"post office; mail","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"acera","meaning":"sidewalk","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"semáforo","meaning":"traffic light","type":"noun","semanticClass":"city","gender":"m"},
-    {"term":"fuente","meaning":"fountain","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"rotonda","meaning":"roundabout","type":"noun","semanticClass":"city","gender":"f"},
-    {"term":"cuerpo","meaning":"body","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"cabeza","meaning":"head","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"cara","meaning":"face","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"ojo","meaning":"eye","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"nariz","meaning":"nose","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"boca","meaning":"mouth","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"oreja","meaning":"ear","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"diente","meaning":"tooth","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"lengua","meaning":"tongue","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"cuello","meaning":"neck","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"hombro","meaning":"shoulder","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"brazo","meaning":"arm","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"codo","meaning":"elbow","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"mano","meaning":"hand","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"dedo","meaning":"finger; toe","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"pecho","meaning":"chest","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"espalda","meaning":"back","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"estómago","meaning":"stomach","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"corazón","meaning":"heart","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"pierna","meaning":"leg","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"rodilla","meaning":"knee","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"pie","meaning":"foot","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"piel","meaning":"skin","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"hueso","meaning":"bone","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"sangre","meaning":"blood","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"cerebro","meaning":"brain","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"labio","meaning":"lip","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"uña","meaning":"nail","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"garganta","meaning":"throat","type":"noun","semanticClass":"body","gender":"f"},
-    {"term":"pulmón","meaning":"lung","type":"noun","semanticClass":"body","gender":"m"},
-    {"term":"transporte","meaning":"transportation","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"vehículo","meaning":"vehicle","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"coche","meaning":"car","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"automóvil","meaning":"automobile","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"autobús","meaning":"bus","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"camión","meaning":"truck","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"taxi","meaning":"taxi","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"tren","meaning":"train","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"metro","meaning":"subway; metro","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"tranvía","meaning":"tram","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"motocicleta","meaning":"motorcycle","type":"noun","semanticClass":"transport","gender":"f"},
-    {"term":"bicicleta","meaning":"bicycle","type":"noun","semanticClass":"transport","gender":"f"},
-    {"term":"barco","meaning":"boat; ship","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"barca","meaning":"small boat","type":"noun","semanticClass":"transport","gender":"f"},
-    {"term":"avión","meaning":"airplane","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"helicóptero","meaning":"helicopter","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"cohete","meaning":"rocket","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"carretera","meaning":"highway; road","type":"noun","semanticClass":"transport","gender":"f"},
-    {"term":"camino","meaning":"road; path","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"ruta","meaning":"route","type":"noun","semanticClass":"transport","gender":"f"},
-    {"term":"carril","meaning":"lane","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"tráfico","meaning":"traffic","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"viaje","meaning":"trip; journey","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"pasajero","meaning":"passenger","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"conductor","meaning":"driver","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"volante","meaning":"steering wheel","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"freno","meaning":"brake","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"motor","meaning":"engine; motor","type":"noun","semanticClass":"transport","gender":"m"},
-    {"term":"gasolina","meaning":"gasoline","type":"noun","semanticClass":"transport","gender":"f"},
-    {"term":"maleta","meaning":"suitcase","type":"noun","semanticClass":"transport","gender":"f"},
-    {"term":"tiempo","meaning":"time","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"momento","meaning":"moment","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"instante","meaning":"instant","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"segundo","meaning":"second","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"minuto","meaning":"minute","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"hora","meaning":"hour","type":"noun","semanticClass":"time","gender":"f"},
-    {"term":"día","meaning":"day","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"semana","meaning":"week","type":"noun","semanticClass":"time","gender":"f"},
-    {"term":"mes","meaning":"month","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"año","meaning":"year","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"siglo","meaning":"century","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"pasado","meaning":"past","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"presente","meaning":"present","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"futuro","meaning":"future","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"mañana","meaning":"morning","type":"noun","semanticClass":"time","gender":"f"},
-    {"term":"tarde","meaning":"afternoon; evening","type":"noun","semanticClass":"time","gender":"f"},
-    {"term":"noche","meaning":"night","type":"noun","semanticClass":"time","gender":"f"},
-    {"term":"madrugada","meaning":"early morning; dawn hours","type":"noun","semanticClass":"time","gender":"f"},
-    {"term":"amanecer","meaning":"dawn","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"atardecer","meaning":"sunset; dusk","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"anochecer","meaning":"nightfall","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"primavera","meaning":"spring","type":"noun","semanticClass":"time","gender":"f"},
-    {"term":"verano","meaning":"summer","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"otoño","meaning":"autumn","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"invierno","meaning":"winter","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"fecha","meaning":"date","type":"noun","semanticClass":"time","gender":"f"},
-    {"term":"plazo","meaning":"term; deadline","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"calendario","meaning":"calendar","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"reloj","meaning":"clock; watch","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"horario","meaning":"schedule; timetable","type":"noun","semanticClass":"time","gender":"m"},
-    {"term":"objeto","meaning":"object","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"cosa","meaning":"thing","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"caja","meaning":"box","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"bolsa","meaning":"bag","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"botella","meaning":"bottle","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"vaso","meaning":"glass; cup","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"taza","meaning":"cup; mug","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"plato","meaning":"plate","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"cuchara","meaning":"spoon","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"tenedor","meaning":"fork","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"cuchillo","meaning":"knife","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"papel","meaning":"paper","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"libreta","meaning":"notebook","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"cuaderno","meaning":"notebook","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"libro","meaning":"book","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"lápiz","meaning":"pencil","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"bolígrafo","meaning":"pen","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"moneda","meaning":"coin","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"billete","meaning":"bill; ticket","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"cartera","meaning":"wallet","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"mochila","meaning":"backpack","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"regalo","meaning":"gift","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"juguete","meaning":"toy","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"herramienta","meaning":"tool","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"cadena","meaning":"chain","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"anillo","meaning":"ring","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"collar","meaning":"necklace","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"retrato","meaning":"portrait; picture","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"bandera","meaning":"flag","type":"noun","semanticClass":"objects","gender":"f"},
-    {"term":"jarrón","meaning":"vase","type":"noun","semanticClass":"objects","gender":"m"},
-    {"term":"ser","meaning":"to be","type":"verb","semanticClass":"core"},
-    {"term":"estar","meaning":"to be","type":"verb","semanticClass":"core"},
-    {"term":"haber","meaning":"to have; there to be","type":"verb","semanticClass":"core"},
-    {"term":"tener","meaning":"to have","type":"verb","semanticClass":"core"},
-    {"term":"hacer","meaning":"to do; to make","type":"verb","semanticClass":"core"},
-    {"term":"poder","meaning":"to be able to","type":"verb","semanticClass":"core"},
-    {"term":"querer","meaning":"to want; to love","type":"verb","semanticClass":"core"},
-    {"term":"deber","meaning":"to owe; should","type":"verb","semanticClass":"core"},
-    {"term":"parecer","meaning":"to seem","type":"verb","semanticClass":"core"},
-    {"term":"resultar","meaning":"to result; to turn out","type":"verb","semanticClass":"core"},
-    {"term":"servir","meaning":"to serve; to be useful","type":"verb","semanticClass":"core"},
-    {"term":"valer","meaning":"to be worth; to cost","type":"verb","semanticClass":"core"},
-    {"term":"poner","meaning":"to put; to place","type":"verb","semanticClass":"core"},
-    {"term":"dar","meaning":"to give","type":"verb","semanticClass":"core"},
-    {"term":"tomar","meaning":"to take; to drink","type":"verb","semanticClass":"core"},
-    {"term":"pasar","meaning":"to pass; to happen","type":"verb","semanticClass":"core"},
-    {"term":"necesitar","meaning":"to need","type":"verb","semanticClass":"core"},
-    {"term":"quedar","meaning":"to remain; to meet","type":"verb","semanticClass":"core"},
-    {"term":"traer","meaning":"to bring","type":"verb","semanticClass":"core"},
-    {"term":"tratar","meaning":"to try; to deal with","type":"verb","semanticClass":"core"},
-    {"term":"ir","meaning":"to go","type":"verb","semanticClass":"motion"},
-    {"term":"venir","meaning":"to come","type":"verb","semanticClass":"motion"},
-    {"term":"llegar","meaning":"to arrive","type":"verb","semanticClass":"motion"},
-    {"term":"salir","meaning":"to leave; to go out","type":"verb","semanticClass":"motion"},
-    {"term":"entrar","meaning":"to enter","type":"verb","semanticClass":"motion"},
-    {"term":"volver","meaning":"to return","type":"verb","semanticClass":"motion"},
-    {"term":"regresar","meaning":"to return","type":"verb","semanticClass":"motion"},
-    {"term":"caminar","meaning":"to walk","type":"verb","semanticClass":"motion"},
-    {"term":"correr","meaning":"to run","type":"verb","semanticClass":"motion"},
-    {"term":"andar","meaning":"to walk; to go around","type":"verb","semanticClass":"motion"},
-    {"term":"subir","meaning":"to go up; to upload","type":"verb","semanticClass":"motion"},
-    {"term":"bajar","meaning":"to go down; to download","type":"verb","semanticClass":"motion"},
-    {"term":"caer","meaning":"to fall","type":"verb","semanticClass":"motion"},
-    {"term":"moverse","meaning":"to move","type":"verb","semanticClass":"motion"},
-    {"term":"viajar","meaning":"to travel","type":"verb","semanticClass":"motion"},
-    {"term":"cruzar","meaning":"to cross","type":"verb","semanticClass":"motion"},
-    {"term":"acercarse","meaning":"to get closer","type":"verb","semanticClass":"motion"},
-    {"term":"alejarse","meaning":"to move away","type":"verb","semanticClass":"motion"},
-    {"term":"avanzar","meaning":"to advance","type":"verb","semanticClass":"motion"},
-    {"term":"conducir","meaning":"to drive","type":"verb","semanticClass":"motion"},
-    {"term":"existir","meaning":"to exist","type":"verb","semanticClass":"state"},
-    {"term":"vivir","meaning":"to live","type":"verb","semanticClass":"state"},
-    {"term":"permanecer","meaning":"to remain","type":"verb","semanticClass":"state"},
-    {"term":"continuar","meaning":"to continue","type":"verb","semanticClass":"state"},
-    {"term":"mantenerse","meaning":"to remain; to stay","type":"verb","semanticClass":"state"},
-    {"term":"quedarse","meaning":"to stay; to remain","type":"verb","semanticClass":"state"},
-    {"term":"convertirse","meaning":"to become","type":"verb","semanticClass":"state"},
-    {"term":"volverse","meaning":"to become","type":"verb","semanticClass":"state"},
-    {"term":"hacerse","meaning":"to become","type":"verb","semanticClass":"state"},
-    {"term":"ponerse","meaning":"to become; to put on","type":"verb","semanticClass":"state"},
-    {"term":"depender","meaning":"to depend","type":"verb","semanticClass":"state"},
-    {"term":"consistir","meaning":"to consist","type":"verb","semanticClass":"state"},
-    {"term":"pertenecer","meaning":"to belong","type":"verb","semanticClass":"state"},
-    {"term":"faltar","meaning":"to be missing; to lack","type":"verb","semanticClass":"state"},
-    {"term":"sobrar","meaning":"to be left over","type":"verb","semanticClass":"state"},
-    {"term":"importar","meaning":"to matter","type":"verb","semanticClass":"state"},
-    {"term":"significar","meaning":"to mean; to signify","type":"verb","semanticClass":"state"},
-    {"term":"funcionar","meaning":"to function; to work","type":"verb","semanticClass":"state"},
-    {"term":"hallarse","meaning":"to be located; to find oneself","type":"verb","semanticClass":"state"},
-    {"term":"ubicarse","meaning":"to be located","type":"verb","semanticClass":"state"},
-    {"term":"decir","meaning":"to say; to tell","type":"verb","semanticClass":"communication"},
-    {"term":"hablar","meaning":"to speak; to talk","type":"verb","semanticClass":"communication"},
-    {"term":"preguntar","meaning":"to ask","type":"verb","semanticClass":"communication"},
-    {"term":"responder","meaning":"to answer; to respond","type":"verb","semanticClass":"communication"},
-    {"term":"contar","meaning":"to tell; to count","type":"verb","semanticClass":"communication"},
-    {"term":"explicar","meaning":"to explain","type":"verb","semanticClass":"communication"},
-    {"term":"llamar","meaning":"to call","type":"verb","semanticClass":"communication"},
-    {"term":"nombrar","meaning":"to name","type":"verb","semanticClass":"communication"},
-    {"term":"mencionar","meaning":"to mention","type":"verb","semanticClass":"communication"},
-    {"term":"repetir","meaning":"to repeat","type":"verb","semanticClass":"communication"},
-    {"term":"anunciar","meaning":"to announce","type":"verb","semanticClass":"communication"},
-    {"term":"avisar","meaning":"to notify; to warn","type":"verb","semanticClass":"communication"},
-    {"term":"discutir","meaning":"to discuss; to argue","type":"verb","semanticClass":"communication"},
-    {"term":"conversar","meaning":"to converse","type":"verb","semanticClass":"communication"},
-    {"term":"comunicar","meaning":"to communicate","type":"verb","semanticClass":"communication"},
-    {"term":"expresar","meaning":"to express","type":"verb","semanticClass":"communication"},
-    {"term":"describir","meaning":"to describe","type":"verb","semanticClass":"communication"},
-    {"term":"leer","meaning":"to read","type":"verb","semanticClass":"communication"},
-    {"term":"escribir","meaning":"to write","type":"verb","semanticClass":"communication"},
-    {"term":"traducir","meaning":"to translate","type":"verb","semanticClass":"communication"},
-    {"term":"saber","meaning":"to know","type":"verb","semanticClass":"thought"},
-    {"term":"pensar","meaning":"to think","type":"verb","semanticClass":"thought"},
-    {"term":"creer","meaning":"to believe","type":"verb","semanticClass":"thought"},
-    {"term":"entender","meaning":"to understand","type":"verb","semanticClass":"thought"},
-    {"term":"comprender","meaning":"to understand; to comprehend","type":"verb","semanticClass":"thought"},
-    {"term":"recordar","meaning":"to remember","type":"verb","semanticClass":"thought"},
-    {"term":"olvidar","meaning":"to forget","type":"verb","semanticClass":"thought"},
-    {"term":"aprender","meaning":"to learn","type":"verb","semanticClass":"thought"},
-    {"term":"estudiar","meaning":"to study","type":"verb","semanticClass":"thought"},
-    {"term":"conocer","meaning":"to know; to meet","type":"verb","semanticClass":"thought"},
-    {"term":"imaginar","meaning":"to imagine","type":"verb","semanticClass":"thought"},
-    {"term":"considerar","meaning":"to consider","type":"verb","semanticClass":"thought"},
-    {"term":"suponer","meaning":"to suppose","type":"verb","semanticClass":"thought"},
-    {"term":"decidir","meaning":"to decide","type":"verb","semanticClass":"thought"},
-    {"term":"dudar","meaning":"to doubt","type":"verb","semanticClass":"thought"},
-    {"term":"deducir","meaning":"to deduce","type":"verb","semanticClass":"thought"},
-    {"term":"descubrir","meaning":"to discover","type":"verb","semanticClass":"thought"},
-    {"term":"investigar","meaning":"to investigate","type":"verb","semanticClass":"thought"},
-    {"term":"calcular","meaning":"to calculate","type":"verb","semanticClass":"thought"},
-    {"term":"analizar","meaning":"to analyze","type":"verb","semanticClass":"thought"},
-    {"term":"gustar","meaning":"to like","type":"verb","semanticClass":"emotion"},
-    {"term":"amar","meaning":"to love","type":"verb","semanticClass":"emotion"},
-    {"term":"adorar","meaning":"to adore","type":"verb","semanticClass":"emotion"},
-    {"term":"odiar","meaning":"to hate","type":"verb","semanticClass":"emotion"},
-    {"term":"temer","meaning":"to fear","type":"verb","semanticClass":"emotion"},
-    {"term":"desear","meaning":"to desire; to wish","type":"verb","semanticClass":"emotion"},
-    {"term":"preocuparse","meaning":"to worry","type":"verb","semanticClass":"emotion"},
-    {"term":"alegrarse","meaning":"to become happy","type":"verb","semanticClass":"emotion"},
-    {"term":"entristecerse","meaning":"to become sad","type":"verb","semanticClass":"emotion"},
-    {"term":"molestar","meaning":"to bother","type":"verb","semanticClass":"emotion"},
-    {"term":"interesar","meaning":"to interest","type":"verb","semanticClass":"emotion"},
-    {"term":"aburrir","meaning":"to bore","type":"verb","semanticClass":"emotion"},
-    {"term":"divertir","meaning":"to amuse","type":"verb","semanticClass":"emotion"},
-    {"term":"disfrutar","meaning":"to enjoy","type":"verb","semanticClass":"emotion"},
-    {"term":"sufrir","meaning":"to suffer","type":"verb","semanticClass":"emotion"},
-    {"term":"lamentar","meaning":"to regret; to lament","type":"verb","semanticClass":"emotion"},
-    {"term":"enojarse","meaning":"to get angry","type":"verb","semanticClass":"emotion"},
-    {"term":"tranquilizarse","meaning":"to calm down","type":"verb","semanticClass":"emotion"},
-    {"term":"asustarse","meaning":"to get scared","type":"verb","semanticClass":"emotion"},
-    {"term":"entusiasmarse","meaning":"to get excited","type":"verb","semanticClass":"emotion"},
-    {"term":"comer","meaning":"to eat","type":"verb","semanticClass":"body"},
-    {"term":"beber","meaning":"to drink","type":"verb","semanticClass":"body"},
-    {"term":"dormir","meaning":"to sleep","type":"verb","semanticClass":"body"},
-    {"term":"descansar","meaning":"to rest","type":"verb","semanticClass":"body"},
-    {"term":"despertar","meaning":"to wake; to wake up","type":"verb","semanticClass":"body"},
-    {"term":"sentarse","meaning":"to sit down","type":"verb","semanticClass":"body"},
-    {"term":"levantarse","meaning":"to get up","type":"verb","semanticClass":"body"},
-    {"term":"acostarse","meaning":"to go to bed","type":"verb","semanticClass":"body"},
-    {"term":"bañarse","meaning":"to bathe; to shower","type":"verb","semanticClass":"body"},
-    {"term":"lavarse","meaning":"to wash oneself","type":"verb","semanticClass":"body"},
-    {"term":"vestirse","meaning":"to get dressed","type":"verb","semanticClass":"body"},
-    {"term":"peinarse","meaning":"to comb one's hair","type":"verb","semanticClass":"body"},
-    {"term":"sonreír","meaning":"to smile","type":"verb","semanticClass":"body"},
-    {"term":"reír","meaning":"to laugh","type":"verb","semanticClass":"body"},
-    {"term":"llorar","meaning":"to cry","type":"verb","semanticClass":"body"},
-    {"term":"toser","meaning":"to cough","type":"verb","semanticClass":"body"},
-    {"term":"estornudar","meaning":"to sneeze","type":"verb","semanticClass":"body"},
-    {"term":"masticar","meaning":"to chew","type":"verb","semanticClass":"body"},
-    {"term":"respirar","meaning":"to breathe","type":"verb","semanticClass":"body"},
-    {"term":"nadar","meaning":"to swim","type":"verb","semanticClass":"body"},
-    {"term":"cocinar","meaning":"to cook","type":"verb","semanticClass":"daily-life"},
-    {"term":"limpiar","meaning":"to clean","type":"verb","semanticClass":"daily-life"},
-    {"term":"abrir","meaning":"to open","type":"verb","semanticClass":"daily-life"},
-    {"term":"cerrar","meaning":"to close","type":"verb","semanticClass":"daily-life"},
-    {"term":"usar","meaning":"to use; to wear","type":"verb","semanticClass":"daily-life"},
-    {"term":"guardar","meaning":"to keep; to store","type":"verb","semanticClass":"daily-life"},
-    {"term":"buscar","meaning":"to look for","type":"verb","semanticClass":"daily-life"},
-    {"term":"encontrar","meaning":"to find","type":"verb","semanticClass":"daily-life"},
-    {"term":"preparar","meaning":"to prepare","type":"verb","semanticClass":"daily-life"},
-    {"term":"arreglar","meaning":"to fix; to arrange","type":"verb","semanticClass":"daily-life"},
-    {"term":"lavar","meaning":"to wash","type":"verb","semanticClass":"daily-life"},
-    {"term":"planchar","meaning":"to iron","type":"verb","semanticClass":"daily-life"},
-    {"term":"encender","meaning":"to turn on; to light","type":"verb","semanticClass":"daily-life"},
-    {"term":"apagar","meaning":"to turn off","type":"verb","semanticClass":"daily-life"},
-    {"term":"cortar","meaning":"to cut","type":"verb","semanticClass":"daily-life"},
-    {"term":"llenar","meaning":"to fill","type":"verb","semanticClass":"daily-life"},
-    {"term":"vaciar","meaning":"to empty","type":"verb","semanticClass":"daily-life"},
-    {"term":"tirar","meaning":"to throw away; to pull","type":"verb","semanticClass":"daily-life"},
-    {"term":"ordenar","meaning":"to tidy; to put in order","type":"verb","semanticClass":"daily-life"},
-    {"term":"recoger","meaning":"to pick up; to collect","type":"verb","semanticClass":"daily-life"},
-    {"term":"comprar","meaning":"to buy","type":"verb","semanticClass":"possession"},
-    {"term":"vender","meaning":"to sell","type":"verb","semanticClass":"possession"},
-    {"term":"pagar","meaning":"to pay","type":"verb","semanticClass":"possession"},
-    {"term":"cobrar","meaning":"to charge; to collect","type":"verb","semanticClass":"possession"},
-    {"term":"recibir","meaning":"to receive","type":"verb","semanticClass":"possession"},
-    {"term":"prestar","meaning":"to lend","type":"verb","semanticClass":"possession"},
-    {"term":"gastar","meaning":"to spend","type":"verb","semanticClass":"possession"},
-    {"term":"ahorrar","meaning":"to save","type":"verb","semanticClass":"possession"},
-    {"term":"ganar","meaning":"to earn; to win","type":"verb","semanticClass":"possession"},
-    {"term":"perder","meaning":"to lose","type":"verb","semanticClass":"possession"},
-    {"term":"compartir","meaning":"to share","type":"verb","semanticClass":"possession"},
-    {"term":"devolver","meaning":"to return; to give back","type":"verb","semanticClass":"possession"},
-    {"term":"regalar","meaning":"to give as a gift","type":"verb","semanticClass":"possession"},
-    {"term":"elegir","meaning":"to choose","type":"verb","semanticClass":"possession"},
-    {"term":"poseer","meaning":"to possess","type":"verb","semanticClass":"possession"},
-    {"term":"adquirir","meaning":"to acquire","type":"verb","semanticClass":"possession"},
-    {"term":"alquilar","meaning":"to rent","type":"verb","semanticClass":"possession"},
-    {"term":"costar","meaning":"to cost","type":"verb","semanticClass":"possession"},
-    {"term":"robar","meaning":"to steal","type":"verb","semanticClass":"possession"},
-    {"term":"ofrecer","meaning":"to offer","type":"verb","semanticClass":"possession"},
-    {"term":"trabajar","meaning":"to work","type":"verb","semanticClass":"work"},
-    {"term":"crear","meaning":"to create","type":"verb","semanticClass":"work"},
-    {"term":"construir","meaning":"to build","type":"verb","semanticClass":"work"},
-    {"term":"producir","meaning":"to produce","type":"verb","semanticClass":"work"},
-    {"term":"empezar","meaning":"to start; to begin","type":"verb","semanticClass":"work"},
-    {"term":"terminar","meaning":"to finish; to end","type":"verb","semanticClass":"work"},
-    {"term":"mejorar","meaning":"to improve","type":"verb","semanticClass":"work"},
-    {"term":"desarrollar","meaning":"to develop","type":"verb","semanticClass":"work"},
-    {"term":"organizar","meaning":"to organize","type":"verb","semanticClass":"work"},
-    {"term":"planear","meaning":"to plan","type":"verb","semanticClass":"work"},
-    {"term":"intentar","meaning":"to try; to attempt","type":"verb","semanticClass":"work"},
-    {"term":"lograr","meaning":"to achieve","type":"verb","semanticClass":"work"},
-    {"term":"resolver","meaning":"to solve; to resolve","type":"verb","semanticClass":"work"},
-    {"term":"reparar","meaning":"to repair","type":"verb","semanticClass":"work"},
-    {"term":"fabricar","meaning":"to manufacture","type":"verb","semanticClass":"work"},
-    {"term":"diseñar","meaning":"to design","type":"verb","semanticClass":"work"},
-    {"term":"administrar","meaning":"to manage; to administer","type":"verb","semanticClass":"work"},
-    {"term":"dirigir","meaning":"to direct; to lead","type":"verb","semanticClass":"work"},
-    {"term":"presentar","meaning":"to present","type":"verb","semanticClass":"work"},
-    {"term":"operar","meaning":"to operate","type":"verb","semanticClass":"work"},
-    {"term":"ayudar","meaning":"to help","type":"verb","semanticClass":"social"},
-    {"term":"invitar","meaning":"to invite","type":"verb","semanticClass":"social"},
-    {"term":"visitar","meaning":"to visit","type":"verb","semanticClass":"social"},
-    {"term":"acompañar","meaning":"to accompany","type":"verb","semanticClass":"social"},
-    {"term":"saludar","meaning":"to greet","type":"verb","semanticClass":"social"},
-    {"term":"despedirse","meaning":"to say goodbye","type":"verb","semanticClass":"social"},
-    {"term":"reunirse","meaning":"to meet; to gather","type":"verb","semanticClass":"social"},
-    {"term":"casarse","meaning":"to get married","type":"verb","semanticClass":"social"},
-    {"term":"celebrar","meaning":"to celebrate","type":"verb","semanticClass":"social"},
-    {"term":"apoyar","meaning":"to support","type":"verb","semanticClass":"social"},
-    {"term":"respetar","meaning":"to respect","type":"verb","semanticClass":"social"},
-    {"term":"confiar","meaning":"to trust","type":"verb","semanticClass":"social"},
-    {"term":"abrazar","meaning":"to hug","type":"verb","semanticClass":"social"},
-    {"term":"besar","meaning":"to kiss","type":"verb","semanticClass":"social"},
-    {"term":"jugar","meaning":"to play","type":"verb","semanticClass":"social"},
-    {"term":"colaborar","meaning":"to collaborate","type":"verb","semanticClass":"social"},
-    {"term":"competir","meaning":"to compete","type":"verb","semanticClass":"social"},
-    {"term":"unirse","meaning":"to join","type":"verb","semanticClass":"social"},
-    {"term":"cuidar","meaning":"to take care of","type":"verb","semanticClass":"social"},
-    {"term":"negociar","meaning":"to negotiate","type":"verb","semanticClass":"social"},
-    {"term":"dejar","meaning":"to let; to leave","type":"verb","semanticClass":"control"},
-    {"term":"permitir","meaning":"to allow","type":"verb","semanticClass":"control"},
-    {"term":"prohibir","meaning":"to prohibit","type":"verb","semanticClass":"control"},
-    {"term":"obligar","meaning":"to force; to oblige","type":"verb","semanticClass":"control"},
-    {"term":"mandar","meaning":"to order; to send","type":"verb","semanticClass":"control"},
-    {"term":"controlar","meaning":"to control","type":"verb","semanticClass":"control"},
-    {"term":"manejar","meaning":"to handle; to manage","type":"verb","semanticClass":"control"},
-    {"term":"evitar","meaning":"to avoid","type":"verb","semanticClass":"control"},
-    {"term":"proteger","meaning":"to protect","type":"verb","semanticClass":"control"},
-    {"term":"atacar","meaning":"to attack","type":"verb","semanticClass":"control"},
-    {"term":"defender","meaning":"to defend","type":"verb","semanticClass":"control"},
-    {"term":"aceptar","meaning":"to accept","type":"verb","semanticClass":"control"},
-    {"term":"rechazar","meaning":"to reject","type":"verb","semanticClass":"control"},
-    {"term":"exigir","meaning":"to demand","type":"verb","semanticClass":"control"},
-    {"term":"cumplir","meaning":"to fulfill; to comply","type":"verb","semanticClass":"control"},
-    {"term":"detener","meaning":"to stop; to detain","type":"verb","semanticClass":"control"},
-    {"term":"soltar","meaning":"to release; to let go","type":"verb","semanticClass":"control"},
-    {"term":"aplicar","meaning":"to apply","type":"verb","semanticClass":"control"},
-    {"term":"impedir","meaning":"to prevent","type":"verb","semanticClass":"control"},
-    {"term":"supervisar","meaning":"to supervise","type":"verb","semanticClass":"control"},
-    {"term":"ver","meaning":"to see","type":"verb","semanticClass":"perception"},
-    {"term":"oír","meaning":"to hear","type":"verb","semanticClass":"perception"},
-    {"term":"escuchar","meaning":"to listen","type":"verb","semanticClass":"perception"},
-    {"term":"mirar","meaning":"to look at","type":"verb","semanticClass":"perception"},
-    {"term":"sentir","meaning":"to feel","type":"verb","semanticClass":"perception"},
-    {"term":"notar","meaning":"to notice","type":"verb","semanticClass":"perception"},
-    {"term":"observar","meaning":"to observe","type":"verb","semanticClass":"perception"},
-    {"term":"tocar","meaning":"to touch","type":"verb","semanticClass":"perception"},
-    {"term":"oler","meaning":"to smell","type":"verb","semanticClass":"perception"},
-    {"term":"probar","meaning":"to taste; to try","type":"verb","semanticClass":"perception"},
-    {"term":"distinguir","meaning":"to distinguish","type":"verb","semanticClass":"perception"},
-    {"term":"vigilar","meaning":"to watch; to keep an eye on","type":"verb","semanticClass":"perception"},
-    {"term":"mostrar","meaning":"to show","type":"verb","semanticClass":"perception"},
-    {"term":"señalar","meaning":"to point out; to signal","type":"verb","semanticClass":"perception"},
-    {"term":"enfocar","meaning":"to focus","type":"verb","semanticClass":"perception"},
-    {"term":"captar","meaning":"to capture; to grasp","type":"verb","semanticClass":"perception"},
-    {"term":"percibir","meaning":"to perceive","type":"verb","semanticClass":"perception"},
-    {"term":"contemplar","meaning":"to contemplate; to look at","type":"verb","semanticClass":"perception"},
-    {"term":"examinar","meaning":"to examine","type":"verb","semanticClass":"perception"},
-    {"term":"detectar","meaning":"to detect","type":"verb","semanticClass":"perception"},
-    {"term":"durar","meaning":"to last","type":"verb","semanticClass":"time"},
-    {"term":"ocurrir","meaning":"to happen; to occur","type":"verb","semanticClass":"time"},
-    {"term":"suceder","meaning":"to happen","type":"verb","semanticClass":"time"},
-    {"term":"comenzar","meaning":"to begin","type":"verb","semanticClass":"time"},
-    {"term":"iniciar","meaning":"to begin; to start","type":"verb","semanticClass":"time"},
-    {"term":"acabar","meaning":"to finish; to end","type":"verb","semanticClass":"time"},
-    {"term":"nacer","meaning":"to be born","type":"verb","semanticClass":"time"},
-    {"term":"morir","meaning":"to die","type":"verb","semanticClass":"time"},
-    {"term":"tardar","meaning":"to take time; to delay","type":"verb","semanticClass":"time"},
-    {"term":"aprovechar","meaning":"to make use of","type":"verb","semanticClass":"time"},
-    {"term":"retrasar","meaning":"to delay","type":"verb","semanticClass":"time"},
-    {"term":"adelantar","meaning":"to move forward; to advance","type":"verb","semanticClass":"time"},
-    {"term":"posponer","meaning":"to postpone","type":"verb","semanticClass":"time"},
-    {"term":"cancelar","meaning":"to cancel","type":"verb","semanticClass":"time"},
-    {"term":"renovar","meaning":"to renew","type":"verb","semanticClass":"time"},
-    {"term":"surgir","meaning":"to arise; to emerge","type":"verb","semanticClass":"time"},
-    {"term":"desaparecer","meaning":"to disappear","type":"verb","semanticClass":"time"},
-    {"term":"caducar","meaning":"to expire","type":"verb","semanticClass":"time"},
-    {"term":"transcurrir","meaning":"to pass; to elapse","type":"verb","semanticClass":"time"},
-    {"term":"persistir","meaning":"to persist","type":"verb","semanticClass":"time"},
-    {"term":"crecer","meaning":"to grow","type":"verb","semanticClass":"change"},
-    {"term":"aumentar","meaning":"to increase","type":"verb","semanticClass":"change"},
-    {"term":"disminuir","meaning":"to decrease","type":"verb","semanticClass":"change"},
-    {"term":"reducir","meaning":"to reduce","type":"verb","semanticClass":"change"},
-    {"term":"cambiar","meaning":"to change","type":"verb","semanticClass":"change"},
-    {"term":"transformar","meaning":"to transform","type":"verb","semanticClass":"change"},
-    {"term":"romper","meaning":"to break","type":"verb","semanticClass":"change"},
-    {"term":"empeorar","meaning":"to worsen","type":"verb","semanticClass":"change"},
-    {"term":"secar","meaning":"to dry","type":"verb","semanticClass":"change"},
-    {"term":"mojar","meaning":"to wet","type":"verb","semanticClass":"change"},
-    {"term":"derretir","meaning":"to melt","type":"verb","semanticClass":"change"},
-    {"term":"congelar","meaning":"to freeze","type":"verb","semanticClass":"change"},
-    {"term":"mezclar","meaning":"to mix","type":"verb","semanticClass":"change"},
-    {"term":"separar","meaning":"to separate","type":"verb","semanticClass":"change"},
-    {"term":"adaptar","meaning":"to adapt","type":"verb","semanticClass":"change"},
-    {"term":"reemplazar","meaning":"to replace","type":"verb","semanticClass":"change"},
-    {"term":"doblar","meaning":"to fold; to bend","type":"verb","semanticClass":"change"},
-    {"term":"calentar","meaning":"to heat; to warm","type":"verb","semanticClass":"change"},
-    {"term":"enfriar","meaning":"to cool","type":"verb","semanticClass":"change"},
-    {"term":"convertir","meaning":"to convert; to turn into","type":"verb","semanticClass":"change"}
+    {
+      "term": "agua",
+      "meaning": "water",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f_el"
+    },
+    {
+      "term": "pan",
+      "meaning": "bread",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "arroz",
+      "meaning": "rice",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "leche",
+      "meaning": "milk",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "queso",
+      "meaning": "cheese",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "huevo",
+      "meaning": "egg",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "carne",
+      "meaning": "meat",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "pollo",
+      "meaning": "chicken",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "pescado",
+      "meaning": "fish",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "manzana",
+      "meaning": "apple",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "plátano",
+      "meaning": "banana",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "naranja",
+      "meaning": "orange",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "uva",
+      "meaning": "grape",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "fresa",
+      "meaning": "strawberry",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "limón",
+      "meaning": "lemon",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "tomate",
+      "meaning": "tomato",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "patata",
+      "meaning": "potato",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "cebolla",
+      "meaning": "onion",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "ajo",
+      "meaning": "garlic",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "zanahoria",
+      "meaning": "carrot",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "ensalada",
+      "meaning": "salad",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "sopa",
+      "meaning": "soup",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "azúcar",
+      "meaning": "sugar",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "sal",
+      "meaning": "salt",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "aceite",
+      "meaning": "oil",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "mantequilla",
+      "meaning": "butter",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "café",
+      "meaning": "coffee",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "té",
+      "meaning": "tea",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "jugo",
+      "meaning": "juice",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "cerveza",
+      "meaning": "beer",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "vino",
+      "meaning": "wine",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "quesadilla",
+      "meaning": "quesadilla",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "almuerzo",
+      "meaning": "lunch",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "cena",
+      "meaning": "dinner",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "comida",
+      "meaning": "food; meal",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "fruta",
+      "meaning": "fruit",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "verdura",
+      "meaning": "vegetable",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "postre",
+      "meaning": "dessert",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "galleta",
+      "meaning": "cookie",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "pastel",
+      "meaning": "cake",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "helado",
+      "meaning": "ice cream",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "chocolate",
+      "meaning": "chocolate",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "miel",
+      "meaning": "honey",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "mermelada",
+      "meaning": "jam",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "sándwich",
+      "meaning": "sandwich",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "pizza",
+      "meaning": "pizza",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "hamburguesa",
+      "meaning": "hamburger",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "pasta",
+      "meaning": "pasta",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "taco",
+      "meaning": "taco",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "frijol",
+      "meaning": "bean",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "maíz",
+      "meaning": "corn",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "harina",
+      "meaning": "flour",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "vinagre",
+      "meaning": "vinegar",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "pimienta",
+      "meaning": "pepper",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "desayuno",
+      "meaning": "breakfast",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "yogur",
+      "meaning": "yogurt",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "manteca",
+      "meaning": "lard; shortening",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "atún",
+      "meaning": "tuna",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "jamón",
+      "meaning": "ham",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "m"
+    },
+    {
+      "term": "salchicha",
+      "meaning": "sausage",
+      "type": "noun",
+      "semanticClass": "food",
+      "gender": "f"
+    },
+    {
+      "term": "perro",
+      "meaning": "dog",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "gato",
+      "meaning": "cat",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "pájaro",
+      "meaning": "bird",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "pez",
+      "meaning": "fish",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "caballo",
+      "meaning": "horse",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "vaca",
+      "meaning": "cow",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "cerdo",
+      "meaning": "pig",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "oveja",
+      "meaning": "sheep",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "ardilla",
+      "meaning": "squirrel",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "conejo",
+      "meaning": "rabbit",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "ratón",
+      "meaning": "mouse",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "tortuga",
+      "meaning": "turtle",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "rana",
+      "meaning": "frog",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "serpiente",
+      "meaning": "snake",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "cabra",
+      "meaning": "goat",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "león",
+      "meaning": "lion",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "tigre",
+      "meaning": "tiger",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "oso",
+      "meaning": "bear",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "lobo",
+      "meaning": "wolf",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "zorro",
+      "meaning": "fox",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "mono",
+      "meaning": "monkey",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "elefante",
+      "meaning": "elephant",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "jirafa",
+      "meaning": "giraffe",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "cebra",
+      "meaning": "zebra",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "hipopótamo",
+      "meaning": "hippopotamus",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "rinoceronte",
+      "meaning": "rhinoceros",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "delfín",
+      "meaning": "dolphin",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "ballena",
+      "meaning": "whale",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "tiburón",
+      "meaning": "shark",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "pulpo",
+      "meaning": "octopus",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "pingüino",
+      "meaning": "penguin",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "águila",
+      "meaning": "eagle",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f_el"
+    },
+    {
+      "term": "halcón",
+      "meaning": "falcon",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "búho",
+      "meaning": "owl",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "paloma",
+      "meaning": "dove; pigeon",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "gallina",
+      "meaning": "hen",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "gallo",
+      "meaning": "rooster",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "pato",
+      "meaning": "duck",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "cisne",
+      "meaning": "swan",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "mariposa",
+      "meaning": "butterfly",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "abeja",
+      "meaning": "bee",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "hormiga",
+      "meaning": "ant",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "mosca",
+      "meaning": "fly",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "mosquito",
+      "meaning": "mosquito",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "araña",
+      "meaning": "spider",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "ciervo",
+      "meaning": "deer",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "camello",
+      "meaning": "camel",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "cocodrilo",
+      "meaning": "crocodile",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "lagarto",
+      "meaning": "lizard",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "murciélago",
+      "meaning": "bat",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "foca",
+      "meaning": "seal",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "medusa",
+      "meaning": "jellyfish",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "cangrejo",
+      "meaning": "crab",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "langosta",
+      "meaning": "lobster",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "calamar",
+      "meaning": "squid",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "gusano",
+      "meaning": "worm",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "burro",
+      "meaning": "donkey",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "mula",
+      "meaning": "mule",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "f"
+    },
+    {
+      "term": "chimpancé",
+      "meaning": "chimpanzee",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "gorila",
+      "meaning": "gorilla",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "koala",
+      "meaning": "koala",
+      "type": "noun",
+      "semanticClass": "animals",
+      "gender": "m"
+    },
+    {
+      "term": "casa",
+      "meaning": "house; home",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "hogar",
+      "meaning": "home",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "apartamento",
+      "meaning": "apartment",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "habitación",
+      "meaning": "room; bedroom",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "cocina",
+      "meaning": "kitchen",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "baño",
+      "meaning": "bathroom",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "sala",
+      "meaning": "living room; hall",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "comedor",
+      "meaning": "dining room",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "puerta",
+      "meaning": "door",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "ventana",
+      "meaning": "window",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "pared",
+      "meaning": "wall",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "techo",
+      "meaning": "ceiling; roof",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "suelo",
+      "meaning": "floor; ground",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "mesa",
+      "meaning": "table",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "silla",
+      "meaning": "chair",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "sofá",
+      "meaning": "sofa",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "cama",
+      "meaning": "bed",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "armario",
+      "meaning": "closet; wardrobe",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "espejo",
+      "meaning": "mirror",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "lámpara",
+      "meaning": "lamp",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "cortina",
+      "meaning": "curtain",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "alfombra",
+      "meaning": "rug; carpet",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "nevera",
+      "meaning": "refrigerator",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "horno",
+      "meaning": "oven",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "fregadero",
+      "meaning": "sink",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "ducha",
+      "meaning": "shower",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "toalla",
+      "meaning": "towel",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "jabón",
+      "meaning": "soap",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "m"
+    },
+    {
+      "term": "llave",
+      "meaning": "key",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "escalera",
+      "meaning": "stairs; staircase",
+      "type": "noun",
+      "semanticClass": "home",
+      "gender": "f"
+    },
+    {
+      "term": "persona",
+      "meaning": "person",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "hombre",
+      "meaning": "man",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "mujer",
+      "meaning": "woman",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "niño",
+      "meaning": "boy; child",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "niña",
+      "meaning": "girl",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "bebé",
+      "meaning": "baby",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "mf"
+    },
+    {
+      "term": "amigo",
+      "meaning": "friend",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "amiga",
+      "meaning": "friend",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "familia",
+      "meaning": "family",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "madre",
+      "meaning": "mother",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "padre",
+      "meaning": "father",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "hermano",
+      "meaning": "brother",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "hermana",
+      "meaning": "sister",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "hijo",
+      "meaning": "son",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "hija",
+      "meaning": "daughter",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "abuelo",
+      "meaning": "grandfather",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "abuela",
+      "meaning": "grandmother",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "tío",
+      "meaning": "uncle",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "tía",
+      "meaning": "aunt",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "primo",
+      "meaning": "cousin",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "prima",
+      "meaning": "cousin",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "vecino",
+      "meaning": "neighbor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "vecina",
+      "meaning": "neighbor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "estudiante",
+      "meaning": "student",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "mf"
+    },
+    {
+      "term": "profesor",
+      "meaning": "teacher; professor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "profesora",
+      "meaning": "teacher; professor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "doctor",
+      "meaning": "doctor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "doctora",
+      "meaning": "doctor",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "f"
+    },
+    {
+      "term": "cliente",
+      "meaning": "customer; client",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "mf"
+    },
+    {
+      "term": "jefe",
+      "meaning": "boss; manager",
+      "type": "noun",
+      "semanticClass": "people",
+      "gender": "m"
+    },
+    {
+      "term": "ciudad",
+      "meaning": "city",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "pueblo",
+      "meaning": "town; village",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "barrio",
+      "meaning": "neighborhood",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "calle",
+      "meaning": "street",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "avenida",
+      "meaning": "avenue",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "plaza",
+      "meaning": "plaza; square",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "parque",
+      "meaning": "park",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "puente",
+      "meaning": "bridge",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "edificio",
+      "meaning": "building",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "tienda",
+      "meaning": "store; shop",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "mercado",
+      "meaning": "market",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "supermercado",
+      "meaning": "supermarket",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "restaurante",
+      "meaning": "restaurant",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "café",
+      "meaning": "cafe",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "hotel",
+      "meaning": "hotel",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "banco",
+      "meaning": "bank",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "hospital",
+      "meaning": "hospital",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "farmacia",
+      "meaning": "pharmacy",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "escuela",
+      "meaning": "school",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "biblioteca",
+      "meaning": "library",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "museo",
+      "meaning": "museum",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "iglesia",
+      "meaning": "church",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "estación",
+      "meaning": "station",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "aeropuerto",
+      "meaning": "airport",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "oficina",
+      "meaning": "office",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "correos",
+      "meaning": "post office; mail",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "acera",
+      "meaning": "sidewalk",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "semáforo",
+      "meaning": "traffic light",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "m"
+    },
+    {
+      "term": "fuente",
+      "meaning": "fountain",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "rotonda",
+      "meaning": "roundabout",
+      "type": "noun",
+      "semanticClass": "city",
+      "gender": "f"
+    },
+    {
+      "term": "cuerpo",
+      "meaning": "body",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "cabeza",
+      "meaning": "head",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "cara",
+      "meaning": "face",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "ojo",
+      "meaning": "eye",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "nariz",
+      "meaning": "nose",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "boca",
+      "meaning": "mouth",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "oreja",
+      "meaning": "ear",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "diente",
+      "meaning": "tooth",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "lengua",
+      "meaning": "tongue",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "cuello",
+      "meaning": "neck",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "hombro",
+      "meaning": "shoulder",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "brazo",
+      "meaning": "arm",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "codo",
+      "meaning": "elbow",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "mano",
+      "meaning": "hand",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "dedo",
+      "meaning": "finger; toe",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "pecho",
+      "meaning": "chest",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "espalda",
+      "meaning": "back",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "estómago",
+      "meaning": "stomach",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "corazón",
+      "meaning": "heart",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "pierna",
+      "meaning": "leg",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "rodilla",
+      "meaning": "knee",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "pie",
+      "meaning": "foot",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "piel",
+      "meaning": "skin",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "hueso",
+      "meaning": "bone",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "sangre",
+      "meaning": "blood",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "cerebro",
+      "meaning": "brain",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "labio",
+      "meaning": "lip",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "uña",
+      "meaning": "nail",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "garganta",
+      "meaning": "throat",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "f"
+    },
+    {
+      "term": "pulmón",
+      "meaning": "lung",
+      "type": "noun",
+      "semanticClass": "body",
+      "gender": "m"
+    },
+    {
+      "term": "transporte",
+      "meaning": "transportation",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "vehículo",
+      "meaning": "vehicle",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "coche",
+      "meaning": "car",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "automóvil",
+      "meaning": "automobile",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "autobús",
+      "meaning": "bus",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "camión",
+      "meaning": "truck",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "taxi",
+      "meaning": "taxi",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "tren",
+      "meaning": "train",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "metro",
+      "meaning": "subway; metro",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "tranvía",
+      "meaning": "tram",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "motocicleta",
+      "meaning": "motorcycle",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "term": "bicicleta",
+      "meaning": "bicycle",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "term": "barco",
+      "meaning": "boat; ship",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "barca",
+      "meaning": "small boat",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "term": "avión",
+      "meaning": "airplane",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "helicóptero",
+      "meaning": "helicopter",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "cohete",
+      "meaning": "rocket",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "carretera",
+      "meaning": "highway; road",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "term": "camino",
+      "meaning": "road; path",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "ruta",
+      "meaning": "route",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "term": "carril",
+      "meaning": "lane",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "tráfico",
+      "meaning": "traffic",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "viaje",
+      "meaning": "trip; journey",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "pasajero",
+      "meaning": "passenger",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "conductor",
+      "meaning": "driver",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "volante",
+      "meaning": "steering wheel",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "freno",
+      "meaning": "brake",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "motor",
+      "meaning": "engine; motor",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "m"
+    },
+    {
+      "term": "gasolina",
+      "meaning": "gasoline",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "term": "maleta",
+      "meaning": "suitcase",
+      "type": "noun",
+      "semanticClass": "transport",
+      "gender": "f"
+    },
+    {
+      "term": "tiempo",
+      "meaning": "time",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "momento",
+      "meaning": "moment",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "instante",
+      "meaning": "instant",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "segundo",
+      "meaning": "second",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "minuto",
+      "meaning": "minute",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "hora",
+      "meaning": "hour",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "term": "día",
+      "meaning": "day",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "semana",
+      "meaning": "week",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "term": "mes",
+      "meaning": "month",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "año",
+      "meaning": "year",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "siglo",
+      "meaning": "century",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "pasado",
+      "meaning": "past",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "presente",
+      "meaning": "present",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "futuro",
+      "meaning": "future",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "mañana",
+      "meaning": "morning",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "term": "tarde",
+      "meaning": "afternoon; evening",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "term": "noche",
+      "meaning": "night",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "term": "madrugada",
+      "meaning": "early morning; dawn hours",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "term": "amanecer",
+      "meaning": "dawn",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "atardecer",
+      "meaning": "sunset; dusk",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "anochecer",
+      "meaning": "nightfall",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "primavera",
+      "meaning": "spring",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "term": "verano",
+      "meaning": "summer",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "otoño",
+      "meaning": "autumn",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "invierno",
+      "meaning": "winter",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "fecha",
+      "meaning": "date",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "f"
+    },
+    {
+      "term": "plazo",
+      "meaning": "term; deadline",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "calendario",
+      "meaning": "calendar",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "reloj",
+      "meaning": "clock; watch",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "horario",
+      "meaning": "schedule; timetable",
+      "type": "noun",
+      "semanticClass": "time",
+      "gender": "m"
+    },
+    {
+      "term": "objeto",
+      "meaning": "object",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "cosa",
+      "meaning": "thing",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "caja",
+      "meaning": "box",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "bolsa",
+      "meaning": "bag",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "botella",
+      "meaning": "bottle",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "vaso",
+      "meaning": "glass; cup",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "taza",
+      "meaning": "cup; mug",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "plato",
+      "meaning": "plate",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "cuchara",
+      "meaning": "spoon",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "tenedor",
+      "meaning": "fork",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "cuchillo",
+      "meaning": "knife",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "papel",
+      "meaning": "paper",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "libreta",
+      "meaning": "notebook",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "cuaderno",
+      "meaning": "notebook",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "libro",
+      "meaning": "book",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "lápiz",
+      "meaning": "pencil",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "bolígrafo",
+      "meaning": "pen",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "moneda",
+      "meaning": "coin",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "billete",
+      "meaning": "bill; ticket",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "cartera",
+      "meaning": "wallet",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "mochila",
+      "meaning": "backpack",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "regalo",
+      "meaning": "gift",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "juguete",
+      "meaning": "toy",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "herramienta",
+      "meaning": "tool",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "cadena",
+      "meaning": "chain",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "anillo",
+      "meaning": "ring",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "collar",
+      "meaning": "necklace",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "retrato",
+      "meaning": "portrait; picture",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "bandera",
+      "meaning": "flag",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "f"
+    },
+    {
+      "term": "jarrón",
+      "meaning": "vase",
+      "type": "noun",
+      "semanticClass": "objects",
+      "gender": "m"
+    },
+    {
+      "term": "ser",
+      "meaning": "to be",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "estar",
+      "meaning": "to be",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "haber",
+      "meaning": "to have; there to be",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "tener",
+      "meaning": "to have",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "hacer",
+      "meaning": "to do; to make",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "poder",
+      "meaning": "to be able to",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "querer",
+      "meaning": "to want; to love",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "deber",
+      "meaning": "to owe; should",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "parecer",
+      "meaning": "to seem",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "resultar",
+      "meaning": "to result; to turn out",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "servir",
+      "meaning": "to serve; to be useful",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "valer",
+      "meaning": "to be worth; to cost",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "poner",
+      "meaning": "to put; to place",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "dar",
+      "meaning": "to give",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "tomar",
+      "meaning": "to take; to drink",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "pasar",
+      "meaning": "to pass; to happen",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "necesitar",
+      "meaning": "to need",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "quedar",
+      "meaning": "to remain; to meet",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "traer",
+      "meaning": "to bring",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "tratar",
+      "meaning": "to try; to deal with",
+      "type": "verb",
+      "semanticClass": "core"
+    },
+    {
+      "term": "ir",
+      "meaning": "to go",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "venir",
+      "meaning": "to come",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "llegar",
+      "meaning": "to arrive",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "salir",
+      "meaning": "to leave; to go out",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "entrar",
+      "meaning": "to enter",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "volver",
+      "meaning": "to return",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "regresar",
+      "meaning": "to return",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "caminar",
+      "meaning": "to walk",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "correr",
+      "meaning": "to run",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "andar",
+      "meaning": "to walk; to go around",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "subir",
+      "meaning": "to go up; to upload",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "bajar",
+      "meaning": "to go down; to download",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "caer",
+      "meaning": "to fall",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "moverse",
+      "meaning": "to move",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "viajar",
+      "meaning": "to travel",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "cruzar",
+      "meaning": "to cross",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "acercarse",
+      "meaning": "to get closer",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "alejarse",
+      "meaning": "to move away",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "avanzar",
+      "meaning": "to advance",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "conducir",
+      "meaning": "to drive",
+      "type": "verb",
+      "semanticClass": "motion"
+    },
+    {
+      "term": "existir",
+      "meaning": "to exist",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "vivir",
+      "meaning": "to live",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "permanecer",
+      "meaning": "to remain",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "continuar",
+      "meaning": "to continue",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "mantenerse",
+      "meaning": "to remain; to stay",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "quedarse",
+      "meaning": "to stay; to remain",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "convertirse",
+      "meaning": "to become",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "volverse",
+      "meaning": "to become",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "hacerse",
+      "meaning": "to become",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "ponerse",
+      "meaning": "to become; to put on",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "depender",
+      "meaning": "to depend",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "consistir",
+      "meaning": "to consist",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "pertenecer",
+      "meaning": "to belong",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "faltar",
+      "meaning": "to be missing; to lack",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "sobrar",
+      "meaning": "to be left over",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "importar",
+      "meaning": "to matter",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "significar",
+      "meaning": "to mean; to signify",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "funcionar",
+      "meaning": "to function; to work",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "hallarse",
+      "meaning": "to be located; to find oneself",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "ubicarse",
+      "meaning": "to be located",
+      "type": "verb",
+      "semanticClass": "state"
+    },
+    {
+      "term": "decir",
+      "meaning": "to say; to tell",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "hablar",
+      "meaning": "to speak; to talk",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "preguntar",
+      "meaning": "to ask",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "responder",
+      "meaning": "to answer; to respond",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "contar",
+      "meaning": "to tell; to count",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "explicar",
+      "meaning": "to explain",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "llamar",
+      "meaning": "to call",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "nombrar",
+      "meaning": "to name",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "mencionar",
+      "meaning": "to mention",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "repetir",
+      "meaning": "to repeat",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "anunciar",
+      "meaning": "to announce",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "avisar",
+      "meaning": "to notify; to warn",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "discutir",
+      "meaning": "to discuss; to argue",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "conversar",
+      "meaning": "to converse",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "comunicar",
+      "meaning": "to communicate",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "expresar",
+      "meaning": "to express",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "describir",
+      "meaning": "to describe",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "leer",
+      "meaning": "to read",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "escribir",
+      "meaning": "to write",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "traducir",
+      "meaning": "to translate",
+      "type": "verb",
+      "semanticClass": "communication"
+    },
+    {
+      "term": "saber",
+      "meaning": "to know",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "pensar",
+      "meaning": "to think",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "creer",
+      "meaning": "to believe",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "entender",
+      "meaning": "to understand",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "comprender",
+      "meaning": "to understand; to comprehend",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "recordar",
+      "meaning": "to remember",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "olvidar",
+      "meaning": "to forget",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "aprender",
+      "meaning": "to learn",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "estudiar",
+      "meaning": "to study",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "conocer",
+      "meaning": "to know; to meet",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "imaginar",
+      "meaning": "to imagine",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "considerar",
+      "meaning": "to consider",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "suponer",
+      "meaning": "to suppose",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "decidir",
+      "meaning": "to decide",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "dudar",
+      "meaning": "to doubt",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "deducir",
+      "meaning": "to deduce",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "descubrir",
+      "meaning": "to discover",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "investigar",
+      "meaning": "to investigate",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "calcular",
+      "meaning": "to calculate",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "analizar",
+      "meaning": "to analyze",
+      "type": "verb",
+      "semanticClass": "thought"
+    },
+    {
+      "term": "gustar",
+      "meaning": "to like",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "amar",
+      "meaning": "to love",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "adorar",
+      "meaning": "to adore",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "odiar",
+      "meaning": "to hate",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "temer",
+      "meaning": "to fear",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "desear",
+      "meaning": "to desire; to wish",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "preocuparse",
+      "meaning": "to worry",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "alegrarse",
+      "meaning": "to become happy",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "entristecerse",
+      "meaning": "to become sad",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "molestar",
+      "meaning": "to bother",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "interesar",
+      "meaning": "to interest",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "aburrir",
+      "meaning": "to bore",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "divertir",
+      "meaning": "to amuse",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "disfrutar",
+      "meaning": "to enjoy",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "sufrir",
+      "meaning": "to suffer",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "lamentar",
+      "meaning": "to regret; to lament",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "enojarse",
+      "meaning": "to get angry",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "tranquilizarse",
+      "meaning": "to calm down",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "asustarse",
+      "meaning": "to get scared",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "entusiasmarse",
+      "meaning": "to get excited",
+      "type": "verb",
+      "semanticClass": "emotion"
+    },
+    {
+      "term": "comer",
+      "meaning": "to eat",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "beber",
+      "meaning": "to drink",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "dormir",
+      "meaning": "to sleep",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "descansar",
+      "meaning": "to rest",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "despertar",
+      "meaning": "to wake; to wake up",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "sentarse",
+      "meaning": "to sit down",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "levantarse",
+      "meaning": "to get up",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "acostarse",
+      "meaning": "to go to bed",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "bañarse",
+      "meaning": "to bathe; to shower",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "lavarse",
+      "meaning": "to wash oneself",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "vestirse",
+      "meaning": "to get dressed",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "peinarse",
+      "meaning": "to comb one's hair",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "sonreír",
+      "meaning": "to smile",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "reír",
+      "meaning": "to laugh",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "llorar",
+      "meaning": "to cry",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "toser",
+      "meaning": "to cough",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "estornudar",
+      "meaning": "to sneeze",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "masticar",
+      "meaning": "to chew",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "respirar",
+      "meaning": "to breathe",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "nadar",
+      "meaning": "to swim",
+      "type": "verb",
+      "semanticClass": "body"
+    },
+    {
+      "term": "cocinar",
+      "meaning": "to cook",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "limpiar",
+      "meaning": "to clean",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "abrir",
+      "meaning": "to open",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "cerrar",
+      "meaning": "to close",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "usar",
+      "meaning": "to use; to wear",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "guardar",
+      "meaning": "to keep; to store",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "buscar",
+      "meaning": "to look for",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "encontrar",
+      "meaning": "to find",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "preparar",
+      "meaning": "to prepare",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "arreglar",
+      "meaning": "to fix; to arrange",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "lavar",
+      "meaning": "to wash",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "planchar",
+      "meaning": "to iron",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "encender",
+      "meaning": "to turn on; to light",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "apagar",
+      "meaning": "to turn off",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "cortar",
+      "meaning": "to cut",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "llenar",
+      "meaning": "to fill",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "vaciar",
+      "meaning": "to empty",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "tirar",
+      "meaning": "to throw away; to pull",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "ordenar",
+      "meaning": "to tidy; to put in order",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "recoger",
+      "meaning": "to pick up; to collect",
+      "type": "verb",
+      "semanticClass": "daily-life"
+    },
+    {
+      "term": "comprar",
+      "meaning": "to buy",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "vender",
+      "meaning": "to sell",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "pagar",
+      "meaning": "to pay",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "cobrar",
+      "meaning": "to charge; to collect",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "recibir",
+      "meaning": "to receive",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "prestar",
+      "meaning": "to lend",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "gastar",
+      "meaning": "to spend",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "ahorrar",
+      "meaning": "to save",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "ganar",
+      "meaning": "to earn; to win",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "perder",
+      "meaning": "to lose",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "compartir",
+      "meaning": "to share",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "devolver",
+      "meaning": "to return; to give back",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "regalar",
+      "meaning": "to give as a gift",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "elegir",
+      "meaning": "to choose",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "poseer",
+      "meaning": "to possess",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "adquirir",
+      "meaning": "to acquire",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "alquilar",
+      "meaning": "to rent",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "costar",
+      "meaning": "to cost",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "robar",
+      "meaning": "to steal",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "ofrecer",
+      "meaning": "to offer",
+      "type": "verb",
+      "semanticClass": "possession"
+    },
+    {
+      "term": "trabajar",
+      "meaning": "to work",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "crear",
+      "meaning": "to create",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "construir",
+      "meaning": "to build",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "producir",
+      "meaning": "to produce",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "empezar",
+      "meaning": "to start; to begin",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "terminar",
+      "meaning": "to finish; to end",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "mejorar",
+      "meaning": "to improve",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "desarrollar",
+      "meaning": "to develop",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "organizar",
+      "meaning": "to organize",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "planear",
+      "meaning": "to plan",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "intentar",
+      "meaning": "to try; to attempt",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "lograr",
+      "meaning": "to achieve",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "resolver",
+      "meaning": "to solve; to resolve",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "reparar",
+      "meaning": "to repair",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "fabricar",
+      "meaning": "to manufacture",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "diseñar",
+      "meaning": "to design",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "administrar",
+      "meaning": "to manage; to administer",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "dirigir",
+      "meaning": "to direct; to lead",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "presentar",
+      "meaning": "to present",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "operar",
+      "meaning": "to operate",
+      "type": "verb",
+      "semanticClass": "work"
+    },
+    {
+      "term": "ayudar",
+      "meaning": "to help",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "invitar",
+      "meaning": "to invite",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "visitar",
+      "meaning": "to visit",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "acompañar",
+      "meaning": "to accompany",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "saludar",
+      "meaning": "to greet",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "despedirse",
+      "meaning": "to say goodbye",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "reunirse",
+      "meaning": "to meet; to gather",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "casarse",
+      "meaning": "to get married",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "celebrar",
+      "meaning": "to celebrate",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "apoyar",
+      "meaning": "to support",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "respetar",
+      "meaning": "to respect",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "confiar",
+      "meaning": "to trust",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "abrazar",
+      "meaning": "to hug",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "besar",
+      "meaning": "to kiss",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "jugar",
+      "meaning": "to play",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "colaborar",
+      "meaning": "to collaborate",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "competir",
+      "meaning": "to compete",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "unirse",
+      "meaning": "to join",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "cuidar",
+      "meaning": "to take care of",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "negociar",
+      "meaning": "to negotiate",
+      "type": "verb",
+      "semanticClass": "social"
+    },
+    {
+      "term": "dejar",
+      "meaning": "to let; to leave",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "permitir",
+      "meaning": "to allow",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "prohibir",
+      "meaning": "to prohibit",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "obligar",
+      "meaning": "to force; to oblige",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "mandar",
+      "meaning": "to order; to send",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "controlar",
+      "meaning": "to control",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "manejar",
+      "meaning": "to handle; to manage",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "evitar",
+      "meaning": "to avoid",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "proteger",
+      "meaning": "to protect",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "atacar",
+      "meaning": "to attack",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "defender",
+      "meaning": "to defend",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "aceptar",
+      "meaning": "to accept",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "rechazar",
+      "meaning": "to reject",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "exigir",
+      "meaning": "to demand",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "cumplir",
+      "meaning": "to fulfill; to comply",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "detener",
+      "meaning": "to stop; to detain",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "soltar",
+      "meaning": "to release; to let go",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "aplicar",
+      "meaning": "to apply",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "impedir",
+      "meaning": "to prevent",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "supervisar",
+      "meaning": "to supervise",
+      "type": "verb",
+      "semanticClass": "control"
+    },
+    {
+      "term": "ver",
+      "meaning": "to see",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "oír",
+      "meaning": "to hear",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "escuchar",
+      "meaning": "to listen",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "mirar",
+      "meaning": "to look at",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "sentir",
+      "meaning": "to feel",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "notar",
+      "meaning": "to notice",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "observar",
+      "meaning": "to observe",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "tocar",
+      "meaning": "to touch",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "oler",
+      "meaning": "to smell",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "probar",
+      "meaning": "to taste; to try",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "distinguir",
+      "meaning": "to distinguish",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "vigilar",
+      "meaning": "to watch; to keep an eye on",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "mostrar",
+      "meaning": "to show",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "señalar",
+      "meaning": "to point out; to signal",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "enfocar",
+      "meaning": "to focus",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "captar",
+      "meaning": "to capture; to grasp",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "percibir",
+      "meaning": "to perceive",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "contemplar",
+      "meaning": "to contemplate; to look at",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "examinar",
+      "meaning": "to examine",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "detectar",
+      "meaning": "to detect",
+      "type": "verb",
+      "semanticClass": "perception"
+    },
+    {
+      "term": "durar",
+      "meaning": "to last",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "ocurrir",
+      "meaning": "to happen; to occur",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "suceder",
+      "meaning": "to happen",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "comenzar",
+      "meaning": "to begin",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "iniciar",
+      "meaning": "to begin; to start",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "acabar",
+      "meaning": "to finish; to end",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "nacer",
+      "meaning": "to be born",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "morir",
+      "meaning": "to die",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "tardar",
+      "meaning": "to take time; to delay",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "aprovechar",
+      "meaning": "to make use of",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "retrasar",
+      "meaning": "to delay",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "adelantar",
+      "meaning": "to move forward; to advance",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "posponer",
+      "meaning": "to postpone",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "cancelar",
+      "meaning": "to cancel",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "renovar",
+      "meaning": "to renew",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "surgir",
+      "meaning": "to arise; to emerge",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "desaparecer",
+      "meaning": "to disappear",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "caducar",
+      "meaning": "to expire",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "transcurrir",
+      "meaning": "to pass; to elapse",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "persistir",
+      "meaning": "to persist",
+      "type": "verb",
+      "semanticClass": "time"
+    },
+    {
+      "term": "crecer",
+      "meaning": "to grow",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "aumentar",
+      "meaning": "to increase",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "disminuir",
+      "meaning": "to decrease",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "reducir",
+      "meaning": "to reduce",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "cambiar",
+      "meaning": "to change",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "transformar",
+      "meaning": "to transform",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "romper",
+      "meaning": "to break",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "empeorar",
+      "meaning": "to worsen",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "secar",
+      "meaning": "to dry",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "mojar",
+      "meaning": "to wet",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "derretir",
+      "meaning": "to melt",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "congelar",
+      "meaning": "to freeze",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "mezclar",
+      "meaning": "to mix",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "separar",
+      "meaning": "to separate",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "adaptar",
+      "meaning": "to adapt",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "reemplazar",
+      "meaning": "to replace",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "doblar",
+      "meaning": "to fold; to bend",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "calentar",
+      "meaning": "to heat; to warm",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "enfriar",
+      "meaning": "to cool",
+      "type": "verb",
+      "semanticClass": "change"
+    },
+    {
+      "term": "convertir",
+      "meaning": "to convert; to turn into",
+      "type": "verb",
+      "semanticClass": "change"
+    }
   ]
 }

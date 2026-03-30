@@ -45,8 +45,4 @@ Instructions:
 - Return only a JSON array of new entries.
 
 Prompt Request:
-<Create entries for the following words: [word1, word2, word3]>
-<Create entries from the following Spanish sentence: "{spanish sentence here}">
-<Create entries from the following English meanings: [water, to arrive, fast, however]>
-<Create entries in the following categories: [travel, food, school, daily routines]>
-<Create entries needed for the following scenario: "ordering food at a cafe">
+{prompt}

@@ -1,0 +1,299 @@
+{
+  "version": 1,
+  "description": "Shared Japanese collection schema types for reusable sentence-unit based content models.",
+  "schemaTypes": {
+    "sentenceChunk": {
+      "description": "A learner reading unit inside a sentence unit. Chunks keep Japanese surface text, a short English rendering, and lookup references.",
+      "fields": [
+        {
+          "key": "ja",
+          "label": "Chunk Japanese",
+          "jp_label": "チャンク日本語",
+          "type": "string",
+          "required": true,
+          "description": "Japanese surface text for this chunk exactly as it appears."
+        },
+        {
+          "key": "en",
+          "label": "English",
+          "jp_label": "英訳",
+          "type": "string",
+          "required": true,
+          "description": "Short learner-friendly English meaning or paraphrase."
+        },
+        {
+          "key": "refs",
+          "label": "References",
+          "jp_label": "参照語",
+          "type": "array<string>",
+          "required": true,
+          "description": "Lookup keys for content words or grammar patterns used in this chunk."
+        }
+      ]
+    },
+    "sentenceUnit": {
+      "description": "A reusable analyzable sentence or lyric line that can optionally be chunked in a later pass.",
+      "fields": [
+        {
+          "key": "ja",
+          "label": "Japanese",
+          "jp_label": "日本語",
+          "type": "string",
+          "required": true,
+          "description": "Japanese sentence or lyric line exactly as it appears in the source."
+        },
+        {
+          "key": "en",
+          "label": "English",
+          "jp_label": "英訳",
+          "type": "string",
+          "required": true,
+          "description": "Natural English translation of the standalone sentence or lyric line."
+        },
+        {
+          "key": "notes",
+          "label": "Notes",
+          "jp_label": "メモ",
+          "type": "array<string>",
+          "required": false,
+          "description": "Sentence-unit-specific nuance, context, lyric interpretation, or reading notes."
+        },
+        {
+          "key": "grammarNotes",
+          "label": "Grammar Notes",
+          "jp_label": "文法ノート",
+          "type": "array<string>",
+          "required": false,
+          "description": "High-value grammar recognition notes relevant to this sentence unit."
+        },
+        {
+          "key": "chunks",
+          "label": "Chunks",
+          "jp_label": "チャンク",
+          "type": "array<sentenceChunk>",
+          "required": false,
+          "description": "Ordered learner chunks inside the sentence unit. This can be added in a later enrichment pass."
+        }
+      ]
+    },
+    "paragraphEntry": {
+      "description": "Learner-friendly multi-sentence Japanese reading passage.",
+      "fields": [
+        {
+          "key": "id",
+          "label": "ID",
+          "jp_label": "ID",
+          "type": "string",
+          "required": true,
+          "description": "Stable unique identifier for the passage."
+        },
+        {
+          "key": "title",
+          "label": "Title",
+          "jp_label": "タイトル",
+          "type": "string",
+          "required": false,
+          "description": "Short learner-friendly title for the passage."
+        },
+        {
+          "key": "ja",
+          "label": "Japanese",
+          "jp_label": "日本語",
+          "type": "string",
+          "required": true,
+          "description": "Full paragraph or short passage in natural Japanese surface form."
+        },
+        {
+          "key": "en",
+          "label": "English",
+          "jp_label": "英訳",
+          "type": "string",
+          "required": true,
+          "description": "Natural English translation of the full passage."
+        },
+        {
+          "key": "notes",
+          "label": "Notes",
+          "jp_label": "メモ",
+          "type": "array<string>",
+          "required": false,
+          "description": "Passage-level notes about tone, context, or reading strategy."
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "jp_label": "タグ",
+          "type": "array<string>",
+          "required": false,
+          "description": "Optional machine-friendly tags for filtering or grouping."
+        },
+        {
+          "key": "sentences",
+          "label": "Sentences",
+          "jp_label": "文",
+          "type": "array<sentenceUnit>",
+          "required": true,
+          "description": "Ordered sentence units composing the passage."
+        }
+      ]
+    },
+    "songEntry": {
+      "description": "Song lyrics with learner-friendly sentence-level analysis.",
+      "fields": [
+        {
+          "key": "id",
+          "label": "ID",
+          "jp_label": "ID",
+          "type": "string",
+          "required": true,
+          "description": "Stable unique identifier for the song."
+        },
+        {
+          "key": "title",
+          "label": "Title",
+          "jp_label": "タイトル",
+          "type": "string",
+          "required": true,
+          "description": "Title of the song."
+        },
+        {
+          "key": "artist",
+          "label": "Artist",
+          "jp_label": "アーティスト",
+          "type": "string",
+          "required": false,
+          "description": "Artist or band who performs the song."
+        },
+        {
+          "key": "album",
+          "label": "Album",
+          "jp_label": "アルバム",
+          "type": "string",
+          "required": false,
+          "description": "Album name the song is from."
+        },
+        {
+          "key": "releaseYear",
+          "label": "Release Year",
+          "jp_label": "リリース年",
+          "type": "number",
+          "required": false,
+          "description": "Year the song was released."
+        },
+        {
+          "key": "genre",
+          "label": "Genre",
+          "jp_label": "ジャンル",
+          "type": "array<string>",
+          "required": false,
+          "description": "Genre or genres of the song."
+        },
+        {
+          "key": "ja",
+          "label": "Japanese",
+          "jp_label": "日本語",
+          "type": "string",
+          "required": true,
+          "description": "Full song lyrics in Japanese."
+        },
+        {
+          "key": "en",
+          "label": "English",
+          "jp_label": "英訳",
+          "type": "string",
+          "required": true,
+          "description": "English translation of the song lyrics."
+        },
+        {
+          "key": "notes",
+          "label": "Notes",
+          "jp_label": "メモ",
+          "type": "array<string>",
+          "required": false,
+          "description": "Song-level notes about context, cultural background, or themes."
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "jp_label": "タグ",
+          "type": "array<string>",
+          "required": false,
+          "description": "Optional machine-friendly tags for filtering or grouping."
+        },
+        {
+          "key": "sentences",
+          "label": "Lines",
+          "jp_label": "歌詞行",
+          "type": "array<sentenceUnit>",
+          "required": true,
+          "description": "Ordered sentence units or lyric lines composing the song."
+        }
+      ]
+    },
+    "wordEntry": {
+      "description": "Japanese vocabulary entry keyed by canonical headword form.",
+      "fields": [
+        {
+          "key": "kanji",
+          "label": "Kanji",
+          "jp_label": "漢字",
+          "description": "Canonical dictionary/headword kanji form if one exists, EVEN IF it is rare or not commonly used in daily writing. This field represents the linguistically recognized kanji spelling, not the most common display form. If no established kanji exists, use the standard kana/katakana headword instead.",
+          "type": "string"
+        },
+        {
+          "key": "reading",
+          "label": "Reading",
+          "jp_label": "読み",
+          "description": "The pronunciation, written in kana (usually hiragana; katakana ok for katakana words). Examples: あくま, ありがとう, どきどき / ドキドキ.",
+          "type": "string"
+        },
+        {
+          "key": "meaning",
+          "label": "Meaning",
+          "jp_label": "意味",
+          "description": "English gloss/translation. Keep it short; add nuance in example notes when needed.",
+          "type": "string"
+        },
+        {
+          "key": "type",
+          "label": "Type",
+          "jp_label": "種類",
+          "type": "enum",
+          "description": "Grammatical classification: how it behaves in sentences. Use `lexicalClass` to capture families like onomatopoeia or greetings that can cross POS. Rules of thumb: if it is one lexical word, pick noun/verb/adj/adverb/etc. If it is multi-word or a fixed chunk, pick expression/phrase/sentence types.",
+          "values": {
+            "noun": "Standalone noun (名詞). Can take particles like が/を/に. Example: 本, 勉強.",
+            "proper-noun": "Proper noun (固有名詞): specific names of people/places/organizations (e.g., 太郎, 東京, 日本, アメリカ, ユニクロ). Use for names you generally don’t want treated as normal vocab.",
+            "morpheme": "Bound morpheme used mainly inside compounds; not typically a standalone word (e.g., 〜学, 〜性).",
+            "ichidan-verb": "一段動詞 dictionary form (e.g., 食べる, 見る).",
+            "godan-verb": "五段動詞 dictionary form (e.g., 書く, 泳ぐ).",
+            "irregular-verb": "Irregular verbs (する, 来る) and irregular verb entries.",
+            "i-adjective": "い-adjective (い形容詞) (e.g., 高い, 忙しい).",
+            "na-adjective": "な-adjective (な形容詞) (e.g., 便利, きれい).",
+            "particle": "Particle / function word (e.g., は, が, を, に, で, から, まで).",
+            "adverb": "Adverb (副詞) or adverb-like word used to modify verbs/clauses (e.g., すぐ, ゆっくり). Many mimetics belong here (ドキドキ(と)する, キラキラ(と)光る) — mark those with lexicalClass='onomatopoeia'.",
+            "counter": "Counter word used with numerals (e.g., 〜人, 〜枚, 〜つ).",
+            "expression": "Fixed conventional phrase (often multi-word) that is used as a unit (e.g., おつかれさま, しょうがない). Not a full sentence unless it clearly contains its own predicate.",
+            "numeral": "Numeral / number-word entry used as a standalone numeric form or numeric symbol (e.g., 一, 二, 三, 百, 千, 万).",
+            "descriptive-phrase": "Descriptive lexicalized phrase or quantified descriptive chunk that behaves as a fixed expression rather than a single simple lexical item.",
+            "phrase-sentence": "Multi-word phrase or sentence-like chunk learned as a unit, often containing its own predicate or argument structure.",
+            "conjunction": "Clause-linking connective/conjunction used to connect statements or explain consequence (e.g., なので)."
+          }
+        },
+        {
+          "key": "semanticClass",
+          "label": "Semantic Class",
+          "jp_label": "意味クラス",
+          "description": "Semantic category/class of the word. Use plain text so it can scale across POS; examples: food, city, onomatopoeia, greeting. Use null when not needed.",
+          "type": "string"
+        },
+        {
+          "key": "tags",
+          "label": "Tags",
+          "jp_label": "タグ",
+          "description": "Optional machine-friendly tags for filtering/grouping. Use short snake_case strings. Examples: fractional_numeral, jlpt_n3, grammar_marker, formal, casual, written, spoken, counter_related.",
+          "type": "string[]"
+        }
+      ]
+    }
+  }
+}

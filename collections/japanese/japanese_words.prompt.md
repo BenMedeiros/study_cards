@@ -50,9 +50,4 @@ Instructions:
 - Return only a JSON array of new entries.
 
 Prompt Request:
-<Create entries for the following Japanese words: [word1, word2, word3]>
-<Create entries from the following English meanings: [to read, quiet, station, sparkling]>
-<Create entries in the following categories: [daily life, travel, food, school]>
-<Create entries for the following item types: [godan verbs, ichidan verbs, counters, onomatopoeia]>
-<Create entries needed for the following scenario: "shopping at a convenience store in Japan"> 
-<Create entries from the following Japanese sentence or passage, extracting useful headwords only: "{japanese text here}">
+{prompt}

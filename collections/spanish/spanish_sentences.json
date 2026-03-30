@@ -5,64 +5,7 @@
     "version": 1,
     "category": "spanish",
     "entry_key": "es",
-    "schema": [
-      {
-        "key": "es",
-        "label": "Spanish",
-        "type": "string",
-        "required": true,
-        "description": "Full Spanish sentence in natural surface form."
-      },
-      {
-        "key": "en",
-        "label": "English",
-        "type": "string",
-        "required": true,
-        "description": "Natural English translation of the full sentence."
-      },
-      {
-        "key": "notes",
-        "label": "Notes",
-        "type": "array<string>",
-        "required": false,
-        "description": "Sentence-specific usage or learner notes."
-      },
-      {
-        "key": "chunks",
-        "label": "Chunks",
-        "type": "array<sentenceChunk>",
-        "required": true,
-        "description": "Ordered learner-friendly chunks that reference terms from the Spanish words collection."
-      }
-    ],
-    "schemaTypes": {
-      "sentenceChunk": {
-        "description": "A learner-facing chunk inside the sentence.",
-        "fields": [
-          {
-            "key": "es",
-            "label": "Chunk Spanish",
-            "type": "string",
-            "required": true,
-            "description": "Chunk text exactly as it appears in the sentence."
-          },
-          {
-            "key": "gloss",
-            "label": "Gloss",
-            "type": "string",
-            "required": true,
-            "description": "Short learner-friendly gloss for the chunk."
-          },
-          {
-            "key": "refs",
-            "label": "References",
-            "type": "array<string>",
-            "required": true,
-            "description": "Referenced terms from the Spanish words collection."
-          }
-        ]
-      }
-    }
+    "schema": "$ref:spanish/_spanish.schemas.json#sentenceEntry"
   },
   "entries": [
     {
@@ -74,37 +17,37 @@
       "chunks": [
         {
           "es": "El gobierno anunció",
-          "gloss": "the government announced",
           "refs": [
             "gobierno",
             "anunciar"
-          ]
+          ],
+          "en": "the government announced"
         },
         {
           "es": "nuevas medidas económicas",
-          "gloss": "new economic measures",
           "refs": [
             "nuevo",
             "medida",
             "económico"
-          ]
+          ],
+          "en": "new economic measures"
         },
         {
           "es": "para reducir la inflación",
-          "gloss": "to reduce inflation",
           "refs": [
             "reducir",
             "inflación"
-          ]
+          ],
+          "en": "to reduce inflation"
         },
         {
           "es": "y apoyar a las pequeñas empresas",
-          "gloss": "and support small businesses",
           "refs": [
             "apoyar",
             "pequeño",
             "empresa"
-          ]
+          ],
+          "en": "and support small businesses"
         }
       ]
     }

@@ -20,68 +20,7 @@
         "foreign_key": "sentences[].chunks[].refs[]"
       }
     ],
-    "schema": [
-      {
-        "key": "kanji",
-        "label": "Kanji",
-        "jp_label": "漢字",
-        "description": "Canonical dictionary/headword kanji form if one exists, EVEN IF it is rare or not commonly used in daily writing. This field represents the linguistically recognized kanji spelling, not the most common display form. If no established kanji exists, use the standard kana/katakana headword instead.",
-        "type": "string"
-      },
-      {
-        "key": "reading",
-        "label": "Reading",
-        "jp_label": "読み",
-        "description": "The pronunciation, written in kana (usually hiragana; katakana ok for katakana words). Examples: あくま, ありがとう, どきどき / ドキドキ.",
-        "type": "string"
-      },
-      {
-        "key": "meaning",
-        "label": "Meaning",
-        "jp_label": "意味",
-        "description": "English gloss/translation. Keep it short; add nuance in example notes when needed.",
-        "type": "string"
-      },
-      {
-        "key": "type",
-        "label": "Type",
-        "jp_label": "種類",
-        "type": "enum",
-        "description": "Grammatical classification: how it behaves in sentences. Use `lexicalClass` to capture families like onomatopoeia or greetings that can cross POS. Rules of thumb: if it is one lexical word, pick noun/verb/adj/adverb/etc. If it is multi-word or a fixed chunk, pick expression/phrase/sentence types.",
-        "values": {
-          "noun": "Standalone noun (名詞). Can take particles like が/を/に. Example: 本, 勉強.",
-          "proper-noun": "Proper noun (固有名詞): specific names of people/places/organizations (e.g., 太郎, 東京, 日本, アメリカ, ユニクロ). Use for names you generally don’t want treated as normal vocab.",
-          "morpheme": "Bound morpheme used mainly inside compounds; not typically a standalone word (e.g., 〜学, 〜性).",
-          "ichidan-verb": "一段動詞 dictionary form (e.g., 食べる, 見る).",
-          "godan-verb": "五段動詞 dictionary form (e.g., 書く, 泳ぐ).",
-          "irregular-verb": "Irregular verbs (する, 来る) and irregular verb entries.",
-          "i-adjective": "い-adjective (い形容詞) (e.g., 高い, 忙しい).",
-          "na-adjective": "な-adjective (な形容詞) (e.g., 便利, きれい).",
-          "particle": "Particle / function word (e.g., は, が, を, に, で, から, まで).",
-          "adverb": "Adverb (副詞) or adverb-like word used to modify verbs/clauses (e.g., すぐ, ゆっくり). Many mimetics belong here (ドキドキ(と)する, キラキラ(と)光る) — mark those with lexicalClass='onomatopoeia'.",
-          "counter": "Counter word used with numerals (e.g., 〜人, 〜枚, 〜つ).",
-          "expression": "Fixed conventional phrase (often multi-word) that is used as a unit (e.g., おつかれさま, しょうがない). Not a full sentence unless it clearly contains its own predicate.",
-          "numeral": "Numeral / number-word entry used as a standalone numeric form or numeric symbol (e.g., 一, 二, 三, 百, 千, 万).",
-          "descriptive-phrase": "Descriptive lexicalized phrase or quantified descriptive chunk that behaves as a fixed expression rather than a single simple lexical item.",
-          "phrase-sentence": "Multi-word phrase or sentence-like chunk learned as a unit, often containing its own predicate or argument structure.",
-          "conjunction": "Clause-linking connective/conjunction used to connect statements or explain consequence (e.g., なので)."
-        }
-      },
-      {
-        "key": "semanticClass",
-        "label": "Semantic Class",
-        "jp_label": "意味クラス",
-        "description": "Semantic category/class of the word. Use plain text so it can scale across POS; examples: food, city, onomatopoeia, greeting. Use null when not needed.",
-        "type": "string"
-      },
-      {
-        "key": "tags",
-        "label": "Tags",
-        "jp_label": "タグ",
-        "description": "Optional machine-friendly tags for filtering/grouping. Use short snake_case strings. Examples: fractional_numeral, jlpt_n3, grammar_marker, formal, casual, written, spoken, counter_related.",
-        "type": "string[]"
-      }
-    ]
+    "schema": "$ref:japanese/_japanese.schemas.json#wordEntry"
   },
   "entries": [
     {

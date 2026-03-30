@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "prompts": [
+    {
+      "id": "from_words",
+      "details": "Create entries for the provided Japanese words.",
+      "example": "[word1, word2, word3]"
+    },
+    {
+      "id": "from_english_meanings",
+      "details": "Create Japanese entries from the provided English meanings.",
+      "example": "[to read, quiet, station, sparkling]"
+    },
+    {
+      "id": "from_categories",
+      "details": "Create Japanese entries in the provided categories.",
+      "example": "[daily life, travel, food, school]"
+    },
+    {
+      "id": "from_item_types",
+      "details": "Create Japanese entries for the provided item types.",
+      "example": "[godan verbs, ichidan verbs, counters, onomatopoeia]"
+    },
+    {
+      "id": "from_scenario",
+      "details": "Create Japanese entries needed for the provided scenario.",
+      "example": "\"shopping at a convenience store in Japan\""
+    },
+    {
+      "id": "extract_headwords_from_text",
+      "details": "Create Japanese entries by extracting useful headwords from the provided Japanese sentence or passage.",
+      "example": "\"{japanese text here}\""
+    }
+  ]
+}

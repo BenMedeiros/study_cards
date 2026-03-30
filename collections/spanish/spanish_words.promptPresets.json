@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "prompts": [
+    {
+      "id": "from_words",
+      "details": "Create entries for the provided Spanish words.",
+      "example": "[word1, word2, word3]"
+    },
+    {
+      "id": "from_spanish_sentence",
+      "details": "Create Spanish entries from the provided Spanish sentence.",
+      "example": "\"{spanish sentence here}\""
+    },
+    {
+      "id": "from_english_meanings",
+      "details": "Create Spanish entries from the provided English meanings.",
+      "example": "[water, to arrive, fast, however]"
+    },
+    {
+      "id": "from_categories",
+      "details": "Create Spanish entries in the provided categories.",
+      "example": "[travel, food, school, daily routines]"
+    },
+    {
+      "id": "from_scenario",
+      "details": "Create Spanish entries needed for the provided scenario.",
+      "example": "\"ordering food at a cafe\""
+    }
+  ]
+}

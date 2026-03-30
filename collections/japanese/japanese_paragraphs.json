@@ -5,148 +5,7 @@
     "version": 1,
     "category": "japanese",
     "entry_key": "id",
-    "schema": [
-      {
-        "key": "id",
-        "label": "ID",
-        "jp_label": "ID",
-        "type": "string",
-        "required": true,
-        "description": "Stable unique identifier for the passage."
-      },
-      {
-        "key": "title",
-        "label": "Title",
-        "jp_label": "タイトル",
-        "type": "string",
-        "required": false,
-        "description": "Short learner-friendly title for the passage."
-      },
-      {
-        "key": "ja",
-        "label": "Japanese",
-        "jp_label": "日本語",
-        "type": "string",
-        "required": true,
-        "description": "Full paragraph or short passage in natural Japanese surface form."
-      },
-      {
-        "key": "en",
-        "label": "English",
-        "jp_label": "英訳",
-        "type": "string",
-        "required": true,
-        "description": "Natural English translation of the full passage."
-      },
-      {
-        "key": "notes",
-        "label": "Notes",
-        "jp_label": "メモ",
-        "type": "array<string>",
-        "required": false,
-        "description": "Passage-level notes about tone, context, or reading strategy."
-      },
-      {
-        "key": "tags",
-        "label": "Tags",
-        "jp_label": "タグ",
-        "type": "array<string>",
-        "required": false,
-        "description": "Optional machine-friendly tags for filtering or grouping."
-      },
-      {
-        "key": "sentences",
-        "label": "Sentences",
-        "jp_label": "文",
-        "type": "array<paragraphSentence>",
-        "required": true,
-        "description": "Ordered sentences composing the passage. Each sentence may have its own chunk list."
-      }
-    ],
-    "schemaTypes": {
-      "paragraphSentence": {
-        "description": "A sentence inside a longer learner reading passage.",
-        "fields": [
-          {
-            "key": "ja",
-            "label": "Sentence Japanese",
-            "jp_label": "文日本語",
-            "type": "string",
-            "required": true,
-            "description": "Japanese sentence exactly as it appears in the passage."
-          },
-          {
-            "key": "en",
-            "label": "Sentence English",
-            "jp_label": "文英訳",
-            "type": "string",
-            "required": true,
-            "description": "Natural English translation of the standalone sentence."
-          },
-          {
-            "key": "notes",
-            "label": "Sentence Notes",
-            "jp_label": "文メモ",
-            "type": "array<string>",
-            "required": false,
-            "description": "Sentence-specific nuance or reading notes."
-          },
-          {
-            "key": "pattern",
-            "label": "Pattern",
-            "jp_label": "文型",
-            "type": "string",
-            "required": false,
-            "description": "Reusable grammar pattern highlighted in the sentence."
-          },
-          {
-            "key": "chunks",
-            "label": "Chunks",
-            "jp_label": "チャンク",
-            "type": "array<sentenceChunk>",
-            "required": true,
-            "description": "Ordered learner chunks inside the sentence."
-          }
-        ]
-      },
-      "sentenceChunk": {
-        "description": "A learner reading unit inside a sentence within a paragraph.",
-        "fields": [
-          {
-            "key": "ja",
-            "label": "Chunk Japanese",
-            "jp_label": "チャンク日本語",
-            "type": "string",
-            "required": true,
-            "description": "Japanese surface text for this chunk exactly as it appears."
-          },
-          {
-            "key": "gloss",
-            "label": "Gloss",
-            "jp_label": "意味",
-            "type": "string",
-            "required": true,
-            "description": "Short learner-friendly meaning or paraphrase."
-          },
-          {
-            "key": "focus",
-            "label": "Grammar Focus",
-            "jp_label": "文型",
-            "type": "string",
-            "required": false,
-            "description": "Canonical grammar or reading focus for this chunk."
-          },
-          {
-            "key": "refs",
-            "label": "References",
-            "jp_label": "参照語",
-            "type": "array<string>",
-            "required": true,
-            "description": "Lookup keys for content words or grammar patterns used in this chunk."
-          }
-        ]
-      }
-    }
+    "schema": "$ref:japanese/_japanese.schemas.json#paragraphEntry"
   },
   "entries": [
     {
@@ -167,133 +26,132 @@
         {
           "ja": "山本さんは毎日渋谷で会社まで歩いて行きます。",
           "en": "Mr. Yamamoto walks to his company in Shibuya every day.",
-          "pattern": "〜て行く / 毎日〜ます",
           "chunks": [
             {
               "ja": "山本さんは毎日渋谷で",
-              "gloss": "As for Mr. Yamamoto, every day in Shibuya",
               "refs": [
                 "山本さん",
                 "毎日",
                 "渋谷"
-              ]
+              ],
+              "en": "As for Mr. Yamamoto, every day in Shibuya"
             },
             {
               "ja": "会社まで歩いて行きます",
-              "gloss": "walks and goes to the company",
-              "focus": "〜まで / 〜て行く",
               "refs": [
                 "会社",
                 "歩く",
                 "行く"
-              ]
+              ],
+              "en": "walks and goes to the company"
             }
+          ],
+          "grammarNotes": [
+            "〜て行く / 毎日〜ます"
           ]
         },
         {
           "ja": "でも今日は遅くなったので、六時十五分の電車に乗ろうと思いました。",
           "en": "But today he ended up late, so he thought he would take the 6:15 train.",
-          "pattern": "〜ので / 〜ようと思う",
           "chunks": [
             {
               "ja": "でも今日は遅くなったので、",
-              "gloss": "but because today he became late,",
-              "focus": "〜ので",
               "refs": [
                 "今日",
                 "遅くなる"
-              ]
+              ],
+              "en": "but because today he became late,"
             },
             {
               "ja": "六時十五分の電車に",
-              "gloss": "for the 6:15 train",
               "refs": [
                 "六時十五分",
                 "電車"
-              ]
+              ],
+              "en": "for the 6:15 train"
             },
             {
               "ja": "乗ろうと思いました",
-              "gloss": "he thought he would ride it",
-              "focus": "V-ようと思う",
               "refs": [
                 "乗る",
                 "思う"
-              ]
+              ],
+              "en": "he thought he would ride it"
             }
+          ],
+          "grammarNotes": [
+            "〜ので / 〜ようと思う"
           ]
         },
         {
           "ja": "階段を下りているとき、くつのひもがほどけているのに気づきましたが、電車も来るのが見えました。",
           "en": "While going down the stairs, he noticed his shoelace was untied, but he could also see the train arriving.",
-          "pattern": "〜ているとき / 〜のに気づく / 〜のが見える",
           "chunks": [
             {
               "ja": "階段を下りているとき、",
-              "gloss": "while going down the stairs,",
-              "focus": "〜ているとき",
               "refs": [
                 "階段",
                 "下りる"
-              ]
+              ],
+              "en": "while going down the stairs,"
             },
             {
               "ja": "くつのひもがほどけているのに気づきましたが、",
-              "gloss": "he noticed that his shoelace was untied, but",
-              "focus": "〜のに気づく",
               "refs": [
                 "くつ",
                 "ひも",
                 "ほどける",
                 "気づく"
-              ]
+              ],
+              "en": "he noticed that his shoelace was untied, but"
             },
             {
               "ja": "電車も来るのが見えました",
-              "gloss": "he could also see the train coming",
-              "focus": "〜のが見える",
               "refs": [
                 "電車",
                 "来る",
                 "見える"
-              ]
+              ],
+              "en": "he could also see the train coming"
             }
+          ],
+          "grammarNotes": [
+            "〜ているとき / 〜のに気づく / 〜のが見える"
           ]
         },
         {
           "ja": "『走れ！』と思って、転ばないようにくつをぬいで、電車に乗ることができました。",
           "en": "He thought, 'Run!', took off his shoe so he would not trip, and managed to get on the train.",
-          "pattern": "命令形 / 〜ように / 〜ことができる",
           "chunks": [
             {
               "ja": "『走れ！』と思って、",
-              "gloss": "thinking, 'Run!',",
-              "focus": "命令形 / 〜と思って",
               "refs": [
                 "走る",
                 "思う"
-              ]
+              ],
+              "en": "thinking, 'Run!',"
             },
             {
               "ja": "転ばないようにくつをぬいで、",
-              "gloss": "taking off his shoe so he would not trip,",
-              "focus": "〜ないように / 〜て",
               "refs": [
                 "転ぶ",
                 "くつ",
                 "ぬぐ"
-              ]
+              ],
+              "en": "taking off his shoe so he would not trip,"
             },
             {
               "ja": "電車に乗ることができました",
-              "gloss": "he was able to get on the train",
-              "focus": "〜ことができる",
               "refs": [
                 "電車",
                 "乗る",
                 "できる"
-              ]
+              ],
+              "en": "he was able to get on the train"
             }
+          ],
+          "grammarNotes": [
+            "命令形 / 〜ように / 〜ことができる"
           ]
         }
       ]
@@ -315,101 +173,100 @@
         {
           "ja": "午後に雨が強くなったので、私は図書館に入りました。",
           "en": "Because the rain got stronger in the afternoon, I went into the library.",
-          "pattern": "〜ので / Nに入る",
           "chunks": [
             {
               "ja": "午後に雨が強くなったので、",
-              "gloss": "because the rain became stronger in the afternoon,",
-              "focus": "〜ので",
               "refs": [
                 "午後",
                 "雨",
                 "強い"
-              ]
+              ],
+              "en": "because the rain became stronger in the afternoon,"
             },
             {
               "ja": "私は図書館に入りました",
-              "gloss": "I entered the library",
-              "focus": "Nに入る",
               "refs": [
                 "私",
                 "図書館",
                 "入る"
-              ]
+              ],
+              "en": "I entered the library"
             }
+          ],
+          "grammarNotes": [
+            "〜ので / Nに入る"
           ]
         },
         {
           "ja": "窓の近くの静かな席で本を読んでいると、外の音が少し遠く感じられました。",
           "en": "As I was reading a book in a quiet seat near the window, the sounds outside felt a little distant.",
-          "pattern": "〜ていると / 〜く感じられる",
           "chunks": [
             {
               "ja": "窓の近くの静かな席で",
-              "gloss": "in a quiet seat near the window",
               "refs": [
                 "窓",
                 "近く",
                 "静か",
                 "席"
-              ]
+              ],
+              "en": "in a quiet seat near the window"
             },
             {
               "ja": "本を読んでいると、",
-              "gloss": "while reading a book,",
-              "focus": "〜ていると",
               "refs": [
                 "本",
                 "読む"
-              ]
+              ],
+              "en": "while reading a book,"
             },
             {
               "ja": "外の音が少し遠く感じられました",
-              "gloss": "the outside sounds felt a little distant",
-              "focus": "〜く感じられる",
               "refs": [
                 "外",
                 "音",
                 "少し",
                 "遠い",
                 "感じる"
-              ]
+              ],
+              "en": "the outside sounds felt a little distant"
             }
+          ],
+          "grammarNotes": [
+            "〜ていると / 〜く感じられる"
           ]
         },
         {
           "ja": "時間がゆっくり過ぎて、帰るころには気分も落ち着いていました。",
           "en": "Time passed slowly, and by the time I went home, my mood had calmed down too.",
-          "pattern": "〜て / 〜ころには / 〜ている",
           "chunks": [
             {
               "ja": "時間がゆっくり過ぎて、",
-              "gloss": "time passed slowly,",
-              "focus": "〜て",
               "refs": [
                 "時間",
                 "ゆっくり",
                 "過ぎる"
-              ]
+              ],
+              "en": "time passed slowly,"
             },
             {
               "ja": "帰るころには",
-              "gloss": "by the time I went home",
-              "focus": "〜ころには",
               "refs": [
                 "帰る",
                 "ころ"
-              ]
+              ],
+              "en": "by the time I went home"
             },
             {
               "ja": "気分も落ち着いていました",
-              "gloss": "my mood had calmed down too",
-              "focus": "〜ている",
               "refs": [
                 "気分",
                 "落ち着く"
-              ]
+              ],
+              "en": "my mood had calmed down too"
             }
+          ],
+          "grammarNotes": [
+            "〜て / 〜ころには / 〜ている"
           ]
         }
       ]
@@ -434,409 +291,412 @@
         {
           "ja": "家族は土曜日の朝、近くのスーパーへ買い物に行きました。",
           "en": "On Saturday morning, the family went shopping at a nearby supermarket.",
-          "pattern": "Nへ買い物に行く",
           "chunks": [
             {
               "ja": "家族は土曜日の朝、",
-              "gloss": "as for the family, on Saturday morning,",
               "refs": [
                 "家族",
                 "土曜日",
                 "朝"
-              ]
+              ],
+              "en": "as for the family, on Saturday morning,"
             },
             {
               "ja": "近くのスーパーへ",
-              "gloss": "to a nearby supermarket",
-              "focus": "Nへ",
               "refs": [
                 "近く",
                 "スーパー"
-              ]
+              ],
+              "en": "to a nearby supermarket"
             },
             {
               "ja": "買い物に行きました",
-              "gloss": "went shopping",
-              "focus": "Nに行く",
               "refs": [
                 "買い物",
                 "行く"
-              ]
+              ],
+              "en": "went shopping"
             }
+          ],
+          "grammarNotes": [
+            "Nへ買い物に行く"
           ]
         },
         {
           "ja": "父は買い物リストを持ち、母は特売の野菜を探しています。",
           "en": "The father carried the shopping list, and the mother was looking for vegetables on special sale.",
-          "pattern": "Vます-stem / 〜ている",
           "chunks": [
             {
               "ja": "父は買い物リストを持ち、",
-              "gloss": "the father carried the shopping list, and",
-              "focus": "Vます-stem",
               "refs": [
                 "父",
                 "買い物リスト",
                 "持つ"
-              ]
+              ],
+              "en": "the father carried the shopping list, and"
             },
             {
               "ja": "母は特売の野菜を",
-              "gloss": "the mother, vegetables on special sale",
               "refs": [
                 "母",
                 "特売",
                 "野菜"
-              ]
+              ],
+              "en": "the mother, vegetables on special sale"
             },
             {
               "ja": "探しています",
-              "gloss": "is looking for",
-              "focus": "〜ている",
               "refs": [
                 "探す"
-              ]
+              ],
+              "en": "is looking for"
             }
+          ],
+          "grammarNotes": [
+            "Vます-stem / 〜ている"
           ]
         },
         {
           "ja": "高校生の娘は夕食にカレーを作りたいので、じゃがいもとにんじんをかごに入れました。",
           "en": "Their high school daughter wanted to make curry for dinner, so she put potatoes and carrots into the basket.",
-          "pattern": "〜たい / 〜ので",
           "chunks": [
             {
               "ja": "高校生の娘は",
-              "gloss": "the high school daughter",
               "refs": [
                 "高校生",
                 "娘"
-              ]
+              ],
+              "en": "the high school daughter"
             },
             {
               "ja": "夕食にカレーを作りたいので、",
-              "gloss": "because she wants to make curry for dinner,",
-              "focus": "〜たい / 〜ので",
               "refs": [
                 "夕食",
                 "カレー",
                 "作る"
-              ]
+              ],
+              "en": "because she wants to make curry for dinner,"
             },
             {
               "ja": "じゃがいもとにんじんをかごに入れました",
-              "gloss": "she put potatoes and carrots into the basket",
-              "focus": "Nに入れる",
               "refs": [
                 "じゃがいも",
                 "にんじん",
                 "かご",
                 "入れる"
-              ]
+              ],
+              "en": "she put potatoes and carrots into the basket"
             }
+          ],
+          "grammarNotes": [
+            "〜たい / 〜ので"
           ]
         },
         {
           "ja": "小学生の弟はお菓子売り場に行きたがりましたが、今日は一つだけと約束しました。",
           "en": "Their elementary school-age younger brother wanted to go to the snack aisle, but they agreed that he could choose only one thing today.",
-          "pattern": "〜たがる / 〜が",
           "chunks": [
             {
               "ja": "小学生の弟は",
-              "gloss": "the elementary school younger brother",
               "refs": [
                 "小学生",
                 "弟"
-              ]
+              ],
+              "en": "the elementary school younger brother"
             },
             {
               "ja": "お菓子売り場に行きたがりましたが、",
-              "gloss": "wanted to go to the snack section, but",
-              "focus": "〜たがる / 〜が",
               "refs": [
                 "お菓子売り場",
                 "行く"
-              ]
+              ],
+              "en": "wanted to go to the snack section, but"
             },
             {
               "ja": "今日は一つだけと約束しました",
-              "gloss": "they agreed on only one today",
               "refs": [
                 "今日",
                 "一つ",
                 "約束する"
-              ]
+              ],
+              "en": "they agreed on only one today"
             }
+          ],
+          "grammarNotes": [
+            "〜たがる / 〜が"
           ]
         },
         {
           "ja": "店の中はとてもにぎやかで、魚売り場では新鮮なさけが並んでいました。",
           "en": "The store was very lively, and fresh salmon was lined up at the fish section.",
-          "pattern": "〜で / 〜ている",
           "chunks": [
             {
               "ja": "店の中はとてもにぎやかで、",
-              "gloss": "inside the store was very lively, and",
-              "focus": "〜で",
               "refs": [
                 "店",
                 "中",
                 "にぎやか"
-              ]
+              ],
+              "en": "inside the store was very lively, and"
             },
             {
               "ja": "魚売り場では",
-              "gloss": "at the fish section,",
               "refs": [
                 "魚売り場"
-              ]
+              ],
+              "en": "at the fish section,"
             },
             {
               "ja": "新鮮なさけが並んでいました",
-              "gloss": "fresh salmon was lined up",
-              "focus": "〜ている",
               "refs": [
                 "新鮮",
                 "さけ",
                 "並ぶ"
-              ]
+              ],
+              "en": "fresh salmon was lined up"
             }
+          ],
+          "grammarNotes": [
+            "〜で / 〜ている"
           ]
         },
         {
           "ja": "母は夕飯用に魚も買うか少し迷いましたが、今日はカレーに決めました。",
           "en": "The mother hesitated a little about buying fish for dinner too, but decided on curry for today.",
-          "pattern": "〜か / Nに決める",
           "chunks": [
             {
               "ja": "母は夕飯用に",
-              "gloss": "the mother, for dinner use,",
               "refs": [
                 "母",
                 "夕飯",
                 "用"
-              ]
+              ],
+              "en": "the mother, for dinner use,"
             },
             {
               "ja": "魚も買うか少し迷いましたが、",
-              "gloss": "wondered a little whether to buy fish too, but",
-              "focus": "〜か / 〜が",
               "refs": [
                 "魚",
                 "買う",
                 "少し",
                 "迷う"
-              ]
+              ],
+              "en": "wondered a little whether to buy fish too, but"
             },
             {
               "ja": "今日はカレーに決めました",
-              "gloss": "decided on curry for today",
-              "focus": "Nに決める",
               "refs": [
                 "今日",
                 "カレー",
                 "決める"
-              ]
+              ],
+              "en": "decided on curry for today"
             }
+          ],
+          "grammarNotes": [
+            "〜か / Nに決める"
           ]
         },
         {
           "ja": "父は牛乳やパンなど、毎日使う物を忘れないようにチェックしています。",
           "en": "The father was checking so he would not forget everyday items like milk and bread.",
-          "pattern": "〜ように / 〜ている",
           "chunks": [
             {
               "ja": "父は牛乳やパンなど、",
-              "gloss": "the father, milk and bread and such,",
               "refs": [
                 "父",
                 "牛乳",
                 "パン"
-              ]
+              ],
+              "en": "the father, milk and bread and such,"
             },
             {
               "ja": "毎日使う物を",
-              "gloss": "items used every day",
               "refs": [
                 "毎日",
                 "使う",
                 "物"
-              ]
+              ],
+              "en": "items used every day"
             },
             {
               "ja": "忘れないようにチェックしています",
-              "gloss": "is checking so as not to forget them",
-              "focus": "〜ないように / 〜ている",
               "refs": [
                 "忘れる",
                 "チェックする"
-              ]
+              ],
+              "en": "is checking so as not to forget them"
             }
+          ],
+          "grammarNotes": [
+            "〜ように / 〜ている"
           ]
         },
         {
           "ja": "レジの前で、弟はチョコレートを選び、うれしそうに笑いました。",
           "en": "In front of the register, the younger brother chose some chocolate and smiled happily.",
-          "pattern": "Vます-stem / 〜そうに",
           "chunks": [
             {
               "ja": "レジの前で、",
-              "gloss": "in front of the register,",
               "refs": [
                 "レジ",
                 "前"
-              ]
+              ],
+              "en": "in front of the register,"
             },
             {
               "ja": "弟はチョコレートを選び、",
-              "gloss": "the younger brother chose chocolate, and",
-              "focus": "Vます-stem",
               "refs": [
                 "弟",
                 "チョコレート",
                 "選ぶ"
-              ]
+              ],
+              "en": "the younger brother chose chocolate, and"
             },
             {
               "ja": "うれしそうに笑いました",
-              "gloss": "smiled happily",
-              "focus": "〜そうに",
               "refs": [
                 "うれしい",
                 "笑う"
-              ]
+              ],
+              "en": "smiled happily"
             }
+          ],
+          "grammarNotes": [
+            "Vます-stem / 〜そうに"
           ]
         },
         {
           "ja": "買い物が終わると、家族は重い袋を持って家に帰りました。",
           "en": "When the shopping was finished, the family carried the heavy bags home.",
-          "pattern": "〜と / 〜て帰る",
           "chunks": [
             {
               "ja": "買い物が終わると、",
-              "gloss": "when the shopping finished,",
-              "focus": "〜と",
               "refs": [
                 "買い物",
                 "終わる"
-              ]
+              ],
+              "en": "when the shopping finished,"
             },
             {
               "ja": "家族は重い袋を持って",
-              "gloss": "the family, carrying heavy bags,",
-              "focus": "〜て",
               "refs": [
                 "家族",
                 "重い",
                 "袋",
                 "持つ"
-              ]
+              ],
+              "en": "the family, carrying heavy bags,"
             },
             {
               "ja": "家に帰りました",
-              "gloss": "went home",
               "refs": [
                 "家",
                 "帰る"
-              ]
+              ],
+              "en": "went home"
             }
+          ],
+          "grammarNotes": [
+            "〜と / 〜て帰る"
           ]
         },
         {
           "ja": "家に着くと、娘はすぐに野菜を切り始め、母はサラダを作ります。",
           "en": "When they arrived home, the daughter immediately started cutting vegetables, and the mother made a salad.",
-          "pattern": "〜と / Vます-stem始める",
           "chunks": [
             {
               "ja": "家に着くと、",
-              "gloss": "when they arrived home,",
-              "focus": "〜と",
               "refs": [
                 "家",
                 "着く"
-              ]
+              ],
+              "en": "when they arrived home,"
             },
             {
               "ja": "娘はすぐに野菜を切り始め、",
-              "gloss": "the daughter immediately began cutting vegetables, and",
-              "focus": "Vます-stem始める",
               "refs": [
                 "娘",
                 "すぐに",
                 "野菜",
                 "切る",
                 "始める"
-              ]
+              ],
+              "en": "the daughter immediately began cutting vegetables, and"
             },
             {
               "ja": "母はサラダを作ります",
-              "gloss": "the mother makes a salad",
               "refs": [
                 "母",
                 "サラダ",
                 "作る"
-              ]
+              ],
+              "en": "the mother makes a salad"
             }
+          ],
+          "grammarNotes": [
+            "〜と / Vます-stem始める"
           ]
         },
         {
           "ja": "父と弟はテーブルを準備しました。",
           "en": "The father and younger brother prepared the table.",
-          "pattern": "Nを準備する",
           "chunks": [
             {
               "ja": "父と弟は",
-              "gloss": "the father and younger brother",
               "refs": [
                 "父",
                 "弟"
-              ]
+              ],
+              "en": "the father and younger brother"
             },
             {
               "ja": "テーブルを準備しました",
-              "gloss": "prepared the table",
-              "focus": "Nを準備する",
               "refs": [
                 "テーブル",
                 "準備する"
-              ]
+              ],
+              "en": "prepared the table"
             }
+          ],
+          "grammarNotes": [
+            "Nを準備する"
           ]
         },
         {
           "ja": "みんなで作った夕食はとてもおいしく、家族は楽しい一日だったねと話しながら食べました。",
           "en": "The dinner everyone helped make was very delicious, and the family ate while talking about what a fun day it had been.",
-          "pattern": "修飾節 / 〜ながら",
           "chunks": [
             {
               "ja": "みんなで作った夕食はとてもおいしく、",
-              "gloss": "the dinner made by everyone was very delicious, and",
-              "focus": "修飾節",
               "refs": [
                 "みんな",
                 "作る",
                 "夕食",
                 "おいしい"
-              ]
+              ],
+              "en": "the dinner made by everyone was very delicious, and"
             },
             {
               "ja": "家族は楽しい一日だったねと",
-              "gloss": "the family said it had been a fun day, and",
               "refs": [
                 "家族",
                 "楽しい",
                 "一日"
-              ]
+              ],
+              "en": "the family said it had been a fun day, and"
             },
             {
               "ja": "話しながら食べました",
-              "gloss": "ate while talking",
-              "focus": "〜ながら",
               "refs": [
                 "話す",
                 "食べる"
-              ]
+              ],
+              "en": "ate while talking"
             }
+          ],
+          "grammarNotes": [
+            "修飾節 / 〜ながら"
           ]
         }
       ]
@@ -861,465 +721,474 @@
         {
           "ja": "土曜日の午後、健太、美咲、そして亮は駅前のゲームセンターに行きました。",
           "en": "On Saturday afternoon, Kenta, Misaki, and Ryo went to the arcade in front of the station.",
-          "pattern": "Nに行く",
           "chunks": [
             {
               "ja": "土曜日の午後、",
-              "gloss": "on Saturday afternoon,",
               "refs": [
                 "土曜日",
                 "午後"
-              ]
+              ],
+              "en": "on Saturday afternoon,"
             },
             {
               "ja": "健太、美咲、そして亮は",
-              "gloss": "Kenta, Misaki, and Ryo",
               "refs": [
                 "健太",
                 "美咲",
                 "亮"
-              ]
+              ],
+              "en": "Kenta, Misaki, and Ryo"
             },
             {
               "ja": "駅前のゲームセンターに行きました",
-              "gloss": "went to the arcade by the station",
-              "focus": "Nに行く",
               "refs": [
                 "駅前",
                 "ゲームセンター",
                 "行く"
-              ]
+              ],
+              "en": "went to the arcade by the station"
             }
+          ],
+          "grammarNotes": [
+            "Nに行く"
           ]
         },
         {
           "ja": "健太はゲームが大好きなので、入ってすぐにクレーンゲームの前に走りました。",
           "en": "Because Kenta loves games, he ran straight to the crane game as soon as they went in.",
-          "pattern": "〜ので / 〜てすぐに",
           "chunks": [
             {
               "ja": "健太はゲームが大好きなので、",
-              "gloss": "because Kenta really loves games,",
-              "focus": "〜ので",
               "refs": [
                 "健太",
                 "ゲーム",
                 "大好き"
-              ]
+              ],
+              "en": "because Kenta really loves games,"
             },
             {
               "ja": "入ってすぐに",
-              "gloss": "right after going in",
-              "focus": "〜てすぐに",
               "refs": [
                 "入る",
                 "すぐ"
-              ]
+              ],
+              "en": "right after going in"
             },
             {
               "ja": "クレーンゲームの前に走りました",
-              "gloss": "he ran to the front of the crane game",
               "refs": [
                 "クレーンゲーム",
                 "前",
                 "走る"
-              ]
+              ],
+              "en": "he ran to the front of the crane game"
             }
+          ],
+          "grammarNotes": [
+            "〜ので / 〜てすぐに"
           ]
         },
         {
           "ja": "「見て！あのぬいぐるみ、かわいい！」と美咲が言いました。",
           "en": "\"Look! That stuffed toy is cute!\" Misaki said.",
-          "pattern": "引用 + と言う",
           "chunks": [
             {
               "ja": "「見て！",
-              "gloss": "\"Look!",
               "refs": [
                 "見る"
-              ]
+              ],
+              "en": "\"Look!"
             },
             {
               "ja": "あのぬいぐるみ、かわいい！」",
-              "gloss": "that stuffed toy is cute!\"",
               "refs": [
                 "あの",
                 "ぬいぐるみ",
                 "かわいい"
-              ]
+              ],
+              "en": "that stuffed toy is cute!\""
             },
             {
               "ja": "と美咲が言いました",
-              "gloss": "Misaki said",
-              "focus": "引用 + と言う",
               "refs": [
                 "美咲",
                 "言う"
-              ]
+              ],
+              "en": "Misaki said"
             }
+          ],
+          "grammarNotes": [
+            "引用 + と言う"
           ]
         },
         {
           "ja": "健太は何回も挑戦しましたが、なかなか取れませんでした。",
           "en": "Kenta tried many times, but he could not win it easily.",
-          "pattern": "〜が / なかなか〜ない",
           "chunks": [
             {
               "ja": "健太は何回も挑戦しましたが、",
-              "gloss": "Kenta tried many times, but",
-              "focus": "〜が",
               "refs": [
                 "健太",
                 "何回",
                 "挑戦する"
-              ]
+              ],
+              "en": "Kenta tried many times, but"
             },
             {
               "ja": "なかなか取れませんでした",
-              "gloss": "he could not get it easily",
-              "focus": "なかなか〜ない",
               "refs": [
                 "なかなか",
                 "取れる"
-              ]
+              ],
+              "en": "he could not get it easily"
             }
+          ],
+          "grammarNotes": [
+            "〜が / なかなか〜ない"
           ]
         },
         {
           "ja": "その間、亮は音楽ゲームをしていました。",
           "en": "Meanwhile, Ryo was playing a music game.",
-          "pattern": "〜ている",
           "chunks": [
             {
               "ja": "その間、",
-              "gloss": "meanwhile,",
               "refs": [
                 "その間"
-              ]
+              ],
+              "en": "meanwhile,"
             },
             {
               "ja": "亮は音楽ゲームをしていました",
-              "gloss": "Ryo was playing a music game",
-              "focus": "〜ている",
               "refs": [
                 "亮",
                 "音楽ゲーム",
                 "する"
-              ]
+              ],
+              "en": "Ryo was playing a music game"
             }
+          ],
+          "grammarNotes": [
+            "〜ている"
           ]
         },
         {
           "ja": "リズムに合わせてボタンを押しながら、楽しそうに笑っています。",
           "en": "He pressed the buttons in time with the rhythm and smiled as if he was having a great time.",
-          "pattern": "〜ながら / 〜そうに",
           "chunks": [
             {
               "ja": "リズムに合わせて",
-              "gloss": "matching the rhythm",
               "refs": [
                 "リズム",
                 "合わせる"
-              ]
+              ],
+              "en": "matching the rhythm"
             },
             {
               "ja": "ボタンを押しながら、",
-              "gloss": "while pressing the buttons,",
-              "focus": "〜ながら",
               "refs": [
                 "ボタン",
                 "押す"
-              ]
+              ],
+              "en": "while pressing the buttons,"
             },
             {
               "ja": "楽しそうに笑っています",
-              "gloss": "he is smiling happily",
-              "focus": "〜そうに / 〜ている",
               "refs": [
                 "楽しい",
                 "笑う"
-              ]
+              ],
+              "en": "he is smiling happily"
             }
+          ],
+          "grammarNotes": [
+            "〜ながら / 〜そうに"
           ]
         },
         {
           "ja": "「亮、すごいね。もうレベル十なの？」と美咲が聞きました。",
           "en": "\"Ryo, you're amazing. Are you already on level ten?\" Misaki asked.",
-          "pattern": "引用 + と聞く",
           "chunks": [
             {
               "ja": "「亮、すごいね。",
-              "gloss": "\"Ryo, that's amazing.",
               "refs": [
                 "亮",
                 "すごい"
-              ]
+              ],
+              "en": "\"Ryo, that's amazing."
             },
             {
               "ja": "もうレベル十なの？」",
-              "gloss": "are you already level ten?\"",
               "refs": [
                 "もう",
                 "レベル",
                 "十"
-              ]
+              ],
+              "en": "are you already level ten?\""
             },
             {
               "ja": "と美咲が聞きました",
-              "gloss": "Misaki asked",
-              "focus": "引用 + と聞く",
               "refs": [
                 "美咲",
                 "聞く"
-              ]
+              ],
+              "en": "Misaki asked"
             }
+          ],
+          "grammarNotes": [
+            "引用 + と聞く"
           ]
         },
         {
           "ja": "「うん、毎週来てるからね」と亮は答えました。",
           "en": "\"Yeah, I come here every week,\" Ryo answered.",
-          "pattern": "〜ている / 〜から",
           "chunks": [
             {
               "ja": "「うん、",
-              "gloss": "\"yeah,",
-              "refs": []
+              "refs": [],
+              "en": "\"yeah,"
             },
             {
               "ja": "毎週来てるからね」",
-              "gloss": "I come every week, you know\"",
-              "focus": "〜ている / 〜から",
               "refs": [
                 "毎週",
                 "来る"
-              ]
+              ],
+              "en": "I come every week, you know\""
             },
             {
               "ja": "と亮は答えました",
-              "gloss": "Ryo answered",
               "refs": [
                 "亮",
                 "答える"
-              ]
+              ],
+              "en": "Ryo answered"
             }
+          ],
+          "grammarNotes": [
+            "〜ている / 〜から"
           ]
         },
         {
           "ja": "しばらくして、三人はレースゲームで対戦することにしました。",
           "en": "After a while, the three decided to compete in a racing game.",
-          "pattern": "V辞書形ことにする",
           "chunks": [
             {
               "ja": "しばらくして、",
-              "gloss": "after a while,",
               "refs": [
                 "しばらく"
-              ]
+              ],
+              "en": "after a while,"
             },
             {
               "ja": "三人はレースゲームで",
-              "gloss": "the three, in a racing game,",
               "refs": [
                 "三人",
                 "レースゲーム"
-              ]
+              ],
+              "en": "the three, in a racing game,"
             },
             {
               "ja": "対戦することにしました",
-              "gloss": "decided to compete",
-              "focus": "V辞書形ことにする",
               "refs": [
                 "対戦する",
                 "ことにする"
-              ]
+              ],
+              "en": "decided to compete"
             }
+          ],
+          "grammarNotes": [
+            "V辞書形ことにする"
           ]
         },
         {
           "ja": "健太は速く走りすぎて、何度も壁にぶつかりました。",
           "en": "Kenta drove too fast and crashed into the walls many times.",
-          "pattern": "〜すぎる / Nにぶつかる",
           "chunks": [
             {
               "ja": "健太は速く走りすぎて、",
-              "gloss": "Kenta drove too fast, and",
-              "focus": "〜すぎる",
               "refs": [
                 "健太",
                 "速い",
                 "走る"
-              ]
+              ],
+              "en": "Kenta drove too fast, and"
             },
             {
               "ja": "何度も壁にぶつかりました",
-              "gloss": "crashed into the wall many times",
-              "focus": "Nにぶつかる",
               "refs": [
                 "何度も",
                 "壁",
                 "ぶつかる"
-              ]
+              ],
+              "en": "crashed into the wall many times"
             }
+          ],
+          "grammarNotes": [
+            "〜すぎる / Nにぶつかる"
           ]
         },
         {
           "ja": "美咲は慎重に運転して、一番になりました。",
           "en": "Misaki drove carefully and came in first.",
-          "pattern": "〜て / Nになる",
           "chunks": [
             {
               "ja": "美咲は慎重に運転して、",
-              "gloss": "Misaki drove carefully, and",
               "refs": [
                 "美咲",
                 "慎重",
                 "運転する"
-              ]
+              ],
+              "en": "Misaki drove carefully, and"
             },
             {
               "ja": "一番になりました",
-              "gloss": "came in first",
-              "focus": "Nになる",
               "refs": [
                 "一番",
                 "なる"
-              ]
+              ],
+              "en": "came in first"
             }
+          ],
+          "grammarNotes": [
+            "〜て / Nになる"
           ]
         },
         {
           "ja": "ゲームが終わったあと、三人は休憩スペースでジュースを飲みました。",
           "en": "After the games were over, the three drank juice in the rest area.",
-          "pattern": "〜たあと",
           "chunks": [
             {
               "ja": "ゲームが終わったあと、",
-              "gloss": "after the game ended,",
-              "focus": "〜たあと",
               "refs": [
                 "ゲーム",
                 "終わる",
                 "あと"
-              ]
+              ],
+              "en": "after the game ended,"
             },
             {
               "ja": "三人は休憩スペースで",
-              "gloss": "the three, in the rest area,",
               "refs": [
                 "三人",
                 "休憩スペース"
-              ]
+              ],
+              "en": "the three, in the rest area,"
             },
             {
               "ja": "ジュースを飲みました",
-              "gloss": "drank juice",
               "refs": [
                 "ジュース",
                 "飲む"
-              ]
+              ],
+              "en": "drank juice"
             }
+          ],
+          "grammarNotes": [
+            "〜たあと"
           ]
         },
         {
           "ja": "「今日は楽しかったね。また来よう！」と健太が言いました。",
           "en": "\"Today was fun. Let's come again!\" Kenta said.",
-          "pattern": "引用 + と言う / V意向形",
           "chunks": [
             {
               "ja": "「今日は楽しかったね。",
-              "gloss": "\"today was fun.",
               "refs": [
                 "今日",
                 "楽しい"
-              ]
+              ],
+              "en": "\"today was fun."
             },
             {
               "ja": "また来よう！」",
-              "gloss": "let's come again!\"",
-              "focus": "V意向形",
               "refs": [
                 "また",
                 "来る"
-              ]
+              ],
+              "en": "let's come again!\""
             },
             {
               "ja": "と健太が言いました",
-              "gloss": "Kenta said",
-              "focus": "引用 + と言う",
               "refs": [
                 "健太",
                 "言う"
-              ]
+              ],
+              "en": "Kenta said"
             }
+          ],
+          "grammarNotes": [
+            "引用 + と言う / V意向形"
           ]
         },
         {
           "ja": "「次は絶対クレーンゲームで勝つ！」と笑いながら言うと、みんなも笑いました。",
           "en": "\"Next time I'll definitely win at the crane game!\" he said with a laugh, and everyone laughed too.",
-          "pattern": "〜ながら / 〜と",
           "chunks": [
             {
               "ja": "「次は絶対クレーンゲームで勝つ！」と",
-              "gloss": "\"next time I'll definitely win at the crane game!\"",
               "refs": [
                 "次",
                 "絶対",
                 "クレーンゲーム",
                 "勝つ"
-              ]
+              ],
+              "en": "\"next time I'll definitely win at the crane game!\""
             },
             {
               "ja": "笑いながら言うと、",
-              "gloss": "when he said it with a laugh,",
-              "focus": "〜ながら / 〜と",
               "refs": [
                 "笑う",
                 "言う"
-              ]
+              ],
+              "en": "when he said it with a laugh,"
             },
             {
               "ja": "みんなも笑いました",
-              "gloss": "everyone laughed too",
               "refs": [
                 "みんな",
                 "笑う"
-              ]
+              ],
+              "en": "everyone laughed too"
             }
+          ],
+          "grammarNotes": [
+            "〜ながら / 〜と"
           ]
         },
         {
           "ja": "夕方になり、三人はまた来る約束をして、駅へ向かいました。",
           "en": "As evening came, the three promised to return and headed toward the station.",
-          "pattern": "〜て / Nへ向かう",
           "chunks": [
             {
               "ja": "夕方になり、",
-              "gloss": "as it became evening,",
               "refs": [
                 "夕方",
                 "なる"
-              ]
+              ],
+              "en": "as it became evening,"
             },
             {
               "ja": "三人はまた来る約束をして、",
-              "gloss": "the three promised to come again, and",
-              "focus": "〜て",
               "refs": [
                 "三人",
                 "また",
                 "来る",
                 "約束する"
-              ]
+              ],
+              "en": "the three promised to come again, and"
             },
             {
               "ja": "駅へ向かいました",
-              "gloss": "headed toward the station",
-              "focus": "Nへ向かう",
               "refs": [
                 "駅",
                 "向かう"
-              ]
+              ],
+              "en": "headed toward the station"
             }
+          ],
+          "grammarNotes": [
+            "〜て / Nへ向かう"
           ]
         }
       ]

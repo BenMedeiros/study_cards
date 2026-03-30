@@ -5,88 +5,7 @@
     "version": 1,
     "category": "japanese",
     "entry_key": "ja",
-    "schema": [
-      {
-        "key": "ja",
-        "label": "Japanese",
-        "jp_label": "日本語",
-        "type": "string",
-        "required": true,
-        "description": "Full Japanese sentence in natural surface form."
-      },
-      {
-        "key": "en",
-        "label": "English",
-        "jp_label": "英訳",
-        "type": "string",
-        "required": true,
-        "description": "Natural English translation conveying overall meaning rather than literal structure."
-      },
-      {
-        "key": "notes",
-        "label": "Notes",
-        "jp_label": "メモ",
-        "type": "array<string>",
-        "required": false,
-        "description": "Instance-only notes: sentence-specific nuance, context assumptions, naturalness warnings, or culture/pragmatics tied to this exact sentence. Do NOT restate general grammar rules (use `grammarNotes`) or general vocabulary definitions (use word entries)."
-      },
-      {
-        "key": "grammarNotes",
-        "label": "Grammar Notes",
-        "jp_label": "文法ノート",
-        "type": "array<string>",
-        "required": false,
-        "description": "High-value grammar recognition notes and common contrast pairs relevant to patterns appearing in this sentence. Prefer short disambiguation insights that help learners distinguish easily confused structures (e.g., Vてきた vs Vていく, ので vs から). Avoid sentence-specific nuance or long theoretical explanations; those belong in `notes`."
-      },
-      {
-        "key": "chunks",
-        "label": "Chunks",
-        "jp_label": "チャンク",
-        "type": "array<sentenceChunk>",
-        "required": true,
-        "description": "Ordered learner-optimized reading units composing the sentence. Each chunk may contain its own focus and references."
-      }
-    ],
-    "schemaTypes": {
-      "sentenceChunk": {
-        "description": "A learner reading unit inside a sentence. Every chunk must link to at least one non-particle reference (content word or grammar pattern). Do not include particles in refs.",
-        "fields": [
-          {
-            "key": "ja",
-            "label": "Chunk Japanese",
-            "jp_label": "チャンク日本語",
-            "type": "string",
-            "required": true,
-            "description": "Japanese surface text for this chunk exactly as it appears in the sentence."
-          },
-          {
-            "key": "gloss",
-            "label": "Gloss",
-            "jp_label": "意味",
-            "type": "string",
-            "required": true,
-            "description": "Short learner-friendly meaning/paraphrase for this chunk."
-          },
-          {
-            "key": "focus",
-            "label": "Grammar Focus",
-            "jp_label": "文型",
-            "type": "string",
-            "required": false,
-            "description": "Canonical grammar/pattern label if this chunk targets a structure (e.g., 'AながらB', 'Vていく')."
-          },
-          {
-            "key": "refs",
-            "label": "References",
-            "jp_label": "参照語",
-            "type": "array<string>",
-            "required": true,
-            "description": "REQUIRED, NON-EMPTY. Must include at least one lookup key for a content word or grammar pattern used in this chunk. Do NOT include particles (は/が/を/に/で/と/へ/も/や/の/ね/よ/か etc.). Authoring rule: do not create particle-only chunks; attach particles to an adjacent chunk that contains a referencable item."
-          }
-        ]
-      }
-    },
-    "_active_revision": "rev_1773243824291_65c74acad03fb7a6"
+    "schema": "$ref:japanese/_japanese.schemas.json#sentenceUnit"
   },
   "entries": [
     {
@@ -98,20 +17,20 @@
       "chunks": [
         {
           "ja": "フーディーニは三回も",
-          "gloss": "Houdini even three times",
           "refs": [
             "フーディーニ",
             "三回"
-          ]
+          ],
+          "en": "Houdini even three times"
         },
         {
           "ja": "冷たい水を浴びた",
-          "gloss": "bathed in cold water",
           "refs": [
             "冷たい",
             "水",
             "浴びる"
-          ]
+          ],
+          "en": "bathed in cold water"
         }
       ],
       "notes": [
@@ -127,19 +46,19 @@
       "chunks": [
         {
           "ja": "駅で友だちを二人",
-          "gloss": "two friends at the station",
           "refs": [
             "駅",
             "友だち",
             "二人"
-          ]
+          ],
+          "en": "two friends at the station"
         },
         {
           "ja": "迎えました",
-          "gloss": "welcomed",
           "refs": [
             "迎える"
-          ]
+          ],
+          "en": "welcomed"
         }
       ],
       "notes": [
@@ -155,19 +74,19 @@
       "chunks": [
         {
           "ja": "先生は三つの質問に",
-          "gloss": "the teacher to three questions",
           "refs": [
             "先生",
             "三つ",
             "質問"
-          ]
+          ],
+          "en": "the teacher to three questions"
         },
         {
           "ja": "答えた",
-          "gloss": "answered",
           "refs": [
             "答える"
-          ]
+          ],
+          "en": "answered"
         }
       ],
       "notes": [
@@ -183,19 +102,19 @@
       "chunks": [
         {
           "ja": "彼は概要を一ページで",
-          "gloss": "he in one page the summary",
           "refs": [
             "彼",
             "概要",
             "一ページ"
-          ]
+          ],
+          "en": "he in one page the summary"
         },
         {
           "ja": "伝えた",
-          "gloss": "conveyed",
           "refs": [
             "伝える"
-          ]
+          ],
+          "en": "conveyed"
         }
       ],
       "notes": [
@@ -211,19 +130,19 @@
       "chunks": [
         {
           "ja": "私は二分で",
-          "gloss": "I in two minutes",
           "refs": [
             "私",
             "二分"
-          ]
+          ],
+          "en": "I in two minutes"
         },
         {
           "ja": "住所を調べた",
-          "gloss": "looked up the address",
           "refs": [
             "住所",
             "調べる"
-          ]
+          ],
+          "en": "looked up the address"
         }
       ],
       "notes": [
@@ -239,18 +158,18 @@
       "chunks": [
         {
           "ja": "このプリンとあのプリンを二個",
-          "gloss": "these two puddings",
           "refs": [
             "プリン",
             "二個"
-          ]
+          ],
+          "en": "these two puddings"
         },
         {
           "ja": "比べた",
-          "gloss": "compared",
           "refs": [
             "比べる"
-          ]
+          ],
+          "en": "compared"
         }
       ],
       "notes": [
@@ -266,19 +185,19 @@
       "chunks": [
         {
           "ja": "彼は三枚の写真を",
-          "gloss": "he three photos",
           "refs": [
             "彼",
             "三枚",
             "写真"
-          ]
+          ],
+          "en": "he three photos"
         },
         {
           "ja": "見せた",
-          "gloss": "showed",
           "refs": [
             "見せる"
-          ]
+          ],
+          "en": "showed"
         }
       ],
       "notes": [
@@ -294,19 +213,19 @@
       "chunks": [
         {
           "ja": "会議の時間を一時間に",
-          "gloss": "the meeting time to one hour",
           "refs": [
             "会議",
             "時間",
             "一時間"
-          ]
+          ],
+          "en": "the meeting time to one hour"
         },
         {
           "ja": "決めた",
-          "gloss": "decided",
           "refs": [
             "決める"
-          ]
+          ],
+          "en": "decided"
         }
       ],
       "notes": [
@@ -322,19 +241,19 @@
       "chunks": [
         {
           "ja": "彼は三日で",
-          "gloss": "he in three days",
           "refs": [
             "彼",
             "三日"
-          ]
+          ],
+          "en": "he in three days"
         },
         {
           "ja": "研究を始めた",
-          "gloss": "started the research",
           "refs": [
             "研究",
             "始める"
-          ]
+          ],
+          "en": "started the research"
         }
       ],
       "notes": [
@@ -350,19 +269,19 @@
       "chunks": [
         {
           "ja": "彼女は二本の説明を",
-          "gloss": "she two presentations",
           "refs": [
             "彼女",
             "二本",
             "説明"
-          ]
+          ],
+          "en": "she two presentations"
         },
         {
           "ja": "終えた",
-          "gloss": "finished",
           "refs": [
             "終える"
-          ]
+          ],
+          "en": "finished"
         }
       ],
       "notes": [
@@ -378,19 +297,19 @@
       "chunks": [
         {
           "ja": "彼はフリーズを五秒",
-          "gloss": "he the freeze five seconds",
           "refs": [
             "彼",
             "フリーズ",
             "五秒"
-          ]
+          ],
+          "en": "he the freeze five seconds"
         },
         {
           "ja": "続けた",
-          "gloss": "continued",
           "refs": [
             "続ける"
-          ]
+          ],
+          "en": "continued"
         }
       ],
       "notes": [
@@ -406,19 +325,19 @@
       "chunks": [
         {
           "ja": "先生は二点の努力を",
-          "gloss": "the teacher two points of effort",
           "refs": [
             "先生",
             "二点",
             "努力"
-          ]
+          ],
+          "en": "the teacher two points of effort"
         },
         {
           "ja": "認めた",
-          "gloss": "acknowledged",
           "refs": [
             "認める"
-          ]
+          ],
+          "en": "acknowledged"
         }
       ],
       "notes": [
@@ -434,20 +353,20 @@
       "chunks": [
         {
           "ja": "彼女はプテラノドンの模型を一体",
-          "gloss": "she one pteranodon model",
           "refs": [
             "彼女",
             "プテラノドン",
             "一体",
             "模型"
-          ]
+          ],
+          "en": "she one pteranodon model"
         },
         {
           "ja": "褒めた",
-          "gloss": "praised",
           "refs": [
             "褒める"
-          ]
+          ],
+          "en": "praised"
         }
       ],
       "notes": [
@@ -463,18 +382,18 @@
       "chunks": [
         {
           "ja": "子どもは鬼を",
-          "gloss": "children (are afraid of) demons",
           "refs": [
             "子ども",
             "鬼"
-          ]
+          ],
+          "en": "children (are afraid of) demons"
         },
         {
           "ja": "こわがっています",
-          "gloss": "are afraid",
           "refs": [
             "こわがる"
-          ]
+          ],
+          "en": "are afraid"
         }
       ]
     },
@@ -484,18 +403,18 @@
       "chunks": [
         {
           "ja": "太郎は",
-          "gloss": "Tarō",
           "refs": [
             "太郎"
-          ]
+          ],
+          "en": "Tarō"
         },
         {
           "ja": "家の長男です",
-          "gloss": "is the eldest son of the family",
           "refs": [
             "家",
             "長男"
-          ]
+          ],
+          "en": "is the eldest son of the family"
         }
       ]
     },
@@ -508,25 +427,25 @@
       "chunks": [
         {
           "ja": "昔話には",
-          "gloss": "in old folk tales",
           "refs": [
             "昔話"
-          ]
+          ],
+          "en": "in old folk tales"
         },
         {
           "ja": "鬼がよく",
-          "gloss": "demons often",
           "refs": [
             "鬼",
             "よく"
-          ]
+          ],
+          "en": "demons often"
         },
         {
           "ja": "出てきます",
-          "gloss": "appear",
           "refs": [
             "出てくる"
-          ]
+          ],
+          "en": "appear"
         }
       ]
     },
@@ -536,18 +455,18 @@
       "chunks": [
         {
           "ja": "太郎は",
-          "gloss": "Tarō",
           "refs": [
             "太郎"
-          ]
+          ],
+          "en": "Tarō"
         },
         {
           "ja": "元気な子どもです",
-          "gloss": "is an energetic child",
           "refs": [
             "元気",
             "子ども"
-          ]
+          ],
+          "en": "is an energetic child"
         }
       ]
     },
@@ -561,19 +480,19 @@
       "chunks": [
         {
           "ja": "びっくりして",
-          "gloss": "being surprised",
           "refs": [
             "びっくりする"
-          ]
+          ],
+          "en": "being surprised"
         },
         {
           "ja": "目玉が大きくなった",
-          "gloss": "eyes became big",
           "refs": [
             "目玉",
             "大きい",
             "なる"
-          ]
+          ],
+          "en": "eyes became big"
         }
       ]
     },
@@ -583,19 +502,19 @@
       "chunks": [
         {
           "ja": "うちの親父は",
-          "gloss": "my dad",
           "refs": [
             "うち",
             "親父"
-          ]
+          ],
+          "en": "my dad"
         },
         {
           "ja": "料理が好きです",
-          "gloss": "likes cooking",
           "refs": [
             "料理",
             "好き"
-          ]
+          ],
+          "en": "likes cooking"
         }
       ],
       "notes": [
@@ -608,18 +527,18 @@
       "chunks": [
         {
           "ja": "彼は",
-          "gloss": "he",
           "refs": [
             "彼"
-          ]
+          ],
+          "en": "he"
         },
         {
           "ja": "家の長男です",
-          "gloss": "is the eldest son of the family",
           "refs": [
             "家",
             "長男"
-          ]
+          ],
+          "en": "is the eldest son of the family"
         }
       ]
     },
@@ -632,19 +551,19 @@
       "chunks": [
         {
           "ja": "長男なので",
-          "gloss": "because (he is) the eldest son",
           "refs": [
             "長男",
             "なので"
-          ]
+          ],
+          "en": "because (he is) the eldest son"
         },
         {
           "ja": "家をつぐ予定です",
-          "gloss": "plans to inherit the family",
           "refs": [
             "家をつぐ",
             "予定"
-          ]
+          ],
+          "en": "plans to inherit the family"
         }
       ]
     },
@@ -657,18 +576,18 @@
       "chunks": [
         {
           "ja": "長男は東京で",
-          "gloss": "the eldest son in Tokyo",
           "refs": [
             "長男",
             "東京"
-          ]
+          ],
+          "en": "the eldest son in Tokyo"
         },
         {
           "ja": "働いています",
-          "gloss": "is working",
           "refs": [
             "働く"
-          ]
+          ],
+          "en": "is working"
         }
       ]
     },
@@ -681,18 +600,18 @@
       "chunks": [
         {
           "ja": "河の近くで",
-          "gloss": "near the river",
           "refs": [
             "河",
             "近く"
-          ]
+          ],
+          "en": "near the river"
         },
         {
           "ja": "遊ばないでください",
-          "gloss": "please do not play",
           "refs": [
             "遊ぶ"
-          ]
+          ],
+          "en": "please do not play"
         }
       ]
     },
@@ -702,19 +621,19 @@
       "chunks": [
         {
           "ja": "昔の童の話を",
-          "gloss": "an old story about children",
           "refs": [
             "昔",
             "童",
             "話"
-          ]
+          ],
+          "en": "an old story about children"
         },
         {
           "ja": "読みました",
-          "gloss": "read",
           "refs": [
             "読む"
-          ]
+          ],
+          "en": "read"
         }
       ]
     },
@@ -727,19 +646,19 @@
       "chunks": [
         {
           "ja": "河童は川に住むと",
-          "gloss": "that kappa live in rivers",
           "refs": [
             "河童",
             "川",
             "住む"
-          ]
+          ],
+          "en": "that kappa live in rivers"
         },
         {
           "ja": "言われています",
-          "gloss": "are said (to)",
           "refs": [
             "言われている"
-          ]
+          ],
+          "en": "are said (to)"
         }
       ]
     },
@@ -752,22 +671,22 @@
       "chunks": [
         {
           "ja": "子どもに川へ近づかないように",
-          "gloss": "so that children do not go near the river",
           "refs": [
             "子ども",
             "川",
             "近づく",
             "ように"
-          ]
+          ],
+          "en": "so that children do not go near the river"
         },
         {
           "ja": "河童の話をしました",
-          "gloss": "told stories about kappa",
           "refs": [
             "河童",
             "話",
             "する"
-          ]
+          ],
+          "en": "told stories about kappa"
         }
       ]
     },
@@ -780,20 +699,20 @@
       "chunks": [
         {
           "ja": "昔から",
-          "gloss": "since long ago",
           "refs": [
             "昔から"
-          ]
+          ],
+          "en": "since long ago"
         },
         {
           "ja": "河童の伝説が日本にあります",
-          "gloss": "kappa legends exist in Japan",
           "refs": [
             "河童",
             "伝説",
             "日本",
             "ある"
-          ]
+          ],
+          "en": "kappa legends exist in Japan"
         }
       ]
     },
@@ -803,18 +722,18 @@
       "chunks": [
         {
           "ja": "森で狐を",
-          "gloss": "a fox in the forest",
           "refs": [
             "森",
             "狐"
-          ]
+          ],
+          "en": "a fox in the forest"
         },
         {
           "ja": "見ました",
-          "gloss": "saw",
           "refs": [
             "見る"
-          ]
+          ],
+          "en": "saw"
         }
       ]
     },
@@ -827,19 +746,19 @@
       "chunks": [
         {
           "ja": "妖狐は人に化けると",
-          "gloss": "that fox spirits transform into people",
           "refs": [
             "妖狐",
             "人",
             "化ける"
-          ]
+          ],
+          "en": "that fox spirits transform into people"
         },
         {
           "ja": "言われています",
-          "gloss": "are said (to)",
           "refs": [
             "言われている"
-          ]
+          ],
+          "en": "are said (to)"
         }
       ]
     },
@@ -849,26 +768,26 @@
       "chunks": [
         {
           "ja": "昔の話には",
-          "gloss": "in old stories",
           "refs": [
             "昔",
             "話"
-          ]
+          ],
+          "en": "in old stories"
         },
         {
           "ja": "狐の霊がよく",
-          "gloss": "fox spirits often",
           "refs": [
             "狐の霊",
             "よく"
-          ]
+          ],
+          "en": "fox spirits often"
         },
         {
           "ja": "出てきます",
-          "gloss": "appear",
           "refs": [
             "出てくる"
-          ]
+          ],
+          "en": "appear"
         }
       ]
     },
@@ -881,19 +800,19 @@
       "chunks": [
         {
           "ja": "村の人は",
-          "gloss": "the villagers",
           "refs": [
             "村",
             "人"
-          ]
+          ],
+          "en": "the villagers"
         },
         {
           "ja": "狐の霊を信じていました",
-          "gloss": "believed in fox spirits",
           "refs": [
             "狐の霊",
             "信じる"
-          ]
+          ],
+          "en": "believed in fox spirits"
         }
       ]
     },
@@ -906,21 +825,21 @@
       "chunks": [
         {
           "ja": "狐の霊が人に化けるという",
-          "gloss": "that fox spirits transform into people",
           "refs": [
             "狐の霊",
             "人",
             "化ける",
             "という"
-          ]
+          ],
+          "en": "that fox spirits transform into people"
         },
         {
           "ja": "伝説があります",
-          "gloss": "there is a legend",
           "refs": [
             "伝説",
             "ある"
-          ]
+          ],
+          "en": "there is a legend"
         }
       ]
     },
@@ -928,31 +847,31 @@
       "ja": "ハワイの海で三時間も泳いでいました。",
       "en": "I was swimming in the ocean in Hawaii for three hours.",
       "grammarNotes": [
-        "Vていました = past progressive / ongoing action in the past."
+        "Vていました = past progressive / ongoing action in the past.",
+        "Vていました"
       ],
       "chunks": [
         {
           "ja": "ハワイの海で",
-          "gloss": "in the ocean in Hawaii",
           "refs": [
             "ハワイ",
             "海"
-          ]
+          ],
+          "en": "in the ocean in Hawaii"
         },
         {
           "ja": "三時間も",
-          "gloss": "for as long as three hours",
           "refs": [
             "三時間"
-          ]
+          ],
+          "en": "for as long as three hours"
         },
         {
           "ja": "泳いでいました",
-          "gloss": "was swimming",
-          "focus": "Vていました",
           "refs": [
             "泳ぐ"
-          ]
+          ],
+          "en": "was swimming"
         }
       ]
     },
@@ -960,23 +879,23 @@
       "ja": "東京駅まで急がなければなりません。",
       "en": "I have to hurry to Tokyo Station.",
       "grammarNotes": [
-        "Vなければなりません = formal obligation “must do”."
+        "Vなければなりません = formal obligation “must do”.",
+        "Vなければなりません"
       ],
       "chunks": [
         {
           "ja": "東京駅まで",
-          "gloss": "to Tokyo Station",
           "refs": [
             "東京駅"
-          ]
+          ],
+          "en": "to Tokyo Station"
         },
         {
           "ja": "急がなければなりません",
-          "gloss": "must hurry",
-          "focus": "Vなければなりません",
           "refs": [
             "急ぐ"
-          ]
+          ],
+          "en": "must hurry"
         }
       ]
     },
@@ -985,33 +904,33 @@
       "en": "When you enter the house, please take off your coat right away.",
       "grammarNotes": [
         "Vたら = conditional “when/if”.",
-        "Vてください = polite request."
+        "Vてください = polite request.",
+        "Vたら",
+        "Vてください"
       ],
       "chunks": [
         {
           "ja": "家に入ったら",
-          "gloss": "when entering the house",
-          "focus": "Vたら",
           "refs": [
             "家",
             "入る"
-          ]
+          ],
+          "en": "when entering the house"
         },
         {
           "ja": "すぐ",
-          "gloss": "right away",
           "refs": [
             "すぐ"
-          ]
+          ],
+          "en": "right away"
         },
         {
           "ja": "コートを脱いでください",
-          "gloss": "please take off your coat",
-          "focus": "Vてください",
           "refs": [
             "コート",
             "脱ぐ"
-          ]
+          ],
+          "en": "please take off your coat"
         }
       ]
     },
@@ -1019,24 +938,24 @@
       "ja": "このアプリはウイルスを防げます。",
       "en": "This app can prevent viruses.",
       "grammarNotes": [
-        "Potential form (Vえる/られる) expresses ability."
+        "Potential form (Vえる/られる) expresses ability.",
+        "Potential"
       ],
       "chunks": [
         {
           "ja": "このアプリは",
-          "gloss": "this app",
           "refs": [
             "アプリ"
-          ]
+          ],
+          "en": "this app"
         },
         {
           "ja": "ウイルスを防げます",
-          "gloss": "can prevent viruses",
-          "focus": "Potential",
           "refs": [
             "ウイルス",
             "防ぐ"
-          ]
+          ],
+          "en": "can prevent viruses"
         }
       ]
     },
@@ -1044,26 +963,26 @@
       "ja": "彼はニューヨークでたくさんお金を稼いだ。",
       "en": "He earned a lot of money in New York.",
       "grammarNotes": [
-        "Plain past (Vた) indicates completed action."
+        "Plain past (Vた) indicates completed action.",
+        "Vた"
       ],
       "chunks": [
         {
           "ja": "彼はニューヨークで",
-          "gloss": "he in New York",
           "refs": [
             "彼",
             "ニューヨーク"
-          ]
+          ],
+          "en": "he in New York"
         },
         {
           "ja": "たくさんお金を稼いだ",
-          "gloss": "earned a lot of money",
-          "focus": "Vた",
           "refs": [
             "たくさん",
             "お金",
             "稼ぐ"
-          ]
+          ],
+          "en": "earned a lot of money"
         }
       ]
     },
@@ -1071,31 +990,31 @@
       "ja": "子供たちが夜遅くまで騒いでいる。",
       "en": "The children are being noisy until late at night.",
       "grammarNotes": [
-        "Vている can express ongoing action or current state."
+        "Vている can express ongoing action or current state.",
+        "Vている"
       ],
       "chunks": [
         {
           "ja": "子供たちが",
-          "gloss": "the children",
           "refs": [
             "子供"
-          ]
+          ],
+          "en": "the children"
         },
         {
           "ja": "夜遅くまで",
-          "gloss": "until late at night",
           "refs": [
             "夜",
             "遅い"
-          ]
+          ],
+          "en": "until late at night"
         },
         {
           "ja": "騒いでいる",
-          "gloss": "are being noisy",
-          "focus": "Vている",
           "refs": [
             "騒ぐ"
-          ]
+          ],
+          "en": "are being noisy"
         }
       ]
     },
@@ -1103,26 +1022,26 @@
       "ja": "Wi-Fiにスマホを繋げば、地図が見られます。",
       "en": "If you connect your phone to Wi-Fi, you can see the map.",
       "grammarNotes": [
-        "Vば = conditional “if/when”."
+        "Vば = conditional “if/when”.",
+        "Vば"
       ],
       "chunks": [
         {
           "ja": "Wi-Fiにスマホを繋げば",
-          "gloss": "if you connect your phone to Wi-Fi",
-          "focus": "Vば",
           "refs": [
             "Wi-Fi",
             "スマホ",
             "繋ぐ"
-          ]
+          ],
+          "en": "if you connect your phone to Wi-Fi"
         },
         {
           "ja": "地図が見られます",
-          "gloss": "you can see the map",
           "refs": [
             "地図",
             "見る"
-          ]
+          ],
+          "en": "you can see the map"
         }
       ]
     },
@@ -1130,26 +1049,26 @@
       "ja": "彼女は京都のカフェでコーヒーを注いでいた。",
       "en": "She was pouring coffee at a café in Kyoto.",
       "grammarNotes": [
-        "Vていた = past ongoing action."
+        "Vていた = past ongoing action.",
+        "Vていた"
       ],
       "chunks": [
         {
           "ja": "彼女は京都のカフェで",
-          "gloss": "she at a café in Kyoto",
           "refs": [
             "彼女",
             "京都",
             "カフェ"
-          ]
+          ],
+          "en": "she at a café in Kyoto"
         },
         {
           "ja": "コーヒーを注いでいた",
-          "gloss": "was pouring coffee",
-          "focus": "Vていた",
           "refs": [
             "コーヒー",
             "注ぐ"
-          ]
+          ],
+          "en": "was pouring coffee"
         }
       ]
     },
@@ -1157,26 +1076,26 @@
       "ja": "朝、包丁を研いでから料理を始めます。",
       "en": "In the morning, I sharpen the knife and then start cooking.",
       "grammarNotes": [
-        "Vてから = do A and then B."
+        "Vてから = do A and then B.",
+        "Vてから"
       ],
       "chunks": [
         {
           "ja": "朝、包丁を研いでから",
-          "gloss": "in the morning, after sharpening the knife",
-          "focus": "Vてから",
           "refs": [
             "朝",
             "包丁",
             "研ぐ"
-          ]
+          ],
+          "en": "in the morning, after sharpening the knife"
         },
         {
           "ja": "料理を始めます",
-          "gloss": "start cooking",
           "refs": [
             "料理",
             "始める"
-          ]
+          ],
+          "en": "start cooking"
         }
       ]
     },
@@ -1184,24 +1103,24 @@
       "ja": "このシャツは手で濯いだほうがいい。",
       "en": "It’s better to rinse this shirt by hand.",
       "grammarNotes": [
-        "Vたほうがいい = giving advice or recommendation."
+        "Vたほうがいい = giving advice or recommendation.",
+        "Vたほうがいい"
       ],
       "chunks": [
         {
           "ja": "このシャツは",
-          "gloss": "this shirt",
           "refs": [
             "シャツ"
-          ]
+          ],
+          "en": "this shirt"
         },
         {
           "ja": "手で濯いだほうがいい",
-          "gloss": "it’s better to rinse by hand",
-          "focus": "Vたほうがいい",
           "refs": [
             "手",
             "濯ぐ"
-          ]
+          ],
+          "en": "it’s better to rinse by hand"
         }
       ]
     },
@@ -1210,33 +1129,33 @@
       "en": "The dog has been sniffing inside the bag the whole time.",
       "grammarNotes": [
         "Vている can describe an ongoing action in progress.",
-        "ずっと marks continuous duration over a period of time and here modifies the action, not the location phrase."
+        "ずっと marks continuous duration over a period of time and here modifies the action, not the location phrase.",
+        "ずっと + Vている"
       ],
       "chunks": [
         {
           "ja": "犬が",
-          "gloss": "the dog",
           "refs": [
             "犬"
-          ]
+          ],
+          "en": "the dog"
         },
         {
           "ja": "バッグの中を",
-          "gloss": "inside the bag",
           "refs": [
             "バッグ",
             "中"
-          ]
+          ],
+          "en": "inside the bag"
         },
         {
           "ja": "ずっと嗅いでいる",
-          "gloss": "has been sniffing continuously",
-          "focus": "ずっと + Vている",
           "refs": [
             "ずっと",
             "嗅ぐ",
             "Vている"
-          ]
+          ],
+          "en": "has been sniffing continuously"
         }
       ],
       "notes": [
@@ -1253,19 +1172,19 @@
       "chunks": [
         {
           "ja": "彼は毎朝",
-          "gloss": "he, every morning",
           "refs": [
             "彼",
             "毎朝"
-          ]
+          ],
+          "en": "he, every morning"
         },
         {
           "ja": "プールで泳ぐ",
-          "gloss": "swims in the pool",
           "refs": [
             "プール",
             "泳ぐ"
-          ]
+          ],
+          "en": "swims in the pool"
         }
       ],
       "notes": []
@@ -1274,32 +1193,32 @@
       "ja": "人混みの中を泳ぐように進んだ。",
       "en": "I pushed forward through the crowd as if swimming.",
       "grammarNotes": [
-        "Vるように = 'as if / in such a way that'."
+        "Vるように = 'as if / in such a way that'.",
+        "Vるように"
       ],
       "chunks": [
         {
           "ja": "人混みの中を",
-          "gloss": "through the crowd",
           "refs": [
             "人混み",
             "中"
-          ]
+          ],
+          "en": "through the crowd"
         },
         {
           "ja": "泳ぐように",
-          "gloss": "as if swimming",
-          "focus": "Vるように",
           "refs": [
             "泳ぐ",
             "ように"
-          ]
+          ],
+          "en": "as if swimming"
         },
         {
           "ja": "進んだ",
-          "gloss": "moved forward",
           "refs": [
             "進む"
-          ]
+          ],
+          "en": "moved forward"
         }
       ],
       "notes": [
@@ -1309,21 +1228,20 @@
     {
       "ja": "駅まで急いだ。",
       "en": "I hurried to the station.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "駅まで",
-          "gloss": "to the station",
           "refs": [
             "駅"
-          ]
+          ],
+          "en": "to the station"
         },
         {
           "ja": "急いだ",
-          "gloss": "hurried",
           "refs": [
             "急ぐ"
-          ]
+          ],
+          "en": "hurried"
         }
       ],
       "notes": []
@@ -1332,30 +1250,30 @@
       "ja": "宿題を急いで終わらせた。",
       "en": "I hurried and finished my homework quickly.",
       "grammarNotes": [
-        "Vて = sequential action ('hurrying and then…')."
+        "Vて = sequential action ('hurrying and then…').",
+        "Vて"
       ],
       "chunks": [
         {
           "ja": "宿題を",
-          "gloss": "homework",
           "refs": [
             "宿題"
-          ]
+          ],
+          "en": "homework"
         },
         {
           "ja": "急いで",
-          "gloss": "in a hurry",
-          "focus": "Vて",
           "refs": [
             "急ぐ"
-          ]
+          ],
+          "en": "in a hurry"
         },
         {
           "ja": "終わらせた",
-          "gloss": "finished (made it end)",
           "refs": [
             "終わらせる"
-          ]
+          ],
+          "en": "finished (made it end)"
         }
       ],
       "notes": [
@@ -1366,24 +1284,24 @@
       "ja": "結論を急ぐべきではない。",
       "en": "You shouldn't rush to a conclusion.",
       "grammarNotes": [
-        "Vるべきではない = 'should not'."
+        "Vるべきではない = 'should not'.",
+        "Vるべきではない"
       ],
       "chunks": [
         {
           "ja": "結論を",
-          "gloss": "a conclusion",
           "refs": [
             "結論"
-          ]
+          ],
+          "en": "a conclusion"
         },
         {
           "ja": "急ぐべきではない",
-          "gloss": "should not rush",
-          "focus": "Vるべきではない",
           "refs": [
             "急ぐ",
             "べき"
-          ]
+          ],
+          "en": "should not rush"
         }
       ],
       "notes": []
@@ -1392,23 +1310,23 @@
       "ja": "靴を脱いでください。",
       "en": "Please take off your shoes.",
       "grammarNotes": [
-        "Vてください = polite request."
+        "Vてください = polite request.",
+        "Vてください"
       ],
       "chunks": [
         {
           "ja": "靴を",
-          "gloss": "shoes",
           "refs": [
             "靴"
-          ]
+          ],
+          "en": "shoes"
         },
         {
           "ja": "脱いでください",
-          "gloss": "please take off",
-          "focus": "Vてください",
           "refs": [
             "脱ぐ"
-          ]
+          ],
+          "en": "please take off"
         }
       ],
       "notes": [
@@ -1418,22 +1336,21 @@
     {
       "ja": "りんごの皮を脱ぐ。",
       "en": "Peel off an apple’s skin.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "りんごの皮を",
-          "gloss": "an apple's skin",
           "refs": [
             "りんご",
             "皮"
-          ]
+          ],
+          "en": "an apple's skin"
         },
         {
           "ja": "脱ぐ",
-          "gloss": "remove/strip off",
           "refs": [
             "脱ぐ"
-          ]
+          ],
+          "en": "remove/strip off"
         }
       ],
       "notes": [
@@ -1444,31 +1361,31 @@
       "ja": "事故を防ぐために注意する。",
       "en": "Be careful in order to prevent accidents.",
       "grammarNotes": [
-        "Vるために = 'in order to'."
+        "Vるために = 'in order to'.",
+        "Vるために"
       ],
       "chunks": [
         {
           "ja": "事故を",
-          "gloss": "accidents",
           "refs": [
             "事故"
-          ]
+          ],
+          "en": "accidents"
         },
         {
           "ja": "防ぐために",
-          "gloss": "to prevent",
-          "focus": "Vるために",
           "refs": [
             "防ぐ",
             "ため"
-          ]
+          ],
+          "en": "to prevent"
         },
         {
           "ja": "注意する",
-          "gloss": "be careful",
           "refs": [
             "注意する"
-          ]
+          ],
+          "en": "be careful"
         }
       ],
       "notes": []
@@ -1482,19 +1399,19 @@
       "chunks": [
         {
           "ja": "雨を防ぐコートを",
-          "gloss": "a rain-blocking coat",
           "refs": [
             "雨",
             "防ぐ",
             "コート"
-          ]
+          ],
+          "en": "a rain-blocking coat"
         },
         {
           "ja": "着る",
-          "gloss": "wear",
           "refs": [
             "着る"
-          ]
+          ],
+          "en": "wear"
         }
       ],
       "notes": []
@@ -1503,25 +1420,25 @@
       "ja": "彼は会社でお金を稼いでいる。",
       "en": "He earns money at his company.",
       "grammarNotes": [
-        "Vている can express ongoing state/habit."
+        "Vている can express ongoing state/habit.",
+        "Vている"
       ],
       "chunks": [
         {
           "ja": "彼は会社で",
-          "gloss": "he, at his company",
           "refs": [
             "彼",
             "会社"
-          ]
+          ],
+          "en": "he, at his company"
         },
         {
           "ja": "お金を稼いでいる",
-          "gloss": "is earning money",
-          "focus": "Vている",
           "refs": [
             "お金",
             "稼ぐ"
-          ]
+          ],
+          "en": "is earning money"
         }
       ],
       "notes": []
@@ -1529,22 +1446,21 @@
     {
       "ja": "広告で時間を稼いだ。",
       "en": "I bought time with an ad.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "広告で",
-          "gloss": "with an ad",
           "refs": [
             "広告"
-          ]
+          ],
+          "en": "with an ad"
         },
         {
           "ja": "時間を稼いだ",
-          "gloss": "gained time",
           "refs": [
             "時間",
             "稼ぐ"
-          ]
+          ],
+          "en": "gained time"
         }
       ],
       "notes": [
@@ -1555,30 +1471,30 @@
       "ja": "子どもたちが外で騒いでいる。",
       "en": "The kids are making noise outside.",
       "grammarNotes": [
-        "Vている = ongoing action."
+        "Vている = ongoing action.",
+        "Vている"
       ],
       "chunks": [
         {
           "ja": "子どもたちが",
-          "gloss": "the kids",
           "refs": [
             "子ども"
-          ]
+          ],
+          "en": "the kids"
         },
         {
           "ja": "外で",
-          "gloss": "outside",
           "refs": [
             "外"
-          ]
+          ],
+          "en": "outside"
         },
         {
           "ja": "騒いでいる",
-          "gloss": "are making noise",
-          "focus": "Vている",
           "refs": [
             "騒ぐ"
-          ]
+          ],
+          "en": "are making noise"
         }
       ],
       "notes": []
@@ -1587,24 +1503,24 @@
       "ja": "そんなことで騒ぐな。",
       "en": "Don’t make a fuss over something like that.",
       "grammarNotes": [
-        "Dictionary form + な = casual negative command."
+        "Dictionary form + な = casual negative command.",
+        "Vるな"
       ],
       "chunks": [
         {
           "ja": "そんなことで",
-          "gloss": "over something like that",
           "refs": [
             "そんな",
             "こと"
-          ]
+          ],
+          "en": "over something like that"
         },
         {
           "ja": "騒ぐな",
-          "gloss": "don't make a fuss",
-          "focus": "Vるな",
           "refs": [
             "騒ぐ"
-          ]
+          ],
+          "en": "don't make a fuss"
         }
       ],
       "notes": []
@@ -1613,24 +1529,24 @@
       "ja": "心が騒いで眠れなかった。",
       "en": "My mind was unsettled and I couldn’t sleep.",
       "grammarNotes": [
-        "Vられる(neg) = inability (眠れない)."
+        "Vられる(neg) = inability (眠れない).",
+        "Vて"
       ],
       "chunks": [
         {
           "ja": "心が騒いで",
-          "gloss": "my heart/mind unsettled",
-          "focus": "Vて",
           "refs": [
             "心",
             "騒ぐ"
-          ]
+          ],
+          "en": "my heart/mind unsettled"
         },
         {
           "ja": "眠れなかった",
-          "gloss": "couldn't sleep",
           "refs": [
             "眠る"
-          ]
+          ],
+          "en": "couldn't sleep"
         }
       ],
       "notes": []
@@ -1638,22 +1554,21 @@
     {
       "ja": "ケーブルを機械に繋ぐ。",
       "en": "Connect the cable to the machine.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "ケーブルを",
-          "gloss": "a cable",
           "refs": [
             "ケーブル"
-          ]
+          ],
+          "en": "a cable"
         },
         {
           "ja": "機械に繋ぐ",
-          "gloss": "connect to a machine",
           "refs": [
             "機械",
             "繋ぐ"
-          ]
+          ],
+          "en": "connect to a machine"
         }
       ],
       "notes": []
@@ -1667,19 +1582,19 @@
       "chunks": [
         {
           "ja": "過去と未来を繋ぐ",
-          "gloss": "connects past and future",
           "refs": [
             "過去",
             "未来",
             "繋ぐ"
-          ]
+          ],
+          "en": "connects past and future"
         },
         {
           "ja": "物語",
-          "gloss": "story",
           "refs": [
             "物語"
-          ]
+          ],
+          "en": "story"
         }
       ],
       "notes": []
@@ -1688,25 +1603,25 @@
       "ja": "話題を繋いで時間を稼ぐ。",
       "en": "Keep the conversation going and buy time.",
       "grammarNotes": [
-        "Vて = sequence/means ('by doing X, do Y')."
+        "Vて = sequence/means ('by doing X, do Y').",
+        "Vて"
       ],
       "chunks": [
         {
           "ja": "話題を繋いで",
-          "gloss": "keep the topic going",
-          "focus": "Vて",
           "refs": [
             "話題",
             "繋ぐ"
-          ]
+          ],
+          "en": "keep the topic going"
         },
         {
           "ja": "時間を稼ぐ",
-          "gloss": "buy time",
           "refs": [
             "時間",
             "稼ぐ"
-          ]
+          ],
+          "en": "buy time"
         }
       ],
       "notes": []
@@ -1714,22 +1629,21 @@
     {
       "ja": "コップに水を注ぐ。",
       "en": "Pour water into a cup.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "コップに",
-          "gloss": "into a cup",
           "refs": [
             "コップ"
-          ]
+          ],
+          "en": "into a cup"
         },
         {
           "ja": "水を注ぐ",
-          "gloss": "pour water",
           "refs": [
             "水",
             "注ぐ"
-          ]
+          ],
+          "en": "pour water"
         }
       ],
       "notes": []
@@ -1737,22 +1651,21 @@
     {
       "ja": "研究に力を注ぐ。",
       "en": "Devote energy to research.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "研究に",
-          "gloss": "to research",
           "refs": [
             "研究"
-          ]
+          ],
+          "en": "to research"
         },
         {
           "ja": "力を注ぐ",
-          "gloss": "devote effort",
           "refs": [
             "力",
             "注ぐ"
-          ]
+          ],
+          "en": "devote effort"
         }
       ],
       "notes": []
@@ -1761,30 +1674,30 @@
       "ja": "窓から光が注いでいる。",
       "en": "Light is streaming in through the window.",
       "grammarNotes": [
-        "Vている = ongoing state (streaming)."
+        "Vている = ongoing state (streaming).",
+        "Vている"
       ],
       "chunks": [
         {
           "ja": "窓から",
-          "gloss": "from the window",
           "refs": [
             "窓"
-          ]
+          ],
+          "en": "from the window"
         },
         {
           "ja": "光が",
-          "gloss": "light",
           "refs": [
             "光"
-          ]
+          ],
+          "en": "light"
         },
         {
           "ja": "注いでいる",
-          "gloss": "is streaming in",
-          "focus": "Vている",
           "refs": [
             "注ぐ"
-          ]
+          ],
+          "en": "is streaming in"
         }
       ],
       "notes": []
@@ -1792,21 +1705,20 @@
     {
       "ja": "包丁を研ぐ。",
       "en": "Sharpen a kitchen knife.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "包丁を",
-          "gloss": "a kitchen knife",
           "refs": [
             "包丁"
-          ]
+          ],
+          "en": "a kitchen knife"
         },
         {
           "ja": "研ぐ",
-          "gloss": "sharpen",
           "refs": [
             "研ぐ"
-          ]
+          ],
+          "en": "sharpen"
         }
       ],
       "notes": []
@@ -1814,21 +1726,20 @@
     {
       "ja": "技術を研ぐ。",
       "en": "Hone your skills.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "技術を",
-          "gloss": "skills/technique",
           "refs": [
             "技術"
-          ]
+          ],
+          "en": "skills/technique"
         },
         {
           "ja": "研ぐ",
-          "gloss": "hone/refine",
           "refs": [
             "研ぐ"
-          ]
+          ],
+          "en": "hone/refine"
         }
       ],
       "notes": []
@@ -1836,28 +1747,27 @@
     {
       "ja": "シャツを水で濯ぐ。",
       "en": "Rinse a shirt with water.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "シャツを",
-          "gloss": "a shirt",
           "refs": [
             "シャツ"
-          ]
+          ],
+          "en": "a shirt"
         },
         {
           "ja": "水で",
-          "gloss": "with water",
           "refs": [
             "水"
-          ]
+          ],
+          "en": "with water"
         },
         {
           "ja": "濯ぐ",
-          "gloss": "rinse",
           "refs": [
             "濯ぐ"
-          ]
+          ],
+          "en": "rinse"
         }
       ],
       "notes": []
@@ -1871,18 +1781,18 @@
       "chunks": [
         {
           "ja": "食後に",
-          "gloss": "after a meal",
           "refs": [
             "食後"
-          ]
+          ],
+          "en": "after a meal"
         },
         {
           "ja": "口を濯ぐ",
-          "gloss": "rinse the mouth",
           "refs": [
             "口",
             "濯ぐ"
-          ]
+          ],
+          "en": "rinse the mouth"
         }
       ],
       "notes": []
@@ -1890,22 +1800,21 @@
     {
       "ja": "花の香りを嗅ぐ。",
       "en": "Smell the scent of a flower.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "花の香りを",
-          "gloss": "a flower's scent",
           "refs": [
             "花",
             "香り"
-          ]
+          ],
+          "en": "a flower's scent"
         },
         {
           "ja": "嗅ぐ",
-          "gloss": "smell/sniff",
           "refs": [
             "嗅ぐ"
-          ]
+          ],
+          "en": "smell/sniff"
         }
       ],
       "notes": []
@@ -1919,17 +1828,17 @@
       "chunks": [
         {
           "ja": "危険を",
-          "gloss": "danger",
           "refs": [
             "危険"
-          ]
+          ],
+          "en": "danger"
         },
         {
           "ja": "嗅ぎつける",
-          "gloss": "sniff out / sense",
           "refs": [
             "嗅ぐ"
-          ]
+          ],
+          "en": "sniff out / sense"
         }
       ],
       "notes": [
@@ -1939,21 +1848,20 @@
     {
       "ja": "家業を継ぐ。",
       "en": "Inherit the family business.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "家業を",
-          "gloss": "family business",
           "refs": [
             "家業"
-          ]
+          ],
+          "en": "family business"
         },
         {
           "ja": "継ぐ",
-          "gloss": "inherit/succeed",
           "refs": [
             "継ぐ"
-          ]
+          ],
+          "en": "inherit/succeed"
         }
       ],
       "notes": []
@@ -1967,18 +1875,18 @@
       "chunks": [
         {
           "ja": "父の後を",
-          "gloss": "after my father",
           "refs": [
             "父",
             "後"
-          ]
+          ],
+          "en": "after my father"
         },
         {
           "ja": "継ぐ",
-          "gloss": "succeed",
           "refs": [
             "継ぐ"
-          ]
+          ],
+          "en": "succeed"
         }
       ],
       "notes": []
@@ -1986,21 +1894,20 @@
     {
       "ja": "伝統を継ぐ。",
       "en": "Carry on a tradition.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "伝統を",
-          "gloss": "tradition",
           "refs": [
             "伝統"
-          ]
+          ],
+          "en": "tradition"
         },
         {
           "ja": "継ぐ",
-          "gloss": "carry on",
           "refs": [
             "継ぐ"
-          ]
+          ],
+          "en": "carry on"
         }
       ],
       "notes": []
@@ -2009,24 +1916,24 @@
       "ja": "布を継いで使う。",
       "en": "Patch cloth together and use it.",
       "grammarNotes": [
-        "Vて = means ('by patching, use it')."
+        "Vて = means ('by patching, use it').",
+        "Vて"
       ],
       "chunks": [
         {
           "ja": "布を継いで",
-          "gloss": "patch the cloth",
-          "focus": "Vて",
           "refs": [
             "布",
             "継ぐ"
-          ]
+          ],
+          "en": "patch the cloth"
         },
         {
           "ja": "使う",
-          "gloss": "use",
           "refs": [
             "使う"
-          ]
+          ],
+          "en": "use"
         }
       ],
       "notes": []
@@ -2034,21 +1941,20 @@
     {
       "ja": "穴を塞ぐ。",
       "en": "Block up a hole.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "穴を",
-          "gloss": "a hole",
           "refs": [
             "穴"
-          ]
+          ],
+          "en": "a hole"
         },
         {
           "ja": "塞ぐ",
-          "gloss": "block/stop up",
           "refs": [
             "塞ぐ"
-          ]
+          ],
+          "en": "block/stop up"
         }
       ],
       "notes": []
@@ -2056,21 +1962,20 @@
     {
       "ja": "耳を塞ぐ。",
       "en": "Cover your ears.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "耳を",
-          "gloss": "ears",
           "refs": [
             "耳"
-          ]
+          ],
+          "en": "ears"
         },
         {
           "ja": "塞ぐ",
-          "gloss": "block/cover",
           "refs": [
             "塞ぐ"
-          ]
+          ],
+          "en": "block/cover"
         }
       ],
       "notes": []
@@ -2078,21 +1983,20 @@
     {
       "ja": "道を塞ぐ。",
       "en": "Block the road.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "道を",
-          "gloss": "the road",
           "refs": [
             "道"
-          ]
+          ],
+          "en": "the road"
         },
         {
           "ja": "塞ぐ",
-          "gloss": "block",
           "refs": [
             "塞ぐ"
-          ]
+          ],
+          "en": "block"
         }
       ],
       "notes": []
@@ -2101,30 +2005,30 @@
       "ja": "悲しくて胸が塞いだ。",
       "en": "I was so sad that my chest felt heavy.",
       "grammarNotes": [
-        "くて = cause/reason (悲しくて…)."
+        "くて = cause/reason (悲しくて…).",
+        "Aくて"
       ],
       "chunks": [
         {
           "ja": "悲しくて",
-          "gloss": "because I was sad",
-          "focus": "Aくて",
           "refs": [
             "悲しい"
-          ]
+          ],
+          "en": "because I was sad"
         },
         {
           "ja": "胸が",
-          "gloss": "my chest/heart",
           "refs": [
             "胸"
-          ]
+          ],
+          "en": "my chest/heart"
         },
         {
           "ja": "塞いだ",
-          "gloss": "felt blocked/heavy",
           "refs": [
             "塞ぐ"
-          ]
+          ],
+          "en": "felt blocked/heavy"
         }
       ],
       "notes": [
@@ -2134,21 +2038,20 @@
     {
       "ja": "米袋を担ぐ。",
       "en": "Shoulder a sack of rice.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "米袋を",
-          "gloss": "a rice sack",
           "refs": [
             "米袋"
-          ]
+          ],
+          "en": "a rice sack"
         },
         {
           "ja": "担ぐ",
-          "gloss": "carry on the shoulder",
           "refs": [
             "担ぐ"
-          ]
+          ],
+          "en": "carry on the shoulder"
         }
       ],
       "notes": []
@@ -2157,23 +2060,23 @@
       "ja": "みんなに担がれた。",
       "en": "Everyone was playing a prank on me.",
       "grammarNotes": [
-        "Passive Vられる can mark being subjected to an action."
+        "Passive Vられる can mark being subjected to an action.",
+        "受け身"
       ],
       "chunks": [
         {
           "ja": "みんなに",
-          "gloss": "by everyone",
           "refs": [
             "みんな"
-          ]
+          ],
+          "en": "by everyone"
         },
         {
           "ja": "担がれた",
-          "gloss": "was tricked/hoaxed",
-          "focus": "受け身",
           "refs": [
             "担ぐ"
-          ]
+          ],
+          "en": "was tricked/hoaxed"
         }
       ],
       "notes": [
@@ -2183,21 +2086,20 @@
     {
       "ja": "神輿を担ぐ。",
       "en": "Carry a portable shrine (mikoshi).",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "神輿を",
-          "gloss": "a mikoshi",
           "refs": [
             "神輿"
-          ]
+          ],
+          "en": "a mikoshi"
         },
         {
           "ja": "担ぐ",
-          "gloss": "carry on the shoulder",
           "refs": [
             "担ぐ"
-          ]
+          ],
+          "en": "carry on the shoulder"
         }
       ],
       "notes": [
@@ -2207,22 +2109,21 @@
     {
       "ja": "じゃがいもの皮を剥ぐ。",
       "en": "Peel a potato.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "じゃがいもの皮を",
-          "gloss": "a potato's skin",
           "refs": [
             "じゃがいも",
             "皮"
-          ]
+          ],
+          "en": "a potato's skin"
         },
         {
           "ja": "剥ぐ",
-          "gloss": "peel off",
           "refs": [
             "剥ぐ"
-          ]
+          ],
+          "en": "peel off"
         }
       ],
       "notes": []
@@ -2230,21 +2131,20 @@
     {
       "ja": "仮面を剥ぐ。",
       "en": "Strip off the mask (reveal the truth).",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "仮面を",
-          "gloss": "a mask",
           "refs": [
             "仮面"
-          ]
+          ],
+          "en": "a mask"
         },
         {
           "ja": "剥ぐ",
-          "gloss": "strip away",
           "refs": [
             "剥ぐ"
-          ]
+          ],
+          "en": "strip away"
         }
       ],
       "notes": [
@@ -2254,21 +2154,20 @@
     {
       "ja": "空を仰ぐ。",
       "en": "Look up at the sky.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "空を",
-          "gloss": "the sky",
           "refs": [
             "空"
-          ]
+          ],
+          "en": "the sky"
         },
         {
           "ja": "仰ぐ",
-          "gloss": "look up",
           "refs": [
             "仰ぐ"
-          ]
+          ],
+          "en": "look up"
         }
       ],
       "notes": []
@@ -2276,21 +2175,20 @@
     {
       "ja": "師を仰ぐ。",
       "en": "Revere a mentor.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "師を",
-          "gloss": "a mentor/master",
           "refs": [
             "師"
-          ]
+          ],
+          "en": "a mentor/master"
         },
         {
           "ja": "仰ぐ",
-          "gloss": "revere",
           "refs": [
             "仰ぐ"
-          ]
+          ],
+          "en": "revere"
         }
       ],
       "notes": [
@@ -2306,18 +2204,18 @@
       "chunks": [
         {
           "ja": "医者の助けを",
-          "gloss": "a doctor's help",
           "refs": [
             "医者",
             "助け"
-          ]
+          ],
+          "en": "a doctor's help"
         },
         {
           "ja": "仰ぐ",
-          "gloss": "seek/request",
           "refs": [
             "仰ぐ"
-          ]
+          ],
+          "en": "seek/request"
         }
       ],
       "notes": []
@@ -2325,21 +2223,20 @@
     {
       "ja": "ボートを漕ぐ。",
       "en": "Row a boat.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "ボートを",
-          "gloss": "a boat",
           "refs": [
             "ボート"
-          ]
+          ],
+          "en": "a boat"
         },
         {
           "ja": "漕ぐ",
-          "gloss": "row",
           "refs": [
             "漕ぐ"
-          ]
+          ],
+          "en": "row"
         }
       ],
       "notes": []
@@ -2347,21 +2244,20 @@
     {
       "ja": "自転車を漕ぐ。",
       "en": "Pedal a bicycle.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "自転車を",
-          "gloss": "a bicycle",
           "refs": [
             "自転車"
-          ]
+          ],
+          "en": "a bicycle"
         },
         {
           "ja": "漕ぐ",
-          "gloss": "pedal",
           "refs": [
             "漕ぐ"
-          ]
+          ],
+          "en": "pedal"
         }
       ],
       "notes": []
@@ -2370,31 +2266,31 @@
       "ja": "困難の中を漕いで進む。",
       "en": "Push forward through difficulties.",
       "grammarNotes": [
-        "Nの中を = 'through/within' a situation."
+        "Nの中を = 'through/within' a situation.",
+        "Vて"
       ],
       "chunks": [
         {
           "ja": "困難の中を",
-          "gloss": "through difficulties",
           "refs": [
             "困難",
             "中"
-          ]
+          ],
+          "en": "through difficulties"
         },
         {
           "ja": "漕いで",
-          "gloss": "struggling onward",
-          "focus": "Vて",
           "refs": [
             "漕ぐ"
-          ]
+          ],
+          "en": "struggling onward"
         },
         {
           "ja": "進む",
-          "gloss": "move forward",
           "refs": [
             "進む"
-          ]
+          ],
+          "en": "move forward"
         }
       ],
       "notes": [
@@ -2404,22 +2300,21 @@
     {
       "ja": "神社に金を貢ぐ。",
       "en": "Offer money to a shrine.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "神社に",
-          "gloss": "to a shrine",
           "refs": [
             "神社"
-          ]
+          ],
+          "en": "to a shrine"
         },
         {
           "ja": "金を貢ぐ",
-          "gloss": "offer money",
           "refs": [
             "金",
             "貢ぐ"
-          ]
+          ],
+          "en": "offer money"
         }
       ],
       "notes": [
@@ -2430,24 +2325,24 @@
       "ja": "彼にお金を貢いでいる。",
       "en": "She’s financially supporting him (one-sidedly).",
       "grammarNotes": [
-        "Vている = ongoing situation/habit."
+        "Vている = ongoing situation/habit.",
+        "Vている"
       ],
       "chunks": [
         {
           "ja": "彼に",
-          "gloss": "to him",
           "refs": [
             "彼"
-          ]
+          ],
+          "en": "to him"
         },
         {
           "ja": "お金を貢いでいる",
-          "gloss": "is giving him money (supporting)",
-          "focus": "Vている",
           "refs": [
             "お金",
             "貢ぐ"
-          ]
+          ],
+          "en": "is giving him money (supporting)"
         }
       ],
       "notes": [
@@ -2457,21 +2352,20 @@
     {
       "ja": "糸を紡ぐ。",
       "en": "Spin thread.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "糸を",
-          "gloss": "thread",
           "refs": [
             "糸"
-          ]
+          ],
+          "en": "thread"
         },
         {
           "ja": "紡ぐ",
-          "gloss": "spin",
           "refs": [
             "紡ぐ"
-          ]
+          ],
+          "en": "spin"
         }
       ],
       "notes": []
@@ -2480,24 +2374,24 @@
       "ja": "言葉を紡いで語る。",
       "en": "Weave words and speak.",
       "grammarNotes": [
-        "Vて = means ('by weaving words, speak')."
+        "Vて = means ('by weaving words, speak').",
+        "Vて"
       ],
       "chunks": [
         {
           "ja": "言葉を紡いで",
-          "gloss": "weaving words",
-          "focus": "Vて",
           "refs": [
             "言葉",
             "紡ぐ"
-          ]
+          ],
+          "en": "weaving words"
         },
         {
           "ja": "語る",
-          "gloss": "tell/speak",
           "refs": [
             "語る"
-          ]
+          ],
+          "en": "tell/speak"
         }
       ],
       "notes": [
@@ -2507,21 +2401,20 @@
     {
       "ja": "人生を紡ぐ。",
       "en": "Build a life over time.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "人生を",
-          "gloss": "a life",
           "refs": [
             "人生"
-          ]
+          ],
+          "en": "a life"
         },
         {
           "ja": "紡ぐ",
-          "gloss": "spin/weave (metaphorically)",
           "refs": [
             "紡ぐ"
-          ]
+          ],
+          "en": "spin/weave (metaphorically)"
         }
       ],
       "notes": [
@@ -2531,22 +2424,21 @@
     {
       "ja": "木の表面を削ぐ。",
       "en": "Shave off the surface of the wood.",
-      "grammarNotes": [],
       "chunks": [
         {
           "ja": "木の表面を",
-          "gloss": "the wood's surface",
           "refs": [
             "木",
             "表面"
-          ]
+          ],
+          "en": "the wood's surface"
         },
         {
           "ja": "削ぐ",
-          "gloss": "shave off",
           "refs": [
             "削ぐ"
-          ]
+          ],
+          "en": "shave off"
         }
       ],
       "notes": []
@@ -2560,18 +2452,18 @@
       "chunks": [
         {
           "ja": "やる気を削ぐ",
-          "gloss": "undermine motivation",
           "refs": [
             "やる気",
             "削ぐ"
-          ]
+          ],
+          "en": "undermine motivation"
         },
         {
           "ja": "発言",
-          "gloss": "remark",
           "refs": [
             "発言"
-          ]
+          ],
+          "en": "remark"
         }
       ],
       "notes": [
@@ -2585,27 +2477,27 @@
         "Uses ので for a neutral, explanatory “because,” fitting for giving a reason without sounding accusatory."
       ],
       "grammarNotes": [
-        "ので is a softer, explanatory “because” than から and often sounds more neutral/polite."
+        "ので is a softer, explanatory “because” than から and often sounds more neutral/polite.",
+        "AのでB"
       ],
       "chunks": [
         {
           "ja": "庭で蜂を見たので、",
-          "gloss": "because I saw a bee in the yard,",
-          "focus": "AのでB",
           "refs": [
             "庭",
             "蜂",
             "見る",
             "ので"
-          ]
+          ],
+          "en": "because I saw a bee in the yard,"
         },
         {
           "ja": "窓を閉めました。",
-          "gloss": "I closed the window.",
           "refs": [
             "窓",
             "閉める"
-          ]
+          ],
+          "en": "I closed the window."
         }
       ]
     },
@@ -2617,34 +2509,34 @@
       ],
       "grammarNotes": [
         "から gives a straightforward reason; it can sound more direct than ので.",
-        "気をつけて is a common casual imperative meaning “be careful.”"
+        "気をつけて is a common casual imperative meaning “be careful.”",
+        "AからB"
       ],
       "chunks": [
         {
           "ja": "夏は蜂が多いから、",
-          "gloss": "because there are many bees in summer,",
-          "focus": "AからB",
           "refs": [
             "夏",
             "蜂",
             "多い",
             "から"
-          ]
+          ],
+          "en": "because there are many bees in summer,"
         },
         {
           "ja": "甘い飲み物に",
-          "gloss": "with sweet drinks",
           "refs": [
             "甘い",
             "飲み物"
-          ]
+          ],
+          "en": "with sweet drinks"
         },
         {
           "ja": "気をつけて。",
-          "gloss": "be careful.",
           "refs": [
             "気をつける"
-          ]
+          ],
+          "en": "be careful."
         }
       ]
     },
@@ -2655,32 +2547,32 @@
         "には highlights the location/target where honeybees gather (on/around the flower)."
       ],
       "grammarNotes": [
-        "Vている can describe an ongoing state/result (here: “are gathering/clustered”)."
+        "Vている can describe an ongoing state/result (here: “are gathering/clustered”).",
+        "Vている"
       ],
       "chunks": [
         {
           "ja": "その花には",
-          "gloss": "on that flower",
           "refs": [
             "花"
-          ]
+          ],
+          "en": "on that flower"
         },
         {
           "ja": "蜜蜂がたくさん",
-          "gloss": "many honeybees",
           "refs": [
             "蜜蜂",
             "たくさん"
-          ]
+          ],
+          "en": "many honeybees"
         },
         {
           "ja": "集まっています。",
-          "gloss": "are gathering",
-          "focus": "Vている",
           "refs": [
             "集まる",
             "ている"
-          ]
+          ],
+          "en": "are gathering"
         }
       ]
     },
@@ -2692,33 +2584,33 @@
       ],
       "grammarNotes": [
         "ので is a neutral explanatory “because.”",
-        "にも adds “also/too” to a target (here: agriculture)."
+        "にも adds “also/too” to a target (here: agriculture).",
+        "AのでB"
       ],
       "chunks": [
         {
           "ja": "蜜蜂は花粉を運ぶので、",
-          "gloss": "because honeybees carry pollen,",
-          "focus": "AのでB",
           "refs": [
             "蜜蜂",
             "花粉",
             "運ぶ",
             "ので"
-          ]
+          ],
+          "en": "because honeybees carry pollen,"
         },
         {
           "ja": "農業にも",
-          "gloss": "for agriculture too",
           "refs": [
             "農業"
-          ]
+          ],
+          "en": "for agriculture too"
         },
         {
           "ja": "大切です。",
-          "gloss": "it is important.",
           "refs": [
             "大切"
-          ]
+          ],
+          "en": "it is important."
         }
       ]
     },
@@ -2729,34 +2621,34 @@
         "A common home remedy context: honey in warm tea for a sore throat."
       ],
       "grammarNotes": [
-        "とき means “when” (time/occasion) and can set a general situation."
+        "とき means “when” (time/occasion) and can set a general situation.",
+        "Aとき"
       ],
       "chunks": [
         {
           "ja": "のどが痛いとき、",
-          "gloss": "when my throat hurts,",
-          "focus": "Aとき",
           "refs": [
             "のど",
             "痛い",
             "とき"
-          ]
+          ],
+          "en": "when my throat hurts,"
         },
         {
           "ja": "温かいお茶に",
-          "gloss": "into warm tea",
           "refs": [
             "温かい",
             "お茶"
-          ]
+          ],
+          "en": "into warm tea"
         },
         {
           "ja": "蜂蜜を入れます。",
-          "gloss": "I add honey.",
           "refs": [
             "蜂蜜",
             "入れる"
-          ]
+          ],
+          "en": "I add honey."
         }
       ]
     },
@@ -2768,27 +2660,27 @@
       ],
       "grammarNotes": [
         "Vると can express a natural result: “when/if you do X, Y happens.”",
-        "やすい attaches to a verb stem to mean “easy to do” (食べやすい)."
+        "やすい attaches to a verb stem to mean “easy to do” (食べやすい).",
+        "Vると"
       ],
       "chunks": [
         {
           "ja": "ヨーグルトに蜂蜜をかけると",
-          "gloss": "if you drizzle honey on yogurt,",
-          "focus": "Vると",
           "refs": [
             "ヨーグルト",
             "蜂蜜",
             "かける",
             "と"
-          ]
+          ],
+          "en": "if you drizzle honey on yogurt,"
         },
         {
           "ja": "食べやすいです。",
-          "gloss": "it is easy to eat.",
           "refs": [
             "食べやすい",
             "食べる"
-          ]
+          ],
+          "en": "it is easy to eat."
         }
       ]
     },
@@ -2800,36 +2692,36 @@
       ],
       "grammarNotes": [
         "Vたら is a common conditional for “if/when.”",
-        "〜ずに means “without doing” (走らずに = without running)."
+        "〜ずに means “without doing” (走らずに = without running).",
+        "Vたら",
+        "Vずに"
       ],
       "chunks": [
         {
           "ja": "山で雀蜂を見かけたら、",
-          "gloss": "if you spot a hornet in the mountains,",
-          "focus": "Vたら",
           "refs": [
             "山",
             "雀蜂",
             "見かける",
             "たら"
-          ]
+          ],
+          "en": "if you spot a hornet in the mountains,"
         },
         {
           "ja": "走らずに",
-          "gloss": "without running",
-          "focus": "Vずに",
           "refs": [
             "走る",
             "ずに"
-          ]
+          ],
+          "en": "without running"
         },
         {
           "ja": "静かに離れてください。",
-          "gloss": "please move away quietly.",
           "refs": [
             "静か",
             "離れる"
-          ]
+          ],
+          "en": "please move away quietly."
         }
       ]
     },
@@ -2841,36 +2733,36 @@
       ],
       "grammarNotes": [
         "ので is an explanatory “because.”",
-        "Vたら is a common “if/when” conditional."
+        "Vたら is a common “if/when” conditional.",
+        "AのでB",
+        "Vたら"
       ],
       "chunks": [
         {
           "ja": "雀蜂は危ないので、",
-          "gloss": "because hornets are dangerous,",
-          "focus": "AのでB",
           "refs": [
             "雀蜂",
             "危ない",
             "ので"
-          ]
+          ],
+          "en": "because hornets are dangerous,"
         },
         {
           "ja": "巣を見つけたら",
-          "gloss": "if I find a nest",
-          "focus": "Vたら",
           "refs": [
             "巣",
             "見つける",
             "たら"
-          ]
+          ],
+          "en": "if I find a nest"
         },
         {
           "ja": "市役所に連絡します。",
-          "gloss": "I contact city hall.",
           "refs": [
             "市役所",
             "連絡する"
-          ]
+          ],
+          "en": "I contact city hall."
         }
       ]
     },
@@ -2882,26 +2774,26 @@
       ],
       "grammarNotes": [
         "Vている can describe a resulting state (できている = has formed/is there).",
-        "〜ていて can connect clauses with a causal/scene-setting feel."
+        "〜ていて can connect clauses with a causal/scene-setting feel.",
+        "Vていて"
       ],
       "chunks": [
         {
           "ja": "ベランダに蜂の巣ができていて、",
-          "gloss": "there being a wasp nest on the balcony,",
-          "focus": "Vていて",
           "refs": [
             "ベランダ",
             "蜂の巣",
             "できる",
             "ている"
-          ]
+          ],
+          "en": "there being a wasp nest on the balcony,"
         },
         {
           "ja": "びっくりしました。",
-          "gloss": "I was surprised.",
           "refs": [
             "びっくりする"
-          ]
+          ],
+          "en": "I was surprised."
         }
       ]
     },
@@ -2914,37 +2806,37 @@
       "grammarNotes": [
         "Aと expresses a general condition: “if/when A, then (it is) B.”",
         "〜ないように言う means “tell someone not to do” (caution/instruction).",
-        "から gives a direct reason."
+        "から gives a direct reason.",
+        "AとB",
+        "Vないように言う"
       ],
       "chunks": [
         {
           "ja": "蜂の巣が近いと危ないから、",
-          "gloss": "because it’s dangerous if a nest is nearby,",
-          "focus": "AとB",
           "refs": [
             "蜂の巣",
             "近い",
             "危ない",
             "と",
             "から"
-          ]
+          ],
+          "en": "because it’s dangerous if a nest is nearby,"
         },
         {
           "ja": "子どもには",
-          "gloss": "to the kids",
           "refs": [
             "子ども"
-          ]
+          ],
+          "en": "to the kids"
         },
         {
           "ja": "近づかないように言った。",
-          "gloss": "I told them not to go near it.",
-          "focus": "Vないように言う",
           "refs": [
             "近づく",
             "言う",
             "ないように"
-          ]
+          ],
+          "en": "I told them not to go near it."
         }
       ]
     },
@@ -2957,20 +2849,20 @@
       "chunks": [
         {
           "ja": "田中さんは東京で",
-          "gloss": "Mr. Tanaka in Tokyo",
           "refs": [
             "田中",
             "東京"
-          ]
+          ],
+          "en": "Mr. Tanaka in Tokyo"
         },
         {
           "ja": "新しい仕事を掴んだ",
-          "gloss": "secured a new job",
           "refs": [
             "新しい",
             "仕事",
             "掴む"
-          ]
+          ],
+          "en": "secured a new job"
         }
       ]
     },
@@ -2983,18 +2875,18 @@
       "chunks": [
         {
           "ja": "山田さんは進路について",
-          "gloss": "Ms. Yamada about her future path",
           "refs": [
             "山田",
             "進路"
-          ]
+          ],
+          "en": "Ms. Yamada about her future path"
         },
         {
           "ja": "悩んでいる",
-          "gloss": "is worrying",
           "refs": [
             "悩む"
-          ]
+          ],
+          "en": "is worrying"
         }
       ]
     },
@@ -3004,19 +2896,19 @@
       "chunks": [
         {
           "ja": "大阪のカフェで",
-          "gloss": "at a café in Osaka",
           "refs": [
             "大阪",
             "カフェ"
-          ]
+          ],
+          "en": "at a café in Osaka"
         },
         {
           "ja": "コーヒーを頼んだ",
-          "gloss": "ordered coffee",
           "refs": [
             "コーヒー",
             "頼む"
-          ]
+          ],
+          "en": "ordered coffee"
         }
       ]
     },
@@ -3026,19 +2918,19 @@
       "chunks": [
         {
           "ja": "ノートの字が雨で",
-          "gloss": "the notebook writing from rain",
           "refs": [
             "ノート",
             "字",
             "雨"
-          ]
+          ],
+          "en": "the notebook writing from rain"
         },
         {
           "ja": "滲んだ",
-          "gloss": "smudged",
           "refs": [
             "滲む"
-          ]
+          ],
+          "en": "smudged"
         }
       ]
     },
@@ -3048,19 +2940,19 @@
       "chunks": [
         {
           "ja": "鈴木さんは毎朝",
-          "gloss": "Mr. Suzuki every morning",
           "refs": [
             "鈴木",
             "毎朝"
-          ]
+          ],
+          "en": "Mr. Suzuki every morning"
         },
         {
           "ja": "お茶を飲む",
-          "gloss": "drinks tea",
           "refs": [
             "お茶",
             "飲む"
-          ]
+          ],
+          "en": "drinks tea"
         }
       ]
     },
@@ -3073,19 +2965,19 @@
       "chunks": [
         {
           "ja": "昨日から",
-          "gloss": "since yesterday",
           "refs": [
             "昨日"
-          ]
+          ],
+          "en": "since yesterday"
         },
         {
           "ja": "頭が少し痛む",
-          "gloss": "my head hurts a little",
           "refs": [
             "頭",
             "少し",
             "痛む"
-          ]
+          ],
+          "en": "my head hurts a little"
         }
       ]
     },
@@ -3095,19 +2987,19 @@
       "chunks": [
         {
           "ja": "佐藤さんは箱を",
-          "gloss": "Mr. Sato the boxes",
           "refs": [
             "佐藤",
             "箱"
-          ]
+          ],
+          "en": "Mr. Sato the boxes"
         },
         {
           "ja": "車に積んだ",
-          "gloss": "loaded into the car",
           "refs": [
             "車",
             "積む"
-          ]
+          ],
+          "en": "loaded into the car"
         }
       ]
     },
@@ -3120,19 +3012,19 @@
       "chunks": [
         {
           "ja": "古いテーブルが少し",
-          "gloss": "the old table slightly",
           "refs": [
             "古い",
             "テーブル",
             "少し"
-          ]
+          ],
+          "en": "the old table slightly"
         },
         {
           "ja": "歪んでいる",
-          "gloss": "is warped",
           "refs": [
             "歪む"
-          ]
+          ],
+          "en": "is warped"
         }
       ]
     },
@@ -3142,19 +3034,19 @@
       "chunks": [
         {
           "ja": "彼は昔の失敗を",
-          "gloss": "he past mistakes",
           "refs": [
             "彼",
             "昔",
             "失敗"
-          ]
+          ],
+          "en": "he past mistakes"
         },
         {
           "ja": "悔む",
-          "gloss": "regrets",
           "refs": [
             "悔む"
-          ]
+          ],
+          "en": "regrets"
         }
       ]
     },
@@ -3162,25 +3054,25 @@
       "ja": "このセーターは洗うと縮む。",
       "en": "This sweater shrinks when washed.",
       "grammarNotes": [
-        "と can express a natural result or general truth."
+        "と can express a natural result or general truth.",
+        "Vると"
       ],
       "chunks": [
         {
           "ja": "このセーターは",
-          "gloss": "this sweater",
           "refs": [
             "セーター"
-          ]
+          ],
+          "en": "this sweater"
         },
         {
           "ja": "洗うと縮む",
-          "gloss": "shrinks when washed",
-          "focus": "Vると",
           "refs": [
             "洗う",
             "縮む",
             "Vると"
-          ]
+          ],
+          "en": "shrinks when washed"
         }
       ]
     },
@@ -3190,21 +3082,21 @@
       "chunks": [
         {
           "ja": "京都で起きた事故を",
-          "gloss": "the accident that happened in Kyoto",
           "refs": [
             "京都",
             "起きる",
             "事故"
-          ]
+          ],
+          "en": "the accident that happened in Kyoto"
         },
         {
           "ja": "多くの人が悔やんだ",
-          "gloss": "many people mourned",
           "refs": [
             "多く",
             "人",
             "悔やむ"
-          ]
+          ],
+          "en": "many people mourned"
         }
       ]
     },
@@ -3214,18 +3106,18 @@
       "chunks": [
         {
           "ja": "中村さんは福岡に",
-          "gloss": "Mr. Nakamura in Fukuoka",
           "refs": [
             "中村",
             "福岡"
-          ]
+          ],
+          "en": "Mr. Nakamura in Fukuoka"
         },
         {
           "ja": "住んでいる",
-          "gloss": "lives",
           "refs": [
             "住む"
-          ]
+          ],
+          "en": "lives"
         }
       ]
     },
@@ -3238,18 +3130,18 @@
       "chunks": [
         {
           "ja": "二人で",
-          "gloss": "with two people",
           "refs": [
             "二人"
-          ]
+          ],
+          "en": "with two people"
         },
         {
           "ja": "チームを組んだ",
-          "gloss": "formed a team",
           "refs": [
             "チーム",
             "組む"
-          ]
+          ],
+          "en": "formed a team"
         }
       ]
     },
@@ -3259,19 +3151,19 @@
       "chunks": [
         {
           "ja": "午後になって",
-          "gloss": "when it became afternoon",
           "refs": [
             "午後",
             "なる"
-          ]
+          ],
+          "en": "when it became afternoon"
         },
         {
           "ja": "雨が止んだ",
-          "gloss": "the rain stopped",
           "refs": [
             "雨",
             "止む"
-          ]
+          ],
+          "en": "the rain stopped"
         }
       ]
     },
@@ -3281,21 +3173,21 @@
       "chunks": [
         {
           "ja": "町の人々は",
-          "gloss": "the townspeople",
           "refs": [
             "町",
             "人々"
-          ]
+          ],
+          "en": "the townspeople"
         },
         {
           "ja": "有名な作家の死を悼んだ",
-          "gloss": "mourned the famous writer's death",
           "refs": [
             "有名",
             "作家",
             "死",
             "悼む"
-          ]
+          ],
+          "en": "mourned the famous writer's death"
         }
       ]
     },
@@ -3308,18 +3200,18 @@
       "chunks": [
         {
           "ja": "北海道は自然に",
-          "gloss": "Hokkaido in nature",
           "refs": [
             "北海道",
             "自然"
-          ]
+          ],
+          "en": "Hokkaido in nature"
         },
         {
           "ja": "富んでいる",
-          "gloss": "is rich in",
           "refs": [
             "富む"
-          ]
+          ],
+          "en": "is rich in"
         }
       ]
     },
@@ -3332,21 +3224,21 @@
       "chunks": [
         {
           "ja": "彼は質問に答えず",
-          "gloss": "he without answering the question",
           "refs": [
             "彼",
             "質問",
             "答える",
             "ず"
-          ]
+          ],
+          "en": "he without answering the question"
         },
         {
           "ja": "口を噤んだ",
-          "gloss": "fell silent",
           "refs": [
             "口",
             "噤む"
-          ]
+          ],
+          "en": "fell silent"
         }
       ]
     },
@@ -3356,19 +3248,19 @@
       "chunks": [
         {
           "ja": "田村さんは甘い物を",
-          "gloss": "Mr. Tamura sweets",
           "refs": [
             "田村",
             "甘い",
             "物"
-          ]
+          ],
+          "en": "Mr. Tamura sweets"
         },
         {
           "ja": "慎んでいる",
-          "gloss": "is refraining from",
           "refs": [
             "慎む"
-          ]
+          ],
+          "en": "is refraining from"
         }
       ]
     },
@@ -3378,19 +3270,19 @@
       "chunks": [
         {
           "ja": "山口さんは小さな店を",
-          "gloss": "Mr. Yamaguchi a small shop",
           "refs": [
             "山口",
             "小さい",
             "店"
-          ]
+          ],
+          "en": "Mr. Yamaguchi a small shop"
         },
         {
           "ja": "営んでいる",
-          "gloss": "runs",
           "refs": [
             "営む"
-          ]
+          ],
+          "en": "runs"
         }
       ]
     },
@@ -3400,20 +3292,20 @@
       "chunks": [
         {
           "ja": "彼は昔の上司を",
-          "gloss": "he his former boss",
           "refs": [
             "彼",
             "昔",
             "上司"
-          ]
+          ],
+          "en": "he his former boss"
         },
         {
           "ja": "今でも恨んでいる",
-          "gloss": "still resents",
           "refs": [
             "今でも",
             "恨む"
-          ]
+          ],
+          "en": "still resents"
         }
       ]
     },
@@ -3423,19 +3315,19 @@
       "chunks": [
         {
           "ja": "先生は学生を",
-          "gloss": "the teacher the student",
           "refs": [
             "先生",
             "学生"
-          ]
+          ],
+          "en": "the teacher the student"
         },
         {
           "ja": "じっと睨んだ",
-          "gloss": "stared intensely",
           "refs": [
             "じっと",
             "睨む"
-          ]
+          ],
+          "en": "stared intensely"
         }
       ]
     },
@@ -3445,19 +3337,19 @@
       "chunks": [
         {
           "ja": "健太くんは図書館で",
-          "gloss": "Kenta at the library",
           "refs": [
             "健太",
             "図書館"
-          ]
+          ],
+          "en": "Kenta at the library"
         },
         {
           "ja": "本を読む",
-          "gloss": "reads books",
           "refs": [
             "本",
             "読む"
-          ]
+          ],
+          "en": "reads books"
         }
       ]
     },
@@ -3467,20 +3359,20 @@
       "chunks": [
         {
           "ja": "母はプレゼントを",
-          "gloss": "my mother the present",
           "refs": [
             "母",
             "プレゼント"
-          ]
+          ],
+          "en": "my mother the present"
         },
         {
           "ja": "きれいな紙で包んだ",
-          "gloss": "wrapped in pretty paper",
           "refs": [
             "きれい",
             "紙",
             "包む"
-          ]
+          ],
+          "en": "wrapped in pretty paper"
         }
       ]
     },
@@ -3493,20 +3385,20 @@
       "chunks": [
         {
           "ja": "祖母は冬になると",
-          "gloss": "my grandmother when winter comes",
           "refs": [
             "祖母",
             "冬",
             "なる"
-          ]
+          ],
+          "en": "my grandmother when winter comes"
         },
         {
           "ja": "マフラーを編む",
-          "gloss": "knits scarves",
           "refs": [
             "マフラー",
             "編む"
-          ]
+          ],
+          "en": "knits scarves"
         }
       ]
     },
@@ -3519,19 +3411,19 @@
       "chunks": [
         {
           "ja": "上野動物園で",
-          "gloss": "at Ueno Zoo",
           "refs": [
             "上野動物園"
-          ]
+          ],
+          "en": "at Ueno Zoo"
         },
         {
           "ja": "パンダの赤ちゃんが生まれた",
-          "gloss": "a baby panda was born",
           "refs": [
             "パンダ",
             "赤ちゃん",
             "生む"
-          ]
+          ],
+          "en": "a baby panda was born"
         }
       ]
     },
@@ -3541,19 +3433,19 @@
       "chunks": [
         {
           "ja": "日曜日は家で",
-          "gloss": "on Sunday at home",
           "refs": [
             "日曜日",
             "家"
-          ]
+          ],
+          "en": "on Sunday at home"
         },
         {
           "ja": "ゆっくり休む",
-          "gloss": "rest slowly",
           "refs": [
             "ゆっくり",
             "休む"
-          ]
+          ],
+          "en": "rest slowly"
         }
       ]
     },
@@ -3563,18 +3455,18 @@
       "chunks": [
         {
           "ja": "このバナナはもう",
-          "gloss": "this banana already",
           "refs": [
             "バナナ",
             "もう"
-          ]
+          ],
+          "en": "this banana already"
         },
         {
           "ja": "傷んでいる",
-          "gloss": "has gone bad",
           "refs": [
             "傷む"
-          ]
+          ],
+          "en": "has gone bad"
         }
       ]
     },
@@ -3587,19 +3479,19 @@
       "chunks": [
         {
           "ja": "試験に落ちて",
-          "gloss": "failing the exam and",
           "refs": [
             "試験",
             "落ちる"
-          ]
+          ],
+          "en": "failing the exam and"
         },
         {
           "ja": "彼はしょげている",
-          "gloss": "he is feeling down",
           "refs": [
             "彼",
             "しょげる"
-          ]
+          ],
+          "en": "he is feeling down"
         }
       ]
     },
@@ -3609,19 +3501,19 @@
       "chunks": [
         {
           "ja": "彼女は海外で働くことを",
-          "gloss": "she working abroad",
           "refs": [
             "彼女",
             "海外",
             "働く"
-          ]
+          ],
+          "en": "she working abroad"
         },
         {
           "ja": "望んでいる",
-          "gloss": "hopes for",
           "refs": [
             "望む"
-          ]
+          ],
+          "en": "hopes for"
         }
       ]
     },
@@ -3634,20 +3526,20 @@
       "chunks": [
         {
           "ja": "駅で誰かの足を",
-          "gloss": "at the station someone's foot",
           "refs": [
             "駅",
             "誰か",
             "足"
-          ]
+          ],
+          "en": "at the station someone's foot"
         },
         {
           "ja": "踏んでしまった",
-          "gloss": "accidentally stepped on",
           "refs": [
             "踏む",
             "Vてしまう"
-          ]
+          ],
+          "en": "accidentally stepped on"
         }
       ]
     },
@@ -3659,36 +3551,35 @@
       "grammarNotes": [
         "〜ている indicates an ongoing state/action (\"is flying\").",
         "ので gives an explanatory reason (so/because), often softer than から.",
-        "Vてください is a polite request."
+        "Vてください is a polite request.",
+        "Vている + ので",
+        "Vてください"
       ],
       "chunks": [
         {
           "ja": "庭に",
-          "gloss": "in the garden",
-          "focus": "",
           "refs": [
             "庭"
-          ]
+          ],
+          "en": "in the garden"
         },
         {
           "ja": "蜂が飛んでいるので",
-          "gloss": "because a bee is flying",
-          "focus": "Vている + ので",
           "refs": [
             "蜂",
             "飛ぶ",
             "ている",
             "ので"
-          ]
+          ],
+          "en": "because a bee is flying"
         },
         {
           "ja": "気をつけてください",
-          "gloss": "please be careful",
-          "focus": "Vてください",
           "refs": [
             "気をつける",
             "ください"
-          ]
+          ],
+          "en": "please be careful"
         }
       ]
     },
@@ -3699,28 +3590,27 @@
       "notes": [],
       "grammarNotes": [
         "Vたことがある expresses past experience (\"have ever done/experienced\").",
-        "刺された is passive, emphasizing the experience of being stung."
+        "刺された is passive, emphasizing the experience of being stung.",
+        "Passive + Vたことがある"
       ],
       "chunks": [
         {
           "ja": "子どものころ",
-          "gloss": "when I was a child",
-          "focus": "",
           "refs": [
             "子ども",
             "ころ"
-          ]
+          ],
+          "en": "when I was a child"
         },
         {
           "ja": "蜂に刺されたことがあります",
-          "gloss": "I have been stung by a bee (before)",
-          "focus": "Passive + Vたことがある",
           "refs": [
             "蜂",
             "刺す",
             "刺される",
             "たことがある"
-          ]
+          ],
+          "en": "I have been stung by a bee (before)"
         }
       ]
     },
@@ -3731,35 +3621,34 @@
       "notes": [],
       "grammarNotes": [
         "〜では sets the topic/location context (\"at this shop\").",
-        "売っています is a common use of 〜ている for a habitual/ongoing business action (\"they sell\")."
+        "売っています is a common use of 〜ている for a habitual/ongoing business action (\"they sell\").",
+        "〜では (context/topic)",
+        "Vている (habitual/ongoing)"
       ],
       "chunks": [
         {
           "ja": "この店では",
-          "gloss": "at this shop",
-          "focus": "〜では (context/topic)",
           "refs": [
             "この",
             "店"
-          ]
+          ],
+          "en": "at this shop"
         },
         {
           "ja": "地元の蜂蜜を",
-          "gloss": "local honey",
-          "focus": "",
           "refs": [
             "地元",
             "蜂蜜"
-          ]
+          ],
+          "en": "local honey"
         },
         {
           "ja": "売っています",
-          "gloss": "sell (as a regular offering)",
-          "focus": "Vている (habitual/ongoing)",
           "refs": [
             "売る",
             "ている"
-          ]
+          ],
+          "en": "sell (as a regular offering)"
         }
       ]
     },
@@ -3775,20 +3664,20 @@
       "chunks": [
         {
           "ja": "彼女は問題の原因を一つ",
-          "gloss": "she one cause of the problem",
           "refs": [
             "彼女",
             "問題",
             "原因",
             "一つ"
-          ]
+          ],
+          "en": "she one cause of the problem"
         },
         {
           "ja": "掴んだ",
-          "gloss": "grasped",
           "refs": [
             "掴む"
-          ]
+          ],
+          "en": "grasped"
         }
       ]
     },
@@ -3805,26 +3694,26 @@
       "chunks": [
         {
           "ja": "私は三日も",
-          "gloss": "I for as long as three days",
           "refs": [
             "私",
             "三日"
-          ]
+          ],
+          "en": "I for as long as three days"
         },
         {
           "ja": "悩んで",
-          "gloss": "worried and",
           "refs": [
             "悩む"
-          ]
+          ],
+          "en": "worried and"
         },
         {
           "ja": "やっと決めた",
-          "gloss": "finally decided",
           "refs": [
             "やっと",
             "決める"
-          ]
+          ],
+          "en": "finally decided"
         }
       ]
     },
@@ -3841,26 +3730,26 @@
       "chunks": [
         {
           "ja": "駅前の店で",
-          "gloss": "at the shop in front of the station",
           "refs": [
             "駅前",
             "店"
-          ]
+          ],
+          "en": "at the shop in front of the station"
         },
         {
           "ja": "コーヒーを二杯",
-          "gloss": "two cups of coffee",
           "refs": [
             "コーヒー",
             "二杯"
-          ]
+          ],
+          "en": "two cups of coffee"
         },
         {
           "ja": "頼んだ",
-          "gloss": "ordered",
           "refs": [
             "頼む"
-          ]
+          ],
+          "en": "ordered"
         }
       ]
     },
@@ -3877,27 +3766,27 @@
       "chunks": [
         {
           "ja": "インクが二か所も",
-          "gloss": "ink in as many as two places",
           "refs": [
             "インク",
             "二か所"
-          ]
+          ],
+          "en": "ink in as many as two places"
         },
         {
           "ja": "滲んで",
-          "gloss": "smudged and",
           "refs": [
             "滲む"
-          ]
+          ],
+          "en": "smudged and"
         },
         {
           "ja": "字が読みにくい",
-          "gloss": "the letters are hard to read",
           "refs": [
             "字",
             "読む",
             "読みにくい"
-          ]
+          ],
+          "en": "the letters are hard to read"
         }
       ]
     },
@@ -3909,34 +3798,34 @@
       ],
       "grammarNotes": [
         "回 is a general counter for occurrences/actions (一回 = once).",
-        "Vたら can mark a condition or sequence (“when/after doing”)."
+        "Vたら can mark a condition or sequence (“when/after doing”).",
+        "Vたら"
       ],
       "chunks": [
         {
           "ja": "薬を一回",
-          "gloss": "the medicine once",
           "refs": [
             "薬",
             "一回"
-          ]
+          ],
+          "en": "the medicine once"
         },
         {
           "ja": "飲んだら",
-          "gloss": "when I took it",
-          "focus": "Vたら",
           "refs": [
             "飲む",
             "Vたら"
-          ]
+          ],
+          "en": "when I took it"
         },
         {
           "ja": "少し楽になった",
-          "gloss": "became a little better",
           "refs": [
             "少し",
             "楽",
             "なる"
-          ]
+          ],
+          "en": "became a little better"
         }
       ]
     },
@@ -3952,27 +3841,27 @@
       "chunks": [
         {
           "ja": "階段を五段",
-          "gloss": "five steps of stairs",
           "refs": [
             "階段",
             "五段"
-          ]
+          ],
+          "en": "five steps of stairs"
         },
         {
           "ja": "上っただけで",
-          "gloss": "just by climbing",
           "refs": [
             "上る",
             "だけ"
-          ]
+          ],
+          "en": "just by climbing"
         },
         {
           "ja": "足が痛む",
-          "gloss": "my legs hurt",
           "refs": [
             "足",
             "痛む"
-          ]
+          ],
+          "en": "my legs hurt"
         }
       ]
     },
@@ -3989,27 +3878,27 @@
       "chunks": [
         {
           "ja": "彼は箱を三つ",
-          "gloss": "he three boxes",
           "refs": [
             "彼",
             "箱",
             "三つ"
-          ]
+          ],
+          "en": "he three boxes"
         },
         {
           "ja": "積んで",
-          "gloss": "stacked and",
           "refs": [
             "積む"
-          ]
+          ],
+          "en": "stacked and"
         },
         {
           "ja": "車に運んだ",
-          "gloss": "carried to the car",
           "refs": [
             "車",
             "運ぶ"
-          ]
+          ],
+          "en": "carried to the car"
         }
       ]
     },
@@ -4021,28 +3910,28 @@
       ],
       "grammarNotes": [
         "Vのは～だ nominalizes the clause and sets up an explanation.",
-        "せいだ expresses a cause and can sound blaming depending on context."
+        "せいだ expresses a cause and can sound blaming depending on context.",
+        "Vのは～だ"
       ],
       "chunks": [
         {
           "ja": "写真が少し歪んで見えるのは",
-          "gloss": "that the photo looks slightly distorted",
-          "focus": "Vのは～だ",
           "refs": [
             "写真",
             "少し",
             "歪む",
             "見る",
             "Vのは～だ"
-          ]
+          ],
+          "en": "that the photo looks slightly distorted"
         },
         {
           "ja": "このレンズのせいだ",
-          "gloss": "is because of this lens",
           "refs": [
             "レンズ",
             "せいだ"
-          ]
+          ],
+          "en": "is because of this lens"
         }
       ]
     },
@@ -4059,21 +3948,21 @@
       "chunks": [
         {
           "ja": "彼は一言も言わずに",
-          "gloss": "he without saying even one word",
           "refs": [
             "彼",
             "一言",
             "言う",
             "ずに"
-          ]
+          ],
+          "en": "he without saying even one word"
         },
         {
           "ja": "口を噤んだ",
-          "gloss": "fell silent",
           "refs": [
             "口",
             "噤む"
-          ]
+          ],
+          "en": "fell silent"
         }
       ]
     },
@@ -4090,28 +3979,28 @@
       "chunks": [
         {
           "ja": "この会社は社員教育に力を入れて",
-          "gloss": "this company puts effort into employee training",
           "refs": [
             "会社",
             "社員教育",
             "力を入れる"
-          ]
+          ],
+          "en": "this company puts effort into employee training"
         },
         {
           "ja": "経験に富む人材を",
-          "gloss": "talent rich in experience",
           "refs": [
             "経験",
             "富む",
             "人材"
-          ]
+          ],
+          "en": "talent rich in experience"
         },
         {
           "ja": "育てている",
-          "gloss": "is developing",
           "refs": [
             "育てる"
-          ]
+          ],
+          "en": "is developing"
         }
       ]
     },
@@ -4122,29 +4011,29 @@
         "慎む can sound a bit formal; it fits well with self-discipline contexts."
       ],
       "grammarNotes": [
-        "ようにしている expresses an ongoing effort or habit."
+        "ようにしている expresses an ongoing effort or habit.",
+        "ようにしている"
       ],
       "chunks": [
         {
           "ja": "彼は夜遅い外出を慎んで",
-          "gloss": "he refrains from late-night outings",
           "refs": [
             "彼",
             "夜遅い",
             "外出",
             "慎む"
-          ]
+          ],
+          "en": "he refrains from late-night outings"
         },
         {
           "ja": "毎朝早く起きるようにしている",
-          "gloss": "tries to wake up early every morning",
-          "focus": "ようにしている",
           "refs": [
             "毎朝",
             "早く",
             "起きる",
             "ようにしている"
-          ]
+          ],
+          "en": "tries to wake up early every morning"
         }
       ]
     },
@@ -4161,23 +4050,23 @@
       "chunks": [
         {
           "ja": "両親は小さな店を営んで",
-          "gloss": "my parents ran a small shop",
           "refs": [
             "両親",
             "小さい",
             "店",
             "営む"
-          ]
+          ],
+          "en": "my parents ran a small shop"
         },
         {
           "ja": "私を大学まで通わせてくれた",
-          "gloss": "supported me to attend college",
           "refs": [
             "私",
             "大学",
             "通う",
             "くれる"
-          ]
+          ],
+          "en": "supported me to attend college"
         }
       ]
     },
@@ -4189,36 +4078,36 @@
       ],
       "grammarNotes": [
         "Vてから indicates doing A and then B.",
-        "何も～ない expresses “not anything.”"
+        "何も～ない expresses “not anything.”",
+        "Vてから"
       ],
       "chunks": [
         {
           "ja": "彼は私を睨んでから",
-          "gloss": "after he glared at me",
-          "focus": "Vてから",
           "refs": [
             "彼",
             "私",
             "睨む",
             "Vてから"
-          ]
+          ],
+          "en": "after he glared at me"
         },
         {
           "ja": "何も言わずに",
-          "gloss": "without saying anything",
           "refs": [
             "何も",
             "言う",
             "ずに"
-          ]
+          ],
+          "en": "without saying anything"
         },
         {
           "ja": "席を立った",
-          "gloss": "stood up from his seat",
           "refs": [
             "席",
             "立つ"
-          ]
+          ],
+          "en": "stood up from his seat"
         }
       ]
     },
@@ -4235,27 +4124,27 @@
       "chunks": [
         {
           "ja": "私は資料を二ページで",
-          "gloss": "I within two pages the materials",
           "refs": [
             "私",
             "資料",
             "二ページ"
-          ]
+          ],
+          "en": "I within two pages the materials"
         },
         {
           "ja": "まとめて",
-          "gloss": "summarized and",
           "refs": [
             "まとめる"
-          ]
+          ],
+          "en": "summarized and"
         },
         {
           "ja": "会議で説明した",
-          "gloss": "explained at the meeting",
           "refs": [
             "会議",
             "説明する"
-          ]
+          ],
+          "en": "explained at the meeting"
         }
       ]
     },
@@ -4271,21 +4160,21 @@
       "chunks": [
         {
           "ja": "彼女は景色を望む部屋を",
-          "gloss": "she a room overlooking the scenery",
           "refs": [
             "彼女",
             "景色",
             "望む",
             "部屋"
-          ]
+          ],
+          "en": "she a room overlooking the scenery"
         },
         {
           "ja": "一泊で予約した",
-          "gloss": "booked for one night",
           "refs": [
             "一泊",
             "予約する"
-          ]
+          ],
+          "en": "booked for one night"
         }
       ]
     },
@@ -4297,33 +4186,33 @@
       ],
       "grammarNotes": [
         "Vたら can express a condition (“when/if”).",
-        "う(意向形) suggests intention; here 走ろう is a proposal (“let’s”)."
+        "う(意向形) suggests intention; here 走ろう is a proposal (“let’s”).",
+        "Vたら"
       ],
       "chunks": [
         {
           "ja": "雨がやんだら",
-          "gloss": "when the rain stops",
-          "focus": "Vたら",
           "refs": [
             "雨",
             "止む",
             "Vたら"
-          ]
+          ],
+          "en": "when the rain stops"
         },
         {
           "ja": "近所を一周",
-          "gloss": "one lap around the neighborhood",
           "refs": [
             "近所",
             "一周"
-          ]
+          ],
+          "en": "one lap around the neighborhood"
         },
         {
           "ja": "走ろう",
-          "gloss": "let's run",
           "refs": [
             "走る"
-          ]
+          ],
+          "en": "let's run"
         }
       ]
     },
@@ -4341,27 +4230,27 @@
       "chunks": [
         {
           "ja": "この肉は二日で",
-          "gloss": "this meat in two days",
           "refs": [
             "肉",
             "二日"
-          ]
+          ],
+          "en": "this meat in two days"
         },
         {
           "ja": "傷んだので",
-          "gloss": "because it went bad",
           "refs": [
             "傷む",
             "ので"
-          ]
+          ],
+          "en": "because it went bad"
         },
         {
           "ja": "捨てるしかなかった",
-          "gloss": "had no choice but to throw it away",
           "refs": [
             "捨てる",
             "しか～ない"
-          ]
+          ],
+          "en": "had no choice but to throw it away"
         }
       ]
     },
@@ -4378,19 +4267,19 @@
       "chunks": [
         {
           "ja": "このアプリは",
-          "gloss": "this app",
           "refs": [
             "この",
             "アプリ"
-          ]
+          ],
+          "en": "this app"
         },
         {
           "ja": "無料です",
-          "gloss": "is free",
           "refs": [
             "無料",
             "です"
-          ]
+          ],
+          "en": "is free"
         }
       ]
     },
@@ -4402,27 +4291,27 @@
       ],
       "grammarNotes": [
         "から marks a direct reason or cause.",
-        "駄目 is often used to say something is not allowed, not possible, or no good."
+        "駄目 is often used to say something is not allowed, not possible, or no good.",
+        "N/今日は + Aい + から"
       ],
       "chunks": [
         {
           "ja": "今日は忙しいから、",
-          "gloss": "because I’m busy today",
-          "focus": "N/今日は + Aい + から",
           "refs": [
             "今日",
             "忙しい",
             "から"
-          ]
+          ],
+          "en": "because I’m busy today"
         },
         {
           "ja": "ゲームは駄目です",
-          "gloss": "games are not allowed",
           "refs": [
             "ゲーム",
             "駄目",
             "です"
-          ]
+          ],
+          "en": "games are not allowed"
         }
       ]
     },
@@ -4439,19 +4328,19 @@
       "chunks": [
         {
           "ja": "それは",
-          "gloss": "that",
           "refs": [
             "それ"
-          ]
+          ],
+          "en": "that"
         },
         {
           "ja": "無駄な努力だ",
-          "gloss": "is wasted effort",
           "refs": [
             "無駄",
             "努力",
             "だ"
-          ]
+          ],
+          "en": "is wasted effort"
         }
       ]
     },
@@ -4468,19 +4357,19 @@
       "chunks": [
         {
           "ja": "無駄な時間を",
-          "gloss": "wasted time",
           "refs": [
             "無駄",
             "時間"
-          ]
+          ],
+          "en": "wasted time"
         },
         {
           "ja": "過ごしたくない",
-          "gloss": "do not want to spend",
           "refs": [
             "過ごす",
             "Vたくない"
-          ]
+          ],
+          "en": "do not want to spend"
         }
       ]
     },
@@ -4492,25 +4381,25 @@
       ],
       "grammarNotes": [
         "無駄に acts adverbially here: “wastefully” / “for nothing.”",
-        "Vないでください is a polite request not to do something."
+        "Vないでください is a polite request not to do something.",
+        "Vないでください"
       ],
       "chunks": [
         {
           "ja": "お金を",
-          "gloss": "money",
           "refs": [
             "お金"
-          ]
+          ],
+          "en": "money"
         },
         {
           "ja": "無駄に使わないでください",
-          "gloss": "please do not use wastefully",
-          "focus": "Vないでください",
           "refs": [
             "無駄",
             "使う",
             "Vないでください"
-          ]
+          ],
+          "en": "please do not use wastefully"
         }
       ]
     },
@@ -4527,19 +4416,19 @@
       "chunks": [
         {
           "ja": "この会議は",
-          "gloss": "this meeting",
           "refs": [
             "この",
             "会議"
-          ]
+          ],
+          "en": "this meeting"
         },
         {
           "ja": "無駄だった",
-          "gloss": "was pointless",
           "refs": [
             "無駄",
             "だった"
-          ]
+          ],
+          "en": "was pointless"
         }
       ]
     },
@@ -4556,19 +4445,19 @@
       "chunks": [
         {
           "ja": "大切な時間を",
-          "gloss": "precious time",
           "refs": [
             "大切",
             "時間"
-          ]
+          ],
+          "en": "precious time"
         },
         {
           "ja": "無駄にした",
-          "gloss": "wasted",
           "refs": [
             "無駄",
             "する"
-          ]
+          ],
+          "en": "wasted"
         }
       ]
     },
@@ -4585,19 +4474,19 @@
       "chunks": [
         {
           "ja": "京都でお寺を三つ",
-          "gloss": "three temples in Kyoto",
           "refs": [
             "京都",
             "お寺",
             "三つ"
-          ]
+          ],
+          "en": "three temples in Kyoto"
         },
         {
           "ja": "回りました",
-          "gloss": "went around and visited",
           "refs": [
             "回る"
-          ]
+          ],
+          "en": "went around and visited"
         }
       ]
     },
@@ -4613,19 +4502,19 @@
       "chunks": [
         {
           "ja": "祖母はみかんを五個",
-          "gloss": "my grandmother five mandarins",
           "refs": [
             "祖母",
             "みかん",
             "五個"
-          ]
+          ],
+          "en": "my grandmother five mandarins"
         },
         {
           "ja": "むきました",
-          "gloss": "peeled",
           "refs": [
             "むく"
-          ]
+          ],
+          "en": "peeled"
         }
       ]
     },
@@ -4641,19 +4530,19 @@
       "chunks": [
         {
           "ja": "先生はプリントを六枚",
-          "gloss": "the teacher six handouts",
           "refs": [
             "先生",
             "プリント",
             "六枚"
-          ]
+          ],
+          "en": "the teacher six handouts"
         },
         {
           "ja": "配りました",
-          "gloss": "handed out",
           "refs": [
             "配る"
-          ]
+          ],
+          "en": "handed out"
         }
       ]
     },
@@ -4670,20 +4559,20 @@
       "chunks": [
         {
           "ja": "姉は映画館でチケットを二枚",
-          "gloss": "my older sister two tickets at the movie theater",
           "refs": [
             "姉",
             "映画館",
             "チケット",
             "二枚"
-          ]
+          ],
+          "en": "my older sister two tickets at the movie theater"
         },
         {
           "ja": "買いました",
-          "gloss": "bought",
           "refs": [
             "買う"
-          ]
+          ],
+          "en": "bought"
         }
       ]
     },
@@ -4699,20 +4588,20 @@
       "chunks": [
         {
           "ja": "田中さんは会議で資料を一部",
-          "gloss": "Mr. Tanaka one set of materials at the meeting",
           "refs": [
             "田中さん",
             "会議",
             "資料",
             "一部"
-          ]
+          ],
+          "en": "Mr. Tanaka one set of materials at the meeting"
         },
         {
           "ja": "配った",
-          "gloss": "handed out",
           "refs": [
             "配る"
-          ]
+          ],
+          "en": "handed out"
         }
       ]
     },
@@ -4726,19 +4615,19 @@
       "chunks": [
         {
           "ja": "鳥が私たちの真上を",
-          "gloss": "a bird directly above us",
           "refs": [
             "鳥",
             "私たち",
             "真上"
-          ]
+          ],
+          "en": "a bird directly above us"
         },
         {
           "ja": "飛んでいる",
-          "gloss": "is flying",
           "refs": [
             "飛ぶ"
-          ]
+          ],
+          "en": "is flying"
         }
       ],
       "notes": [
@@ -4755,19 +4644,19 @@
       "chunks": [
         {
           "ja": "ライトがテーブルの真上に",
-          "gloss": "the light directly above the table",
           "refs": [
             "ライト",
             "テーブル",
             "真上"
-          ]
+          ],
+          "en": "the light directly above the table"
         },
         {
           "ja": "ある",
-          "gloss": "exists / is located",
           "refs": [
             "ある"
-          ]
+          ],
+          "en": "exists / is located"
         }
       ],
       "notes": [
@@ -4784,19 +4673,19 @@
       "chunks": [
         {
           "ja": "飛行機が家の真上を",
-          "gloss": "a plane directly over the house",
           "refs": [
             "飛行機",
             "家",
             "真上"
-          ]
+          ],
+          "en": "a plane directly over the house"
         },
         {
           "ja": "通った",
-          "gloss": "passed through",
           "refs": [
             "通る"
-          ]
+          ],
+          "en": "passed through"
         }
       ],
       "notes": [
@@ -4813,19 +4702,19 @@
       "chunks": [
         {
           "ja": "月がビルの真上に",
-          "gloss": "the moon directly above the building",
           "refs": [
             "月",
             "ビル",
             "真上"
-          ]
+          ],
+          "en": "the moon directly above the building"
         },
         {
           "ja": "見える",
-          "gloss": "is visible / appears",
           "refs": [
             "見える"
-          ]
+          ],
+          "en": "is visible / appears"
         }
       ],
       "notes": [
@@ -4840,24 +4729,24 @@
       ],
       "grammarNotes": [
         "Aが〜する can describe a bodily or surface condition being felt directly.",
-        "べたべたする expresses an ongoing sticky/tacky sensation."
+        "べたべたする expresses an ongoing sticky/tacky sensation.",
+        "オノマトペ + する"
       ],
       "chunks": [
         {
           "ja": "手が",
-          "gloss": "my hands",
           "refs": [
             "手"
-          ]
+          ],
+          "en": "my hands"
         },
         {
           "ja": "べたべたする",
-          "gloss": "feel sticky",
-          "focus": "オノマトペ + する",
           "refs": [
             "べたべた",
             "する"
-          ]
+          ],
+          "en": "feel sticky"
         }
       ]
     },
@@ -4869,33 +4758,33 @@
       ],
       "grammarNotes": [
         "〜くて links an i-adjective to a following result or related state.",
-        "Vている here describes a current ongoing condition."
+        "Vている here describes a current ongoing condition.",
+        "い-adjective + くて",
+        "オノマトペ + している"
       ],
       "chunks": [
         {
           "ja": "暑くて、",
-          "gloss": "because it is hot / it is hot and",
-          "focus": "い-adjective + くて",
           "refs": [
             "暑い"
-          ]
+          ],
+          "en": "because it is hot / it is hot and"
         },
         {
           "ja": "体が",
-          "gloss": "my body",
           "refs": [
             "体"
-          ]
+          ],
+          "en": "my body"
         },
         {
           "ja": "べたべたしている",
-          "gloss": "is feeling sticky",
-          "focus": "オノマトペ + している",
           "refs": [
             "べたべた",
             "する",
             "ている"
-          ]
+          ],
+          "en": "is feeling sticky"
         }
       ]
     },
@@ -4912,24 +4801,24 @@
       "chunks": [
         {
           "ja": "テーブルが",
-          "gloss": "the table",
           "refs": [
             "テーブル"
-          ]
+          ],
+          "en": "the table"
         },
         {
           "ja": "ジュースで",
-          "gloss": "with juice / because of juice",
           "refs": [
             "ジュース"
-          ]
+          ],
+          "en": "with juice / because of juice"
         },
         {
           "ja": "べたべただ",
-          "gloss": "is sticky",
           "refs": [
             "べたべた"
-          ]
+          ],
+          "en": "is sticky"
         }
       ]
     },
@@ -4941,32 +4830,32 @@
       ],
       "grammarNotes": [
         "Nに with べたべたする marks the person someone is clinging to.",
-        "Vている shows the behavior is currently happening."
+        "Vている shows the behavior is currently happening.",
+        "オノマトペ + している"
       ],
       "chunks": [
         {
           "ja": "子どもが",
-          "gloss": "the child",
           "refs": [
             "子ども"
-          ]
+          ],
+          "en": "the child"
         },
         {
           "ja": "母親に",
-          "gloss": "to the mother",
           "refs": [
             "母親"
-          ]
+          ],
+          "en": "to the mother"
         },
         {
           "ja": "べたべたしている",
-          "gloss": "is clinging closely",
-          "focus": "オノマトペ + している",
           "refs": [
             "べたべた",
             "する",
             "ている"
-          ]
+          ],
+          "en": "is clinging closely"
         }
       ]
     },
@@ -4978,32 +4867,32 @@
       ],
       "grammarNotes": [
         "Vます-stem + すぎる means 'do too much' or 'be excessively ~'.",
-        "Nに with べたべたする marks the target of clingy behavior."
+        "Nに with べたべたする marks the target of clingy behavior.",
+        "Vます-stem + すぎる"
       ],
       "chunks": [
         {
           "ja": "彼は",
-          "gloss": "he",
           "refs": [
             "彼"
-          ]
+          ],
+          "en": "he"
         },
         {
           "ja": "彼女に",
-          "gloss": "to his girlfriend",
           "refs": [
             "彼女"
-          ]
+          ],
+          "en": "to his girlfriend"
         },
         {
           "ja": "べたべたしすぎる",
-          "gloss": "is too clingy",
-          "focus": "Vます-stem + すぎる",
           "refs": [
             "べたべた",
             "する",
             "すぎる"
-          ]
+          ],
+          "en": "is too clingy"
         }
       ]
     },
@@ -5020,24 +4909,24 @@
       "chunks": [
         {
           "ja": "手が",
-          "gloss": "my hands",
           "refs": [
             "手"
-          ]
+          ],
+          "en": "my hands"
         },
         {
           "ja": "油で",
-          "gloss": "with oil",
           "refs": [
             "油"
-          ]
+          ],
+          "en": "with oil"
         },
         {
           "ja": "べたべただ",
-          "gloss": "are sticky",
           "refs": [
             "べたべた"
-          ]
+          ],
+          "en": "are sticky"
         }
       ]
     },
@@ -5049,31 +4938,31 @@
       ],
       "grammarNotes": [
         "A/N + になる means 'become ~' and marks a change of state.",
-        "Nで marks the cause or substance behind that change."
+        "Nで marks the cause or substance behind that change.",
+        "A/N + になる"
       ],
       "chunks": [
         {
           "ja": "床が",
-          "gloss": "the floor",
           "refs": [
             "床"
-          ]
+          ],
+          "en": "the floor"
         },
         {
           "ja": "ジュースで",
-          "gloss": "from juice / because of juice",
           "refs": [
             "ジュース"
-          ]
+          ],
+          "en": "from juice / because of juice"
         },
         {
           "ja": "べたべたになった",
-          "gloss": "became sticky",
-          "focus": "A/N + になる",
           "refs": [
             "べたべた",
             "なる"
-          ]
+          ],
+          "en": "became sticky"
         }
       ]
     },
@@ -5085,24 +4974,24 @@
       ],
       "grammarNotes": [
         "Vる + な is a strong casual negative command.",
-        "Nに with べたべたする marks the person being clung to."
+        "Nに with べたべたする marks the person being clung to.",
+        "Vる + な"
       ],
       "chunks": [
         {
           "ja": "彼女に",
-          "gloss": "to her",
           "refs": [
             "彼女"
-          ]
+          ],
+          "en": "to her"
         },
         {
           "ja": "べたべたするな",
-          "gloss": "don't cling all over",
-          "focus": "Vる + な",
           "refs": [
             "べたべた",
             "する"
-          ]
+          ],
+          "en": "don't cling all over"
         }
       ]
     },
@@ -5115,26 +5004,26 @@
       ],
       "grammarNotes": [
         "A間、B expresses that B continues during the period A.",
-        "ずっと often means 'the whole time' when paired with a time span."
+        "ずっと often means 'the whole time' when paired with a time span.",
+        "A間、B"
       ],
       "chunks": [
         {
           "ja": "日本にいる間、",
-          "gloss": "while being in Japan",
-          "focus": "A間、B",
           "refs": [
             "日本",
             "いる",
             "間"
-          ]
+          ],
+          "en": "while being in Japan"
         },
         {
           "ja": "ずっと雨でした",
-          "gloss": "it was raining the whole time",
           "refs": [
             "ずっと",
             "雨"
-          ]
+          ],
+          "en": "it was raining the whole time"
         }
       ]
     },
@@ -5147,25 +5036,25 @@
       ],
       "grammarNotes": [
         "Vます-stem + たい expresses the speaker's desire to do something.",
-        "ずっと before a verb can mean 'continuously' or 'for a long time'."
+        "ずっと before a verb can mean 'continuously' or 'for a long time'.",
+        "Vたい"
       ],
       "chunks": [
         {
           "ja": "ずっとここに",
-          "gloss": "here forever",
           "refs": [
             "ずっと",
             "ここ"
-          ]
+          ],
+          "en": "here forever"
         },
         {
           "ja": "住みたい",
-          "gloss": "want to live",
-          "focus": "Vたい",
           "refs": [
             "住む",
             "たい"
-          ]
+          ],
+          "en": "want to live"
         }
       ]
     },
@@ -5178,32 +5067,32 @@
       ],
       "grammarNotes": [
         "AはBよりC expresses comparison: A is more C than B.",
-        "ずっと can strongly intensify a comparison, similar to 'much' or 'far'."
+        "ずっと can strongly intensify a comparison, similar to 'much' or 'far'.",
+        "AよりB"
       ],
       "chunks": [
         {
           "ja": "この本は",
-          "gloss": "this book",
           "refs": [
             "本"
-          ]
+          ],
+          "en": "this book"
         },
         {
           "ja": "前のよりずっと",
-          "gloss": "than the previous one, much",
-          "focus": "AよりB",
           "refs": [
             "前",
             "より",
             "ずっと"
-          ]
+          ],
+          "en": "than the previous one, much"
         },
         {
           "ja": "面白い",
-          "gloss": "interesting",
           "refs": [
             "面白い"
-          ]
+          ],
+          "en": "interesting"
         }
       ]
     },
@@ -5216,26 +5105,26 @@
       ],
       "grammarNotes": [
         "A間、B marks that B continues throughout the period A.",
-        "Vていた often describes a continuing state in the past."
+        "Vていた often describes a continuing state in the past.",
+        "A間、B"
       ],
       "chunks": [
         {
           "ja": "彼は会議の間、",
-          "gloss": "during the meeting, he",
-          "focus": "A間、B",
           "refs": [
             "彼",
             "会議",
             "間"
-          ]
+          ],
+          "en": "during the meeting, he"
         },
         {
           "ja": "ずっと黙っていた",
-          "gloss": "remained silent the whole time",
           "refs": [
             "ずっと",
             "黙る"
-          ]
+          ],
+          "en": "remained silent the whole time"
         }
       ]
     },
@@ -5253,26 +5142,26 @@
       "chunks": [
         {
           "ja": "子供のころから、",
-          "gloss": "since childhood",
           "refs": [
             "子供",
             "ころ"
-          ]
+          ],
+          "en": "since childhood"
         },
         {
           "ja": "ずっとこの町に",
-          "gloss": "all this time in this town",
           "refs": [
             "ずっと",
             "町"
-          ]
+          ],
+          "en": "all this time in this town"
         },
         {
           "ja": "住んでいる",
-          "gloss": "have been living",
           "refs": [
             "住む"
-          ]
+          ],
+          "en": "have been living"
         }
       ]
     },
@@ -5285,32 +5174,32 @@
       ],
       "grammarNotes": [
         "AはBよりC is the standard comparative pattern.",
-        "ずっと with comparatives means 'much/far more' rather than 'continuously'."
+        "ずっと with comparatives means 'much/far more' rather than 'continuously'.",
+        "AよりB"
       ],
       "chunks": [
         {
           "ja": "今日は",
-          "gloss": "today",
           "refs": [
             "今日"
-          ]
+          ],
+          "en": "today"
         },
         {
           "ja": "昨日よりずっと",
-          "gloss": "much more than yesterday",
-          "focus": "AよりB",
           "refs": [
             "昨日",
             "より",
             "ずっと"
-          ]
+          ],
+          "en": "much more than yesterday"
         },
         {
           "ja": "寒い",
-          "gloss": "cold",
           "refs": [
             "寒い"
-          ]
+          ],
+          "en": "cold"
         }
       ]
     },
@@ -5323,33 +5212,33 @@
       ],
       "grammarNotes": [
         "Vている間に/間, another action or state continues during that time.",
-        "Vていた often expresses a continuing action or state in the past."
+        "Vていた often expresses a continuing action or state in the past.",
+        "Vている間"
       ],
       "chunks": [
         {
           "ja": "映画を見ている間、",
-          "gloss": "while watching the movie",
-          "focus": "Vている間",
           "refs": [
             "映画",
             "見る",
             "間"
-          ]
+          ],
+          "en": "while watching the movie"
         },
         {
           "ja": "彼女はずっと",
-          "gloss": "she the whole time",
           "refs": [
             "彼女",
             "ずっと"
-          ]
+          ],
+          "en": "she the whole time"
         },
         {
           "ja": "泣いていた",
-          "gloss": "was crying",
           "refs": [
             "泣く"
-          ]
+          ],
+          "en": "was crying"
         }
       ]
     },
@@ -5366,19 +5255,19 @@
       "chunks": [
         {
           "ja": "ずっと先のことは",
-          "gloss": "as for things far in the future",
           "refs": [
             "ずっと先",
             "こと"
-          ]
+          ],
+          "en": "as for things far in the future"
         },
         {
           "ja": "まだ分からない",
-          "gloss": "still do not know",
           "refs": [
             "まだ",
             "分かる"
-          ]
+          ],
+          "en": "still do not know"
         }
       ]
     },
@@ -5390,33 +5279,33 @@
       ],
       "grammarNotes": [
         "Vている can describe an ongoing mental activity or state.",
-        "〜まで adds extent, often meaning 'even as far as ~'."
+        "〜まで adds extent, often meaning 'even as far as ~'.",
+        "Vている"
       ],
       "chunks": [
         {
           "ja": "彼は",
-          "gloss": "he",
           "refs": [
             "彼"
-          ]
+          ],
+          "en": "he"
         },
         {
           "ja": "ずっと先の計画まで",
-          "gloss": "even plans far ahead",
           "refs": [
             "ずっと先",
             "計画",
             "まで"
-          ]
+          ],
+          "en": "even plans far ahead"
         },
         {
           "ja": "考えている",
-          "gloss": "is thinking about",
-          "focus": "Vている",
           "refs": [
             "考える",
             "Vている"
-          ]
+          ],
+          "en": "is thinking about"
         }
       ]
     },
@@ -5428,33 +5317,33 @@
       ],
       "grammarNotes": [
         "Nになってから means 'after it became ~' or 'once it reached ~'.",
-        "〜てから marks a sequence: first one stage happens, then the next."
+        "〜てから marks a sequence: first one stage happens, then the next.",
+        "Nになってから"
       ],
       "chunks": [
         {
           "ja": "ずっと先になってから",
-          "gloss": "much later on",
-          "focus": "Nになってから",
           "refs": [
             "ずっと先",
             "なる",
             "てから",
             "Nになってから"
-          ]
+          ],
+          "en": "much later on"
         },
         {
           "ja": "その意味が",
-          "gloss": "its meaning",
           "refs": [
             "意味"
-          ]
+          ],
+          "en": "its meaning"
         },
         {
           "ja": "分かった",
-          "gloss": "became understood",
           "refs": [
             "分かる"
-          ]
+          ],
+          "en": "became understood"
         }
       ]
     },
@@ -5470,25 +5359,25 @@
       "chunks": [
         {
           "ja": "この問題は",
-          "gloss": "this problem",
           "refs": [
             "問題"
-          ]
+          ],
+          "en": "this problem"
         },
         {
           "ja": "ずっと先まで",
-          "gloss": "far into the future",
           "refs": [
             "ずっと先",
             "まで"
-          ]
+          ],
+          "en": "far into the future"
         },
         {
           "ja": "影響する",
-          "gloss": "will affect",
           "refs": [
             "影響する"
-          ]
+          ],
+          "en": "will affect"
         }
       ]
     },
@@ -5505,19 +5394,19 @@
       "chunks": [
         {
           "ja": "彼は父の家を",
-          "gloss": "his father's family household",
           "refs": [
             "彼",
             "父",
             "家"
-          ]
+          ],
+          "en": "his father's family household"
         },
         {
           "ja": "継いだ",
-          "gloss": "inherited; succeeded",
           "refs": [
             "継ぐ"
-          ]
+          ],
+          "en": "inherited; succeeded"
         }
       ]
     },
@@ -5529,26 +5418,26 @@
       ],
       "grammarNotes": [
         "Vることが多い means something often happens or is often the case.",
-        "長男 refers specifically to the eldest son."
+        "長男 refers specifically to the eldest son.",
+        "Vることが多い"
       ],
       "chunks": [
         {
           "ja": "長男が家を継ぐことが",
-          "gloss": "the eldest son inheriting the family was",
-          "focus": "Vることが多い",
           "refs": [
             "長男",
             "家",
             "継ぐ",
             "Vることが多い"
-          ]
+          ],
+          "en": "the eldest son inheriting the family was"
         },
         {
           "ja": "多かった",
-          "gloss": "often happened",
           "refs": [
             "多い"
-          ]
+          ],
+          "en": "often happened"
         }
       ]
     },
@@ -5565,19 +5454,19 @@
       "chunks": [
         {
           "ja": "彼女は店と家を",
-          "gloss": "the shop and the family household",
           "refs": [
             "彼女",
             "店",
             "家"
-          ]
+          ],
+          "en": "the shop and the family household"
         },
         {
           "ja": "継いだ",
-          "gloss": "inherited; took over",
           "refs": [
             "継ぐ"
-          ]
+          ],
+          "en": "inherited; took over"
         }
       ]
     },
@@ -5594,19 +5483,19 @@
       "chunks": [
         {
           "ja": "彼は父の跡を",
-          "gloss": "his father's position; legacy",
           "refs": [
             "彼",
             "父",
             "跡"
-          ]
+          ],
+          "en": "his father's position; legacy"
         },
         {
           "ja": "継いだ",
-          "gloss": "succeeded",
           "refs": [
             "継ぐ"
-          ]
+          ],
+          "en": "succeeded"
         }
       ]
     },
@@ -5618,25 +5507,25 @@
       ],
       "grammarNotes": [
         "Vるつもりだ means to intend to do something.",
-        "仕事 can mean job, work, trade, or professional role depending on context."
+        "仕事 can mean job, work, trade, or professional role depending on context.",
+        "Vるつもりだ"
       ],
       "chunks": [
         {
           "ja": "父の仕事を",
-          "gloss": "my father's work",
           "refs": [
             "父",
             "仕事"
-          ]
+          ],
+          "en": "my father's work"
         },
         {
           "ja": "継ぐつもりだ",
-          "gloss": "intend to take over",
-          "focus": "Vるつもりだ",
           "refs": [
             "継ぐ",
             "Vるつもりだ"
-          ]
+          ],
+          "en": "intend to take over"
         }
       ]
     },
@@ -5650,28 +5539,28 @@
       "chunks": [
         {
           "ja": "日本語で少し",
-          "gloss": "a little in Japanese",
           "refs": [
             "日本語",
             "少し"
-          ]
+          ],
+          "en": "a little in Japanese"
         },
         {
           "ja": "ギリシャ神話について",
-          "gloss": "about Greek mythology",
           "refs": [
             "ギリシャ",
             "神話",
             "について"
-          ]
+          ],
+          "en": "about Greek mythology"
         },
         {
           "ja": "話してください",
-          "gloss": "please talk",
           "refs": [
             "話す",
             "Vてください"
-          ]
+          ],
+          "en": "please talk"
         }
       ],
       "notes": [
@@ -5688,14 +5577,13 @@
       "chunks": [
         {
           "ja": "ギリシャ神話は",
-          "gloss": "Greek mythology",
           "refs": [
             "ギリシャ神話"
-          ]
+          ],
+          "en": "Greek mythology"
         },
         {
           "ja": "古代ギリシャの神々や英雄についての",
-          "gloss": "about the gods and heroes of ancient Greece",
           "refs": [
             "古代",
             "ギリシャ",
@@ -5703,14 +5591,15 @@
             "英雄",
             "について",
             "や"
-          ]
+          ],
+          "en": "about the gods and heroes of ancient Greece"
         },
         {
           "ja": "物語です",
-          "gloss": "are stories",
           "refs": [
             "物語"
-          ]
+          ],
+          "en": "are stories"
         }
       ],
       "notes": [
@@ -5726,19 +5615,19 @@
       "chunks": [
         {
           "ja": "一番有名な神は",
-          "gloss": "the most famous god",
           "refs": [
             "一番",
             "有名",
             "神"
-          ]
+          ],
+          "en": "the most famous god"
         },
         {
           "ja": "ゼウスです",
-          "gloss": "is Zeus",
           "refs": [
             "ゼウス"
-          ]
+          ],
+          "en": "is Zeus"
         }
       ],
       "notes": [
@@ -5755,28 +5644,28 @@
       "chunks": [
         {
           "ja": "オリンポス山には",
-          "gloss": "on Mount Olympus",
           "refs": [
             "オリンポス山"
-          ]
+          ],
+          "en": "on Mount Olympus"
         },
         {
           "ja": "多くの神が住んでいる",
-          "gloss": "many gods live",
           "refs": [
             "多く",
             "神",
             "住む",
             "Vている"
-          ]
+          ],
+          "en": "many gods live"
         },
         {
           "ja": "と言われています",
-          "gloss": "it is said",
           "refs": [
             "言う",
             "と言われている"
-          ]
+          ],
+          "en": "it is said"
         }
       ],
       "notes": [
@@ -5792,26 +5681,26 @@
       "chunks": [
         {
           "ja": "ヘラクレスは",
-          "gloss": "Heracles",
           "refs": [
             "ヘラクレス"
-          ]
+          ],
+          "en": "Heracles"
         },
         {
           "ja": "十二の功業で有名な",
-          "gloss": "famous for the Twelve Labors",
           "refs": [
             "十二",
             "功業",
             "有名"
-          ]
+          ],
+          "en": "famous for the Twelve Labors"
         },
         {
           "ja": "英雄です",
-          "gloss": "is a hero",
           "refs": [
             "英雄"
-          ]
+          ],
+          "en": "is a hero"
         }
       ],
       "notes": [
@@ -5827,24 +5716,22 @@
       ],
       "grammarNotes": [
         "Vましょう can mean either 'let’s do' or a polite prompt like 'please do' in instructions.",
-        "で marks the device or place used for an action."
+        "で marks the device or place used for an action.",
+        "Vましょう"
       ],
       "chunks": [
         {
           "ja": "「[LG] webOS TV OLED55B7A」で",
-          "gloss": "on the [LG] webOS TV OLED55B7A",
-          "refs": [
-            
-          ]
+          "refs": [],
+          "en": "on the [LG] webOS TV OLED55B7A"
         },
         {
           "ja": "YouTubeにログインしましょう",
-          "gloss": "let’s sign in to YouTube",
-          "focus": "Vましょう",
           "refs": [
             "YouTube",
             "ログインする"
-          ]
+          ],
+          "en": "let’s sign in to YouTube"
         }
       ]
     },
@@ -5859,42 +5746,42 @@
       "grammarNotes": [
         "Vば expresses a conditional meaning like 'if/when.'",
         "や links representative items in a non-exhaustive list.",
-        "Vことができる and Vできる express ability; here 視聴できます means 'can watch/view.'"
+        "Vことができる and Vできる express ability; here 視聴できます means 'can watch/view.'",
+        "Vば"
       ],
       "chunks": [
         {
           "ja": "テレビでログインすれば、",
-          "gloss": "if you sign in on the TV",
-          "focus": "Vば",
           "refs": [
             "テレビ",
             "ログインする"
-          ]
+          ],
+          "en": "if you sign in on the TV"
         },
         {
           "ja": "お気に入りの動画や登録チャンネルを",
-          "gloss": "favorite videos and subscribed channels",
           "refs": [
             "お気に入り",
             "動画",
             "登録",
             "チャンネル"
-          ]
+          ],
+          "en": "favorite videos and subscribed channels"
         },
         {
           "ja": "ご自宅の大画面で",
-          "gloss": "on your home big screen",
           "refs": [
             "ご自宅",
             "大画面"
-          ]
+          ],
+          "en": "on your home big screen"
         },
         {
           "ja": "視聴できます",
-          "gloss": "can watch",
           "refs": [
             "視聴できる"
-          ]
+          ],
+          "en": "can watch"
         }
       ]
     },
@@ -5911,26 +5798,26 @@
       "chunks": [
         {
           "ja": "彼は会議で",
-          "gloss": "he in the meeting",
           "refs": [
             "彼",
             "会議"
-          ]
+          ],
+          "en": "he in the meeting"
         },
         {
           "ja": "新しいアイデアを",
-          "gloss": "a new idea",
           "refs": [
             "新しい",
             "アイデア"
-          ]
+          ],
+          "en": "a new idea"
         },
         {
           "ja": "持ち出した",
-          "gloss": "brought up",
           "refs": [
             "持ち出す"
-          ]
+          ],
+          "en": "brought up"
         }
       ]
     },
@@ -5942,32 +5829,32 @@
       ],
       "grammarNotes": [
         "Vてはいけません expresses prohibition or strong disallowance.",
-        "外に gives the destination or direction of taking something out."
+        "外に gives the destination or direction of taking something out.",
+        "Vてはいけません"
       ],
       "chunks": [
         {
           "ja": "図書館の本は",
-          "gloss": "library books",
           "refs": [
             "図書館",
             "本"
-          ]
+          ],
+          "en": "library books"
         },
         {
           "ja": "外に",
-          "gloss": "outside",
           "refs": [
             "外"
-          ]
+          ],
+          "en": "outside"
         },
         {
           "ja": "持ち出してはいけません",
-          "gloss": "must not take out",
-          "focus": "Vてはいけません",
           "refs": [
             "持ち出す",
             "Vてはいけません"
-          ]
+          ],
+          "en": "must not take out"
         }
       ]
     },
@@ -5983,25 +5870,25 @@
       "chunks": [
         {
           "ja": "古い写真を",
-          "gloss": "old photos",
           "refs": [
             "古い",
             "写真"
-          ]
+          ],
+          "en": "old photos"
         },
         {
           "ja": "箱から",
-          "gloss": "from the box",
           "refs": [
             "箱"
-          ]
+          ],
+          "en": "from the box"
         },
         {
           "ja": "持ち出した",
-          "gloss": "took out",
           "refs": [
             "持ち出す"
-          ]
+          ],
+          "en": "took out"
         }
       ]
     },
@@ -6018,26 +5905,26 @@
       "chunks": [
         {
           "ja": "彼女は突然",
-          "gloss": "she suddenly",
           "refs": [
             "彼女",
             "突然"
-          ]
+          ],
+          "en": "she suddenly"
         },
         {
           "ja": "その問題を",
-          "gloss": "that issue",
           "refs": [
             "その",
             "問題"
-          ]
+          ],
+          "en": "that issue"
         },
         {
           "ja": "持ち出した",
-          "gloss": "brought up",
           "refs": [
             "持ち出す"
-          ]
+          ],
+          "en": "brought up"
         }
       ]
     },
@@ -6053,20 +5940,20 @@
       "chunks": [
         {
           "ja": "彼は会議の前に",
-          "gloss": "he before the meeting",
           "refs": [
             "彼",
             "会議",
             "前"
-          ]
+          ],
+          "en": "he before the meeting"
         },
         {
           "ja": "腕時計を外した",
-          "gloss": "took off his wristwatch",
           "refs": [
             "腕時計",
             "外す"
-          ]
+          ],
+          "en": "took off his wristwatch"
         }
       ]
     },
@@ -6077,25 +5964,25 @@
         "しまった adds a nuance that the speaker regrets or did not intend the result."
       ],
       "grammarNotes": [
-        "Vてしまう often conveys completion with regret or accident."
+        "Vてしまう often conveys completion with regret or accident.",
+        "Vてしまう"
       ],
       "chunks": [
         {
           "ja": "ボタンが一つ",
-          "gloss": "one button",
           "refs": [
             "ボタン",
             "一つ"
-          ]
+          ],
+          "en": "one button"
         },
         {
           "ja": "外れてしまった",
-          "gloss": "ended up coming off",
-          "focus": "Vてしまう",
           "refs": [
             "外れる",
             "Vてしまう"
-          ]
+          ],
+          "en": "ended up coming off"
         }
       ]
     },
@@ -6106,26 +5993,26 @@
         "外 often refers to being outdoors rather than inside a building."
       ],
       "grammarNotes": [
-        "Volitional form ～よう expresses suggestion or invitation."
+        "Volitional form ～よう expresses suggestion or invitation.",
+        "Vよう"
       ],
       "chunks": [
         {
           "ja": "今日は外で",
-          "gloss": "today outside",
           "refs": [
             "今日",
             "外"
-          ]
+          ],
+          "en": "today outside"
         },
         {
           "ja": "昼ご飯を食べよう",
-          "gloss": "let's eat lunch",
-          "focus": "Vよう",
           "refs": [
             "昼ご飯",
             "食べる",
             "Vよう"
-          ]
+          ],
+          "en": "let's eat lunch"
         }
       ]
     },
@@ -6141,19 +6028,19 @@
       "chunks": [
         {
           "ja": "彼女は外国で",
-          "gloss": "she in a foreign country",
           "refs": [
             "彼女",
             "外国"
-          ]
+          ],
+          "en": "she in a foreign country"
         },
         {
           "ja": "三年間働いた",
-          "gloss": "worked for three years",
           "refs": [
             "三年",
             "働く"
-          ]
+          ],
+          "en": "worked for three years"
         }
       ]
     },
@@ -6164,26 +6051,26 @@
         "外側 emphasizes the outer side or exterior area of something."
       ],
       "grammarNotes": [
-        "Vている expresses a continuing state or ongoing action."
+        "Vている expresses a continuing state or ongoing action.",
+        "Vている"
       ],
       "chunks": [
         {
           "ja": "駅の外側で",
-          "gloss": "on the outside of the station",
           "refs": [
             "駅",
             "外側"
-          ]
+          ],
+          "en": "on the outside of the station"
         },
         {
           "ja": "友達を待っている",
-          "gloss": "waiting for a friend",
-          "focus": "Vている",
           "refs": [
             "友達",
             "待つ",
             "Vている"
-          ]
+          ],
+          "en": "waiting for a friend"
         }
       ]
     },
@@ -6194,26 +6081,26 @@
         "外国人 literally means 'person from another country' and is widely used in everyday speech."
       ],
       "grammarNotes": [
-        "Vている can describe a gradual change or trend."
+        "Vている can describe a gradual change or trend.",
+        "Vている"
       ],
       "chunks": [
         {
           "ja": "外国人の観光客が",
-          "gloss": "foreign tourists",
           "refs": [
             "外国人",
             "観光客"
-          ]
+          ],
+          "en": "foreign tourists"
         },
         {
           "ja": "この町に増えている",
-          "gloss": "are increasing in this town",
-          "focus": "Vている",
           "refs": [
             "町",
             "増える",
             "Vている"
-          ]
+          ],
+          "en": "are increasing in this town"
         }
       ]
     },
@@ -6224,25 +6111,25 @@
         "外出 is often used in slightly formal contexts like schedules or announcements."
       ],
       "grammarNotes": [
-        "予定です expresses a planned action."
+        "予定です expresses a planned action.",
+        "Nする予定"
       ],
       "chunks": [
         {
           "ja": "午後は少し",
-          "gloss": "this afternoon a little",
           "refs": [
             "午後",
             "少し"
-          ]
+          ],
+          "en": "this afternoon a little"
         },
         {
           "ja": "外出する予定です",
-          "gloss": "plan to go out",
-          "focus": "Nする予定",
           "refs": [
             "外出",
             "予定"
-          ]
+          ],
+          "en": "plan to go out"
         }
       ]
     },
@@ -6254,27 +6141,27 @@
       ],
       "grammarNotes": [
         "N以外 expresses exclusion ('except for N').",
-        "毎日 indicates habitual repetition."
+        "毎日 indicates habitual repetition.",
+        "N以外",
+        "Vている"
       ],
       "chunks": [
         {
           "ja": "日曜日以外は",
-          "gloss": "except Sunday",
-          "focus": "N以外",
           "refs": [
             "日曜日",
             "以外"
-          ]
+          ],
+          "en": "except Sunday"
         },
         {
           "ja": "毎日働いている",
-          "gloss": "work every day",
-          "focus": "Vている",
           "refs": [
             "毎日",
             "働く",
             "Vている"
-          ]
+          ],
+          "en": "work every day"
         }
       ]
     }
