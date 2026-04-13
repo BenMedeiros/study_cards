@@ -13,9 +13,19 @@ export function normalizeCollectionPromptKey(value) {
 export function getCollectionPromptDocumentPath(collectionKey) {
   const normalized = normalizeCollectionPromptKey(collectionKey);
   if (!normalized) return '';
-  if (/\.json$/i.test(normalized)) return normalized.replace(/\.json$/i, '.prompt.md');
-  if (/\.prompt\.md$/i.test(normalized)) return normalized;
-  return `${normalized}.prompt.md`;
+  if (/\.prompt\.json$/i.test(normalized) || /\.prompt\.md$/i.test(normalized)) return normalized;
+  if (/\.json$/i.test(normalized)) return normalized.replace(/\.json$/i, '.prompt.json');
+  return `${normalized}.prompt.json`;
+}
+
+export function getCollectionPromptDocumentCandidatePaths(collectionKey) {
+  const normalized = normalizeCollectionPromptKey(collectionKey);
+  if (!normalized) return [];
+  const primary = getCollectionPromptDocumentPath(normalized);
+  const candidates = [primary];
+  if (/\.prompt\.json$/i.test(primary)) candidates.push(primary.replace(/\.prompt\.json$/i, '.prompt.md'));
+  if (/\.prompt\.md$/i.test(primary)) candidates.push(primary.replace(/\.prompt\.md$/i, '.prompt.json'));
+  return Array.from(new Set(candidates.filter(Boolean)));
 }
 
 function parseFrontmatterValue(value) {
@@ -53,64 +63,167 @@ function parsePromptDocumentText(text) {
   };
 }
 
+function formatBulletSection(title, items) {
+  const lines = Array.isArray(items)
+    ? items.map((item) => String(item || '').trim()).filter(Boolean)
+    : [];
+  if (!lines.length) return '';
+  return `${title}:\n${lines.map((line) => `- ${line}`).join('\n')}`;
+}
+
+function formatPromptFieldRules(fieldRules) {
+  const rules = Array.isArray(fieldRules)
+    ? fieldRules
+      .filter((rule) => rule && typeof rule === 'object')
+      .map((rule) => {
+        const field = String(rule.field || '').trim();
+        const type = String(rule.type || '').trim();
+        const description = String(rule.description || '').trim();
+        if (!field) return '';
+        const parts = [`- ${field}${type ? `: ${type}` : ''}`];
+        if (description) parts.push(`  ${description}`);
+        return parts.join('\n');
+      })
+      .filter(Boolean)
+    : [];
+  if (!rules.length) return '';
+  return `Field Rules:\n${rules.join('\n')}`;
+}
+
+function buildPromptTextFromJsonSpec(spec) {
+  if (!spec || typeof spec !== 'object') return '';
+  const shared = spec.shared && typeof spec.shared === 'object' ? spec.shared : {};
+  const defaults = spec.defaults && typeof spec.defaults === 'object' ? spec.defaults : {};
+  const stepId = String(defaults.stepId || '').trim();
+  const steps = Array.isArray(spec.steps) ? spec.steps : [];
+  const activeStep = steps.find((step) => String(step?.id || '').trim() === stepId) || null;
+  const parts = [];
+
+  const contextSection = formatBulletSection('Context', shared.context);
+  if (contextSection) parts.push(contextSection);
+
+  const outputSection = formatBulletSection('Output Requirements', shared.outputRequirements);
+  if (outputSection) parts.push(outputSection);
+
+  const rulesSection = formatBulletSection('Shared Rules', shared.rules);
+  if (rulesSection) parts.push(rulesSection);
+
+  if (activeStep) {
+    const stepTitle = String(activeStep.title || activeStep.id || '').trim();
+    const goal = String(activeStep.goal || '').trim();
+    const stepHeader = [stepTitle ? `Step: ${stepTitle}` : '', goal ? `Goal:\n${goal}` : '']
+      .filter(Boolean)
+      .join('\n\n');
+    if (stepHeader) parts.push(stepHeader);
+
+    const inputSection = formatBulletSection('Input Contract', activeStep.inputContract);
+    if (inputSection) parts.push(inputSection);
+
+    const preserveSection = formatBulletSection('Preserve Existing Data', activeStep.preserveRules);
+    if (preserveSection) parts.push(preserveSection);
+
+    const fieldRulesSection = formatPromptFieldRules(activeStep.fieldRules);
+    if (fieldRulesSection) parts.push(fieldRulesSection);
+
+    const stepInstructions = formatBulletSection('Instructions', activeStep.instructions);
+    if (stepInstructions) parts.push(stepInstructions);
+  }
+
+  return joinPromptSections(parts);
+}
+
 export async function loadCollectionPromptDocument(collectionKey, { force = false } = {}) {
   const normalizedKey = normalizeCollectionPromptKey(collectionKey);
-  const promptPath = getCollectionPromptDocumentPath(normalizedKey);
-  if (!normalizedKey || !promptPath) return null;
+  const candidatePaths = getCollectionPromptDocumentCandidatePaths(normalizedKey);
+  const primaryPath = candidatePaths[0] || '';
+  if (!normalizedKey || !primaryPath) return null;
 
-  if (!force && PROMPT_DOCUMENT_CACHE.has(promptPath)) {
-    return PROMPT_DOCUMENT_CACHE.get(promptPath);
+  if (!force && PROMPT_DOCUMENT_CACHE.has(primaryPath)) {
+    return PROMPT_DOCUMENT_CACHE.get(primaryPath);
   }
 
   const pending = Promise.resolve().then(async () => {
-    const url = `./collections/${promptPath}`;
-    let response;
-    try {
-      response = await fetch(url);
-    } catch (error) {
-      return {
-        collectionKey: normalizedKey,
-        path: promptPath,
-        url,
-        exists: false,
-        status: null,
-        error: error?.message || String(error),
-        frontmatter: {},
-        rawText: '',
-        bodyText: '',
-      };
-    }
+    for (const promptPath of candidatePaths) {
+      const url = `./collections/${promptPath}`;
+      let response;
+      try {
+        response = await fetch(url);
+      } catch (error) {
+        return {
+          collectionKey: normalizedKey,
+          path: promptPath,
+          url,
+          exists: false,
+          status: null,
+          error: error?.message || String(error),
+          frontmatter: {},
+          rawText: '',
+          bodyText: '',
+        };
+      }
 
-    if (!response.ok) {
+      if (!response.ok) continue;
+
+      const text = await response.text();
+      if (/\.prompt\.json$/i.test(promptPath)) {
+        let spec = null;
+        try {
+          spec = JSON.parse(text);
+        } catch (error) {
+          return {
+            collectionKey: normalizedKey,
+            path: promptPath,
+            url,
+            exists: false,
+            status: response.status,
+            error: error?.message || String(error),
+            frontmatter: {},
+            rawText: text,
+            bodyText: '',
+          };
+        }
+        return {
+          collectionKey: normalizedKey,
+          path: promptPath,
+          url,
+          exists: true,
+          status: response.status,
+          error: null,
+          frontmatter: {},
+          rawText: text,
+          bodyText: buildPromptTextFromJsonSpec(spec),
+          spec,
+        };
+      }
+
+      const parsed = parsePromptDocumentText(text);
       return {
         collectionKey: normalizedKey,
         path: promptPath,
         url,
-        exists: false,
+        exists: true,
         status: response.status,
         error: null,
-        frontmatter: {},
-        rawText: '',
-        bodyText: '',
+        frontmatter: parsed.frontmatter,
+        rawText: parsed.rawText,
+        bodyText: parsed.bodyText,
       };
     }
 
-    const text = await response.text();
-    const parsed = parsePromptDocumentText(text);
     return {
       collectionKey: normalizedKey,
-      path: promptPath,
-      url,
-      exists: true,
-      status: response.status,
+      path: primaryPath,
+      url: `./collections/${primaryPath}`,
+      exists: false,
+      status: 404,
       error: null,
-      frontmatter: parsed.frontmatter,
-      rawText: parsed.rawText,
-      bodyText: parsed.bodyText,
+      frontmatter: {},
+      rawText: '',
+      bodyText: '',
     };
   });
 
-  PROMPT_DOCUMENT_CACHE.set(promptPath, pending);
+  PROMPT_DOCUMENT_CACHE.set(primaryPath, pending);
   return pending;
 }
 

@@ -32,11 +32,13 @@
 }
 
 .kanji-study-card-config-dialog {
-  width: min(34rem, calc(100vw - 1rem));
   max-height: calc(100vh - 1rem);
   margin: 0;
   overflow: hidden;
   gap: 0.85rem;
+  background: color-mix(in srgb, var(--panel) 92%, black 8%);
+  border: 1px solid color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.16)) 90%, white 10%);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.38);
 }
 
 .kanji-study-card-config-header h2 {
@@ -46,6 +48,7 @@
 
 .kanji-study-card-config-header .hint {
   margin: 0.35rem 0 0;
+  text-wrap-mode: wrap;
 }
 
 .kanji-study-card-config-summary {
@@ -611,10 +614,17 @@
   }
 }
 
-.view-footer-settings-close {
+.view-footer-settings-actions {
   position: absolute;
   top: 0.55rem;
   right: 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.view-footer-settings-close {
+  position: static;
 }
 
 .view-footer-settings-title {
@@ -726,6 +736,28 @@
 .view-footer-validation-warning-title {
   font-weight: 700;
   margin-bottom: 0.2rem;
+}
+
+.view-footer-pending-diff {
+  display: none;
+  margin-top: 0.5rem;
+  padding: 0.45rem 0.55rem;
+  border: var(--border-1);
+  border-radius: 0.45rem;
+  background: var(--surface-raised, rgba(255,255,255,0.04));
+  color: var(--text-muted, var(--text));
+}
+
+.view-footer-pending-diff-title {
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  color: var(--text);
+}
+
+.view-footer-pending-diff-line {
+  font-family: var(--font-mono, monospace);
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .view-footer-config-name,

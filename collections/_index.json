@@ -216,7 +216,7 @@
     },
     {
       "path": "japanese/japanese_songs.json",
-      "modifiedAt": "2026-03-30T18:05:46.782Z",
+      "modifiedAt": "2026-03-31T02:56:04.214Z",
       "name": "Japanese Songs",
       "description": "Song lyrics with learner-friendly sentence-level analysis and chunks.",
       "entriesCount": 2,
@@ -1782,8 +1782,8 @@
   ],
   "prompts": [
     {
-      "path": "japanese/japanese_sentences.promptPresets.json",
-      "modifiedAt": "2026-03-30T18:46:51.489Z",
+      "path": "japanese/japanese_sentences.prompt.json",
+      "modifiedAt": "2026-04-13T18:16:51.564Z",
       "promptCount": 7,
       "valid": true,
       "validation": {
@@ -1792,8 +1792,18 @@
       }
     },
     {
-      "path": "japanese/japanese_words.promptPresets.json",
-      "modifiedAt": "2026-03-30T18:51:17.568Z",
+      "path": "japanese/japanese_songs.prompt.json",
+      "modifiedAt": "2026-03-31T03:16:51.772Z",
+      "promptCount": 5,
+      "valid": true,
+      "validation": {
+        "errors": [],
+        "warnings": []
+      }
+    },
+    {
+      "path": "japanese/japanese_words.prompt.json",
+      "modifiedAt": "2026-04-13T18:16:51.563Z",
       "promptCount": 6,
       "valid": true,
       "validation": {
@@ -1802,8 +1812,8 @@
       }
     },
     {
-      "path": "spanish/spanish_sentences.promptPresets.json",
-      "modifiedAt": "2026-03-30T18:51:17.570Z",
+      "path": "spanish/spanish_sentences.prompt.json",
+      "modifiedAt": "2026-04-13T18:21:11.755Z",
       "promptCount": 7,
       "valid": true,
       "validation": {
@@ -1812,8 +1822,8 @@
       }
     },
     {
-      "path": "spanish/spanish_words.promptPresets.json",
-      "modifiedAt": "2026-03-30T18:51:17.568Z",
+      "path": "spanish/spanish_words.prompt.json",
+      "modifiedAt": "2026-04-13T18:21:11.754Z",
       "promptCount": 5,
       "valid": true,
       "validation": {

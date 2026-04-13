@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-30T18:58:56.964Z",
-  "scannedCollections": 21,
-  "collectionsWithProblems": 13,
-  "collectionsWithInvalidEntryKey": 7,
+  "generatedAt": "2026-04-13T18:20:22.598Z",
+  "scannedCollections": 22,
+  "collectionsWithProblems": 14,
+  "collectionsWithInvalidEntryKey": 8,
   "collectionsWithSchemaMismatch": 6,
-  "totalInvalidEntries": 27,
+  "totalInvalidEntries": 23,
   "totalDuplicateValues": 43,
   "totalDuplicateEntries": 86,
   "reports_clean": [
@@ -180,56 +180,32 @@
       "duplicates": []
     },
     {
-      "collectionName": "japanese/japanese_sentences.promptPresets.json",
-      "collectionPath": "collections/japanese/japanese_sentences.promptPresets.json",
+      "collectionName": "japanese/japanese_sentences.prompt.json",
+      "collectionPath": "collections/japanese/japanese_sentences.prompt.json",
       "entryKey": null,
-      "entryCount": 7,
+      "entryCount": 3,
       "hasValidEntryKeyMetadata": false,
       "schemaHasEntryKey": false,
-      "invalidEntryCount": 7,
+      "invalidEntryCount": 3,
       "duplicateValueCount": 0,
       "duplicateEntryCount": 0,
       "invalidEntries": [
         {
           "index": 0,
-          "lineNumber": 4,
-          "label": "(unlabeled entry)",
+          "lineNumber": 29,
+          "label": "Split Into Sentence Units",
           "reason": "Collection metadata.entry_key is missing or invalid"
         },
         {
           "index": 1,
-          "lineNumber": 9,
-          "label": "(unlabeled entry)",
+          "lineNumber": 58,
+          "label": "Create Sentence Units",
           "reason": "Collection metadata.entry_key is missing or invalid"
         },
         {
           "index": 2,
-          "lineNumber": 14,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 3,
-          "lineNumber": 19,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 4,
-          "lineNumber": 24,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 5,
-          "lineNumber": 29,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 6,
-          "lineNumber": 34,
-          "label": "(unlabeled entry)",
+          "lineNumber": 101,
+          "label": "Add Chunks",
           "reason": "Collection metadata.entry_key is missing or invalid"
         }
       ],
@@ -246,6 +222,44 @@
       "duplicateValueCount": 0,
       "duplicateEntryCount": 0,
       "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "japanese/japanese_songs.prompt.json",
+      "collectionPath": "collections/japanese/japanese_songs.prompt.json",
+      "entryKey": null,
+      "entryCount": 4,
+      "hasValidEntryKeyMetadata": false,
+      "schemaHasEntryKey": false,
+      "invalidEntryCount": 4,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [
+        {
+          "index": 0,
+          "lineNumber": 29,
+          "label": "Metadata Only",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 1,
+          "lineNumber": 109,
+          "label": "Lyrics And Translation",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 2,
+          "lineNumber": 153,
+          "label": "Sentence Units Only",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        },
+        {
+          "index": 3,
+          "lineNumber": 202,
+          "label": "Chunking Only",
+          "reason": "Collection metadata.entry_key is missing or invalid"
+        }
+      ],
       "duplicates": []
     },
     {
@@ -935,50 +949,26 @@
       ]
     },
     {
-      "collectionName": "japanese/japanese_words.promptPresets.json",
-      "collectionPath": "collections/japanese/japanese_words.promptPresets.json",
+      "collectionName": "japanese/japanese_words.prompt.json",
+      "collectionPath": "collections/japanese/japanese_words.prompt.json",
       "entryKey": null,
-      "entryCount": 6,
+      "entryCount": 2,
       "hasValidEntryKeyMetadata": false,
       "schemaHasEntryKey": false,
-      "invalidEntryCount": 6,
+      "invalidEntryCount": 2,
       "duplicateValueCount": 0,
       "duplicateEntryCount": 0,
       "invalidEntries": [
         {
           "index": 0,
-          "lineNumber": 4,
-          "label": "(unlabeled entry)",
+          "lineNumber": 30,
+          "label": "Create Word Entries",
           "reason": "Collection metadata.entry_key is missing or invalid"
         },
         {
           "index": 1,
-          "lineNumber": 9,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 2,
-          "lineNumber": 14,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 3,
-          "lineNumber": 19,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 4,
-          "lineNumber": 24,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 5,
-          "lineNumber": 29,
-          "label": "(unlabeled entry)",
+          "lineNumber": 79,
+          "label": "Extract Headwords",
           "reason": "Collection metadata.entry_key is missing or invalid"
         }
       ],
@@ -1145,9 +1135,9 @@
   "outputPath": "scripts/outputs/report_duplicated_keys_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-03-30T18:58:56.909Z",
-    "finishedAt": "2026-03-30T18:58:56.965Z",
-    "durationMs": 56,
-    "durationSeconds": 0.056
+    "startedAt": "2026-04-13T18:20:22.535Z",
+    "finishedAt": "2026-04-13T18:20:22.599Z",
+    "durationMs": 64,
+    "durationSeconds": 0.064
   }
 }

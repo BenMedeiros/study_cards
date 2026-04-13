@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "kind": "collection-prompt-spec",
+  "collection": "japanese/japanese_words.json",
+  "defaults": {
+    "stepId": "create_word_entries",
+    "promptRequestPlaceholder": "<fill in the prompt request here>"
+  },
+  "shared": {
+    "context": [
+      "You are generating or enriching entries for the Japanese words collection.",
+      "Work only on the requested workflow step.",
+      "Return only a JSON array."
+    ],
+    "outputRequirements": [
+      "Return only a JSON array.",
+      "No extra text.",
+      "Follow the active step's field rules exactly."
+    ],
+    "rules": [
+      "Match the concise dictionary style of the collection.",
+      "Prefer common useful vocabulary, but keep specialized item types consistent with the collection when requested.",
+      "Prefer canonical dictionary headword forms.",
+      "Use `reading` in kana only.",
+      "Keep English meanings short and learner-friendly.",
+      "Use `semanticClass` and `tags` only when they add clear value."
+    ]
+  },
+  "steps": [
+    {
+      "id": "create_word_entries",
+      "title": "Create Word Entries",
+      "goal": "Create concise dictionary-style Japanese word entries from the provided input.",
+      "inputContract": [
+        "The request may provide Japanese words, English meanings, categories, item types, or a scenario.",
+        "Return full word-entry objects."
+      ],
+      "fieldRules": [
+        {
+          "field": "kanji",
+          "type": "string",
+          "description": "Canonical dictionary/headword kanji form if one exists. If no established kanji exists, use the standard kana or katakana headword."
+        },
+        {
+          "field": "reading",
+          "type": "string",
+          "description": "Pronunciation written in kana. Usually hiragana, but katakana is allowed for katakana words."
+        },
+        {
+          "field": "meaning",
+          "type": "string",
+          "description": "Short English gloss."
+        },
+        {
+          "field": "type",
+          "type": "enum",
+          "description": "noun, proper-noun, morpheme, ichidan-verb, godan-verb, irregular-verb, i-adjective, na-adjective, particle, adverb, counter, expression, numeral, descriptive-phrase, phrase-sentence, conjunction"
+        },
+        {
+          "field": "semanticClass",
+          "type": "string",
+          "description": "Optional semantic grouping such as onomatopoeia, greeting, food, city, or sfx."
+        },
+        {
+          "field": "tags",
+          "type": "string[]",
+          "description": "Optional machine-friendly tags. Use short snake_case or existing collection-style tags only when useful."
+        }
+      ],
+      "instructions": [
+        "Keep `kanji` as the canonical headword field even when the most common display form is kana or katakana.",
+        "Use `morpheme` only for bound elements mainly used inside compounds rather than normal standalone words.",
+        "Use `expression`, `descriptive-phrase`, or `phrase-sentence` for fixed multi-word units when a single-word type would be misleading.",
+        "For verb entries, use dictionary form.",
+        "For adjectives, distinguish carefully between `i-adjective` and `na-adjective`.",
+        "For onomatopoeia and sound-symbolic words, usually use `semanticClass` like `onomatopoeia` or `sfx` when appropriate."
+      ]
+    },
+    {
+      "id": "extract_headwords",
+      "title": "Extract Headwords",
+      "goal": "Extract useful learnable Japanese headwords from the provided text before entry creation.",
+      "inputContract": [
+        "The request provides Japanese text such as a sentence, passage, or short dialogue.",
+        "Return only a JSON array of canonical Japanese headword strings."
+      ],
+      "fieldRules": [
+        {
+          "field": "array item",
+          "type": "string",
+          "description": "A useful canonical Japanese headword suitable for later dictionary entry creation."
+        }
+      ],
+      "instructions": [
+        "Prefer useful headwords over exhaustive extraction.",
+        "Skip particles and trivial function-word-only extraction unless they are intentionally being studied.",
+        "Prefer canonical dictionary forms over inflected surface forms."
+      ],
+      "handoff": {
+        "nextStepIds": [
+          "create_word_entries"
+        ],
+        "expectedState": [
+          "The result is a clean list of learnable headwords ready for entry creation."
+        ]
+      }
+    }
+  ],
+  "workflows": [
+    {
+      "id": "direct_word_entry_creation",
+      "stepIds": [
+        "create_word_entries"
+      ]
+    },
+    {
+      "id": "extract_headwords_then_create_entries",
+      "stepIds": [
+        "extract_headwords",
+        "create_word_entries"
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "from_words",
+      "details": "Create entries for the provided Japanese words.",
+      "example": "[word1, word2, word3]",
+      "workflowId": "direct_word_entry_creation",
+      "startStepId": "create_word_entries"
+    },
+    {
+      "id": "from_english_meanings",
+      "details": "Create Japanese entries from the provided English meanings.",
+      "example": "[to read, quiet, station, sparkling]",
+      "workflowId": "direct_word_entry_creation",
+      "startStepId": "create_word_entries"
+    },
+    {
+      "id": "from_categories",
+      "details": "Create Japanese entries in the provided categories.",
+      "example": "[daily life, travel, food, school]",
+      "workflowId": "direct_word_entry_creation",
+      "startStepId": "create_word_entries"
+    },
+    {
+      "id": "from_item_types",
+      "details": "Create Japanese entries for the provided item types.",
+      "example": "[godan verbs, ichidan verbs, counters, onomatopoeia]",
+      "workflowId": "direct_word_entry_creation",
+      "startStepId": "create_word_entries"
+    },
+    {
+      "id": "from_scenario",
+      "details": "Create Japanese entries needed for the provided scenario.",
+      "example": "\"shopping at a convenience store in Japan\"",
+      "workflowId": "direct_word_entry_creation",
+      "startStepId": "create_word_entries"
+    },
+    {
+      "id": "extract_headwords_from_text",
+      "details": "Extract useful headwords from Japanese text before later entry creation.",
+      "example": "\"{japanese text here}\"",
+      "workflowId": "extract_headwords_then_create_entries",
+      "startStepId": "extract_headwords"
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import { el, safeId } from '../../utils/browser/ui.js';
 import { openViewFooterCustomButtonDialog } from './viewFooterCustomButtonDialog.js';
 import { confirmDialog } from '../../components/dialogs/confirmDialog.js';
 import { createDropdown } from '../../components/shared/dropdown.js';
+import { createJsonViewer } from '../../components/shared/jsonViewer.js';
 import { getLanguageCode } from '../../utils/browser/speech.js';
 
 // Autoplay constraints
@@ -452,8 +453,8 @@ export function openViewFooterSettingsDialog({
   const controls = normalizeBaseControls(baseControls);
   const baseKeys = controls.map(c => c.key);
   let prefs = normalizeAppPrefs(appPrefs, controls, { customOnly: !!customOnly });
-  let savedPrefs = deepClone(prefs);
   let selectedConfigId = prefs.activeConfigId;
+  let savedPrefs = null;
   let isDirty = false;
   let expandedRows = new Set();
   let isConfigListCollapsed = false;
@@ -461,6 +462,8 @@ export function openViewFooterSettingsDialog({
   const availableActionById = new Map(availableActionList.map(a => [asString(a.id).trim(), a]));
   const templatePrefs = normalizeAppPrefs(defaultAppPrefs, controls, { customOnly: !!customOnly });
   const normalizedCollectionKey = asString(currentCollectionKey || collectionLabel).trim();
+  ensureSelectedConfigIsAvailable();
+  savedPrefs = deepClone(prefs);
 
   function normalizeActionFieldKey(fieldKey = '') {
     const raw = asString(fieldKey).trim();
@@ -628,9 +631,226 @@ export function openViewFooterSettingsDialog({
     delete config.controls[key];
   }
 
-  function markDirty() {
-    isDirty = JSON.stringify(prefs) !== JSON.stringify(savedPrefs);
+  function isPlainObject(value) {
+    return !!value && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function collectDiffEntries(left, right, path = 'prefs', out = [], limit = 20) {
+    if (out.length >= limit) return out;
+    if (left === right) return out;
+
+    const leftIsArray = Array.isArray(left);
+    const rightIsArray = Array.isArray(right);
+    if (leftIsArray || rightIsArray) {
+      if (!leftIsArray || !rightIsArray) {
+        out.push({ path, before: right, after: left, reason: 'type-mismatch' });
+        return out;
+      }
+      if (left.length !== right.length) {
+        out.push({ path: `${path}.length`, before: right.length, after: left.length, reason: 'array-length' });
+        if (out.length >= limit) return out;
+      }
+      const max = Math.max(left.length, right.length);
+      for (let i = 0; i < max && out.length < limit; i += 1) {
+        collectDiffEntries(left[i], right[i], `${path}[${i}]`, out, limit);
+      }
+      return out;
+    }
+
+    const leftIsObject = isPlainObject(left);
+    const rightIsObject = isPlainObject(right);
+    if (leftIsObject || rightIsObject) {
+      if (!leftIsObject || !rightIsObject) {
+        out.push({ path, before: right, after: left, reason: 'type-mismatch' });
+        return out;
+      }
+      const keys = new Set([...Object.keys(right), ...Object.keys(left)]);
+      for (const key of keys) {
+        if (out.length >= limit) break;
+        collectDiffEntries(left[key], right[key], `${path}.${key}`, out, limit);
+      }
+      return out;
+    }
+
+    out.push({ path, before: right, after: left, reason: 'value' });
+    return out;
+  }
+
+  function logDirtyDiff(context = 'markDirty') {
+    try {
+      const diffs = collectDiffEntries(prefs, savedPrefs);
+      console.debug('[viewFooterSettingsDialog] dirty diff', {
+        context,
+        diffCount: diffs.length,
+        diffs,
+        currentActiveConfigId: prefs?.activeConfigId,
+        savedActiveConfigId: savedPrefs?.activeConfigId,
+        selectedConfigId,
+      });
+    } catch (e) {}
+  }
+
+  function formatDiffValue(value) {
+    if (typeof value === 'undefined') return '(missing)';
+    if (value === null) return 'null';
+    if (typeof value === 'string') return value || '""';
+    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+    try { return JSON.stringify(value); } catch (e) {}
+    return String(value);
+  }
+
+  function renderPendingDiffSummary() {
+    if (!pendingDiffSummary) return;
+    pendingDiffSummary.innerHTML = '';
+    if (!isDirty) {
+      pendingDiffSummary.style.display = 'none';
+      return;
+    }
+    const diffs = collectDiffEntries(prefs, savedPrefs, 'prefs', [], 12);
+    if (!diffs.length) {
+      pendingDiffSummary.style.display = 'none';
+      return;
+    }
+    pendingDiffSummary.style.display = 'block';
+    pendingDiffSummary.appendChild(el('div', {
+      className: 'view-footer-pending-diff-title',
+      text: 'Pending changes',
+    }));
+    for (const diff of diffs) {
+      pendingDiffSummary.appendChild(el('div', {
+        className: 'view-footer-pending-diff-line',
+        text: `${diff.path}: ${formatDiffValue(diff.before)} -> ${formatDiffValue(diff.after)}`,
+      }));
+    }
+  }
+
+  function openJsonDialog({ title: dialogTitle = 'JSON', hint = '', data = null } = {}) {
+    const mount = document.body || document.documentElement;
+    if (!mount) return;
+
+    const backdrop = el('div');
+    const dialog = el('div', {
+      className: 'card',
+      attrs: {
+        role: 'dialog',
+        'aria-modal': 'true',
+        'aria-label': 'Footer config JSON',
+      },
+    });
+    dialog.tabIndex = -1;
+
+    try {
+      backdrop.style.position = 'fixed';
+      backdrop.style.inset = '0';
+      backdrop.style.background = 'rgba(0, 0, 0, 0.45)';
+      backdrop.style.zIndex = '1400';
+      dialog.style.position = 'fixed';
+      dialog.style.left = '50%';
+      dialog.style.top = '50%';
+      dialog.style.transform = 'translate(-50%, -50%)';
+      dialog.style.width = 'min(960px, calc(100vw - 2rem))';
+      dialog.style.maxHeight = 'calc(100vh - 2rem)';
+      dialog.style.display = 'flex';
+      dialog.style.flexDirection = 'column';
+      dialog.style.gap = '0.75rem';
+      dialog.style.padding = '0.9rem';
+      dialog.style.zIndex = '1401';
+      dialog.style.background = 'var(--surface, #1f2937)';
+      dialog.style.border = '1px solid var(--border-color, rgba(255, 255, 255, 0.16))';
+      dialog.style.boxShadow = '0 18px 48px rgba(0, 0, 0, 0.35)';
+      dialog.style.borderRadius = '0.75rem';
+    } catch (e) {}
+
+    const header = el('div', {
+      children: [
+        el('div', { text: asString(dialogTitle).trim() || 'JSON' }),
+        el('div', { className: 'hint', text: asString(hint).trim() }),
+      ],
+    });
+    try {
+      header.style.display = 'flex';
+      header.style.flexDirection = 'column';
+      header.style.gap = '0.2rem';
+      header.style.color = 'var(--text, #f9fafb)';
+    } catch (e) {}
+    try {
+      if (header.firstChild) {
+        header.firstChild.style.fontSize = '1rem';
+        header.firstChild.style.fontWeight = '700';
+        header.firstChild.style.color = 'var(--text, #f9fafb)';
+      }
+      if (header.lastChild) {
+        header.lastChild.style.color = 'var(--muted, #cbd5e1)';
+      }
+    } catch (e) {}
+
+    const viewer = createJsonViewer(deepClone(data), {
+      expanded: true,
+      maxChars: 200000,
+      maxLines: 10000,
+      previewLen: 400,
+    });
+    viewer.classList.add('kanji-study-card-config-json-viewer');
+    const viewerBody = el('div', { children: [viewer] });
+    try {
+      viewerBody.style.minHeight = '0';
+      viewerBody.style.overflow = 'auto';
+      viewerBody.style.flex = '1 1 auto';
+    } catch (e) {}
+
+    const closeJsonBtn = el('button', { className: 'btn', text: 'Close', attrs: { type: 'button' } });
+    const footer = el('div', { children: [closeJsonBtn] });
+    try {
+      footer.style.display = 'flex';
+      footer.style.justifyContent = 'flex-end';
+    } catch (e) {}
+
+    dialog.append(header, viewerBody, footer);
+
+    function closeJsonDialog() {
+      try { dialog.remove(); } catch (e) {}
+      try { backdrop.remove(); } catch (e) {}
+      try { dialog.removeEventListener('keydown', onJsonKeyDown); } catch (e) {}
+    }
+
+    function onJsonKeyDown(e) {
+      if (e.key !== 'Escape') return;
+      e.preventDefault();
+      closeJsonDialog();
+    }
+
+    closeJsonBtn.addEventListener('click', closeJsonDialog);
+    backdrop.addEventListener('click', closeJsonDialog);
+    dialog.addEventListener('keydown', onJsonKeyDown);
+
+    mount.append(backdrop, dialog);
+    try { dialog.focus(); } catch (e) {}
+  }
+
+  function openCurrentConfigJsonDialog() {
+    const cfg = selectedConfig();
+    if (!cfg) return;
+    openJsonDialog({
+      title: `Footer Settings Config - ${asString(cfg.name || cfg.id).trim() || 'Selected config'}`,
+      hint: `localStorage["study_cards:settings"]["apps.viewFooter.configs"]["${appId}"].configs[]`,
+      data: cfg,
+    });
+  }
+
+  function openStoredFooterPrefsJsonDialog() {
+    openJsonDialog({
+      title: `Footer Settings Store - ${appId}`,
+      hint: `localStorage["study_cards:settings"]["apps.viewFooter.configs"]["${appId}"]`,
+      data: prefs,
+    });
+  }
+
+  function markDirty(context = 'markDirty') {
+    const nextDirty = JSON.stringify(prefs) !== JSON.stringify(savedPrefs);
+    if (nextDirty) logDirtyDiff(context);
+    isDirty = nextDirty;
     if (saveBtn) saveBtn.disabled = !isDirty;
+    renderPendingDiffSummary();
   }
 
   function createNewConfig() {
@@ -846,9 +1066,16 @@ export function openViewFooterSettingsDialog({
   });
   dialog.tabIndex = -1;
 
+  const chromeActions = el('div', { className: 'view-footer-settings-actions' });
+  const dialogJsonBtn = el('button', {
+    className: 'btn small table-card-settings-btn kanji-study-card-config-json-btn',
+    text: 'JSON',
+    attrs: { type: 'button', title: 'Open JSON viewer for saved footer settings' },
+  });
   const closeBtn = el('button', { className: 'view-footer-settings-close btn small', text: '✕' });
   closeBtn.type = 'button';
   closeBtn.setAttribute('aria-label', 'Close footer settings');
+  chromeActions.append(dialogJsonBtn, closeBtn);
 
   const title = el('div', { className: 'view-footer-settings-title', text: 'Footer Settings' });
   const subtitle = el('div', { className: 'hint', text: `App: ${appId}` });
@@ -880,6 +1107,11 @@ export function openViewFooterSettingsDialog({
   addCustomBtn.type = 'button';
   const disableHotkeysBtn = el('button', { className: 'btn small', text: 'Disable Hotkeys' });
   disableHotkeysBtn.type = 'button';
+  const jsonBtn = el('button', {
+    className: 'btn small table-card-settings-btn kanji-study-card-config-json-btn',
+    text: 'JSON',
+    attrs: { type: 'button', title: 'Open JSON viewer for the current config' },
+  });
   const saveBtn = el('button', { className: 'btn small primary', text: 'Save' });
   saveBtn.type = 'button';
   saveBtn.disabled = true;
@@ -887,17 +1119,18 @@ export function openViewFooterSettingsDialog({
   const expandCollapseAllBtn = el('button', { className: 'btn small', text: 'Collapse All' });
   expandCollapseAllBtn.type = 'button';
   const validationWarning = el('div', { className: 'view-footer-validation-warning hint' });
+  const pendingDiffSummary = el('div', { className: 'view-footer-pending-diff hint' });
 
   rightTop.append(nameLabel, nameInput, expandCollapseAllBtn, saveBtn);
 
   const controlsTitle = el('div', { className: 'hint', text: 'Controls' });
   const controlsList = el('div', { className: 'view-footer-controls-editor-list' });
   // place action buttons directly in the controls wrapper (no extra actions wrapper)
-  const controlsWrapper = el('div', { className: 'view-footer-editor-controls', children: [controlsTitle, addEmptyBtn, addCustomBtn, disableHotkeysBtn] });
-  right.append(rightTop, validationWarning, controlsWrapper, controlsList);
+  const controlsWrapper = el('div', { className: 'view-footer-editor-controls', children: [controlsTitle, addEmptyBtn, addCustomBtn, disableHotkeysBtn, jsonBtn] });
+  right.append(rightTop, validationWarning, pendingDiffSummary, controlsWrapper, controlsList);
 
   const shell = el('div', { className: 'view-footer-settings-shell', children: [left, right] });
-  dialog.append(closeBtn, title, subtitle, shell);
+  dialog.append(chromeActions, title, subtitle, shell);
 
   function updateConfigListCollapseUi() {
     const cfg = selectedConfig();
@@ -1805,7 +2038,7 @@ export function openViewFooterSettingsDialog({
     renderConfigList();
     renderEditor();
     try { updateDisableHotkeysText(); } catch (e) {}
-    markDirty();
+    markDirty('renderAll');
   }
 
   newBtn.addEventListener('click', () => {
@@ -1887,6 +2120,14 @@ export function openViewFooterSettingsDialog({
     renderEditor();
   });
 
+  jsonBtn.addEventListener('click', () => {
+    openCurrentConfigJsonDialog();
+  });
+
+  dialogJsonBtn.addEventListener('click', () => {
+    openStoredFooterPrefsJsonDialog();
+  });
+
   expandCollapseAllBtn.addEventListener('click', () => {
     const rows = Array.from(controlsList.querySelectorAll('.view-footer-control-row'));
     if (!rows.length) return;
@@ -1918,7 +2159,7 @@ export function openViewFooterSettingsDialog({
     if (!isDirty) return;
     emitSave();
     savedPrefs = deepClone(prefs);
-    markDirty();
+    markDirty('save');
   });
 
   let closed = false;
@@ -1977,7 +2218,7 @@ export function openViewFooterSettingsDialog({
       if (res === 'save') {
         try { emitSave(); } catch (e) {}
         savedPrefs = deepClone(prefs);
-        markDirty();
+        markDirty('attemptClose:save');
         close();
         return;
       }
@@ -2021,6 +2262,7 @@ export function openViewFooterSettingsDialog({
   dialog.style.left = '50%';
   dialog.style.top = '45%';
   dialog.style.transform = 'translate(-50%, -50%)';
+  dialog.style.width = 'auto';
 
   renderAll();
 
@@ -2038,11 +2280,3 @@ export function openViewFooterSettingsDialog({
 
   return { close };
 }
-
-
-
-
-
-
-
-

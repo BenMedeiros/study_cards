@@ -1,0 +1,210 @@
+{
+  "version": 1,
+  "kind": "collection-prompt-spec",
+  "collection": "spanish/spanish_sentences.json",
+  "defaults": {
+    "stepId": "create_sentence_units",
+    "promptRequestPlaceholder": "<fill in the prompt request here>"
+  },
+  "shared": {
+    "context": [
+      "You are generating or enriching entries for the Spanish sentences collection.",
+      "Work only on the requested workflow step.",
+      "Return only a JSON array."
+    ],
+    "outputRequirements": [
+      "Return only a JSON array.",
+      "No extra text.",
+      "Follow the active step's field rules exactly."
+    ],
+    "rules": [
+      "Write natural Spanish and natural English.",
+      "Keep output learner-friendly.",
+      "Omit optional fields when they add no value."
+    ]
+  },
+  "steps": [
+    {
+      "id": "split_into_sentence_units",
+      "title": "Split Into Sentence Units",
+      "goal": "Split raw Spanish text into natural sentence units before later sentence creation.",
+      "inputContract": [
+        "The request provides a raw Spanish blob, passage, or messy text.",
+        "Return only a JSON array of clean Spanish sentence-unit strings in order."
+      ],
+      "fieldRules": [
+        {
+          "field": "array item",
+          "type": "string",
+          "description": "A clean Spanish sentence unit."
+        }
+      ],
+      "instructions": [
+        "Preserve the original order.",
+        "Do not translate in this step.",
+        "Prefer natural sentence boundaries over overly fine splitting."
+      ],
+      "handoff": {
+        "nextStepIds": [
+          "create_sentence_units"
+        ]
+      }
+    },
+    {
+      "id": "create_sentence_units",
+      "title": "Create Sentence Units",
+      "goal": "Create Spanish sentence entries with full-line Spanish and English, without chunking unless explicitly requested.",
+      "inputContract": [
+        "The request may provide already-separated Spanish sentences, ideas, grammar targets, categories, scenarios, or a list from the split step.",
+        "Return full sentence-entry objects."
+      ],
+      "fieldRules": [
+        {
+          "field": "es",
+          "type": "string",
+          "description": "Full natural Spanish sentence."
+        },
+        {
+          "field": "en",
+          "type": "string",
+          "description": "Natural English translation of the full sentence."
+        },
+        {
+          "field": "notes",
+          "type": "string[]",
+          "description": "Optional learner notes. Omit when unnecessary."
+        }
+      ],
+      "instructions": [
+        "Do not add `chunks` unless the request explicitly asks for chunking in the same pass.",
+        "Keep the output natural and learner-friendly."
+      ],
+      "handoff": {
+        "nextStepIds": [
+          "add_chunks"
+        ]
+      }
+    },
+    {
+      "id": "add_chunks",
+      "title": "Add Chunks",
+      "goal": "Add learner-friendly chunks to existing Spanish sentence entries as a dedicated later pass.",
+      "inputContract": [
+        "The request provides sentence entries that already contain `es` and `en`.",
+        "Return sentence-entry objects with chunk enrichment."
+      ],
+      "preserveRules": [
+        "Preserve existing `es` and `en` unless the request explicitly asks for corrections.",
+        "Preserve sentence order."
+      ],
+      "fieldRules": [
+        {
+          "field": "chunks[].es",
+          "type": "string",
+          "description": "Chunk text exactly as it appears in the sentence."
+        },
+        {
+          "field": "chunks[].en",
+          "type": "string",
+          "description": "Short learner-friendly English rendering of the chunk."
+        },
+        {
+          "field": "chunks[].refs",
+          "type": "string[]",
+          "description": "Referenced Spanish terms for that chunk."
+        }
+      ],
+      "instructions": [
+        "Keep chunks ordered and faithful to the sentence surface form.",
+        "Use refs only for meaningful Spanish terms actually present in the chunk.",
+        "Prefer chunking that helps a learner read the sentence naturally."
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "id": "split_only",
+      "stepIds": [
+        "split_into_sentence_units"
+      ]
+    },
+    {
+      "id": "sentence_units_only",
+      "stepIds": [
+        "create_sentence_units"
+      ]
+    },
+    {
+      "id": "chunking_only",
+      "stepIds": [
+        "add_chunks"
+      ]
+    },
+    {
+      "id": "split_then_sentence_units_then_chunking",
+      "stepIds": [
+        "split_into_sentence_units",
+        "create_sentence_units",
+        "add_chunks"
+      ]
+    },
+    {
+      "id": "sentence_units_then_optional_chunking",
+      "stepIds": [
+        "create_sentence_units",
+        "add_chunks"
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "given_sentences",
+      "details": "Create sentence entries from already-separated Spanish sentences.",
+      "example": "[sentence1, sentence2, sentence3]",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    },
+    {
+      "id": "given_messy_blob",
+      "details": "Split raw Spanish text into sentence units before later sentence creation.",
+      "example": "\"{raw text here}\"",
+      "workflowId": "split_then_sentence_units_then_chunking",
+      "startStepId": "split_into_sentence_units"
+    },
+    {
+      "id": "from_words",
+      "details": "Create beginner-friendly sentence entries using the provided Spanish words.",
+      "example": "[word1, word2, word3]",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    },
+    {
+      "id": "from_sentence_ideas",
+      "details": "Create sentence entries from the provided Spanish sentence ideas.",
+      "example": "[idea1, idea2, idea3]",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    },
+    {
+      "id": "from_grammar_points",
+      "details": "Create sentence entries that practice the provided grammar points.",
+      "example": "[present tense, gustar, ir a + infinitive]",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    },
+    {
+      "id": "from_categories",
+      "details": "Create sentence entries in the provided categories.",
+      "example": "[travel, food, school, daily routines]",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    },
+    {
+      "id": "from_scenario",
+      "details": "Create sentence entries for the provided real-world scenario.",
+      "example": "\"ordering food at a cafe\"",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    }
+  ]
+}

@@ -34,46 +34,47 @@ function normalizeCardConfig(config) {
   return next;
 }
 
-export function createMainFieldCard({ entry = null, indexText = '', config = {}, handlers = {} } = {}) {
+export function createMainFieldCard({ entry = null, indexText = '', config = {}, handlers = {}, documentRef = document } = {}) {
   settingsLog('[Card:Main] createMainFieldCard()', { entry, indexText, config });
-  const root = document.createElement('div');
+  const doc = documentRef || document;
+  const root = doc.createElement('div');
   root.className = 'card kanji-study-card main-field-card';
 
-  const wrapper = document.createElement('div');
+  const wrapper = doc.createElement('div');
   wrapper.className = 'main-field-card-wrapper';
   wrapper.tabIndex = 0;
 
-  const topRight = document.createElement('div');
+  const topRight = doc.createElement('div');
   topRight.className = 'kanji-study-card-top-right';
 
-  const corner = document.createElement('div');
+  const corner = doc.createElement('div');
   corner.className = 'card-corner-caption';
   corner.textContent = indexText || '';
 
-  const actions = document.createElement('div');
+  const actions = doc.createElement('div');
   actions.className = 'kanji-study-card-actions';
 
-  const body = document.createElement('div');
+  const body = doc.createElement('div');
   body.className = 'main-field-card-body';
 
-  const topLeft = document.createElement('div');
+  const topLeft = doc.createElement('div');
   topLeft.className = 'main-field-card-top-left';
 
-  const mainWrap = document.createElement('div');
+  const mainWrap = doc.createElement('div');
   mainWrap.className = 'main-field-card-main-wrap';
 
-  const main = document.createElement('div');
+  const main = doc.createElement('div');
   main.className = 'main-field-card-main';
   main.style.fontSize = '5rem';
 
-  const mainSecondary = document.createElement('div');
+  const mainSecondary = doc.createElement('div');
   mainSecondary.className = 'main-field-card-main';
   mainSecondary.style.fontSize = '5rem';
 
-  const bottomLeft = document.createElement('div');
+  const bottomLeft = doc.createElement('div');
   bottomLeft.className = 'main-field-card-bottom-left';
 
-  const bottomRight = document.createElement('div');
+  const bottomRight = doc.createElement('div');
   bottomRight.className = 'main-field-card-bottom-right';
 
   topRight.append(corner, actions);
@@ -95,7 +96,7 @@ export function createMainFieldCard({ entry = null, indexText = '', config = {},
     ? handlers.onOpenConfig
     : (config && typeof config.onOpenConfig === 'function' ? config.onOpenConfig : null);
   if (typeof openConfig === 'function') {
-    const configBtn = document.createElement('button');
+    const configBtn = doc.createElement('button');
     configBtn.type = 'button';
     configBtn.className = 'icon-button kanji-study-card-config-btn';
     configBtn.title = 'Configure card';

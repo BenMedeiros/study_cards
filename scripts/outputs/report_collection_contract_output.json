@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-03-30T18:58:57.967Z",
+  "generatedAt": "2026-04-13T18:20:23.670Z",
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_collection_contract_output.json",
   "runTiming": {
-    "startedAt": "2026-03-30T18:58:57.919Z",
-    "finishedAt": "2026-03-30T18:58:57.968Z",
-    "durationMs": 49,
-    "durationSeconds": 0.049
+    "startedAt": "2026-04-13T18:20:23.621Z",
+    "finishedAt": "2026-04-13T18:20:23.671Z",
+    "durationMs": 50,
+    "durationSeconds": 0.05
   },
-  "scannedCollections": 18,
-  "collectionsWithProblems": 10,
+  "scannedCollections": 19,
+  "collectionsWithProblems": 11,
   "parseErrors": [],
   "reports_clean": [
     {
@@ -153,9 +153,9 @@
       "duplicateCount": 0
     },
     {
-      "collectionPath": "collections/japanese/japanese_sentences.promptPresets.json",
+      "collectionPath": "collections/japanese/japanese_sentences.prompt.json",
       "valid": false,
-      "arrayKey": "prompts",
+      "arrayKey": "steps",
       "entryKeyField": "id",
       "collectionErrors": [
         {
@@ -166,6 +166,24 @@
         },
         {
           "message": "$.version is not allowed by the collection contract."
+        },
+        {
+          "message": "$.kind is not allowed by the collection contract."
+        },
+        {
+          "message": "$.collection is not allowed by the collection contract."
+        },
+        {
+          "message": "$.defaults is not allowed by the collection contract."
+        },
+        {
+          "message": "$.shared is not allowed by the collection contract."
+        },
+        {
+          "message": "$.steps is not allowed by the collection contract."
+        },
+        {
+          "message": "$.workflows is not allowed by the collection contract."
         },
         {
           "message": "$.prompts is not allowed by the collection contract."
@@ -196,6 +214,50 @@
       "duplicateCount": 0
     },
     {
+      "collectionPath": "collections/japanese/japanese_songs.prompt.json",
+      "valid": false,
+      "arrayKey": "steps",
+      "entryKeyField": "id",
+      "collectionErrors": [
+        {
+          "message": "$.metadata is required."
+        },
+        {
+          "message": "$.entries is required."
+        },
+        {
+          "message": "$.version is not allowed by the collection contract."
+        },
+        {
+          "message": "$.kind is not allowed by the collection contract."
+        },
+        {
+          "message": "$.collection is not allowed by the collection contract."
+        },
+        {
+          "message": "$.defaults is not allowed by the collection contract."
+        },
+        {
+          "message": "$.shared is not allowed by the collection contract."
+        },
+        {
+          "message": "$.steps is not allowed by the collection contract."
+        },
+        {
+          "message": "$.workflows is not allowed by the collection contract."
+        },
+        {
+          "message": "$.prompts is not allowed by the collection contract."
+        }
+      ],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
       "collectionPath": "collections/japanese/japanese_words.json",
       "valid": false,
       "arrayKey": "entries",
@@ -213,9 +275,9 @@
       "duplicateCount": 42
     },
     {
-      "collectionPath": "collections/japanese/japanese_words.promptPresets.json",
+      "collectionPath": "collections/japanese/japanese_words.prompt.json",
       "valid": false,
-      "arrayKey": "prompts",
+      "arrayKey": "steps",
       "entryKeyField": "id",
       "collectionErrors": [
         {
@@ -226,6 +288,24 @@
         },
         {
           "message": "$.version is not allowed by the collection contract."
+        },
+        {
+          "message": "$.kind is not allowed by the collection contract."
+        },
+        {
+          "message": "$.collection is not allowed by the collection contract."
+        },
+        {
+          "message": "$.defaults is not allowed by the collection contract."
+        },
+        {
+          "message": "$.shared is not allowed by the collection contract."
+        },
+        {
+          "message": "$.steps is not allowed by the collection contract."
+        },
+        {
+          "message": "$.workflows is not allowed by the collection contract."
         },
         {
           "message": "$.prompts is not allowed by the collection contract."

@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "kind": "collection-prompt-spec",
+  "collection": "spanish/spanish_words.json",
+  "defaults": {
+    "stepId": "create_word_entries",
+    "promptRequestPlaceholder": "<fill in the prompt request here>"
+  },
+  "shared": {
+    "context": [
+      "You are generating or enriching entries for the Spanish words collection.",
+      "Work only on the requested workflow step.",
+      "Return only a JSON array."
+    ],
+    "outputRequirements": [
+      "Return only a JSON array.",
+      "No extra text.",
+      "Follow the active step's field rules exactly."
+    ],
+    "rules": [
+      "Match the concise dictionary style of the examples.",
+      "Prefer common useful vocabulary.",
+      "Prefer dictionary headword forms when possible, such as verbs in the infinitive and nouns in the singular.",
+      "Use `expression` for fixed multi-word expressions.",
+      "Omit optional fields when they add no value."
+    ]
+  },
+  "steps": [
+    {
+      "id": "create_word_entries",
+      "title": "Create Word Entries",
+      "goal": "Create new Spanish word entries from provided words, meanings, categories, or scenario prompts.",
+      "inputContract": [
+        "The request may provide Spanish words, English meanings, categories, item lists, or a scenario.",
+        "Return full Spanish word-entry objects."
+      ],
+      "fieldRules": [
+        {
+          "field": "term",
+          "type": "string",
+          "description": "Main study term. Usually a single word, but short useful phrases are allowed."
+        },
+        {
+          "field": "meaning",
+          "type": "string",
+          "description": "Short English gloss."
+        },
+        {
+          "field": "type",
+          "type": "enum",
+          "description": "noun, proper-noun, verb, adjective, adverb, pronoun, determiner, preposition, conjunction, interjection, expression"
+        },
+        {
+          "field": "semanticClass",
+          "type": "string",
+          "description": "Optional semantic grouping such as food, home, animals, people, city, or time."
+        },
+        {
+          "field": "gender",
+          "type": "enum",
+          "description": "m, f, mf, f_el. Only for nouns when relevant."
+        },
+        {
+          "field": "tags",
+          "type": "string[]",
+          "description": "Optional. Use only when useful."
+        }
+      ],
+      "instructions": [
+        "Use infinitives for verbs where appropriate.",
+        "Use singular headword forms for nouns unless the plural is the real lexical entry.",
+        "Use `f_el` for feminine nouns that take singular `el` before stressed /a/."
+      ]
+    },
+    {
+      "id": "extract_headwords",
+      "title": "Extract Headwords",
+      "goal": "Extract useful Spanish headwords from supplied Spanish text before later entry creation.",
+      "inputContract": [
+        "The request provides Spanish text such as a sentence, passage, or short dialogue.",
+        "Return only a JSON array of useful canonical Spanish headword strings."
+      ],
+      "fieldRules": [
+        {
+          "field": "array item",
+          "type": "string",
+          "description": "A useful canonical Spanish headword suitable for later entry creation."
+        }
+      ],
+      "instructions": [
+        "Prefer useful headwords over exhaustive extraction.",
+        "Prefer infinitives, singular nouns, and canonical adjective forms where applicable.",
+        "Skip trivial function-word-only extraction unless intentionally requested."
+      ],
+      "handoff": {
+        "nextStepIds": [
+          "create_word_entries"
+        ]
+      }
+    }
+  ],
+  "workflows": [
+    {
+      "id": "direct_word_entry_creation",
+      "stepIds": [
+        "create_word_entries"
+      ]
+    },
+    {
+      "id": "extract_headwords_then_create_entries",
+      "stepIds": [
+        "extract_headwords",
+        "create_word_entries"
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "from_words",
+      "details": "Create entries for the provided Spanish words.",
+      "example": "[word1, word2, word3]",
+      "workflowId": "direct_word_entry_creation",
+      "startStepId": "create_word_entries"
+    },
+    {
+      "id": "from_spanish_sentence",
+      "details": "Extract useful headwords from the provided Spanish sentence before later entry creation.",
+      "example": "\"{spanish sentence here}\"",
+      "workflowId": "extract_headwords_then_create_entries",
+      "startStepId": "extract_headwords"
+    },
+    {
+      "id": "from_english_meanings",
+      "details": "Create Spanish entries from the provided English meanings.",
+      "example": "[water, to arrive, fast, however]",
+      "workflowId": "direct_word_entry_creation",
+      "startStepId": "create_word_entries"
+    },
+    {
+      "id": "from_categories",
+      "details": "Create Spanish entries in the provided categories.",
+      "example": "[travel, food, school, daily routines]",
+      "workflowId": "direct_word_entry_creation",
+      "startStepId": "create_word_entries"
+    },
+    {
+      "id": "from_scenario",
+      "details": "Create Spanish entries needed for the provided scenario.",
+      "example": "\"ordering food at a cafe\"",
+      "workflowId": "direct_word_entry_creation",
+      "startStepId": "create_word_entries"
+    }
+  ]
+}

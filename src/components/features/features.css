@@ -73,6 +73,26 @@
   user-select: text;
 }
 
+.view-header-cast-button,
+.view-header-pip-button {
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+}
+
+.view-header-cast-button svg,
+.view-header-pip-button svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+.view-header-cast-button[aria-pressed="true"],
+.view-header-pip-button[aria-pressed="true"] {
+  background: var(--accent-bg-medium-strong);
+  border-color: var(--accent-border);
+}
+
 /* Make expansion dropdown button show multi-line selections (\n). */
 .data-expansion-dropdown .custom-dropdown-button,
 .custom-dropdown-button.custom-dropdown-button-multiline {

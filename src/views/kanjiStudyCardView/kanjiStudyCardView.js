@@ -8,9 +8,10 @@ import { CARD_REGISTRY } from './cards/index.js';
 import { addStudyFilter } from '../../components/features/studyControls.js';
 import { addShuffleControls } from '../../components/features/collectionControls.js';
 import kanjiStudyController from './kanjiStudyController.js';
-import { openGenericFlatCardConfigDialog } from './genericFlatCardConfigDialog.js';
-import { openRelatedCardConfigDialog } from './relatedCardConfigDialog.js';
+import { openGenericFlatCardConfigDialog, openRelatedCardConfigDialog } from './cardConfigDialog.js';
 import { createKanjiStudyFooterActionsController } from './actionsController.js';
+import { createMainFieldCardCastSession } from '../../integrations/casting/mainFieldCardCastSession.js';
+import { createGoogleCastSender } from '../../integrations/casting/googleCastSender.js';
 
 const GENERIC_CARD_SETTINGS_KEY = 'genericFlatCard';
 const MAIN_CARD_SETTINGS_KEY = 'main';
@@ -352,6 +353,21 @@ export function renderKanjiStudyCard({ store }) {
   // Root UI pieces
   const headerTools = createViewHeaderTools();
   const cardApis = {};
+  const mainFieldCastSession = createMainFieldCardCastSession();
+  const googleCastSender = createGoogleCastSender({
+    getReceiverAppId: () => {
+      try {
+        return store?.settings?.get?.('apps.kanjiStudy.castReceiverAppId', { consumerId: 'kanjiStudyCardView' }) || '';
+      } catch (e) {
+        return '';
+      }
+    },
+    setReceiverAppId: (nextValue) => {
+      try {
+        store?.settings?.set?.('apps.kanjiStudy.castReceiverAppId', String(nextValue || '').trim(), { consumerId: 'kanjiStudyCardView' });
+      } catch (e) {}
+    },
+  });
 
   // Track whether we mounted header/footer into the shell main container
   let __mountedHeaderInShell = false;
@@ -515,6 +531,7 @@ export function renderKanjiStudyCard({ store }) {
         for (const fk of Object.keys(map)) api.setFieldVisible(fk, !!map[fk]);
       }
     }
+    syncMainFieldCastView();
   }
 
   function getEntryFieldVisibilityMap() {
@@ -705,9 +722,13 @@ export function renderKanjiStudyCard({ store }) {
 
   function applyMainCardConfig() {
     const mainCardApi = getCardApi('main', { createIfMissing: false });
-    if (!mainCardApi) return;
-    if (typeof mainCardApi.setAvailableFields === 'function') mainCardApi.setAvailableFields(getGenericCardAvailableFields());
-    if (typeof mainCardApi.setConfig === 'function') mainCardApi.setConfig(getMainCardConfig());
+    const availableFields = getGenericCardAvailableFields();
+    const mainCardConfig = getMainCardConfig();
+    if (mainCardApi) {
+      if (typeof mainCardApi.setAvailableFields === 'function') mainCardApi.setAvailableFields(availableFields);
+      if (typeof mainCardApi.setConfig === 'function') mainCardApi.setConfig(mainCardConfig);
+    }
+    syncMainFieldCastView();
   }
 
   function applyGenericCardConfig() {
@@ -914,6 +935,77 @@ export function renderKanjiStudyCard({ store }) {
     caption: 'entry.fields.visibility'
   });
   entryFieldsControl = entryFieldsRec && entryFieldsRec.control ? entryFieldsRec.control : null;
+
+  headerTools.addElement({
+    type: 'custom',
+    key: 'castMainField',
+    caption: 'cast',
+    create: () => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'icon-button view-header-cast-button';
+      btn.title = 'Cast main card to a device. Alt+Click to configure receiver app ID.';
+      btn.setAttribute('aria-label', 'Cast main card to a device');
+      btn.setAttribute('aria-pressed', 'false');
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M3 18h2a1 1 0 0 1 1 1v2H4a1 1 0 0 1-1-1z"></path>
+          <path d="M3 14a7 7 0 0 1 7 7H8a5 5 0 0 0-5-5z"></path>
+          <path d="M3 10a11 11 0 0 1 11 11h-2A9 9 0 0 0 3 12z"></path>
+          <path d="M5 4h14a2 2 0 0 1 2 2v7h-2V6H5v2H3V6a2 2 0 0 1 2-2z"></path>
+        </svg>
+      `;
+      btn.addEventListener('click', async (event) => {
+        try {
+          if (event.altKey || event.shiftKey) {
+            await googleCastSender.configure();
+          } else {
+            await googleCastSender.send(getMainFieldCastSnapshot());
+          }
+        } catch (e) {
+          try { console.warn('[casting] unable to start Google Cast session', e); } catch (err) {}
+        } finally {
+          btn.setAttribute('aria-pressed', String(googleCastSender.isActive()));
+        }
+      });
+      return btn;
+    },
+  });
+
+  headerTools.addElement({
+    type: 'custom',
+    key: 'pipMainField',
+    caption: 'pip',
+    create: () => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'icon-button view-header-pip-button';
+      btn.title = 'Open main card in Picture-in-Picture';
+      btn.setAttribute('aria-label', 'Open main card in Picture-in-Picture');
+      btn.setAttribute('aria-pressed', 'false');
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm0 2v10h16V7z"></path>
+          <path d="M13 11h6v4h-6z"></path>
+        </svg>
+      `;
+      if (!mainFieldCastSession.isSupported()) {
+        btn.disabled = true;
+        btn.title = 'Picture-in-Picture view is not supported in this browser';
+        btn.setAttribute('aria-label', 'Picture-in-Picture view not supported in this browser');
+      }
+      btn.addEventListener('click', async () => {
+        try {
+          const isOpen = await mainFieldCastSession.toggle(getMainFieldCastSnapshot());
+          btn.setAttribute('aria-pressed', String(!!isOpen));
+        } catch (e) {
+          btn.setAttribute('aria-pressed', 'false');
+          try { console.warn('[casting] unable to open cast session', e); } catch (err) {}
+        }
+      });
+      return btn;
+    },
+  });
 
   const scrubThresholdItems = createScrubThresholdItems();
   const scrubThresholdRec = headerTools.addElement({
@@ -1614,6 +1706,34 @@ export function renderKanjiStudyCard({ store }) {
     }
   }
 
+  function getMainFieldCastSnapshot(overrides = {}) {
+    const entry = Object.prototype.hasOwnProperty.call(overrides, 'entry') ? overrides.entry : entries[index];
+    const total = Array.isArray(entries) ? entries.length : 0;
+    const indexText = Object.prototype.hasOwnProperty.call(overrides, 'indexText')
+      ? overrides.indexText
+      : (total ? `${index + 1} / ${total}` : 'Empty');
+    const collectionKey = getCurrentCollectionKey();
+    return {
+      entry: entry || null,
+      indexText,
+      availableFields: getGenericCardAvailableFields(),
+      cardConfig: getMainCardConfig(),
+      visibilityMap: getEntryFieldVisibilityMap(),
+      mode: defaultViewMode,
+      title: collectionKey ? `Study Cards Cast - ${collectionKey}` : 'Study Cards Cast',
+    };
+  }
+
+  function syncMainFieldCastView(overrides = {}) {
+    const castBtn = typeof headerTools.getControl === 'function' ? headerTools.getControl('castMainField') : null;
+    const pipBtn = typeof headerTools.getControl === 'function' ? headerTools.getControl('pipMainField') : null;
+    if (castBtn) castBtn.setAttribute('aria-pressed', String(googleCastSender.isActive()));
+    if (pipBtn) pipBtn.setAttribute('aria-pressed', String(mainFieldCastSession.isActive()));
+    if (!mainFieldCastSession.isActive()) return;
+    mainFieldCastSession.update(getMainFieldCastSnapshot(overrides));
+    if (pipBtn) pipBtn.setAttribute('aria-pressed', String(mainFieldCastSession.isActive()));
+  }
+
   function render({ skipRefresh = false, forceCardKeys = null, skipTrackerSync = false } = {}) {
     if (!skipRefresh && !isShuffled) {
       refreshEntriesFromStore();
@@ -1696,6 +1816,10 @@ export function renderKanjiStudyCard({ store }) {
 
     // Update learned/focus button state
     updateMarkButtons();
+    syncMainFieldCastView({ entry, indexText: caption });
+    if (googleCastSender.isActive()) {
+      googleCastSender.send(getMainFieldCastSnapshot({ entry, indexText: caption })).catch(() => {});
+    }
   }
 
   // Initial population — refresh entries and render (saved order is applied in refresh)
@@ -1902,6 +2026,7 @@ export function renderKanjiStudyCard({ store }) {
       if (__mountedFooterInShell && footerControls && footerControls.el && footerControls.el.parentNode) footerControls.el.parentNode.removeChild(footerControls.el);
       // explicitly unregister footer key handler if provided
       if (footerControls && typeof footerControls.__unregister === 'function') footerControls.__unregister();
+      mainFieldCastSession.close();
       for (const c of (Array.isArray(CARD_REGISTRY) ? CARD_REGISTRY : [])) destroyCardApi(c.key);
       observer.disconnect();
     }

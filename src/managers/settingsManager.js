@@ -95,6 +95,7 @@ const CATALOG = Object.freeze((() => {
     'apps.kanjiStudy.defaultViewMode': { type: { kind: 'enum', values: ['kanji-only', 'full'] }, default: 'kanji-only' },
     'apps.kanjiStudy.isAutoSpeak': { type: { kind: 'boolean' }, default: false },
     'apps.kanjiStudy.autoplaySequence': { type: { kind: 'json' }, default: [] },
+    'apps.kanjiStudy.castReceiverAppId': { type: { kind: 'string' }, default: '' },
 
     // apps.viewFooter.*
     'apps.viewFooter.configs': { type: { kind: 'json' }, default: {} },

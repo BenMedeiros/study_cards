@@ -1,0 +1,317 @@
+{
+  "version": 1,
+  "kind": "collection-prompt-spec",
+  "collection": "japanese/japanese_songs.json",
+  "defaults": {
+    "stepId": "metadata_only",
+    "promptRequestPlaceholder": "<fill in the prompt request here>"
+  },
+  "shared": {
+    "context": [
+      "You are generating or enriching Japanese song entries.",
+      "Work only on the requested workflow step.",
+      "Return only a JSON array."
+    ],
+    "outputRequirements": [
+      "Return only a JSON array.",
+      "No extra text.",
+      "Follow the active step's field rules exactly."
+    ],
+    "rules": [
+      "Do not fabricate copyrighted lyrics that were not provided by the user.",
+      "Preserve user-provided lyrics while normalizing obvious whitespace or formatting noise.",
+      "Write natural English that stays faithful to the Japanese.",
+      "Keep lyric-line and sentence-unit order faithful to the song.",
+      "Omit optional fields when they add no value."
+    ]
+  },
+  "steps": [
+    {
+      "id": "metadata_only",
+      "title": "Metadata Only",
+      "goal": "Create song shell entries from a song title, album, artist, or seed list without adding lyrics or sentence analysis.",
+      "inputContract": [
+        "The request names one or more songs, albums, artists, or seed descriptors.",
+        "Lyrics may be missing at this stage."
+      ],
+      "fieldRules": [
+        {
+          "field": "id",
+          "type": "string",
+          "description": "Stable slug for the song."
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "description": "Song title as commonly written for the Japanese release or source material."
+        },
+        {
+          "field": "artist",
+          "type": "string",
+          "description": "Artist or group name. Omit only if truly unknown."
+        },
+        {
+          "field": "album",
+          "type": "string",
+          "description": "Album, single, soundtrack, or release grouping. Omit when unknown."
+        },
+        {
+          "field": "releaseYear",
+          "type": "number",
+          "description": "Release year. Omit when unknown."
+        },
+        {
+          "field": "genre",
+          "type": "string[]",
+          "description": "Optional genre or style tags."
+        },
+        {
+          "field": "notes",
+          "type": "string[]",
+          "description": "Optional song-level notes."
+        },
+        {
+          "field": "tags",
+          "type": "string[]",
+          "description": "Optional machine-friendly tags."
+        },
+        {
+          "field": "ja",
+          "type": "null",
+          "description": "Always set to null at this stage."
+        },
+        {
+          "field": "en",
+          "type": "null",
+          "description": "Always set to null at this stage."
+        },
+        {
+          "field": "sentences",
+          "type": "null",
+          "description": "Always set to null at this stage."
+        }
+      ],
+      "instructions": [
+        "Create metadata only.",
+        "Do not generate or reconstruct lyrics.",
+        "Initialize `ja`, `en`, and `sentences` to null."
+      ],
+      "handoff": {
+        "nextStepIds": [
+          "lyrics_only"
+        ],
+        "expectedState": [
+          "The song entry exists with metadata fields filled as confidently as possible.",
+          "`ja`, `en`, and `sentences` are null."
+        ]
+      }
+    },
+    {
+      "id": "lyrics_only",
+      "title": "Lyrics And Translation",
+      "goal": "Populate full-song `ja` and `en` from user-provided Japanese lyrics or a curated lyric paste, without creating sentence units yet.",
+      "inputContract": [
+        "An existing song entry already exists or an id/title is supplied with user-provided Japanese lyrics.",
+        "The user provides the lyrics content to be normalized."
+      ],
+      "preserveRules": [
+        "Preserve existing metadata unless the request explicitly asks for corrections.",
+        "Do not create or modify `sentences` in this step unless the request explicitly asks for sentence extraction too."
+      ],
+      "fieldRules": [
+        {
+          "field": "ja",
+          "type": "string",
+          "description": "Full Japanese lyrics, normalized but not rewritten."
+        },
+        {
+          "field": "en",
+          "type": "string",
+          "description": "Natural English translation of the full lyrics."
+        },
+        {
+          "field": "sentences",
+          "type": "null",
+          "description": "Leave null unless the request explicitly asks for sentence extraction in the same pass."
+        }
+      ],
+      "instructions": [
+        "Normalize formatting, but do not silently rewrite lyric content.",
+        "Preserve line order and stanza breaks where they matter.",
+        "Stop after filling `ja` and `en` if the request is only for lyrics enrichment."
+      ],
+      "handoff": {
+        "nextStepIds": [
+          "sentence_units_only"
+        ],
+        "expectedState": [
+          "The song entry contains full `ja` and `en` lyrics.",
+          "`sentences` remains null unless a combined run explicitly requests sentence extraction."
+        ]
+      }
+    },
+    {
+      "id": "sentence_units_only",
+      "title": "Sentence Units Only",
+      "goal": "Convert existing lyrics into ordered `sentences` entries with `ja` and `en` only.",
+      "inputContract": [
+        "The song entry already contains `ja` and `en` lyrics.",
+        "The request is specifically asking for sentence-unit or lyric-line extraction."
+      ],
+      "preserveRules": [
+        "Preserve the existing full-song `ja` and `en`.",
+        "Do not add `chunks` unless the request explicitly asks for chunking too."
+      ],
+      "fieldRules": [
+        {
+          "field": "sentences[].ja",
+          "type": "string",
+          "description": "Lyric line or sentence exactly as it appears in the curated lyrics."
+        },
+        {
+          "field": "sentences[].en",
+          "type": "string",
+          "description": "Natural English rendering for that line."
+        },
+        {
+          "field": "sentences[].notes",
+          "type": "string[]",
+          "description": "Optional learner notes for that line."
+        },
+        {
+          "field": "sentences[].grammarNotes",
+          "type": "string[]",
+          "description": "Optional high-value grammar recognition notes."
+        }
+      ],
+      "instructions": [
+        "Prefer lyric-line units unless the request explicitly asks for a different grouping.",
+        "Create ordered `sentences` with `ja` and `en` only.",
+        "Omit `chunks` in this step."
+      ],
+      "handoff": {
+        "nextStepIds": [
+          "chunking_only"
+        ],
+        "expectedState": [
+          "The song entry contains ordered `sentences` records with `ja` and `en`.",
+          "Chunking remains deferred."
+        ]
+      }
+    },
+    {
+      "id": "chunking_only",
+      "title": "Chunking Only",
+      "goal": "Add or revise `sentences[].chunks` for existing song sentence units without rewriting the sentence-level content.",
+      "inputContract": [
+        "The song entry already contains `sentences[].ja` and `sentences[].en`.",
+        "The request is specifically about chunking, chunk repair, or chunk enrichment."
+      ],
+      "preserveRules": [
+        "Preserve sentence order.",
+        "Do not rewrite existing full-line `ja` and `en` unless the request explicitly asks for corrections.",
+        "Apply the same chunking standards used by the Japanese sentences prompt workflow."
+      ],
+      "fieldRules": [
+        {
+          "field": "sentences[].chunks[].ja",
+          "type": "string",
+          "description": "Chunk text exactly as it appears in the line."
+        },
+        {
+          "field": "sentences[].chunks[].en",
+          "type": "string",
+          "description": "Short learner-friendly English rendering of the chunk."
+        },
+        {
+          "field": "sentences[].chunks[].refs",
+          "type": "string[]",
+          "description": "Meaningful Japanese terms actually present in the chunk."
+        }
+      ],
+      "instructions": [
+        "Prefer chunking that helps a learner read the line naturally.",
+        "Keep chunks ordered and faithful to the line surface form.",
+        "Do not include particles in `refs`.",
+        "Surface meaningful grammar markers when they carry real meaning, such as `はず`."
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "id": "metadata_only_workflow",
+      "stepIds": [
+        "metadata_only"
+      ]
+    },
+    {
+      "id": "lyrics_only_workflow",
+      "stepIds": [
+        "lyrics_only"
+      ]
+    },
+    {
+      "id": "sentence_units_only_workflow",
+      "stepIds": [
+        "sentence_units_only"
+      ]
+    },
+    {
+      "id": "chunking_only_workflow",
+      "stepIds": [
+        "chunking_only"
+      ]
+    },
+    {
+      "id": "full_incremental_song_workflow",
+      "stepIds": [
+        "metadata_only",
+        "lyrics_only",
+        "sentence_units_only",
+        "chunking_only"
+      ],
+      "guidance": [
+        "Treat this as a staged workflow across multiple AI requests, not a single-pass generation task.",
+        "It is valid to stop after any step and resume later.",
+        "Retries should rerun only the affected step whenever possible."
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "from_song_or_album_or_artist",
+      "details": "Create song shell entries from a provided song title, album, artist, or seed list.",
+      "example": "\"Create entries for the artist milet\"",
+      "workflowId": "metadata_only_workflow",
+      "startStepId": "metadata_only"
+    },
+    {
+      "id": "add_lyrics_from_user_paste",
+      "details": "Fill in lyrics and translation for an existing song entry from user-provided Japanese lyrics.",
+      "example": "{\"id\":\"kizuna-no-kiseki\",\"jaLyrics\":\"...user pasted lyrics here...\"}",
+      "workflowId": "lyrics_only_workflow",
+      "startStepId": "lyrics_only"
+    },
+    {
+      "id": "split_existing_lyrics_into_sentence_units",
+      "details": "Create `sentences` entries from an existing song entry that already has `ja` and `en` lyrics.",
+      "example": "{\"id\":\"kizuna-no-kiseki\",\"ja\":\"...\",\"en\":\"...\"}",
+      "workflowId": "sentence_units_only_workflow",
+      "startStepId": "sentence_units_only"
+    },
+    {
+      "id": "add_chunks_to_existing_song_sentences",
+      "details": "Add learner-friendly chunks to an existing song entry whose `sentences` already contain `ja` and `en`.",
+      "example": "{\"id\":\"kizuna-no-kiseki\",\"sentences\":[{\"ja\":\"...\",\"en\":\"...\"}]}",
+      "workflowId": "chunking_only_workflow",
+      "startStepId": "chunking_only"
+    },
+    {
+      "id": "run_full_incremental_song_workflow",
+      "details": "Run the full staged workflow for song entries, potentially stopping between steps when later data is missing.",
+      "example": "\"Create a new song entry shell now; I will paste the lyrics later.\"",
+      "workflowId": "full_incremental_song_workflow",
+      "startStepId": "metadata_only"
+    }
+  ]
+}

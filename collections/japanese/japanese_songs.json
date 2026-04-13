@@ -884,9 +884,8 @@
         "pop"
       ],
       "ja": "闇夜を駆け抜けて　何処へ向かう\n月明かりだけがただ一つの道標\n痛みも悲しみも拭いきれず\nされどこの胸の炎は消させない\n誰が為に僕たちは\nこの想いを貫いて\n闇を裂き　陽の下で\n光さす日まで\n解き放たれた心に宿した火よ\n舞い上げ、まとえ　今　夜明けの向こう側へ\n君がいるこの世界もう一度愛せるまで\n我が命　果てようとも　繋いで行こう\n絆が紡いで生まれた奇跡を\n喜怒哀楽　夢　揺らめいてる現世\n互いの正義をまた繰り返し振りかざす\n誰が為に繋ぐ命\n交わりもつれる運命\n蛇の道　数多の罪\n全て薙ぎ払え\n解き放て今　僕らが起こした火を\n舞い上げ走れば明日が変わるはず\n君といるこの世界二度と離さずに\n君と共に行く\n瞼を閉じても思い出すあの日を\n打ちのめされても焦がれた未来を\nいつの日か君に捧げてみせよう\n解き放たれた心に宿した火よ\n舞い上げ、まとえ　今　夜明けの向こうへ\n解き放て今　僕らが起こした火を\n舞い上げ走れば\n明日が変わるはず\n君がいたこの世界もう一度愛せるまで\n我が命　果てようとも　繋げていくよ\n絆が紡いで生まれた奇跡を",
-      "en": "Racing through the dark night, where are we heading?\nMoonlight alone is the single guidepost.\nI still cannot fully wipe away the pain or the sorrow,\nand yet I will not let the flame in this chest be extinguished.\nFor whose sake do we\ncarry these feelings through to the end?\nTearing through the darkness, beneath the sun,\nuntil the day the light shines through.\nO fire dwelling in the heart that has been set free,\nrise up and cloak us now, to the far side of dawn.\nUntil I can love this world you are in once more,\neven if my life comes to an end, let us keep connecting onward.\nThe miracle born from bonds spun together.\nJoy, anger, sorrow, delight, dreams, this flickering present world.\nWe once again brandish our own forms of justice again and again.\nFor whose sake are these lives connected?\nIntertwining, entangling fate,\nthe serpent's path, the countless sins,\nsweep it all away.\nSet it free now, the fire we ignited.\nIf we rise up and run, tomorrow should change.\nIn this world where you are, never letting go again,\nI will go on together with you.\nEven when I close my eyes, I remember that day.\nEven if I am beaten down, I remember the future I longed for.\nSomeday I will surely dedicate it to you.\nO fire dwelling in the heart that has been set free,\nrise up and cloak us now, toward the other side of dawn.\nSet it free now, the fire we ignited.\nIf we rise up and run,\ntomorrow should change.\nUntil I can love this world you were in once more,\neven if my life comes to an end, I will keep carrying it on.\nThe miracle born from bonds spun together.",
+      "en": "Racing through the dark night, where are we heading?\nMoonlight alone is the single guidepost.\nI still cannot fully wipe away the pain or the sorrow,\nand yet I will not let the flame in this chest be extinguished.\nFor whose sake do we\ncarry these feelings through to the end?\nTearing through the darkness, beneath the sun,\nuntil the day the light shines through.\nO fire dwelling in the heart that has been set free,\nrise up and cloak us now, to the far side of dawn.\nUntil I can love this world you are in once more,\neven if my life comes to an end, let us keep connecting onward.\nThe miracle born from bonds spun together.\nJoy, anger, sorrow, delight, dreams, this flickering present world.\nWe once again brandish our own forms of justice again and again.\nFor whose sake are these lives connected?\nIntertwining, entangling fate,\nthe serpent's path, the countless sins,\nsweep it all away.\nSet it free now, the fire we ignited.\nIf we rise up and run, tomorrow should change.\nIn this world with you, never letting go again,\nI will go on together with you.\nEven when I close my eyes, I remember that day.\nEven if I am beaten down, I remember the future I longed for.\nSomeday I will surely dedicate it to you.\nO fire dwelling in the heart that has been set free,\nrise up and cloak us now, toward the other side of dawn.\nSet it free now, the fire we ignited.\nIf we rise up and run,\ntomorrow should change.\nUntil I can love this world you were in once more,\neven if my life comes to an end, I will keep carrying it on.\nThe miracle born from bonds spun together.",
       "notes": [
-        "Japanese lyrics were added from a user-provided paste and still include inline reading hints.",
         "Opening theme song for Demon Slayer: Kimetsu no Yaiba Swordsmith Village Arc."
       ],
       "tags": [
@@ -1157,6 +1156,461 @@
               "refs": [
                 "繋ぐ",
                 "行く"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "絆が紡いで生まれた奇跡を",
+          "en": "The miracle born from bonds spun together.",
+          "chunks": [
+            {
+              "ja": "絆が紡いで生まれた奇跡を",
+              "en": "the miracle born from bonds spun together",
+              "refs": [
+                "絆",
+                "紡ぐ",
+                "生まれる",
+                "奇跡"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "喜怒哀楽　夢　揺らめいてる現世",
+          "en": "Joy, anger, sorrow, delight, dreams, this flickering present world.",
+          "chunks": [
+            {
+              "ja": "喜怒哀楽　夢",
+              "en": "joy, anger, sorrow, delight, dreams",
+              "refs": [
+                "喜怒哀楽",
+                "夢"
+              ]
+            },
+            {
+              "ja": "揺らめいてる現世",
+              "en": "this flickering present world",
+              "refs": [
+                "揺らめく",
+                "現世"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "互いの正義をまた繰り返し振りかざす",
+          "en": "We once again brandish our own forms of justice again and again.",
+          "chunks": [
+            {
+              "ja": "互いの正義を",
+              "en": "each other's sense of justice",
+              "refs": [
+                "互い",
+                "正義"
+              ]
+            },
+            {
+              "ja": "また繰り返し振りかざす",
+              "en": "brandish again and again",
+              "refs": [
+                "繰り返す",
+                "振りかざす"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "誰が為に繋ぐ命",
+          "en": "For whose sake are these lives connected?",
+          "chunks": [
+            {
+              "ja": "誰が為に",
+              "en": "for whose sake",
+              "refs": [
+                "誰",
+                "為"
+              ]
+            },
+            {
+              "ja": "繋ぐ命",
+              "en": "the lives that are connected",
+              "refs": [
+                "繋ぐ",
+                "命"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "交わりもつれる運命",
+          "en": "Intertwining, entangling fate,",
+          "chunks": [
+            {
+              "ja": "交わり",
+              "en": "intersecting, crossing",
+              "refs": [
+                "交わる"
+              ]
+            },
+            {
+              "ja": "もつれる運命",
+              "en": "entangled fate",
+              "refs": [
+                "もつれる",
+                "運命"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "蛇の道　数多の罪",
+          "en": "The serpent's path, the countless sins,",
+          "chunks": [
+            {
+              "ja": "蛇の道",
+              "en": "the serpent's path",
+              "refs": [
+                "蛇",
+                "道"
+              ]
+            },
+            {
+              "ja": "数多の罪",
+              "en": "countless sins",
+              "refs": [
+                "数多",
+                "罪"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "全て薙ぎ払え",
+          "en": "Sweep it all away.",
+          "chunks": [
+            {
+              "ja": "全て薙ぎ払え",
+              "en": "sweep it all away",
+              "refs": [
+                "全て",
+                "薙ぎ払う"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "解き放て今　僕らが起こした火を",
+          "en": "Set it free now, the fire we ignited.",
+          "chunks": [
+            {
+              "ja": "解き放て今",
+              "en": "set it free now",
+              "refs": [
+                "解き放つ",
+                "今"
+              ]
+            },
+            {
+              "ja": "僕らが起こした火を",
+              "en": "the fire we ignited",
+              "refs": [
+                "僕ら",
+                "起こす",
+                "火"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "舞い上げ走れば明日が変わるはず",
+          "en": "If we rise up and run, tomorrow should change.",
+          "grammarNotes": [
+            "〜はず expresses expectation or strong likelihood: 'should' / 'is expected to'."
+          ],
+          "chunks": [
+            {
+              "ja": "舞い上げ走れば",
+              "en": "if we rise up and run",
+              "refs": [
+                "舞い上がる",
+                "走る"
+              ]
+            },
+            {
+              "ja": "明日が変わるはず",
+              "en": "tomorrow should change / is expected to change",
+              "refs": [
+                "明日",
+                "変わる",
+                "はず"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "君といるこの世界二度と離さずに",
+          "en": "In this world with you, never letting go again,",
+          "chunks": [
+            {
+              "ja": "君といるこの世界",
+              "en": "this world with you",
+              "refs": [
+                "君",
+                "世界"
+              ]
+            },
+            {
+              "ja": "二度と離さずに",
+              "en": "never letting go again",
+              "refs": [
+                "二度と",
+                "離す"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "君と共に行く",
+          "en": "I will go on together with you.",
+          "chunks": [
+            {
+              "ja": "君と共に行く",
+              "en": "go on together with you",
+              "refs": [
+                "君",
+                "共に",
+                "行く"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "瞼を閉じても思い出すあの日を",
+          "en": "Even when I close my eyes, I remember that day.",
+          "chunks": [
+            {
+              "ja": "瞼を閉じても",
+              "en": "even if I close my eyes",
+              "refs": [
+                "瞼",
+                "閉じる"
+              ]
+            },
+            {
+              "ja": "思い出すあの日を",
+              "en": "that day I remember",
+              "refs": [
+                "思い出す",
+                "あの日"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "打ちのめされても焦がれた未来を",
+          "en": "Even if I am beaten down, I remember the future I longed for.",
+          "chunks": [
+            {
+              "ja": "打ちのめされても",
+              "en": "even if I am beaten down",
+              "refs": [
+                "打ちのめす"
+              ]
+            },
+            {
+              "ja": "焦がれた未来を",
+              "en": "the future I longed for",
+              "refs": [
+                "焦がれる",
+                "未来"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "いつの日か君に捧げてみせよう",
+          "en": "Someday I will surely dedicate it to you.",
+          "chunks": [
+            {
+              "ja": "いつの日か",
+              "en": "someday",
+              "refs": [
+                "いつの日か"
+              ]
+            },
+            {
+              "ja": "君に捧げてみせよう",
+              "en": "I will surely dedicate it to you",
+              "refs": [
+                "君",
+                "捧げる"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "解き放たれた心に宿した火よ",
+          "en": "O fire dwelling in a liberated heart,",
+          "chunks": [
+            {
+              "ja": "解き放たれた心に",
+              "en": "in a freed heart",
+              "refs": [
+                "解き放たれる",
+                "心"
+              ]
+            },
+            {
+              "ja": "宿した火よ",
+              "en": "the fire that dwells",
+              "refs": [
+                "宿す",
+                "火"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "舞い上げ、まとえ　今　夜明けの向こうへ",
+          "en": "Rise up, wrap yourself in it, now toward the other side of dawn.",
+          "chunks": [
+            {
+              "ja": "舞い上げ、まとえ",
+              "en": "rise up, wrap yourself",
+              "refs": [
+                "舞い上がる",
+                "まとう"
+              ]
+            },
+            {
+              "ja": "今",
+              "en": "now",
+              "refs": [
+                "今"
+              ]
+            },
+            {
+              "ja": "夜明けの向こうへ",
+              "en": "toward the other side of dawn",
+              "refs": [
+                "夜明け",
+                "向こう"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "解き放て今　僕らが起こした火を",
+          "en": "Set it free now, the fire we ignited.",
+          "chunks": [
+            {
+              "ja": "解き放て今",
+              "en": "set it free now",
+              "refs": [
+                "解き放つ",
+                "今"
+              ]
+            },
+            {
+              "ja": "僕らが起こした火を",
+              "en": "the fire we ignited",
+              "refs": [
+                "僕ら",
+                "起こす",
+                "火"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "舞い上げ走れば",
+          "en": "If we rise up and run,",
+          "chunks": [
+            {
+              "ja": "舞い上げ走れば",
+              "en": "if we rise up and run",
+              "refs": [
+                "舞い上がる",
+                "走る"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "明日が変わるはず",
+          "en": "Tomorrow should change.",
+          "grammarNotes": [
+            "〜はず expresses expectation or strong likelihood: 'should' / 'is expected to'."
+          ],
+          "chunks": [
+            {
+              "ja": "明日が変わるはず",
+              "en": "tomorrow should change / is expected to change",
+              "refs": [
+                "明日",
+                "変わる",
+                "はず"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "君がいたこの世界もう一度愛せるまで",
+          "en": "Until I can love this world you were in once more,",
+          "chunks": [
+            {
+              "ja": "君がいたこの世界",
+              "en": "this world you were in",
+              "refs": [
+                "君",
+                "世界"
+              ]
+            },
+            {
+              "ja": "もう一度愛せるまで",
+              "en": "until I can love it again",
+              "refs": [
+                "一度",
+                "愛する"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "我が命　果てようとも　繋げていくよ",
+          "en": "Even if my life comes to an end, I will keep carrying it on.",
+          "chunks": [
+            {
+              "ja": "我が命　果てようとも",
+              "en": "even if my life comes to an end",
+              "refs": [
+                "命",
+                "果てる"
+              ]
+            },
+            {
+              "ja": "繋げていくよ",
+              "en": "I will keep carrying it on",
+              "refs": [
+                "繋げる",
+                "行く"
+              ]
+            }
+          ]
+        },
+        {
+          "ja": "絆が紡いで生まれた奇跡を",
+          "en": "The miracle born from bonds spun together.",
+          "chunks": [
+            {
+              "ja": "絆が紡いで生まれた奇跡を",
+              "en": "the miracle born from bonds spun together",
+              "refs": [
+                "絆",
+                "紡ぐ",
+                "生まれる",
+                "奇跡"
               ]
             }
           ]

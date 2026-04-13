@@ -552,7 +552,7 @@ export function renderManageCollections({ store, onNavigate }) {
       }
       const promptDocument = await loadCollectionPromptDocument(normalizedKey);
       if (!promptDocument?.exists || !promptDocument.bodyText) {
-        setStatus(`No prompt document found for ${normalizedKey}. Expected ${promptDocument?.path || `${normalizedKey}.prompt.md`}.`);
+        setStatus(`No prompt document found for ${normalizedKey}. Expected ${promptDocument?.path || `${normalizedKey}.prompt.json`}.`);
         return;
       }
       const promptText = buildCollectionPromptText({ promptDocument });
@@ -600,12 +600,12 @@ export function renderManageCollections({ store, onNavigate }) {
     const genericRow = el('div', {
       className: 'mc-ai-prompt-row',
       children: [
-        el('div', {
-          children: [
-            el('div', { text: 'General import prompt' }),
-            el('div', { className: 'hint', text: 'Copies the collection’s `.prompt.md` text. Leave the Prompt Request placeholder in place, then fill it when you use the prompt.' }),
-          ]
-        }),
+            el('div', {
+              children: [
+                el('div', { text: 'General import prompt' }),
+                el('div', { className: 'hint', text: 'Copies the collection prompt text assembled from its prompt document. Leave the Prompt Request placeholder in place, then fill it when you use the prompt.' }),
+              ]
+            }),
       ]
     });
     const genericBtn = el('button', { className: 'btn small', text: 'Copy Generic Prompt', attrs: { type: 'button' } });

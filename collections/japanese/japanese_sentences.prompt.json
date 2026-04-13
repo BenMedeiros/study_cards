@@ -1,0 +1,231 @@
+{
+  "version": 1,
+  "kind": "collection-prompt-spec",
+  "collection": "japanese/japanese_sentences.json",
+  "defaults": {
+    "stepId": "create_sentence_units",
+    "promptRequestPlaceholder": "<fill in the prompt request here>"
+  },
+  "shared": {
+    "context": [
+      "You are generating or enriching entries for the Japanese sentences collection.",
+      "Work only on the requested workflow step.",
+      "Return only a JSON array."
+    ],
+    "outputRequirements": [
+      "Return only a JSON array.",
+      "No extra text.",
+      "Follow the active step's field rules exactly."
+    ],
+    "rules": [
+      "Write natural Japanese and natural English.",
+      "Use `grammarNotes` only for short, high-value recognition notes or contrast notes.",
+      "If the request implies multiple stages, follow the workflow instead of forcing sentence generation, translation, and chunking into one large pass.",
+      "For larger batches, prefer sentence units first and chunking in a later pass.",
+      "Omit optional fields when they add no value."
+    ]
+  },
+  "steps": [
+    {
+      "id": "split_into_sentence_units",
+      "title": "Split Into Sentence Units",
+      "goal": "Split raw Japanese text into natural sentence units or lyric-line units before later sentence creation.",
+      "inputContract": [
+        "The request provides a raw Japanese blob, passage, or messy text.",
+        "Return only a JSON array of clean Japanese sentence-unit strings in order."
+      ],
+      "fieldRules": [
+        {
+          "field": "array item",
+          "type": "string",
+          "description": "A clean Japanese sentence unit or lyric-line unit."
+        }
+      ],
+      "instructions": [
+        "Preserve the original order.",
+        "Do not translate in this step.",
+        "Prefer natural learner-usable segmentation rather than exhaustive micro-splitting."
+      ],
+      "handoff": {
+        "nextStepIds": [
+          "create_sentence_units"
+        ],
+        "expectedState": [
+          "The result is an ordered list of Japanese sentence units ready for translation and entry creation."
+        ]
+      }
+    },
+    {
+      "id": "create_sentence_units",
+      "title": "Create Sentence Units",
+      "goal": "Create Japanese sentence-unit entries with natural Japanese and English, without chunking unless explicitly requested.",
+      "inputContract": [
+        "The request may provide already-separated Japanese sentences, ideas, grammar targets, categories, scenarios, or a list from the split step.",
+        "Return full sentence-entry objects."
+      ],
+      "fieldRules": [
+        {
+          "field": "ja",
+          "type": "string",
+          "description": "Full natural Japanese sentence."
+        },
+        {
+          "field": "en",
+          "type": "string",
+          "description": "Natural English translation of the full sentence."
+        },
+        {
+          "field": "notes",
+          "type": "string[]",
+          "description": "Optional learner notes. Omit when unnecessary."
+        },
+        {
+          "field": "grammarNotes",
+          "type": "string[]",
+          "description": "Optional high-value grammar recognition notes. Omit when unnecessary."
+        }
+      ],
+      "instructions": [
+        "Do not add `chunks` unless the request explicitly asks for chunking in the same pass.",
+        "Keep output learner-friendly and faithful to the Japanese."
+      ],
+      "handoff": {
+        "nextStepIds": [
+          "add_chunks"
+        ],
+        "expectedState": [
+          "The result is a set of ordered sentence entries with `ja` and `en`, optionally plus notes."
+        ]
+      }
+    },
+    {
+      "id": "add_chunks",
+      "title": "Add Chunks",
+      "goal": "Add learner-oriented chunks to existing sentence units as a dedicated later pass.",
+      "inputContract": [
+        "The request provides sentence entries that already contain `ja` and `en`.",
+        "Return sentence-entry objects with chunk enrichment."
+      ],
+      "preserveRules": [
+        "Preserve existing `ja` and `en` unless the request explicitly asks for corrections.",
+        "Preserve sentence order."
+      ],
+      "fieldRules": [
+        {
+          "field": "chunks[].ja",
+          "type": "string",
+          "description": "Chunk text exactly as it appears in the sentence."
+        },
+        {
+          "field": "chunks[].en",
+          "type": "string",
+          "description": "Short learner-friendly English rendering of the chunk."
+        },
+        {
+          "field": "chunks[].refs",
+          "type": "string[]",
+          "description": "Referenced Japanese terms for that chunk."
+        }
+      ],
+      "instructions": [
+        "Keep chunks ordered and faithful to the sentence surface form.",
+        "Use refs only for meaningful Japanese terms actually present in the chunk.",
+        "Do not include particles in `refs`.",
+        "Prefer chunking that helps a learner read the sentence naturally."
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "id": "sentence_units_only",
+      "stepIds": [
+        "create_sentence_units"
+      ]
+    },
+    {
+      "id": "chunking_only",
+      "stepIds": [
+        "add_chunks"
+      ]
+    },
+    {
+      "id": "split_only",
+      "stepIds": [
+        "split_into_sentence_units"
+      ]
+    },
+    {
+      "id": "sentence_units_then_optional_chunking",
+      "stepIds": [
+        "create_sentence_units",
+        "add_chunks"
+      ],
+      "thresholds": {
+        "max_sentences_for_single_pass_with_chunking": 5,
+        "max_generated_sentences_for_single_pass_with_chunking": 5
+      }
+    },
+    {
+      "id": "split_then_sentence_units_then_chunking",
+      "stepIds": [
+        "split_into_sentence_units",
+        "create_sentence_units",
+        "add_chunks"
+      ],
+      "thresholds": {
+        "max_sentences_for_single_pass_with_chunking": 5
+      }
+    }
+  ],
+  "prompts": [
+    {
+      "id": "given_sentences",
+      "details": "Create sentence entries from already-separated Japanese sentences.",
+      "example": "[sentence1, sentence2, sentence3]",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    },
+    {
+      "id": "given_messy_blob",
+      "details": "Split raw Japanese text into sentence units before later sentence creation.",
+      "example": "\"{raw text here}\"",
+      "workflowId": "split_then_sentence_units_then_chunking",
+      "startStepId": "split_into_sentence_units"
+    },
+    {
+      "id": "from_words",
+      "details": "Create beginner-friendly sentence entries using the provided Japanese words.",
+      "example": "[word1, word2, word3]",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    },
+    {
+      "id": "from_sentence_ideas",
+      "details": "Create sentence entries from the provided Japanese sentence ideas.",
+      "example": "[idea1, idea2, idea3]",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    },
+    {
+      "id": "from_grammar_points",
+      "details": "Create sentence entries that practice the provided grammar points.",
+      "example": "[Vている, ので, ことができる]",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    },
+    {
+      "id": "from_categories",
+      "details": "Create sentence entries in the provided categories.",
+      "example": "[daily life, travel, food, school]",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    },
+    {
+      "id": "from_scenario",
+      "details": "Create sentence entries for the provided real-world scenario.",
+      "example": "\"buying a train ticket in Japan\"",
+      "workflowId": "sentence_units_then_optional_chunking",
+      "startStepId": "create_sentence_units"
+    }
+  ]
+}
