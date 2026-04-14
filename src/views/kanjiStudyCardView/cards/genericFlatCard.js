@@ -17,53 +17,71 @@ function normalizeAvailableFields(fields) {
   return out;
 }
 
+function normalizeStyleConfig(styleConfig) {
+  if (!styleConfig || typeof styleConfig !== 'object' || Array.isArray(styleConfig)) return {};
+  const style = {};
+  const labelWidth = String(styleConfig.labelWidth || '').trim();
+  const labelSize = String(styleConfig.labelSize || '').trim();
+  const labelTone = String(styleConfig.labelTone || '').trim();
+  const labelVisibility = String(styleConfig.labelVisibility || '').trim();
+  const valueSize = String(styleConfig.valueSize || '').trim();
+  const rowPadding = String(styleConfig.rowPadding || '').trim();
+  const rowDivider = String(styleConfig.rowDivider || '').trim();
+  if (labelWidth) style.labelWidth = labelWidth;
+  if (labelSize) style.labelSize = labelSize;
+  if (labelTone) style.labelTone = labelTone;
+  if (labelVisibility) style.labelVisibility = labelVisibility;
+  if (valueSize) style.valueSize = valueSize;
+  if (rowPadding) style.rowPadding = rowPadding;
+  if (rowDivider) style.rowDivider = rowDivider;
+  return style;
+}
+
 function normalizeCardConfig(config) {
   if (!config || typeof config !== 'object' || Array.isArray(config)) return {};
   const next = {};
-  if (Array.isArray(config.fields)) {
-    next.fields = Array.from(new Set(config.fields.map((field) => String(field || '').trim()).filter(Boolean)));
+  if (config.fields && typeof config.fields === 'object' && !Array.isArray(config.fields)) {
+    next.fields = {};
+    for (const [fieldKey, rawFieldConfig] of Object.entries(config.fields)) {
+      const field = String(fieldKey || '').trim();
+      if (!field || !rawFieldConfig || typeof rawFieldConfig !== 'object' || Array.isArray(rawFieldConfig)) continue;
+      const entry = {};
+      if (Object.prototype.hasOwnProperty.call(rawFieldConfig, 'hide')) entry.hide = !!rawFieldConfig.hide;
+      if (Object.prototype.hasOwnProperty.call(rawFieldConfig, 'order') && Number.isFinite(Number(rawFieldConfig.order))) {
+        entry.order = Number(rawFieldConfig.order);
+      }
+      if (Object.prototype.hasOwnProperty.call(rawFieldConfig, 'style')) {
+        entry.style = String(rawFieldConfig.style || 'main').trim() || 'main';
+      }
+      next.fields[field] = entry;
+    }
   }
-  if (config.style && typeof config.style === 'object' && !Array.isArray(config.style)) {
-    const style = {};
-    const labelWidth = String(config.style.labelWidth || '').trim();
-    const labelSize = String(config.style.labelSize || '').trim();
-    const labelTone = String(config.style.labelTone || '').trim();
-    const labelVisibility = String(config.style.labelVisibility || '').trim();
-    const valueSize = String(config.style.valueSize || '').trim();
-    const rowPadding = String(config.style.rowPadding || '').trim();
-    const rowDivider = String(config.style.rowDivider || '').trim();
-    if (labelWidth) style.labelWidth = labelWidth;
-    if (labelSize) style.labelSize = labelSize;
-    if (labelTone) style.labelTone = labelTone;
-    if (labelVisibility) style.labelVisibility = labelVisibility;
-    if (valueSize) style.valueSize = valueSize;
-    if (rowPadding) style.rowPadding = rowPadding;
-    if (rowDivider) style.rowDivider = rowDivider;
-    if (Object.keys(style).length) next.style = style;
-  }
-  if (config.customStyles && typeof config.customStyles === 'object' && !Array.isArray(config.customStyles)) {
-    const customStyles = {};
-    for (const [styleId, rawStyle] of Object.entries(config.customStyles)) {
+  if (config.styles && typeof config.styles === 'object' && !Array.isArray(config.styles)) {
+    const styles = {};
+    for (const [styleId, rawStyle] of Object.entries(config.styles)) {
       const id = String(styleId || '').trim();
       if (!id || !rawStyle || typeof rawStyle !== 'object' || Array.isArray(rawStyle)) continue;
-      const style = normalizeCardConfig({ style: rawStyle }).style || {};
-      customStyles[id] = {
-        name: String(rawStyle.name || '').trim() || id,
+      const style = normalizeStyleConfig(rawStyle);
+      styles[id] = {
+        name: String(rawStyle.name || '').trim() || (id === 'main' ? 'Main Style' : id),
         ...style,
       };
     }
-    if (Object.keys(customStyles).length) next.customStyles = customStyles;
+    if (Object.keys(styles).length) next.styles = styles;
+  } else if (config.style || config.customStyles) {
+    const styles = normalizeCardConfig({
+      styles: {
+        ...(config.style ? { main: { name: 'Main Style', ...config.style } } : {}),
+        ...((config.customStyles && typeof config.customStyles === 'object' && !Array.isArray(config.customStyles)) ? config.customStyles : {}),
+      },
+    }).styles;
+    if (Object.keys(styles || {}).length) next.styles = styles;
   }
-  if (config.fieldStyles && typeof config.fieldStyles === 'object' && !Array.isArray(config.fieldStyles)) {
-    const validStyleIds = new Set(Object.keys(next.customStyles || {}));
-    const fieldStyles = {};
-    for (const [fieldKey, styleId] of Object.entries(config.fieldStyles)) {
-      const field = String(fieldKey || '').trim();
-      const style = String(styleId || '').trim();
-      if (!field || !style || !validStyleIds.has(style)) continue;
-      fieldStyles[field] = style;
-    }
-    if (Object.keys(fieldStyles).length) next.fieldStyles = fieldStyles;
+  if (!next.styles?.main) {
+    next.styles = {
+      ...(next.styles || {}),
+      main: {},
+    };
   }
   return next;
 }
@@ -220,7 +238,17 @@ export function createGenericFlatCard({ entry = null, indexText = '', config = {
   }
 
   function getRenderFieldKeys(entryObj) {
-    if (Array.isArray(cardConfig.fields)) return cardConfig.fields.slice();
+    if (cardConfig.fields && typeof cardConfig.fields === 'object' && !Array.isArray(cardConfig.fields)) {
+      return Object.entries(cardConfig.fields)
+        .map(([fieldKey, fieldConfig]) => ({
+          key: fieldKey,
+          hide: !!fieldConfig?.hide,
+          order: Number.isFinite(Number(fieldConfig?.order)) ? Number(fieldConfig.order) : Number.MAX_SAFE_INTEGER,
+        }))
+        .sort((a, b) => a.order - b.order)
+        .filter((item) => !item.hide)
+        .map((item) => item.key);
+    }
     return getDefaultFieldOrder(entryObj);
   }
 
@@ -251,8 +279,8 @@ export function createGenericFlatCard({ entry = null, indexText = '', config = {
       const { row, label, value } = makeRow(getLabelForField(k));
       value.textContent = formatValue(entryObj[k]);
       rows[k] = { row, label, value };
-      const styleId = String(cardConfig?.fieldStyles?.[k] || '').trim();
-      const rowStyle = styleId ? cardConfig?.customStyles?.[styleId] : null;
+      const styleId = String(cardConfig?.fields?.[k]?.style || 'main').trim() || 'main';
+      const rowStyle = cardConfig?.styles?.[styleId] || cardConfig?.styles?.main || null;
       if (rowStyle) applyRowStyle(rows[k], rowStyle);
       body.appendChild(row);
     }
@@ -285,7 +313,7 @@ export function createGenericFlatCard({ entry = null, indexText = '', config = {
 
   function setConfig(nextConfig) {
     cardConfig = normalizeCardConfig(nextConfig);
-    applyCardStyle(root, cardConfig.style);
+    applyCardStyle(root, cardConfig?.styles?.main || {});
     setEntry(currentEntry);
   }
 
@@ -299,7 +327,7 @@ export function createGenericFlatCard({ entry = null, indexText = '', config = {
   }
 
   // initialize
-  applyCardStyle(root, cardConfig.style);
+  applyCardStyle(root, cardConfig?.styles?.main || {});
   setEntry(entry);
   setIndexText(indexText || config?.cornerCaption || '');
 

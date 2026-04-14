@@ -62,6 +62,21 @@
   color: var(--muted);
 }
 
+.kanji-study-card-config-header-meta {
+  margin-top: 0.6rem;
+}
+
+.kanji-study-card-config-preset-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.kanji-study-card-config-preset-select {
+  min-width: 14rem;
+}
+
 .kanji-study-card-config-body {
   min-height: 0;
   overflow: auto;

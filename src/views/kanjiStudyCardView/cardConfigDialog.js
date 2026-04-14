@@ -213,9 +213,14 @@ function createConfigJsonViewer(value, compareValue) {
   return viewer;
 }
 
+function cloneDialogValue(value) {
+  return JSON.parse(JSON.stringify(value ?? null));
+}
+
 function createCardConfigDialogShell({
   title,
   subtitle,
+  onRenderHeaderMeta,
   onRenderSummary,
   onRenderHeaderActions,
   onRenderBody,
@@ -246,6 +251,7 @@ function createCardConfigDialogShell({
 
     const titleEl = el('h2', { text: String(title || 'Card Settings') });
     const subtitleEl = el('p', { className: 'hint', text: String(subtitle || '').trim() });
+    const headerMetaEl = el('div', { className: 'kanji-study-card-config-header-meta' });
     const summaryEl = el('div', { className: 'kanji-study-card-config-summary' });
     const headerActionsEl = el('div', { className: 'kanji-study-card-config-header-actions' });
     const jsonBtn = el('button', {
@@ -257,7 +263,7 @@ function createCardConfigDialogShell({
     const header = el('div', {
       className: 'kanji-study-card-config-header',
       children: [
-        el('div', { children: [titleEl, subtitleEl, summaryEl] }),
+        el('div', { children: [titleEl, subtitleEl, headerMetaEl, summaryEl] }),
         headerActionsEl,
       ],
     });
@@ -299,6 +305,15 @@ function createCardConfigDialogShell({
 
     function render() {
       summaryEl.textContent = typeof onRenderSummary === 'function' ? (onRenderSummary() || '') : '';
+      headerMetaEl.innerHTML = '';
+      const headerMeta = typeof onRenderHeaderMeta === 'function'
+        ? onRenderHeaderMeta({ rerender: render })
+        : null;
+      if (Array.isArray(headerMeta)) {
+        headerMeta.forEach((item) => {
+          if (item) headerMetaEl.appendChild(item);
+        });
+      }
       const hasChanges = typeof onHasChanges === 'function' ? !!onHasChanges() : true;
       const canReset = typeof onCanReset === 'function' ? !!onCanReset() : true;
       const canResetToDefaults = typeof onCanResetToDefaults === 'function' ? !!onCanResetToDefaults() : true;
@@ -389,9 +404,13 @@ export function openGenericFlatCardConfigDialog({
   defaultStyles = {},
   customStyles = {},
   fieldStyles = {},
+  styles = null,
+  savedConfigs = null,
+  activeConfigId = 'system',
   namespace = '',
   collection = '',
 } = {}) {
+  const CODE_DEFAULT_CONFIG_ID = '__system__';
   const items = normalizeFieldItems(fields);
   const slots = Array.isArray(layoutSlots)
     ? layoutSlots.map((raw) => ({
@@ -403,6 +422,15 @@ export function openGenericFlatCardConfigDialog({
     : [];
   const controls = normalizeControlItems(optionControls);
   const styleControlsState = normalizeControlItems(styleControls);
+  const stylesSource = styles && typeof styles === 'object' && !Array.isArray(styles)
+    ? styles
+    : {
+      main: {
+        name: 'Main Style',
+        ...(selectedStyles && typeof selectedStyles === 'object' && !Array.isArray(selectedStyles) ? selectedStyles : {}),
+      },
+      ...((customStyles && typeof customStyles === 'object' && !Array.isArray(customStyles)) ? customStyles : {}),
+    };
 
   let state = buildSelectableState(items, selectedFields);
   let layoutState = slots.map((slot) => ({
@@ -429,12 +457,34 @@ export function openGenericFlatCardConfigDialog({
     };
   }
 
-  let mainStyleState = createStyleState('main', selectedStyles, defaultStyles);
-  let customStyleState = Object.entries(customStyles || {}).map(([styleId, config]) => createStyleState(styleId, config, defaultStyles));
+  let mainStyleState = createStyleState('main', stylesSource.main || selectedStyles, defaultStyles);
+  let customStyleState = Object.entries(stylesSource || {})
+    .filter(([styleId]) => String(styleId || '').trim() && String(styleId || '').trim() !== 'main')
+    .map(([styleId, config]) => createStyleState(styleId, config, defaultStyles));
   let fieldStyleState = Object.fromEntries(
     Object.entries(fieldStyles || {}).map(([fieldKey, styleId]) => [String(fieldKey || '').trim(), String(styleId || '').trim()])
   );
   let activeTab = hasStyleTabs ? 'fields' : '';
+  const supportsSavedConfigs = !isLayoutMode && hasStyleTabs;
+  let activeSavedConfigId = String(activeConfigId || 'system').trim() || 'system';
+  let savedConfigState = supportsSavedConfigs && savedConfigs && typeof savedConfigs === 'object' && !Array.isArray(savedConfigs)
+    ? Object.fromEntries(
+      Object.entries(savedConfigs).map(([rawId, rawConfig]) => {
+        const id = String(rawId || '').trim();
+        if (!id) return [null, null];
+        return [id, {
+          id,
+          name: String(rawConfig?.name || id).trim() || id,
+          parentId: id === CODE_DEFAULT_CONFIG_ID
+            ? ''
+            : String(rawConfig?.parentId || (id === 'system' ? CODE_DEFAULT_CONFIG_ID : 'system')).trim(),
+          inheritsFromParent: id === CODE_DEFAULT_CONFIG_ID ? false : !!rawConfig?.inheritsFromParent,
+          config: cloneDialogValue(rawConfig?.config) || cloneDialogValue(rawConfig?.effectiveConfig) || {},
+          effectiveConfig: null,
+        }];
+      }).filter(([id, preset]) => id && preset)
+    )
+    : null;
 
   function getSelectedFieldOrder() {
     return state.filter((item) => item.enabled).map((item) => item.key);
@@ -493,12 +543,370 @@ export function openGenericFlatCardConfigDialog({
     return out;
   }
 
+  function getAllStyleOptions() {
+    return [{ value: 'main', label: 'Main Style' }].concat(customStyleState.map((styleItem) => ({
+      value: styleItem.id,
+      label: String(styleItem.name || styleItem.id).trim() || styleItem.id,
+    })));
+  }
+
+  function buildCurrentFieldConfigMap() {
+    const out = {};
+    state.forEach((item, index) => {
+      const styleId = String(fieldStyleState[item.key] || 'main').trim() || 'main';
+      out[item.key] = {
+        hide: !item.enabled,
+        order: index,
+        style: styleId,
+      };
+    });
+    return out;
+  }
+
+  function normalizeDialogFieldStyles(fieldStyles, fields) {
+    const selectedFieldSet = new Set(Array.isArray(fields) ? fields : []);
+    const validStyleIds = new Set(customStyleState.map((item) => item.id));
+    const out = {};
+    Object.entries(fieldStyles || {}).forEach(([fieldKey, styleId]) => {
+      const field = String(fieldKey || '').trim();
+      const style = String(styleId || '').trim();
+      if (!field || !style) return;
+      if (!selectedFieldSet.has(field)) return;
+      if (!validStyleIds.has(style)) return;
+      out[field] = style;
+    });
+    return out;
+  }
+
+  function getEditableStyleConfig() {
+    return {
+      fields: buildCurrentFieldConfigMap(),
+    };
+  }
+
+  function applyEditableStyleConfig(config = {}) {
+    const defaults = items.map((item, index) => ({
+      key: item.key,
+      label: item.label,
+      enabled: true,
+      order: index,
+      style: 'main',
+    }));
+    const merged = defaults.map((item) => {
+      const raw = (config.fields && typeof config.fields === 'object' && !Array.isArray(config.fields))
+        ? config.fields[item.key]
+        : null;
+      return {
+        ...item,
+        enabled: raw?.hide === true ? false : true,
+        order: Number.isFinite(raw?.order) ? Number(raw.order) : item.order,
+        style: String(raw?.style || 'main').trim() || 'main',
+      };
+    }).sort((a, b) => a.order - b.order);
+    state = merged.map(({ order, style, ...item }) => item);
+    fieldStyleState = Object.fromEntries(
+      merged
+        .map((item) => [item.key, String(item.style || 'main').trim() || 'main'])
+        .filter(([, styleId]) => styleId && styleId !== 'main')
+    );
+  }
+
+  function getDefaultSavedConfigFields() {
+    return Object.fromEntries(
+      items.map((item, index) => [item.key, {
+        hide: false,
+        order: index,
+        style: 'main',
+      }])
+    );
+  }
+
+  function resolveSavedConfigFields(configId, seen = new Set()) {
+    const id = String(configId || 'system').trim() || 'system';
+    if (seen.has(id)) return getDefaultSavedConfigFields();
+    const preset = savedConfigState[id] || savedConfigState.system;
+    if (!preset) return getDefaultSavedConfigFields();
+    if (preset.id === CODE_DEFAULT_CONFIG_ID) {
+      return preset.config?.fields && typeof preset.config.fields === 'object' && !Array.isArray(preset.config.fields)
+        ? cloneDialogValue(preset.config.fields) || getDefaultSavedConfigFields()
+        : getDefaultSavedConfigFields();
+    }
+    if (!preset.inheritsFromParent) {
+      return preset.config?.fields && typeof preset.config.fields === 'object' && !Array.isArray(preset.config.fields)
+        ? cloneDialogValue(preset.config.fields) || getDefaultSavedConfigFields()
+        : getDefaultSavedConfigFields();
+    }
+    seen.add(id);
+    const parentFields = resolveSavedConfigFields(preset.parentId || 'system', seen);
+    seen.delete(id);
+    const out = cloneDialogValue(parentFields) || getDefaultSavedConfigFields();
+    Object.entries(preset.config?.fields || {}).forEach(([fieldKey, overrides]) => {
+      const field = String(fieldKey || '').trim();
+      if (!field || !out[field]) return;
+      out[field] = {
+        ...out[field],
+        ...(overrides && typeof overrides === 'object' && !Array.isArray(overrides) ? overrides : {}),
+      };
+    });
+    return out;
+  }
+
+  function resolveSavedConfigEffective(configId, seen = new Set()) {
+    const id = String(configId || 'system').trim() || 'system';
+    if (seen.has(id)) {
+      const fields = getDefaultSavedConfigFields();
+      return { fields, fieldStyles: {} };
+    }
+    const preset = savedConfigState[id] || savedConfigState.system;
+    if (!preset) {
+      const fields = getDefaultSavedConfigFields();
+      return { fields, fieldStyles: {} };
+    }
+    if (preset.id === CODE_DEFAULT_CONFIG_ID) {
+      const fields = resolveSavedConfigFields(CODE_DEFAULT_CONFIG_ID);
+      return {
+        fields,
+        fieldStyles: {},
+      };
+    }
+    if (!preset.inheritsFromParent) {
+      const fields = resolveSavedConfigFields(preset.id);
+      return {
+        fields,
+        fieldStyles: {},
+      };
+    }
+    seen.add(id);
+    const parentEffective = resolveSavedConfigEffective(preset.parentId || 'system', seen);
+    seen.delete(id);
+    const fields = resolveSavedConfigFields(preset.id);
+    return {
+      fields,
+      fieldStyles: {},
+    };
+  }
+
+  function syncSavedConfigEffectiveStates() {
+    if (!supportsSavedConfigs) return;
+    Object.values(savedConfigState).forEach((preset) => {
+      preset.effectiveConfig = resolveSavedConfigEffective(preset.id);
+    });
+  }
+
+  function updateSavedConfigOverride(preset) {
+    if (!supportsSavedConfigs || !preset) return;
+    const currentConfig = getEditableStyleConfig();
+    if (preset.id === 'system' || !preset.inheritsFromParent) {
+      preset.config = currentConfig;
+      preset.effectiveConfig = cloneDialogValue(currentConfig);
+      return;
+    }
+    const parentFields = resolveSavedConfigFields(preset.parentId || 'system');
+    const nextConfig = { fields: {} };
+    const allFieldKeys = new Set([...Object.keys(parentFields || {}), ...Object.keys(currentConfig.fields || {})]);
+    allFieldKeys.forEach((fieldKey) => {
+      const base = parentFields?.[fieldKey] || { hide: false, order: 0, style: 'main' };
+      const next = currentConfig.fields?.[fieldKey] || base;
+      const entry = {};
+      if (!!next.hide !== !!base.hide) entry.hide = !!next.hide;
+      if (Number(next.order) !== Number(base.order)) entry.order = Number(next.order);
+      if (String(next.style || 'main').trim() !== String(base.style || 'main').trim()) {
+        entry.style = String(next.style || 'main').trim() || 'main';
+      }
+      if (Object.keys(entry).length) nextConfig.fields[fieldKey] = entry;
+    });
+    if (!Object.keys(nextConfig.fields).length) delete nextConfig.fields;
+    preset.config = nextConfig;
+    preset.effectiveConfig = cloneDialogValue(currentConfig);
+  }
+
+  function ensureSavedConfigState() {
+    if (!supportsSavedConfigs) return;
+    if (!savedConfigState || !savedConfigState.system) {
+      savedConfigState = {
+        [CODE_DEFAULT_CONFIG_ID]: {
+          id: CODE_DEFAULT_CONFIG_ID,
+          name: 'Code Defaults',
+          parentId: '',
+          inheritsFromParent: false,
+          config: { fields: getDefaultSavedConfigFields() },
+          effectiveConfig: null,
+        },
+        system: {
+          id: 'system',
+          name: 'System Defaults',
+          parentId: CODE_DEFAULT_CONFIG_ID,
+          inheritsFromParent: true,
+          config: {},
+          effectiveConfig: null,
+        },
+      };
+    }
+    if (!savedConfigState[CODE_DEFAULT_CONFIG_ID]) {
+      savedConfigState[CODE_DEFAULT_CONFIG_ID] = {
+        id: CODE_DEFAULT_CONFIG_ID,
+        name: 'Code Defaults',
+        parentId: '',
+        inheritsFromParent: false,
+        config: { fields: getDefaultSavedConfigFields() },
+        effectiveConfig: null,
+      };
+    }
+    Object.values(savedConfigState).forEach((preset) => {
+      if (!preset || typeof preset !== 'object') return;
+      preset.id = String(preset.id || '').trim() || 'system';
+      preset.name = String(preset.name || preset.id).trim() || preset.id;
+      preset.parentId = preset.id === CODE_DEFAULT_CONFIG_ID ? '' : String(preset.parentId || (preset.id === 'system' ? CODE_DEFAULT_CONFIG_ID : 'system')).trim();
+      preset.inheritsFromParent = preset.id === CODE_DEFAULT_CONFIG_ID ? false : !!preset.inheritsFromParent;
+      if (!preset.config || typeof preset.config !== 'object' || Array.isArray(preset.config)) {
+        preset.config = {};
+      }
+    });
+    if (!savedConfigState[activeSavedConfigId]) activeSavedConfigId = 'system';
+    syncSavedConfigEffectiveStates();
+  }
+
+  function syncActiveSavedConfig() {
+    if (!supportsSavedConfigs) return;
+    ensureSavedConfigState();
+    if (savedConfigState[activeSavedConfigId]) {
+      updateSavedConfigOverride(savedConfigState[activeSavedConfigId]);
+      syncSavedConfigEffectiveStates();
+    }
+  }
+
+  function loadSavedConfig(configId) {
+    if (!supportsSavedConfigs) return;
+    ensureSavedConfigState();
+    const nextId = String(configId || '').trim();
+    if (!savedConfigState[nextId]) return;
+    activeSavedConfigId = nextId;
+    applyEditableStyleConfig(savedConfigState[nextId].effectiveConfig || {});
+  }
+
+  function createSavedConfigName(baseName = 'Config') {
+    ensureSavedConfigState();
+    const used = new Set(Object.values(savedConfigState).map((preset) => String(preset?.name || '').trim()).filter(Boolean));
+    if (!used.has(baseName)) return baseName;
+    let index = 2;
+    while (used.has(`${baseName} ${index}`)) index += 1;
+    return `${baseName} ${index}`;
+  }
+
+  function createSavedConfigId(baseName = 'config') {
+    ensureSavedConfigState();
+    const slugBase = String(baseName || 'config').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'config';
+    let candidate = slugBase;
+    let index = 2;
+    while (savedConfigState[candidate]) {
+      candidate = `${slugBase}-${index}`;
+      index += 1;
+    }
+    return candidate;
+  }
+
+  function isSavedConfigDescendant(targetId, parentId) {
+    const target = String(targetId || '').trim();
+    const parent = String(parentId || '').trim();
+    if (!target || !parent || target === parent) return false;
+    let current = savedConfigState[target];
+    const seen = new Set();
+    while (current && current.parentId && !seen.has(current.id)) {
+      if (current.parentId === parent) return true;
+      seen.add(current.id);
+      current = savedConfigState[current.parentId];
+    }
+    return false;
+  }
+
+  function createNewSavedConfig({ copyFromActive = false } = {}) {
+    if (!supportsSavedConfigs) return;
+    ensureSavedConfigState();
+    syncActiveSavedConfig();
+    const source = copyFromActive ? savedConfigState[activeSavedConfigId] : savedConfigState.system;
+    const sourceName = String(source?.name || (copyFromActive ? 'Copy' : 'Config')).trim() || 'Config';
+    const name = createSavedConfigName(copyFromActive ? `${sourceName} Copy` : 'New Config');
+    const id = createSavedConfigId(name);
+    savedConfigState[id] = {
+      id,
+      name,
+      parentId: copyFromActive ? activeSavedConfigId : 'system',
+      inheritsFromParent: true,
+      config: {},
+      effectiveConfig: cloneDialogValue(source?.effectiveConfig || { fields: getDefaultSavedConfigFields() }),
+    };
+    loadSavedConfig(id);
+  }
+
+  function createSavedConfigPresetBar(rerender) {
+    ensureSavedConfigState();
+    const presetOptions = Object.values(savedConfigState)
+      .filter((preset) => preset.id !== CODE_DEFAULT_CONFIG_ID)
+      .map((preset) => ({
+      value: preset.id,
+      label: preset.name,
+    }));
+    const presetDropdown = createDropdown({
+      items: presetOptions,
+      value: activeSavedConfigId,
+      className: 'kanji-study-card-config-select kanji-study-card-config-preset-select',
+      closeOverlaysOnOpen: false,
+      onChange: (nextValue) => {
+        syncActiveSavedConfig();
+        loadSavedConfig(nextValue);
+        rerender();
+      },
+    });
+    const newBtn = el('button', {
+      className: 'btn small',
+      text: 'New',
+      attrs: { type: 'button', title: 'Create a new config from System Defaults' },
+    });
+    newBtn.addEventListener('click', () => {
+      createNewSavedConfig({ copyFromActive: false });
+      rerender();
+    });
+    const copyBtn = el('button', {
+      className: 'btn small',
+      text: 'Copy',
+      attrs: { type: 'button', title: 'Create a child config from the current config' },
+    });
+    copyBtn.addEventListener('click', () => {
+      createNewSavedConfig({ copyFromActive: true });
+      rerender();
+    });
+    return el('div', {
+      className: 'kanji-study-card-config-preset-bar',
+      children: [presetDropdown, newBtn, copyBtn],
+    });
+  }
+
+  if (supportsSavedConfigs) {
+    ensureSavedConfigState();
+    loadSavedConfig(activeSavedConfigId);
+  }
+
   function getStyleUsage(styleId) {
     const id = String(styleId || '').trim();
     if (!id) return [];
-    return state
-      .filter((item) => fieldStyleState[item.key] === id)
-      .map((item) => item.label);
+    const labelByKey = new Map(items.map((item) => [item.key, item.label]));
+    if (!supportsSavedConfigs) {
+      return state
+        .filter((item) => fieldStyleState[item.key] === id)
+        .map((item) => item.label);
+    }
+    syncActiveSavedConfig();
+    const out = [];
+    Object.values(savedConfigState || {}).forEach((preset) => {
+      const fieldMap = preset?.id === activeSavedConfigId
+        ? getEditableStyleConfig().fields
+        : preset?.effectiveConfig?.fields;
+      Object.entries(fieldMap || {}).forEach(([fieldKey, fieldConfig]) => {
+        if (String(fieldConfig?.style || 'main').trim() !== id) return;
+        out.push(`${preset.name}: ${labelByKey.get(fieldKey) || fieldKey}`);
+      });
+    });
+    return out;
   }
 
   function addCustomStyle() {
@@ -513,6 +921,7 @@ export function openGenericFlatCardConfigDialog({
   function removeCustomStyle(styleId) {
     const id = String(styleId || '').trim();
     if (!id) return;
+    if (getStyleUsage(id).length) return;
     customStyleState = customStyleState.filter((item) => item.id !== id);
     Object.keys(fieldStyleState).forEach((fieldKey) => {
       if (fieldStyleState[fieldKey] === id) delete fieldStyleState[fieldKey];
@@ -576,6 +985,31 @@ export function openGenericFlatCardConfigDialog({
   }
 
   function getCurrentConfigSnapshot() {
+    if (supportsSavedConfigs) {
+      syncActiveSavedConfig();
+        return {
+          _namespace: String(namespace || '').trim(),
+          _collection: String(collection || '').trim(),
+          styles: {
+            main: {
+              name: 'Main Style',
+              ...getStylePayload(mainStyleState),
+            },
+            ...getSelectedCustomStyles(),
+          },
+          activeConfigId: activeSavedConfigId,
+          savedConfigs: Object.fromEntries(
+            Object.entries(savedConfigState || {})
+              .filter(([configId]) => configId !== CODE_DEFAULT_CONFIG_ID)
+              .map(([configId, preset]) => [configId, {
+              name: String(preset?.name || configId).trim() || configId,
+              parentId: String(preset?.parentId || '').trim(),
+              inheritsFromParent: !!preset?.inheritsFromParent,
+              config: cloneDialogValue(preset?.config) || {},
+            }])
+          ),
+        };
+    }
     const payload = isLayoutMode
       ? {
         layout: getSelectedLayout(),
@@ -601,7 +1035,25 @@ export function openGenericFlatCardConfigDialog({
   const defaultConfigSnapshot = {
     _namespace: String(namespace || '').trim(),
     _collection: String(collection || '').trim(),
-    ...(isLayoutMode
+    ...(supportsSavedConfigs
+      ? {
+        styles: {
+          main: {
+            name: 'Main Style',
+            ...getStylePayload(createStyleState('main', defaultStyles, defaultStyles)),
+          },
+        },
+        activeConfigId: 'system',
+        savedConfigs: {
+          system: {
+            name: 'System Defaults',
+            parentId: CODE_DEFAULT_CONFIG_ID,
+            inheritsFromParent: true,
+            config: {},
+          },
+        },
+      }
+      : isLayoutMode
       ? {
         layout: Object.fromEntries(slots.map((slot) => [slot.key, String(defaultLayout?.[slot.key] || '').trim()])),
         ...Object.fromEntries(controls.map((item) => [item.key, getLayoutValue(defaultOptions, item.key, defaultOptions) || item.items[0]?.value || ''])),
@@ -620,6 +1072,18 @@ export function openGenericFlatCardConfigDialog({
   const hasDefaultChanges = () => JSON.stringify(getCurrentConfigSnapshot()) !== defaultSnapshot;
 
   function resetToInitialState() {
+    if (supportsSavedConfigs) {
+      mainStyleState = createStyleState('main', initialConfigSnapshot.styles?.main, defaultStyles);
+      customStyleState = Object.entries(initialConfigSnapshot.styles || {})
+        .filter(([styleId]) => styleId !== 'main')
+        .map(([styleId, config]) => createStyleState(styleId, config, defaultStyles));
+      savedConfigState = cloneDialogValue(initialConfigSnapshot.savedConfigs) || {};
+      activeSavedConfigId = String(initialConfigSnapshot.activeConfigId || 'system').trim() || 'system';
+      ensureSavedConfigState();
+      loadSavedConfig(activeSavedConfigId);
+      activeTab = 'fields';
+      return;
+    }
     state = buildSelectableState(items, initialConfigSnapshot.fields || selectedFields);
     layoutState = slots.map((slot) => ({
       ...slot,
@@ -640,6 +1104,16 @@ export function openGenericFlatCardConfigDialog({
   }
 
   function resetToDefaultState() {
+    if (supportsSavedConfigs) {
+      mainStyleState = createStyleState('main', defaultConfigSnapshot.styles?.main, defaultStyles);
+      customStyleState = [];
+      savedConfigState = cloneDialogValue(defaultConfigSnapshot.savedConfigs) || {};
+      activeSavedConfigId = 'system';
+      ensureSavedConfigState();
+      loadSavedConfig(activeSavedConfigId);
+      activeTab = 'fields';
+      return;
+    }
     if (isLayoutMode) {
       layoutState = slots.map((slot) => ({
         ...slot,
@@ -665,6 +1139,7 @@ export function openGenericFlatCardConfigDialog({
     subtitle: String(subtitle || '').trim() || (isLayoutMode
       ? 'Choose which collection field appears in each fixed position on the card.'
       : 'Choose which fields appear on the generic card and arrange their top-to-bottom order.'),
+    onRenderHeaderMeta: () => [],
     onRenderSummary: () => {
       if (isLayoutMode) {
         const visibleLayoutState = layoutState.filter((item) => isLayoutItemVisible(item));
@@ -676,7 +1151,9 @@ export function openGenericFlatCardConfigDialog({
       }
       const visibleCount = state.filter((item) => item.enabled).length;
       if (!hasStyleTabs) return `${visibleCount} visible of ${state.length}`;
-      return `${visibleCount} visible of ${state.length} • ${customStyleState.length} custom styles`;
+      const presetName = supportsSavedConfigs ? String(savedConfigState?.[activeSavedConfigId]?.name || activeSavedConfigId).trim() : '';
+      const presetLabel = activeTab === 'fields' && presetName ? ` • ${presetName}` : '';
+      return `${visibleCount} visible of ${state.length} • ${customStyleState.length} extra styles${presetLabel}`;
     },
     onRenderHeaderActions: ({ rerender }) => {
       if (!hasStyleTabs) return [];
@@ -750,12 +1227,18 @@ export function openGenericFlatCardConfigDialog({
             nameInput.addEventListener('blur', () => {
               rerender();
             });
+            const styleUsage = getStyleUsage(currentStyleState.id);
             const deleteBtn = el('button', {
               className: 'btn small danger',
               text: 'Delete',
-              attrs: { type: 'button', title: 'Delete this custom style' },
-            });
+               attrs: {
+                 type: 'button',
+                 title: styleUsage.length ? 'This style is still assigned to fields.' : 'Delete this style',
+               },
+             });
+            deleteBtn.disabled = styleUsage.length > 0;
             deleteBtn.addEventListener('click', () => {
+              if (styleUsage.length) return;
               removeCustomStyle(currentStyleState.id);
               rerender();
             });
@@ -766,7 +1249,7 @@ export function openGenericFlatCardConfigDialog({
             }));
             list.append(createConfigItemRow({
               label: 'Fields Using This Style',
-              keyText: getStyleUsage(currentStyleState.id).join(', ') || 'No fields currently use this style.',
+              keyText: styleUsage.join(', ') || 'No fields currently use this style.',
             }));
           }
 
@@ -782,6 +1265,84 @@ export function openGenericFlatCardConfigDialog({
             }));
           });
           return { tabs: topLevelTabs, body: list };
+        }
+      }
+
+      if (supportsSavedConfigs) {
+        const currentPreset = savedConfigState?.[activeSavedConfigId];
+        if (currentPreset && activeTab === 'fields') {
+          list.append(createSavedConfigPresetBar(rerender));
+          if (activeSavedConfigId !== 'system') {
+            const nameInput = el('input', {
+              className: 'kanji-study-card-config-name-input',
+              attrs: {
+                type: 'text',
+                maxlength: '48',
+                placeholder: 'Config name',
+                value: String(currentPreset.name || '').trim(),
+                'aria-label': 'Config name',
+              },
+            });
+            nameInput.addEventListener('input', () => {
+              currentPreset.name = String(nameInput.value || '').trim() || currentPreset.id;
+            });
+            nameInput.addEventListener('change', () => rerender());
+            nameInput.addEventListener('blur', () => rerender());
+            list.append(createConfigItemRow({
+              label: 'Config Name',
+              keyText: currentPreset.id,
+              controls: [nameInput],
+            }));
+          }
+
+          const parentOptions = Object.values(savedConfigState)
+            .filter((preset) => preset.id !== CODE_DEFAULT_CONFIG_ID && preset.id !== activeSavedConfigId && !isSavedConfigDescendant(preset.id, activeSavedConfigId))
+            .map((preset) => ({ value: preset.id, label: preset.name }));
+          if (activeSavedConfigId === 'system') {
+            list.append(createConfigItemRow({
+              label: 'Parent Config',
+              keyText: 'System Defaults follows the built-in code defaults for this card.',
+            }));
+          }
+          else {
+            list.append(createConfigItemRow({
+              label: 'Parent Config',
+              keyText: currentPreset.parentId || 'system',
+              controls: [createDropdown({
+                items: parentOptions,
+                value: currentPreset.parentId || 'system',
+                className: 'kanji-study-card-config-select',
+                closeOverlaysOnOpen: false,
+                onChange: (nextValue) => {
+                  currentPreset.parentId = String(nextValue || 'system').trim() || 'system';
+                  rerender();
+                },
+              })],
+            }));
+            list.append(createConfigItemRow({
+              label: 'Follow Parent',
+              keyText: currentPreset.inheritsFromParent
+                ? `Uses ${savedConfigState[currentPreset.parentId]?.name || currentPreset.parentId} except for this config's changes.`
+                : 'Stores a standalone snapshot of this config.',
+              controls: [createInlineToggleButtons({
+                item: {
+              label: 'Follow Parent',
+              items: [
+                { value: 'on', label: 'On' },
+                { value: 'off', label: 'Off' },
+              ],
+            },
+            value: currentPreset.inheritsFromParent ? 'on' : 'off',
+            onChange: (nextValue) => {
+              syncActiveSavedConfig();
+              currentPreset.inheritsFromParent = nextValue === 'on';
+              updateSavedConfigOverride(currentPreset);
+              syncSavedConfigEffectiveStates();
+              rerender();
+            },
+          })],
+            }));
+          }
         }
       }
 
@@ -824,24 +1385,19 @@ export function openGenericFlatCardConfigDialog({
         return topLevelTabs ? { tabs: topLevelTabs, body: list } : { body: list };
       }
 
-      const styleOptions = hasStyleTabs
-        ? [{ value: '', label: 'Main Style' }].concat(customStyleState.map((styleItem) => ({
-          value: styleItem.id,
-          label: String(styleItem.name || styleItem.id).trim() || styleItem.id,
-        })))
-        : [];
+      const styleOptions = hasStyleTabs ? getAllStyleOptions() : [];
 
       state.forEach((item, index) => {
         const controlsChildren = [];
         if (hasStyleTabs) {
           controlsChildren.push(createDropdown({
             items: styleOptions,
-            value: String(fieldStyleState[item.key] || '').trim(),
+            value: String(fieldStyleState[item.key] || 'main').trim() || 'main',
             className: 'kanji-study-card-config-select kanji-study-card-config-style-select',
             closeOverlaysOnOpen: false,
             onChange: (nextValue) => {
-              const styleId = String(nextValue || '').trim();
-              if (!styleId) delete fieldStyleState[item.key];
+              const styleId = String(nextValue || 'main').trim() || 'main';
+              if (styleId === 'main') delete fieldStyleState[item.key];
               else fieldStyleState[item.key] = styleId;
               rerender();
             },
@@ -870,7 +1426,32 @@ export function openGenericFlatCardConfigDialog({
     onReset: resetToInitialState,
     onResetToDefaults: resetToDefaultState,
     onSave: () => (
-      isLayoutMode
+      supportsSavedConfigs
+        ? (() => {
+          syncActiveSavedConfig();
+          return {
+            styles: {
+              main: {
+                name: 'Main Style',
+                ...getStylePayload(mainStyleState),
+              },
+              ...getSelectedCustomStyles(),
+            },
+            activeConfigId: activeSavedConfigId,
+            configs: Object.fromEntries(
+              Object.entries(savedConfigState || {})
+                .filter(([configId]) => configId !== CODE_DEFAULT_CONFIG_ID)
+                .map(([configId, preset]) => [configId, {
+                id: configId,
+                name: String(preset?.name || configId).trim() || configId,
+                parentId: String(preset?.parentId || '').trim(),
+                inheritsFromParent: !!preset?.inheritsFromParent,
+                config: cloneDialogValue(preset?.config) || {},
+              }])
+            ),
+          };
+        })()
+      : isLayoutMode
         ? {
           layout: getSelectedLayout(),
           ...Object.fromEntries(optionState.map((item) => [item.key, String(item.value || '').trim()])),

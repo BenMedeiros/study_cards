@@ -149,23 +149,56 @@ function cloneCardsConfig(cards) {
   for (const [cardKey, rawConfig] of Object.entries(cards)) {
     const key = String(cardKey || '').trim();
     if (!key || !rawConfig || typeof rawConfig !== 'object' || Array.isArray(rawConfig)) continue;
+    if (key === 'genericFlatCard' && rawConfig.configs && typeof rawConfig.configs === 'object' && !Array.isArray(rawConfig.configs)) {
+      const rootConfig = cloneCardsConfig({ __genericRoot__: rawConfig }).__genericRoot__ || {};
+      delete rootConfig.activeConfigId;
+      delete rootConfig.configs;
+      const presets = {};
+      for (const [presetId, rawPreset] of Object.entries(rawConfig.configs)) {
+        const id = String(presetId || '').trim();
+        if (!id || !rawPreset || typeof rawPreset !== 'object' || Array.isArray(rawPreset)) continue;
+        const nextPreset = {
+          name: String(rawPreset.name || id).trim() || id,
+        };
+        if (id !== 'system') {
+          const parentId = String(rawPreset.parentId || 'system').trim() || 'system';
+          nextPreset.parentId = parentId;
+          nextPreset.inheritsFromParent = !!rawPreset.inheritsFromParent;
+        }
+        nextPreset.config = cloneCardsConfig({ __preset__: rawPreset.config || {} }).__preset__ || {};
+        presets[id] = nextPreset;
+      }
+      out[key] = {
+        ...rootConfig,
+        activeConfigId: String(rawConfig.activeConfigId || '').trim() || 'system',
+        configs: presets,
+      };
+      continue;
+    }
     const nextConfig = {};
-    if (Array.isArray(rawConfig.fields)) {
+    if (rawConfig.fields && typeof rawConfig.fields === 'object' && !Array.isArray(rawConfig.fields)) {
+      nextConfig.fields = {};
+      for (const [fieldKey, rawFieldConfig] of Object.entries(rawConfig.fields)) {
+        const field = String(fieldKey || '').trim();
+        if (!field || !rawFieldConfig || typeof rawFieldConfig !== 'object' || Array.isArray(rawFieldConfig)) continue;
+        const nextFieldConfig = {};
+        if (Object.prototype.hasOwnProperty.call(rawFieldConfig, 'hide')) nextFieldConfig.hide = !!rawFieldConfig.hide;
+        if (Object.prototype.hasOwnProperty.call(rawFieldConfig, 'order') && Number.isFinite(Number(rawFieldConfig.order))) {
+          nextFieldConfig.order = Number(rawFieldConfig.order);
+        }
+        if (Object.prototype.hasOwnProperty.call(rawFieldConfig, 'style')) {
+          const style = String(rawFieldConfig.style || '').trim();
+          nextFieldConfig.style = style || 'main';
+        }
+        nextConfig.fields[field] = nextFieldConfig;
+      }
+      if (!Object.keys(nextConfig.fields).length) delete nextConfig.fields;
+    } else if (Array.isArray(rawConfig.fields)) {
       nextConfig.fields = Array.from(new Set(rawConfig.fields.map((field) => String(field || '').trim()).filter(Boolean)));
     }
-    if (rawConfig.style && typeof rawConfig.style === 'object' && !Array.isArray(rawConfig.style)) {
-      nextConfig.style = {};
-      for (const [styleKey, styleValue] of Object.entries(rawConfig.style)) {
-        const key = String(styleKey || '').trim();
-        const value = String(styleValue || '').trim();
-        if (!key || !value) continue;
-        nextConfig.style[key] = value;
-      }
-      if (!Object.keys(nextConfig.style).length) delete nextConfig.style;
-    }
-    if (rawConfig.customStyles && typeof rawConfig.customStyles === 'object' && !Array.isArray(rawConfig.customStyles)) {
-      nextConfig.customStyles = {};
-      for (const [styleId, rawStyle] of Object.entries(rawConfig.customStyles)) {
+    if (rawConfig.styles && typeof rawConfig.styles === 'object' && !Array.isArray(rawConfig.styles)) {
+      nextConfig.styles = {};
+      for (const [styleId, rawStyle] of Object.entries(rawConfig.styles)) {
         const id = String(styleId || '').trim();
         if (!id || !rawStyle || typeof rawStyle !== 'object' || Array.isArray(rawStyle)) continue;
         const nextStyle = {};
@@ -177,19 +210,17 @@ function cloneCardsConfig(cards) {
           if (!key || !value || key === 'name') continue;
           nextStyle[key] = value;
         }
-        nextConfig.customStyles[id] = nextStyle;
+        nextConfig.styles[id] = nextStyle;
       }
-      if (!Object.keys(nextConfig.customStyles).length) delete nextConfig.customStyles;
-    }
-    if (rawConfig.fieldStyles && typeof rawConfig.fieldStyles === 'object' && !Array.isArray(rawConfig.fieldStyles)) {
-      nextConfig.fieldStyles = {};
-      for (const [fieldKey, styleId] of Object.entries(rawConfig.fieldStyles)) {
-        const field = String(fieldKey || '').trim();
-        const style = String(styleId || '').trim();
-        if (!field || !style) continue;
-        nextConfig.fieldStyles[field] = style;
-      }
-      if (!Object.keys(nextConfig.fieldStyles).length) delete nextConfig.fieldStyles;
+      if (!Object.keys(nextConfig.styles).length) delete nextConfig.styles;
+    } else if (rawConfig.style || rawConfig.customStyles) {
+      nextConfig.styles = cloneCardsConfig({
+        __styles__: {
+          main: { ...(rawConfig.style || {}), name: 'Main Style' },
+          ...(rawConfig.customStyles || {}),
+        },
+      }).__styles__;
+      if (!Object.keys(nextConfig.styles || {}).length) delete nextConfig.styles;
     }
     if (Array.isArray(rawConfig.controls)) {
       nextConfig.controls = Array.from(new Set(rawConfig.controls.map((item) => String(item || '').trim()).filter(Boolean)));
@@ -293,6 +324,90 @@ function _validateCards(cards, collection) {
     if (!key) continue;
     if (!rawConfig || typeof rawConfig !== 'object' || Array.isArray(rawConfig)) {
       throw new Error(`cards.${key} must be an object`);
+    }
+    if (key === 'genericFlatCard' && Object.prototype.hasOwnProperty.call(rawConfig, 'configs')) {
+      if (Object.prototype.hasOwnProperty.call(rawConfig, 'styles')) {
+        if (!rawConfig.styles || typeof rawConfig.styles !== 'object' || Array.isArray(rawConfig.styles)) {
+          throw new Error(`cards.${key}.styles must be an object`);
+        }
+        for (const [styleId, rawStyle] of Object.entries(rawConfig.styles)) {
+          const id = String(styleId || '').trim();
+          if (!id) throw new Error(`cards.${key}.styles keys must be non-empty strings`);
+          if (!rawStyle || typeof rawStyle !== 'object' || Array.isArray(rawStyle)) {
+            throw new Error(`cards.${key}.styles.${id} must be an object`);
+          }
+          for (const [styleKey, styleValue] of Object.entries(rawStyle)) {
+            if (styleKey === 'name') continue;
+            const styleName = String(styleKey || '').trim();
+            const styleOption = String(styleValue || '').trim();
+            const allowedValues = allowedGenericStyleKeys.get(styleName);
+            if (!allowedValues) throw new Error(`cards.${key}.styles.${id} key not supported: ${styleName}`);
+            if (!allowedValues.has(styleOption)) {
+              throw new Error(`cards.${key}.styles.${id} value not supported for ${styleName}: ${styleOption}`);
+            }
+          }
+        }
+      }
+      if (!rawConfig.configs || typeof rawConfig.configs !== 'object' || Array.isArray(rawConfig.configs)) {
+        throw new Error(`cards.${key}.configs must be an object`);
+      }
+      const styleIds = new Set(Object.keys(rawConfig.styles || {}).map((item) => String(item || '').trim()).filter(Boolean));
+      styleIds.add('main');
+      const presetIds = new Set();
+      for (const [presetId, rawPreset] of Object.entries(rawConfig.configs)) {
+        const id = String(presetId || '').trim();
+        if (!id) throw new Error(`cards.${key}.configs keys must be non-empty strings`);
+        if (presetIds.has(id)) throw new Error(`cards.${key}.configs contains duplicate key: ${id}`);
+        presetIds.add(id);
+        if (!rawPreset || typeof rawPreset !== 'object' || Array.isArray(rawPreset)) {
+          throw new Error(`cards.${key}.configs.${id} must be an object`);
+        }
+        if (id !== 'system') {
+          const parentId = String(rawPreset.parentId || '').trim();
+          if (!parentId) throw new Error(`cards.${key}.configs.${id}.parentId must be a non-empty string`);
+          if (parentId === id) throw new Error(`cards.${key}.configs.${id}.parentId cannot reference itself`);
+          if (parentId !== '__system__' && !rawConfig.configs[parentId]) {
+            throw new Error(`cards.${key}.configs.${id}.parentId must reference cards.${key}.configs or __system__`);
+          }
+        } else {
+          const parentId = String(rawPreset.parentId || '').trim();
+          if (parentId && parentId !== '__system__') {
+            throw new Error(`cards.${key}.configs.${id}.parentId must be __system__ when provided`);
+          }
+        }
+        if (!rawPreset.config || typeof rawPreset.config !== 'object' || Array.isArray(rawPreset.config)) {
+          throw new Error(`cards.${key}.configs.${id}.config must be an object`);
+        }
+        if (Object.prototype.hasOwnProperty.call(rawPreset.config, 'fields')) {
+          if (!rawPreset.config.fields || typeof rawPreset.config.fields !== 'object' || Array.isArray(rawPreset.config.fields)) {
+            throw new Error(`cards.${key}.configs.${id}.config.fields must be an object`);
+          }
+          for (const [fieldKey, fieldConfig] of Object.entries(rawPreset.config.fields)) {
+            const field = String(fieldKey || '').trim();
+            if (!field) throw new Error(`cards.${key}.configs.${id}.config.fields keys must be non-empty strings`);
+            if (!fieldKeys.has(field)) throw new Error(`cards.${key}.configs.${id}.config.fields entry not in collection schema: ${field}`);
+            if (!fieldConfig || typeof fieldConfig !== 'object' || Array.isArray(fieldConfig)) {
+              throw new Error(`cards.${key}.configs.${id}.config.fields.${field} must be an object`);
+            }
+            if (Object.prototype.hasOwnProperty.call(fieldConfig, 'order') && !Number.isFinite(Number(fieldConfig.order))) {
+              throw new Error(`cards.${key}.configs.${id}.config.fields.${field}.order must be numeric`);
+            }
+            if (Object.prototype.hasOwnProperty.call(fieldConfig, 'style')) {
+              const style = String(fieldConfig.style || '').trim() || 'main';
+              if (!styleIds.has(style)) {
+                throw new Error(`cards.${key}.configs.${id}.config.fields.${field}.style must reference cards.${key}.styles`);
+              }
+            }
+          }
+        }
+      }
+      if (Object.prototype.hasOwnProperty.call(rawConfig, 'activeConfigId')) {
+        const activeId = String(rawConfig.activeConfigId || '').trim();
+        if (activeId && !presetIds.has(activeId)) {
+          throw new Error(`cards.${key}.activeConfigId must reference cards.${key}.configs`);
+        }
+      }
+      continue;
     }
     if (Object.prototype.hasOwnProperty.call(rawConfig, 'fields')) {
       if (!Array.isArray(rawConfig.fields)) throw new Error(`cards.${key}.fields must be an array`);

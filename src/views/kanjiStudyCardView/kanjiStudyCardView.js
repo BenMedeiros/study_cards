@@ -16,6 +16,8 @@ import { createGoogleCastSender } from '../../integrations/casting/googleCastSen
 const GENERIC_CARD_SETTINGS_KEY = 'genericFlatCard';
 const MAIN_CARD_SETTINGS_KEY = 'main';
 const RELATED_CARD_SETTINGS_KEY = 'related';
+const GENERIC_CARD_CODE_DEFAULT_CONFIG_ID = '__system__';
+const GENERIC_CARD_SYSTEM_CONFIG_ID = 'system';
 const MAIN_CARD_FLOW_VALUES = new Set(['row', 'column']);
 const GENERIC_CARD_LABEL_WIDTH_VALUES = new Set(['6rem', '8rem', '10rem', '12rem', '14rem']);
 const GENERIC_CARD_LABEL_SIZE_VALUES = new Set(['2xs', 'xs', 'sm', 'body']);
@@ -117,37 +119,329 @@ function normalizeGenericCardStyle(style) {
   return next;
 }
 
-function normalizeGenericCardCustomStyles(customStyles) {
-  if (!customStyles || typeof customStyles !== 'object' || Array.isArray(customStyles)) return {};
+function normalizeGenericCardStyles(rawStyles, { applyDefaults = false } = {}) {
+  const source = rawStyles && typeof rawStyles === 'object' && !Array.isArray(rawStyles) ? rawStyles : {};
   const out = {};
-  for (const [styleId, rawStyle] of Object.entries(customStyles)) {
-    const id = String(styleId || '').trim();
+  for (const [rawId, rawStyle] of Object.entries(source)) {
+    const id = String(rawId || '').trim();
     if (!id || !rawStyle || typeof rawStyle !== 'object' || Array.isArray(rawStyle)) continue;
     const style = normalizeGenericCardStyle(rawStyle);
     out[id] = {
-      name: String(rawStyle.name || '').trim() || id,
+      name: id === 'main' ? (String(rawStyle.name || '').trim() || 'Main Style') : (String(rawStyle.name || '').trim() || id),
       ...style,
+    };
+  }
+  if (applyDefaults || !out.main) {
+    out.main = {
+      name: String(out.main?.name || 'Main Style').trim() || 'Main Style',
+      ...DEFAULT_GENERIC_CARD_STYLE,
+      ...normalizeGenericCardStyle(out.main || {}),
     };
   }
   return out;
 }
 
-function normalizeGenericCardFieldStyles(fieldStyles, allowedFields = null, customStyles = null) {
-  if (!fieldStyles || typeof fieldStyles !== 'object' || Array.isArray(fieldStyles)) return {};
-  const allowedFieldSet = allowedFields instanceof Set ? allowedFields : null;
-  const allowedStyleSet = customStyles && typeof customStyles === 'object'
-    ? new Set(Object.keys(customStyles).map((item) => String(item || '').trim()).filter(Boolean))
-    : null;
+function buildDefaultGenericCardFieldConfigMap(collectionKey, availableFields) {
+  return Object.fromEntries(
+    getDefaultGenericCardFields(collectionKey, availableFields).map((fieldKey, index) => [fieldKey, {
+      hide: false,
+      order: index,
+      style: 'main',
+    }])
+  );
+}
+
+function normalizeGenericCardFieldEntry(rawEntry, { validStyleIds = null, includeMissing = false } = {}) {
+  const entry = rawEntry && typeof rawEntry === 'object' && !Array.isArray(rawEntry) ? rawEntry : null;
+  if (!entry) return includeMissing ? { hide: false, style: 'main' } : {};
   const out = {};
-  for (const [fieldKey, styleId] of Object.entries(fieldStyles)) {
-    const field = String(fieldKey || '').trim();
-    const style = String(styleId || '').trim();
-    if (!field || !style) continue;
-    if (allowedFieldSet && !allowedFieldSet.has(field)) continue;
-    if (allowedStyleSet && !allowedStyleSet.has(style)) continue;
-    out[field] = style;
+  if (Object.prototype.hasOwnProperty.call(entry, 'hide')) out.hide = !!entry.hide;
+  if (Object.prototype.hasOwnProperty.call(entry, 'order') && Number.isFinite(Number(entry.order))) out.order = Number(entry.order);
+  if (Object.prototype.hasOwnProperty.call(entry, 'style')) {
+    const styleId = String(entry.style || 'main').trim() || 'main';
+    if (!validStyleIds || validStyleIds.has(styleId)) out.style = styleId;
   }
   return out;
+}
+
+function cloneGenericCardValue(value) {
+  return JSON.parse(JSON.stringify(value ?? null));
+}
+
+function buildDefaultGenericCardConfig(collectionKey, availableFields) {
+  return {
+    fields: buildDefaultGenericCardFieldConfigMap(collectionKey, availableFields),
+    styles: normalizeGenericCardStyles({}, { applyDefaults: true }),
+  };
+}
+
+function normalizeGenericCardConfigSections(rawConfig, {
+  collectionKey = '',
+  applyDefaults = false,
+} = {}) {
+  const stylesSource = rawConfig?.styles && typeof rawConfig.styles === 'object' && !Array.isArray(rawConfig.styles)
+    ? rawConfig.styles
+    : {
+      ...(rawConfig?.style ? { main: { name: 'Main Style', ...rawConfig.style } } : {}),
+      ...((rawConfig?.customStyles && typeof rawConfig.customStyles === 'object' && !Array.isArray(rawConfig.customStyles)) ? rawConfig.customStyles : {}),
+    };
+  const styles = normalizeGenericCardStyles(stylesSource, { applyDefaults });
+  if (!applyDefaults) return Object.keys(styles).length ? { styles } : {};
+  return { styles };
+}
+
+function normalizeGenericCardSavedConfig(rawConfig, {
+  collectionKey = '',
+  availableFields = [],
+  styles = null,
+  applyDefaults = true,
+} = {}) {
+  const available = Array.isArray(availableFields) ? availableFields : [];
+  const allowedKeys = available.map((item) => String(item?.key || '').trim()).filter(Boolean);
+  const allowedSet = new Set(allowedKeys);
+  const normalizedStyles = normalizeGenericCardStyles(styles || {}, { applyDefaults: true });
+  const validStyleIds = new Set(Object.keys(normalizedStyles));
+  const defaults = buildDefaultGenericCardFieldConfigMap(collectionKey, availableFields);
+  const rawFields = rawConfig?.fields;
+  const out = {};
+
+  if (rawFields && typeof rawFields === 'object' && !Array.isArray(rawFields)) {
+    for (const [rawFieldKey, rawEntry] of Object.entries(rawFields)) {
+      const fieldKey = String(rawFieldKey || '').trim();
+      if (!fieldKey || !allowedSet.has(fieldKey)) continue;
+      const nextEntry = normalizeGenericCardFieldEntry(rawEntry, { validStyleIds, includeMissing: false });
+      if (Object.keys(nextEntry).length) out[fieldKey] = nextEntry;
+    }
+  }
+  else if (Array.isArray(rawFields)) {
+    const selected = rawFields.map((field) => String(field || '').trim()).filter((field) => allowedSet.has(field));
+    const selectedSet = new Set(selected);
+    selected.forEach((fieldKey, index) => {
+      out[fieldKey] = { order: index, hide: false };
+    });
+    allowedKeys.filter((fieldKey) => !selectedSet.has(fieldKey)).forEach((fieldKey, index) => {
+      out[fieldKey] = { order: selected.length + index, hide: true };
+    });
+  }
+
+  if (!applyDefaults) {
+    return Object.keys(out).length ? { fields: out } : { fields: {} };
+  }
+
+  const merged = cloneGenericCardValue(defaults) || {};
+  Object.entries(out).forEach(([fieldKey, entry]) => {
+    merged[fieldKey] = {
+      ...merged[fieldKey],
+      ...entry,
+    };
+  });
+  const orderedEntries = allowedKeys
+    .map((fieldKey, index) => ({
+      fieldKey,
+      defaultOrder: index,
+      ...merged[fieldKey],
+    }))
+    .sort((a, b) => {
+      const orderDiff = Number(a.order) - Number(b.order);
+      if (orderDiff !== 0) return orderDiff;
+      return a.defaultOrder - b.defaultOrder;
+    });
+  const normalizedFields = {};
+  orderedEntries.forEach((entry, index) => {
+    normalizedFields[entry.fieldKey] = {
+      hide: !!entry.hide,
+      order: index,
+      style: validStyleIds.has(String(entry.style || 'main').trim()) ? (String(entry.style || 'main').trim() || 'main') : 'main',
+    };
+  });
+  return { fields: normalizedFields };
+}
+
+function diffGenericCardSavedConfig(baseConfig, nextConfig) {
+  const out = {};
+  const baseFields = baseConfig?.fields && typeof baseConfig.fields === 'object' && !Array.isArray(baseConfig.fields) ? baseConfig.fields : {};
+  const nextFields = nextConfig?.fields && typeof nextConfig.fields === 'object' && !Array.isArray(nextConfig.fields) ? nextConfig.fields : {};
+  const changedFields = {};
+  const allKeys = new Set([...Object.keys(baseFields), ...Object.keys(nextFields)]);
+  allKeys.forEach((fieldKey) => {
+    const base = baseFields[fieldKey] || { hide: false, order: 0, style: 'main' };
+    const next = nextFields[fieldKey] || base;
+    const entry = {};
+    if (!!next.hide !== !!base.hide) entry.hide = !!next.hide;
+    if (Number(next.order) !== Number(base.order)) entry.order = Number(next.order);
+    if (String(next.style || 'main').trim() !== String(base.style || 'main').trim()) {
+      entry.style = String(next.style || 'main').trim() || 'main';
+    }
+    if (Object.keys(entry).length) changedFields[fieldKey] = entry;
+  });
+  out.fields = changedFields;
+  return out;
+}
+
+function normalizeGenericCardPresetState(rawConfig, {
+  collectionKey = '',
+  availableFields = [],
+  styles = {},
+} = {}) {
+  const source = rawConfig && typeof rawConfig === 'object' && !Array.isArray(rawConfig) ? rawConfig : {};
+  const rawConfigs = source.configs && typeof source.configs === 'object' && !Array.isArray(source.configs)
+    ? source.configs
+    : null;
+  const configs = {};
+
+  if (rawConfigs) {
+    for (const [rawId, rawPreset] of Object.entries(rawConfigs)) {
+      const id = String(rawId || '').trim();
+      if (!id || !rawPreset || typeof rawPreset !== 'object' || Array.isArray(rawPreset)) continue;
+      configs[id] = {
+        id,
+        name: String(rawPreset.name || id).trim() || id,
+        parentId: id === GENERIC_CARD_CODE_DEFAULT_CONFIG_ID
+          ? ''
+          : String(rawPreset.parentId || (id === GENERIC_CARD_SYSTEM_CONFIG_ID ? GENERIC_CARD_CODE_DEFAULT_CONFIG_ID : GENERIC_CARD_SYSTEM_CONFIG_ID)).trim(),
+        inheritsFromParent: id === GENERIC_CARD_CODE_DEFAULT_CONFIG_ID ? false : !!rawPreset.inheritsFromParent,
+        config: normalizeGenericCardSavedConfig(rawPreset.config, { collectionKey, availableFields, styles, applyDefaults: false }),
+        effectiveConfig: null,
+      };
+    }
+  }
+  else {
+    const legacyConfig = normalizeGenericCardSavedConfig(source, { collectionKey, availableFields, styles });
+    configs[GENERIC_CARD_CODE_DEFAULT_CONFIG_ID] = {
+      id: GENERIC_CARD_CODE_DEFAULT_CONFIG_ID,
+      name: 'Code Defaults',
+      parentId: '',
+      inheritsFromParent: false,
+      config: normalizeGenericCardSavedConfig({}, { collectionKey, availableFields, styles }),
+      effectiveConfig: normalizeGenericCardSavedConfig({}, { collectionKey, availableFields, styles }),
+    };
+    configs[GENERIC_CARD_SYSTEM_CONFIG_ID] = {
+      id: GENERIC_CARD_SYSTEM_CONFIG_ID,
+      name: 'System Defaults',
+      parentId: GENERIC_CARD_CODE_DEFAULT_CONFIG_ID,
+      inheritsFromParent: true,
+      config: diffGenericCardSavedConfig(
+        configs[GENERIC_CARD_CODE_DEFAULT_CONFIG_ID].effectiveConfig,
+        legacyConfig
+      ),
+      effectiveConfig: legacyConfig,
+    };
+  }
+
+  if (!configs[GENERIC_CARD_CODE_DEFAULT_CONFIG_ID]) {
+    configs[GENERIC_CARD_CODE_DEFAULT_CONFIG_ID] = {
+      id: GENERIC_CARD_CODE_DEFAULT_CONFIG_ID,
+      name: 'Code Defaults',
+      parentId: '',
+      inheritsFromParent: false,
+      config: normalizeGenericCardSavedConfig({}, { collectionKey, availableFields, styles }),
+      effectiveConfig: normalizeGenericCardSavedConfig({}, { collectionKey, availableFields, styles }),
+    };
+  }
+  if (!configs[GENERIC_CARD_SYSTEM_CONFIG_ID]) {
+    configs[GENERIC_CARD_SYSTEM_CONFIG_ID] = {
+      id: GENERIC_CARD_SYSTEM_CONFIG_ID,
+      name: 'System Defaults',
+      parentId: GENERIC_CARD_CODE_DEFAULT_CONFIG_ID,
+      inheritsFromParent: true,
+      config: {},
+      effectiveConfig: normalizeGenericCardSavedConfig({}, { collectionKey, availableFields, styles }),
+    };
+  }
+
+  function resolvePresetConfig(configId, stack = new Set()) {
+    const id = String(configId || GENERIC_CARD_SYSTEM_CONFIG_ID).trim() || GENERIC_CARD_SYSTEM_CONFIG_ID;
+    const defaultConfig = normalizeGenericCardSavedConfig({}, { collectionKey, availableFields, styles });
+    if (stack.has(id)) return defaultConfig;
+    const preset = configs[id] || configs[GENERIC_CARD_SYSTEM_CONFIG_ID];
+    if (!preset || id === GENERIC_CARD_CODE_DEFAULT_CONFIG_ID) {
+      return normalizeGenericCardSavedConfig(configs[GENERIC_CARD_CODE_DEFAULT_CONFIG_ID]?.config, { collectionKey, availableFields, styles });
+    }
+    if (!preset.inheritsFromParent) {
+      return normalizeGenericCardSavedConfig(preset.config, { collectionKey, availableFields, styles });
+    }
+    stack.add(id);
+    const parentConfig = resolvePresetConfig(preset.parentId || GENERIC_CARD_SYSTEM_CONFIG_ID, stack);
+    stack.delete(id);
+    const parentFields = cloneGenericCardValue(parentConfig.fields) || {};
+    Object.entries(preset.config?.fields || {}).forEach(([fieldKey, rawEntry]) => {
+      if (!parentFields[fieldKey]) return;
+      parentFields[fieldKey] = {
+        ...parentFields[fieldKey],
+        ...normalizeGenericCardFieldEntry(rawEntry, {
+          validStyleIds: new Set(Object.keys(normalizeGenericCardStyles(styles || {}, { applyDefaults: true }))),
+          includeMissing: false,
+        }),
+      };
+    });
+    return normalizeGenericCardSavedConfig({ fields: parentFields }, { collectionKey, availableFields, styles });
+  }
+
+  Object.values(configs).forEach((preset) => {
+    preset.effectiveConfig = resolvePresetConfig(preset.id);
+    if (preset.id === GENERIC_CARD_CODE_DEFAULT_CONFIG_ID) {
+      preset.parentId = '';
+      preset.inheritsFromParent = false;
+    }
+    else if (!configs[preset.parentId]) {
+      preset.parentId = GENERIC_CARD_SYSTEM_CONFIG_ID;
+    }
+  });
+
+  const activeConfigId = configs[String(source.activeConfigId || '').trim()]
+    ? String(source.activeConfigId || '').trim()
+    : GENERIC_CARD_SYSTEM_CONFIG_ID;
+
+  return { activeConfigId, configs };
+}
+
+function serializeGenericCardPresetState(state, {
+  collectionKey = '',
+  availableFields = [],
+  styles = {},
+} = {}) {
+  const source = state && typeof state === 'object' && !Array.isArray(state) ? state : {};
+  const configs = source.configs && typeof source.configs === 'object' && !Array.isArray(source.configs) ? source.configs : {};
+  const out = {};
+  const systemPreset = configs[GENERIC_CARD_SYSTEM_CONFIG_ID];
+  const codeDefaultPreset = configs[GENERIC_CARD_CODE_DEFAULT_CONFIG_ID];
+  const systemEffective = normalizeGenericCardSavedConfig(systemPreset?.effectiveConfig, { collectionKey, availableFields, styles });
+  const codeDefaultEffective = normalizeGenericCardSavedConfig(codeDefaultPreset?.effectiveConfig, { collectionKey, availableFields, styles });
+
+  Object.values(configs).forEach((preset) => {
+    const id = String(preset?.id || '').trim();
+    if (!id) return;
+    if (id === GENERIC_CARD_CODE_DEFAULT_CONFIG_ID) return;
+    const isSystem = id === GENERIC_CARD_SYSTEM_CONFIG_ID;
+    const effectiveConfig = normalizeGenericCardSavedConfig(preset?.effectiveConfig, { collectionKey, availableFields, styles });
+    const parentId = isSystem
+      ? GENERIC_CARD_CODE_DEFAULT_CONFIG_ID
+      : (configs[String(preset?.parentId || '').trim()]
+        ? String(preset.parentId || '').trim()
+        : GENERIC_CARD_SYSTEM_CONFIG_ID);
+    const parentEffective = parentId === GENERIC_CARD_CODE_DEFAULT_CONFIG_ID
+      ? codeDefaultEffective
+      : parentId === GENERIC_CARD_SYSTEM_CONFIG_ID
+      ? systemEffective
+      : normalizeGenericCardSavedConfig(configs[parentId]?.effectiveConfig, { collectionKey, availableFields, styles });
+    out[id] = {
+      name: String(preset?.name || id).trim() || id,
+      ...(isSystem ? { parentId, inheritsFromParent: true } : { parentId }),
+      ...(!isSystem ? { inheritsFromParent: !!preset?.inheritsFromParent } : {}),
+      config: isSystem
+        ? diffGenericCardSavedConfig(parentEffective, effectiveConfig)
+        : !preset?.inheritsFromParent
+        ? normalizeGenericCardSavedConfig(preset?.effectiveConfig, { collectionKey, availableFields, styles })
+        : diffGenericCardSavedConfig(parentEffective, effectiveConfig),
+    };
+  });
+
+  return {
+    activeConfigId: configs[String(source.activeConfigId || '').trim()]
+      ? String(source.activeConfigId || '').trim()
+      : GENERIC_CARD_SYSTEM_CONFIG_ID,
+    configs: out,
+  };
 }
 
 function normalizeKanjiStudyCardsConfig(cards) {
@@ -156,20 +450,39 @@ function normalizeKanjiStudyCardsConfig(cards) {
   for (const [cardKey, rawConfig] of Object.entries(cards)) {
     const key = String(cardKey || '').trim();
     if (!key || !rawConfig || typeof rawConfig !== 'object' || Array.isArray(rawConfig)) continue;
+    if (key === GENERIC_CARD_SETTINGS_KEY) {
+      const normalizedRoot = normalizeGenericCardConfigSections(rawConfig, { applyDefaults: false });
+      out[key] = {
+        ...(Object.keys(normalizedRoot.styles || {}).length ? { styles: normalizedRoot.styles } : {}),
+        activeConfigId: String(rawConfig.activeConfigId || '').trim() || GENERIC_CARD_SYSTEM_CONFIG_ID,
+        configs: rawConfig.configs && typeof rawConfig.configs === 'object' && !Array.isArray(rawConfig.configs)
+          ? cloneGenericCardValue(rawConfig.configs) || {}
+          : {
+            [GENERIC_CARD_SYSTEM_CONFIG_ID]: {
+              name: 'System Defaults',
+              config: normalizeGenericCardSavedConfig(rawConfig, {
+                collectionKey: '',
+                availableFields: [],
+                styles: normalizedRoot.styles || {},
+              }),
+            },
+          },
+      };
+      continue;
+    }
     const nextConfig = {};
     const fields = normalizeCardFieldList(rawConfig.fields);
     if (fields) nextConfig.fields = fields;
-    if (rawConfig.style && typeof rawConfig.style === 'object' && !Array.isArray(rawConfig.style)) {
-      const style = normalizeGenericCardStyle(rawConfig.style);
-      if (Object.keys(style).length) nextConfig.style = style;
+    if (rawConfig.styles && typeof rawConfig.styles === 'object' && !Array.isArray(rawConfig.styles)) {
+      const styles = normalizeGenericCardStyles(rawConfig.styles, { applyDefaults: false });
+      if (Object.keys(styles).length) nextConfig.styles = styles;
     }
-    if (rawConfig.customStyles && typeof rawConfig.customStyles === 'object' && !Array.isArray(rawConfig.customStyles)) {
-      const customStyles = normalizeGenericCardCustomStyles(rawConfig.customStyles);
-      if (Object.keys(customStyles).length) nextConfig.customStyles = customStyles;
-    }
-    if (rawConfig.fieldStyles && typeof rawConfig.fieldStyles === 'object' && !Array.isArray(rawConfig.fieldStyles)) {
-      const fieldStyles = normalizeGenericCardFieldStyles(rawConfig.fieldStyles, null, rawConfig.customStyles);
-      if (Object.keys(fieldStyles).length) nextConfig.fieldStyles = fieldStyles;
+    else if (rawConfig.style || rawConfig.customStyles) {
+      const styles = normalizeGenericCardStyles({
+        ...(rawConfig.style ? { main: { name: 'Main Style', ...rawConfig.style } } : {}),
+        ...((rawConfig.customStyles && typeof rawConfig.customStyles === 'object' && !Array.isArray(rawConfig.customStyles)) ? rawConfig.customStyles : {}),
+      }, { applyDefaults: false });
+      if (Object.keys(styles).length) nextConfig.styles = styles;
     }
     if (Array.isArray(rawConfig.controls)) {
       nextConfig.controls = Array.from(new Set(rawConfig.controls.map((item) => String(item || '').trim()).filter(Boolean)));
@@ -720,20 +1033,27 @@ export function renderKanjiStudyCard({ store }) {
 
   function getGenericCardConfig() {
     const collectionKey = getCurrentCollectionKey();
-    const config = cardsConfigState[GENERIC_CARD_SETTINGS_KEY] || {};
+    const rawConfig = cardsConfigState[GENERIC_CARD_SETTINGS_KEY] || {};
     const availableFields = getGenericCardAvailableFields();
-    const allowed = new Set(availableFields.map((item) => item.key));
-    const style = {
-      ...DEFAULT_GENERIC_CARD_STYLE,
-      ...normalizeGenericCardStyle(config.style),
+    const rootConfig = normalizeGenericCardConfigSections(rawConfig, {
+      collectionKey,
+      applyDefaults: true,
+    });
+    const presetState = normalizeGenericCardPresetState(cardsConfigState[GENERIC_CARD_SETTINGS_KEY], {
+      collectionKey,
+      availableFields,
+      styles: rootConfig.styles || {},
+    });
+    const activePreset = presetState.configs[presetState.activeConfigId] || presetState.configs[GENERIC_CARD_SYSTEM_CONFIG_ID];
+    const effectiveConfig = normalizeGenericCardSavedConfig(activePreset?.effectiveConfig, {
+      collectionKey,
+      availableFields,
+      styles: rootConfig.styles || {},
+    });
+    return {
+      ...rootConfig,
+      fields: effectiveConfig.fields || {},
     };
-    const fields = Array.isArray(config.fields)
-      ? config.fields.map((field) => String(field || '').trim()).filter((field) => allowed.has(field))
-      : undefined;
-    const customStyles = normalizeGenericCardCustomStyles(config.customStyles);
-    const fieldStyles = normalizeGenericCardFieldStyles(config.fieldStyles, allowed, customStyles);
-    if (fields) return { ...config, fields, style, customStyles, fieldStyles };
-    return { ...config, fields: getDefaultGenericCardFields(collectionKey, availableFields), style, customStyles, fieldStyles };
   }
 
   function getMainCardConfig() {
@@ -919,14 +1239,15 @@ export function renderKanjiStudyCard({ store }) {
     if (!key) return;
     const availableFields = getGenericCardAvailableFields();
     const currentConfig = getGenericCardConfig();
-    const allowed = new Set(availableFields.map((field) => field.key));
+    const presetState = normalizeGenericCardPresetState(cardsConfigState[GENERIC_CARD_SETTINGS_KEY], {
+      collectionKey: key,
+      availableFields,
+      styles: currentConfig?.styles || {},
+    });
     const next = await openGenericFlatCardConfigDialog({
       title: 'Generic Card Settings',
       subtitle: 'Use Fields to choose order and visibility. Use Style to tune the generic row layout and labels.',
       fields: availableFields,
-      selectedFields: Array.isArray(currentConfig.fields)
-        ? currentConfig.fields.filter((field) => allowed.has(String(field || '').trim()))
-        : getDefaultGenericCardFields(key, availableFields),
       styleControls: [
         {
           key: 'labelWidth',
@@ -1000,28 +1321,33 @@ export function renderKanjiStudyCard({ store }) {
           ],
         },
       ],
-      selectedStyles: currentConfig.style || DEFAULT_GENERIC_CARD_STYLE,
       defaultStyles: DEFAULT_GENERIC_CARD_STYLE,
-      customStyles: currentConfig.customStyles || {},
-      fieldStyles: currentConfig.fieldStyles || {},
+      styles: currentConfig.styles || {},
+      savedConfigs: cloneGenericCardValue(presetState.configs) || {},
+      activeConfigId: presetState.activeConfigId,
       namespace: 'kanjiStudyCardView.cards.genericFlatCard.js',
       collection: key,
     });
     if (!next) return;
-    const fields = normalizeCardFieldList(next.fields) || [];
-    const style = {
-      ...DEFAULT_GENERIC_CARD_STYLE,
-      ...normalizeGenericCardStyle(next.style),
-    };
-    const customStyles = normalizeGenericCardCustomStyles(next.customStyles);
-    const fieldStyles = normalizeGenericCardFieldStyles(next.fieldStyles, new Set(fields), customStyles);
+    const styles = normalizeGenericCardStyles(next.styles, { applyDefaults: true });
+    const serializedPresetState = serializeGenericCardPresetState(next, {
+      collectionKey: key,
+      availableFields,
+      styles,
+    });
     cardsConfigState = {
       ...cardsConfigState,
-      [GENERIC_CARD_SETTINGS_KEY]: { fields, style, customStyles, fieldStyles },
+      [GENERIC_CARD_SETTINGS_KEY]: {
+        ...serializedPresetState,
+        styles,
+      },
     };
     applyGenericCardConfig();
     try {
-      (kanjiController || kanjiStudyController.create(key)).setCardConfig(GENERIC_CARD_SETTINGS_KEY, { fields, style, customStyles, fieldStyles });
+      (kanjiController || kanjiStudyController.create(key)).setCardConfig(GENERIC_CARD_SETTINGS_KEY, {
+        ...serializedPresetState,
+        styles,
+      });
     } catch (e) {}
   }
 
