@@ -2,7 +2,7 @@ import controllerUtils from '../../utils/common/controllerUtils.mjs';
 import { normalizeTableSettings, createDefaultTableSettings, cloneTableSettings } from '../../utils/browser/tableSettings.js';
 
 const VIEW = 'studyManagerView';
-const DEFAULT_ACTION_ORDER = ['clear', 'copyJson', 'copyFullJson'];
+const DEFAULT_ACTION_ORDER = ['clear', 'copyJson', 'copyFullJson', 'downloadJson', 'downloadFullJson'];
 const LEGACY_RECOMMENDATIONS_TABLE_ID = '__legacy';
 
 function makeDefaultTableSettings() {

@@ -2,7 +2,7 @@ import controllerUtils from '../../utils/common/controllerUtils.mjs';
 import { normalizeTableSettings, createDefaultTableSettings, cloneTableSettings } from '../../utils/browser/tableSettings.js';
 
 const VIEW = 'manageCollectionsView';
-const DEFAULT_ACTION_ORDER = ['clear', 'copyJson', 'copyFullJson'];
+const DEFAULT_ACTION_ORDER = ['clear', 'copyJson', 'copyFullJson', 'downloadJson', 'downloadFullJson'];
 const DEFAULT_AI_PROMPT_BATCH_TARGET = 20;
 
 const DEFAULT_VIEW = {

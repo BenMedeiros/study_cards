@@ -280,6 +280,8 @@ export function renderData({ store }) {
     { key: 'copyJson', label: 'Copy JSON' },
     { key: 'saveFilter', label: 'Save Filter' },
     { key: 'copyFullJson', label: 'Copy Full JSON' },
+    { key: 'downloadJson', label: 'Download JSON' },
+    { key: 'downloadFullJson', label: 'Download Full JSON' },
   ];
 
   let dataViewCtrl = null;

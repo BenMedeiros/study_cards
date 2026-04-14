@@ -21,6 +21,8 @@ const TABLE_ACTION_ITEMS = [
   { key: 'clear', label: 'Clear' },
   { key: 'copyJson', label: 'Copy JSON' },
   { key: 'copyFullJson', label: 'Copy Full JSON' },
+  { key: 'downloadJson', label: 'Download JSON' },
+  { key: 'downloadFullJson', label: 'Download Full JSON' },
 ];
 
 function asString(v) {

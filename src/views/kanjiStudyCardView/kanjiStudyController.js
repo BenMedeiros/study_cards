@@ -160,11 +160,13 @@ function cloneCardsConfig(cards) {
         const nextPreset = {
           name: String(rawPreset.name || id).trim() || id,
         };
-        if (id !== 'system') {
-          const parentId = String(rawPreset.parentId || 'system').trim() || 'system';
-          nextPreset.parentId = parentId;
-          nextPreset.inheritsFromParent = !!rawPreset.inheritsFromParent;
-        }
+        const parentId = id === 'system'
+          ? String(rawPreset.parentId || '__system__').trim() || '__system__'
+          : String(rawPreset.parentId || 'system').trim() || 'system';
+        nextPreset.parentId = parentId;
+        nextPreset.inheritsFromParent = id === 'system'
+          ? rawPreset.inheritsFromParent !== false
+          : !!rawPreset.inheritsFromParent;
         nextPreset.config = cloneCardsConfig({ __preset__: rawPreset.config || {} }).__preset__ || {};
         presets[id] = nextPreset;
       }

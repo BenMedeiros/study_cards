@@ -225,7 +225,7 @@ function normalizeGenericCardSavedConfig(rawConfig, {
   }
 
   if (!applyDefaults) {
-    return Object.keys(out).length ? { fields: out } : { fields: {} };
+    return Object.keys(out).length ? { fields: out } : {};
   }
 
   const merged = cloneGenericCardValue(defaults) || {};
@@ -274,7 +274,7 @@ function diffGenericCardSavedConfig(baseConfig, nextConfig) {
     }
     if (Object.keys(entry).length) changedFields[fieldKey] = entry;
   });
-  out.fields = changedFields;
+  if (Object.keys(changedFields).length) out.fields = changedFields;
   return out;
 }
 
@@ -412,13 +412,12 @@ function serializeGenericCardPresetState(state, {
     const id = String(preset?.id || '').trim();
     if (!id) return;
     if (id === GENERIC_CARD_CODE_DEFAULT_CONFIG_ID) return;
-    const isSystem = id === GENERIC_CARD_SYSTEM_CONFIG_ID;
     const effectiveConfig = normalizeGenericCardSavedConfig(preset?.effectiveConfig, { collectionKey, availableFields, styles });
-    const parentId = isSystem
+    const parentId = id === GENERIC_CARD_SYSTEM_CONFIG_ID
       ? GENERIC_CARD_CODE_DEFAULT_CONFIG_ID
-      : (configs[String(preset?.parentId || '').trim()]
-        ? String(preset.parentId || '').trim()
-        : GENERIC_CARD_SYSTEM_CONFIG_ID);
+      : configs[String(preset?.parentId || '').trim()]
+      ? String(preset.parentId || '').trim()
+      : GENERIC_CARD_SYSTEM_CONFIG_ID;
     const parentEffective = parentId === GENERIC_CARD_CODE_DEFAULT_CONFIG_ID
       ? codeDefaultEffective
       : parentId === GENERIC_CARD_SYSTEM_CONFIG_ID
@@ -426,11 +425,9 @@ function serializeGenericCardPresetState(state, {
       : normalizeGenericCardSavedConfig(configs[parentId]?.effectiveConfig, { collectionKey, availableFields, styles });
     out[id] = {
       name: String(preset?.name || id).trim() || id,
-      ...(isSystem ? { parentId, inheritsFromParent: true } : { parentId }),
-      ...(!isSystem ? { inheritsFromParent: !!preset?.inheritsFromParent } : {}),
-      config: isSystem
-        ? diffGenericCardSavedConfig(parentEffective, effectiveConfig)
-        : !preset?.inheritsFromParent
+      parentId,
+      inheritsFromParent: !!preset?.inheritsFromParent,
+      config: !preset?.inheritsFromParent
         ? normalizeGenericCardSavedConfig(preset?.effectiveConfig, { collectionKey, availableFields, styles })
         : diffGenericCardSavedConfig(parentEffective, effectiveConfig),
     };

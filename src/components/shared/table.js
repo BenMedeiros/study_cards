@@ -634,15 +634,29 @@ export function createTable({ store = null, headers, rows, className = '', id, c
     copyBtn.textContent = 'Copy JSON';
     copyBtn.title = 'Copy current (filtered) rows as JSON';
     copyBtn.dataset.tableAction = 'copyJson';
+    const downloadBtn = document.createElement('button');
+    downloadBtn.type = 'button';
+    downloadBtn.className = 'table-download-json btn small';
+    downloadBtn.textContent = '⬇ Download JSON';
+    downloadBtn.title = 'Download current (filtered) rows as JSON';
+    downloadBtn.dataset.tableAction = 'downloadJson';
     const copyFullBtn = document.createElement('button');
     copyFullBtn.type = 'button';
     copyFullBtn.className = 'table-copy-full-json btn small';
     copyFullBtn.textContent = 'Copy Full JSON';
     copyFullBtn.title = 'Copy table metadata + columns + current (filtered) rows as JSON';
     copyFullBtn.dataset.tableAction = 'copyFullJson';
+    const downloadFullBtn = document.createElement('button');
+    downloadFullBtn.type = 'button';
+    downloadFullBtn.className = 'table-download-full-json btn small';
+    downloadFullBtn.textContent = '⬇ Download Full JSON';
+    downloadFullBtn.title = 'Download table metadata + columns + current (filtered) rows as JSON';
+    downloadFullBtn.dataset.tableAction = 'downloadFullJson';
     searchWrap.append(searchInput, clearBtn);
     searchWrap.append(copyBtn);
+    searchWrap.append(downloadBtn);
     searchWrap.append(copyFullBtn);
+    searchWrap.append(downloadFullBtn);
     wrapper.append(searchWrap);
     updateStickyOffsets();
 
@@ -882,6 +896,33 @@ export function createTable({ store = null, headers, rows, className = '', id, c
       }
     });
 
+    downloadBtn.addEventListener('click', async () => {
+      try {
+        const srcRows = Array.isArray(displayRows) ? displayRows : currentRows;
+        const out = srcRows.map(r => {
+          const obj = {};
+          for (let i = 0; i < headerKeys.length; i++) {
+            const key = headerKeys[i]?.key || String(i);
+            const v = extractCellValue(r[i]);
+            obj[key || `col${i}`] = v;
+          }
+          return obj;
+        });
+        const txt = JSON.stringify(out, null, 2);
+        const blob = new Blob([txt], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (id ? `${id}` : 'table') + '-rows.json';
+        document.body.append(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        try { alert('Download failed'); } catch (er) {}
+      }
+    });
+
     copyFullBtn.addEventListener('click', async () => {
       try {
         const srcRows = Array.isArray(displayRows) ? displayRows : currentRows;
@@ -946,6 +987,68 @@ export function createTable({ store = null, headers, rows, className = '', id, c
         setTimeout(() => { copyFullBtn.textContent = prev; }, 1200);
       } catch (e) {
         try { alert('Copy failed'); } catch (er) {}
+      }
+    });
+
+    downloadFullBtn.addEventListener('click', async () => {
+      try {
+        const srcRows = Array.isArray(displayRows) ? displayRows : currentRows;
+        const records = srcRows.map(r => {
+          const obj = {};
+          for (let i = 0; i < headerKeys.length; i++) {
+            const key = headerKeys[i]?.key || String(i);
+            const v = extractCellValue(r[i]);
+            obj[key || `col${i}`] = v;
+          }
+          return obj;
+        });
+
+        const columns = headerKeys.map((h, i) => ({
+          index: i,
+          key: h?.key || `col${i}`,
+          label: h?.label || '',
+          type: h?.type ?? null,
+        }));
+
+        const full = {
+          metadata: {
+            id: id || null,
+            wrapperId: wrapper.id || null,
+            collection: collection || null,
+            query: String(searchInput.value || '').trim(),
+            sort: (sortCol == null)
+              ? null
+              : {
+                columnIndex: sortCol,
+                field: headerKeys[sortCol]?.key || null,
+                direction: sortDir,
+              },
+            counts: {
+              visibleRows: records.length,
+              totalRows: Array.isArray(originalRows) ? originalRows.length : records.length,
+            },
+            copiedAtIso: new Date().toISOString(),
+          },
+          source: {
+            collectionKey: collection || null,
+            metadata: normalizeSourceMetadataForExport(sourceMetadata),
+          },
+          columns,
+          records,
+        };
+
+        const txt = JSON.stringify(full, null, 2);
+        const blob = new Blob([txt], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (id ? `${id}` : 'table') + '-full.json';
+        document.body.append(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        try { alert('Download failed'); } catch (er) {}
       }
     });
 
