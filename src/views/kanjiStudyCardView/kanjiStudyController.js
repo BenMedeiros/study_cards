@@ -10,6 +10,7 @@ const DEFAULT_VIEW = {
   entryFields: 'all',
   relatedFields: {},
   displayCards: 'all',
+  headerTools: {},
   cards: {},
   speech: {},
 };
@@ -108,6 +109,28 @@ function cloneSpeechConfig(raw) {
       }
       if (Object.keys(next).length) out.languages[key] = next;
     }
+  }
+  return out;
+}
+
+function cloneHeaderToolsConfig(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  const out = {};
+  if (Array.isArray(raw.items)) {
+    const seen = new Set();
+    out.items = raw.items
+      .map((item, index) => {
+        const key = String(item?.key || '').trim();
+        if (!key || seen.has(key)) return null;
+        seen.add(key);
+        return {
+          key,
+          visible: item?.visible !== false,
+          order: Number.isFinite(Number(item?.order)) ? Number(item.order) : index,
+        };
+      })
+      .filter(Boolean);
+    if (!out.items.length) delete out.items;
   }
   return out;
 }
@@ -505,11 +528,32 @@ function _validateCards(cards, collection) {
   }
 }
 
+function _validateHeaderTools(config) {
+  if (!config || typeof config !== 'object' || Array.isArray(config)) throw new Error('headerTools must be an object');
+  if (!Object.prototype.hasOwnProperty.call(config, 'items')) return;
+  if (!Array.isArray(config.items)) throw new Error('headerTools.items must be an array');
+  const seen = new Set();
+  for (const item of config.items) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) throw new Error('headerTools.items entries must be objects');
+    const key = String(item.key || '').trim();
+    if (!key) throw new Error('headerTools.items entries must include a non-empty key');
+    if (seen.has(key)) throw new Error(`headerTools.items contains duplicate key: ${key}`);
+    seen.add(key);
+    if (Object.prototype.hasOwnProperty.call(item, 'visible') && typeof item.visible !== 'boolean') {
+      throw new Error(`headerTools.items.${key}.visible must be boolean`);
+    }
+    if (Object.prototype.hasOwnProperty.call(item, 'order') && !Number.isFinite(Number(item.order))) {
+      throw new Error(`headerTools.items.${key}.order must be numeric`);
+    }
+  }
+}
+
 function create(collKey) {
   const collectionDefaults = getDefaultViewForCollection(collKey);
   const validators = {
     displayCards: (v) => _validateDisplayCards(v),
     entryFields: (v, collection) => _validateEntryFields(v, collection),
+    headerTools: (v) => _validateHeaderTools(v),
     cards: (v, collection) => _validateCards(v, collection),
     speech: (v) => {
       if (!v || typeof v !== 'object' || Array.isArray(v)) throw new Error('speech must be an object');
@@ -583,6 +627,9 @@ function create(collKey) {
     set: async (patch) => {
       if (!patch || typeof patch !== 'object' || Array.isArray(patch)) throw new Error('patch object required');
       const nextPatch = { ...patch };
+      if (Object.prototype.hasOwnProperty.call(nextPatch, 'headerTools')) {
+        nextPatch.headerTools = cloneHeaderToolsConfig(nextPatch.headerTools);
+      }
       if (Object.prototype.hasOwnProperty.call(nextPatch, 'speech')) {
         nextPatch.speech = cloneSpeechConfig(nextPatch.speech);
       }
@@ -591,6 +638,7 @@ function create(collKey) {
     reset: () => base.replace(collectionDefaults),
     setEntryFields: (fields) => base.set({ entryFields: fields }),
     setDisplayCards: (cards) => base.set({ displayCards: cards }),
+    setHeaderTools: (headerTools) => base.set({ headerTools: cloneHeaderToolsConfig(headerTools) }),
     setCards: (cards) => base.set({ cards: cloneCardsConfig(cards) }),
     setSpeech: (speech) => base.set({ speech: cloneSpeechConfig(speech) }),
     getSpeech: () => {

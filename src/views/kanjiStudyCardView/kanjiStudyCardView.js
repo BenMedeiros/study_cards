@@ -9,6 +9,7 @@ import { addStudyFilter } from '../../components/features/studyControls.js';
 import { addShuffleControls } from '../../components/features/collectionControls.js';
 import kanjiStudyController from './kanjiStudyController.js';
 import { openGenericFlatCardConfigDialog, openRelatedCardConfigDialog } from './cardConfigDialog.js';
+import { openKanjiStudyCardViewConfigDialog } from './kanjiStudyCardViewConfigDialog.js';
 import { createKanjiStudyFooterActionsController } from './actionsController.js';
 import { createMainFieldCardCastSession } from '../../integrations/casting/mainFieldCardCastSession.js';
 import { createGoogleCastSender } from '../../integrations/casting/googleCastSender.js';
@@ -30,6 +31,17 @@ const SCRUB_THRESHOLD_MIN_MS = 500;
 const SCRUB_THRESHOLD_MAX_MS = 2000;
 const SCRUB_THRESHOLD_STEP_MS = 100;
 const SCRUB_THRESHOLD_DEFAULT_MS = 2000;
+const MANAGED_HEADER_TOOL_ITEMS = Object.freeze([
+  { key: 'shuffle', label: 'Shuffle', description: 'Shuffle collection order' },
+  { key: 'clearShuffle', label: 'Clear Shuffle', description: 'Restore persisted collection order' },
+  { key: 'studyFilter', label: 'Study Filter', description: 'Filter by study state' },
+  { key: 'entryFields', label: 'Entry Fields', description: 'Toggle entry field visibility' },
+  { key: 'castMainField', label: 'Cast', description: 'Cast the main card to a receiver' },
+  { key: 'pipMainField', label: 'Picture-in-Picture', description: 'Open the main card in Picture-in-Picture' },
+  { key: 'scrubThreshold', label: 'Scrub Threshold', description: 'Configure arrow-key scrub hold delay' },
+  { key: 'displayCards', label: 'Visible Cards', description: 'Choose which cards are displayed' },
+  { key: 'viewHeaderSettings', label: 'Settings', description: 'Configure view header tools', lockVisible: true },
+]);
 const DEFAULT_MAIN_CARD_LAYOUT = {
   topLeft: 'type',
   main: 'kanji',
@@ -519,6 +531,45 @@ function normalizeKanjiStudyCardsConfig(cards) {
   return out;
 }
 
+function normalizeManagedHeaderToolsConfig(rawConfig, availableItems = MANAGED_HEADER_TOOL_ITEMS) {
+  const items = Array.isArray(availableItems) ? availableItems : [];
+  const byKey = new Map();
+  items.forEach((item, index) => {
+    const key = String(item?.key || '').trim();
+    if (!key || byKey.has(key)) return;
+    byKey.set(key, {
+      key,
+      visible: true,
+      order: index,
+      lockVisible: item?.lockVisible === true,
+    });
+  });
+
+  const sourceItems = Array.isArray(rawConfig?.items) ? rawConfig.items : [];
+  sourceItems.forEach((item, index) => {
+    const key = String(item?.key || '').trim();
+    if (!key || !byKey.has(key)) return;
+    byKey.set(key, {
+      key,
+      visible: byKey.get(key)?.lockVisible ? true : item?.visible !== false,
+      order: Number.isFinite(Number(item?.order)) ? Number(item.order) : index,
+      lockVisible: byKey.get(key)?.lockVisible === true,
+    });
+  });
+
+  return {
+    items: Array.from(byKey.values()).sort((a, b) => {
+      const diff = Number(a.order) - Number(b.order);
+      if (diff !== 0) return diff;
+      return String(a.key).localeCompare(String(b.key));
+    }),
+  };
+}
+
+function cloneManagedHeaderToolsConfig(config, availableItems = MANAGED_HEADER_TOOL_ITEMS) {
+  return normalizeManagedHeaderToolsConfig(config, availableItems);
+}
+
 function normalizeLayoutConfig(layout, allowedFields) {
   const allowed = allowedFields instanceof Set ? allowedFields : new Set();
   if (!layout || typeof layout !== 'object' || Array.isArray(layout)) return {};
@@ -763,6 +814,80 @@ export function renderKanjiStudyCard({ store }) {
   // Track whether we mounted header/footer into the shell main container
   let __mountedHeaderInShell = false;
   let __mountedFooterInShell = false;
+  const managedHeaderToolMeta = new Map(MANAGED_HEADER_TOOL_ITEMS.map((item) => [item.key, { ...item }]));
+
+  function registerManagedHeaderTool(item) {
+    const key = String(item?.key || '').trim();
+    if (!key) return;
+    if (!managedHeaderToolMeta.has(key)) managedHeaderToolMeta.set(key, { ...item, key });
+  }
+
+  function getManagedHeaderToolItems() {
+    return Array.from(managedHeaderToolMeta.values()).map((item) => ({ ...item }));
+  }
+
+  function applyManagedHeaderToolConfig() {
+    if (!headerTools || typeof headerTools.getGroup !== 'function') return;
+    const normalized = normalizeManagedHeaderToolsConfig(headerToolsConfig, getManagedHeaderToolItems());
+    headerToolsConfig = normalized;
+    const orderedManagedKeys = normalized.items.map((item) => item.key);
+    const visibleManagedKeys = new Set(
+      normalized.items.filter((item) => item.visible !== false).map((item) => item.key)
+    );
+
+    orderedManagedKeys.forEach((key) => {
+      try { headerTools.setControlHidden(key, !visibleManagedKeys.has(key)); } catch (e) {}
+    });
+
+    const parent = headerTools;
+    const currentChildren = Array.from(parent.children);
+    const visibleManagedGroups = orderedManagedKeys
+      .map((key) => ({ key, group: headerTools.getGroup(key) }))
+      .filter((entry) => entry.group && visibleManagedKeys.has(entry.key))
+      .map((entry) => entry.group);
+    const hiddenManagedGroups = orderedManagedKeys
+      .map((key) => headerTools.getGroup(key))
+      .filter((group) => group && group.hidden);
+
+    let visibleIndex = 0;
+    const nextChildren = [];
+    currentChildren.forEach((child) => {
+      const childKey = orderedManagedKeys.find((key) => headerTools.getGroup(key) === child);
+      if (!childKey) {
+        nextChildren.push(child);
+        return;
+      }
+      if (visibleIndex < visibleManagedGroups.length) {
+        nextChildren.push(visibleManagedGroups[visibleIndex]);
+        visibleIndex += 1;
+      }
+    });
+    while (visibleIndex < visibleManagedGroups.length) {
+      nextChildren.push(visibleManagedGroups[visibleIndex]);
+      visibleIndex += 1;
+    }
+    hiddenManagedGroups.forEach((group) => nextChildren.push(group));
+    nextChildren.forEach((child) => {
+      try { parent.appendChild(child); } catch (e) {}
+    });
+  }
+
+  async function openViewHeaderSettings() {
+    const active = store?.collections?.getActiveCollection?.();
+    const key = String(active?.key || '').trim();
+    if (!key) return;
+    const next = await openKanjiStudyCardViewConfigDialog({
+      title: 'View Header Settings',
+      items: getManagedHeaderToolItems(),
+      selectedItems: cloneManagedHeaderToolsConfig(headerToolsConfig, getManagedHeaderToolItems()).items,
+      namespace: 'kanjiStudyCardView.headerTools',
+      collection: key,
+    });
+    if (!next) return;
+    headerToolsConfig = normalizeManagedHeaderToolsConfig(next, getManagedHeaderToolItems());
+    applyManagedHeaderToolConfig();
+    persistViewState({ headerTools: cloneManagedHeaderToolsConfig(headerToolsConfig, getManagedHeaderToolItems()) });
+  }
 
   // header groups are created via `headerTools.addElement`
 
@@ -845,6 +970,14 @@ export function renderKanjiStudyCard({ store }) {
               applyDisplayCardVisibility(resolvedDisplay, { renderNewlyVisible: true });
             }
 
+            if (viewPatch && Object.prototype.hasOwnProperty.call(viewPatch, 'headerTools')) {
+              headerToolsConfig = normalizeManagedHeaderToolsConfig(
+                (viewState && viewState.headerTools !== undefined) ? viewState.headerTools : viewPatch.headerTools,
+                getManagedHeaderToolItems()
+              );
+              applyManagedHeaderToolConfig();
+            }
+
             if (viewPatch && Object.prototype.hasOwnProperty.call(viewPatch, 'cards')) {
               cardsConfigState = normalizeKanjiStudyCardsConfig(
                 (viewState && viewState.cards !== undefined) ? viewState.cards : viewPatch.cards
@@ -902,6 +1035,7 @@ export function renderKanjiStudyCard({ store }) {
   let displayCardSelection = (appState && appState.displayCards !== undefined)
     ? (Array.isArray(appState.displayCards) ? appState.displayCards.slice() : appState.displayCards)
     : undefined;
+  let headerToolsConfig = normalizeManagedHeaderToolsConfig(appState?.headerTools);
   let cardsConfigState = normalizeKanjiStudyCardsConfig(appState?.cards);
   let activeDisplayCardKeys = new Set();
   let resolvedEntryFieldMap = null;
@@ -1428,6 +1562,7 @@ export function renderKanjiStudyCard({ store }) {
     className: 'data-expansion-dropdown',
     caption: 'entry.fields.visibility'
   });
+  registerManagedHeaderTool({ key: 'entryFields', label: 'Entry Fields', description: 'Toggle entry field visibility' });
   entryFieldsControl = entryFieldsRec && entryFieldsRec.control ? entryFieldsRec.control : null;
 
   headerTools.addElement({
@@ -1465,6 +1600,7 @@ export function renderKanjiStudyCard({ store }) {
       return btn;
     },
   });
+  registerManagedHeaderTool({ key: 'castMainField', label: 'Cast', description: 'Cast the main card to a receiver' });
 
   headerTools.addElement({
     type: 'custom',
@@ -1500,6 +1636,25 @@ export function renderKanjiStudyCard({ store }) {
       return btn;
     },
   });
+  registerManagedHeaderTool({ key: 'pipMainField', label: 'Picture-in-Picture', description: 'Open the main card in Picture-in-Picture' });
+
+  headerTools.addElement({
+    type: 'custom',
+    key: 'viewHeaderSettings',
+    caption: 'settings',
+    create: () => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'icon-button view-header-settings-button';
+      btn.title = 'Configure view header tools';
+      btn.setAttribute('aria-label', 'Configure view header tools');
+      btn.textContent = '⚙';
+      btn.addEventListener('click', () => {
+        void openViewHeaderSettings();
+      });
+      return btn;
+    },
+  });
 
   const scrubThresholdItems = createScrubThresholdItems();
   const scrubThresholdRec = headerTools.addElement({
@@ -1516,11 +1671,11 @@ export function renderKanjiStudyCard({ store }) {
     className: 'data-expansion-dropdown',
     caption: 'scrub.threshold'
   });
+  registerManagedHeaderTool({ key: 'scrubThreshold', label: 'Scrub Threshold', description: 'Configure arrow-key scrub hold delay' });
   scrubThresholdControl = scrubThresholdRec && scrubThresholdRec.control ? scrubThresholdRec.control : null;
 
   // For each related-collection declared in the collection metadata, add a dropdown.
   const relatedDefs = Array.isArray(coll?.metadata?.relatedCollections) ? coll.metadata.relatedCollections.slice() : [];
-  const relatedDropdownControls = {};
   const RELATED_DEFAULT_ITEMS = [
     { value: 'title', left: 'Title' },
     { value: 'english', left: 'English' },
@@ -1529,30 +1684,6 @@ export function renderKanjiStudyCard({ store }) {
     { value: 'sentences', left: 'Sentences' },
     { value: 'chunks', left: 'Chunks' },
   ];
-
-  for (const rel of relatedDefs) {
-    const name = String(rel?.name || '').trim();
-    if (!name) continue;
-    const items = RELATED_DEFAULT_ITEMS.slice();
-    const sel = relatedFieldSelections[name] || 'all';
-    const rec = headerTools.addElement({
-      type: 'dropdown', key: `related.${name}.fields`, items, multi: true,
-      values: (sel === 'all') ? items.map(it => String(it.value || '')) : (Array.isArray(sel) ? sel.slice() : []),
-      commitOnClose: true,
-      includeAllNone: true,
-      onChange: (vals) => {
-        // Persist selection and let controller compute + publish resolved related maps.
-        const chosen = (typeof vals === 'string' && vals === 'all') ? items.map(it => String(it?.value || '')) : (Array.isArray(vals) ? vals.slice() : []);
-        relatedFieldSelections[name] = (typeof vals === 'string' && vals === 'all') ? 'all' : chosen;
-        const relatedOut = {};
-        for (const k of Object.keys(relatedFieldSelections || {})) relatedOut[k] = Array.isArray(relatedFieldSelections[k]) ? relatedFieldSelections[k].slice() : relatedFieldSelections[k];
-        persistViewState({ relatedFields: relatedOut });
-      },
-      className: 'data-expansion-dropdown',
-      caption: `${name}.fields.visibility`
-    });
-    relatedDropdownControls[name] = rec && rec.control ? rec.control : null;
-  }
 
   applyMainCardConfig();
   applyGenericCardConfig();
@@ -1957,13 +2088,6 @@ export function renderKanjiStudyCard({ store }) {
 
     syncDisplayedCardsInDom(nextSet);
 
-    try {
-      for (const rn of Object.keys(relatedDropdownControls || {})) {
-        const rc = relatedDropdownControls[rn];
-        if (rc && rc.parentNode) rc.parentNode.style.display = nextSet.has('related') ? '' : 'none';
-      }
-    } catch (e) {}
-
     activeDisplayCardKeys = nextSet;
 
     if (renderNewlyVisible && newlyVisible.size) {
@@ -1988,8 +2112,10 @@ export function renderKanjiStudyCard({ store }) {
     className: 'data-expansion-dropdown',
     caption: 'visible.cards'
   });
+  registerManagedHeaderTool({ key: 'displayCards', label: 'Visible Cards', description: 'Choose which cards are displayed' });
 
   addStudyFilter(headerTools, { getCurrentCollectionKey, onChange: () => { refreshEntriesFromStore(); render(); } });
+  registerManagedHeaderTool({ key: 'studyFilter', label: 'Study Filter', description: 'Filter by study state' });
 
   // Apply initial visibility defaults based on entry-level and related selections
   if (displayCardSelection === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
@@ -2061,9 +2187,11 @@ export function renderKanjiStudyCard({ store }) {
         if (appState.relatedFields && typeof appState.relatedFields === 'object') {
           for (const k of Object.keys(appState.relatedFields)) relatedFieldSelections[k] = Array.isArray(appState.relatedFields[k]) ? appState.relatedFields[k].slice() : appState.relatedFields[k];
         }
+        headerToolsConfig = normalizeManagedHeaderToolsConfig(appState.headerTools, getManagedHeaderToolItems());
         cardsConfigState = normalizeKanjiStudyCardsConfig(appState.cards);
         if (Array.isArray(appState.displayCards)) displayCardSelection = appState.displayCards.slice();
         else if (appState.displayCards === 'all') displayCardSelection = displayCardItems.map(it => String(it?.value || ''));
+        applyManagedHeaderToolConfig();
         applyMainCardConfig();
         applyGenericCardConfig();
         applyJsonCardConfig();
@@ -2408,22 +2536,9 @@ export function renderKanjiStudyCard({ store }) {
       includeClearLearned: false
     });
   } catch (e) {}
-  // Ensure header order: shuffle, clearShuffle, studyFilter, then remaining controls
-  try {
-    const parent = headerTools;
-    const getCtrlGroup = (key) => {
-      const ctrl = (typeof headerTools.getControl === 'function') ? headerTools.getControl(key) : null;
-      return ctrl && ctrl.parentNode ? ctrl.parentNode : null;
-    };
-    const shuffleGroup = getCtrlGroup('shuffle');
-    const clearShuffleGroup = getCtrlGroup('clearShuffle');
-    const studyFilterGroup = getCtrlGroup('studyFilter');
-
-    // Insert in desired sequence at the start of the parent container.
-    if (parent && shuffleGroup) parent.insertBefore(shuffleGroup, parent.firstChild);
-    if (parent && clearShuffleGroup) parent.insertBefore(clearShuffleGroup, shuffleGroup ? shuffleGroup.nextSibling : parent.firstChild);
-    if (parent && studyFilterGroup) parent.insertBefore(studyFilterGroup, (clearShuffleGroup && parent.contains(clearShuffleGroup)) ? clearShuffleGroup.nextSibling : (shuffleGroup && parent.contains(shuffleGroup) ? shuffleGroup.nextSibling : parent.firstChild));
-  } catch (e) {}
+  registerManagedHeaderTool({ key: 'shuffle', label: 'Shuffle', description: 'Shuffle collection order' });
+  registerManagedHeaderTool({ key: 'clearShuffle', label: 'Clear Shuffle', description: 'Restore persisted collection order' });
+  applyManagedHeaderToolConfig();
   // Details toggle removed from header tools
 
   function onScrubKeyDownCapture(e) {

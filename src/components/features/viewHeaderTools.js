@@ -18,7 +18,7 @@ export function createViewHeaderTools(opts = {}) {
   el.className = 'view-header-tools' + (className ? ' ' + className : '');
   Object.assign(el.style, style);
 
-  // Store references to created controls by key -> { el: controlEl, group }
+  // Store references to created controls by key -> { el: controlEl, group, config }
   const controls = {};
 
   // Helper: create a group with optional caption
@@ -105,7 +105,7 @@ export function createViewHeaderTools(opts = {}) {
       const key = elem.key || elem.label || elem.text;
       const group = wrapGroup(control, elem.caption);
       el.appendChild(group);
-      controls[key] = { el: control, group };
+      controls[key] = { el: control, group, config: { ...elem } };
       return { control, group };
     }
     return null;
@@ -117,7 +117,28 @@ export function createViewHeaderTools(opts = {}) {
   // Expose API for dynamic additions and control management
   el.addElement = (elem) => createControlFromConfig(elem);
   el.getControl = (key) => (controls[key] ? controls[key].el : undefined);
+  el.getGroup = (key) => (controls[key] ? controls[key].group : undefined);
+  el.getElementConfig = (key) => (controls[key] ? { ...controls[key].config } : undefined);
   el.getControls = () => Object.fromEntries(Object.entries(controls).map(([k, v]) => [k, v.el]));
+  el.getKeys = () => Object.keys(controls);
+  el.getOrderedKeys = () => {
+    const order = [];
+    for (const child of Array.from(el.children)) {
+      const found = Object.entries(controls).find(([, rec]) => rec?.group === child);
+      if (found) order.push(found[0]);
+    }
+    return order;
+  };
+  el.setControlHidden = (key, hidden) => {
+    try {
+      const rec = controls[key];
+      if (!rec?.group) return false;
+      rec.group.hidden = !!hidden;
+      rec.group.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+      rec.group.style.display = hidden ? 'none' : '';
+      return true;
+    } catch (e) { return false; }
+  };
   el.removeControl = (key) => {
     try {
       const rec = controls[key];
