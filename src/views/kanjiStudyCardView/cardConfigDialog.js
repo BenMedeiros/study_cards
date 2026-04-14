@@ -89,6 +89,130 @@ function normalizeControlItems(controls) {
     : [];
 }
 
+function createConfigItemCopy(label, keyText) {
+  return el('div', {
+    className: 'kanji-study-card-config-item-copy',
+    children: [
+      el('div', { className: 'kanji-study-card-config-item-label', text: label }),
+      el('div', { className: 'kanji-study-card-config-item-key hint', text: keyText }),
+    ],
+  });
+}
+
+function createConfigItemRow({ main = null, label = '', keyText = '', controls = [] }) {
+  return el('div', {
+    className: 'kanji-study-card-config-item',
+    children: [
+      main || createConfigItemCopy(label, keyText),
+      controls.length
+        ? el('div', {
+          className: 'kanji-study-card-config-item-controls',
+          children: controls,
+        })
+        : null,
+    ].filter(Boolean),
+  });
+}
+
+function createTabButtons(entries, activeKey, onSelect) {
+  return entries.map((item) => {
+    const key = String(item?.key || '').trim();
+    const isActive = activeKey === key;
+    const btn = el('button', {
+      className: `btn small kanji-study-card-config-tab${isActive ? ' is-active' : ''}`,
+      text: String(item?.label || key).trim() || key,
+      attrs: { type: 'button', 'aria-pressed': isActive ? 'true' : 'false' },
+    });
+    btn.addEventListener('click', () => onSelect(key));
+    return btn;
+  });
+}
+
+function createMoveButtons({ index, length, label, onMove }) {
+  const createButton = (direction, nextIndex, text) => {
+    const btn = el('button', {
+      className: 'icon-button kanji-study-card-config-move',
+      text,
+      attrs: { type: 'button', 'aria-label': `Move ${label} ${direction}` },
+    });
+    btn.disabled = nextIndex < 0 || nextIndex >= length;
+    btn.addEventListener('click', () => onMove(nextIndex));
+    return btn;
+  };
+
+  return [
+    createButton('up', index - 1, '↑'),
+    createButton('down', index + 1, '↓'),
+  ];
+}
+
+function createSelectableReorderRow({
+  item,
+  index,
+  length,
+  checked,
+  onToggle,
+  onMove,
+  extraControls = [],
+}) {
+  const checkbox = el('input', {
+    attrs: {
+      type: 'checkbox',
+      'aria-label': `Show ${item.label}`,
+    },
+  });
+  checkbox.checked = !!checked;
+  checkbox.addEventListener('change', () => onToggle(!!checkbox.checked));
+
+  return createConfigItemRow({
+    main: el('label', {
+      className: 'kanji-study-card-config-item-main',
+      children: [
+        checkbox,
+        createConfigItemCopy(item.label, item.key),
+      ],
+    }),
+    controls: extraControls.concat(createMoveButtons({
+      index,
+      length,
+      label: item.label,
+      onMove,
+    })),
+  });
+}
+
+function createInlineToggleButtons({ item, value, onChange }) {
+  return el('div', {
+    className: 'btn-group kanji-study-card-config-inline-toggle',
+    children: item.items.map((toggleItem) => {
+      const selected = value === String(toggleItem.value || '').trim();
+      const btn = el('button', {
+        className: `btn small${selected ? ' is-active' : ''}`,
+        text: toggleItem.label,
+        attrs: {
+          type: 'button',
+          'aria-pressed': selected ? 'true' : 'false',
+          title: `${item.label}: ${toggleItem.label}`,
+        },
+      });
+      btn.addEventListener('click', () => onChange(String(toggleItem.value || '').trim()));
+      return btn;
+    }),
+  });
+}
+
+function createConfigJsonViewer(value, compareValue) {
+  const viewer = createJsonViewer(value, {
+    expanded: true,
+    maxChars: 200000,
+    maxLines: 10000,
+    previewLen: 400,
+    compareValue,
+  });
+  viewer.classList.add('kanji-study-card-config-json-viewer');
+  return viewer;
+}
+
 function createCardConfigDialogShell({
   title,
   subtitle,
@@ -429,25 +553,13 @@ export function openGenericFlatCardConfigDialog({
         optionState[nextIndex] = nextItem;
       });
     if (item.renderAs === 'toggle' && item.items.length) {
-      return el('div', {
-        className: 'btn-group kanji-study-card-config-inline-toggle',
-        children: item.items.map((toggleItem) => {
-          const selected = String(item.value || '').trim() === String(toggleItem.value || '').trim();
-          const btn = el('button', {
-            className: `btn small${selected ? ' is-active' : ''}`,
-            text: toggleItem.label,
-            attrs: {
-              type: 'button',
-              'aria-pressed': selected ? 'true' : 'false',
-              title: `${item.label}: ${toggleItem.label}`,
-            },
-          });
-          btn.addEventListener('click', () => {
-            assignItem(index, { ...item, value: String(toggleItem.value || '').trim() });
-            rerender();
-          });
-          return btn;
-        }),
+      return createInlineToggleButtons({
+        item,
+        value: String(item.value || '').trim(),
+        onChange: (nextValue) => {
+          assignItem(index, { ...item, value: nextValue });
+          rerender();
+        },
       });
     }
 
@@ -504,6 +616,8 @@ export function openGenericFlatCardConfigDialog({
       }),
   };
   const defaultSnapshot = JSON.stringify(defaultConfigSnapshot);
+  const hasChanges = () => JSON.stringify(getCurrentConfigSnapshot()) !== initialSnapshot;
+  const hasDefaultChanges = () => JSON.stringify(getCurrentConfigSnapshot()) !== defaultSnapshot;
 
   function resetToInitialState() {
     state = buildSelectableState(items, initialConfigSnapshot.fields || selectedFields);
@@ -578,19 +692,11 @@ export function openGenericFlatCardConfigDialog({
       return [addStyleBtn];
     },
     onRenderJson: () => {
-      const viewer = createJsonViewer(getCurrentConfigSnapshot(), {
-        expanded: true,
-        maxChars: 200000,
-        maxLines: 10000,
-        previewLen: 400,
-        compareValue: initialConfigSnapshot,
-      });
-      viewer.classList.add('kanji-study-card-config-json-viewer');
-      return viewer;
+      return createConfigJsonViewer(getCurrentConfigSnapshot(), initialConfigSnapshot);
     },
-    onHasChanges: () => JSON.stringify(getCurrentConfigSnapshot()) !== initialSnapshot,
-    onCanReset: () => JSON.stringify(getCurrentConfigSnapshot()) !== initialSnapshot,
-    onCanResetToDefaults: () => JSON.stringify(getCurrentConfigSnapshot()) !== defaultSnapshot,
+    onHasChanges: hasChanges,
+    onCanReset: hasChanges,
+    onCanResetToDefaults: hasDefaultChanges,
     onRenderBody: ({ rerender }) => {
       const list = el('div', { className: 'kanji-study-card-config-list' });
       let topLevelTabs = null;
@@ -605,24 +711,17 @@ export function openGenericFlatCardConfigDialog({
       }
 
       if (hasStyleTabs) {
-        topLevelTabs = [
+        const tabEntries = [
           { key: 'fields', label: 'Fields' },
           { key: 'main-style', label: 'Main Style' },
           ...customStyleState.map((item) => ({
             key: item.id,
             label: String(item.name || item.id).trim() || item.id,
           })),
-        ].map((item) => {
-          const btn = el('button', {
-            className: `btn small kanji-study-card-config-tab${activeTab === item.key ? ' is-active' : ''}`,
-            text: item.label,
-            attrs: { type: 'button' },
-          });
-          btn.addEventListener('click', () => {
-            activeTab = item.key;
-            rerender();
-          });
-          return btn;
+        ];
+        topLevelTabs = createTabButtons(tabEntries, activeTab, (nextKey) => {
+          activeTab = nextKey;
+          rerender();
         });
 
         if (activeTab === 'main-style' || customStyleState.some((item) => item.id === activeTab)) {
@@ -660,59 +759,26 @@ export function openGenericFlatCardConfigDialog({
               removeCustomStyle(currentStyleState.id);
               rerender();
             });
-            list.append(el('div', {
-              className: 'kanji-study-card-config-item',
-              children: [
-                el('div', {
-                  className: 'kanji-study-card-config-item-copy',
-                  children: [
-                    el('div', { className: 'kanji-study-card-config-item-label', text: 'Style Name' }),
-                    el('div', { className: 'kanji-study-card-config-item-key hint', text: currentStyleState.id }),
-                  ],
-                }),
-                el('div', {
-                  className: 'kanji-study-card-config-item-controls',
-                  children: [nameInput, deleteBtn],
-                }),
-              ],
+            list.append(createConfigItemRow({
+              label: 'Style Name',
+              keyText: currentStyleState.id,
+              controls: [nameInput, deleteBtn],
             }));
-            list.append(el('div', {
-              className: 'kanji-study-card-config-item',
-              children: [
-                el('div', {
-                  className: 'kanji-study-card-config-item-copy',
-                  children: [
-                    el('div', { className: 'kanji-study-card-config-item-label', text: 'Fields Using This Style' }),
-                    el('div', {
-                      className: 'kanji-study-card-config-item-key hint',
-                      text: getStyleUsage(currentStyleState.id).join(', ') || 'No fields currently use this style.',
-                    }),
-                  ],
-                }),
-              ],
+            list.append(createConfigItemRow({
+              label: 'Fields Using This Style',
+              keyText: getStyleUsage(currentStyleState.id).join(', ') || 'No fields currently use this style.',
             }));
           }
 
           currentStyleState.controls.forEach((item, index) => {
-            list.append(el('div', {
-              className: 'kanji-study-card-config-item',
-              children: [
-                el('div', {
-                  className: 'kanji-study-card-config-item-copy',
-                  children: [
-                    el('div', { className: 'kanji-study-card-config-item-label', text: item.label }),
-                    el('div', { className: 'kanji-study-card-config-item-key hint', text: item.key }),
-                  ],
-                }),
-                el('div', {
-                  className: 'kanji-study-card-config-item-controls',
-                  children: [renderOptionControl(item, index, rerender, {
-                    setItem: (nextIndex, nextItem) => {
-                      currentStyleState.controls[nextIndex] = nextItem;
-                    },
-                  })],
-                }),
-              ],
+            list.append(createConfigItemRow({
+              label: item.label,
+              keyText: item.key,
+              controls: [renderOptionControl(item, index, rerender, {
+                setItem: (nextIndex, nextItem) => {
+                  currentStyleState.controls[nextIndex] = nextItem;
+                },
+              })],
             }));
           });
           return { tabs: topLevelTabs, body: list };
@@ -741,43 +807,18 @@ export function openGenericFlatCardConfigDialog({
             },
           });
 
-          list.append(el('div', {
-            className: 'kanji-study-card-config-item',
-            children: [
-              el('div', {
-                className: 'kanji-study-card-config-item-copy',
-                children: [
-                  el('div', { className: 'kanji-study-card-config-item-label', text: item.label }),
-                  el('div', { className: 'kanji-study-card-config-item-key hint', text: item.key }),
-                ],
-              }),
-              el('div', {
-                className: 'kanji-study-card-config-item-controls',
-                children: [
-                  ...attachedControls.map((control) => renderOptionControl(control, control.index, rerender)),
-                  dropdown,
-                ],
-              }),
-            ],
+          list.append(createConfigItemRow({
+            label: item.label,
+            keyText: item.key,
+            controls: attachedControls.map((control) => renderOptionControl(control, control.index, rerender)).concat(dropdown),
           }));
         });
         optionState.forEach((item, index) => {
           if (!isOptionItemVisible(item) || item.attachToLayoutKey) return;
-          list.append(el('div', {
-            className: 'kanji-study-card-config-item',
-            children: [
-              el('div', {
-                className: 'kanji-study-card-config-item-copy',
-                children: [
-                  el('div', { className: 'kanji-study-card-config-item-label', text: item.label }),
-                  el('div', { className: 'kanji-study-card-config-item-key hint', text: item.key }),
-                ],
-              }),
-              el('div', {
-                className: 'kanji-study-card-config-item-controls',
-                children: [renderOptionControl(item, index, rerender)],
-              }),
-            ],
+          list.append(createConfigItemRow({
+            label: item.label,
+            keyText: item.key,
+            controls: [renderOptionControl(item, index, rerender)],
           }));
         });
         return topLevelTabs ? { tabs: topLevelTabs, body: list } : { body: list };
@@ -791,55 +832,6 @@ export function openGenericFlatCardConfigDialog({
         : [];
 
       state.forEach((item, index) => {
-        const checkbox = el('input', {
-          attrs: {
-            type: 'checkbox',
-            'aria-label': `Show ${item.label}`,
-          },
-        });
-        checkbox.checked = !!item.enabled;
-        checkbox.addEventListener('change', () => {
-          state[index] = { ...item, enabled: !!checkbox.checked };
-          if (!checkbox.checked) delete fieldStyleState[item.key];
-          rerender();
-        });
-
-        const labelWrap = el('label', {
-          className: 'kanji-study-card-config-item-main',
-          children: [
-            checkbox,
-            el('div', {
-              className: 'kanji-study-card-config-item-copy',
-              children: [
-                el('div', { className: 'kanji-study-card-config-item-label', text: item.label }),
-                el('div', { className: 'kanji-study-card-config-item-key hint', text: item.key }),
-              ],
-            }),
-          ],
-        });
-
-        const upBtn = el('button', {
-          className: 'icon-button kanji-study-card-config-move',
-          text: '↑',
-          attrs: { type: 'button', 'aria-label': `Move ${item.label} up` },
-        });
-        upBtn.disabled = index === 0;
-        upBtn.addEventListener('click', () => {
-          state = moveItem(state, index, index - 1);
-          rerender();
-        });
-
-        const downBtn = el('button', {
-          className: 'icon-button kanji-study-card-config-move',
-          text: '↓',
-          attrs: { type: 'button', 'aria-label': `Move ${item.label} down` },
-        });
-        downBtn.disabled = index === state.length - 1;
-        downBtn.addEventListener('click', () => {
-          state = moveItem(state, index, index + 1);
-          rerender();
-        });
-
         const controlsChildren = [];
         if (hasStyleTabs) {
           controlsChildren.push(createDropdown({
@@ -855,17 +847,21 @@ export function openGenericFlatCardConfigDialog({
             },
           }));
         }
-        controlsChildren.push(upBtn, downBtn);
-
-        list.append(el('div', {
-          className: 'kanji-study-card-config-item',
-          children: [
-            labelWrap,
-            el('div', {
-              className: 'kanji-study-card-config-item-controls',
-              children: controlsChildren,
-            }),
-          ],
+        list.append(createSelectableReorderRow({
+          item,
+          index,
+          length: state.length,
+          checked: item.enabled,
+          onToggle: (checked) => {
+            state[index] = { ...item, enabled: checked };
+            if (!checked) delete fieldStyleState[item.key];
+            rerender();
+          },
+          onMove: (nextIndex) => {
+            state = moveItem(state, index, nextIndex);
+            rerender();
+          },
+          extraControls: controlsChildren,
         }));
       });
 
@@ -993,6 +989,8 @@ export function openRelatedCardConfigDialog({
     })),
   };
   const defaultSnapshot = JSON.stringify(defaultConfigSnapshot);
+  const hasChanges = () => JSON.stringify(getSnapshot()) !== initialSnapshot;
+  const hasDefaultChanges = () => JSON.stringify(getSnapshot()) !== defaultSnapshot;
 
   function resetToInitialState() {
     collectionState = buildSelectableState(collectionItems, initialConfigSnapshot.collections || []);
@@ -1022,95 +1020,40 @@ export function openRelatedCardConfigDialog({
     title,
     subtitle,
     onRenderSummary: () => `${getSelectedCollections().length} related collections selected`,
-    onRenderJson: () => {
-      const viewer = createJsonViewer(getSnapshot(), {
-        expanded: true,
-        maxChars: 200000,
-        maxLines: 10000,
-        previewLen: 400,
-        compareValue: initialConfigSnapshot,
-      });
-      viewer.classList.add('kanji-study-card-config-json-viewer');
-      return viewer;
-    },
-    onHasChanges: () => JSON.stringify(getSnapshot()) !== initialSnapshot,
-    onCanReset: () => JSON.stringify(getSnapshot()) !== initialSnapshot,
-    onCanResetToDefaults: () => JSON.stringify(getSnapshot()) !== defaultSnapshot,
+    onRenderJson: () => createConfigJsonViewer(getSnapshot(), initialConfigSnapshot),
+    onHasChanges: hasChanges,
+    onCanReset: hasChanges,
+    onCanResetToDefaults: hasDefaultChanges,
     onRenderBody: ({ rerender }) => {
       ensureActiveTab();
-      const tabs = [];
       const selected = getSelectedCollections();
       const entries = [{ key: 'card', label: 'Card Settings' }]
         .concat(selected.map((key) => {
           const found = collectionItems.find((item) => item.key === key);
           return { key, label: found?.label || key };
         }));
-      entries.forEach((item) => {
-        const btn = el('button', {
-          className: `btn small kanji-study-card-config-tab${activeTab === item.key ? ' is-active' : ''}`,
-          text: item.label,
-          attrs: { type: 'button', 'aria-pressed': activeTab === item.key ? 'true' : 'false' },
-        });
-        btn.addEventListener('click', () => {
-          activeTab = item.key;
-          rerender();
-        });
-        tabs.push(btn);
+      const tabs = createTabButtons(entries, activeTab, (nextKey) => {
+        activeTab = nextKey;
+        rerender();
       });
 
       if (activeTab === 'card') {
         const list = el('div', { className: 'kanji-study-card-config-list' });
         collectionState.forEach((item, index) => {
-          const checkbox = el('input', {
-            attrs: { type: 'checkbox', 'aria-label': `Show ${item.label}` },
-          });
-          checkbox.checked = !!item.enabled;
-          checkbox.addEventListener('change', () => {
-            collectionState[index] = { ...item, enabled: !!checkbox.checked };
-            ensureActiveTab();
-            rerender();
-          });
-          const upBtn = el('button', {
-            className: 'icon-button kanji-study-card-config-move',
-            text: '↑',
-            attrs: { type: 'button', 'aria-label': `Move ${item.label} up` },
-          });
-          upBtn.disabled = index === 0;
-          upBtn.addEventListener('click', () => {
-            collectionState = moveItem(collectionState, index, index - 1);
-            rerender();
-          });
-          const downBtn = el('button', {
-            className: 'icon-button kanji-study-card-config-move',
-            text: '↓',
-            attrs: { type: 'button', 'aria-label': `Move ${item.label} down` },
-          });
-          downBtn.disabled = index === collectionState.length - 1;
-          downBtn.addEventListener('click', () => {
-            collectionState = moveItem(collectionState, index, index + 1);
-            rerender();
-          });
-          list.append(el('div', {
-            className: 'kanji-study-card-config-item',
-            children: [
-              el('label', {
-                className: 'kanji-study-card-config-item-main',
-                children: [
-                  checkbox,
-                  el('div', {
-                    className: 'kanji-study-card-config-item-copy',
-                    children: [
-                      el('div', { className: 'kanji-study-card-config-item-label', text: item.label }),
-                      el('div', { className: 'kanji-study-card-config-item-key hint', text: item.key }),
-                    ],
-                  }),
-                ],
-              }),
-              el('div', {
-                className: 'kanji-study-card-config-item-controls',
-                children: [upBtn, downBtn],
-              }),
-            ],
+          list.append(createSelectableReorderRow({
+            item,
+            index,
+            length: collectionState.length,
+            checked: item.enabled,
+            onToggle: (checked) => {
+              collectionState[index] = { ...item, enabled: checked };
+              ensureActiveTab();
+              rerender();
+            },
+            onMove: (nextIndex) => {
+              collectionState = moveItem(collectionState, index, nextIndex);
+              rerender();
+            },
           }));
         });
         return { tabs, body: list };
@@ -1125,38 +1068,24 @@ export function openRelatedCardConfigDialog({
       }
 
       const wrap = el('div', { className: 'kanji-study-card-config-list' });
-      const modeItem = el('div', {
-        className: 'kanji-study-card-config-item',
-        children: [
-          el('div', {
-            className: 'kanji-study-card-config-item-copy',
-            children: [
-              el('div', { className: 'kanji-study-card-config-item-label', text: 'Nested Content' }),
-              el('div', { className: 'kanji-study-card-config-item-key hint', text: 'Choose whether sentences/chunks stay expanded or open on click.' }),
-            ],
-          }),
-          el('div', {
-            className: 'btn-group kanji-study-card-config-inline-toggle',
-            children: [
+      wrap.append(createConfigItemRow({
+        label: 'Nested Content',
+        keyText: 'Choose whether sentences/chunks stay expanded or open on click.',
+        controls: [createInlineToggleButtons({
+          item: {
+            label: 'Nested Content',
+            items: [
               { value: 'click', label: 'Click' },
               { value: 'always', label: 'Always' },
-            ].map((item) => {
-              const selectedMode = state.config.detailsMode === item.value;
-              const btn = el('button', {
-                className: `btn small${selectedMode ? ' is-active' : ''}`,
-                text: item.label,
-                attrs: { type: 'button', 'aria-pressed': selectedMode ? 'true' : 'false' },
-              });
-              btn.addEventListener('click', () => {
-                state.config.detailsMode = item.value;
-                rerender();
-              });
-              return btn;
-            }),
-          }),
-        ],
-      });
-      wrap.append(modeItem);
+            ],
+          },
+          value: state.config.detailsMode,
+          onChange: (nextValue) => {
+            state.config.detailsMode = nextValue;
+            rerender();
+          },
+        })],
+      }));
 
       const collapseCheckbox = el('input', {
         attrs: { type: 'checkbox', 'aria-label': 'Collapse primary text when nested content is expanded' },
@@ -1165,81 +1094,38 @@ export function openRelatedCardConfigDialog({
       collapseCheckbox.addEventListener('change', () => {
         state.config.collapsePrimaryWhenExpanded = !!collapseCheckbox.checked;
       });
-      wrap.append(el('div', {
-        className: 'kanji-study-card-config-item',
-        children: [
-          el('label', {
-            className: 'kanji-study-card-config-item-main',
-            children: [
-              collapseCheckbox,
-              el('div', {
-                className: 'kanji-study-card-config-item-copy',
-                children: [
-                  el('div', { className: 'kanji-study-card-config-item-label', text: 'Collapse Primary Text When Expanded' }),
-                  el('div', { className: 'kanji-study-card-config-item-key hint', text: 'Hide the paragraph/sentence text while its nested children are visible.' }),
-                ],
-              }),
-            ],
-          }),
-        ],
+      wrap.append(createConfigItemRow({
+        main: el('label', {
+          className: 'kanji-study-card-config-item-main',
+          children: [
+            collapseCheckbox,
+            createConfigItemCopy(
+              'Collapse Primary Text When Expanded',
+              'Hide the paragraph/sentence text while its nested children are visible.'
+            ),
+          ],
+        }),
       }));
 
       state.fields.forEach((item, index) => {
         const selectedFieldSet = new Set(state.config.fields);
-        const checkbox = el('input', {
-          attrs: { type: 'checkbox', 'aria-label': `Show ${item.label}` },
-        });
-        checkbox.checked = selectedFieldSet.has(item.key);
-        checkbox.addEventListener('change', () => {
-          const next = state.fields
-            .filter((field) => (field.key === item.key ? !!checkbox.checked : selectedFieldSet.has(field.key)))
-            .map((field) => field.key);
-          state.config.fields = next;
-          rerender();
-        });
-        const upBtn = el('button', {
-          className: 'icon-button kanji-study-card-config-move',
-          text: '↑',
-          attrs: { type: 'button', 'aria-label': `Move ${item.label} up` },
-        });
-        upBtn.disabled = index === 0;
-        upBtn.addEventListener('click', () => {
-          state.fields = moveItem(state.fields, index, index - 1);
-          state.config.fields = state.fields.filter((field) => selectedFieldSet.has(field.key)).map((field) => field.key);
-          rerender();
-        });
-        const downBtn = el('button', {
-          className: 'icon-button kanji-study-card-config-move',
-          text: '↓',
-          attrs: { type: 'button', 'aria-label': `Move ${item.label} down` },
-        });
-        downBtn.disabled = index === state.fields.length - 1;
-        downBtn.addEventListener('click', () => {
-          state.fields = moveItem(state.fields, index, index + 1);
-          state.config.fields = state.fields.filter((field) => selectedFieldSet.has(field.key)).map((field) => field.key);
-          rerender();
-        });
-        wrap.append(el('div', {
-          className: 'kanji-study-card-config-item',
-          children: [
-            el('label', {
-              className: 'kanji-study-card-config-item-main',
-              children: [
-                checkbox,
-                el('div', {
-                  className: 'kanji-study-card-config-item-copy',
-                  children: [
-                    el('div', { className: 'kanji-study-card-config-item-label', text: item.label }),
-                    el('div', { className: 'kanji-study-card-config-item-key hint', text: item.key }),
-                  ],
-                }),
-              ],
-            }),
-            el('div', {
-              className: 'kanji-study-card-config-item-controls',
-              children: [upBtn, downBtn],
-            }),
-          ],
+        wrap.append(createSelectableReorderRow({
+          item,
+          index,
+          length: state.fields.length,
+          checked: selectedFieldSet.has(item.key),
+          onToggle: (checked) => {
+            const next = state.fields
+              .filter((field) => (field.key === item.key ? checked : selectedFieldSet.has(field.key)))
+              .map((field) => field.key);
+            state.config.fields = next;
+            rerender();
+          },
+          onMove: (nextIndex) => {
+            state.fields = moveItem(state.fields, index, nextIndex);
+            state.config.fields = state.fields.filter((field) => selectedFieldSet.has(field.key)).map((field) => field.key);
+            rerender();
+          },
         }));
       });
 
