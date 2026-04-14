@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-04-13T18:20:23.670Z",
+  "generatedAt": "2026-04-13T22:53:05.596Z",
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_collection_contract_output.json",
   "runTiming": {
-    "startedAt": "2026-04-13T18:20:23.621Z",
-    "finishedAt": "2026-04-13T18:20:23.671Z",
-    "durationMs": 50,
-    "durationSeconds": 0.05
+    "startedAt": "2026-04-13T22:53:05.536Z",
+    "finishedAt": "2026-04-13T22:53:05.597Z",
+    "durationMs": 61,
+    "durationSeconds": 0.061
   },
-  "scannedCollections": 19,
+  "scannedCollections": 20,
   "collectionsWithProblems": 11,
   "parseErrors": [],
   "reports_clean": [
@@ -108,6 +108,19 @@
       "valid": true,
       "arrayKey": "entries",
       "entryKeyField": "pattern",
+      "collectionErrors": [],
+      "collectionWarnings": [],
+      "schemaErrors": [],
+      "schemaWarnings": [],
+      "entryErrorCount": 0,
+      "entryWarningCount": 0,
+      "duplicateCount": 0
+    },
+    {
+      "collectionPath": "collections/persian/persian_alphabet.json",
+      "valid": true,
+      "arrayKey": "entries",
+      "entryKeyField": "char",
       "collectionErrors": [],
       "collectionWarnings": [],
       "schemaErrors": [],
@@ -336,9 +349,9 @@
       "duplicateCount": 0
     },
     {
-      "collectionPath": "collections/spanish/spanish_sentences.promptPresets.json",
+      "collectionPath": "collections/spanish/spanish_sentences.prompt.json",
       "valid": false,
-      "arrayKey": "prompts",
+      "arrayKey": "steps",
       "entryKeyField": "id",
       "collectionErrors": [
         {
@@ -349,6 +362,24 @@
         },
         {
           "message": "$.version is not allowed by the collection contract."
+        },
+        {
+          "message": "$.kind is not allowed by the collection contract."
+        },
+        {
+          "message": "$.collection is not allowed by the collection contract."
+        },
+        {
+          "message": "$.defaults is not allowed by the collection contract."
+        },
+        {
+          "message": "$.shared is not allowed by the collection contract."
+        },
+        {
+          "message": "$.steps is not allowed by the collection contract."
+        },
+        {
+          "message": "$.workflows is not allowed by the collection contract."
         },
         {
           "message": "$.prompts is not allowed by the collection contract."
@@ -379,9 +410,9 @@
       "duplicateCount": 1
     },
     {
-      "collectionPath": "collections/spanish/spanish_words.promptPresets.json",
+      "collectionPath": "collections/spanish/spanish_words.prompt.json",
       "valid": false,
-      "arrayKey": "prompts",
+      "arrayKey": "steps",
       "entryKeyField": "id",
       "collectionErrors": [
         {
@@ -392,6 +423,24 @@
         },
         {
           "message": "$.version is not allowed by the collection contract."
+        },
+        {
+          "message": "$.kind is not allowed by the collection contract."
+        },
+        {
+          "message": "$.collection is not allowed by the collection contract."
+        },
+        {
+          "message": "$.defaults is not allowed by the collection contract."
+        },
+        {
+          "message": "$.shared is not allowed by the collection contract."
+        },
+        {
+          "message": "$.steps is not allowed by the collection contract."
+        },
+        {
+          "message": "$.workflows is not allowed by the collection contract."
         },
         {
           "message": "$.prompts is not allowed by the collection contract."

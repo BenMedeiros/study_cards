@@ -46,6 +46,19 @@ const SPEECH_LANGUAGE_DEFAULTS_BY_COLLECTION = {
   'spanish/spanish_sentences.json': {
     es: 'es-ES',
   },
+  'persian/persian_alphabet.json': {
+    char: 'fa-IR',
+    isolated_form: 'fa-IR',
+    initial_form: 'fa-IR',
+    medial_form: 'fa-IR',
+    final_form: 'fa-IR',
+    ex_initial_word: 'fa-IR',
+    ex_initial_letters: 'fa-IR',
+    ex_medial_word: 'fa-IR',
+    ex_medial_letters: 'fa-IR',
+    ex_final_word: 'fa-IR',
+    ex_final_letters: 'fa-IR',
+  },
   'pokemon.json': {
     japaneseName: 'ja-JP',
   },
@@ -140,6 +153,44 @@ function cloneCardsConfig(cards) {
     if (Array.isArray(rawConfig.fields)) {
       nextConfig.fields = Array.from(new Set(rawConfig.fields.map((field) => String(field || '').trim()).filter(Boolean)));
     }
+    if (rawConfig.style && typeof rawConfig.style === 'object' && !Array.isArray(rawConfig.style)) {
+      nextConfig.style = {};
+      for (const [styleKey, styleValue] of Object.entries(rawConfig.style)) {
+        const key = String(styleKey || '').trim();
+        const value = String(styleValue || '').trim();
+        if (!key || !value) continue;
+        nextConfig.style[key] = value;
+      }
+      if (!Object.keys(nextConfig.style).length) delete nextConfig.style;
+    }
+    if (rawConfig.customStyles && typeof rawConfig.customStyles === 'object' && !Array.isArray(rawConfig.customStyles)) {
+      nextConfig.customStyles = {};
+      for (const [styleId, rawStyle] of Object.entries(rawConfig.customStyles)) {
+        const id = String(styleId || '').trim();
+        if (!id || !rawStyle || typeof rawStyle !== 'object' || Array.isArray(rawStyle)) continue;
+        const nextStyle = {};
+        const name = String(rawStyle.name || '').trim();
+        if (name) nextStyle.name = name;
+        for (const [styleKey, styleValue] of Object.entries(rawStyle)) {
+          const key = String(styleKey || '').trim();
+          const value = String(styleValue || '').trim();
+          if (!key || !value || key === 'name') continue;
+          nextStyle[key] = value;
+        }
+        nextConfig.customStyles[id] = nextStyle;
+      }
+      if (!Object.keys(nextConfig.customStyles).length) delete nextConfig.customStyles;
+    }
+    if (rawConfig.fieldStyles && typeof rawConfig.fieldStyles === 'object' && !Array.isArray(rawConfig.fieldStyles)) {
+      nextConfig.fieldStyles = {};
+      for (const [fieldKey, styleId] of Object.entries(rawConfig.fieldStyles)) {
+        const field = String(fieldKey || '').trim();
+        const style = String(styleId || '').trim();
+        if (!field || !style) continue;
+        nextConfig.fieldStyles[field] = style;
+      }
+      if (!Object.keys(nextConfig.fieldStyles).length) delete nextConfig.fieldStyles;
+    }
     if (Array.isArray(rawConfig.controls)) {
       nextConfig.controls = Array.from(new Set(rawConfig.controls.map((item) => String(item || '').trim()).filter(Boolean)));
     }
@@ -228,6 +279,15 @@ function _validateCards(cards, collection) {
   const fieldKeys = new Set(getCollectionFieldKeys(collection));
   const allowedMainLayoutSlots = new Set(['topLeft', 'main', 'bottomLeft', 'bottomRight']);
   const allowedJsonControls = new Set(['maximize', 'wrap', 'copy', 'toggle']);
+  const allowedGenericStyleKeys = new Map([
+    ['labelWidth', new Set(['6rem', '8rem', '10rem', '12rem', '14rem'])],
+    ['labelSize', new Set(['2xs', 'xs', 'sm', 'body'])],
+    ['labelTone', new Set(['muted', 'default'])],
+    ['labelVisibility', new Set(['show', 'hidden'])],
+    ['valueSize', new Set(['xs', 'sm', 'body', 'lg', 'xl'])],
+    ['rowPadding', new Set(['compact', 'default', 'relaxed'])],
+    ['rowDivider', new Set(['show', 'hide'])],
+  ]);
   for (const [cardKey, rawConfig] of Object.entries(cards)) {
     const key = String(cardKey || '').trim();
     if (!key) continue;
@@ -240,6 +300,66 @@ function _validateCards(cards, collection) {
         const field = String(fieldKey || '').trim();
         if (!field) throw new Error(`cards.${key}.fields entries must be non-empty strings`);
         if (!fieldKeys.has(field)) throw new Error(`cards.${key}.fields entry not in collection schema: ${field}`);
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(rawConfig, 'style')) {
+      if (!rawConfig.style || typeof rawConfig.style !== 'object' || Array.isArray(rawConfig.style)) {
+        throw new Error(`cards.${key}.style must be an object`);
+      }
+      if (key !== 'genericFlatCard') {
+        throw new Error(`cards.${key}.style is not supported`);
+      }
+      for (const [styleKey, styleValue] of Object.entries(rawConfig.style)) {
+        const styleName = String(styleKey || '').trim();
+        const styleOption = String(styleValue || '').trim();
+        const allowedValues = allowedGenericStyleKeys.get(styleName);
+        if (!allowedValues) throw new Error(`cards.${key}.style key not supported: ${styleName}`);
+        if (!allowedValues.has(styleOption)) {
+          throw new Error(`cards.${key}.style value not supported for ${styleName}: ${styleOption}`);
+        }
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(rawConfig, 'customStyles')) {
+      if (!rawConfig.customStyles || typeof rawConfig.customStyles !== 'object' || Array.isArray(rawConfig.customStyles)) {
+        throw new Error(`cards.${key}.customStyles must be an object`);
+      }
+      if (key !== 'genericFlatCard') {
+        throw new Error(`cards.${key}.customStyles is not supported`);
+      }
+      for (const [styleId, rawStyle] of Object.entries(rawConfig.customStyles)) {
+        const id = String(styleId || '').trim();
+        if (!id) throw new Error(`cards.${key}.customStyles keys must be non-empty strings`);
+        if (!rawStyle || typeof rawStyle !== 'object' || Array.isArray(rawStyle)) {
+          throw new Error(`cards.${key}.customStyles.${id} must be an object`);
+        }
+        for (const [styleKey, styleValue] of Object.entries(rawStyle)) {
+          if (styleKey === 'name') continue;
+          const styleName = String(styleKey || '').trim();
+          const styleOption = String(styleValue || '').trim();
+          const allowedValues = allowedGenericStyleKeys.get(styleName);
+          if (!allowedValues) throw new Error(`cards.${key}.customStyles.${id} key not supported: ${styleName}`);
+          if (!allowedValues.has(styleOption)) {
+            throw new Error(`cards.${key}.customStyles.${id} value not supported for ${styleName}: ${styleOption}`);
+          }
+        }
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(rawConfig, 'fieldStyles')) {
+      if (!rawConfig.fieldStyles || typeof rawConfig.fieldStyles !== 'object' || Array.isArray(rawConfig.fieldStyles)) {
+        throw new Error(`cards.${key}.fieldStyles must be an object`);
+      }
+      if (key !== 'genericFlatCard') {
+        throw new Error(`cards.${key}.fieldStyles is not supported`);
+      }
+      const customStyleIds = new Set(Object.keys(rawConfig.customStyles || {}).map((item) => String(item || '').trim()).filter(Boolean));
+      for (const [fieldKey, styleId] of Object.entries(rawConfig.fieldStyles)) {
+        const field = String(fieldKey || '').trim();
+        const style = String(styleId || '').trim();
+        if (!field) throw new Error(`cards.${key}.fieldStyles keys must be non-empty strings`);
+        if (!fieldKeys.has(field)) throw new Error(`cards.${key}.fieldStyles entry not in collection schema: ${field}`);
+        if (!style || !customStyleIds.has(style)) {
+          throw new Error(`cards.${key}.fieldStyles entry must reference a custom style: ${style}`);
+        }
       }
     }
     if (Object.prototype.hasOwnProperty.call(rawConfig, 'controls')) {

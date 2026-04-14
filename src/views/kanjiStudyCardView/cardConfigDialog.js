@@ -71,7 +71,38 @@ function getLayoutValue(layout, slotKey, fallbackLayout) {
   return '';
 }
 
-function createCardConfigDialogShell({ title, subtitle, onRenderSummary, onRenderBody, onRenderJson, onReset, onSave }) {
+function normalizeControlItems(controls) {
+  return Array.isArray(controls)
+    ? controls.map((raw) => ({
+      key: String(raw?.key || '').trim(),
+      label: String(raw?.label || raw?.key || '').trim(),
+      showWhen: raw?.showWhen || null,
+      attachToLayoutKey: String(raw?.attachToLayoutKey || '').trim(),
+      renderAs: String(raw?.renderAs || '').trim(),
+      items: Array.isArray(raw?.items)
+        ? raw.items.map((item) => ({
+          value: String(item?.value || '').trim(),
+          label: String(item?.label || item?.value || '').trim(),
+        })).filter((item) => item.value)
+        : [],
+    })).filter((item) => item.key && item.items.length)
+    : [];
+}
+
+function createCardConfigDialogShell({
+  title,
+  subtitle,
+  onRenderSummary,
+  onRenderHeaderActions,
+  onRenderBody,
+  onRenderJson,
+  onHasChanges,
+  onCanReset,
+  onCanResetToDefaults,
+  onReset,
+  onResetToDefaults,
+  onSave,
+}) {
   const mount = document.body || document.documentElement;
   if (!mount) return Promise.resolve(null);
 
@@ -92,28 +123,31 @@ function createCardConfigDialogShell({ title, subtitle, onRenderSummary, onRende
     const titleEl = el('h2', { text: String(title || 'Card Settings') });
     const subtitleEl = el('p', { className: 'hint', text: String(subtitle || '').trim() });
     const summaryEl = el('div', { className: 'kanji-study-card-config-summary' });
+    const headerActionsEl = el('div', { className: 'kanji-study-card-config-header-actions' });
     const jsonBtn = el('button', {
       className: 'btn small table-card-settings-btn kanji-study-card-config-json-btn',
       text: 'JSON',
       attrs: { type: 'button', title: 'Toggle JSON viewer for this card config' },
     });
+    headerActionsEl.append(jsonBtn);
     const header = el('div', {
       className: 'kanji-study-card-config-header',
       children: [
         el('div', { children: [titleEl, subtitleEl, summaryEl] }),
-        el('div', { className: 'kanji-study-card-config-header-actions', children: [jsonBtn] }),
+        headerActionsEl,
       ],
     });
 
     const tabs = el('div', { className: 'kanji-study-card-config-tabs' });
     const body = el('div', { className: 'kanji-study-card-config-body' });
     const resetBtn = el('button', { className: 'btn', text: 'Reset', attrs: { type: 'button' } });
+    const resetDefaultsBtn = el('button', { className: 'btn', text: 'Reset to Defaults', attrs: { type: 'button' } });
     const cancelBtn = el('button', { className: 'btn', text: 'Cancel', attrs: { type: 'button' } });
     const saveBtn = el('button', { className: 'btn primary', text: 'Save', attrs: { type: 'button' } });
     const footer = el('div', {
       className: 'kanji-study-card-config-footer',
       children: [
-        el('div', { className: 'kanji-study-card-config-footer-left', children: [resetBtn] }),
+        el('div', { className: 'kanji-study-card-config-footer-left', children: [resetBtn, resetDefaultsBtn] }),
         el('div', { className: 'kanji-study-card-config-footer-right', children: [cancelBtn, saveBtn] }),
       ],
     });
@@ -141,8 +175,27 @@ function createCardConfigDialogShell({ title, subtitle, onRenderSummary, onRende
 
     function render() {
       summaryEl.textContent = typeof onRenderSummary === 'function' ? (onRenderSummary() || '') : '';
+      const hasChanges = typeof onHasChanges === 'function' ? !!onHasChanges() : true;
+      const canReset = typeof onCanReset === 'function' ? !!onCanReset() : true;
+      const canResetToDefaults = typeof onCanResetToDefaults === 'function' ? !!onCanResetToDefaults() : true;
+      saveBtn.disabled = !hasChanges;
+      saveBtn.setAttribute('aria-disabled', hasChanges ? 'false' : 'true');
+      resetBtn.disabled = !canReset;
+      resetBtn.setAttribute('aria-disabled', canReset ? 'false' : 'true');
+      resetDefaultsBtn.disabled = !canResetToDefaults;
+      resetDefaultsBtn.setAttribute('aria-disabled', canResetToDefaults ? 'false' : 'true');
       jsonBtn.classList.toggle('is-active', isJsonMode);
       jsonBtn.setAttribute('aria-pressed', isJsonMode ? 'true' : 'false');
+      headerActionsEl.innerHTML = '';
+      const extraActions = typeof onRenderHeaderActions === 'function'
+        ? onRenderHeaderActions({ rerender: render })
+        : null;
+      if (Array.isArray(extraActions)) {
+        extraActions.forEach((actionEl) => {
+          if (actionEl) headerActionsEl.appendChild(actionEl);
+        });
+      }
+      headerActionsEl.append(jsonBtn);
       tabs.innerHTML = '';
       body.innerHTML = '';
       if (isJsonMode) {
@@ -177,6 +230,10 @@ function createCardConfigDialogShell({ title, subtitle, onRenderSummary, onRende
       if (typeof onReset === 'function') onReset();
       render();
     });
+    resetDefaultsBtn.addEventListener('click', () => {
+      if (typeof onResetToDefaults === 'function') onResetToDefaults();
+      render();
+    });
     cancelBtn.addEventListener('click', () => cleanup(null));
     saveBtn.addEventListener('click', () => cleanup(typeof onSave === 'function' ? onSave() : null));
 
@@ -203,6 +260,11 @@ export function openGenericFlatCardConfigDialog({
   optionControls = [],
   selectedOptions = {},
   defaultOptions = {},
+  styleControls = [],
+  selectedStyles = {},
+  defaultStyles = {},
+  customStyles = {},
+  fieldStyles = {},
   namespace = '',
   collection = '',
 } = {}) {
@@ -215,21 +277,8 @@ export function openGenericFlatCardConfigDialog({
       showWhen: raw?.showWhen || null,
     })).filter((item) => item.key)
     : [];
-  const controls = Array.isArray(optionControls)
-    ? optionControls.map((raw) => ({
-      key: String(raw?.key || '').trim(),
-      label: String(raw?.label || raw?.key || '').trim(),
-      showWhen: raw?.showWhen || null,
-      attachToLayoutKey: String(raw?.attachToLayoutKey || '').trim(),
-      renderAs: String(raw?.renderAs || '').trim(),
-      items: Array.isArray(raw?.items)
-        ? raw.items.map((item) => ({
-          value: String(item?.value || '').trim(),
-          label: String(item?.label || item?.value || '').trim(),
-        })).filter((item) => item.value)
-        : [],
-    })).filter((item) => item.key && item.items.length)
-    : [];
+  const controls = normalizeControlItems(optionControls);
+  const styleControlsState = normalizeControlItems(styleControls);
 
   let state = buildSelectableState(items, selectedFields);
   let layoutState = slots.map((slot) => ({
@@ -241,6 +290,27 @@ export function openGenericFlatCardConfigDialog({
     value: getLayoutValue(selectedOptions, control.key, defaultOptions) || control.items[0]?.value || '',
   }));
   const isLayoutMode = slots.length > 0 || controls.length > 0;
+  const hasStyleTabs = !isLayoutMode && styleControlsState.length > 0;
+  let styleIdCounter = 1;
+
+  function createStyleState(styleId, src = {}, fallback = {}) {
+    const normalizedId = String(styleId || '').trim() || `style-${styleIdCounter++}`;
+    return {
+      id: normalizedId,
+      name: String(src?.name || '').trim() || normalizedId,
+      controls: styleControlsState.map((control) => ({
+        ...control,
+        value: getLayoutValue(src, control.key, fallback) || control.items[0]?.value || '',
+      })),
+    };
+  }
+
+  let mainStyleState = createStyleState('main', selectedStyles, defaultStyles);
+  let customStyleState = Object.entries(customStyles || {}).map(([styleId, config]) => createStyleState(styleId, config, defaultStyles));
+  let fieldStyleState = Object.fromEntries(
+    Object.entries(fieldStyles || {}).map(([fieldKey, styleId]) => [String(fieldKey || '').trim(), String(styleId || '').trim()])
+  );
+  let activeTab = hasStyleTabs ? 'fields' : '';
 
   function getSelectedFieldOrder() {
     return state.filter((item) => item.enabled).map((item) => item.key);
@@ -259,6 +329,71 @@ export function openGenericFlatCardConfigDialog({
     if (!key) return '';
     const found = optionState.find((item) => item.key === key);
     return String(found?.value || '').trim();
+  }
+
+  function getStylePayload(styleState) {
+    const out = {};
+    (styleState?.controls || []).forEach((item) => {
+      const value = String(item.value || '').trim();
+      if (!value) return;
+      out[item.key] = value;
+    });
+    return out;
+  }
+
+  function getSelectedCustomStyles() {
+    const out = {};
+    customStyleState.forEach((styleState) => {
+      const id = String(styleState?.id || '').trim();
+      if (!id) return;
+      out[id] = {
+        name: String(styleState?.name || '').trim() || id,
+        ...getStylePayload(styleState),
+      };
+    });
+    return out;
+  }
+
+  function getSelectedFieldStyles() {
+    const selectedFieldSet = new Set(getSelectedFieldOrder());
+    const validStyleIds = new Set(customStyleState.map((item) => item.id));
+    const out = {};
+    Object.entries(fieldStyleState).forEach(([fieldKey, styleId]) => {
+      const field = String(fieldKey || '').trim();
+      const style = String(styleId || '').trim();
+      if (!field || !style) return;
+      if (!selectedFieldSet.has(field)) return;
+      if (!validStyleIds.has(style)) return;
+      out[field] = style;
+    });
+    return out;
+  }
+
+  function getStyleUsage(styleId) {
+    const id = String(styleId || '').trim();
+    if (!id) return [];
+    return state
+      .filter((item) => fieldStyleState[item.key] === id)
+      .map((item) => item.label);
+  }
+
+  function addCustomStyle() {
+    let styleId = '';
+    do {
+      styleId = `style-${styleIdCounter++}`;
+    } while (customStyleState.some((item) => item.id === styleId));
+    customStyleState.push(createStyleState(styleId, { name: styleId }, defaultStyles));
+    activeTab = styleId;
+  }
+
+  function removeCustomStyle(styleId) {
+    const id = String(styleId || '').trim();
+    if (!id) return;
+    customStyleState = customStyleState.filter((item) => item.id !== id);
+    Object.keys(fieldStyleState).forEach((fieldKey) => {
+      if (fieldStyleState[fieldKey] === id) delete fieldStyleState[fieldKey];
+    });
+    if (activeTab === id) activeTab = 'fields';
   }
 
   function matchesVisibilityRule(rule) {
@@ -287,7 +422,12 @@ export function openGenericFlatCardConfigDialog({
       .filter((item) => item.attachToLayoutKey === key && isOptionItemVisible(item));
   }
 
-  function renderOptionControl(item, index, rerender) {
+  function renderOptionControl(item, index, rerender, { setItem } = {}) {
+    const assignItem = typeof setItem === 'function'
+      ? setItem
+      : ((nextIndex, nextItem) => {
+        optionState[nextIndex] = nextItem;
+      });
     if (item.renderAs === 'toggle' && item.items.length) {
       return el('div', {
         className: 'btn-group kanji-study-card-config-inline-toggle',
@@ -303,7 +443,7 @@ export function openGenericFlatCardConfigDialog({
             },
           });
           btn.addEventListener('click', () => {
-            optionState[index] = { ...item, value: String(toggleItem.value || '').trim() };
+            assignItem(index, { ...item, value: String(toggleItem.value || '').trim() });
             rerender();
           });
           return btn;
@@ -317,7 +457,7 @@ export function openGenericFlatCardConfigDialog({
       className: 'kanji-study-card-config-select',
       closeOverlaysOnOpen: false,
       onChange: (nextValue) => {
-        optionState[index] = { ...item, value: String(nextValue || '').trim() };
+        assignItem(index, { ...item, value: String(nextValue || '').trim() });
         rerender();
       },
     });
@@ -329,12 +469,81 @@ export function openGenericFlatCardConfigDialog({
         layout: getSelectedLayout(),
         ...Object.fromEntries(optionState.map((item) => [item.key, String(item.value || '').trim()])),
       }
-      : { fields: getSelectedFieldOrder() };
+      : {
+        fields: getSelectedFieldOrder(),
+        ...(hasStyleTabs ? {
+          style: getStylePayload(mainStyleState),
+          customStyles: getSelectedCustomStyles(),
+          fieldStyles: getSelectedFieldStyles(),
+        } : {}),
+      };
     return {
-      namespace: String(namespace || '').trim(),
-      collection: String(collection || '').trim(),
+      _namespace: String(namespace || '').trim(),
+      _collection: String(collection || '').trim(),
       ...payload,
     };
+  }
+
+  const initialConfigSnapshot = getCurrentConfigSnapshot();
+  const initialSnapshot = JSON.stringify(initialConfigSnapshot);
+  const defaultConfigSnapshot = {
+    _namespace: String(namespace || '').trim(),
+    _collection: String(collection || '').trim(),
+    ...(isLayoutMode
+      ? {
+        layout: Object.fromEntries(slots.map((slot) => [slot.key, String(defaultLayout?.[slot.key] || '').trim()])),
+        ...Object.fromEntries(controls.map((item) => [item.key, getLayoutValue(defaultOptions, item.key, defaultOptions) || item.items[0]?.value || ''])),
+      }
+      : {
+        fields: items.map((item) => item.key),
+        ...(hasStyleTabs ? {
+          style: getStylePayload(createStyleState('main', defaultStyles, defaultStyles)),
+          customStyles: {},
+          fieldStyles: {},
+        } : {}),
+      }),
+  };
+  const defaultSnapshot = JSON.stringify(defaultConfigSnapshot);
+
+  function resetToInitialState() {
+    state = buildSelectableState(items, initialConfigSnapshot.fields || selectedFields);
+    layoutState = slots.map((slot) => ({
+      ...slot,
+      value: getLayoutValue(initialConfigSnapshot.layout, slot.key, defaultLayout),
+    }));
+    optionState = controls.map((control) => ({
+      ...control,
+      value: getLayoutValue(initialConfigSnapshot, control.key, defaultOptions) || control.items[0]?.value || '',
+    }));
+    if (hasStyleTabs) {
+      mainStyleState = createStyleState('main', initialConfigSnapshot.style, defaultStyles);
+      customStyleState = Object.entries(initialConfigSnapshot.customStyles || {}).map(([styleId, config]) => createStyleState(styleId, config, defaultStyles));
+      fieldStyleState = Object.fromEntries(
+        Object.entries(initialConfigSnapshot.fieldStyles || {}).map(([fieldKey, styleId]) => [String(fieldKey || '').trim(), String(styleId || '').trim()])
+      );
+      activeTab = 'fields';
+    }
+  }
+
+  function resetToDefaultState() {
+    if (isLayoutMode) {
+      layoutState = slots.map((slot) => ({
+        ...slot,
+        value: String(defaultLayout?.[slot.key] || '').trim(),
+      }));
+      optionState = controls.map((control) => ({
+        ...control,
+        value: getLayoutValue(defaultOptions, control.key, defaultOptions) || control.items[0]?.value || '',
+      }));
+      return;
+    }
+    state = items.map((item) => ({ ...item, enabled: true }));
+    if (hasStyleTabs) {
+      mainStyleState = createStyleState('main', defaultStyles, defaultStyles);
+      customStyleState = [];
+      fieldStyleState = {};
+      activeTab = 'fields';
+    }
   }
 
   return createCardConfigDialogShell({
@@ -352,7 +561,21 @@ export function openGenericFlatCardConfigDialog({
         return `${mappedCount + configuredCount} configured of ${totalCount}`;
       }
       const visibleCount = state.filter((item) => item.enabled).length;
-      return `${visibleCount} visible of ${state.length}`;
+      if (!hasStyleTabs) return `${visibleCount} visible of ${state.length}`;
+      return `${visibleCount} visible of ${state.length} • ${customStyleState.length} custom styles`;
+    },
+    onRenderHeaderActions: ({ rerender }) => {
+      if (!hasStyleTabs) return [];
+      const addStyleBtn = el('button', {
+        className: 'btn small',
+        text: 'Add Style',
+        attrs: { type: 'button', title: 'Create a new custom field style' },
+      });
+      addStyleBtn.addEventListener('click', () => {
+        addCustomStyle();
+        rerender();
+      });
+      return [addStyleBtn];
     },
     onRenderJson: () => {
       const viewer = createJsonViewer(getCurrentConfigSnapshot(), {
@@ -360,12 +583,17 @@ export function openGenericFlatCardConfigDialog({
         maxChars: 200000,
         maxLines: 10000,
         previewLen: 400,
+        compareValue: initialConfigSnapshot,
       });
       viewer.classList.add('kanji-study-card-config-json-viewer');
       return viewer;
     },
+    onHasChanges: () => JSON.stringify(getCurrentConfigSnapshot()) !== initialSnapshot,
+    onCanReset: () => JSON.stringify(getCurrentConfigSnapshot()) !== initialSnapshot,
+    onCanResetToDefaults: () => JSON.stringify(getCurrentConfigSnapshot()) !== defaultSnapshot,
     onRenderBody: ({ rerender }) => {
       const list = el('div', { className: 'kanji-study-card-config-list' });
+      let topLevelTabs = null;
 
       if (isLayoutMode && !layoutState.length && !optionState.length) {
         list.append(el('p', { className: 'hint kanji-study-card-config-empty', text: 'No card positions are available for this card.' }));
@@ -374,6 +602,121 @@ export function openGenericFlatCardConfigDialog({
       if (!items.length) {
         list.append(el('p', { className: 'hint kanji-study-card-config-empty', text: 'No schema fields are available for this collection.' }));
         return { body: list };
+      }
+
+      if (hasStyleTabs) {
+        topLevelTabs = [
+          { key: 'fields', label: 'Fields' },
+          { key: 'main-style', label: 'Main Style' },
+          ...customStyleState.map((item) => ({
+            key: item.id,
+            label: String(item.name || item.id).trim() || item.id,
+          })),
+        ].map((item) => {
+          const btn = el('button', {
+            className: `btn small kanji-study-card-config-tab${activeTab === item.key ? ' is-active' : ''}`,
+            text: item.label,
+            attrs: { type: 'button' },
+          });
+          btn.addEventListener('click', () => {
+            activeTab = item.key;
+            rerender();
+          });
+          return btn;
+        });
+
+        if (activeTab === 'main-style' || customStyleState.some((item) => item.id === activeTab)) {
+          const currentStyleState = activeTab === 'main-style'
+            ? mainStyleState
+            : customStyleState.find((item) => item.id === activeTab);
+          if (!currentStyleState) return { tabs: topLevelTabs, body: list };
+
+          if (activeTab !== 'main-style') {
+            const nameInput = el('input', {
+              className: 'kanji-study-card-config-name-input',
+              attrs: {
+                type: 'text',
+                maxlength: '48',
+                placeholder: 'Style name',
+                value: String(currentStyleState.name || '').trim(),
+                'aria-label': 'Style name',
+              },
+            });
+            nameInput.addEventListener('input', () => {
+              currentStyleState.name = String(nameInput.value || '').trim() || currentStyleState.id;
+            });
+            nameInput.addEventListener('change', () => {
+              rerender();
+            });
+            nameInput.addEventListener('blur', () => {
+              rerender();
+            });
+            const deleteBtn = el('button', {
+              className: 'btn small danger',
+              text: 'Delete',
+              attrs: { type: 'button', title: 'Delete this custom style' },
+            });
+            deleteBtn.addEventListener('click', () => {
+              removeCustomStyle(currentStyleState.id);
+              rerender();
+            });
+            list.append(el('div', {
+              className: 'kanji-study-card-config-item',
+              children: [
+                el('div', {
+                  className: 'kanji-study-card-config-item-copy',
+                  children: [
+                    el('div', { className: 'kanji-study-card-config-item-label', text: 'Style Name' }),
+                    el('div', { className: 'kanji-study-card-config-item-key hint', text: currentStyleState.id }),
+                  ],
+                }),
+                el('div', {
+                  className: 'kanji-study-card-config-item-controls',
+                  children: [nameInput, deleteBtn],
+                }),
+              ],
+            }));
+            list.append(el('div', {
+              className: 'kanji-study-card-config-item',
+              children: [
+                el('div', {
+                  className: 'kanji-study-card-config-item-copy',
+                  children: [
+                    el('div', { className: 'kanji-study-card-config-item-label', text: 'Fields Using This Style' }),
+                    el('div', {
+                      className: 'kanji-study-card-config-item-key hint',
+                      text: getStyleUsage(currentStyleState.id).join(', ') || 'No fields currently use this style.',
+                    }),
+                  ],
+                }),
+              ],
+            }));
+          }
+
+          currentStyleState.controls.forEach((item, index) => {
+            list.append(el('div', {
+              className: 'kanji-study-card-config-item',
+              children: [
+                el('div', {
+                  className: 'kanji-study-card-config-item-copy',
+                  children: [
+                    el('div', { className: 'kanji-study-card-config-item-label', text: item.label }),
+                    el('div', { className: 'kanji-study-card-config-item-key hint', text: item.key }),
+                  ],
+                }),
+                el('div', {
+                  className: 'kanji-study-card-config-item-controls',
+                  children: [renderOptionControl(item, index, rerender, {
+                    setItem: (nextIndex, nextItem) => {
+                      currentStyleState.controls[nextIndex] = nextItem;
+                    },
+                  })],
+                }),
+              ],
+            }));
+          });
+          return { tabs: topLevelTabs, body: list };
+        }
       }
 
       if (isLayoutMode) {
@@ -437,8 +780,15 @@ export function openGenericFlatCardConfigDialog({
             ],
           }));
         });
-        return { body: list };
+        return topLevelTabs ? { tabs: topLevelTabs, body: list } : { body: list };
       }
+
+      const styleOptions = hasStyleTabs
+        ? [{ value: '', label: 'Main Style' }].concat(customStyleState.map((styleItem) => ({
+          value: styleItem.id,
+          label: String(styleItem.name || styleItem.id).trim() || styleItem.id,
+        })))
+        : [];
 
       state.forEach((item, index) => {
         const checkbox = el('input', {
@@ -450,6 +800,7 @@ export function openGenericFlatCardConfigDialog({
         checkbox.checked = !!item.enabled;
         checkbox.addEventListener('change', () => {
           state[index] = { ...item, enabled: !!checkbox.checked };
+          if (!checkbox.checked) delete fieldStyleState[item.key];
           rerender();
         });
 
@@ -489,41 +840,53 @@ export function openGenericFlatCardConfigDialog({
           rerender();
         });
 
+        const controlsChildren = [];
+        if (hasStyleTabs) {
+          controlsChildren.push(createDropdown({
+            items: styleOptions,
+            value: String(fieldStyleState[item.key] || '').trim(),
+            className: 'kanji-study-card-config-select kanji-study-card-config-style-select',
+            closeOverlaysOnOpen: false,
+            onChange: (nextValue) => {
+              const styleId = String(nextValue || '').trim();
+              if (!styleId) delete fieldStyleState[item.key];
+              else fieldStyleState[item.key] = styleId;
+              rerender();
+            },
+          }));
+        }
+        controlsChildren.push(upBtn, downBtn);
+
         list.append(el('div', {
           className: 'kanji-study-card-config-item',
           children: [
             labelWrap,
             el('div', {
               className: 'kanji-study-card-config-item-controls',
-              children: [upBtn, downBtn],
+              children: controlsChildren,
             }),
           ],
         }));
       });
 
-      return { body: list };
+      return topLevelTabs ? { tabs: topLevelTabs, body: list } : { body: list };
     },
-    onReset: () => {
-      if (isLayoutMode) {
-        layoutState = slots.map((slot) => ({
-          ...slot,
-          value: String(defaultLayout?.[slot.key] || '').trim(),
-        }));
-        optionState = controls.map((control) => ({
-          ...control,
-          value: getLayoutValue(defaultOptions, control.key, defaultOptions) || control.items[0]?.value || '',
-        }));
-        return;
-      }
-      state = items.map((item) => ({ ...item, enabled: true }));
-    },
+    onReset: resetToInitialState,
+    onResetToDefaults: resetToDefaultState,
     onSave: () => (
       isLayoutMode
         ? {
           layout: getSelectedLayout(),
           ...Object.fromEntries(optionState.map((item) => [item.key, String(item.value || '').trim()])),
         }
-        : { fields: getSelectedFieldOrder() }
+        : {
+          fields: getSelectedFieldOrder(),
+          ...(hasStyleTabs ? {
+            style: getStylePayload(mainStyleState),
+            customStyles: getSelectedCustomStyles(),
+            fieldStyles: getSelectedFieldStyles(),
+          } : {}),
+        }
     ),
   });
 }
@@ -611,21 +974,68 @@ export function openRelatedCardConfigDialog({
       };
     }
     return {
-      namespace: String(namespace || '').trim(),
-      collection: String(collection || '').trim(),
+      _namespace: String(namespace || '').trim(),
+      _collection: String(collection || '').trim(),
       collections: selected,
       relatedCollections,
     };
+  }
+
+  const initialConfigSnapshot = getSnapshot();
+  const initialSnapshot = JSON.stringify(initialConfigSnapshot);
+  const defaultConfigSnapshot = {
+    _namespace: String(namespace || '').trim(),
+    _collection: String(collection || '').trim(),
+    collections: collectionItems.map((item) => item.key),
+    relatedCollections: Object.fromEntries(collectionItems.map((item) => {
+      const fields = normalizeFieldItems(collectionFieldItems?.[item.key], DEFAULT_FIELD_ITEMS);
+      return [item.key, buildDefaultCollectionConfig(fields)];
+    })),
+  };
+  const defaultSnapshot = JSON.stringify(defaultConfigSnapshot);
+
+  function resetToInitialState() {
+    collectionState = buildSelectableState(collectionItems, initialConfigSnapshot.collections || []);
+    for (const item of collectionItems) {
+      const fields = normalizeFieldItems(collectionFieldItems?.[item.key], DEFAULT_FIELD_ITEMS);
+      perCollectionState[item.key] = {
+        fields,
+        config: cloneCollectionConfig(initialConfigSnapshot.relatedCollections?.[item.key], fields),
+      };
+    }
+    activeTab = 'card';
+  }
+
+  function resetToDefaultState() {
+    collectionState = buildSelectableState(collectionItems, collectionItems.map((item) => item.key));
+    for (const item of collectionItems) {
+      const fields = normalizeFieldItems(collectionFieldItems?.[item.key], DEFAULT_FIELD_ITEMS);
+      perCollectionState[item.key] = {
+        fields,
+        config: buildDefaultCollectionConfig(fields),
+      };
+    }
+    activeTab = 'card';
   }
 
   return createCardConfigDialogShell({
     title,
     subtitle,
     onRenderSummary: () => `${getSelectedCollections().length} related collections selected`,
-    onRenderJson: () => el('pre', {
-      className: 'kanji-study-card-config-json-plain',
-      text: JSON.stringify(getSnapshot(), null, 2),
-    }),
+    onRenderJson: () => {
+      const viewer = createJsonViewer(getSnapshot(), {
+        expanded: true,
+        maxChars: 200000,
+        maxLines: 10000,
+        previewLen: 400,
+        compareValue: initialConfigSnapshot,
+      });
+      viewer.classList.add('kanji-study-card-config-json-viewer');
+      return viewer;
+    },
+    onHasChanges: () => JSON.stringify(getSnapshot()) !== initialSnapshot,
+    onCanReset: () => JSON.stringify(getSnapshot()) !== initialSnapshot,
+    onCanResetToDefaults: () => JSON.stringify(getSnapshot()) !== defaultSnapshot,
     onRenderBody: ({ rerender }) => {
       ensureActiveTab();
       const tabs = [];
@@ -835,17 +1245,8 @@ export function openRelatedCardConfigDialog({
 
       return { tabs, body: wrap };
     },
-    onReset: () => {
-      collectionState = buildSelectableState(collectionItems, collectionItems.map((item) => item.key));
-      for (const item of collectionItems) {
-        const fields = normalizeFieldItems(collectionFieldItems?.[item.key], DEFAULT_FIELD_ITEMS);
-        perCollectionState[item.key] = {
-          fields,
-          config: buildDefaultCollectionConfig(fields),
-        };
-      }
-      activeTab = 'card';
-    },
+    onReset: resetToInitialState,
+    onResetToDefaults: resetToDefaultState,
     onSave: () => getSnapshot(),
   });
 }

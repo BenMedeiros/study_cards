@@ -5,9 +5,9 @@
 /* Generic flat card row layout. */
 .generic-flat-card .kanji-full-row {
   display: grid;
-  grid-template-columns: 10rem 1fr;
-  border-bottom: var(--border-1);
-  padding: 0.3rem 0;
+  grid-template-columns: var(--generic-flat-label-width, 10rem) 1fr;
+  border-bottom: var(--generic-flat-row-border, var(--border-1));
+  padding: var(--generic-flat-row-padding-y, 0.3rem) 0;
 }
 
 .generic-flat-card .generic-flat-body {
@@ -15,8 +15,13 @@
 }
 
 .generic-flat-card .kanji-full-label {
-  color: var(--muted);
-  font-size: var(--font-size-xs);
+  color: var(--generic-flat-label-color, var(--muted));
+  font-size: var(--generic-flat-label-size, var(--font-size-xs));
+  display: var(--generic-flat-label-display, block);
+}
+
+.generic-flat-card .kanji-full-value {
+  font-size: var(--generic-flat-value-size, var(--font-size-body));
 }
 
 .kanji-study-card-config-backdrop {
@@ -135,6 +140,25 @@
 
 .kanji-study-card-config-select .custom-dropdown-button {
   width: 100%;
+}
+
+.kanji-study-card-config-name-input {
+  min-width: 12rem;
+  max-width: 100%;
+  width: min(18rem, 100%);
+  background: var(--surface-field-soft);
+  border: var(--border-1);
+  color: var(--text);
+  border-radius: 0.45rem;
+  padding: 0.45rem 0.6rem;
+  font: inherit;
+  line-height: 1.2;
+}
+
+.kanji-study-card-config-name-input:focus {
+  outline: 1px solid var(--accent-border-stronger);
+  border-color: var(--accent-border-strong);
+  box-shadow: 0 0 0 2px var(--accent-bg-soft);
 }
 
 .kanji-study-card-config-header {
@@ -1082,6 +1106,15 @@
   padding: 0.8rem;
   z-index: 1331;
   overflow-y: auto;
+}
+
+.speech-settings-dialog {
+  width: min(48rem, calc(100vw - 2rem));
+  max-width: 48rem;
+}
+
+.speech-settings-grid {
+  grid-template-columns: minmax(10rem, 1fr) minmax(11rem, 1fr) minmax(14rem, 1.2fr) minmax(8rem, 8rem) auto auto;
 }
 
 .view-footer-hotkey-title {

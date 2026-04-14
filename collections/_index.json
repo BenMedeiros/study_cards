@@ -235,7 +235,7 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-03-30T18:09:05.219Z",
+      "modifiedAt": "2026-04-13T19:09:50.451Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
       "entriesCount": 2731,
@@ -1705,6 +1705,25 @@
         }
       },
       "schemaSource": "japanese/_japanese.schemas.json#wordEntry"
+    },
+    {
+      "path": "persian/persian_alphabet.json",
+      "modifiedAt": "2026-04-13T21:37:15.149Z",
+      "name": "Persian Alphabet",
+      "description": "Starter Persian alphabet collection with letter forms, learner-facing sound notes, romanized values, and short example words for each positional form.",
+      "entriesCount": 32,
+      "valid": true,
+      "validation": {
+        "schema": {
+          "errors": [],
+          "warnings": []
+        },
+        "entries": {
+          "errors": [],
+          "warnings": []
+        }
+      },
+      "schemaSource": "inline"
     },
     {
       "path": "spanish/spanish_sentences.json",

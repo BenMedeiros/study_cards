@@ -17,6 +17,13 @@ const GENERIC_CARD_SETTINGS_KEY = 'genericFlatCard';
 const MAIN_CARD_SETTINGS_KEY = 'main';
 const RELATED_CARD_SETTINGS_KEY = 'related';
 const MAIN_CARD_FLOW_VALUES = new Set(['row', 'column']);
+const GENERIC_CARD_LABEL_WIDTH_VALUES = new Set(['6rem', '8rem', '10rem', '12rem', '14rem']);
+const GENERIC_CARD_LABEL_SIZE_VALUES = new Set(['2xs', 'xs', 'sm', 'body']);
+const GENERIC_CARD_LABEL_TONE_VALUES = new Set(['muted', 'default']);
+const GENERIC_CARD_LABEL_VISIBILITY_VALUES = new Set(['show', 'hidden']);
+const GENERIC_CARD_VALUE_SIZE_VALUES = new Set(['xs', 'sm', 'body', 'lg', 'xl']);
+const GENERIC_CARD_ROW_PADDING_VALUES = new Set(['compact', 'default', 'relaxed']);
+const GENERIC_CARD_ROW_DIVIDER_VALUES = new Set(['show', 'hide']);
 const SCRUB_THRESHOLD_MIN_MS = 500;
 const SCRUB_THRESHOLD_MAX_MS = 2000;
 const SCRUB_THRESHOLD_STEP_MS = 100;
@@ -75,10 +82,72 @@ const COLLECTION_CARD_DEFAULTS = {
     },
   },
 };
+const DEFAULT_GENERIC_CARD_STYLE = {
+  labelWidth: '10rem',
+  labelSize: 'xs',
+  labelTone: 'muted',
+  labelVisibility: 'show',
+  valueSize: 'body',
+  rowPadding: 'default',
+  rowDivider: 'show',
+};
 
 function normalizeCardFieldList(fields) {
   if (!Array.isArray(fields)) return null;
   return Array.from(new Set(fields.map((field) => String(field || '').trim()).filter(Boolean)));
+}
+
+function normalizeGenericCardStyle(style) {
+  if (!style || typeof style !== 'object' || Array.isArray(style)) return {};
+  const next = {};
+  const labelWidth = String(style.labelWidth || '').trim();
+  const labelSize = String(style.labelSize || '').trim();
+  const labelTone = String(style.labelTone || '').trim();
+  const labelVisibility = String(style.labelVisibility || '').trim();
+  const valueSize = String(style.valueSize || '').trim();
+  const rowPadding = String(style.rowPadding || '').trim();
+  const rowDivider = String(style.rowDivider || '').trim();
+  if (GENERIC_CARD_LABEL_WIDTH_VALUES.has(labelWidth)) next.labelWidth = labelWidth;
+  if (GENERIC_CARD_LABEL_SIZE_VALUES.has(labelSize)) next.labelSize = labelSize;
+  if (GENERIC_CARD_LABEL_TONE_VALUES.has(labelTone)) next.labelTone = labelTone;
+  if (GENERIC_CARD_LABEL_VISIBILITY_VALUES.has(labelVisibility)) next.labelVisibility = labelVisibility;
+  if (GENERIC_CARD_VALUE_SIZE_VALUES.has(valueSize)) next.valueSize = valueSize;
+  if (GENERIC_CARD_ROW_PADDING_VALUES.has(rowPadding)) next.rowPadding = rowPadding;
+  if (GENERIC_CARD_ROW_DIVIDER_VALUES.has(rowDivider)) next.rowDivider = rowDivider;
+  return next;
+}
+
+function normalizeGenericCardCustomStyles(customStyles) {
+  if (!customStyles || typeof customStyles !== 'object' || Array.isArray(customStyles)) return {};
+  const out = {};
+  for (const [styleId, rawStyle] of Object.entries(customStyles)) {
+    const id = String(styleId || '').trim();
+    if (!id || !rawStyle || typeof rawStyle !== 'object' || Array.isArray(rawStyle)) continue;
+    const style = normalizeGenericCardStyle(rawStyle);
+    out[id] = {
+      name: String(rawStyle.name || '').trim() || id,
+      ...style,
+    };
+  }
+  return out;
+}
+
+function normalizeGenericCardFieldStyles(fieldStyles, allowedFields = null, customStyles = null) {
+  if (!fieldStyles || typeof fieldStyles !== 'object' || Array.isArray(fieldStyles)) return {};
+  const allowedFieldSet = allowedFields instanceof Set ? allowedFields : null;
+  const allowedStyleSet = customStyles && typeof customStyles === 'object'
+    ? new Set(Object.keys(customStyles).map((item) => String(item || '').trim()).filter(Boolean))
+    : null;
+  const out = {};
+  for (const [fieldKey, styleId] of Object.entries(fieldStyles)) {
+    const field = String(fieldKey || '').trim();
+    const style = String(styleId || '').trim();
+    if (!field || !style) continue;
+    if (allowedFieldSet && !allowedFieldSet.has(field)) continue;
+    if (allowedStyleSet && !allowedStyleSet.has(style)) continue;
+    out[field] = style;
+  }
+  return out;
 }
 
 function normalizeKanjiStudyCardsConfig(cards) {
@@ -90,6 +159,18 @@ function normalizeKanjiStudyCardsConfig(cards) {
     const nextConfig = {};
     const fields = normalizeCardFieldList(rawConfig.fields);
     if (fields) nextConfig.fields = fields;
+    if (rawConfig.style && typeof rawConfig.style === 'object' && !Array.isArray(rawConfig.style)) {
+      const style = normalizeGenericCardStyle(rawConfig.style);
+      if (Object.keys(style).length) nextConfig.style = style;
+    }
+    if (rawConfig.customStyles && typeof rawConfig.customStyles === 'object' && !Array.isArray(rawConfig.customStyles)) {
+      const customStyles = normalizeGenericCardCustomStyles(rawConfig.customStyles);
+      if (Object.keys(customStyles).length) nextConfig.customStyles = customStyles;
+    }
+    if (rawConfig.fieldStyles && typeof rawConfig.fieldStyles === 'object' && !Array.isArray(rawConfig.fieldStyles)) {
+      const fieldStyles = normalizeGenericCardFieldStyles(rawConfig.fieldStyles, null, rawConfig.customStyles);
+      if (Object.keys(fieldStyles).length) nextConfig.fieldStyles = fieldStyles;
+    }
     if (Array.isArray(rawConfig.controls)) {
       nextConfig.controls = Array.from(new Set(rawConfig.controls.map((item) => String(item || '').trim()).filter(Boolean)));
     }
@@ -642,11 +723,17 @@ export function renderKanjiStudyCard({ store }) {
     const config = cardsConfigState[GENERIC_CARD_SETTINGS_KEY] || {};
     const availableFields = getGenericCardAvailableFields();
     const allowed = new Set(availableFields.map((item) => item.key));
+    const style = {
+      ...DEFAULT_GENERIC_CARD_STYLE,
+      ...normalizeGenericCardStyle(config.style),
+    };
     const fields = Array.isArray(config.fields)
       ? config.fields.map((field) => String(field || '').trim()).filter((field) => allowed.has(field))
       : undefined;
-    if (fields) return { ...config, fields };
-    return { ...config, fields: getDefaultGenericCardFields(collectionKey, availableFields) };
+    const customStyles = normalizeGenericCardCustomStyles(config.customStyles);
+    const fieldStyles = normalizeGenericCardFieldStyles(config.fieldStyles, allowed, customStyles);
+    if (fields) return { ...config, fields, style, customStyles, fieldStyles };
+    return { ...config, fields: getDefaultGenericCardFields(collectionKey, availableFields), style, customStyles, fieldStyles };
   }
 
   function getMainCardConfig() {
@@ -835,22 +922,106 @@ export function renderKanjiStudyCard({ store }) {
     const allowed = new Set(availableFields.map((field) => field.key));
     const next = await openGenericFlatCardConfigDialog({
       title: 'Generic Card Settings',
+      subtitle: 'Use Fields to choose order and visibility. Use Style to tune the generic row layout and labels.',
       fields: availableFields,
       selectedFields: Array.isArray(currentConfig.fields)
         ? currentConfig.fields.filter((field) => allowed.has(String(field || '').trim()))
         : getDefaultGenericCardFields(key, availableFields),
+      styleControls: [
+        {
+          key: 'labelWidth',
+          label: 'Label Column Width',
+          items: [
+            { value: '6rem', label: 'Narrow' },
+            { value: '8rem', label: 'Small' },
+            { value: '10rem', label: 'Default' },
+            { value: '12rem', label: 'Wide' },
+            { value: '14rem', label: 'Extra Wide' },
+          ],
+        },
+        {
+          key: 'labelSize',
+          label: 'Label Font Size',
+          renderAs: 'toggle',
+          items: [
+            { value: '2xs', label: 'XS-' },
+            { value: 'xs', label: 'XS' },
+            { value: 'sm', label: 'SM' },
+            { value: 'body', label: 'Body' },
+          ],
+        },
+        {
+          key: 'labelTone',
+          label: 'Label Color',
+          renderAs: 'toggle',
+          items: [
+            { value: 'muted', label: 'Muted' },
+            { value: 'default', label: 'Text' },
+          ],
+        },
+        {
+          key: 'labelVisibility',
+          label: 'Show Labels',
+          renderAs: 'toggle',
+          items: [
+            { value: 'show', label: 'Show' },
+            { value: 'hidden', label: 'Hide' },
+          ],
+        },
+        {
+          key: 'valueSize',
+          label: 'Value Font Size',
+          renderAs: 'toggle',
+          items: [
+            { value: 'xs', label: 'XS' },
+            { value: 'sm', label: 'SM' },
+            { value: 'body', label: 'Body' },
+            { value: 'lg', label: 'LG' },
+            { value: 'xl', label: 'XL' },
+          ],
+        },
+        {
+          key: 'rowPadding',
+          label: 'Row Density',
+          renderAs: 'toggle',
+          items: [
+            { value: 'compact', label: 'Tight' },
+            { value: 'default', label: 'Default' },
+            { value: 'relaxed', label: 'Loose' },
+          ],
+        },
+        {
+          key: 'rowDivider',
+          label: 'Row Divider',
+          renderAs: 'toggle',
+          items: [
+            { value: 'show', label: 'Show' },
+            { value: 'hide', label: 'Hide' },
+          ],
+        },
+      ],
+      selectedStyles: currentConfig.style || DEFAULT_GENERIC_CARD_STYLE,
+      defaultStyles: DEFAULT_GENERIC_CARD_STYLE,
+      customStyles: currentConfig.customStyles || {},
+      fieldStyles: currentConfig.fieldStyles || {},
       namespace: 'kanjiStudyCardView.cards.genericFlatCard.js',
       collection: key,
     });
     if (!next) return;
     const fields = normalizeCardFieldList(next.fields) || [];
+    const style = {
+      ...DEFAULT_GENERIC_CARD_STYLE,
+      ...normalizeGenericCardStyle(next.style),
+    };
+    const customStyles = normalizeGenericCardCustomStyles(next.customStyles);
+    const fieldStyles = normalizeGenericCardFieldStyles(next.fieldStyles, new Set(fields), customStyles);
     cardsConfigState = {
       ...cardsConfigState,
-      [GENERIC_CARD_SETTINGS_KEY]: { fields },
+      [GENERIC_CARD_SETTINGS_KEY]: { fields, style, customStyles, fieldStyles },
     };
     applyGenericCardConfig();
     try {
-      (kanjiController || kanjiStudyController.create(key)).setCardConfig(GENERIC_CARD_SETTINGS_KEY, { fields });
+      (kanjiController || kanjiStudyController.create(key)).setCardConfig(GENERIC_CARD_SETTINGS_KEY, { fields, style, customStyles, fieldStyles });
     } catch (e) {}
   }
 

@@ -233,6 +233,7 @@ export function getLanguageCode(fieldKey, collectionCategory) {
   const normalized = key.toLowerCase();
   const isGreekCollection = collectionKey.includes('/greek/') || collectionKey.startsWith('greek/');
   const isSpanishCollection = collectionKey.includes('/spanish/') || collectionKey.startsWith('spanish/');
+  const isPersianCollection = collectionKey.includes('/persian/') || collectionKey.startsWith('persian/');
 
   if (isGreekCollection) {
     if (
@@ -251,6 +252,15 @@ export function getLanguageCode(fieldKey, collectionCategory) {
       || normalized === 'lemma'
       || normalized === 'term'
     ) return 'es-ES';
+  }
+
+  if (isPersianCollection) {
+    if (
+      normalized === 'char'
+      || normalized.endsWith('_form')
+      || normalized.endsWith('_word')
+      || normalized.endsWith('_letters')
+    ) return 'fa-IR';
   }
 
   if (

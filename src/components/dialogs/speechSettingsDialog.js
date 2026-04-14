@@ -65,6 +65,10 @@ function normalizeSpeechConfig(raw) {
       const next = {};
       const lang = normalizeLangTag(value.lang);
       if (lang) next.lang = lang;
+      const voiceURI = asString(value.voiceURI).trim();
+      if (voiceURI) next.voiceURI = voiceURI;
+      const voiceName = asString(value.voiceName).trim();
+      if (voiceName) next.voiceName = voiceName;
       if (value.rate != null && value.rate !== '') {
         const rate = Number(value.rate);
         if (Number.isFinite(rate)) next.rate = rate;
@@ -94,10 +98,7 @@ function cleanupSpeechConfig(raw) {
 
 function getLanguageItems(fields = [], voices = [], speechConfig = null) {
   const displayNames = getDisplayNames();
-  const base = [
-    { value: '', label: 'Auto' },
-  ];
-  const seen = new Set(base.map((item) => asString(item.value).toLowerCase()));
+  const base = [{ value: '', label: 'Auto' }];
   const supportedLangs = Array.from(new Set(
     (Array.isArray(voices) ? voices : [])
       .map((voice) => normalizeLangTag(voice?.lang))
@@ -114,11 +115,11 @@ function getLanguageItems(fields = [], voices = [], speechConfig = null) {
       .filter(Boolean)
   )).sort((a, b) => a.localeCompare(b));
 
+  const itemMap = new Map();
   for (const lang of supportedLangs) {
     const key = lang.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    base.push({
+    if (itemMap.has(key)) continue;
+    itemMap.set(key, {
       value: lang,
       label: formatLanguageLabel(lang, displayNames),
       rightText: lang,
@@ -127,16 +128,48 @@ function getLanguageItems(fields = [], voices = [], speechConfig = null) {
 
   for (const lang of expectedLangs) {
     const key = lang.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    base.push({
+    if (itemMap.has(key)) continue;
+    itemMap.set(key, {
       value: lang,
       label: `${formatLanguageLabel(lang, displayNames)} not installed`,
       rightText: lang,
       disabled: !hasLanguageSupport(supportedLangs, key),
     });
   }
-  return base;
+
+  const sortedItems = Array.from(itemMap.values())
+    .sort((a, b) => asString(a.label).localeCompare(asString(b.label)));
+
+  const expectedTopLang = expectedLangs[0] ? expectedLangs[0].toLowerCase() : '';
+  if (expectedTopLang && itemMap.has(expectedTopLang)) {
+    const pinned = itemMap.get(expectedTopLang);
+    return [base[0], pinned, ...sortedItems.filter((item) => asString(item.value).toLowerCase() !== expectedTopLang)];
+  }
+
+  return [...base, ...sortedItems];
+}
+
+function getVoiceItems(voices = [], lang = '') {
+  const normalized = normalizeLangTag(lang);
+  const out = [{ value: '', label: 'Auto' }];
+  const seen = new Set(['']);
+  const filtered = (Array.isArray(voices) ? voices : []).filter((voice) => {
+    if (!normalized) return true;
+    return hasLanguageSupport([voice?.lang], normalized);
+  });
+  for (const voice of filtered) {
+    const voiceURI = asString(voice?.voiceURI).trim();
+    if (!voiceURI || seen.has(voiceURI)) continue;
+    seen.add(voiceURI);
+    const name = asString(voice?.name).trim() || voiceURI;
+    const langTag = normalizeLangTag(voice?.lang);
+    out.push({
+      value: voiceURI,
+      label: voice?.default ? `${name} (default)` : name,
+      rightText: langTag,
+    });
+  }
+  return out;
 }
 
 function getRateItems() {
@@ -172,7 +205,7 @@ export function openSpeechSettingsDialog({
 
     const backdrop = el('div', { className: 'view-footer-hotkey-backdrop' });
     const dialog = el('div', {
-      className: 'view-footer-hotkey-dialog',
+      className: 'view-footer-hotkey-dialog speech-settings-dialog',
       attrs: {
         role: 'dialog',
         'aria-modal': 'true',
@@ -180,8 +213,6 @@ export function openSpeechSettingsDialog({
       }
     });
     dialog.tabIndex = -1;
-    dialog.style.maxWidth = '48rem';
-    dialog.style.width = 'min(48rem, calc(100vw - 2rem))';
 
     const title = el('div', { className: 'view-footer-hotkey-title', text: 'Speech Settings' });
     const hint = el('div', { className: 'hint', text: 'These settings are saved per collection and used by speech actions in study views.' });
@@ -216,6 +247,8 @@ export function openSpeechSettingsDialog({
       const current = getFieldDraft(fieldKey);
       const next = { ...current, ...patch };
       if (!next.lang) delete next.lang;
+      if (!next.voiceURI) delete next.voiceURI;
+      if (!next.voiceName) delete next.voiceName;
       if (next.rate == null || next.rate === '') delete next.rate;
       if (Object.keys(next).length === 0) delete draft.fields[fieldKey];
       else draft.fields[fieldKey] = next;
@@ -224,11 +257,11 @@ export function openSpeechSettingsDialog({
     function renderRows() {
       const languageItems = getLanguageItems(normalizedFields, currentVoices, draft);
       table.innerHTML = '';
-      const header = el('div', { className: 'view-footer-custom-available-header' });
-      header.style.gridTemplateColumns = 'minmax(10rem, 1fr) minmax(11rem, 1fr) minmax(8rem, 8rem) auto auto';
+      const header = el('div', { className: 'view-footer-custom-available-header speech-settings-grid' });
       header.append(
         el('div', { className: 'view-footer-custom-action-label header', text: 'Field' }),
         el('div', { className: 'view-footer-action-field header', text: 'Language' }),
+        el('div', { className: 'view-footer-action-field header', text: 'Voice' }),
         el('div', { className: 'view-footer-action-field header', text: 'Rate' }),
         el('div', { className: 'view-footer-action-field header', text: '' }),
         el('div', { className: 'view-footer-action-field header', text: '' })
@@ -236,11 +269,11 @@ export function openSpeechSettingsDialog({
       table.appendChild(header);
 
       for (const field of normalizedFields) {
-        const row = el('div', { className: 'view-footer-custom-available-row' });
-        row.style.gridTemplateColumns = 'minmax(10rem, 1fr) minmax(11rem, 1fr) minmax(8rem, 8rem) auto auto';
+        const row = el('div', { className: 'view-footer-custom-available-row speech-settings-grid' });
 
         const fieldConfig = getFieldDraft(field.fieldKey);
         const inferredLang = normalizeLangTag(fieldConfig.lang || getLanguageCode(field.fieldKey, field.collectionKey));
+        const voiceItems = getVoiceItems(currentVoices, inferredLang);
         const langDropdown = createDropdown({
           items: languageItems,
           value: asString(fieldConfig.lang),
@@ -255,7 +288,40 @@ export function openSpeechSettingsDialog({
             return inferredLang ? `Auto (${inferredLang})` : 'Auto';
           },
           onChange: (nextLang) => {
-            syncFieldDraft(field.fieldKey, { lang: normalizeLangTag(nextLang) });
+            const normalizedLang = normalizeLangTag(nextLang);
+            const nextPatch = { lang: normalizedLang };
+            const currentVoiceURI = asString(fieldConfig.voiceURI).trim();
+            if (currentVoiceURI) {
+              const nextVoiceItems = getVoiceItems(currentVoices, normalizedLang || getLanguageCode(field.fieldKey, field.collectionKey));
+              const stillAvailable = nextVoiceItems.some((item) => asString(item.value).trim() === currentVoiceURI);
+              if (!stillAvailable) {
+                nextPatch.voiceURI = '';
+                nextPatch.voiceName = '';
+              }
+            }
+            syncFieldDraft(field.fieldKey, nextPatch);
+            renderRows();
+          },
+        });
+
+        const voiceDropdown = createDropdown({
+          items: voiceItems,
+          value: asString(fieldConfig.voiceURI),
+          className: 'view-footer-custom-group-dropdown',
+          closeOverlaysOnOpen: false,
+          portalZIndex: 1500,
+          getButtonLabel: ({ selectedItem }) => {
+            if (!asString(fieldConfig.voiceURI).trim()) return 'Auto';
+            if (selectedItem?.label) return selectedItem.label;
+            return asString(fieldConfig.voiceName).trim() || 'Auto';
+          },
+          onChange: (nextVoiceURI) => {
+            const trimmed = asString(nextVoiceURI).trim();
+            const selectedVoice = currentVoices.find((voice) => asString(voice?.voiceURI).trim() === trimmed);
+            syncFieldDraft(field.fieldKey, {
+              voiceURI: trimmed,
+              voiceName: trimmed ? (asString(selectedVoice?.name).trim() || '') : '',
+            });
           },
         });
 
@@ -292,6 +358,8 @@ export function openSpeechSettingsDialog({
             fieldKey: field.fieldKey,
             collectionKey: field.collectionKey,
             lang: current.lang || undefined,
+            voiceURI: current.voiceURI || undefined,
+            voiceName: current.voiceName || undefined,
             rate: (current.rate == null || current.rate === '') ? undefined : current.rate,
           });
         });
@@ -301,6 +369,11 @@ export function openSpeechSettingsDialog({
           (() => {
             const wrap = el('div', { className: 'view-footer-action-field' });
             wrap.appendChild(langDropdown);
+            return wrap;
+          })(),
+          (() => {
+            const wrap = el('div', { className: 'view-footer-action-field' });
+            wrap.appendChild(voiceDropdown);
             return wrap;
           })(),
           (() => {

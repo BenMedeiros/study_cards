@@ -23,7 +23,121 @@ function normalizeCardConfig(config) {
   if (Array.isArray(config.fields)) {
     next.fields = Array.from(new Set(config.fields.map((field) => String(field || '').trim()).filter(Boolean)));
   }
+  if (config.style && typeof config.style === 'object' && !Array.isArray(config.style)) {
+    const style = {};
+    const labelWidth = String(config.style.labelWidth || '').trim();
+    const labelSize = String(config.style.labelSize || '').trim();
+    const labelTone = String(config.style.labelTone || '').trim();
+    const labelVisibility = String(config.style.labelVisibility || '').trim();
+    const valueSize = String(config.style.valueSize || '').trim();
+    const rowPadding = String(config.style.rowPadding || '').trim();
+    const rowDivider = String(config.style.rowDivider || '').trim();
+    if (labelWidth) style.labelWidth = labelWidth;
+    if (labelSize) style.labelSize = labelSize;
+    if (labelTone) style.labelTone = labelTone;
+    if (labelVisibility) style.labelVisibility = labelVisibility;
+    if (valueSize) style.valueSize = valueSize;
+    if (rowPadding) style.rowPadding = rowPadding;
+    if (rowDivider) style.rowDivider = rowDivider;
+    if (Object.keys(style).length) next.style = style;
+  }
+  if (config.customStyles && typeof config.customStyles === 'object' && !Array.isArray(config.customStyles)) {
+    const customStyles = {};
+    for (const [styleId, rawStyle] of Object.entries(config.customStyles)) {
+      const id = String(styleId || '').trim();
+      if (!id || !rawStyle || typeof rawStyle !== 'object' || Array.isArray(rawStyle)) continue;
+      const style = normalizeCardConfig({ style: rawStyle }).style || {};
+      customStyles[id] = {
+        name: String(rawStyle.name || '').trim() || id,
+        ...style,
+      };
+    }
+    if (Object.keys(customStyles).length) next.customStyles = customStyles;
+  }
+  if (config.fieldStyles && typeof config.fieldStyles === 'object' && !Array.isArray(config.fieldStyles)) {
+    const validStyleIds = new Set(Object.keys(next.customStyles || {}));
+    const fieldStyles = {};
+    for (const [fieldKey, styleId] of Object.entries(config.fieldStyles)) {
+      const field = String(fieldKey || '').trim();
+      const style = String(styleId || '').trim();
+      if (!field || !style || !validStyleIds.has(style)) continue;
+      fieldStyles[field] = style;
+    }
+    if (Object.keys(fieldStyles).length) next.fieldStyles = fieldStyles;
+  }
   return next;
+}
+
+function applyCardStyleVars(target, style = {}) {
+  if (!target) return;
+  const labelWidth = String(style?.labelWidth || '').trim();
+  const labelSize = String(style?.labelSize || '').trim();
+  const labelTone = String(style?.labelTone || '').trim();
+  const labelVisibility = String(style?.labelVisibility || '').trim();
+  const valueSize = String(style?.valueSize || '').trim();
+  const rowPadding = String(style?.rowPadding || '').trim();
+  const rowDivider = String(style?.rowDivider || '').trim();
+
+  const labelSizeMap = {
+    '2xs': 'var(--font-size-2xs)',
+    xs: 'var(--font-size-xs)',
+    sm: 'var(--font-size-sm)',
+    body: 'var(--font-size-body)',
+  };
+  const labelToneMap = {
+    muted: 'var(--muted)',
+    default: 'var(--text)',
+  };
+  const rowPaddingMap = {
+    compact: '0.15rem',
+    default: '0.3rem',
+    relaxed: '0.5rem',
+  };
+  const valueSizeMap = {
+    xs: 'var(--font-size-xs)',
+    sm: 'var(--font-size-sm)',
+    body: 'var(--font-size-body)',
+    lg: 'var(--font-size-lg)',
+    xl: 'var(--font-size-xl)',
+  };
+  const rowDividerMap = {
+    show: 'var(--border-1)',
+    hide: 'none',
+  };
+
+  if (labelWidth) target.style.setProperty('--generic-flat-label-width', labelWidth);
+  else target.style.removeProperty('--generic-flat-label-width');
+
+  if (labelSizeMap[labelSize]) target.style.setProperty('--generic-flat-label-size', labelSizeMap[labelSize]);
+  else target.style.removeProperty('--generic-flat-label-size');
+
+  if (labelToneMap[labelTone]) target.style.setProperty('--generic-flat-label-color', labelToneMap[labelTone]);
+  else target.style.removeProperty('--generic-flat-label-color');
+
+  if (labelVisibility === 'hidden') target.style.setProperty('--generic-flat-label-display', 'none');
+  else target.style.removeProperty('--generic-flat-label-display');
+
+  if (valueSizeMap[valueSize]) target.style.setProperty('--generic-flat-value-size', valueSizeMap[valueSize]);
+  else target.style.removeProperty('--generic-flat-value-size');
+
+  if (rowPaddingMap[rowPadding]) target.style.setProperty('--generic-flat-row-padding-y', rowPaddingMap[rowPadding]);
+  else target.style.removeProperty('--generic-flat-row-padding-y');
+
+  if (rowDividerMap[rowDivider]) target.style.setProperty('--generic-flat-row-border', rowDividerMap[rowDivider]);
+  else target.style.removeProperty('--generic-flat-row-border');
+}
+
+function applyCardStyle(root, style = {}) {
+  if (!root) return;
+  applyCardStyleVars(root, style);
+}
+
+function applyRowStyle(rowRecord, style = {}) {
+  const row = rowRecord?.row;
+  if (!row) return;
+  applyCardStyleVars(row, style);
+  const labelHidden = String(style?.labelVisibility || '').trim() === 'hidden';
+  row.style.gridTemplateColumns = labelHidden ? '1fr' : '';
 }
 
 export function createGenericFlatCard({ entry = null, indexText = '', config = {}, handlers = {} } = {}) {
@@ -137,6 +251,9 @@ export function createGenericFlatCard({ entry = null, indexText = '', config = {
       const { row, label, value } = makeRow(getLabelForField(k));
       value.textContent = formatValue(entryObj[k]);
       rows[k] = { row, label, value };
+      const styleId = String(cardConfig?.fieldStyles?.[k] || '').trim();
+      const rowStyle = styleId ? cardConfig?.customStyles?.[styleId] : null;
+      if (rowStyle) applyRowStyle(rows[k], rowStyle);
       body.appendChild(row);
     }
     for (const [fieldKey, isVisible] of Object.entries(fieldVisibility)) {
@@ -168,6 +285,7 @@ export function createGenericFlatCard({ entry = null, indexText = '', config = {
 
   function setConfig(nextConfig) {
     cardConfig = normalizeCardConfig(nextConfig);
+    applyCardStyle(root, cardConfig.style);
     setEntry(currentEntry);
   }
 
@@ -181,6 +299,7 @@ export function createGenericFlatCard({ entry = null, indexText = '', config = {
   }
 
   // initialize
+  applyCardStyle(root, cardConfig.style);
   setEntry(entry);
   setIndexText(indexText || config?.cornerCaption || '');
 

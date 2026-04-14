@@ -36,6 +36,98 @@ function getEntries(value) {
     : Object.entries(value);
 }
 
+function valuesEqual(a, b) {
+  if (a === b) return true;
+  if (Number.isNaN(a) && Number.isNaN(b)) return true;
+  if (isContainer(a) || isContainer(b)) return safeJson(a) === safeJson(b);
+  return false;
+}
+
+function buildDiffMeta(currentValue, compareValue, path = '') {
+  const statusByPath = new Map();
+  const deletedByParentPath = new Map();
+
+  function addDeleted(parentPath, key, value) {
+    const list = deletedByParentPath.get(parentPath) || [];
+    const childPath = createPath(parentPath, key);
+    list.push({ key, value, path: childPath });
+    deletedByParentPath.set(parentPath, list);
+    statusByPath.set(childPath, 'deleted');
+  }
+
+  function walk(current, previous, currentPath) {
+    const currentExists = typeof current !== 'undefined';
+    const previousExists = typeof previous !== 'undefined';
+    if (!currentExists && !previousExists) return;
+    if (!previousExists) {
+      if (currentPath) statusByPath.set(currentPath, 'added');
+      return;
+    }
+    if (!currentExists) {
+      if (currentPath) statusByPath.set(currentPath, 'deleted');
+      return;
+    }
+
+    const currentIsContainer = isContainer(current);
+    const previousIsContainer = isContainer(previous);
+    if (!currentIsContainer || !previousIsContainer) {
+      if (!valuesEqual(current, previous) && currentPath) statusByPath.set(currentPath, 'edited');
+      return;
+    }
+
+    if (Array.isArray(current) !== Array.isArray(previous)) {
+      if (currentPath) statusByPath.set(currentPath, 'edited');
+      return;
+    }
+
+    const currentEntries = getEntries(current);
+    const previousEntries = getEntries(previous);
+    if (safeJson(current) === safeJson(previous)) return;
+
+    const currentMap = new Map(currentEntries);
+    const previousMap = new Map(previousEntries);
+    const keys = new Set([...currentMap.keys(), ...previousMap.keys()]);
+
+    const currentOnlyKeys = [];
+    const previousOnlyKeys = [];
+    const sharedKeys = [];
+    keys.forEach((key) => {
+      const hasCurrent = currentMap.has(key);
+      const hasPrevious = previousMap.has(key);
+      if (hasCurrent && !hasPrevious) currentOnlyKeys.push(key);
+      else if (!hasCurrent && hasPrevious) previousOnlyKeys.push(key);
+      else if (hasCurrent && hasPrevious) sharedKeys.push(key);
+    });
+
+    if (currentPath && !sharedKeys.length && currentOnlyKeys.length && !previousOnlyKeys.length) {
+      statusByPath.set(currentPath, 'added');
+      return;
+    }
+
+    if (currentPath && !sharedKeys.length && previousOnlyKeys.length && !currentOnlyKeys.length) {
+      statusByPath.set(currentPath, 'deleted');
+      return;
+    }
+
+    keys.forEach((key) => {
+      const hasCurrent = currentMap.has(key);
+      const hasPrevious = previousMap.has(key);
+      if (hasCurrent && !hasPrevious) {
+        walk(currentMap.get(key), undefined, createPath(currentPath, key));
+        return;
+      }
+      if (!hasCurrent && hasPrevious) {
+        addDeleted(currentPath, key, previousMap.get(key));
+        return;
+      }
+      walk(currentMap.get(key), previousMap.get(key), createPath(currentPath, key));
+    });
+  }
+
+  walk(currentValue, compareValue, path);
+  return { statusByPath, deletedByParentPath };
+}
+
 function getValueAtPath(rootValue, path) {
   const rawPath = String(path || '');
   if (!rawPath) return rootValue;
@@ -128,16 +220,22 @@ function buildJsonTree(value, options = {}) {
     collapsedPaths = new Set(),
     onTogglePath = () => {},
     wrapping = false,
+    diffMeta = null,
   } = options;
 
   const root = document.createElement('div');
   root.className = 'json-tree';
   if (wrapping) root.classList.add('json-tree-wrap');
 
-  function createLine(depth) {
+  function createLine(depth, path = '', status = '') {
     const line = document.createElement('div');
     line.className = 'json-tree-line';
     line.style.paddingLeft = `${depth * 16}px`;
+    if (path) line.dataset.path = path;
+    if (status) {
+      line.dataset.diffStatus = status;
+      line.classList.add('json-diff-line', `json-diff-${status}`);
+    }
     return line;
   }
 
@@ -168,10 +266,23 @@ function buildJsonTree(value, options = {}) {
     appendToken(line, 'json-token-punctuation', ': ');
   }
 
+  function renderDeletedEntry(entry, depth, trailingComma = false) {
+    const line = createLine(depth, entry?.path || '', 'deleted');
+    line.appendChild(createTogglePlaceholder());
+    appendKey(line, entry?.key);
+    appendToken(line, 'json-token-deleted-marker', '<deleted> ');
+    const entryValue = entry?.value;
+    if (isContainer(entryValue)) appendToken(line, 'json-token-summary', formatContainerSummary(entryValue));
+    else appendToken(line, 'json-token-primitive', formatPrimitive(entryValue));
+    if (trailingComma) appendToken(line, 'json-token-punctuation', ',');
+    return line;
+  }
+
   function renderNode(nodeValue, path, depth, opts = {}) {
     const { key = null, trailingComma = false, isRoot = false } = opts;
+    const diffStatus = diffMeta?.statusByPath?.get(path) || '';
     if (!isContainer(nodeValue)) {
-      const line = createLine(depth);
+      const line = createLine(depth, path, diffStatus);
       line.appendChild(createTogglePlaceholder());
       if (key !== null) appendKey(line, key);
       appendToken(line, 'json-token-primitive', formatPrimitive(nodeValue));
@@ -181,9 +292,14 @@ function buildJsonTree(value, options = {}) {
 
     const wrapper = document.createElement('div');
     wrapper.className = 'json-tree-node';
+    if (diffStatus === 'added' || diffStatus === 'deleted') {
+      wrapper.dataset.diffStatus = diffStatus;
+      wrapper.classList.add('json-diff-node', `json-diff-node-${diffStatus}`);
+    }
 
-    const line = createLine(depth);
+    const line = createLine(depth, path, diffStatus);
     const entries = getEntries(nodeValue);
+    const deletedEntries = diffMeta?.deletedByParentPath?.get(path) || [];
     const isCollapsed = !isRoot && collapsedPaths.has(path);
     const openBracket = Array.isArray(nodeValue) ? '[' : '{';
     const closeBracket = Array.isArray(nodeValue) ? ']' : '}';
@@ -203,6 +319,7 @@ function buildJsonTree(value, options = {}) {
     if (isCollapsed) {
       appendToken(line, 'json-token-punctuation', openBracket);
       appendToken(line, 'json-token-summary', ` ${formatContainerSummary(nodeValue)} `);
+      if (deletedEntries.length) appendToken(line, 'json-token-summary', ` -${deletedEntries.length} `);
       appendToken(line, 'json-token-punctuation', closeBracket);
       if (trailingComma) appendToken(line, 'json-token-punctuation', ',');
       wrapper.appendChild(line);
@@ -215,8 +332,12 @@ function buildJsonTree(value, options = {}) {
     entries.forEach(([entryKey, entryValue], index) => {
       wrapper.appendChild(renderNode(entryValue, createPath(path, entryKey), depth + 1, {
         key: entryKey,
-        trailingComma: index < entries.length - 1,
+        trailingComma: index < entries.length - 1 || deletedEntries.length > 0,
       }));
+    });
+
+    deletedEntries.forEach((entry, index) => {
+      wrapper.appendChild(renderDeletedEntry(entry, depth + 1, index < deletedEntries.length - 1));
     });
 
     const closeLine = createLine(depth);
@@ -245,6 +366,9 @@ export function createJsonViewer(value, opts = {}) {
   let isBig = (typeof text === 'string' && text.length > MAX_CHARS) || lines > MAX_LINES;
   let isTreeValue = treeEnabled && isContainer(currentValue);
   let treeRoot = null;
+  let diffMeta = Object.prototype.hasOwnProperty.call(opts, 'compareValue')
+    ? buildDiffMeta(currentValue, opts.compareValue)
+    : null;
   const userCollapsedPaths = Array.isArray(opts.collapsedPaths) ? opts.collapsedPaths.filter((entry) => typeof entry === 'string') : [];
   const collapsedPaths = new Set(userCollapsedPaths);
 
@@ -315,6 +439,7 @@ export function createJsonViewer(value, opts = {}) {
     treeRoot = buildJsonTree(currentValue, {
       collapsedPaths,
       wrapping,
+      diffMeta,
       onTogglePath(path, nextCollapsed) {
         if (!path) return;
         if (nextCollapsed) collapsedPaths.add(path);
@@ -464,6 +589,7 @@ export function createJsonViewer(value, opts = {}) {
           const bigTree = buildJsonTree(currentValue, {
             collapsedPaths,
             wrapping,
+            diffMeta,
             onTogglePath(path, nextCollapsed) {
               if (!path) return;
               if (nextCollapsed) collapsedPaths.add(path);
@@ -572,6 +698,9 @@ export function createJsonViewer(value, opts = {}) {
         });
         for (const path of autoCollapsed) collapsedPaths.add(path);
       }
+      diffMeta = Object.prototype.hasOwnProperty.call(opts, 'compareValue')
+        ? buildDiffMeta(currentValue, opts.compareValue)
+        : null;
 
       // update pre and placeholder
       pre.textContent = text;

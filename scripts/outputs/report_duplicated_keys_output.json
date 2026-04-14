@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-13T18:20:22.598Z",
-  "scannedCollections": 22,
+  "generatedAt": "2026-04-13T22:53:03.394Z",
+  "scannedCollections": 23,
   "collectionsWithProblems": 14,
   "collectionsWithInvalidEntryKey": 8,
   "collectionsWithSchemaMismatch": 6,
-  "totalInvalidEntries": 23,
+  "totalInvalidEntries": 16,
   "totalDuplicateValues": 43,
   "totalDuplicateEntries": 86,
   "reports_clean": [
@@ -104,6 +104,19 @@
       "collectionPath": "collections/japanese/japanese_grammar.json",
       "entryKey": "pattern",
       "entryCount": 317,
+      "hasValidEntryKeyMetadata": true,
+      "schemaHasEntryKey": true,
+      "invalidEntryCount": 0,
+      "duplicateValueCount": 0,
+      "duplicateEntryCount": 0,
+      "invalidEntries": [],
+      "duplicates": []
+    },
+    {
+      "collectionName": "Persian Alphabet",
+      "collectionPath": "collections/persian/persian_alphabet.json",
+      "entryKey": "char",
+      "entryCount": 32,
       "hasValidEntryKeyMetadata": true,
       "schemaHasEntryKey": true,
       "invalidEntryCount": 0,
@@ -1001,56 +1014,32 @@
       "duplicates": []
     },
     {
-      "collectionName": "spanish/spanish_sentences.promptPresets.json",
-      "collectionPath": "collections/spanish/spanish_sentences.promptPresets.json",
+      "collectionName": "spanish/spanish_sentences.prompt.json",
+      "collectionPath": "collections/spanish/spanish_sentences.prompt.json",
       "entryKey": null,
-      "entryCount": 7,
+      "entryCount": 3,
       "hasValidEntryKeyMetadata": false,
       "schemaHasEntryKey": false,
-      "invalidEntryCount": 7,
+      "invalidEntryCount": 3,
       "duplicateValueCount": 0,
       "duplicateEntryCount": 0,
       "invalidEntries": [
         {
           "index": 0,
-          "lineNumber": 4,
-          "label": "(unlabeled entry)",
+          "lineNumber": 27,
+          "label": "Split Into Sentence Units",
           "reason": "Collection metadata.entry_key is missing or invalid"
         },
         {
           "index": 1,
-          "lineNumber": 9,
-          "label": "(unlabeled entry)",
+          "lineNumber": 53,
+          "label": "Create Sentence Units",
           "reason": "Collection metadata.entry_key is missing or invalid"
         },
         {
           "index": 2,
-          "lineNumber": 14,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 3,
-          "lineNumber": 19,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 4,
-          "lineNumber": 24,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 5,
-          "lineNumber": 29,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 6,
-          "lineNumber": 34,
-          "label": "(unlabeled entry)",
+          "lineNumber": 88,
+          "label": "Add Chunks",
           "reason": "Collection metadata.entry_key is missing or invalid"
         }
       ],
@@ -1087,44 +1076,26 @@
       ]
     },
     {
-      "collectionName": "spanish/spanish_words.promptPresets.json",
-      "collectionPath": "collections/spanish/spanish_words.promptPresets.json",
+      "collectionName": "spanish/spanish_words.prompt.json",
+      "collectionPath": "collections/spanish/spanish_words.prompt.json",
       "entryKey": null,
-      "entryCount": 5,
+      "entryCount": 2,
       "hasValidEntryKeyMetadata": false,
       "schemaHasEntryKey": false,
-      "invalidEntryCount": 5,
+      "invalidEntryCount": 2,
       "duplicateValueCount": 0,
       "duplicateEntryCount": 0,
       "invalidEntries": [
         {
           "index": 0,
-          "lineNumber": 4,
-          "label": "(unlabeled entry)",
+          "lineNumber": 29,
+          "label": "Create Word Entries",
           "reason": "Collection metadata.entry_key is missing or invalid"
         },
         {
           "index": 1,
-          "lineNumber": 9,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 2,
-          "lineNumber": 14,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 3,
-          "lineNumber": 19,
-          "label": "(unlabeled entry)",
-          "reason": "Collection metadata.entry_key is missing or invalid"
-        },
-        {
-          "index": 4,
-          "lineNumber": 24,
-          "label": "(unlabeled entry)",
+          "lineNumber": 75,
+          "label": "Extract Headwords",
           "reason": "Collection metadata.entry_key is missing or invalid"
         }
       ],
@@ -1135,9 +1106,9 @@
   "outputPath": "scripts/outputs/report_duplicated_keys_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-04-13T18:20:22.535Z",
-    "finishedAt": "2026-04-13T18:20:22.599Z",
-    "durationMs": 64,
-    "durationSeconds": 0.064
+    "startedAt": "2026-04-13T22:53:03.190Z",
+    "finishedAt": "2026-04-13T22:53:03.395Z",
+    "durationMs": 205,
+    "durationSeconds": 0.205
   }
 }
