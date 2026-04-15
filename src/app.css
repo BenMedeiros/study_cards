@@ -648,6 +648,7 @@ input[type="number"].button::-webkit-inner-spin-button {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   height: 100%;
+  position: relative;
 }
 
 .shell-cached-route > :only-child {

@@ -1,6 +1,13 @@
 import { el } from '../../utils/browser/ui.js';
 import { createJsonViewer } from '../../components/shared/jsonViewer.js';
 
+const DEFAULT_HEADER_SETTINGS = Object.freeze({
+  showLabels: 'on',
+  layoutMode: 'scroll',
+  collapseMode: 'off',
+  headerWidth: '100%',
+});
+
 function normalizeItems(items = [], selectedItems = []) {
   const source = Array.isArray(items) ? items : [];
   const selected = Array.isArray(selectedItems) ? selectedItems : [];
@@ -37,6 +44,22 @@ function normalizeItems(items = [], selectedItems = []) {
     out.push({ ...item, visible: true });
   });
   return out;
+}
+
+function normalizeSettings(raw = {}) {
+  const src = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  return {
+    showLabels: String(src.showLabels || DEFAULT_HEADER_SETTINGS.showLabels).trim() === 'off' ? 'off' : 'on',
+    layoutMode: ['scroll', 'wrap', 'grid'].includes(String(src.layoutMode || '').trim())
+      ? String(src.layoutMode || '').trim()
+      : DEFAULT_HEADER_SETTINGS.layoutMode,
+    collapseMode: ['off', 'badge'].includes(String(src.collapseMode || '').trim())
+      ? String(src.collapseMode || '').trim()
+      : DEFAULT_HEADER_SETTINGS.collapseMode,
+    headerWidth: ['100%', '75%', '50%', 'auto'].includes(String(src.headerWidth || '').trim())
+      ? String(src.headerWidth || '').trim()
+      : DEFAULT_HEADER_SETTINGS.headerWidth,
+  };
 }
 
 function moveItem(state, fromIndex, toIndex) {
@@ -128,6 +151,40 @@ function createSelectableReorderRow({
   });
 }
 
+function createTabButtons(entries, activeKey, onSelect) {
+  return entries.map((item) => {
+    const key = String(item?.key || '').trim();
+    const isActive = activeKey === key;
+    const btn = el('button', {
+      className: `btn small kanji-study-card-config-tab${isActive ? ' is-active' : ''}`,
+      text: String(item?.label || key).trim() || key,
+      attrs: { type: 'button', 'aria-pressed': isActive ? 'true' : 'false' },
+    });
+    btn.addEventListener('click', () => onSelect(key));
+    return btn;
+  });
+}
+
+function createInlineToggleButtons({ item, value, onChange }) {
+  return el('div', {
+    className: 'btn-group kanji-study-card-config-inline-toggle',
+    children: item.items.map((toggleItem) => {
+      const selected = value === String(toggleItem.value || '').trim();
+      const btn = el('button', {
+        className: `btn small${selected ? ' is-active' : ''}`,
+        text: toggleItem.label,
+        attrs: {
+          type: 'button',
+          'aria-pressed': selected ? 'true' : 'false',
+          title: `${item.label}: ${toggleItem.label}`,
+        },
+      });
+      btn.addEventListener('click', () => onChange(String(toggleItem.value || '').trim()));
+      return btn;
+    }),
+  });
+}
+
 function createConfigJsonViewer(value, compareValue) {
   const viewer = createJsonViewer(value, {
     expanded: true,
@@ -188,6 +245,7 @@ function createDialogShell({
       ],
     });
 
+    const tabs = el('div', { className: 'kanji-study-card-config-tabs' });
     const body = el('div', { className: 'kanji-study-card-config-body' });
     const resetBtn = el('button', { className: 'btn', text: 'Reset', attrs: { type: 'button' } });
     const resetDefaultsBtn = el('button', { className: 'btn', text: 'Reset to Defaults', attrs: { type: 'button' } });
@@ -201,7 +259,7 @@ function createDialogShell({
       ],
     });
 
-    dialog.append(header, body, footer);
+    dialog.append(header, tabs, body, footer);
 
     function cleanup(result) {
       document.removeEventListener('keydown', onKeyDown, true);
@@ -235,6 +293,7 @@ function createDialogShell({
       resetDefaultsBtn.setAttribute('aria-disabled', canResetToDefaults ? 'false' : 'true');
       jsonBtn.classList.toggle('is-active', isJsonMode);
       jsonBtn.setAttribute('aria-pressed', isJsonMode ? 'true' : 'false');
+      tabs.innerHTML = '';
       body.innerHTML = '';
       if (isJsonMode) {
         const jsonNode = typeof onRenderJson === 'function' ? onRenderJson() : null;
@@ -242,7 +301,13 @@ function createDialogShell({
         return;
       }
       const nextBody = typeof onRenderBody === 'function' ? onRenderBody({ rerender: render }) : null;
-      if (nextBody) body.appendChild(nextBody);
+      if (nextBody?.tabs && Array.isArray(nextBody.tabs)) {
+        nextBody.tabs.forEach((tabEl) => {
+          if (tabEl) tabs.appendChild(tabEl);
+        });
+      }
+      if (nextBody?.body) body.appendChild(nextBody.body);
+      else if (nextBody) body.appendChild(nextBody);
     }
 
     jsonBtn.addEventListener('click', () => {
@@ -277,15 +342,19 @@ export function openKanjiStudyCardViewConfigDialog({
   subtitle = 'Choose which fixed header tools are shown and arrange their left-to-right order.',
   items = [],
   selectedItems = [],
+  selectedSettings = {},
   namespace = '',
   collection = '',
 } = {}) {
   let state = normalizeItems(items, selectedItems);
+  let settingsState = normalizeSettings(selectedSettings);
+  let activeTab = 'fields';
 
   function getSnapshot() {
     return {
       _namespace: String(namespace || '').trim(),
       _collection: String(collection || '').trim(),
+      settings: { ...settingsState },
       items: state.map((item, index) => ({
         key: item.key,
         visible: item.visible !== false,
@@ -299,6 +368,7 @@ export function openKanjiStudyCardViewConfigDialog({
   const defaultConfigSnapshot = {
     _namespace: String(namespace || '').trim(),
     _collection: String(collection || '').trim(),
+    settings: { ...DEFAULT_HEADER_SETTINGS },
     items: normalizeItems(items, []).map((item, index) => ({
       key: item.key,
       visible: true,
@@ -311,21 +381,110 @@ export function openKanjiStudyCardViewConfigDialog({
 
   function resetToInitialState() {
     state = normalizeItems(items, initialConfigSnapshot.items);
+    settingsState = normalizeSettings(initialConfigSnapshot.settings);
+    activeTab = 'fields';
   }
 
   function resetToDefaultState() {
     state = normalizeItems(items, defaultConfigSnapshot.items);
+    settingsState = normalizeSettings(defaultConfigSnapshot.settings);
+    activeTab = 'fields';
   }
 
   return createDialogShell({
     title,
     subtitle,
-    onRenderSummary: () => `${state.filter((item) => item.visible !== false).length} visible of ${state.length}`,
+    onRenderSummary: () => `${state.filter((item) => item.visible !== false).length} visible of ${state.length} • ${settingsState.layoutMode} layout • ${settingsState.headerWidth} width • ${settingsState.collapseMode} collapse`,
     onRenderBody: ({ rerender }) => {
       const list = el('div', { className: 'kanji-study-card-config-list' });
+      const tabs = createTabButtons([
+        { key: 'fields', label: 'Fields' },
+        { key: 'header', label: 'Header' },
+      ], activeTab, (nextKey) => {
+        activeTab = nextKey;
+        rerender();
+      });
       if (!state.length) {
         list.append(el('p', { className: 'hint kanji-study-card-config-empty', text: 'No fixed header tools are available.' }));
-        return list;
+        return { tabs, body: list };
+      }
+      if (activeTab === 'header') {
+        list.append(createConfigItemRow({
+          label: 'Show Labels',
+          keyText: 'Show or hide the small captions under each header tool.',
+          controls: [createInlineToggleButtons({
+            item: {
+              label: 'Show Labels',
+              items: [
+                { value: 'on', label: 'On' },
+                { value: 'off', label: 'Off' },
+              ],
+            },
+            value: settingsState.showLabels,
+            onChange: (nextValue) => {
+              settingsState = { ...settingsState, showLabels: nextValue === 'off' ? 'off' : 'on' };
+              rerender();
+            },
+          })],
+        }));
+        list.append(createConfigItemRow({
+          label: 'Layout',
+          keyText: 'Choose how header tools flow when there is not enough horizontal space.',
+          controls: [createInlineToggleButtons({
+            item: {
+              label: 'Layout',
+              items: [
+                { value: 'scroll', label: 'Scroll' },
+                { value: 'wrap', label: 'Wrap' },
+                { value: 'grid', label: 'Grid' },
+              ],
+            },
+            value: settingsState.layoutMode,
+            onChange: (nextValue) => {
+              settingsState = { ...settingsState, layoutMode: normalizeSettings({ ...settingsState, layoutMode: nextValue }).layoutMode };
+              rerender();
+            },
+          })],
+        }));
+        list.append(createConfigItemRow({
+          label: 'Width',
+          keyText: 'Set the toolbar width, or let it size to its content.',
+          controls: [createInlineToggleButtons({
+            item: {
+              label: 'Width',
+              items: [
+                { value: '100%', label: '100%' },
+                { value: '75%', label: '75%' },
+                { value: '50%', label: '50%' },
+                { value: 'auto', label: 'Auto' },
+              ],
+            },
+            value: settingsState.headerWidth,
+            onChange: (nextValue) => {
+              settingsState = { ...settingsState, headerWidth: normalizeSettings({ ...settingsState, headerWidth: nextValue }).headerWidth };
+              rerender();
+            },
+          })],
+        }));
+        list.append(createConfigItemRow({
+          label: 'Collapse Mode',
+          keyText: 'Let the header compress into a compact trigger that can be clicked open again.',
+          controls: [createInlineToggleButtons({
+            item: {
+              label: 'Collapse Mode',
+              items: [
+                { value: 'off', label: 'Off' },
+                { value: 'badge', label: 'Badge' },
+              ],
+            },
+            value: settingsState.collapseMode,
+            onChange: (nextValue) => {
+              settingsState = { ...settingsState, collapseMode: normalizeSettings({ ...settingsState, collapseMode: nextValue }).collapseMode };
+              rerender();
+            },
+          })],
+        }));
+        return { tabs, body: list };
       }
       state.forEach((item, index) => {
         list.append(createSelectableReorderRow({
@@ -342,7 +501,7 @@ export function openKanjiStudyCardViewConfigDialog({
           },
         }));
       });
-      return list;
+      return { tabs, body: list };
     },
     onRenderJson: () => createConfigJsonViewer(getSnapshot(), initialConfigSnapshot),
     onHasChanges: hasChanges,
@@ -351,6 +510,7 @@ export function openKanjiStudyCardViewConfigDialog({
     onReset: resetToInitialState,
     onResetToDefaults: resetToDefaultState,
     onSave: () => ({
+      settings: { ...settingsState },
       items: state.map((item, index) => ({
         key: item.key,
         visible: item.visible !== false,

@@ -116,6 +116,16 @@ function cloneSpeechConfig(raw) {
 function cloneHeaderToolsConfig(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
   const out = {};
+  if (raw.settings && typeof raw.settings === 'object' && !Array.isArray(raw.settings)) {
+    out.settings = {};
+    out.settings.showLabels = String(raw.settings.showLabels || '').trim() === 'off' ? 'off' : 'on';
+    const layoutMode = String(raw.settings.layoutMode || '').trim();
+    out.settings.layoutMode = ['scroll', 'wrap', 'grid'].includes(layoutMode) ? layoutMode : 'scroll';
+    const collapseMode = String(raw.settings.collapseMode || '').trim();
+    out.settings.collapseMode = ['off', 'badge'].includes(collapseMode) ? collapseMode : 'off';
+    const headerWidth = String(raw.settings.headerWidth || '').trim();
+    out.settings.headerWidth = ['100%', '75%', '50%', 'auto'].includes(headerWidth) ? headerWidth : '100%';
+  }
   if (Array.isArray(raw.items)) {
     const seen = new Set();
     out.items = raw.items
@@ -530,6 +540,27 @@ function _validateCards(cards, collection) {
 
 function _validateHeaderTools(config) {
   if (!config || typeof config !== 'object' || Array.isArray(config)) throw new Error('headerTools must be an object');
+  if (Object.prototype.hasOwnProperty.call(config, 'settings')) {
+    if (!config.settings || typeof config.settings !== 'object' || Array.isArray(config.settings)) {
+      throw new Error('headerTools.settings must be an object');
+    }
+    if (Object.prototype.hasOwnProperty.call(config.settings, 'showLabels')) {
+      const value = String(config.settings.showLabels || '').trim();
+      if (value !== 'on' && value !== 'off') throw new Error('headerTools.settings.showLabels must be "on" or "off"');
+    }
+    if (Object.prototype.hasOwnProperty.call(config.settings, 'layoutMode')) {
+      const value = String(config.settings.layoutMode || '').trim();
+      if (!['scroll', 'wrap', 'grid'].includes(value)) throw new Error('headerTools.settings.layoutMode must be "scroll", "wrap", or "grid"');
+    }
+    if (Object.prototype.hasOwnProperty.call(config.settings, 'collapseMode')) {
+      const value = String(config.settings.collapseMode || '').trim();
+      if (!['off', 'badge'].includes(value)) throw new Error('headerTools.settings.collapseMode must be "off" or "badge"');
+    }
+    if (Object.prototype.hasOwnProperty.call(config.settings, 'headerWidth')) {
+      const value = String(config.settings.headerWidth || '').trim();
+      if (!['100%', '75%', '50%', 'auto'].includes(value)) throw new Error('headerTools.settings.headerWidth must be "100%", "75%", "50%", or "auto"');
+    }
+  }
   if (!Object.prototype.hasOwnProperty.call(config, 'items')) return;
   if (!Array.isArray(config.items)) throw new Error('headerTools.items must be an array');
   const seen = new Set();

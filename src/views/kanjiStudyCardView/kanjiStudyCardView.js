@@ -40,8 +40,15 @@ const MANAGED_HEADER_TOOL_ITEMS = Object.freeze([
   { key: 'pipMainField', label: 'Picture-in-Picture', description: 'Open the main card in Picture-in-Picture' },
   { key: 'scrubThreshold', label: 'Scrub Threshold', description: 'Configure arrow-key scrub hold delay' },
   { key: 'displayCards', label: 'Visible Cards', description: 'Choose which cards are displayed' },
+  { key: 'headerCollapseToggle', label: 'Collapse Toggle', description: 'Collapse or expand the header tools', lockVisible: true },
   { key: 'viewHeaderSettings', label: 'Settings', description: 'Configure view header tools', lockVisible: true },
 ]);
+const DEFAULT_HEADER_TOOL_SETTINGS = Object.freeze({
+  showLabels: 'on',
+  layoutMode: 'scroll',
+  collapseMode: 'off',
+  headerWidth: '100%',
+});
 const DEFAULT_MAIN_CARD_LAYOUT = {
   topLeft: 'type',
   main: 'kanji',
@@ -557,7 +564,24 @@ function normalizeManagedHeaderToolsConfig(rawConfig, availableItems = MANAGED_H
     });
   });
 
+  const rawSettings = rawConfig?.settings && typeof rawConfig.settings === 'object' && !Array.isArray(rawConfig.settings)
+    ? rawConfig.settings
+    : {};
+  const settings = {
+    showLabels: String(rawSettings.showLabels || DEFAULT_HEADER_TOOL_SETTINGS.showLabels).trim() === 'off' ? 'off' : 'on',
+    layoutMode: ['scroll', 'wrap', 'grid'].includes(String(rawSettings.layoutMode || '').trim())
+      ? String(rawSettings.layoutMode || '').trim()
+      : DEFAULT_HEADER_TOOL_SETTINGS.layoutMode,
+    collapseMode: ['off', 'badge'].includes(String(rawSettings.collapseMode || '').trim())
+      ? String(rawSettings.collapseMode || '').trim()
+      : DEFAULT_HEADER_TOOL_SETTINGS.collapseMode,
+    headerWidth: ['100%', '75%', '50%', 'auto'].includes(String(rawSettings.headerWidth || '').trim())
+      ? String(rawSettings.headerWidth || '').trim()
+      : DEFAULT_HEADER_TOOL_SETTINGS.headerWidth,
+  };
+
   return {
+    settings,
     items: Array.from(byKey.values()).sort((a, b) => {
       const diff = Number(a.order) - Number(b.order);
       if (diff !== 0) return diff;
@@ -794,6 +818,7 @@ export function renderKanjiStudyCard({ store }) {
 
   // Root UI pieces
   const headerTools = createViewHeaderTools();
+  let headerCollapseToggleBtn = null;
   const cardApis = {};
   const mainFieldCastSession = createMainFieldCardCastSession();
   const googleCastSender = createGoogleCastSender({
@@ -814,6 +839,8 @@ export function renderKanjiStudyCard({ store }) {
   // Track whether we mounted header/footer into the shell main container
   let __mountedHeaderInShell = false;
   let __mountedFooterInShell = false;
+  let headerToolsCollapsed = false;
+  let lastHeaderCollapseMode = DEFAULT_HEADER_TOOL_SETTINGS.collapseMode;
   const managedHeaderToolMeta = new Map(MANAGED_HEADER_TOOL_ITEMS.map((item) => [item.key, { ...item }]));
 
   function registerManagedHeaderTool(item) {
@@ -834,16 +861,21 @@ export function renderKanjiStudyCard({ store }) {
     const visibleManagedKeys = new Set(
       normalized.items.filter((item) => item.visible !== false).map((item) => item.key)
     );
+    const isManagedToolVisible = (key) => {
+      if (!visibleManagedKeys.has(key)) return false;
+      if (key === 'headerCollapseToggle') return normalized.settings.collapseMode === 'badge';
+      return true;
+    };
 
     orderedManagedKeys.forEach((key) => {
-      try { headerTools.setControlHidden(key, !visibleManagedKeys.has(key)); } catch (e) {}
+      try { headerTools.setControlHidden(key, !isManagedToolVisible(key)); } catch (e) {}
     });
 
     const parent = headerTools;
     const currentChildren = Array.from(parent.children);
     const visibleManagedGroups = orderedManagedKeys
       .map((key) => ({ key, group: headerTools.getGroup(key) }))
-      .filter((entry) => entry.group && visibleManagedKeys.has(entry.key))
+      .filter((entry) => entry.group && isManagedToolVisible(entry.key))
       .map((entry) => entry.group);
     const hiddenManagedGroups = orderedManagedKeys
       .map((key) => headerTools.getGroup(key))
@@ -870,6 +902,31 @@ export function renderKanjiStudyCard({ store }) {
     nextChildren.forEach((child) => {
       try { parent.appendChild(child); } catch (e) {}
     });
+    applyManagedHeaderToolPresentation();
+  }
+
+  function applyManagedHeaderToolPresentation() {
+    const settings = headerToolsConfig?.settings || DEFAULT_HEADER_TOOL_SETTINGS;
+    const collapseMode = String(settings.collapseMode || DEFAULT_HEADER_TOOL_SETTINGS.collapseMode).trim();
+    if (collapseMode === 'off') headerToolsCollapsed = false;
+    else if (lastHeaderCollapseMode !== 'badge') headerToolsCollapsed = true;
+    lastHeaderCollapseMode = collapseMode;
+
+    headerTools.classList.toggle('view-header-tools-hide-captions', settings.showLabels === 'off');
+    headerTools.classList.toggle('view-header-tools-layout-wrap', settings.layoutMode === 'wrap');
+    headerTools.classList.toggle('view-header-tools-layout-grid', settings.layoutMode === 'grid');
+    headerTools.classList.toggle('view-header-tools-collapse-badge', collapseMode === 'badge');
+    headerTools.classList.toggle('view-header-tools-is-collapsed', collapseMode !== 'off' && headerToolsCollapsed);
+    headerTools.classList.toggle('view-header-tools-floating-badge', collapseMode === 'badge' && headerToolsCollapsed);
+    headerTools.style.width = collapseMode === 'badge' && headerToolsCollapsed
+      ? 'fit-content'
+      : (settings.headerWidth === 'auto' ? 'fit-content' : settings.headerWidth);
+    headerTools.style.maxWidth = '100%';
+    if (!headerCollapseToggleBtn) return;
+    headerCollapseToggleBtn.classList.toggle('is-collapsed', headerToolsCollapsed);
+    headerCollapseToggleBtn.setAttribute('aria-expanded', collapseMode === 'off' ? 'true' : String(!headerToolsCollapsed));
+    headerCollapseToggleBtn.setAttribute('aria-label', headerToolsCollapsed ? 'Expand header tools' : 'Collapse header tools');
+    headerCollapseToggleBtn.title = headerToolsCollapsed ? 'Expand header tools' : 'Collapse header tools';
   }
 
   async function openViewHeaderSettings() {
@@ -880,6 +937,7 @@ export function renderKanjiStudyCard({ store }) {
       title: 'View Header Settings',
       items: getManagedHeaderToolItems(),
       selectedItems: cloneManagedHeaderToolsConfig(headerToolsConfig, getManagedHeaderToolItems()).items,
+      selectedSettings: cloneManagedHeaderToolsConfig(headerToolsConfig, getManagedHeaderToolItems()).settings,
       namespace: 'kanjiStudyCardView.headerTools',
       collection: key,
     });
@@ -1655,6 +1713,36 @@ export function renderKanjiStudyCard({ store }) {
       return btn;
     },
   });
+
+  const collapseToggleRec = headerTools.addElement({
+    type: 'custom',
+    key: 'headerCollapseToggle',
+    caption: 'collapse',
+    create: () => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'icon-button view-header-collapse-toggle';
+      btn.setAttribute('aria-expanded', 'true');
+      btn.setAttribute('aria-label', 'Collapse header tools');
+      btn.title = 'Collapse header tools';
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"></path>
+        </svg>
+      `;
+      btn.addEventListener('click', (event) => {
+        const collapseMode = String(headerToolsConfig?.settings?.collapseMode || DEFAULT_HEADER_TOOL_SETTINGS.collapseMode).trim();
+        if (collapseMode === 'off') return;
+        event.preventDefault();
+        event.stopPropagation();
+        headerToolsCollapsed = !headerToolsCollapsed;
+        applyManagedHeaderToolPresentation();
+      });
+      return btn;
+    },
+  });
+  try { collapseToggleRec?.group?.classList.add('view-header-collapse-group'); } catch (e) {}
+  headerCollapseToggleBtn = collapseToggleRec && collapseToggleRec.control ? collapseToggleRec.control : null;
 
   const scrubThresholdItems = createScrubThresholdItems();
   const scrubThresholdRec = headerTools.addElement({
