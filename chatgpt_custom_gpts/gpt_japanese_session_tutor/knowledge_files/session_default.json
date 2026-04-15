@@ -1,0 +1,31 @@
+{
+  "_info": "This contains instructions for custom gpt for a session, user can modify parameters freely (since they are only instructions for the gpt).  These sessions only should apply to sentences/examples/word results, but not for general conversation (which should use user's normal expected AI behaviors.  The goal here is essentially saved preferences for the GPT output format style/approach.",
+  "targetLevel": "N3",
+  "nounTargets": [],
+  "expressionTargets": [],
+  "grammarTargets": [],
+  "focus": "balanced",
+  "useKnownWordsOnly": false,
+  "preferKnownWords": true,
+  "introduceNewWords": true,
+  "teachingMode": "standard",
+  "include": {
+    "kanjiBreakdown": true,
+    "examples": true,
+    "grammarNotes": true,
+    "contrast": false
+  },
+  "breakdown": {
+    "kanji": true,
+    "reading": true,
+    "romaji": false,
+    "meaning": true,
+    "detailLevel": "medium"
+  },
+  "styling": {
+    "bold": "only headers",
+    "rules": [
+      "Do not bold example sentences under any circumstance"
+    ]
+  }
+}
