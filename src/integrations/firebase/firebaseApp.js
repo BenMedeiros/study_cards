@@ -3,8 +3,10 @@ import { getAuth } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-aut
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 import { getStorage } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js';
 
+const publicApiKey = 'AIzaSyAC7UKSO_VQQWDC6kzKFnFzVxH7EQ8gHt8';
+
 export const firebaseConfig = {
-  apiKey: 'AIzaSyAC7UKSO_VQQWDC6kzKFnFzVxH7EQ8gHt8',
+  apiKey: publicApiKey,
   authDomain: 'study-cards-sync.firebaseapp.com',
   projectId: 'study-cards-sync',
   storageBucket: 'study-cards-sync.firebasestorage.app',
