@@ -23,7 +23,7 @@ export function isIndexedDBAvailable() {
   }
 }
 
-export function openStudyDb({ dbName = 'study_cards', version = 6 } = {}) {
+export function openStudyDb({ dbName = 'study_cards', version = 7 } = {}) {
   if (dbPromise) return dbPromise;
 
   dbPromise = new Promise((resolve, reject) => {
@@ -84,6 +84,20 @@ export function openStudyDb({ dbName = 'study_cards', version = 6 } = {}) {
       if (!db.objectStoreNames.contains('study_time_sessions')) {
         // keyPath startIso asserted unique by app
         db.createObjectStore('study_time_sessions', { keyPath: 'startIso' });
+      }
+
+      if (!db.objectStoreNames.contains('firebase_sync_state')) {
+        const s = db.createObjectStore('firebase_sync_state', { keyPath: 'id' });
+        s.createIndex('by_entity', ['entityType', 'entityKey'], { unique: true });
+      } else {
+        try {
+          const s = tx.objectStore('firebase_sync_state');
+          if (!s.indexNames.contains('by_entity')) {
+            s.createIndex('by_entity', ['entityType', 'entityKey'], { unique: true });
+          }
+        } catch (e) {
+          // ignore
+        }
       }
     };
 

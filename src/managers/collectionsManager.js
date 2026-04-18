@@ -3,6 +3,7 @@ import { buildHashRoute, parseHashRoute } from '../utils/browser/helpers.js';
 import { timed } from '../utils/browser/timing.js';
 import { compileTableSearchQuery, matchesTableSearch, filterRecordsAndIndicesByTableSearch } from '../utils/browser/tableSearch.js';
 import { extractPathValues } from '../utils/common/collectionParser.mjs';
+import { markStudyProgressStateDirty } from '../integrations/firebase/studyProgressFirestoreSync.js';
 
 export function createCollectionsManager({ state, uiState, persistence, progressManager, collectionDB = null, settings = null }) {
   const subscribers = new Set();
@@ -974,6 +975,12 @@ export function createCollectionsManager({ state, uiState, persistence, progress
       if (!same && !nextId) {
         state.collections = [];
         clearCollectionViewCache();
+      }
+
+      if (!same && nextId) {
+        try {
+          void markStudyProgressStateDirty(nextId);
+        } catch (e) {}
       }
 
       try {

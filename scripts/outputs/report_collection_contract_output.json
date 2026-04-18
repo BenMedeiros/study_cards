@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-04-13T22:53:05.596Z",
+  "generatedAt": "2026-04-18T18:03:38.342Z",
   "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
   "outputPath": "scripts/outputs/report_collection_contract_output.json",
   "runTiming": {
-    "startedAt": "2026-04-13T22:53:05.536Z",
-    "finishedAt": "2026-04-13T22:53:05.597Z",
-    "durationMs": 61,
-    "durationSeconds": 0.061
+    "startedAt": "2026-04-18T18:03:38.290Z",
+    "finishedAt": "2026-04-18T18:03:38.343Z",
+    "durationMs": 53,
+    "durationSeconds": 0.053
   },
   "scannedCollections": 20,
   "collectionsWithProblems": 11,

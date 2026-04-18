@@ -13,17 +13,13 @@
     "report:missing-related": "node scripts/validations/report_missing_related_collection_data.mjs",
     "report:collection-contract": "node scripts/validations/report_collection_contract.mjs",
     "imports:process": "node scripts/process/process_collection_import.mjs",
-    "revisions:process": "node scripts/process/process_collection_revisions.mjs",
-    "firebase:pull-collection-settings": "node firebase/scripts/pullCollectionSettings.mjs",
-    "firebase:pull-security-rules": "node firebase/scripts/pullSecurityRules.mjs"
+    "revisions:process": "node scripts/process/process_collection_revisions.mjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "http-server": "^14.1.1",
-    "firebase-admin": "^13.7.0"
-  },
-  "dependencies": {}
+    "http-server": "^14.1.1"
+  }
 }

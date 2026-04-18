@@ -7,6 +7,10 @@ import kanjiStudyController from '../kanjiStudyCardView/kanjiStudyController.js'
 import { openSpeechSettingsDialog } from '../../components/dialogs/speechSettingsDialog.js';
 import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
 import { syncCollectionSettingSnapshot } from '../../integrations/firebase/collectionSettingsFirestoreSync.js';
+import {
+  getStudyProgressStateSyncStatus,
+  syncStudyProgressStateSnapshot,
+} from '../../integrations/firebase/studyProgressFirestoreSync.js';
 import collectionsViewController from './collectionsViewController.js';
 import {
   normalizeTableSettings,
@@ -72,6 +76,56 @@ function getCollectionFieldOptions(collection) {
   }
   return out;
 }
+
+function resolveCollectionCandidates(collection, fallbackId) {
+  return [
+    collection?.path,
+    collection?.id,
+    collection?.key,
+    collection?.path && collection.path.replace(/^\.?\/*collections\/*/, ''),
+    collection?.path && collection.path.replace(/^\/*/, ''),
+    fallbackId,
+  ].filter(Boolean);
+}
+
+function setStudyProgressSyncButtonStatus(button, status, detail = '') {
+  if (!button) return;
+  const normalized = String(status || '').trim();
+  button.dataset.syncStatus = normalized;
+  if (normalized === 'checking') {
+    button.textContent = 'Checking sync...';
+    button.title = 'Checking whether study progress state needs sync';
+    button.disabled = true;
+    button.setAttribute('aria-disabled', 'true');
+    return;
+  }
+  if (normalized === 'syncing') {
+    button.textContent = 'Syncing...';
+    button.title = 'Syncing study progress state to Firestore';
+    button.disabled = true;
+    button.setAttribute('aria-disabled', 'true');
+    return;
+  }
+  if (normalized === 'synced') {
+    button.textContent = 'Study progress synced';
+    button.title = detail || 'Study progress state is already synced';
+    button.disabled = true;
+    button.setAttribute('aria-disabled', 'true');
+    return;
+  }
+  if (normalized === 'error') {
+    button.textContent = 'Sync study progress state';
+    button.title = detail || 'Unable to determine sync status';
+    button.disabled = false;
+    button.setAttribute('aria-disabled', 'false');
+    return;
+  }
+  button.textContent = 'Sync study progress state';
+  button.title = detail || 'Upload this collection study progress state to Firestore for the signed-in user';
+  button.disabled = false;
+  button.setAttribute('aria-disabled', 'false');
+}
+
 export function renderCollectionsManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
   root.id = 'collections-root';
@@ -265,21 +319,63 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
       title: 'Upload this collection_settings row to Firestore for the signed-in user',
       className: 'btn-snapshot-collection-settings',
       onClick: async (rowData, rowIndex, { tr }) => {
-        const id = tr?.dataset?.rowId || rowData.__id;
-        try {
-          const col = collections.find(c => (c.id === id || c.key === id || c.path === id || c.name === id));
-          const candidates = [
-            col?.path,
-            col?.id,
-            col?.key,
-            col?.path && col.path.replace(/^\.?\/*collections\/*/, ''),
-            col?.path && col.path.replace(/^\/*/, ''),
-            id,
-          ].filter(Boolean);
-          const result = await syncCollectionSettingSnapshot(candidates);
-          console.log('Snapshot collection_settings: synced', result.collectionId, 'to users/' + result.userId + '/collection_settings/' + result.docId);
+          const id = tr?.dataset?.rowId || rowData.__id;
+          try {
+            const col = collections.find(c => (c.id === id || c.key === id || c.path === id || c.name === id));
+            const candidates = resolveCollectionCandidates(col, id);
+            const result = await syncCollectionSettingSnapshot(candidates);
+            console.log('Snapshot collection_settings: synced', result.collectionId, 'to users/' + result.userId + '/collection_settings/' + result.docId);
         } catch (e) {
           console.error('Snapshot collection_settings: failed for', id, e);
+        }
+      }
+    },
+    {
+      label: 'Sync study progress state',
+      title: 'Upload this collection study progress state to Firestore for the signed-in user',
+      className: 'btn-sync-study-progress-state',
+      onClick: async (rowData, rowIndex, { tr }) => {
+        const id = tr?.dataset?.rowId || rowData.__id;
+        const button = tr?.querySelector('.btn-sync-study-progress-state');
+        try {
+          const col = collections.find(c => (c.id === id || c.key === id || c.path === id || c.name === id));
+          const candidates = resolveCollectionCandidates(col, id);
+          const syncStatus = await getStudyProgressStateSyncStatus(candidates);
+          if (!syncStatus?.needsSync) {
+            console.warn('[CollectionsView] sync click ignored because study progress state has no diffs', {
+              collectionId: id,
+              syncState: syncStatus?.syncState || null,
+              payload: syncStatus?.payload || null,
+              diff: syncStatus?.diff || null,
+            });
+            const lastSync = syncStatus?.syncState?.lastSuccessIso || '';
+            const title = lastSync ?
+              `Study progress state already synced (${lastSync})` :
+              `Study progress state already synced for ${syncStatus?.entityKey || id}`;
+            setStudyProgressSyncButtonStatus(button, 'synced', title);
+            return;
+          }
+          setStudyProgressSyncButtonStatus(button, 'syncing');
+          const result = await syncStudyProgressStateSnapshot(candidates);
+          setStudyProgressSyncButtonStatus(
+            button,
+            'synced',
+            `Study progress state synced for ${result.collectionKey}`,
+          );
+          console.log(
+            'Sync study progress state: synced',
+            result.collectionKey,
+            'to users/' + result.userId + '/study_progress_state/' + result.docId,
+            result.states,
+            syncStatus?.diff || null,
+          );
+        } catch (e) {
+          setStudyProgressSyncButtonStatus(
+            button,
+            'error',
+            String(e?.message || e || 'Study progress sync failed'),
+          );
+          console.error('Sync study progress state: failed for', id, e);
         }
       }
     },
@@ -344,6 +440,67 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   applyTableColumnStyles({ wrapper: table, tableSettings: collectionsTableSettings });
   applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings: collectionsTableSettings, actionItems: TABLE_ACTION_ITEMS });
 
+  function scheduleStudyProgressSyncStatusRefresh() {
+    const rowsWithButtons = Array.from(table.querySelectorAll('tbody tr'))
+      .map((tr) => ({
+        tr,
+        id: String(tr?.dataset?.rowId || '').trim(),
+        button: tr.querySelector('.btn-sync-study-progress-state'),
+      }))
+      .filter((item) => item.id && item.button);
+    if (!rowsWithButtons.length) return;
+
+    const concurrency = 4;
+    let index = 0;
+
+    const runNext = async () => {
+      const item = rowsWithButtons[index++];
+      if (!item) return;
+      setStudyProgressSyncButtonStatus(item.button, 'checking');
+      try {
+        const col = collections.find(c =>
+          (c.id === item.id || c.key === item.id || c.path === item.id || c.name === item.id));
+        const candidates = resolveCollectionCandidates(col, item.id);
+        const status = await getStudyProgressStateSyncStatus(candidates);
+        if (status?.needsSync) {
+          setStudyProgressSyncButtonStatus(
+            item.button,
+            'needs-sync',
+            `Study progress state needs sync for ${status.entityKey}`,
+          );
+        } else {
+          const lastSync = status?.syncState?.lastSuccessIso || '';
+          const title = lastSync ?
+            `Study progress state already synced (${lastSync})` :
+            `Study progress state already synced for ${status.entityKey}`;
+          setStudyProgressSyncButtonStatus(item.button, 'synced', title);
+        }
+      } catch (error) {
+        setStudyProgressSyncButtonStatus(
+          item.button,
+          'error',
+          String(error?.message || error || 'Unable to determine sync status'),
+        );
+      }
+      void runNext();
+    };
+
+    for (let i = 0; i < Math.min(concurrency, rowsWithButtons.length); i++) {
+      setTimeout(() => {
+        void runNext();
+      }, 0);
+    }
+  }
+
+  let refreshTimer = null;
+  function scheduleStudyProgressSyncStatusRefreshSoon() {
+    if (refreshTimer) clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => {
+      refreshTimer = null;
+      scheduleStudyProgressSyncStatusRefresh();
+    }, 0);
+  }
+
   const collectionsCard = card({
     id: 'collections-card',
     cornerCaption: `${collections.length} Collections`,
@@ -370,10 +527,35 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   });
 
   root.append(collectionsCard);
+  scheduleStudyProgressSyncStatusRefresh();
+  root.__activate = () => {
+    scheduleStudyProgressSyncStatusRefreshSoon();
+  };
+  root.__updateRoute = () => {
+    scheduleStudyProgressSyncStatusRefreshSoon();
+  };
+  table.addEventListener('table:searchApplied', () => {
+    scheduleStudyProgressSyncStatusRefreshSoon();
+  });
+  const tbody = table.querySelector('tbody');
+  let bodyRefreshInFlight = false;
+  const bodyObserver = tbody ? new MutationObserver(() => {
+    if (bodyRefreshInFlight) return;
+    bodyRefreshInFlight = true;
+    setTimeout(() => {
+      bodyRefreshInFlight = false;
+      scheduleStudyProgressSyncStatusRefreshSoon();
+    }, 0);
+  }) : null;
+  if (bodyObserver && tbody) {
+    bodyObserver.observe(tbody, { childList: true });
+  }
 
   const mo = new MutationObserver(() => {
     if (!document.body.contains(root)) {
       try { if (collectionsCtrl && typeof collectionsCtrl.dispose === 'function') collectionsCtrl.dispose(); } catch (e) {}
+      try { if (bodyObserver) bodyObserver.disconnect(); } catch (e) {}
+      if (refreshTimer) clearTimeout(refreshTimer);
       mo.disconnect();
     }
   });

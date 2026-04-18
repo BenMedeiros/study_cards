@@ -1,7 +1,7 @@
 node_modules/
 data/settings.local.json
-/.secrets.json
-/.env.json
+*/.secrets.json
+*/.env.json
 
 # Firebase admin local exports
 /firebase/exports/*

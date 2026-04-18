@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-13T22:53:03.394Z",
+  "generatedAt": "2026-04-18T18:03:37.261Z",
   "scannedCollections": 23,
   "collectionsWithProblems": 14,
   "collectionsWithInvalidEntryKey": 8,
@@ -1106,9 +1106,9 @@
   "outputPath": "scripts/outputs/report_duplicated_keys_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-04-13T22:53:03.190Z",
-    "finishedAt": "2026-04-13T22:53:03.395Z",
-    "durationMs": 205,
-    "durationSeconds": 0.205
+    "startedAt": "2026-04-18T18:03:37.200Z",
+    "finishedAt": "2026-04-18T18:03:37.262Z",
+    "durationMs": 62,
+    "durationSeconds": 0.062
   }
 }
