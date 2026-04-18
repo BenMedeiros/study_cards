@@ -1,5 +1,5 @@
 import { el } from '../../utils/browser/ui.js';
-import { createJsonViewer } from '../../components/shared/jsonViewer.js';
+import { createJsonViewer } from '../shared/jsonViewer.js';
 
 const DEFAULT_HEADER_SETTINGS = Object.freeze({
   showLabels: 'on',
@@ -337,7 +337,7 @@ function createDialogShell({
   });
 }
 
-export function openKanjiStudyCardViewConfigDialog({
+export function openViewHeaderSettingsDialog({
   title = 'View Header Settings',
   subtitle = 'Choose which fixed header tools are shown and arrange their left-to-right order.',
   items = [],
@@ -519,3 +519,5 @@ export function openKanjiStudyCardViewConfigDialog({
     }),
   });
 }
+
+export const openKanjiStudyCardViewConfigDialog = openViewHeaderSettingsDialog;

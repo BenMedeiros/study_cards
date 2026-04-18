@@ -1,11 +1,11 @@
-import { createTable } from '../../components/shared/table.js';
+import { createTable } from '../../components/table/table.js';
 import { card } from '../../utils/browser/ui.js';
 import { validateCollection } from '../../utils/browser/validation.js';
 import { formatDurationMs, formatIsoShort } from '../../utils/browser/helpers.js';
 import collectionSettingsManager from '../../managers/collectionSettingsManager.js';
 import kanjiStudyController from '../kanjiStudyCardView/kanjiStudyController.js';
-import { openSpeechSettingsDialog } from '../../components/dialogs/speechSettingsDialog.js';
-import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
+import { openSpeechSettingsDialog } from './speechSettingsDialog.js';
+import { openTableSettingsDialog } from '../../components/table/tableSettingsDialog.js';
 import { syncCollectionSettingSnapshot } from '../../integrations/firebase/collectionSettingsFirestoreSync.js';
 import {
   getStudyProgressStateSyncStatus,
@@ -506,6 +506,27 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     cornerCaption: `${collections.length} Collections`,
     children: [table]
   });
+  try {
+    const corner = collectionsCard.querySelector('.card-corner-caption');
+    const updateCollectionsCaption = ({ visibleRows, totalRows } = {}) => {
+      if (!corner) return;
+      const visible = Math.max(0, Math.round(Number(visibleRows) || 0));
+      const total = Math.max(0, Math.round(Number(totalRows) || 0));
+      corner.textContent = (visible < total)
+        ? `${visible}/${total} Collections`
+        : `${total} Collections`;
+      corner.title = (visible < total)
+        ? `${visible} of ${total} collections shown`
+        : `${total} collections`;
+    };
+    updateCollectionsCaption({
+      visibleRows: Number(table?.dataset?.visibleRows ?? collections.length),
+      totalRows: Number(table?.dataset?.totalRows ?? collections.length),
+    });
+    table.addEventListener('table:stateChange', (e) => {
+      updateCollectionsCaption(e?.detail || {});
+    });
+  } catch (e) {}
 
   attachCardTableSettingsButton({
     cardEl: collectionsCard,

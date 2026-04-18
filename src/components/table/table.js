@@ -1,8 +1,8 @@
 let _tableGlobalResizeHookInstalled = false;
 
 import { timed } from '../../utils/browser/timing.js';
-import { openRightClickMenu, registerRightClickContext } from './rightClickMenu.js';
-import { createJsonViewer } from './jsonViewer.js';
+import { openRightClickMenu, registerRightClickContext } from '../shared/rightClickMenu.js';
+import { createJsonViewer } from '../shared/jsonViewer.js';
 import { cleanSearchQuery, compileTableSearchQuery, matchesTableSearch, buildAddToSearchColumnAnalyses } from '../../utils/browser/tableSearch.js';
 
 // register the table context class so CSS and code searches can find it
@@ -544,6 +544,28 @@ export function createTable({ store = null, headers, rows, className = '', id, c
     renderVirtualRows(displayRows);
   }
 
+  function emitTableStateChange() {
+    try {
+      const query = String(searchInputEl?.value || '').trim();
+      const totalRows = Array.isArray(originalRows) ? originalRows.length : 0;
+      const visibleRows = Array.isArray(displayRows) ? displayRows.length : 0;
+      wrapper.dataset.totalRows = String(totalRows);
+      wrapper.dataset.visibleRows = String(visibleRows);
+      wrapper.dataset.searchQuery = query;
+      wrapper.dispatchEvent(new CustomEvent('table:stateChange', {
+        bubbles: true,
+        detail: {
+          query,
+          totalRows,
+          visibleRows,
+          isFiltered: visibleRows < totalRows,
+        },
+      }));
+    } catch (e) {
+      // ignore
+    }
+  }
+
   // Sorting state
   let sortCol = null;
   let sortDir = 'asc';
@@ -1080,6 +1102,7 @@ export function createTable({ store = null, headers, rows, className = '', id, c
     return timed('table.sortAndRender', () => {
     if (sortCol === null) {
       renderMaybeVirtual(currentRows);
+      emitTableStateChange();
       Array.from(headerRow.children).forEach(th => th.setAttribute('aria-sort', 'none'));
       return;
     }
@@ -1101,6 +1124,7 @@ export function createTable({ store = null, headers, rows, className = '', id, c
     if (sortDir === 'desc') paired.reverse();
 
     renderMaybeVirtual(paired.map(p => p.data));
+    emitTableStateChange();
 
     Array.from(headerRow.children).forEach((th, j) => {
       if (j === sortCol) th.setAttribute('aria-sort', sortDir === 'asc' ? 'ascending' : 'descending');

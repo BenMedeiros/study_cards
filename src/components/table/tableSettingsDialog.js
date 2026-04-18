@@ -1,6 +1,6 @@
 import { el } from '../../utils/browser/ui.js';
 import { createDropdown } from '../shared/dropdown.js';
-import { confirmDialog } from './confirmDialog.js';
+import { confirmDialog } from '../shared/confirmDialog.js';
 
 const WORD_BREAK_OPTIONS = [
   { value: '', label: '(default)' },
@@ -115,6 +115,188 @@ function normalizeSourceOptions(v) {
   return out;
 }
 
+function sanitizeJsonFieldKeyPart(value) {
+  return String(value || '')
+    .trim()
+    .replace(/[^A-Za-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .toLowerCase();
+}
+
+function buildJsonFieldKey(sourceKey, path) {
+  const sourcePart = sanitizeJsonFieldKeyPart(sourceKey) || 'value';
+  const pathPart = sanitizeJsonFieldKeyPart(path) || 'field';
+  return `json_${sourcePart}__${pathPart}`;
+}
+
+function normalizeJsonFieldType(value) {
+  const raw = String(value || '').trim().toLowerCase();
+  return ['auto', 'string', 'number', 'boolean', 'json'].includes(raw) ? raw : 'auto';
+}
+
+function normalizeJsonFieldSources(v) {
+  const arr = Array.isArray(v) ? v : [];
+  const out = [];
+  const seen = new Set();
+  for (const raw of arr) {
+    if (!raw || typeof raw !== 'object') continue;
+    const key = String(raw.key || '').trim();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      key,
+      label: String(raw.label || key).trim() || key,
+      description: String(raw.description || '').trim(),
+      type: String(raw.type || '').trim(),
+      pathOptions: Array.isArray(raw.pathOptions) ? raw.pathOptions.map((item) => ({
+        path: String(item?.path || '').trim(),
+        label: String(item?.label || item?.path || '').trim(),
+        type: normalizeJsonFieldType(item?.type),
+        examples: Array.isArray(item?.examples) ? item.examples.map((example) => ({
+          rowIndex: Math.max(0, Math.round(Number(example?.rowIndex) || 0)),
+          value: cloneJson(example?.value, example?.value ?? null),
+        })) : [],
+      })).filter((item) => item.path) : [],
+    });
+  }
+  return out;
+}
+
+function normalizeJsonFieldDefs(v, jsonFieldSources = []) {
+  const arr = Array.isArray(v) ? v : [];
+  const allowedSources = new Set((Array.isArray(jsonFieldSources) ? jsonFieldSources : []).map(item => String(item?.key || '').trim()).filter(Boolean));
+  const out = [];
+  const seen = new Set();
+  for (const raw of arr) {
+    if (!raw || typeof raw !== 'object') continue;
+    const sourceKey = String(raw.sourceKey || '').trim();
+    const path = String(raw.path || '').trim();
+    if (!sourceKey || !path) continue;
+    if (allowedSources.size && !allowedSources.has(sourceKey)) continue;
+    const key = String(raw.key || buildJsonFieldKey(sourceKey, path)).trim();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      key,
+      sourceKey,
+      path,
+      label: String(raw.label || path).trim() || path,
+      valueType: normalizeJsonFieldType(raw.valueType || raw.type),
+    });
+  }
+  return out;
+}
+
+function suggestJsonFieldLabel(path, fallback = 'field') {
+  const raw = String(path || '').trim();
+  if (!raw || raw === '$') return fallback;
+  const parts = raw.split('.');
+  const last = String(parts[parts.length - 1] || '').trim();
+  const cleaned = last.replace(/\[(\d+)\]/g, '_$1').replace(/[^A-Za-z0-9_$]+/g, '_').replace(/^_+|_+$/g, '');
+  return cleaned || fallback;
+}
+
+function formatJsonFieldPreview(value) {
+  if (value == null) return '(empty)';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  try { return JSON.stringify(value, null, 2); } catch (e) { return String(value); }
+}
+
+function tokenizeJsonPath(path) {
+  const raw = String(path || '').trim();
+  if (!raw || raw === '$') return [];
+  const out = [];
+  let i = 1;
+  while (i < raw.length) {
+    const ch = raw[i];
+    if (ch === '.') {
+      i += 1;
+      let j = i;
+      while (j < raw.length && /[A-Za-z0-9_$]/.test(raw[j])) j += 1;
+      const key = raw.slice(i, j).trim();
+      if (!key) break;
+      out.push(key);
+      i = j;
+      continue;
+    }
+    if (ch === '[') {
+      const end = raw.indexOf(']', i + 1);
+      if (end < 0) break;
+      out.push(raw.slice(i, end + 1));
+      i = end + 1;
+      continue;
+    }
+    break;
+  }
+  return out;
+}
+
+function buildJsonPathFromSegments(segments) {
+  const parts = Array.isArray(segments) ? segments : [];
+  let out = '$';
+  for (const segment of parts) {
+    const s = String(segment || '').trim();
+    if (!s) continue;
+    if (s.startsWith('[')) out += s;
+    else out += `.${s}`;
+  }
+  return out;
+}
+
+function buildJsonPathTree(pathOptions) {
+  const root = { key: '$', path: '$', option: null, children: new Map() };
+  for (const item of (Array.isArray(pathOptions) ? pathOptions : [])) {
+    const path = String(item?.path || '').trim();
+    if (!path) continue;
+    if (path === '$') {
+      root.option = item;
+      continue;
+    }
+    const segments = tokenizeJsonPath(path);
+    let node = root;
+    let seenSegments = [];
+    for (const segment of segments) {
+      seenSegments.push(segment);
+      if (!node.children.has(segment)) {
+        node.children.set(segment, {
+          key: segment,
+          path: buildJsonPathFromSegments(seenSegments),
+          option: null,
+          children: new Map(),
+        });
+      }
+      node = node.children.get(segment);
+    }
+    node.option = item;
+  }
+  return root;
+}
+
+function resolveJsonPathNode(tree, segments) {
+  let node = tree;
+  for (const segment of (Array.isArray(segments) ? segments : [])) {
+    const next = node?.children?.get(String(segment || '').trim());
+    if (!next) break;
+    node = next;
+  }
+  return node;
+}
+
+function sanitizeJsonPathSegments(tree, segments) {
+  const nextSegments = [];
+  let node = tree;
+  while (node?.children?.size) {
+    const options = Array.from(node.children.keys());
+    const desired = String((Array.isArray(segments) ? segments[nextSegments.length] : '') || '').trim();
+    const selected = options.includes(desired) ? desired : options[0];
+    if (!selected) break;
+    nextSegments.push(selected);
+    node = node.children.get(selected);
+  }
+  return nextSegments;
+}
+
 function normalizeSourceConfigByKey(v, sourceOptions = []) {
   const src = (v && typeof v === 'object') ? v : {};
   const optionByKey = new Map((Array.isArray(sourceOptions) ? sourceOptions : []).map(item => [item.key, item]));
@@ -166,7 +348,7 @@ function getDisplayedSourceType(option, mode) {
   return String(option?.type || groupedType).trim() || groupedType;
 }
 
-function normalizeSettings(raw, { relatedSources = [], studyProgressSources = [] } = {}) {
+function normalizeSettings(raw, { relatedSources = [], studyProgressSources = [], jsonFieldSources = [] } = {}) {
   const src = (raw && typeof raw === 'object') ? raw : {};
   const cols = (src.columns && typeof src.columns === 'object') ? src.columns : {};
   const acts = (src.actions && typeof src.actions === 'object') ? src.actions : {};
@@ -183,6 +365,7 @@ function normalizeSettings(raw, { relatedSources = [], studyProgressSources = []
 
   const relatedList = normalizeSourceOptions(relatedSources);
   const studyList = normalizeSourceOptions(studyProgressSources);
+  const jsonSourceList = normalizeJsonFieldSources(jsonFieldSources);
   const allSourceOptions = [...relatedList, ...studyList];
   const relatedKeySet = new Set(relatedList.map(item => item.key));
   const studyKeySet = new Set(studyList.map(item => item.key));
@@ -222,6 +405,7 @@ function normalizeSettings(raw, { relatedSources = [], studyProgressSources = []
       relatedColumns,
       studyProgressFields,
       configByKey,
+      jsonFields: normalizeJsonFieldDefs(sources.jsonFields, jsonSourceList),
     },
   };
 }
@@ -271,12 +455,14 @@ export function openTableSettingsDialog({
   settings = null,
   relatedSources = [],
   studyProgressSources = [],
+  jsonFieldSources = [],
 } = {}) {
   return new Promise((resolve) => {
     const inputColumns = Array.isArray(columns) ? columns : [];
     const inputActions = Array.isArray(actions) ? actions : [];
     const inputRelatedSources = normalizeSourceOptions(relatedSources);
     const inputStudyProgressSources = normalizeSourceOptions(studyProgressSources);
+    const inputJsonFieldSources = normalizeJsonFieldSources(jsonFieldSources);
     const sourceColumnKeys = new Set([
       ...inputRelatedSources.map(item => item.key),
       ...inputStudyProgressSources.map(item => item.key),
@@ -291,6 +477,7 @@ export function openTableSettingsDialog({
     const base = normalizeSettings(settings || {}, {
       relatedSources: inputRelatedSources,
       studyProgressSources: inputStudyProgressSources,
+      jsonFieldSources: inputJsonFieldSources,
     });
     const state = cloneJson(base, base) || base;
 
@@ -320,7 +507,26 @@ export function openTableSettingsDialog({
           hasObjectData: !!existing.hasObjectData || /^array<.*object.*>$/.test(displayedType) || /^array<.*array<.*>$/.test(displayedType),
         };
       });
-      return [...baseColumns, ...dynamicSourceColumns];
+      const jsonFieldColumns = (Array.isArray(state.sources.jsonFields) ? state.sources.jsonFields : []).map((field) => {
+        const existing = inputColumns.find(col => String(col?.key || '').trim() === String(field?.key || '').trim()) || {};
+        const sourceMeta = inputJsonFieldSources.find(item => item.key === field.sourceKey) || {};
+        const valueType = normalizeJsonFieldType(field.valueType);
+        const displayedType = valueType === 'auto'
+          ? (String(existing.type || sourceMeta.type || '').trim() || 'unknown')
+          : valueType;
+        return {
+          ...existing,
+          key: field.key,
+          label: String(field.label || existing.label || field.path || field.key).trim() || field.key,
+          type: displayedType,
+          description: String(existing.description || sourceMeta.description || '').trim(),
+          sourceKind: 'jsonField',
+          sourceKey: field.sourceKey,
+          jsonPath: field.path,
+          valueType,
+        };
+      });
+      return [...baseColumns, ...dynamicSourceColumns, ...jsonFieldColumns];
     }
 
     function normalizeColumnStateToEffectiveColumns() {
@@ -366,7 +572,11 @@ export function openTableSettingsDialog({
     }
 
     const globalMsg = el('div', { className: 'table-settings-global-msg hint', text: '' });
-    const initialSnapshot = JSON.stringify(normalizeSettings(state, { relatedSources: inputRelatedSources, studyProgressSources: inputStudyProgressSources }));
+    const initialSnapshot = JSON.stringify(normalizeSettings(state, {
+      relatedSources: inputRelatedSources,
+      studyProgressSources: inputStudyProgressSources,
+      jsonFieldSources: inputJsonFieldSources,
+    }));
 
     if (inputRelatedSources.length) info.append(el('span', { className: 'hint', text: `Related options: ${inputRelatedSources.length}` }));
     if (inputStudyProgressSources.length) info.append(el('span', { className: 'hint', text: `Study metrics: ${inputStudyProgressSources.length}` }));
@@ -384,9 +594,15 @@ export function openTableSettingsDialog({
     const expandedDetailsByCol = {};
     let closed = false;
     let saveBtn = null;
+    const jsonFieldBuilderBySource = {};
+    const jsonFieldPreviewOffsetByKey = {};
 
     function currentSnapshot() {
-      return JSON.stringify(normalizeSettings(state, { relatedSources: inputRelatedSources, studyProgressSources: inputStudyProgressSources }));
+      return JSON.stringify(normalizeSettings(state, {
+        relatedSources: inputRelatedSources,
+        studyProgressSources: inputStudyProgressSources,
+        jsonFieldSources: inputJsonFieldSources,
+      }));
     }
 
     function isDirty() {
@@ -461,7 +677,11 @@ export function openTableSettingsDialog({
           return;
         }
         globalMsg.textContent = '';
-        close(normalizeSettings(state, { relatedSources: inputRelatedSources, studyProgressSources: inputStudyProgressSources }));
+        close(normalizeSettings(state, {
+          relatedSources: inputRelatedSources,
+          studyProgressSources: inputStudyProgressSources,
+          jsonFieldSources: inputJsonFieldSources,
+        }));
         return;
       }
 
@@ -627,7 +847,7 @@ export function openTableSettingsDialog({
 
       const sourceHint = el('div', {
         className: 'hint table-settings-sources-intro',
-        text: 'Choose which related collection fields and study metrics become real table columns. Source shaping happens here first, then the Columns section only handles the active shaped columns.',
+        text: 'Source shaping happens here first. Related fields, study metrics, and JSON path extracts become real table columns; the Columns section then handles only the active shaped columns.',
       });
       sourcesBody.append(sourceHint);
 
@@ -772,8 +992,304 @@ export function openTableSettingsDialog({
         sourcesBody.append(row);
       }
 
-      if (!relatedGroups.size && !inputStudyProgressSources.length) {
-        sourcesBody.append(el('div', { className: 'hint', text: 'No configurable related or study source fields are available for this table.' }));
+      if (inputJsonFieldSources.length) {
+        const groupRow = el('div', { className: 'table-settings-row table-settings-source-row' });
+        const groupHead = el('div', { className: 'table-settings-source-group-head' });
+        groupHead.append(
+          el('strong', { text: 'JSON Fields' }),
+          el('div', { className: 'hint', text: `${(Array.isArray(state.sources.jsonFields) ? state.sources.jsonFields.length : 0)} defined` })
+        );
+        const groupBody = el('div', { className: 'table-settings-source-grid' });
+
+        function getBuilderState(sourceKey) {
+          const key = String(sourceKey || '').trim();
+          if (!jsonFieldBuilderBySource[key]) {
+            jsonFieldBuilderBySource[key] = {
+              segments: [],
+              label: '',
+              labelTouched: false,
+              exampleOffset: 0,
+            };
+          }
+          return jsonFieldBuilderBySource[key];
+        }
+
+        for (const sourceMeta of inputJsonFieldSources) {
+          const sourceKey = String(sourceMeta.key || '').trim();
+          const sourceRow = el('div', { className: 'table-settings-row table-settings-source-row table-settings-json-source-row' });
+          const sourceHead = el('div', { className: 'table-settings-source-group-head' });
+          const existingFields = (Array.isArray(state.sources.jsonFields) ? state.sources.jsonFields : [])
+            .filter((field) => String(field?.sourceKey || '').trim() === sourceKey);
+          sourceHead.append(
+            el('strong', { text: sourceMeta.label || sourceKey }),
+            el('div', { className: 'hint', text: `${existingFields.length} extracted` })
+          );
+
+          const sourceBody = el('div', { className: 'table-settings-source-controls' });
+          if (sourceMeta.description) {
+            sourceBody.append(el('div', { className: 'hint table-settings-source-option-desc', text: sourceMeta.description }));
+          }
+
+          const builderState = getBuilderState(sourceKey);
+          const pathTree = buildJsonPathTree(sourceMeta.pathOptions);
+          builderState.segments = sanitizeJsonPathSegments(pathTree, builderState.segments);
+          const selectedNode = resolveJsonPathNode(pathTree, builderState.segments);
+          const selectedPath = String(selectedNode?.path || '$').trim();
+          const selectedPathMeta = selectedNode?.option || null;
+          const selectedExamples = Array.isArray(selectedPathMeta?.examples) ? selectedPathMeta.examples : [];
+          const inferredType = normalizeJsonFieldType(selectedPathMeta?.type);
+          if (!builderState.labelTouched) {
+            builderState.label = suggestJsonFieldLabel(selectedPath, 'field');
+          }
+          if (selectedExamples.length) {
+            builderState.exampleOffset = Math.max(0, Math.min(builderState.exampleOffset, selectedExamples.length - 1));
+          } else {
+            builderState.exampleOffset = 0;
+          }
+
+          const builder = el('div', { className: 'table-settings-json-field-builder' });
+          const builderGrid = el('div', { className: 'table-settings-style-grid table-settings-style-grid-simple' });
+
+          let currentNode = pathTree;
+          let levelIndex = 0;
+          while (currentNode && currentNode.children && currentNode.children.size) {
+            const levelOptions = Array.from(currentNode.children.values())
+              .map((node) => ({ value: node.key, label: node.key }));
+            const selectedSegment = String(builderState.segments[levelIndex] || '').trim() || String(levelOptions[0]?.value || '');
+            const wrap = el('label', { className: 'table-settings-style-item' });
+            wrap.append(el('span', { className: 'table-settings-style-label', text: levelIndex === 0 ? 'root' : `field ${levelIndex + 1}` }));
+            const dropdown = createDropdown({
+              items: levelOptions,
+              value: selectedSegment,
+              className: 'table-settings-inline-dropdown',
+              closeOverlaysOnOpen: true,
+              portalZIndex: 1505,
+              onChange: (next) => {
+                builderState.segments = [
+                  ...builderState.segments.slice(0, levelIndex),
+                  String(next || '').trim(),
+                ];
+                builderState.exampleOffset = 0;
+                if (!builderState.labelTouched) builderState.label = '';
+                renderSources();
+                updateSaveState();
+              },
+            });
+            wrap.append(dropdown);
+            builderGrid.append(wrap);
+            currentNode = currentNode.children.get(selectedSegment) || null;
+            levelIndex += 1;
+          }
+
+          const nameWrap = el('label', { className: 'table-settings-style-item' });
+          nameWrap.append(el('span', { className: 'table-settings-style-label', text: 'name' }));
+          const nameInput = el('input', {
+            className: 'input small',
+            attrs: { type: 'text', value: String(builderState.label || ''), placeholder: suggestJsonFieldLabel(selectedPath, 'field') },
+          });
+          nameInput.addEventListener('input', () => {
+            builderState.labelTouched = true;
+            builderState.label = String(nameInput.value || '').trim();
+            updateSaveState();
+          });
+          nameWrap.append(nameInput);
+          builderGrid.append(nameWrap);
+
+          const inferredWrap = el('div', { className: 'table-settings-json-field-meta' });
+          inferredWrap.append(
+            el('span', { className: 'table-settings-style-label', text: 'inferred type' }),
+            el('strong', { text: inferredType || 'json' })
+          );
+          builderGrid.append(inferredWrap);
+
+          const preview = el('div', { className: 'table-settings-json-field-preview' });
+          const previewHead = el('div', { className: 'table-settings-json-field-preview-head' });
+          const previewLabel = el('div', {
+            className: 'hint',
+            text: selectedExamples.length ? `Example ${builderState.exampleOffset + 1}/${selectedExamples.length}` : 'No example',
+          });
+          const previewControls = el('div', { className: 'table-settings-row-right' });
+          const prevBtn = el('button', { className: 'btn small', attrs: { type: 'button' }, text: 'Prev' });
+          const nextBtn = el('button', { className: 'btn small', attrs: { type: 'button' }, text: 'Next' });
+          prevBtn.disabled = selectedExamples.length <= 1;
+          nextBtn.disabled = selectedExamples.length <= 1;
+          prevBtn.addEventListener('click', () => {
+            if (!selectedExamples.length) return;
+            builderState.exampleOffset = (builderState.exampleOffset - 1 + selectedExamples.length) % selectedExamples.length;
+            renderSources();
+          });
+          nextBtn.addEventListener('click', () => {
+            if (!selectedExamples.length) return;
+            builderState.exampleOffset = (builderState.exampleOffset + 1) % selectedExamples.length;
+            renderSources();
+          });
+          previewControls.append(prevBtn, nextBtn);
+          previewHead.append(previewLabel, previewControls);
+          const currentExample = selectedExamples[builderState.exampleOffset] || null;
+          const previewBody = el('pre', {
+            className: 'table-settings-json-field-preview-body',
+            text: currentExample ? formatJsonFieldPreview(currentExample.value) : '(no value found in sampled rows)',
+          });
+          preview.append(previewHead, previewBody);
+          if (currentExample) {
+            preview.append(el('div', {
+              className: 'hint table-settings-source-option-desc',
+              text: `row ${Math.max(0, Math.round(Number(currentExample.rowIndex) || 0)) + 1}`,
+            }));
+          }
+
+          const addBtn = el('button', { className: 'btn small', attrs: { type: 'button' }, text: 'Extract Field' });
+          const candidateKey = buildJsonFieldKey(sourceKey, selectedPath);
+          const exists = existingFields.some((field) => String(field?.key || '') === candidateKey);
+          addBtn.disabled = !selectedPathMeta || exists;
+          addBtn.title = exists ? 'This extracted field is already defined for this source/path.' : 'Create a derived field from the selected path.';
+          addBtn.addEventListener('click', () => {
+            if (!selectedPathMeta) return;
+            state.sources.jsonFields = [
+              ...(Array.isArray(state.sources.jsonFields) ? state.sources.jsonFields : []),
+              {
+                key: candidateKey,
+                sourceKey,
+                path: selectedPath,
+                label: String(builderState.label || '').trim() || suggestJsonFieldLabel(selectedPath, 'field'),
+                valueType: inferredType || 'json',
+              },
+            ];
+            builderState.labelTouched = false;
+            builderState.label = '';
+            builderState.exampleOffset = 0;
+            jsonFieldPreviewOffsetByKey[candidateKey] = 0;
+            normalizeColumnStateToEffectiveColumns();
+            renderSources();
+            renderColumns();
+            updateSaveState();
+          });
+
+          builder.append(builderGrid, preview, addBtn);
+          sourceBody.append(builder);
+
+          for (const field of existingFields) {
+            const fieldKey = String(field?.key || '').trim();
+            const fieldRow = el('div', { className: 'table-settings-source-option' });
+            const textWrap = el('div', { className: 'table-settings-source-option-text' });
+            const top = el('div', { className: 'table-settings-source-option-top' });
+            const fieldPathMeta = (Array.isArray(sourceMeta?.pathOptions) ? sourceMeta.pathOptions : [])
+              .find((item) => item.path === field.path);
+            const fieldExamples = Array.isArray(fieldPathMeta?.examples) ? fieldPathMeta.examples : [];
+            const previewOffset = Math.max(0, Math.min(Math.round(Number(jsonFieldPreviewOffsetByKey[fieldKey]) || 0), Math.max(0, fieldExamples.length - 1)));
+            jsonFieldPreviewOffsetByKey[fieldKey] = previewOffset;
+            top.append(
+              el('strong', { text: String(field.label || field.path || field.key) }),
+              el('span', { className: 'hint', text: `${field.path}` })
+            );
+            textWrap.append(top);
+
+            const controls = el('div', { className: 'table-settings-style-grid table-settings-style-grid-simple' });
+            const labelWrap = el('label', { className: 'table-settings-style-item' });
+            labelWrap.append(el('span', { className: 'table-settings-style-label', text: 'name' }));
+            const labelInput = el('input', { className: 'input small', attrs: { type: 'text', value: String(field.label || '') } });
+            labelInput.addEventListener('input', () => {
+              field.label = String(labelInput.value || '').trim() || field.path;
+              renderColumns();
+              updateSaveState();
+            });
+            labelWrap.append(labelInput);
+
+            const typeWrap = el('label', { className: 'table-settings-style-item' });
+            typeWrap.append(el('span', { className: 'table-settings-style-label', text: 'type' }));
+            const typeSelect = createDropdown({
+              items: ['auto', 'string', 'number', 'boolean', 'json'].map((typeValue) => ({ value: typeValue, label: typeValue })),
+              value: normalizeJsonFieldType(field.valueType),
+              className: 'table-settings-inline-dropdown',
+              closeOverlaysOnOpen: true,
+              portalZIndex: 1505,
+              onChange: (next) => {
+                field.valueType = normalizeJsonFieldType(next);
+                renderColumns();
+                updateSaveState();
+              },
+            });
+            typeWrap.append(typeSelect);
+
+            const removeBtn = el('button', { className: 'btn small', attrs: { type: 'button' }, text: 'Remove' });
+            removeBtn.addEventListener('click', async () => {
+              const ok = await confirmDialog({
+                title: 'Remove extracted field?',
+                message: `Remove ${String(field.label || field.path || field.key)} from this source?`,
+                confirmText: 'Remove',
+                cancelText: 'Cancel',
+                danger: true,
+              });
+              if (!ok) return;
+              state.sources.jsonFields = (Array.isArray(state.sources.jsonFields) ? state.sources.jsonFields : [])
+                .filter(item => String(item?.key || '') !== fieldKey);
+              delete jsonFieldPreviewOffsetByKey[fieldKey];
+              normalizeColumnStateToEffectiveColumns();
+              renderSources();
+              renderColumns();
+              updateSaveState();
+            });
+
+            controls.append(labelWrap, typeWrap, removeBtn);
+            textWrap.append(controls);
+            textWrap.append(el('div', {
+              className: 'hint table-settings-source-option-desc',
+              text: `inferred: ${normalizeJsonFieldType(fieldPathMeta?.type)}`,
+            }));
+
+            const extractedPreview = el('div', { className: 'table-settings-json-field-preview' });
+            const extractedPreviewHead = el('div', { className: 'table-settings-json-field-preview-head' });
+            extractedPreviewHead.append(
+              el('div', {
+                className: 'hint',
+                text: fieldExamples.length ? `Example ${previewOffset + 1}/${fieldExamples.length}` : 'No example',
+              })
+            );
+            const extractedControls = el('div', { className: 'table-settings-row-right' });
+            const extractedPrevBtn = el('button', { className: 'btn small', attrs: { type: 'button' }, text: 'Prev' });
+            const extractedNextBtn = el('button', { className: 'btn small', attrs: { type: 'button' }, text: 'Next' });
+            extractedPrevBtn.disabled = fieldExamples.length <= 1;
+            extractedNextBtn.disabled = fieldExamples.length <= 1;
+            extractedPrevBtn.addEventListener('click', () => {
+              if (!fieldExamples.length) return;
+              jsonFieldPreviewOffsetByKey[fieldKey] = (previewOffset - 1 + fieldExamples.length) % fieldExamples.length;
+              renderSources();
+            });
+            extractedNextBtn.addEventListener('click', () => {
+              if (!fieldExamples.length) return;
+              jsonFieldPreviewOffsetByKey[fieldKey] = (previewOffset + 1) % fieldExamples.length;
+              renderSources();
+            });
+            extractedControls.append(extractedPrevBtn, extractedNextBtn);
+            extractedPreviewHead.append(extractedControls);
+            const extractedExample = fieldExamples[previewOffset] || null;
+            const extractedPreviewBody = el('pre', {
+              className: 'table-settings-json-field-preview-body',
+              text: extractedExample ? formatJsonFieldPreview(extractedExample.value) : '(no value found in sampled rows)',
+            });
+            extractedPreview.append(extractedPreviewHead, extractedPreviewBody);
+            if (extractedExample) {
+              extractedPreview.append(el('div', {
+                className: 'hint table-settings-source-option-desc',
+                text: `row ${Math.max(0, Math.round(Number(extractedExample.rowIndex) || 0)) + 1}`,
+              }));
+            }
+            textWrap.append(extractedPreview);
+
+            fieldRow.append(textWrap);
+            sourceBody.append(fieldRow);
+          }
+
+          sourceRow.append(sourceHead, sourceBody);
+          groupBody.append(sourceRow);
+        }
+
+        groupRow.append(groupHead, groupBody);
+        sourcesBody.append(groupRow);
+      }
+
+      if (!relatedGroups.size && !inputStudyProgressSources.length && !inputJsonFieldSources.length) {
+        sourcesBody.append(el('div', { className: 'hint', text: 'No configurable sources are available for this table.' }));
       }
     }
 
@@ -808,6 +1324,12 @@ export function openTableSettingsDialog({
         if (isSourceColumn) {
           const mode = String(state.sources.configByKey?.[key]?.mode || meta?.sourceMode || '').trim();
           if (mode) titleRow.append(el('span', { className: 'hint table-settings-col-type', text: `shape: ${mode}` }));
+        }
+        if (String(meta?.sourceKind || '').trim() === 'jsonField') {
+          const path = String(meta?.jsonPath || '').trim();
+          if (path) titleRow.append(el('span', { className: 'hint table-settings-col-type', text: `path: ${path}` }));
+          const sourceKey = String(meta?.sourceKey || '').trim();
+          if (sourceKey) titleRow.append(el('span', { className: 'hint table-settings-col-type', text: `source: ${sourceKey}` }));
         }
 
         const stats = meta?.stats && typeof meta.stats === 'object' ? meta.stats : null;
@@ -1054,7 +1576,11 @@ export function openTableSettingsDialog({
         return;
       }
       globalMsg.textContent = '';
-      close(normalizeSettings(state, { relatedSources: inputRelatedSources, studyProgressSources: inputStudyProgressSources }));
+      close(normalizeSettings(state, {
+        relatedSources: inputRelatedSources,
+        studyProgressSources: inputStudyProgressSources,
+        jsonFieldSources: inputJsonFieldSources,
+      }));
     });
 
     controls.append(cancelBtn, saveBtn);

@@ -1,12 +1,12 @@
-import { createTable } from '../../components/shared/table.js';
+import { createTable } from '../../components/table/table.js';
 import { card, el } from '../../utils/browser/ui.js';
 import { createDropdown } from '../../components/shared/dropdown.js';
 import { createJsonViewer } from '../../components/shared/jsonViewer.js';
-import { confirmDialog } from '../../components/dialogs/confirmDialog.js';
+import { confirmDialog } from '../../components/shared/confirmDialog.js';
 import { buildImportFeedback } from '../../utils/common/collectionImportFeedback.mjs';
 import { validateEntriesAgainstSchema } from '../../utils/common/validation.mjs';
 import { parseCollectionImportInput } from '../../utils/common/collectionImport.mjs';
-import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
+import { openTableSettingsDialog } from '../../components/table/tableSettingsDialog.js';
 import manageCollectionsViewController from './manageCollectionsViewController.js';
 import { openAiPromptBatchTargetDialog } from './aiPromptConfigDialog.js';
 import {

@@ -1,6 +1,6 @@
 import { el, safeId } from '../../utils/browser/ui.js';
 import { openViewFooterCustomButtonDialog } from './viewFooterCustomButtonDialog.js';
-import { confirmDialog } from '../../components/dialogs/confirmDialog.js';
+import { confirmDialog } from '../../components/shared/confirmDialog.js';
 import { createDropdown } from '../../components/shared/dropdown.js';
 import { createJsonViewer } from '../../components/shared/jsonViewer.js';
 import { getLanguageCode } from '../../utils/browser/speech.js';

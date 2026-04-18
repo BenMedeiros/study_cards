@@ -1,18 +1,18 @@
-import { el } from '../../utils/browser/ui.js';
+import { el, card } from '../../utils/browser/ui.js';
 import * as idb from '../../utils/browser/idb.js';
-import { createViewHeaderTools } from '../../components/features/viewHeaderTools.js';
+import { createViewHeaderTools } from '../../components/viewHeaderTools/viewHeaderTools.js';
 import { createDropdown } from '../../components/shared/dropdown.js';
-import { createTable } from '../../components/shared/table.js';
+import { createTable } from '../../components/table/table.js';
 import { createJsonViewer } from '../../components/shared/jsonViewer.js';
-import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
+import { openTableSettingsDialog } from '../../components/table/tableSettingsDialog.js';
 import entityExplorerViewController from './entityExplorerViewController.js';
-import studyManagerController from '../studyManagerView/studyManagerController.js';
 import {
   normalizeTableSettings,
   applyTableColumnSettings,
   applyTableColumnStyles,
   applyTableActionSettings,
   buildTableColumnItems,
+  attachCardTableSettingsButton,
 } from '../../utils/browser/tableSettings.js';
 
 const TABLE_ACTION_ITEMS = [
@@ -27,11 +27,6 @@ const DEFAULT_ENTITY_EXPLORER_SETTINGS = Object.freeze({
   manager: 'idb',
   db: null,
   selection: null,
-  sessionStateViewer: {
-    expanded: true,
-    wrapping: false,
-    collapsedPaths: [],
-  },
 });
 
 function cloneJson(value, fallback = null) {
@@ -46,19 +41,11 @@ function cloneJson(value, fallback = null) {
 function normalizeEntityExplorerSettings(value) {
   const src = (value && typeof value === 'object') ? value : {};
   const rawManager = String(src.manager || DEFAULT_ENTITY_EXPLORER_SETTINGS.manager).trim();
-  const manager = ['idb', 'ls', 'session'].includes(rawManager) ? rawManager : DEFAULT_ENTITY_EXPLORER_SETTINGS.manager;
-  const sessionStateViewer = (src.sessionStateViewer && typeof src.sessionStateViewer === 'object') ? src.sessionStateViewer : {};
+  const manager = ['idb', 'ls'].includes(rawManager) ? rawManager : DEFAULT_ENTITY_EXPLORER_SETTINGS.manager;
   return {
     manager,
     db: (typeof src.db === 'string' && src.db.trim()) ? src.db : null,
     selection: (typeof src.selection === 'string' && src.selection.trim()) ? src.selection : null,
-    sessionStateViewer: {
-      expanded: sessionStateViewer.expanded !== undefined ? !!sessionStateViewer.expanded : true,
-      wrapping: !!sessionStateViewer.wrapping,
-      collapsedPaths: Array.isArray(sessionStateViewer.collapsedPaths)
-        ? sessionStateViewer.collapsedPaths.filter((entry) => typeof entry === 'string')
-        : [],
-    },
   };
 }
 
@@ -91,6 +78,215 @@ function readLocalStorageValue(key) {
 }
 
 function renderJsonViewer(value, opts) { return createJsonViewer(value, opts); }
+
+function parseJsonPath(path) {
+  const raw = String(path || '').trim();
+  if (!raw || raw[0] !== '$') return null;
+  const tokens = [];
+  let i = 1;
+  while (i < raw.length) {
+    const ch = raw[i];
+    if (ch === '.') {
+      i += 1;
+      let j = i;
+      while (j < raw.length && /[A-Za-z0-9_$]/.test(raw[j])) j += 1;
+      const key = raw.slice(i, j).trim();
+      if (!key) return null;
+      tokens.push({ kind: 'prop', key });
+      i = j;
+      continue;
+    }
+    if (ch === '[') {
+      const end = raw.indexOf(']', i + 1);
+      if (end < 0) return null;
+      const inner = raw.slice(i + 1, end).trim();
+      if (!/^\d+$/.test(inner)) return null;
+      tokens.push({ kind: 'index', index: Math.max(0, Math.round(Number(inner) || 0)) });
+      i = end + 1;
+      continue;
+    }
+    return null;
+  }
+  return tokens;
+}
+
+function extractJsonPathValue(value, path) {
+  const tokens = parseJsonPath(path);
+  if (!tokens) return undefined;
+  let current = value;
+  for (const token of tokens) {
+    if (token.kind === 'prop') {
+      if (!current || typeof current !== 'object') return undefined;
+      current = current[token.key];
+      continue;
+    }
+    if (!Array.isArray(current)) return undefined;
+    current = current[token.index];
+  }
+  return current;
+}
+
+function classifyJsonFieldValue(value) {
+  if (typeof value === 'string') return 'string';
+  if (typeof value === 'number' && Number.isFinite(value)) return 'number';
+  if (typeof value === 'boolean') return 'boolean';
+  if (value == null) return 'json';
+  return 'json';
+}
+
+function inferJsonFieldType(values) {
+  const seen = new Set();
+  for (const value of (Array.isArray(values) ? values : [])) {
+    if (value == null) continue;
+    seen.add(classifyJsonFieldValue(value));
+  }
+  if (!seen.size) return 'json';
+  if (seen.size === 1) return Array.from(seen)[0];
+  return 'json';
+}
+
+function safePreviewValue(value) {
+  if (value == null) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  return cloneJson(value, null);
+}
+
+function collectJsonPathOptionsFromValue(value, { path = '$', depth = 0, map, rowIndex, maxDepth = 4, maxArrayItems = 5 } = {}) {
+  if (!map || depth > maxDepth) return;
+  const key = String(path || '$').trim() || '$';
+  let rec = map.get(key);
+  if (!rec) {
+    rec = { path: key, values: [], examples: [] };
+    map.set(key, rec);
+  }
+  rec.values.push(value);
+  if (rec.examples.length < 12) {
+    rec.examples.push({
+      rowIndex,
+      value: safePreviewValue(value),
+    });
+  }
+  if (!value || typeof value !== 'object') return;
+  if (Array.isArray(value)) {
+    for (let i = 0; i < Math.min(value.length, maxArrayItems); i++) {
+      collectJsonPathOptionsFromValue(value[i], {
+        path: `${key}[${i}]`,
+        depth: depth + 1,
+        map,
+        rowIndex,
+        maxDepth,
+        maxArrayItems,
+      });
+    }
+    return;
+  }
+  for (const prop of Object.keys(value)) {
+    collectJsonPathOptionsFromValue(value[prop], {
+      path: `${key}.${prop}`,
+      depth: depth + 1,
+      map,
+      rowIndex,
+      maxDepth,
+      maxArrayItems,
+    });
+  }
+}
+
+function buildStorageJsonFieldSources({ headers, rows } = {}) {
+  const hs = Array.isArray(headers) ? headers : [];
+  const rs = Array.isArray(rows) ? rows : [];
+  return hs.map((header, columnIndex) => {
+    const key = String((header && typeof header === 'object') ? (header.key || '') : (header || '')).trim();
+    if (!key) return null;
+    const pathMap = new Map();
+    for (let rowIndex = 0; rowIndex < rs.length; rowIndex++) {
+      const row = rs[rowIndex];
+      const value = Array.isArray(row) ? row[columnIndex] : undefined;
+      collectJsonPathOptionsFromValue(value, { map: pathMap, rowIndex });
+    }
+    const pathOptions = Array.from(pathMap.values()).map((item) => ({
+      path: item.path,
+      label: item.path === '$' ? '(self)' : item.path,
+      type: inferJsonFieldType(item.values),
+      examples: item.examples,
+    })).sort((a, b) => String(a.path || '').localeCompare(String(b.path || '')));
+    return {
+      key,
+      label: key,
+      description: `Extract a JSON field from the ${key} column.`,
+      type: inferJsonFieldType(rs.map((row) => Array.isArray(row) ? row[columnIndex] : undefined)),
+      pathOptions,
+    };
+  }).filter(Boolean);
+}
+
+function coerceJsonFieldValue(value, valueType) {
+  const type = String(valueType || 'auto').trim().toLowerCase();
+  if (type === 'json' || type === 'auto') return value;
+  if (type === 'string') {
+    if (value == null) return '';
+    if (typeof value === 'string') return value;
+    try { return JSON.stringify(value); } catch { return String(value); }
+  }
+  if (type === 'number') {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : '';
+  }
+  if (type === 'boolean') {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') {
+      const normalized = value.trim().toLowerCase();
+      if (normalized === 'true') return true;
+      if (normalized === 'false') return false;
+    }
+    if (typeof value === 'number') return value !== 0;
+    return '';
+  }
+  return value;
+}
+
+function buildStorageHeadersAndRows({ headers, rows, tableSettings }) {
+  const baseHeaders = Array.isArray(headers) ? headers.slice() : [];
+  const baseRows = Array.isArray(rows) ? rows.slice() : [];
+  const normalized = normalizeTableSettings(tableSettings);
+  const jsonFields = Array.isArray(normalized?.sources?.jsonFields) ? normalized.sources.jsonFields : [];
+  if (!jsonFields.length) return { headers: baseHeaders, rows: baseRows };
+
+  const keyToIndex = new Map();
+  baseHeaders.forEach((header, index) => {
+    const key = String((header && typeof header === 'object') ? (header.key || '') : (header || '')).trim();
+    if (key && !keyToIndex.has(key)) keyToIndex.set(key, index);
+  });
+
+  const derivedHeaders = jsonFields.map((field) => ({
+    key: String(field.key || '').trim(),
+    label: String(field.label || field.path || field.key || '').trim() || String(field.key || '').trim(),
+    type: String(field.valueType || '').trim() || 'auto',
+    sourceKind: 'jsonField',
+    sourceKey: String(field.sourceKey || '').trim(),
+    jsonPath: String(field.path || '').trim(),
+  })).filter((field) => field.key);
+
+  const nextRows = baseRows.map((row) => {
+    const out = Array.isArray(row) ? row.slice() : [];
+    for (const field of jsonFields) {
+      const sourceKey = String(field.sourceKey || '').trim();
+      const path = String(field.path || '').trim();
+      const sourceIndex = keyToIndex.get(sourceKey);
+      const sourceValue = (sourceIndex == null || !Array.isArray(row)) ? undefined : row[sourceIndex];
+      const extracted = extractJsonPathValue(sourceValue, path);
+      out.push(coerceJsonFieldValue(extracted, field.valueType));
+    }
+    try { out.__id = row.__id; } catch (e) {}
+    return out;
+  });
+
+  return {
+    headers: [...baseHeaders, ...derivedHeaders],
+    rows: nextRows,
+  };
+}
 
 // Helpers for listing/opening arbitrary DBs and reading stores
 async function listDatabases() {
@@ -150,10 +346,6 @@ export function renderEntityExplorer({ store }) {
   let latestTableHeaders = [];
   let latestTableRows = [];
   let latestTableSourceInfo = '';
-  let analysisStateUnsub = null;
-  let sessionViewerExpose = null;
-  let isViewActive = true;
-  let pendingManagerRefresh = false;
 
   function readSavedEntityExplorerSettings() {
     try {
@@ -194,21 +386,6 @@ export function renderEntityExplorer({ store }) {
     } catch (e) {}
   }
 
-  function persistSessionViewerState() {
-    try {
-      if (!sessionViewerExpose) return;
-      persistEntityExplorerSettings({
-        sessionStateViewer: {
-          expanded: !!sessionViewerExpose.getExpanded?.(),
-          wrapping: !!sessionViewerExpose.getWrapping?.(),
-          collapsedPaths: Array.isArray(sessionViewerExpose.getCollapsedPaths?.())
-            ? sessionViewerExpose.getCollapsedPaths()
-            : [],
-        },
-      });
-    } catch (e) {}
-  }
-
   try {
     if (settingsCollectionKey) {
       tableSettingsCtrl = entityExplorerViewController.create(settingsCollectionKey);
@@ -226,18 +403,77 @@ export function renderEntityExplorer({ store }) {
   }
 
   async function openStorageTableSettingsDialog() {
+    const shaped = buildStorageHeadersAndRows({
+      headers: latestTableHeaders,
+      rows: latestTableRows,
+      tableSettings: storageTableSettings,
+    });
+    const jsonFieldSources = buildStorageJsonFieldSources({
+      headers: latestTableHeaders,
+      rows: latestTableRows,
+    });
     const next = await openTableSettingsDialog({
       tableName: 'Entity Explorer Storage Table',
       sourceInfo: latestTableSourceInfo,
-      columns: buildTableColumnItems(latestTableHeaders, latestTableRows),
+      columns: buildTableColumnItems(shaped.headers, shaped.rows),
       actions: TABLE_ACTION_ITEMS,
       settings: storageTableSettings,
+      jsonFieldSources,
     });
     if (!next) return;
     await persistStorageTableSettings(next);
 
     const manager = String((managerDropdown?.getValue && managerDropdown.getValue()) || initialManager || 'idb');
     await loadAndRenderManager(manager);
+  }
+
+  function buildStorageTableCard({ child, cornerCaption = '' } = {}) {
+    const cardEl = card({
+      id: 'entity-explorer-storage-card',
+      cornerCaption,
+      children: child ? [child] : [],
+    });
+    attachCardTableSettingsButton({
+      cardEl,
+      onClick: () => {
+        void openStorageTableSettingsDialog();
+      },
+      title: 'Storage table settings',
+    });
+    return cardEl;
+  }
+
+  function updateStorageTableCardCaption(cardEl, { visibleRows, totalRows, unitLabel = 'rows' } = {}) {
+    try {
+      const corner = cardEl?.querySelector('.card-corner-caption');
+      if (!corner) return;
+      const visible = Math.max(0, Math.round(Number(visibleRows) || 0));
+      const total = Math.max(0, Math.round(Number(totalRows) || 0));
+      corner.textContent = (visible < total)
+        ? `${visible}/${total} ${unitLabel}`
+        : `${total} ${unitLabel}`;
+      corner.title = (visible < total)
+        ? `${visible} of ${total} ${unitLabel} shown`
+        : `${total} ${unitLabel}`;
+    } catch (e) {}
+  }
+
+  function attachStorageTableCaption(cardEl, tableWrapper, { totalRows = 0, unitLabel = 'rows' } = {}) {
+    if (!cardEl || !tableWrapper) return;
+    const update = (detail = {}) => {
+      updateStorageTableCardCaption(cardEl, {
+        visibleRows: detail?.visibleRows,
+        totalRows: detail?.totalRows,
+        unitLabel,
+      });
+    };
+    tableWrapper.addEventListener('table:stateChange', (e) => {
+      update(e?.detail || {});
+    });
+    update({
+      visibleRows: Number(tableWrapper?.dataset?.visibleRows ?? totalRows),
+      totalRows: Number(tableWrapper?.dataset?.totalRows ?? totalRows),
+    });
   }
   // Register as a settings consumer.
   try {
@@ -253,86 +489,10 @@ export function renderEntityExplorer({ store }) {
   const content = document.createElement('div');
   content.className = 'entity-explorer-content';
 
-  // Collapse-all control (added to header tools)
-  const _collapseRec = headerTools.addElement({
-    type: 'button', key: 'collapseAll', label: 'Collapse all', title: 'Collapse all JSON viewers'
-  });
-  const _tableSettingsRec = headerTools.addElement({
-    type: 'button', key: 'tableSettings', label: 'Table', title: 'Storage table settings'
-  });
-  const _refreshSessionRec = headerTools.addElement({
-    type: 'button', key: 'refreshSessionState', label: 'Refresh', title: 'Refresh session-state analysis reports'
-  });
-  function updateCollapseAllBtnState() {
-    const collapseAllBtn = headerTools.getControl('collapseAll');
-    // enabled only if there exists at least one expanded json-view-wrapper
-    const anyExpanded = Boolean(document.querySelector('#entity-explorer-root .json-view-wrapper[data-expanded="true"]'));
-    if (collapseAllBtn) collapseAllBtn.disabled = !anyExpanded;
-  }
-
-  const tableSettingsBtn = headerTools.getControl('tableSettings');
-  if (tableSettingsBtn) {
-    tableSettingsBtn.addEventListener('click', () => {
-      void openStorageTableSettingsDialog();
-    });
-  }
-  const refreshSessionBtn = headerTools.getControl('refreshSessionState');
-  if (refreshSessionBtn) {
-    refreshSessionBtn.addEventListener('click', () => {
-      void refreshSessionStateReports();
-    });
-  }
-  const collapseAllBtn = headerTools.getControl('collapseAll');
-  if (collapseAllBtn) {
-    collapseAllBtn.addEventListener('click', () => {
-      const wrappers = Array.from(document.querySelectorAll('#entity-explorer-root .json-view-wrapper'));
-      wrappers.forEach(w => {
-        const btn = w.querySelector('.json-toggle');
-        if (!btn) return;
-        // if currently expanded, click to collapse
-        if (w.dataset.expanded === 'true') btn.click();
-      });
-      updateCollapseAllBtnState();
-    });
-  }
-
-
   const managerItems = [
     { value: 'idb', label: 'IndexedDB' },
     { value: 'ls', label: 'localStorage' },
-    { value: 'session', label: 'Session State' },
   ];
-
-  function teardownSessionStateSubscription() {
-    try { if (typeof analysisStateUnsub === 'function') analysisStateUnsub(); } catch (e) {}
-    analysisStateUnsub = null;
-    sessionViewerExpose = null;
-  }
-
-  function updateTableSettingsBtnState(manager) {
-    const button = headerTools.getControl('tableSettings');
-    if (!button) return;
-    button.disabled = String(manager || 'idb') === 'session';
-  }
-
-  function updateSessionRefreshBtnState(manager) {
-    const button = headerTools.getControl('refreshSessionState');
-    if (!button) return;
-    button.disabled = String(manager || 'idb') !== 'session';
-  }
-
-  async function refreshSessionStateReports() {
-    try { await store?.collectionDB?.validations?.runAll?.(); } catch (e) {}
-    try {
-      const activeCollectionId = String(store?.collections?.getActiveCollectionId?.() || '').trim();
-      if (activeCollectionId) {
-        studyManagerController.requestRefresh('entityExplorer.session.refresh', {
-          delayMs: 0,
-          collectionIds: [activeCollectionId],
-        });
-      }
-    } catch (e) {}
-  }
 
   function hideIdbControls() {
     try { if (dbGroup?.parentElement) dbGroup.parentElement.removeChild(dbGroup); } catch (e) {}
@@ -345,75 +505,26 @@ export function renderEntityExplorer({ store }) {
   }
 
   async function loadAndRenderManager(manager) {
-    teardownSessionStateSubscription();
-    updateTableSettingsBtnState(manager);
-    updateSessionRefreshBtnState(manager);
     content.innerHTML = '';
     content.append(el('div', { className: 'hint', text: 'Loading…' }));
     try {
-      if (manager === 'session') {
-        latestTableHeaders = [];
-        latestTableRows = [];
-        latestTableSourceInfo = 'Session State';
-
-        const expose = {};
-        sessionViewerExpose = expose;
-        const getSessionStateSnapshot = () => {
-          try { return store?.analysis?.getState?.() || {}; } catch (e) { return {}; }
-        };
-        const viewer = renderJsonViewer(getSessionStateSnapshot(), {
-          id: 'entity-explorer-session-state',
-          expanded: entityExplorerSettings?.sessionStateViewer?.expanded !== undefined
-            ? !!entityExplorerSettings.sessionStateViewer.expanded
-            : true,
-          wrapping: !!entityExplorerSettings?.sessionStateViewer?.wrapping,
-          collapsedPaths: Array.isArray(entityExplorerSettings?.sessionStateViewer?.collapsedPaths)
-            ? entityExplorerSettings.sessionStateViewer.collapsedPaths
-            : [],
-          maxChars: 200000,
-          maxLines: 10000,
-          previewLen: 400,
-          expose,
-        });
-
+      if (manager === 'idb') {
+        const empty = el('div', { className: 'hint', text: 'Select a database and store to inspect.' });
         content.innerHTML = '';
-        content.append(viewer);
-        viewer.addEventListener('json-toggle', () => {
-          persistSessionViewerState();
-        });
-        viewer.addEventListener('json-tree-toggle', () => {
-          persistSessionViewerState();
-        });
-        viewer.addEventListener('json-wrap-toggle', () => {
-          persistSessionViewerState();
-        });
-        if (store?.analysis && typeof store.analysis.subscribe === 'function') {
-          analysisStateUnsub = store.analysis.subscribe(() => {
-            try {
-              const activeManager = String((managerDropdown?.getValue && managerDropdown.getValue()) || initialManager || 'idb');
-              if (activeManager !== 'session') return;
-              if (!isViewActive) {
-                pendingManagerRefresh = true;
-                return;
-              }
-              expose.setJson?.(getSessionStateSnapshot());
-              updateCollapseAllBtnState();
-            } catch (e) {}
-          });
-        }
-        try { updateCollapseAllBtnState(); } catch (e) {}
-      } else if (manager === 'idb') {
-        content.innerHTML = el('div', { className: 'hint', text: 'Select a database and store to inspect.' });
+        content.append(buildStorageTableCard({
+          child: empty,
+          cornerCaption: 'IndexedDB',
+        }));
       } else {
         const keys = collectLocalStorageKeys();
         const rows = keys.map(k => {
-          const pre = renderJsonViewer(readLocalStorageValue(k));
-          const arr = [k, pre];
+          const arr = [k, readLocalStorageValue(k)];
           try { arr.__id = k; } catch (e) {}
           return arr;
         });
         const headers = ['Key', 'Value'];
-        const applied = applyTableColumnSettings({ headers, rows, tableSettings: storageTableSettings });
+        const shaped = buildStorageHeadersAndRows({ headers, rows, tableSettings: storageTableSettings });
+        const applied = applyTableColumnSettings({ headers: shaped.headers, rows: shaped.rows, tableSettings: storageTableSettings });
         const table = createTable({ store, headers: applied.headers, rows: applied.rows, columnRenderSettings: (storageTableSettings?.columns?.stylesByKey || {}), tableRenderSettings: storageTableSettings?.table || {}, id: 'ls-table', searchable: true, sortable: true });
         applyTableColumnStyles({ wrapper: table, tableSettings: storageTableSettings });
         applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings: storageTableSettings, actionItems: TABLE_ACTION_ITEMS });
@@ -422,12 +533,16 @@ export function renderEntityExplorer({ store }) {
         latestTableSourceInfo = `localStorage | ${rows.length} keys`;
 
         content.innerHTML = '';
-        content.append(table);
-        try { updateCollapseAllBtnState(); } catch (e) {}      }
+        const cardEl = buildStorageTableCard({
+          child: table,
+          cornerCaption: `${rows.length} keys`,
+        });
+        attachStorageTableCaption(cardEl, table, { totalRows: rows.length, unitLabel: 'keys' });
+        content.append(cardEl);
+      }
     } catch (e) {
       content.innerHTML = '';
       content.append(renderJsonViewer({ error: String(e?.message || e) }));
-      try { updateCollapseAllBtnState(); } catch (e) {}
     }
   }
 
@@ -492,29 +607,16 @@ export function renderEntityExplorer({ store }) {
   const spacer = document.createElement('div');
   spacer.className = 'header-tools-spacer';
   headerTools.append(left, spacer);
-  // append right-side controls to header tools
-  try { if (_tableSettingsRec && _tableSettingsRec.group) headerTools.append(_tableSettingsRec.group); } catch (e) {}
-  try { if (_refreshSessionRec && _refreshSessionRec.group) headerTools.append(_refreshSessionRec.group); } catch (e) {}
-  try { if (_collapseRec && _collapseRec.group) headerTools.append(_collapseRec.group); } catch (e) {}
-
-  // wrap handled per-view inside each JSON viewer component
 
   root.append(headerTools, content);
-
-  // update collapse-all button when individual json viewers change
-  root.addEventListener('json-toggle', () => {
-    try { updateCollapseAllBtnState(); } catch (e) {}
-  });
 
   // initial state
   const _initState = _savedAppState || {};
   const _initManager = String(_initState.manager || 'idb');
   if (_initManager === 'idb') {
-    updateTableSettingsBtnState('idb');
     loadAndRenderManager('idb');
     rebuildDbDropdown();
   } else {
-    updateTableSettingsBtnState(_initManager);
     loadAndRenderManager(_initManager);
     hideIdbControls();
   }
@@ -614,13 +716,13 @@ export function renderEntityExplorer({ store }) {
             val = r;
           }
         } catch (e) { key = String(idx); val = r; }
-        const pre = renderJsonViewer(val);
-        const arr = [key, pre];
+        const arr = [key, val];
         try { arr.__id = key; } catch (e) {}
         return arr;
       }) : [];
       const headers = ['Key', 'Value'];
-      const applied = applyTableColumnSettings({ headers, rows, tableSettings: storageTableSettings });
+      const shaped = buildStorageHeadersAndRows({ headers, rows, tableSettings: storageTableSettings });
+      const applied = applyTableColumnSettings({ headers: shaped.headers, rows: shaped.rows, tableSettings: storageTableSettings });
       const table = createTable({ store, headers: applied.headers, rows: applied.rows, columnRenderSettings: (storageTableSettings?.columns?.stylesByKey || {}), tableRenderSettings: storageTableSettings?.table || {}, id: `idb-${dbName}-${storeName}-table`, searchable: true, sortable: true });
       applyTableColumnStyles({ wrapper: table, tableSettings: storageTableSettings });
       applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings: storageTableSettings, actionItems: TABLE_ACTION_ITEMS });
@@ -629,43 +731,27 @@ export function renderEntityExplorer({ store }) {
       latestTableSourceInfo = `${dbName}/${storeName} | ${rows.length} rows`;
 
       content.innerHTML = '';
-      content.append(table);
-      try { updateCollapseAllBtnState(); } catch (e) {}
+      const cardEl = buildStorageTableCard({
+        child: table,
+        cornerCaption: `${rows.length} rows`,
+      });
+      attachStorageTableCaption(cardEl, table, { totalRows: rows.length, unitLabel: 'rows' });
+      content.append(cardEl);
     } catch (e) {
       content.innerHTML = '';
       content.append(renderJsonViewer({ error: String(e?.message || e) }));
-      try { updateCollapseAllBtnState(); } catch (e) {}
     }
   }
 
   const mo = new MutationObserver(() => {
     if (!document.body.contains(root)) {
-      teardownSessionStateSubscription();
       try { if (tableSettingsCtrl && typeof tableSettingsCtrl.dispose === 'function') tableSettingsCtrl.dispose(); } catch (e) {}
       mo.disconnect();
     }
   });
   mo.observe(document.body, { childList: true, subtree: true });
-  root.__activate = () => {
-    isViewActive = true;
-    if (!pendingManagerRefresh) return;
-    pendingManagerRefresh = false;
-    const manager = String((managerDropdown?.getValue && managerDropdown.getValue()) || initialManager || 'idb');
-    void loadAndRenderManager(manager);
-  };
-  root.__deactivate = () => {
-    isViewActive = false;
-  };
   return root;
 }
-
-
-
-
-
-
-
-
 
 
 

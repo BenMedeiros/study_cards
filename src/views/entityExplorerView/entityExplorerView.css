@@ -1,8 +1,11 @@
 /* Entity Explorer */
 .entity-explorer-view .entity-explorer-content {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 0.5rem;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .entity-explorer-view .entity-explorer-controls-row {
@@ -12,16 +15,11 @@
   flex-wrap: wrap;
 }
 
-.entity-explorer-view .table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.entity-explorer-view .table th,
-.entity-explorer-view .table td {
-  border: var(--border-1);
-  padding: 0.35rem 0.45rem;
-  vertical-align: top;
+.entity-explorer-view .entity-explorer-content > .card {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0;
+  overflow: hidden;
 }
 
 .entity-explorer-view .mono {

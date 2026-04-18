@@ -1,101 +1,9 @@
-/* Reusable dialog shells */
-:is(.confirm-backdrop, .table-settings-backdrop) {
+/* Table settings dialog */
+.table-settings-backdrop {
   position: fixed;
   inset: 0;
   opacity: 0;
   transition: opacity 120ms ease;
-}
-
-:is(.confirm-backdrop.show, .table-settings-backdrop.show) {
-  opacity: 1;
-}
-
-:is(.confirm-dialog, .table-settings-dialog) {
-  background: var(--panel);
-  color: var(--text);
-  border: var(--border-1);
-  opacity: 0;
-}
-
-/* Generic confirm dialog */
-.confirm-backdrop {
-  background: var(--surface-scrim);
-  z-index: 1300;
-}
-
-.confirm-dialog {
-  z-index: 1301;
-  min-width: 22rem;
-  max-width: min(32rem, 92vw);
-  border-radius: 0.75rem;
-  box-shadow: var(--shadow-dialog);
-  padding: 0.9rem;
-  transform: translate(-50%, -50%) scale(0.98);
-  transition: opacity 120ms ease, transform 120ms cubic-bezier(.2, .9, .3, 1);
-  overflow-x: auto;
-  max-height: 90vh;
-}
-
-.confirm-dialog.open {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.confirm-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-}
-
-.confirm-title {
-  font-weight: 750;
-  font-size: var(--font-size-lg);
-}
-
-.confirm-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 0.75rem;
-}
-
-.confirm-message {
-  line-height: 1.35;
-}
-
-.confirm-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
-/* Make JSON inside confirm dialogs use the same mono styling as the
-   Entity Explorer so previews/examples look consistent. */
-.confirm-body .json-content,
-.confirm-dialog .json-content,
-.confirm-body .json-view,
-.confirm-dialog .json-view,
-.confirm-body .mono,
-.confirm-dialog .mono {
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-md);
-  color: var(--text);
-  line-height: 1.45;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.confirm-body pre,
-.confirm-dialog pre {
-  margin: 0;
-  background: transparent;
-  padding: 0.25rem 0.4rem;
-  border-radius: 0.25rem;
-}
-
-/* Data table settings dialog */
-.table-settings-backdrop {
   z-index: 1400;
   display: flex;
   align-items: center;
@@ -104,7 +12,15 @@
   background: var(--surface-scrim-strong);
 }
 
+.table-settings-backdrop.show {
+  opacity: 1;
+}
+
 .table-settings-dialog {
+  background: var(--panel);
+  color: var(--text);
+  border: var(--border-1);
+  opacity: 0;
   width: min(980px, 95vw);
   max-height: 90vh;
   overflow: auto;
@@ -362,6 +278,68 @@
 
 .table-settings-source-mode select {
   width: 100%;
+}
+
+.table-settings-inline-dropdown {
+  width: 100%;
+  display: block;
+}
+
+.table-settings-inline-dropdown .custom-dropdown-button {
+  width: 100%;
+  min-width: 0;
+}
+
+.table-settings-inline-dropdown .custom-dropdown-menu {
+  min-width: 100%;
+}
+
+.table-settings-json-field-builder {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.45rem;
+  border: var(--border-1);
+  border-radius: 0.42rem;
+  background: var(--surface-field-soft);
+}
+
+.table-settings-json-field-meta {
+  display: grid;
+  align-content: end;
+  gap: 0.12rem;
+}
+
+.table-settings-json-field-meta strong {
+  font-size: var(--font-size-sm);
+}
+
+.table-settings-json-field-preview {
+  display: grid;
+  gap: 0.25rem;
+  border: var(--border-1);
+  border-radius: 0.42rem;
+  background: var(--surface-card-faint);
+  padding: 0.35rem;
+}
+
+.table-settings-json-field-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.table-settings-json-field-preview-body {
+  margin: 0;
+  padding: 0.4rem;
+  border-radius: 0.36rem;
+  background: var(--surface-overlay-muted);
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 12rem;
+  overflow: auto;
+  font-size: var(--font-size-xs);
 }
 
 .table-settings-row-table {

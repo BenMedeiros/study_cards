@@ -1,13 +1,11 @@
-import { createTable } from '../../components/shared/table.js';
+import { createTable } from '../../components/table/table.js';
 import { card } from '../../utils/browser/ui.js';
 import { el } from '../../utils/browser/ui.js';
-import { createViewHeaderTools } from '../../components/features/viewHeaderTools.js';
-import { addShuffleControls } from '../../components/features/collectionControls.js';
-import { addStudyFilter } from '../../components/features/studyControls.js';
+import { createViewHeaderTools, addStudyFilter } from '../../components/viewHeaderTools/viewHeaderTools.js';
 import collectionSettingsManager from '../../managers/collectionSettingsManager.js';
 import { createDropdown } from '../../components/shared/dropdown.js';
-import { confirmDialog } from '../../components/dialogs/confirmDialog.js';
-import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
+import { confirmDialog } from '../../components/shared/confirmDialog.js';
+import { openTableSettingsDialog } from '../../components/table/tableSettingsDialog.js';
 import dataViewController from './dataViewController.js';
 import { parseHashRoute, buildHashRoute } from '../../utils/browser/helpers.js';
 import { buildTableColumnItems } from '../../utils/browser/tableSettings.js';
@@ -613,11 +611,45 @@ export function renderData({ store }) {
   // Controls: header owns primary collection actions; declare buttons via viewHeaderTools
   const controls = createViewHeaderTools({ elements: [] });
   try {
-    addShuffleControls(controls, {
-      store,
-      onShuffle: () => { updateStudyLabel(); markStudyRows(); },
-      onClearShuffle: () => { try { updateStudyLabel(); markStudyRows(); } catch (e) {} },
-      onClearLearned: async () => {
+    controls.addElement({
+      type: 'button',
+      key: 'shuffle',
+      label: 'Shuffle',
+      caption: 'col.shuffle',
+      onClick: () => {
+        try {
+          const coll = store?.collections?.getActiveCollection?.();
+          if (!coll?.key) return;
+          store.collections.shuffleCollection(coll.key);
+          updateStudyLabel();
+          markStudyRows();
+          updateControlStates();
+        } catch (e) {}
+      }
+    });
+    controls.addElement({
+      type: 'button',
+      key: 'clearShuffle',
+      label: 'Clear Shuffle',
+      caption: 'col.clear-shuffle',
+      onClick: () => {
+        try {
+          const coll = store?.collections?.getActiveCollection?.();
+          if (!coll?.key) return;
+          store.collections.clearCollectionShuffle(coll.key);
+          updateStudyLabel();
+          markStudyRows();
+          updateControlStates();
+        } catch (e) {}
+      }
+    });
+    controls.addElement({
+      type: 'button',
+      key: 'clearLearned',
+      label: 'Clear Learned',
+      caption: 'col.clear-learned',
+      title: 'Remove Learned flags',
+      onClick: async () => {
         const stats = getClearLearnedStats();
         const n = Math.max(0, Math.round(Number(stats?.count) || 0));
         if (!n) return;
@@ -636,7 +668,6 @@ export function renderData({ store }) {
         if (!ok) return;
         try {
           const keys = Array.isArray(stats?.keys) ? stats.keys : [];
-          const adapter = getProgressAdapter();
           if (typeof store?.kanjiProgress?.clearLearnedKanjiForValues === 'function') {
             const coll = store?.collections?.getActiveCollection?.();
             store.kanjiProgress.clearLearnedKanjiForValues(keys, { collectionKey: coll?.key });
@@ -1347,12 +1378,14 @@ export function renderData({ store }) {
       }
 
     // Update corner caption if present.
-    // Show the *persisted* (held) filter, not the table's ephemeral local filter.
+    // Show the persisted held filter and the current local table-filter count.
       try {
       const corner = root.querySelector('#data-card .card-corner-caption');
-      if (corner) {
-        const visible = visibleEntries.length;
-        const total = visible;
+      const tableWrapper = tableMount.querySelector('.table-wrapper');
+      const updateCornerCaption = ({ visibleRows, totalRows } = {}) => {
+        if (!corner) return;
+        const visible = Math.max(0, Math.round(Number(visibleRows) || 0));
+        const total = Math.max(0, Math.round(Number(totalRows) || 0));
         const base = (visible < total) ? `${visible}/${total} Entries` : `${total} Entries`;
 
         // Architecture note: treat collection state as the source of truth for held filters.
@@ -1370,11 +1403,20 @@ export function renderData({ store }) {
           titleParts.push(`Held filter: ${held}`);
         }
 
-        // Ask CollectionsManager for expansion deltas on the held/study-filtered,
-        // unexpanded base entries.
+        if (visible < total) {
+          titleParts.unshift(`${visible} of ${total} entries shown`);
+        }
+
         corner.textContent = parts.join(' • ');
         corner.title = titleParts.join('\n');
-      }
+      };
+      updateCornerCaption({
+        visibleRows: Number(tableWrapper?.dataset?.visibleRows ?? visibleEntries.length),
+        totalRows: Number(tableWrapper?.dataset?.totalRows ?? visibleEntries.length),
+      });
+      tableWrapper?.addEventListener('table:stateChange', (e) => {
+        updateCornerCaption(e?.detail || {});
+      });
       } catch (e) {
         // ignore
       }

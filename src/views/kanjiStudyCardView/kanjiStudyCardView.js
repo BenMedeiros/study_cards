@@ -1,15 +1,13 @@
 import { nowMs } from '../../utils/browser/helpers.js';
 import { speak } from '../../utils/browser/speech.js';
 
-import { createViewHeaderTools } from '../../components/features/viewHeaderTools.js';
+import { createViewHeaderTools, addStudyFilter } from '../../components/viewHeaderTools/viewHeaderTools.js';
 import { createViewFooterControls } from './viewFooterControls.js';
 import { getDefaultSpeechConfigForCollection } from './kanjiStudyController.js';
 import { CARD_REGISTRY } from './cards/index.js';
-import { addStudyFilter } from '../../components/features/studyControls.js';
-import { addShuffleControls } from '../../components/features/collectionControls.js';
 import kanjiStudyController from './kanjiStudyController.js';
 import { openGenericFlatCardConfigDialog, openRelatedCardConfigDialog } from './cardConfigDialog.js';
-import { openKanjiStudyCardViewConfigDialog } from './kanjiStudyCardViewConfigDialog.js';
+import { openViewHeaderSettingsDialog } from '../../components/viewHeaderTools/viewHeaderSettingsDialog.js';
 import { createKanjiStudyFooterActionsController } from './actionsController.js';
 import { createMainFieldCardCastSession } from '../../integrations/casting/mainFieldCardCastSession.js';
 import { createGoogleCastSender } from '../../integrations/casting/googleCastSender.js';
@@ -933,7 +931,7 @@ export function renderKanjiStudyCard({ store }) {
     const active = store?.collections?.getActiveCollection?.();
     const key = String(active?.key || '').trim();
     if (!key) return;
-    const next = await openKanjiStudyCardViewConfigDialog({
+    const next = await openViewHeaderSettingsDialog({
       title: 'View Header Settings',
       items: getManagedHeaderToolItems(),
       selectedItems: cloneManagedHeaderToolsConfig(headerToolsConfig, getManagedHeaderToolItems()).items,
@@ -2608,20 +2606,28 @@ export function renderKanjiStudyCard({ store }) {
   // Tools behaviour
   // wire shuffle control after handler exists
   try {
-    addShuffleControls(headerTools, {
-      store,
-      onShuffle: shuffleEntries,
-      onClearShuffle: () => {
+    headerTools.addElement({
+      type: 'button',
+      key: 'shuffle',
+      label: 'Shuffle',
+      caption: 'col.shuffle',
+      onClick: shuffleEntries,
+    });
+    headerTools.addElement({
+      type: 'button',
+      key: 'clearShuffle',
+      label: 'Clear Shuffle',
+      caption: 'col.clear-shuffle',
+      onClick: () => {
         try {
+          const active = store?.collections?.getActiveCollection?.();
+          if (active?.key) store.collections.clearCollectionShuffle(active.key);
           refreshEntriesFromStore();
           if (kanjiController && typeof kanjiController.goToIndex === 'function') kanjiController.goToIndex(0);
           isShuffled = false;
-          // ensure UI updates; controller will persist index when appropriate
           render();
         } catch (e) {}
       },
-      includeClearShuffle: true,
-      includeClearLearned: false
     });
   } catch (e) {}
   registerManagedHeaderTool({ key: 'shuffle', label: 'Shuffle', description: 'Shuffle collection order' });

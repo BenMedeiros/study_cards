@@ -71,6 +71,48 @@ function normalizeStylesByKey(v) {
   return out;
 }
 
+function sanitizeJsonFieldKeyPart(value) {
+  return String(value || '')
+    .trim()
+    .replace(/[^A-Za-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .toLowerCase();
+}
+
+function buildJsonFieldKey(sourceKey, path) {
+  const sourcePart = sanitizeJsonFieldKeyPart(sourceKey) || 'value';
+  const pathPart = sanitizeJsonFieldKeyPart(path) || 'field';
+  return `json_${sourcePart}__${pathPart}`;
+}
+
+function normalizeJsonFieldType(value) {
+  const raw = String(value || '').trim().toLowerCase();
+  return ['auto', 'string', 'number', 'boolean', 'json'].includes(raw) ? raw : 'auto';
+}
+
+function normalizeJsonFields(v) {
+  const arr = Array.isArray(v) ? v : [];
+  const out = [];
+  const seen = new Set();
+  for (const raw of arr) {
+    if (!raw || typeof raw !== 'object') continue;
+    const sourceKey = String(raw.sourceKey || '').trim();
+    const path = String(raw.path || '').trim();
+    if (!sourceKey || !path) continue;
+    const key = String(raw.key || buildJsonFieldKey(sourceKey, path)).trim();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      key,
+      sourceKey,
+      path,
+      label: String(raw.label || path).trim() || path,
+      valueType: normalizeJsonFieldType(raw.valueType || raw.type),
+    });
+  }
+  return out;
+}
+
 export const DEFAULT_TABLE_VIRTUALIZATION = {
   enabled: true,
   threshold: 50,
@@ -98,6 +140,7 @@ export function normalizeTableSettings(v) {
   const cols = (src.columns && typeof src.columns === 'object') ? src.columns : {};
   const acts = (src.actions && typeof src.actions === 'object') ? src.actions : {};
   const table = (src.table && typeof src.table === 'object') ? src.table : {};
+  const sources = (src.sources && typeof src.sources === 'object') ? src.sources : {};
   const searchQuery = String(table.searchQuery || '').trim();
   return {
     columns: {
@@ -112,6 +155,9 @@ export function normalizeTableSettings(v) {
     table: {
       virtualization: normalizeVirtualization(table.virtualization),
       searchQuery,
+    },
+    sources: {
+      jsonFields: normalizeJsonFields(sources.jsonFields),
     },
   };
 }
@@ -130,6 +176,9 @@ export function createDefaultTableSettings(actionOrder = []) {
     table: {
       virtualization: normalizeVirtualization(null),
       searchQuery: '',
+    },
+    sources: {
+      jsonFields: [],
     },
   };
 }

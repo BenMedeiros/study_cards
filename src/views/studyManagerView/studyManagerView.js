@@ -1,8 +1,8 @@
-import { createTable } from '../../components/shared/table.js';
+import { createTable } from '../../components/table/table.js';
 import { createJsonViewer } from '../../components/shared/jsonViewer.js';
 import { card, el } from '../../utils/browser/ui.js';
-import { createViewHeaderTools } from '../../components/features/viewHeaderTools.js';
-import { openTableSettingsDialog } from '../../components/dialogs/tableSettingsDialog.js';
+import { createViewHeaderTools } from '../../components/viewHeaderTools/viewHeaderTools.js';
+import { openTableSettingsDialog } from '../../components/table/tableSettingsDialog.js';
 import { formatIsoShort } from '../../utils/browser/helpers.js';
 import studyManagerController from './studyManagerController.js';
 import studyManagerViewController from './studyManagerViewController.js';

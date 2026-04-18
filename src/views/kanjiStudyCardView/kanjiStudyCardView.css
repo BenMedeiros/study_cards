@@ -24,252 +24,6 @@
   font-size: var(--generic-flat-value-size, var(--font-size-body));
 }
 
-.kanji-study-card-config-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  background: var(--surface-backdrop-accent);
-  backdrop-filter: blur(2px);
-}
-
-.kanji-study-card-config-dialog {
-  max-height: calc(100vh - 1rem);
-  margin: 0;
-  overflow: hidden;
-  gap: 0.85rem;
-  background: color-mix(in srgb, var(--panel) 92%, black 8%);
-  border: 1px solid color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.16)) 90%, white 10%);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.38);
-}
-
-.kanji-study-card-config-header h2 {
-  margin: 0;
-  font-size: var(--font-size-lg);
-}
-
-.kanji-study-card-config-header .hint {
-  margin: 0.35rem 0 0;
-  text-wrap-mode: wrap;
-}
-
-.kanji-study-card-config-summary {
-  margin-top: 0.5rem;
-  font-size: var(--font-size-xs);
-  color: var(--muted);
-}
-
-.kanji-study-card-config-header-meta {
-  margin-top: 0.6rem;
-}
-
-.kanji-study-card-config-preset-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  align-items: center;
-}
-
-.kanji-study-card-config-preset-select {
-  min-width: 14rem;
-}
-
-.kanji-study-card-config-body {
-  min-height: 0;
-  overflow: auto;
-}
-
-.kanji-study-card-config-tabs {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-}
-
-.kanji-study-card-config-tab.is-active {
-  border-color: var(--accent-border-strong);
-  background: var(--accent-bg-strong);
-}
-
-.kanji-study-card-config-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-}
-
-.kanji-study-card-config-item {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.6rem;
-  align-items: center;
-  padding: 0.7rem 0.8rem;
-  border: var(--border-1);
-  border-radius: 0.75rem;
-  background: var(--surface-card);
-}
-
-.kanji-study-card-config-item-main {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  min-width: 0;
-}
-
-.kanji-study-card-config-item-main input[type="checkbox"] {
-  width: 1rem;
-  height: 1rem;
-  flex: 0 0 auto;
-}
-
-.kanji-study-card-config-item-copy {
-  min-width: 0;
-}
-
-.kanji-study-card-config-item-label {
-  font-size: var(--font-size-body);
-  font-weight: 600;
-  word-break: break-word;
-}
-
-.kanji-study-card-config-item-key {
-  margin-top: 0.15rem;
-  word-break: break-word;
-}
-
-.kanji-study-card-config-item-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.kanji-study-card-config-select {
-  min-width: 12rem;
-  max-width: 100%;
-}
-
-.kanji-study-card-config-select.custom-dropdown {
-  width: 100%;
-}
-
-.kanji-study-card-config-select .custom-dropdown-button {
-  width: 100%;
-}
-
-.kanji-study-card-config-name-input {
-  min-width: 12rem;
-  max-width: 100%;
-  width: min(18rem, 100%);
-  background: var(--surface-field-soft);
-  border: var(--border-1);
-  color: var(--text);
-  border-radius: 0.45rem;
-  padding: 0.45rem 0.6rem;
-  font: inherit;
-  line-height: 1.2;
-}
-
-.kanji-study-card-config-name-input:focus {
-  outline: 1px solid var(--accent-border-stronger);
-  border-color: var(--accent-border-strong);
-  box-shadow: 0 0 0 2px var(--accent-bg-soft);
-}
-
-.kanji-study-card-config-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.kanji-study-card-config-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  flex: 0 0 auto;
-}
-
-.kanji-study-card-config-json-btn {
-  position: static;
-}
-
-.kanji-study-card-config-json-viewer .json-content {
-  max-height: 52vh;
-  overflow: auto;
-  background: var(--surface-void-strong);
-  border-radius: 0.45rem;
-  padding: 0.35rem 0.35rem 0.5rem 0.35rem;
-}
-
-.kanji-study-card-config-json-viewer .json-tree {
-  background: var(--surface-void-stronger);
-}
-
-.kanji-study-card-config-json-plain {
-  margin: 0;
-  max-height: 52vh;
-  overflow: auto;
-  background: var(--surface-void-strong);
-  border-radius: 0.45rem;
-  padding: 0.65rem;
-  font-size: var(--font-size-xs);
-}
-
-.kanji-study-card-config-move:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.kanji-study-card-config-empty {
-  margin: 0;
-}
-
-.kanji-study-card-config-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.kanji-study-card-config-footer-left,
-.kanji-study-card-config-footer-right {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-@media (max-width: 720px) {
-  .kanji-study-card-config-backdrop {
-    padding: 0.25rem;
-  }
-
-  .kanji-study-card-config-dialog {
-    width: calc(100vw - 0.5rem);
-    max-height: calc(100vh - 0.5rem);
-    border-radius: 0.8rem;
-  }
-
-  .kanji-study-card-config-item {
-    grid-template-columns: 1fr;
-  }
-
-  .kanji-study-card-config-item-controls {
-    justify-content: flex-end;
-  }
-
-  .kanji-study-card-config-footer-left,
-  .kanji-study-card-config-footer-right {
-    width: 100%;
-  }
-
-  .kanji-study-card-config-footer-right .btn,
-  .kanji-study-card-config-footer-left .btn {
-    flex: 1 1 0;
-  }
-}
-
 .kanji-study-card {
   justify-content: center;
   padding: 1rem;
@@ -445,6 +199,120 @@
   line-height: 1;
 }
 
+.autoplay-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.autoplay-overlay {
+  display: none;
+  gap: 1rem;
+  min-width: 28rem;
+  max-width: 90vw;
+  background: var(--panel);
+  color: var(--text);
+  border: var(--border-1);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  box-shadow: var(--shadow-popover);
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 120ms ease, transform 120ms cubic-bezier(.2, .9, .3, 1);
+}
+
+.autoplay-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--surface-scrim);
+  z-index: 1200;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.autoplay-overlay .autoplay-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+.autoplay-overlay .autoplay-close:hover {
+  color: var(--text);
+  border-color: var(--accent-bg-medium);
+  background: var(--accent-bg-faint);
+}
+
+.autoplay-overlay.open {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.autoplay-backdrop.show {
+  opacity: 1;
+}
+
+.autoplay-left,
+.autoplay-right {
+  padding: 0.25rem;
+}
+
+.autoplay-left {
+  width: 40%;
+  border-right: var(--border-1);
+}
+
+.autoplay-right {
+  width: 60%;
+}
+
+.autoplay-actions,
+.autoplay-sequence {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.autoplay-actions .btn {
+  text-align: left;
+}
+
+.sequence-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  background: var(--surface-card-muted);
+  border: 1px solid var(--surface-card-muted);
+}
+
+.sequence-label {
+  font-weight: 600;
+  color: var(--text);
+  min-width: 4.5rem;
+}
+
+.sequence-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.sequence-item input[type="number"] {
+  background: var(--surface-field-soft);
+  border: var(--border-1);
+  color: var(--text);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
 /* Footer controls and footer settings */
 
 /* Autoplay visuals for footer buttons */
@@ -532,6 +400,16 @@
 }
 
 @media (max-width: 700px) {
+  .autoplay-overlay {
+    min-width: 90vw;
+  }
+
+  .autoplay-left,
+  .autoplay-right {
+    width: 100%;
+    border-right: none;
+  }
+
   .view-footer-controls {
     display: grid;
     justify-content: stretch;
