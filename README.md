@@ -88,3 +88,8 @@ Development notes
 
 Deployment
 - The repo is static and can be deployed via GitHub Pages (configure Pages to serve from the master branch root) or any static host.
+
+OAuth bridge
+- `oauth-bridge.html` is a standalone browser bridge for ChatGPT OAuth.
+- Configure the backend `CUSTOMGPT_OAUTH_AUTHORIZE_BRIDGE_URL` to point at that page on the same static host as the frontend.
+- The bridge waits for Firebase auth, prompts for Google sign-in if needed, gets a Firebase ID token, posts it to the backend `/oauth/authorize/complete` endpoint, and then redirects back to ChatGPT.

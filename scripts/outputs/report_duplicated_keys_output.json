@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-18T18:03:37.261Z",
+  "generatedAt": "2026-04-19T13:56:08.234Z",
   "scannedCollections": 23,
   "collectionsWithProblems": 14,
   "collectionsWithInvalidEntryKey": 8,
@@ -1102,13 +1102,13 @@
       "duplicates": []
     }
   ],
-  "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards",
+  "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards_workspace\\study_cards",
   "outputPath": "scripts/outputs/report_duplicated_keys_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-04-18T18:03:37.200Z",
-    "finishedAt": "2026-04-18T18:03:37.262Z",
-    "durationMs": 62,
-    "durationSeconds": 0.062
+    "startedAt": "2026-04-19T13:56:08.161Z",
+    "finishedAt": "2026-04-19T13:56:08.235Z",
+    "durationMs": 74,
+    "durationSeconds": 0.074
   }
 }
