@@ -5,6 +5,7 @@ import { parseHashRoute } from './utils/browser/helpers.js';
 import { renderData } from './views/dataView/dataView.js';
 import { renderKanjiStudyCard } from './views/kanjiStudyCardView/kanjiStudyCardView.js';
 import { renderEntityExplorer } from './views/entityExplorerView/entityExplorerView.js';
+import { renderOauthLinkView } from './views/oauthLinkView/oauthLinkView.js';
 import { createCollectionBrowserDropdown } from './components/shell/collectionBrowser.js';
 import { openRightClickMenu, registerRightClickContext } from './components/shared/rightClickMenu.js';
 import { createShellTitleContextMenu } from './components/shell/shellTitleContextMenu.js';
@@ -835,6 +836,16 @@ export function createAppShell({ store, onNavigate }) {
       if (route.pathname === '/manage-collections') {
         try { console.info(cachedRouteMounts.has('/manage-collections') ? 'shell.renderRoute /manage-collections cache hit' : 'shell.renderRoute /manage-collections cache miss'); } catch (e) {}
         const mount = getCachedRouteMount('/manage-collections', () => timed('view.renderManageCollections', () => renderManageCollections({ store, onNavigate, route })));
+        mount.hidden = false;
+        mount.style.display = '';
+        updateCachedRouteMount(mount, route);
+        activateCachedRouteMount(mount);
+        return;
+      }
+
+      if (route.pathname === '/oauth-link') {
+        try { console.info(cachedRouteMounts.has('/oauth-link') ? 'shell.renderRoute /oauth-link cache hit' : 'shell.renderRoute /oauth-link cache miss'); } catch (e) {}
+        const mount = getCachedRouteMount('/oauth-link', () => timed('view.renderOauthLinkView', () => renderOauthLinkView({ store, onNavigate, route })));
         mount.hidden = false;
         mount.style.display = '';
         updateCachedRouteMount(mount, route);

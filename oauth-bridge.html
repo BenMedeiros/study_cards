@@ -3,18 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Study Cards OAuth Bridge</title>
+    <title>Redirecting to Study Cards</title>
     <style>
       :root {
         color-scheme: light;
-        --bg: #eef3ec;
-        --panel: #fffdf8;
-        --border: #d7dfd1;
-        --text: #1d2a1f;
-        --muted: #536255;
-        --accent: #1f6a4d;
-        --accent-strong: #174e39;
-        --danger: #9f2f2f;
+        --bg: #f0f4ee;
+        --text: #203126;
+        --muted: #607062;
       }
 
       * {
@@ -24,21 +19,17 @@
       body {
         margin: 0;
         min-height: 100vh;
+        display: grid;
+        place-items: center;
         font-family: Georgia, "Times New Roman", serif;
         color: var(--text);
-        background:
-          radial-gradient(circle at top, rgba(89, 133, 105, 0.14), transparent 36%),
-          linear-gradient(180deg, #f4f7ef 0%, var(--bg) 100%);
+        background: linear-gradient(180deg, #f7faf5 0%, var(--bg) 100%);
       }
 
       main {
-        width: min(720px, calc(100vw - 32px));
-        margin: 48px auto;
+        width: min(560px, calc(100vw - 32px));
         padding: 32px;
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 24px;
-        box-shadow: 0 18px 60px rgba(33, 54, 40, 0.12);
+        text-align: center;
       }
 
       .eyebrow {
@@ -62,92 +53,19 @@
         color: var(--muted);
       }
 
-      dl {
-        display: grid;
-        grid-template-columns: 110px 1fr;
-        gap: 10px 16px;
-        margin: 28px 0;
-        padding: 20px;
-        border-radius: 18px;
-        background: rgba(243, 247, 240, 0.9);
-        border: 1px solid var(--border);
-      }
-
-      dt {
-        font-weight: 700;
-      }
-
-      dd {
-        margin: 0;
-        overflow-wrap: anywhere;
-        color: var(--muted);
-      }
-
-      .status,
-      .error {
-        min-height: 24px;
-        margin: 0;
-        font-size: 15px;
+      p {
+        margin: 14px 0 0;
+        font-size: 18px;
         line-height: 1.5;
-      }
-
-      .status {
-        color: var(--accent-strong);
-      }
-
-      .error {
-        color: var(--danger);
-      }
-
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 22px;
-      }
-
-      button {
-        appearance: none;
-        border: 0;
-        border-radius: 999px;
-        padding: 12px 18px;
-        font: inherit;
-        font-size: 15px;
-        cursor: pointer;
-        background: var(--accent);
-        color: #fff;
-      }
-
-      button.secondary {
-        background: #dfe8df;
-        color: var(--text);
-      }
-
-      button:disabled {
-        cursor: wait;
-        opacity: 0.72;
+        color: var(--muted);
       }
     </style>
   </head>
   <body>
     <main>
       <p class="eyebrow">Study Cards</p>
-      <h1>Finish ChatGPT OAuth</h1>
-      <p class="lede">
-        ChatGPT is requesting access to your Study Cards study progress API.
-        Review the request details below, then sign in and approve it only if
-        this looks correct.
-      </p>
-
-      <dl id="oauth-bridge-details"></dl>
-      <p class="status" id="oauth-bridge-status"></p>
-      <p class="error" id="oauth-bridge-error"></p>
-
-      <div class="actions" id="oauth-bridge-action" data-pending="false">
-        <button id="oauth-bridge-sign-in" type="button" hidden>Sign in with Google</button>
-        <button id="oauth-bridge-approve" type="button" hidden>Approve ChatGPT Access</button>
-        <button id="oauth-bridge-retry" class="secondary" type="button" hidden>Retry</button>
-      </div>
+      <h1>Opening Study Cards</h1>
+      <p>Redirecting you to the Study Cards app to finish linking ChatGPT access.</p>
     </main>
     <script type="module" src="./src/integrations/oauth/bridge.js"></script>
   </body>
