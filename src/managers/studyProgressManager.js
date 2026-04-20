@@ -1,3 +1,8 @@
+import {
+  normalizePersistedStudyState,
+  resolveStudyRecordState,
+} from '../utils/common/studyProgressState.js';
+
 export function createStudyProgressManager({
   uiState,
   persistence,
@@ -121,7 +126,8 @@ export function createStudyProgressManager({
     out.timesSeen = timesSeen;
     out.timeMs = timeMs;
     out.lastSeenIso = lastSeenIso;
-    out.seen = !!out.seen || timesSeen > 0 || timeMs > 0;
+    out.state = resolveStudyRecordState(out);
+    delete out.seen;
     if (out.lastStudiedIso) delete out.lastStudiedIso;
     return out;
   }
@@ -230,15 +236,15 @@ export function createStudyProgressManager({
 
   function getKanjiState(v, opts = {}) {
     const rec = getKanjiProgressRecord(v, opts);
-    const s = rec?.state;
-    return (typeof s === 'string' && s.trim()) ? s.trim() : null;
+    return normalizePersistedStudyState(rec?.state);
   }
 
   function setKanjiState(v, nextState, opts = {}) {
-    const state = (typeof nextState === 'string' && nextState.trim()) ? nextState.trim() : null;
+    const state = normalizePersistedStudyState(nextState);
     return setKanjiProgressRecord(v, { state }, opts);
   }
 
+  function isKanjiSeen(v, opts = {}) { return resolveStudyRecordState(getKanjiProgressRecord(v, opts)) !== null; }
   function isKanjiLearned(v, opts = {}) { return getKanjiState(v, opts) === 'learned'; }
   function isKanjiFocus(v, opts = {}) { return getKanjiState(v, opts) === 'focus'; }
 
@@ -620,7 +626,7 @@ export function createStudyProgressManager({
         const parts = splitStudyId(id);
         if (parts.collectionKey !== coll) continue;
         if (rec.state === 'learned') {
-          map[id] = { ...rec, state: null };
+          map[id] = recalcAggregate({ ...rec, state: null });
           changed = true;
         }
       }
@@ -646,7 +652,7 @@ export function createStudyProgressManager({
         const id = makeStudyId(coll, value);
         const rec = map[id];
         if (rec && typeof rec === 'object' && rec.state === 'learned') {
-          map[id] = { ...rec, state: null };
+          map[id] = recalcAggregate({ ...rec, state: null });
           changed = true;
         }
       }
@@ -799,6 +805,7 @@ export function createStudyProgressManager({
     setKanjiProgressRecord,
     getKanjiState,
     setKanjiState,
+    isKanjiSeen,
     isKanjiLearned,
     isKanjiFocus,
     toggleKanjiLearned,

@@ -1,4 +1,5 @@
 import {
+  deleteField,
   doc,
   serverTimestamp,
   setDoc,
@@ -53,7 +54,66 @@ function encodeCollectionDocId(collectionKey) {
 
 function normalizeStudyState(value) {
   const normalized = normalizeValue(value);
-  return (normalized === 'focus' || normalized === 'learned') ? normalized : '';
+  return (normalized === 'unseen' || normalized === 'seen' || normalized === 'focus' || normalized === 'learned') ? normalized : '';
+}
+
+function readEntryValueByPath(entry, keyPath) {
+  if (!entry || typeof entry !== 'object') return '';
+  const path = normalizeValue(keyPath);
+  if (!path) return '';
+
+  const direct = entry[path];
+  if (direct != null && String(direct).trim()) return String(direct).trim();
+
+  const parts = path.split('.').map((part) => normalizeValue(part)).filter(Boolean);
+  if (!parts.length) return '';
+
+  let current = entry;
+  for (const part of parts) {
+    if (!current || typeof current !== 'object') return '';
+    current = current[part];
+  }
+  if (current == null) return '';
+  return String(current).trim();
+}
+
+function getCollectionEntryStudyKey(entry, collection) {
+  if (!entry || typeof entry !== 'object') return '';
+
+  const metadataEntryKey = normalizeValue(collection?.metadata?.entry_key);
+  if (metadataEntryKey) {
+    const explicit = readEntryValueByPath(entry, metadataEntryKey);
+    if (explicit) return explicit;
+  }
+
+  for (const candidateKey of ['kanji', 'character', 'text', 'word', 'reading', 'kana', 'id', 'key', 'value', 'name', 'title', 'term', 'lowercase', 'uppercase', 'pattern']) {
+    const candidate = entry[candidateKey];
+    if (typeof candidate === 'string' && candidate.trim()) return candidate.trim();
+    if (typeof candidate === 'number' || typeof candidate === 'boolean') return String(candidate);
+  }
+
+  return '';
+}
+
+async function loadCollectionEntryKeys(collectionKey) {
+  const normalizedCollectionKey = normalizeValue(collectionKey);
+  if (!normalizedCollectionKey) return [];
+
+  const systemRow = await idbGet('system_collections', normalizedCollectionKey).catch(() => null);
+  const collection = (systemRow?.blob && typeof systemRow.blob === 'object') ? systemRow.blob : null;
+  const entries = Array.isArray(collection?.entries) ? collection.entries : [];
+  if (!entries.length) return [];
+
+  const out = [];
+  const seen = new Set();
+  for (const entry of entries) {
+    const entryKey = normalizeValue(getCollectionEntryStudyKey(entry, collection));
+    if (!entryKey || seen.has(entryKey)) continue;
+    seen.add(entryKey);
+    out.push(entryKey);
+  }
+  out.sort((left, right) => left.localeCompare(right));
+  return out;
 }
 
 function buildSyncStateId(entityType, entityKey) {
@@ -83,13 +143,13 @@ function normalizeStudyProgressRow(row) {
   const appIds = Object.keys(apps)
     .map((appId) => normalizeValue(appId))
     .filter(Boolean);
+  const state = normalizeStudyState(value.state) || (normalizeBoolean(value.seen) ? 'seen' : null);
 
   return {
     studyId: id,
     collectionKey,
     entryKey,
-    state: normalizeValue(value.state) || null,
-    seen: normalizeBoolean(value.seen),
+    state,
     timesSeen: normalizeWholeNumber(value.timesSeen),
     timeMs: normalizeWholeNumber(value.timeMs),
     lastSeenIso: normalizeValue(value.lastSeenIso) || null,
@@ -117,6 +177,7 @@ async function writeStudyProgressRows(rows, opts = {}) {
     const docRef = doc(firebaseDb, 'users', user.uid, 'study_progress', docId);
     batch.set(docRef, {
       ...row,
+      seen: deleteField(),
       source: 'browser.indexeddb.study_progress',
       syncedAt: serverTimestamp(),
       ...(opts && typeof opts === 'object' ? opts : {}),
@@ -183,10 +244,15 @@ async function buildStudyProgressStateSnapshot(collectionIdOrCandidates) {
   const matchingRows = rows.filter((row) =>
     normalizedCandidates.includes(normalizeValue(row?.collection)));
   const collectionKey = normalizeValue(matchingRows[0]?.collection) || normalizedCandidates[0];
+  const collectionEntryKeys = await loadCollectionEntryKeys(collectionKey);
   const states = {
+    unseen: [],
+    seen: [],
     focus: [],
     learned: [],
   };
+  const seenUnseen = new Set();
+  const seenSeen = new Set();
   const seenFocus = new Set();
   const seenLearned = new Set();
 
@@ -194,9 +260,22 @@ async function buildStudyProgressStateSnapshot(collectionIdOrCandidates) {
     const normalizedRow = normalizeStudyProgressRow(row);
     if (!normalizedRow || normalizeValue(normalizedRow.collectionKey) !== collectionKey) continue;
     const state = normalizeStudyState(normalizedRow.state);
-    if (!state) continue;
     const entryKey = normalizeValue(normalizedRow.entryKey);
     if (!entryKey) continue;
+
+    if (!state || state === 'unseen') {
+      if (seenUnseen.has(entryKey)) continue;
+      seenUnseen.add(entryKey);
+      states.unseen.push(entryKey);
+      continue;
+    }
+
+    if (state === 'seen') {
+      if (seenSeen.has(entryKey)) continue;
+      seenSeen.add(entryKey);
+      states.seen.push(entryKey);
+      continue;
+    }
 
     if (state === 'focus') {
       if (seenFocus.has(entryKey)) continue;
@@ -210,6 +289,15 @@ async function buildStudyProgressStateSnapshot(collectionIdOrCandidates) {
     states.learned.push(entryKey);
   }
 
+  for (const entryKey of collectionEntryKeys) {
+    if (!entryKey) continue;
+    if (seenSeen.has(entryKey) || seenFocus.has(entryKey) || seenLearned.has(entryKey) || seenUnseen.has(entryKey)) continue;
+    seenUnseen.add(entryKey);
+    states.unseen.push(entryKey);
+  }
+
+  states.unseen.sort((left, right) => left.localeCompare(right));
+  states.seen.sort((left, right) => left.localeCompare(right));
   states.focus.sort((left, right) => left.localeCompare(right));
   states.learned.sort((left, right) => left.localeCompare(right));
 
@@ -217,7 +305,7 @@ async function buildStudyProgressStateSnapshot(collectionIdOrCandidates) {
     collectionKey,
     docId: encodeCollectionDocId(collectionKey),
     states,
-    schemaVersion: 1,
+    schemaVersion: 3,
   };
 }
 
@@ -242,11 +330,23 @@ function normalizeSyncStateRecord(record) {
     lastAttemptIso: normalizeValue(record.lastAttemptIso) || null,
     lastSuccessIso: normalizeValue(record.lastSuccessIso) || null,
     lastError: normalizeValue(record.lastError) || null,
+    docSize: normalizeWholeNumber(record.docSize),
+    lastAttemptDocSize: normalizeWholeNumber(record.lastAttemptDocSize),
+    lastSyncedDocSize: normalizeWholeNumber(record.lastSyncedDocSize),
     lastSyncedPayload:
       (record.lastSyncedPayload && typeof record.lastSyncedPayload === 'object') ?
         record.lastSyncedPayload :
         null,
   };
+}
+
+function estimateJsonSizeBytes(value) {
+  try {
+    const text = JSON.stringify(value ?? null);
+    return new TextEncoder().encode(text).length;
+  } catch {
+    return 0;
+  }
 }
 
 function areJsonEqual(left, right) {
@@ -287,6 +387,8 @@ function buildStudyProgressPayloadDiff(previousPayload, nextPayload) {
       same: (previous?.schemaVersion ?? null) === (next?.schemaVersion ?? null),
     },
     states: {
+      unseen: diffStateArrays(previousStates.unseen, nextStates.unseen),
+      seen: diffStateArrays(previousStates.seen, nextStates.seen),
       focus: diffStateArrays(previousStates.focus, nextStates.focus),
       learned: diffStateArrays(previousStates.learned, nextStates.learned),
     },
@@ -307,6 +409,7 @@ async function writeSyncStateRecord(record) {
 
 export async function getStudyProgressStateSyncStatus(collectionIdOrCandidates) {
   const snapshot = await buildStudyProgressStateSnapshot(collectionIdOrCandidates);
+  const docSize = estimateJsonSizeBytes(snapshot);
   const syncState = await getSyncStateRecord('study_progress_state', snapshot.collectionKey);
   const needsSync = !syncState?.lastSyncedPayload ||
     !areJsonEqual(syncState.lastSyncedPayload, snapshot);
@@ -316,6 +419,7 @@ export async function getStudyProgressStateSyncStatus(collectionIdOrCandidates) 
     entityKey: snapshot.collectionKey,
     needsSync,
     payload: snapshot,
+    docSize,
     syncState,
     diff: buildStudyProgressPayloadDiff(syncState?.lastSyncedPayload || null, snapshot),
   };
@@ -323,6 +427,7 @@ export async function getStudyProgressStateSyncStatus(collectionIdOrCandidates) 
 
 export async function markStudyProgressStateDirty(collectionIdOrCandidates, opts = {}) {
   const snapshot = await buildStudyProgressStateSnapshot(collectionIdOrCandidates);
+  const docSize = estimateJsonSizeBytes(snapshot);
   const prior = await getSyncStateRecord('study_progress_state', snapshot.collectionKey);
   const nowIso = new Date().toISOString();
   await writeSyncStateRecord({
@@ -331,6 +436,9 @@ export async function markStudyProgressStateDirty(collectionIdOrCandidates, opts
     entityKey: snapshot.collectionKey,
     status: normalizeValue(opts.status) || prior?.status || 'dirty',
     dirty: true,
+    docSize,
+    lastAttemptDocSize: prior?.lastAttemptDocSize || 0,
+    lastSyncedDocSize: prior?.lastSyncedDocSize || 0,
     lastAttemptIso: prior?.lastAttemptIso || null,
     lastSuccessIso: prior?.lastSuccessIso || null,
     lastError: prior?.lastError || null,
@@ -348,6 +456,7 @@ export async function markStudyProgressStateDirty(collectionIdOrCandidates, opts
 export async function syncStudyProgressStateSnapshot(collectionIdOrCandidates, opts = {}) {
   const user = requireSignedInUser();
   const snapshot = await buildStudyProgressStateSnapshot(collectionIdOrCandidates);
+  const docSize = estimateJsonSizeBytes(snapshot);
   const nowIso = new Date().toISOString();
   const docRef = doc(firebaseDb, 'users', user.uid, 'study_progress_state', snapshot.docId);
   const syncStateId = buildSyncStateId('study_progress_state', snapshot.collectionKey);
@@ -360,6 +469,9 @@ export async function syncStudyProgressStateSnapshot(collectionIdOrCandidates, o
       entityKey: snapshot.collectionKey,
       status: 'pending',
       dirty: true,
+      docSize,
+      lastAttemptDocSize: docSize,
+      lastSyncedDocSize: prior?.lastSyncedDocSize || 0,
       lastAttemptIso: nowIso,
       lastSuccessIso: prior?.lastSuccessIso || null,
       lastError: null,
@@ -381,6 +493,9 @@ export async function syncStudyProgressStateSnapshot(collectionIdOrCandidates, o
       entityKey: snapshot.collectionKey,
       status: 'success',
       dirty: false,
+      docSize,
+      lastAttemptDocSize: docSize,
+      lastSyncedDocSize: docSize,
       lastAttemptIso: nowIso,
       lastSuccessIso: nowIso,
       lastError: null,
@@ -394,6 +509,9 @@ export async function syncStudyProgressStateSnapshot(collectionIdOrCandidates, o
       entityKey: snapshot.collectionKey,
       status: 'error',
       dirty: true,
+      docSize,
+      lastAttemptDocSize: docSize,
+      lastSyncedDocSize: prior?.lastSyncedDocSize || 0,
       lastAttemptIso: nowIso,
       lastSuccessIso: prior?.lastSuccessIso || null,
       lastError: String(error?.message || error || 'Sync failed'),

@@ -23,7 +23,7 @@ export function isIndexedDBAvailable() {
   }
 }
 
-export function openStudyDb({ dbName = 'study_cards', version = 7 } = {}) {
+export function openStudyDb({ dbName = 'study_cards', version = 8 } = {}) {
   if (dbPromise) return dbPromise;
 
   dbPromise = new Promise((resolve, reject) => {
@@ -98,6 +98,10 @@ export function openStudyDb({ dbName = 'study_cards', version = 7 } = {}) {
         } catch (e) {
           // ignore
         }
+      }
+
+      if (!db.objectStoreNames.contains('app_meta')) {
+        db.createObjectStore('app_meta', { keyPath: 'id' });
       }
     };
 

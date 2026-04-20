@@ -5,6 +5,8 @@ import { compileTableSearchQuery, matchesTableSearch, filterRecordsAndIndicesByT
 import { extractPathValues } from '../utils/common/collectionParser.mjs';
 import { markStudyProgressStateDirty } from '../integrations/firebase/studyProgressFirestoreSync.js';
 
+import { isStudyRecordSeen, normalizeStudyViewState } from '../utils/common/studyProgressState.js';
+
 export function createCollectionsManager({ state, uiState, persistence, progressManager, collectionDB = null, settings = null }) {
   const subscribers = new Set();
   // Folder metadata helpers/storage used for lazy loads
@@ -1328,9 +1330,9 @@ export function createCollectionsManager({ state, uiState, persistence, progress
     const coll = (collection && typeof collection === 'object') ? collection : null;
     const adapter = progressAdapterForCollection(coll);
     const key = adapter?.getKey ? adapter.getKey(entry) : String(getEntryStudyKey(entry) || '').trim();
-    const learned = !!(key && adapter?.isLearned && adapter.isLearned(key));
-    const focus = !!(key && adapter?.isFocus && adapter.isFocus(key));
-    const status = learned ? 'learned' : (focus ? 'focus' : 'null');
+    const status = key && typeof adapter?.getState === 'function'
+      ? normalizeStudyViewState(adapter.getState(key))
+      : 'null';
 
     let timesSeen = 0;
     let timeMs = 0;
@@ -1341,7 +1343,7 @@ export function createCollectionsManager({ state, uiState, persistence, progress
         : {};
       timesSeen = Math.max(0, Math.round(Number(rec?.timesSeen) || 0));
       timeMs = Math.max(0, Math.round(Number(rec?.timeMs) || 0));
-      seen = !!rec?.seen || timesSeen > 0 || timeMs > 0;
+      seen = isStudyRecordSeen(rec);
     } catch {
       // ignore
     }
@@ -1562,7 +1564,7 @@ export function createCollectionsManager({ state, uiState, persistence, progress
   // ============================================================================
 
   function normalizeStudyFilterStates(value) {
-    const order = ['null', 'focus', 'learned'];
+    const order = ['null', 'seen', 'focus', 'learned'];
     const arr = Array.isArray(value)
       ? value
       : String(value || '').split(/[,|\s]+/g).map(s => s.trim()).filter(Boolean);
@@ -1572,8 +1574,8 @@ export function createCollectionsManager({ state, uiState, persistence, progress
     const add = (v) => {
       const s = String(v || '').trim().toLowerCase();
       if (!s || seen.has(s)) return;
-      if (s !== 'null' && s !== 'focus' && s !== 'learned') {
-        throw new Error(`Invalid studyFilter state: ${s}. Allowed states: null, focus, learned`);
+      if (s !== 'null' && s !== 'seen' && s !== 'focus' && s !== 'learned') {
+        throw new Error(`Invalid studyFilter state: ${s}. Allowed states: null, seen, focus, learned`);
       }
       seen.add(s);
       out.push(s);
@@ -1589,7 +1591,7 @@ export function createCollectionsManager({ state, uiState, persistence, progress
   }
 
   function parseStudyFilterState(collState = {}) {
-    const defaultStates = ['null', 'focus', 'learned'];
+    const defaultStates = ['null', 'seen', 'focus', 'learned'];
     let includeStates = defaultStates.slice();
 
     if (collState && typeof collState.studyFilter === 'string') {
@@ -1603,7 +1605,7 @@ export function createCollectionsManager({ state, uiState, persistence, progress
       const skipLearned = !!collState?.skipLearned;
       const focusOnly = !!collState?.focusOnly;
       if (focusOnly) includeStates = ['focus'];
-      else if (skipLearned) includeStates = ['null', 'focus'];
+      else if (skipLearned) includeStates = ['null', 'seen', 'focus'];
     }
 
     const include = new Set(includeStates);
@@ -1615,32 +1617,36 @@ export function createCollectionsManager({ state, uiState, persistence, progress
   function progressAdapterForCollection(coll) {
     return {
       getKey: (entry) => String(getEntryStudyKey(entry, { collection: coll }) || '').trim(),
+      getState: (key) => (key && typeof progressManager?.getKanjiState === 'function')
+        ? progressManager.getKanjiState(key, { collectionKey: coll?.key })
+        : null,
       isLearned: (key) => !!(key && typeof progressManager?.isKanjiLearned === 'function' && progressManager.isKanjiLearned(key, { collectionKey: coll?.key })),
       isFocus: (key) => !!(key && typeof progressManager?.isKanjiFocus === 'function' && progressManager.isKanjiFocus(key, { collectionKey: coll?.key })),
     };
   }
 
-  function applyStudyFilterToView(entries, indices, { includeStates = ['null', 'focus', 'learned'] } = {}, adapter) {
+  function applyStudyFilterToView(entries, indices, { includeStates = ['null', 'seen', 'focus', 'learned'] } = {}, adapter) {
     const arr = Array.isArray(entries) ? entries : [];
     const idx = Array.isArray(indices) ? indices : arr.map((_, i) => i);
     if (!arr.length) return { entries: [], indices: [] };
     const allowed = new Set(normalizeStudyFilterStates(includeStates));
     if (!allowed.size) return { entries: [], indices: [] };
-    if (allowed.has('null') && allowed.has('focus') && allowed.has('learned')) {
+    if (allowed.has('null') && allowed.has('seen') && allowed.has('focus') && allowed.has('learned')) {
       return { entries: arr.slice(), indices: idx.slice() };
     }
-    const a = adapter || { getKey: (e) => String(getEntryStudyKey(e, { collection: getActiveCollection() }) || '').trim(), isLearned: () => false, isFocus: () => true };
+    const a = adapter || {
+      getKey: (e) => String(getEntryStudyKey(e, { collection: getActiveCollection() }) || '').trim(),
+      getState: () => null,
+      isLearned: () => false,
+      isFocus: () => true,
+    };
 
     const outEntries = [];
     const outIdx = [];
     for (let i = 0; i < arr.length; i++) {
       const e = arr[i];
       const key = a.getKey(e);
-      let state = 'null';
-      if (key) {
-        if (a.isLearned(key)) state = 'learned';
-        else if (a.isFocus(key)) state = 'focus';
-      }
+      const state = key ? normalizeStudyViewState(a.getState(key)) : 'null';
       if (!allowed.has(state)) continue;
       outEntries.push(e);
       outIdx.push(idx[i]);
@@ -1829,11 +1835,11 @@ export function createCollectionsManager({ state, uiState, persistence, progress
   // ============================================================================
 
   function serializeStudyFilter({ states = [], skipLearned = false, focusOnly = false } = {}) {
-    const order = ['null', 'focus', 'learned'];
+    const order = ['null', 'seen', 'focus', 'learned'];
     let next = normalizeStudyFilterStates(states);
     if (!next.length) {
       if (focusOnly) next = ['focus'];
-      else if (skipLearned) next = ['null', 'focus'];
+      else if (skipLearned) next = ['null', 'seen', 'focus'];
       else next = order.slice();
     }
     return order.filter(v => next.includes(v)).join(',');

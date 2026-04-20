@@ -1,13 +1,11 @@
+import { isStudyRecordSeen, normalizeStudyViewState } from '../../utils/common/studyProgressState.js';
+
 function normalizeState(v) {
-  const s = String(v || '').trim().toLowerCase();
-  if (s === 'focus' || s === 'learned') return s;
-  return 'null';
+  return normalizeStudyViewState(v);
 }
 
 function hasSeenProgress(rec) {
-  const timesSeen = Math.max(0, Math.round(Number(rec?.timesSeen) || 0));
-  const timeMs = Math.max(0, Math.round(Number(rec?.timeMs) || 0));
-  return !!rec?.seen || timesSeen > 0 || timeMs > 0;
+  return isStudyRecordSeen(rec);
 }
 
 function resolveMinimumCountOptions(input) {
@@ -178,7 +176,7 @@ export function buildGroupedLearningRecommendations({
     const words = bucket.words
       .slice()
       .sort((a, b) => {
-        const stateOrder = { focus: 0, null: 1, learned: 2 };
+        const stateOrder = { focus: 0, seen: 1, null: 2, learned: 3 };
         const byState = (stateOrder[a.state] ?? 9) - (stateOrder[b.state] ?? 9);
         if (byState !== 0) return byState;
         return String(a.label || '').localeCompare(String(b.label || ''));

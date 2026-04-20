@@ -14,7 +14,7 @@ const DEFAULTS = {
   savedTableSearches: [],
   isShuffled: false,
   order_hash_int: null,
-  studyFilter: 'null,focus,learned',
+  studyFilter: 'null,seen,focus,learned',
 };
 
 

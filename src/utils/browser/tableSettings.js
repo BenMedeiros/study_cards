@@ -113,6 +113,20 @@ function normalizeJsonFields(v) {
   return out;
 }
 
+function normalizeSourceConfigByKey(v) {
+  const src = (v && typeof v === 'object') ? v : {};
+  const out = {};
+  for (const [rawKey, rawValue] of Object.entries(src)) {
+    const key = String(rawKey || '').trim();
+    if (!key) continue;
+    const value = (rawValue && typeof rawValue === 'object') ? rawValue : {};
+    const mode = String(value.mode || '').trim();
+    if (!mode) continue;
+    out[key] = { mode };
+  }
+  return out;
+}
+
 export const DEFAULT_TABLE_VIRTUALIZATION = {
   enabled: true,
   threshold: 50,
@@ -157,6 +171,10 @@ export function normalizeTableSettings(v) {
       searchQuery,
     },
     sources: {
+      customized: !!sources.customized,
+      relatedColumns: normalizeKeyList(sources.relatedColumns),
+      studyProgressFields: normalizeKeyList(sources.studyProgressFields),
+      configByKey: normalizeSourceConfigByKey(sources.configByKey),
       jsonFields: normalizeJsonFields(sources.jsonFields),
     },
   };
@@ -178,6 +196,10 @@ export function createDefaultTableSettings(actionOrder = []) {
       searchQuery: '',
     },
     sources: {
+      customized: false,
+      relatedColumns: [],
+      studyProgressFields: [],
+      configByKey: {},
       jsonFields: [],
     },
   };

@@ -11,6 +11,7 @@ import {
   getStudyProgressStateSyncStatus,
   syncStudyProgressStateSnapshot,
 } from '../../integrations/firebase/studyProgressFirestoreSync.js';
+import { idbGetAll } from '../../utils/browser/idb.js';
 import collectionsViewController from './collectionsViewController.js';
 import {
   normalizeTableSettings,
@@ -27,6 +28,17 @@ const TABLE_ACTION_ITEMS = [
   { key: 'copyFullJson', label: 'Copy Full JSON' },
   { key: 'downloadJson', label: 'Download JSON' },
   { key: 'downloadFullJson', label: 'Download Full JSON' },
+];
+
+const FIREBASE_SYNC_SOURCE_DEFS = [
+  { key: 'firebaseSyncStatus', label: 'Firebase Sync Status', type: 'string', sourceKind: 'studyProgress', description: 'firebase_sync_state.status for study_progress_state.', defaultSelected: false },
+  { key: 'firebaseSyncDirty', label: 'Firebase Sync Dirty', type: 'boolean', sourceKind: 'studyProgress', description: 'Whether the local study_progress_state sync record is marked dirty.', defaultSelected: false },
+  { key: 'firebaseSyncDocSize', label: 'Firebase Doc Size', type: 'number', sourceKind: 'studyProgress', description: 'Latest computed study_progress_state snapshot size in bytes.', defaultSelected: false },
+  { key: 'firebaseSyncLastSyncedDocSize', label: 'Firebase Last Synced Doc Size', type: 'number', sourceKind: 'studyProgress', description: 'Last successfully synced study_progress_state snapshot size in bytes.', defaultSelected: false },
+  { key: 'firebaseSyncLastAttemptDocSize', label: 'Firebase Last Attempt Doc Size', type: 'number', sourceKind: 'studyProgress', description: 'Last attempted study_progress_state snapshot size in bytes.', defaultSelected: false },
+  { key: 'firebaseSyncLastAttemptIso', label: 'Firebase Last Attempt', type: 'string', sourceKind: 'studyProgress', description: 'Last attempt timestamp from firebase_sync_state.', defaultSelected: false },
+  { key: 'firebaseSyncLastSuccessIso', label: 'Firebase Last Success', type: 'string', sourceKind: 'studyProgress', description: 'Last successful sync timestamp from firebase_sync_state.', defaultSelected: false },
+  { key: 'firebaseSyncLastError', label: 'Firebase Last Error', type: 'string', sourceKind: 'studyProgress', description: 'Last sync error from firebase_sync_state.', defaultSelected: false },
 ];
 
 function asString(v) {
@@ -132,6 +144,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   root.className = 'collections-view';
 
   const collections = store.collections.getAvailableCollections();
+  const firebaseSyncStateByKey = new Map();
 
   const activeCollection = store?.collections?.getActiveCollection?.();
   const settingsCollectionKey = String(activeCollection?.key || activeCollection?.path || '').trim();
@@ -173,6 +186,32 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     'Study Filter'
   ];
 
+  function getFirebaseSyncStateForCollection(collection, fallbackId) {
+    const candidates = resolveCollectionCandidates(collection, fallbackId)
+      .map((value) => asString(value).trim())
+      .filter(Boolean);
+    for (const candidate of candidates) {
+      const found = firebaseSyncStateByKey.get(candidate);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  function getSelectedFirebaseSyncColumns() {
+    const sourceSettings = (collectionsTableSettings?.sources && typeof collectionsTableSettings.sources === 'object')
+      ? collectionsTableSettings.sources
+      : {};
+    if (!sourceSettings.customized) {
+      return FIREBASE_SYNC_SOURCE_DEFS.filter((def) => def.defaultSelected !== false);
+    }
+    const selected = new Set((Array.isArray(sourceSettings.studyProgressFields) ? sourceSettings.studyProgressFields : [])
+      .map((value) => asString(value).trim())
+      .filter(Boolean));
+    return FIREBASE_SYNC_SOURCE_DEFS.filter((def) => selected.has(def.key));
+  }
+
+  const selectedFirebaseSyncColumns = getSelectedFirebaseSyncColumns();
+
   // Build table rows and attach __id metadata for action handlers
   const rows = collections.map(c => {
     const entryCount = (typeof c.entries === 'number') ? c.entries : (Array.isArray(c.entries) ? c.entries.length : (c.entries || 0));
@@ -209,13 +248,27 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
       meta.currentIndex ?? '',
       meta.defaultViewMode ?? '',
       (typeof meta.isShuffled === 'boolean') ? (meta.isShuffled ? 'Yes' : 'No') : '',
-      meta.order_hash_int ?? '',
-      meta.studyFilter ?? ''
-    ];
+       meta.order_hash_int ?? '',
+       meta.studyFilter ?? ''
+     ];
+    for (const def of selectedFirebaseSyncColumns) {
+      arr.push('');
+    }
     // attach identifier so table action handlers can find the original collection
     try { arr.__id = c.id || c.key || c.path || c.name || ''; } catch (e) {}
     return arr;
   });
+
+  const allHeaders = [
+    ...headers,
+    ...selectedFirebaseSyncColumns.map((def) => ({
+      key: def.key,
+      label: def.label,
+      type: def.type,
+      description: def.description || '',
+      sourceKind: def.sourceKind || '',
+    })),
+  ];
 
   const rowActions = [
     {
@@ -362,6 +415,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
             'synced',
             `Study progress state synced for ${result.collectionKey}`,
           );
+          void refreshFirebaseSyncStateColumns();
           console.log(
             'Sync study progress state: synced',
             result.collectionKey,
@@ -424,7 +478,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     }
   ];
 
-  const applied = applyTableColumnSettings({ headers, rows, tableSettings: collectionsTableSettings });
+  const applied = applyTableColumnSettings({ headers: allHeaders, rows, tableSettings: collectionsTableSettings });
 
   const table = createTable({
     store,
@@ -439,6 +493,42 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   });
   applyTableColumnStyles({ wrapper: table, tableSettings: collectionsTableSettings });
   applyTableActionSettings({ searchWrap: table.querySelector('.table-search'), tableSettings: collectionsTableSettings, actionItems: TABLE_ACTION_ITEMS });
+
+  async function refreshFirebaseSyncStateColumns() {
+    try {
+      const loadedSyncRows = await idbGetAll('firebase_sync_state').catch(() => []);
+      firebaseSyncStateByKey.clear();
+      for (const row of (Array.isArray(loadedSyncRows) ? loadedSyncRows : [])) {
+        if (!row || typeof row !== 'object') continue;
+        if (String(row.entityType || '').trim() !== 'study_progress_state') continue;
+        const entityKey = String(row.entityKey || '').trim();
+        if (!entityKey || firebaseSyncStateByKey.has(entityKey)) continue;
+        firebaseSyncStateByKey.set(entityKey, row);
+      }
+
+      for (const tr of Array.from(table.querySelectorAll('tbody tr'))) {
+        const id = String(tr?.dataset?.rowId || '').trim();
+        if (!id) continue;
+        const col = collections.find(c => (c.id === id || c.key === id || c.path === id || c.name === id));
+        const syncState = getFirebaseSyncStateForCollection(col, id);
+        const valuesByKey = {
+          firebaseSyncStatus: asString(syncState?.status || ''),
+          firebaseSyncDirty: syncState?.dirty === true ? 'true' : (syncState ? 'false' : ''),
+          firebaseSyncDocSize: Number.isFinite(Number(syncState?.docSize)) && Number(syncState?.docSize) > 0 ? String(Math.round(Number(syncState.docSize))) : '',
+          firebaseSyncLastSyncedDocSize: Number.isFinite(Number(syncState?.lastSyncedDocSize)) && Number(syncState?.lastSyncedDocSize) > 0 ? String(Math.round(Number(syncState.lastSyncedDocSize))) : '',
+          firebaseSyncLastAttemptDocSize: Number.isFinite(Number(syncState?.lastAttemptDocSize)) && Number(syncState?.lastAttemptDocSize) > 0 ? String(Math.round(Number(syncState.lastAttemptDocSize))) : '',
+          firebaseSyncLastAttemptIso: asString(syncState?.lastAttemptIso || ''),
+          firebaseSyncLastSuccessIso: asString(syncState?.lastSuccessIso || ''),
+          firebaseSyncLastError: asString(syncState?.lastError || ''),
+        };
+        for (const def of selectedFirebaseSyncColumns) {
+          const cell = tr.querySelector(`[data-field="${def.key}"]`);
+          if (!cell) continue;
+          cell.textContent = valuesByKey[def.key] ?? '';
+        }
+      }
+    } catch (e) {}
+  }
 
   function scheduleStudyProgressSyncStatusRefresh() {
     const rowsWithButtons = Array.from(table.querySelectorAll('tbody tr'))
@@ -534,9 +624,10 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
       const next = await openTableSettingsDialog({
         tableName: 'Collections Table',
         sourceInfo: settingsCollectionKey ? `${settingsCollectionKey} | ${collections.length} collections` : `${collections.length} collections`,
-        columns: buildTableColumnItems(headers, rows),
+        columns: buildTableColumnItems(allHeaders, rows),
         actions: TABLE_ACTION_ITEMS,
         settings: collectionsTableSettings,
+        studyProgressSources: FIREBASE_SYNC_SOURCE_DEFS,
       });
       if (!next) return;
       await persistCollectionsTableSettings(next);
@@ -548,14 +639,18 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   });
 
   root.append(collectionsCard);
+  void refreshFirebaseSyncStateColumns();
   scheduleStudyProgressSyncStatusRefresh();
   root.__activate = () => {
+    void refreshFirebaseSyncStateColumns();
     scheduleStudyProgressSyncStatusRefreshSoon();
   };
   root.__updateRoute = () => {
+    void refreshFirebaseSyncStateColumns();
     scheduleStudyProgressSyncStatusRefreshSoon();
   };
   table.addEventListener('table:searchApplied', () => {
+    void refreshFirebaseSyncStateColumns();
     scheduleStudyProgressSyncStatusRefreshSoon();
   });
   const tbody = table.querySelector('tbody');
@@ -565,6 +660,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     bodyRefreshInFlight = true;
     setTimeout(() => {
       bodyRefreshInFlight = false;
+      void refreshFirebaseSyncStateColumns();
       scheduleStudyProgressSyncStatusRefreshSoon();
     }, 0);
   }) : null;

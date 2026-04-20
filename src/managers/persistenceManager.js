@@ -1,4 +1,6 @@
 import * as idb from '../utils/browser/idb.js';
+import { runFrontendMigrations } from '../migration/index.js';
+import { resolveStudyRecordState } from '../utils/common/studyProgressState.js';
 
 // Namespaced localStorage key for shell UI state
 const SHELL_LS_KEY = 'study_cards:v1';
@@ -44,15 +46,21 @@ export function createPersistenceManager({ uiState, studyProgressKey = 'study_pr
 
   async function ensureReady() {
     if (persistenceReady) return;
-    try {
-      idbAvailable = !!idb?.isIndexedDBAvailable?.();
-      if (idbAvailable) {
-        await idb.openStudyDb().catch((e) => {
-          idbBroken = true;
-          console.warn('[Persistence] IndexedDB unavailable', e);
-        });
-      }
-    } catch (e) {
+      try {
+        idbAvailable = !!idb?.isIndexedDBAvailable?.();
+        if (idbAvailable) {
+          await idb.openStudyDb().catch((e) => {
+            idbBroken = true;
+            console.warn('[Persistence] IndexedDB unavailable', e);
+          });
+          if (!idbBroken) {
+            await runFrontendMigrations().catch((e) => {
+              idbBroken = true;
+              console.warn('[Persistence] IndexedDB migration failed', e);
+            });
+          }
+        }
+      } catch (e) {
       idbAvailable = false;
       idbBroken = true;
     }
@@ -175,7 +183,11 @@ export function createPersistenceManager({ uiState, studyProgressKey = 'study_pr
             if (!r || typeof r !== 'object') continue;
             const id = String(r.id || '').trim();
             if (!id) continue;
-            const value = (r.value && typeof r.value === 'object') ? r.value : (r.value ?? {});
+            const value = (r.value && typeof r.value === 'object') ? { ...r.value } : (r.value ?? {});
+            const state = resolveStudyRecordState(value);
+            if (state) value.state = state;
+            else delete value.state;
+            delete value.seen;
             studyProgressMap[id] = value;
           }
         }

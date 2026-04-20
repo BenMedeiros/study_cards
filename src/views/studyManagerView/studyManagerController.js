@@ -4,8 +4,9 @@ import { buildStudyTimeByDateSummary } from '../../reports/studyManager/buildStu
 import { buildGroupedLearningRecommendations } from '../../reports/studyManager/buildGroupedLearningRecommendations.js';
 import { buildWordLearningRecommendations } from '../../reports/studyManager/buildWordLearningRecommendations.js';
 import { normalizeRelatedCollectionsConfig } from '../../utils/common/collectionParser.mjs';
+import { isStudyRecordSeen, normalizeStudyViewState } from '../../utils/common/studyProgressState.js';
 
-const STUDY_STATES = ['null', 'focus', 'learned'];
+const STUDY_STATES = ['null', 'seen', 'focus', 'learned'];
 const STUDY_STATS_APP_ID = 'kanji';
 const COOPERATIVE_YIELD_INTERVAL = 250;
 
@@ -202,9 +203,7 @@ function clonePlain(value) {
 }
 
 function normalizeState(v) {
-  const s = String(v || '').trim().toLowerCase();
-  if (s === 'focus' || s === 'learned') return s;
-  return 'null';
+  return normalizeStudyViewState(v);
 }
 
 function normalizeStudyFilterString(v) {
@@ -240,7 +239,7 @@ function hashString(s, seed = 0) {
 }
 
 function makeStateCounts() {
-  return { null: 0, focus: 0, learned: 0 };
+  return { null: 0, seen: 0, focus: 0, learned: 0 };
 }
 
 function makeProgressSummary(collectionKey) {
@@ -753,7 +752,7 @@ const studyManagerController = (() => {
       const state = normalizeState(rec.state);
       const timesSeen = Math.max(0, Math.round(Number(rec.timesSeen) || 0));
       const timeMs = Math.max(0, Math.round(Number(rec.timeMs) || 0));
-      const seen = !!rec.seen || timesSeen > 0 || timeMs > 0;
+      const seen = isStudyRecordSeen(rec);
 
       if (!out.has(collectionKey)) out.set(collectionKey, makeProgressSummary(collectionKey));
       const sum = out.get(collectionKey);
@@ -804,7 +803,7 @@ const studyManagerController = (() => {
       focusOnly: false,
       skipLearned: false,
       heldTableSearch: '',
-      studyFilter: 'null,focus,learned',
+      studyFilter: 'null,seen,focus,learned',
     };
     const view = store?.collections?.getCollectionViewForCollection?.(collection, aggregateState, {
       windowSize: Math.max(10, Math.round(Number(collection?.entries?.length) || 10)),
@@ -858,7 +857,7 @@ const studyManagerController = (() => {
         const state = rec ? normalizeState(rec.state) : 'null';
         const timesSeen = rec ? Math.max(0, Math.round(Number(rec.timesSeen) || 0)) : 0;
         const timeMs = rec ? Math.max(0, Math.round(Number(rec.timeMs) || 0)) : 0;
-        const seen = !!(rec?.seen) || timesSeen > 0 || timeMs > 0;
+        const seen = isStudyRecordSeen(rec);
         stateCounts[state] += 1;
         if (seen) seenCount += 1;
         else notSeenCount += 1;

@@ -219,12 +219,13 @@ export function addStudyFilter(headerTools, { getCurrentCollectionKey, onChange 
 
   const STUDY_FILTER_ITEMS = [
     { value: 'null', label: 'null', left: 'state', right: 'null' },
+    { value: 'seen', label: 'seen', left: 'state', right: 'seen' },
     { value: 'focus', label: 'focus', left: 'state', right: 'focus' },
     { value: 'learned', label: 'learned', left: 'state', right: 'learned' },
   ];
 
   function orderStudyStates(values) {
-    const order = ['null', 'focus', 'learned'];
+    const order = ['null', 'seen', 'focus', 'learned'];
     const arr = Array.isArray(values) ? values : (typeof values === 'string' ? String(values).split(/[,|\s]+/) : []);
     const set = new Set(arr.map(v => String(v || '').trim()).filter(Boolean));
     return order.filter(v => set.has(v));
@@ -233,18 +234,18 @@ export function addStudyFilter(headerTools, { getCurrentCollectionKey, onChange 
   function formatStudyFilterButtonLabel(selectedValues) {
     const ordered = orderStudyStates(selectedValues);
     if (!ordered.length) return 'none';
-    if (ordered.length === 3) return 'all';
+    if (ordered.length === 4) return 'all';
     if (ordered.length >= 2) return `${ordered.length} selected`;
     return ordered[0];
   }
 
-  let initialStudyFilterValues = ['null', 'focus', 'learned'];
+  let initialStudyFilterValues = ['null', 'seen', 'focus', 'learned'];
   const key = (typeof getCurrentCollectionKey === 'function') ? getCurrentCollectionKey() : null;
   if (key) {
     const st = collectionSettingsManager.get(key) || {};
     const saved = typeof st.studyFilter === 'string' ? String(st.studyFilter).trim() : null;
     if (saved) {
-      if (saved === 'all') initialStudyFilterValues = ['null', 'focus', 'learned'];
+      if (saved === 'all') initialStudyFilterValues = ['null', 'seen', 'focus', 'learned'];
       else initialStudyFilterValues = orderStudyStates(saved.split(/[,|\s]+/));
     }
   }
@@ -254,11 +255,11 @@ export function addStudyFilter(headerTools, { getCurrentCollectionKey, onChange 
     key: 'studyFilter',
     items: STUDY_FILTER_ITEMS,
     multi: true,
-    values: Array.isArray(initialStudyFilterValues) ? initialStudyFilterValues.slice() : ['null', 'focus', 'learned'],
+    values: Array.isArray(initialStudyFilterValues) ? initialStudyFilterValues.slice() : ['null', 'seen', 'focus', 'learned'],
     commitOnClose: true,
     getButtonLabel: ({ selectedValues }) => formatStudyFilterButtonLabel(selectedValues),
     onChange: (vals) => {
-      const chosen = (typeof vals === 'string' && vals === 'all') ? ['null', 'focus', 'learned'] : (Array.isArray(vals) ? vals.slice() : []);
+      const chosen = (typeof vals === 'string' && vals === 'all') ? ['null', 'seen', 'focus', 'learned'] : (Array.isArray(vals) ? vals.slice() : []);
       const ordered = orderStudyStates(chosen);
       const collectionKey = (typeof getCurrentCollectionKey === 'function') ? getCurrentCollectionKey() : null;
       if (collectionKey) {

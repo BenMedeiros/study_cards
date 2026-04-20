@@ -10,6 +10,7 @@ import dataViewController from './dataViewController.js';
 import { parseHashRoute, buildHashRoute } from '../../utils/browser/helpers.js';
 import { buildTableColumnItems } from '../../utils/browser/tableSettings.js';
 import { extractPathValues } from '../../utils/common/collectionParser.mjs';
+import { isStudyRecordSeen, normalizeStudyViewState } from '../../utils/common/studyProgressState.js';
 import { timed } from '../../utils/browser/timing.js';
 
 export function renderData({ store }) {
@@ -264,7 +265,7 @@ export function renderData({ store }) {
 
   const relatedCollectionConfigs = normalizeRelatedCollectionsConfig(active?.metadata?.relatedCollections);
 
-  const STUDY_STATE_ORDER = ['null', 'focus', 'learned'];
+  const STUDY_STATE_ORDER = ['null', 'seen', 'focus', 'learned'];
   let studyFilterStates = STUDY_STATE_ORDER.slice();
 
   // Persisted per-collection table search query (always applied)
@@ -482,6 +483,7 @@ export function renderData({ store }) {
   }
   const STUDY_FILTER_ITEMS = [
     { value: 'null', label: 'null', left: 'state', right: 'null' },
+    { value: 'seen', label: 'seen', left: 'state', right: 'seen' },
     { value: 'focus', label: 'focus', left: 'state', right: 'focus' },
     { value: 'learned', label: 'learned', left: 'state', right: 'learned' },
   ];
@@ -543,8 +545,8 @@ export function renderData({ store }) {
     const add = (v) => {
       const s = String(v || '').trim().toLowerCase();
       if (!s || seen.has(s)) return;
-      if (s !== 'null' && s !== 'focus' && s !== 'learned') {
-        throw new Error(`Invalid studyFilter state: ${s}. Allowed states: null, focus, learned`);
+      if (s !== 'null' && s !== 'seen' && s !== 'focus' && s !== 'learned') {
+        throw new Error(`Invalid studyFilter state: ${s}. Allowed states: null, seen, focus, learned`);
       }
       seen.add(s);
       out.push(s);
@@ -725,9 +727,9 @@ export function renderData({ store }) {
       // Legacy booleans
       const skipLearned = !!saved?.skipLearned;
       const focusOnly = !!saved?.focusOnly;
-      if (focusOnly) studyFilterStates = ['focus'];
-      else if (skipLearned) studyFilterStates = ['null', 'focus'];
-      else studyFilterStates = STUDY_STATE_ORDER.slice();
+        if (focusOnly) studyFilterStates = ['focus'];
+        else if (skipLearned) studyFilterStates = ['null', 'seen', 'focus'];
+        else studyFilterStates = STUDY_STATE_ORDER.slice();
     }
 
     const held = String(saved?.heldTableSearch || '').trim();
@@ -795,7 +797,7 @@ export function renderData({ store }) {
           : {};
         const timesSeen = Math.max(0, Math.round(Number(rec?.timesSeen) || 0));
         const timeMs = Math.max(0, Math.round(Number(rec?.timeMs) || 0));
-        const seen = !!rec?.seen || timesSeen > 0 || timeMs > 0;
+        const seen = isStudyRecordSeen(rec);
         return { seen, timesSeen, timeMs };
       },
       clearLearned: () => {
@@ -1054,8 +1056,9 @@ export function renderData({ store }) {
       const allRows = [];
       const rows = visibleEntries.map((entry, i) => {
       const key = adapter.getKey(entry);
-      const learned = adapter.isLearned(key);
-      const focus = adapter.isFocus(key);
+      const state = normalizeStudyViewState(adapter.getProgressRecord(key)?.state);
+      const learned = state === 'learned';
+      const focus = state === 'focus';
       const metrics = (typeof adapter.getStudyMetrics === 'function')
         ? adapter.getStudyMetrics(key)
         : { seen: false, timesSeen: 0, timeMs: 0 };
@@ -1491,7 +1494,7 @@ export function renderData({ store }) {
         const skipLearned = !!saved?.skipLearned;
         const focusOnly = !!saved?.focusOnly;
         if (focusOnly) studyFilterStates = ['focus'];
-        else if (skipLearned) studyFilterStates = ['null', 'focus'];
+        else if (skipLearned) studyFilterStates = ['null', 'seen', 'focus'];
         else studyFilterStates = STUDY_STATE_ORDER.slice();
       }
 
