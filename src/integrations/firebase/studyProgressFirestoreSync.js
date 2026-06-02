@@ -1,24 +1,24 @@
 import {
-  deleteField,
-  doc,
-  serverTimestamp,
-  setDoc,
-  writeBatch,
-} from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
-
-import { firebaseAuth, firebaseDb } from './firebaseApp.js';
+  assertFirebaseSyncEnabled,
+  FIREBASE_SYNC_ENABLED,
+} from './config.js';
 import {
   idbGet,
   idbGetAll,
   idbPut,
 } from '../../utils/browser/idb.js';
 
-function requireSignedInUser() {
-  const user = firebaseAuth.currentUser;
+async function loadFirebaseSyncApi() {
+  assertFirebaseSyncEnabled();
+  const [api, app] = await Promise.all([
+    import('https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js'),
+    import('./firebaseApp.js'),
+  ]);
+  const user = app.firebaseAuth.currentUser;
   if (!user?.uid) {
     throw new Error('A signed-in Firebase user is required to sync study progress');
   }
-  return user;
+  return { api, db: app.firebaseDb, user };
 }
 
 function normalizeValue(value) {
@@ -159,27 +159,28 @@ function normalizeStudyProgressRow(row) {
 }
 
 async function writeStudyProgressRows(rows, opts = {}) {
+  assertFirebaseSyncEnabled();
   const normalizedRows = rows
     .map((row) => normalizeStudyProgressRow(row))
     .filter(Boolean);
+  const { api, db, user } = await loadFirebaseSyncApi();
   if (!normalizedRows.length) {
     return {
-      userId: requireSignedInUser().uid,
+      userId: user.uid,
       count: 0,
       rows: [],
     };
   }
 
-  const user = requireSignedInUser();
-  const batch = writeBatch(firebaseDb);
+  const batch = api.writeBatch(db);
   for (const row of normalizedRows) {
     const docId = encodeStudyProgressDocId(row.collectionKey, row.entryKey);
-    const docRef = doc(firebaseDb, 'users', user.uid, 'study_progress', docId);
+    const docRef = api.doc(db, 'users', user.uid, 'study_progress', docId);
     batch.set(docRef, {
       ...row,
-      seen: deleteField(),
+      seen: api.deleteField(),
       source: 'browser.indexeddb.study_progress',
-      syncedAt: serverTimestamp(),
+      syncedAt: api.serverTimestamp(),
       ...(opts && typeof opts === 'object' ? opts : {}),
     }, { merge: true });
   }
@@ -426,6 +427,15 @@ export async function getStudyProgressStateSyncStatus(collectionIdOrCandidates) 
 }
 
 export async function markStudyProgressStateDirty(collectionIdOrCandidates, opts = {}) {
+  if (!FIREBASE_SYNC_ENABLED) {
+    return {
+      entityType: 'study_progress_state',
+      entityKey: getCollectionKeyHint(collectionIdOrCandidates),
+      dirty: false,
+      localOnly: true,
+    };
+  }
+
   const snapshot = await buildStudyProgressStateSnapshot(collectionIdOrCandidates);
   const docSize = estimateJsonSizeBytes(snapshot);
   const prior = await getSyncStateRecord('study_progress_state', snapshot.collectionKey);
@@ -454,11 +464,11 @@ export async function markStudyProgressStateDirty(collectionIdOrCandidates, opts
 }
 
 export async function syncStudyProgressStateSnapshot(collectionIdOrCandidates, opts = {}) {
-  const user = requireSignedInUser();
+  const { api, db, user } = await loadFirebaseSyncApi();
   const snapshot = await buildStudyProgressStateSnapshot(collectionIdOrCandidates);
   const docSize = estimateJsonSizeBytes(snapshot);
   const nowIso = new Date().toISOString();
-  const docRef = doc(firebaseDb, 'users', user.uid, 'study_progress_state', snapshot.docId);
+  const docRef = api.doc(db, 'users', user.uid, 'study_progress_state', snapshot.docId);
   const syncStateId = buildSyncStateId('study_progress_state', snapshot.collectionKey);
   const prior = await getSyncStateRecord('study_progress_state', snapshot.collectionKey);
 
@@ -478,11 +488,11 @@ export async function syncStudyProgressStateSnapshot(collectionIdOrCandidates, o
       lastSyncedPayload: prior?.lastSyncedPayload || null,
     });
 
-    await setDoc(docRef, {
+    await api.setDoc(docRef, {
       collectionKey: snapshot.collectionKey,
       states: snapshot.states,
       schemaVersion: snapshot.schemaVersion,
-      updatedAt: serverTimestamp(),
+      updatedAt: api.serverTimestamp(),
       source: 'collectionsView.rowAction',
       ...(opts && typeof opts === 'object' ? opts : {}),
     }, { merge: true });

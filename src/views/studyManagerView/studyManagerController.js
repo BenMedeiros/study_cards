@@ -4,7 +4,7 @@ import { buildStudyTimeByDateSummary } from '../../reports/studyManager/buildStu
 import { buildGroupedLearningRecommendations } from '../../reports/studyManager/buildGroupedLearningRecommendations.js';
 import { buildWordLearningRecommendations } from '../../reports/studyManager/buildWordLearningRecommendations.js';
 import { normalizeRelatedCollectionsConfig } from '../../utils/common/collectionParser.mjs';
-import { isStudyRecordSeen, normalizeStudyViewState } from '../../utils/common/studyProgressState.js';
+import { isStudyRecordSeen, normalizeStudyViewState } from '../../utils/common/studyProgressState.mjs';
 
 const STUDY_STATES = ['null', 'seen', 'focus', 'learned'];
 const STUDY_STATS_APP_ID = 'kanji';

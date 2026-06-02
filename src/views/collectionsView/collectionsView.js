@@ -11,6 +11,7 @@ import {
   getStudyProgressStateSyncStatus,
   syncStudyProgressStateSnapshot,
 } from '../../integrations/firebase/studyProgressFirestoreSync.js';
+import { FIREBASE_SYNC_ENABLED } from '../../integrations/firebase/config.js';
 import { idbGetAll } from '../../utils/browser/idb.js';
 import collectionsViewController from './collectionsViewController.js';
 import {
@@ -30,7 +31,7 @@ const TABLE_ACTION_ITEMS = [
   { key: 'downloadFullJson', label: 'Download Full JSON' },
 ];
 
-const FIREBASE_SYNC_SOURCE_DEFS = [
+const FIREBASE_SYNC_SOURCE_DEFS = FIREBASE_SYNC_ENABLED ? [
   { key: 'firebaseSyncStatus', label: 'Firebase Sync Status', type: 'string', sourceKind: 'studyProgress', description: 'firebase_sync_state.status for study_progress_state.', defaultSelected: false },
   { key: 'firebaseSyncDirty', label: 'Firebase Sync Dirty', type: 'boolean', sourceKind: 'studyProgress', description: 'Whether the local study_progress_state sync record is marked dirty.', defaultSelected: false },
   { key: 'firebaseSyncDocSize', label: 'Firebase Doc Size', type: 'number', sourceKind: 'studyProgress', description: 'Latest computed study_progress_state snapshot size in bytes.', defaultSelected: false },
@@ -39,7 +40,7 @@ const FIREBASE_SYNC_SOURCE_DEFS = [
   { key: 'firebaseSyncLastAttemptIso', label: 'Firebase Last Attempt', type: 'string', sourceKind: 'studyProgress', description: 'Last attempt timestamp from firebase_sync_state.', defaultSelected: false },
   { key: 'firebaseSyncLastSuccessIso', label: 'Firebase Last Success', type: 'string', sourceKind: 'studyProgress', description: 'Last successful sync timestamp from firebase_sync_state.', defaultSelected: false },
   { key: 'firebaseSyncLastError', label: 'Firebase Last Error', type: 'string', sourceKind: 'studyProgress', description: 'Last sync error from firebase_sync_state.', defaultSelected: false },
-];
+] : [];
 
 function asString(v) {
   return (v == null) ? '' : String(v);
@@ -476,7 +477,13 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
         console.log('collections:clearHistory - no callback built yet for', id);
       }
     }
-  ];
+  ].filter((action) => (
+    FIREBASE_SYNC_ENABLED ||
+    (
+      action?.className !== 'btn-snapshot-collection-settings' &&
+      action?.className !== 'btn-sync-study-progress-state'
+    )
+  ));
 
   const applied = applyTableColumnSettings({ headers: allHeaders, rows, tableSettings: collectionsTableSettings });
 
@@ -639,17 +646,22 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
   });
 
   root.append(collectionsCard);
-  void refreshFirebaseSyncStateColumns();
-  scheduleStudyProgressSyncStatusRefresh();
+  if (FIREBASE_SYNC_ENABLED) {
+    void refreshFirebaseSyncStateColumns();
+    scheduleStudyProgressSyncStatusRefresh();
+  }
   root.__activate = () => {
+    if (!FIREBASE_SYNC_ENABLED) return;
     void refreshFirebaseSyncStateColumns();
     scheduleStudyProgressSyncStatusRefreshSoon();
   };
   root.__updateRoute = () => {
+    if (!FIREBASE_SYNC_ENABLED) return;
     void refreshFirebaseSyncStateColumns();
     scheduleStudyProgressSyncStatusRefreshSoon();
   };
   table.addEventListener('table:searchApplied', () => {
+    if (!FIREBASE_SYNC_ENABLED) return;
     void refreshFirebaseSyncStateColumns();
     scheduleStudyProgressSyncStatusRefreshSoon();
   });
@@ -660,6 +672,7 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
     bodyRefreshInFlight = true;
     setTimeout(() => {
       bodyRefreshInFlight = false;
+      if (!FIREBASE_SYNC_ENABLED) return;
       void refreshFirebaseSyncStateColumns();
       scheduleStudyProgressSyncStatusRefreshSoon();
     }, 0);
@@ -680,7 +693,6 @@ export function renderCollectionsManager({ store, onNavigate, route }) {
 
   return root;
 }
-
 
 
 

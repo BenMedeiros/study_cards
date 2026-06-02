@@ -10,7 +10,7 @@ import dataViewController from './dataViewController.js';
 import { parseHashRoute, buildHashRoute } from '../../utils/browser/helpers.js';
 import { buildTableColumnItems } from '../../utils/browser/tableSettings.js';
 import { extractPathValues } from '../../utils/common/collectionParser.mjs';
-import { isStudyRecordSeen, normalizeStudyViewState } from '../../utils/common/studyProgressState.js';
+import { isStudyRecordSeen, normalizeStudyViewState } from '../../utils/common/studyProgressState.mjs';
 import { timed } from '../../utils/browser/timing.js';
 
 export function renderData({ store }) {

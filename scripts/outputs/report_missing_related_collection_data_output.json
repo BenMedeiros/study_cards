@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-19T14:39:55.787Z",
+  "generatedAt": "2026-06-02T17:39:40.321Z",
   "scannedCollections": 23,
   "collectionsWithRelations": 2,
   "relationCount": 3,
@@ -66,13 +66,13 @@
       ]
     }
   ],
-  "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards_workspace\\study_cards",
+  "repoRoot": "/Users/benjaminmedeiros/Developer/benjaminmedeirosai/study_cards",
   "outputPath": "scripts/outputs/report_missing_related_collection_data_output.json",
   "parseErrors": [],
   "runTiming": {
-    "startedAt": "2026-04-19T14:39:55.752Z",
-    "finishedAt": "2026-04-19T14:39:55.787Z",
-    "durationMs": 35,
-    "durationSeconds": 0.035
+    "startedAt": "2026-06-02T17:39:40.309Z",
+    "finishedAt": "2026-06-02T17:39:40.321Z",
+    "durationMs": 12,
+    "durationSeconds": 0.012
   }
 }

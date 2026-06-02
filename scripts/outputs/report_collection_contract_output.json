@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-04-19T14:39:56.398Z",
-  "repoRoot": "C:\\Users\\benme\\source\\language_learning\\study_cards_workspace\\study_cards",
+  "generatedAt": "2026-06-02T17:39:40.470Z",
+  "repoRoot": "/Users/benjaminmedeiros/Developer/benjaminmedeirosai/study_cards",
   "outputPath": "scripts/outputs/report_collection_contract_output.json",
   "runTiming": {
-    "startedAt": "2026-04-19T14:39:56.341Z",
-    "finishedAt": "2026-04-19T14:39:56.399Z",
-    "durationMs": 58,
-    "durationSeconds": 0.058
+    "startedAt": "2026-06-02T17:39:40.453Z",
+    "finishedAt": "2026-06-02T17:39:40.470Z",
+    "durationMs": 17,
+    "durationSeconds": 0.017
   },
   "scannedCollections": 20,
   "collectionsWithProblems": 11,

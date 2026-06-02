@@ -5,7 +5,7 @@ import { compileTableSearchQuery, matchesTableSearch, filterRecordsAndIndicesByT
 import { extractPathValues } from '../utils/common/collectionParser.mjs';
 import { markStudyProgressStateDirty } from '../integrations/firebase/studyProgressFirestoreSync.js';
 
-import { isStudyRecordSeen, normalizeStudyViewState } from '../utils/common/studyProgressState.js';
+import { isStudyRecordSeen, normalizeStudyViewState } from '../utils/common/studyProgressState.mjs';
 
 export function createCollectionsManager({ state, uiState, persistence, progressManager, collectionDB = null, settings = null }) {
   const subscribers = new Set();

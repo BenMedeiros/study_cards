@@ -1,18 +1,17 @@
-import {
-  doc,
-  serverTimestamp,
-  setDoc,
-} from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
-
-import { firebaseAuth, firebaseDb } from './firebaseApp.js';
+import { assertFirebaseSyncEnabled } from './config.js';
 import { snapshotCollectionSetting } from './collectionSettingsSnapshot.js';
 
-function requireSignedInUser() {
-  const user = firebaseAuth.currentUser;
+async function loadFirebaseSyncApi() {
+  assertFirebaseSyncEnabled();
+  const [api, app] = await Promise.all([
+    import('https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js'),
+    import('./firebaseApp.js'),
+  ]);
+  const user = app.firebaseAuth.currentUser;
   if (!user?.uid) {
     throw new Error('A signed-in Firebase user is required to snapshot collection settings');
   }
-  return user;
+  return { api, db: app.firebaseDb, user };
 }
 
 export function encodeCollectionSettingsDocId(collectionId) {
@@ -22,7 +21,7 @@ export function encodeCollectionSettingsDocId(collectionId) {
 }
 
 export async function syncCollectionSettingSnapshot(collectionIdOrCandidates, opts = {}) {
-  const user = requireSignedInUser();
+  const { api, db, user } = await loadFirebaseSyncApi();
   const snapshot = await snapshotCollectionSetting(collectionIdOrCandidates);
   if (!snapshot?.row) {
     throw new Error('No collection_settings row found for the requested collection');
@@ -34,8 +33,8 @@ export async function syncCollectionSettingSnapshot(collectionIdOrCandidates, op
   }
 
   const docId = encodeCollectionSettingsDocId(collectionId);
-  const docRef = doc(firebaseDb, 'users', user.uid, 'collection_settings', docId);
-  await setDoc(docRef, {
+  const docRef = api.doc(db, 'users', user.uid, 'collection_settings', docId);
+  await api.setDoc(docRef, {
     schemaVersion: snapshot.schemaVersion,
     snapshotType: snapshot.snapshotType,
     dbName: snapshot.dbName,
@@ -43,7 +42,7 @@ export async function syncCollectionSettingSnapshot(collectionIdOrCandidates, op
     collectionId,
     row: snapshot.row,
     clientSnapshotCreatedAt: snapshot.createdAt,
-    syncedAt: serverTimestamp(),
+    syncedAt: api.serverTimestamp(),
     source: 'collectionsView.rowAction',
     ...(opts && typeof opts === 'object' ? opts : {}),
   }, { merge: true });

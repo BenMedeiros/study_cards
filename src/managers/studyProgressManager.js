@@ -1,7 +1,7 @@
 import {
   normalizePersistedStudyState,
   resolveStudyRecordState,
-} from '../utils/common/studyProgressState.js';
+} from '../utils/common/studyProgressState.mjs';
 
 export function createStudyProgressManager({
   uiState,

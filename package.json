@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "npm run report && npm run validate && npm run build && npx http-server -p 3000 -c-1",
+    "dev": "npm run report && npm run validate && npm run build && npx http-server -p 3131 -c-1",
     "build": "npm run build:rebuild-index",
     "build:rebuild-index": "node scripts/build/rebuild_index.js",
     "validate": "npm run validate:common-shared",

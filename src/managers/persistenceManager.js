@@ -1,6 +1,6 @@
 import * as idb from '../utils/browser/idb.js';
 import { runFrontendMigrations } from '../migration/index.js';
-import { resolveStudyRecordState } from '../utils/common/studyProgressState.js';
+import { resolveStudyRecordState } from '../utils/common/studyProgressState.mjs';
 
 // Namespaced localStorage key for shell UI state
 const SHELL_LS_KEY = 'study_cards:v1';

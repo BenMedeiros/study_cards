@@ -1,5 +1,5 @@
 import { idbGetAll, idbPut } from '../utils/browser/idb.js';
-import { resolveStudyRecordState } from '../utils/common/studyProgressState.js';
+import { resolveStudyRecordState } from '../utils/common/studyProgressState.mjs';
 
 const MIGRATION_ID = 'study_progress_seen_to_state_v1';
 

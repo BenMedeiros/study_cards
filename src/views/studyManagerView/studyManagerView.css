@@ -7,6 +7,12 @@
   overflow: auto;
 }
 
+.study-manager-view .study-manager-body > .card {
+  flex: 0 0 auto;
+  min-height: fit-content;
+  overflow-y: visible;
+}
+
 .study-manager-view [hidden] {
   display: none !important;
 }

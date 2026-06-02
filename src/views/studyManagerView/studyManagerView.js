@@ -22,15 +22,6 @@ const TABLE_ACTION_ITEMS = [
   { key: 'downloadFullJson', label: 'Download Full JSON' },
 ];
 
-const REPORT_REFRESH_ITEMS = [
-  { id: 'collectionSummary', label: 'Summary' },
-  { id: 'studyTimeByFilter', label: 'Filters' },
-  { id: 'groupByAppId', label: 'Apps' },
-  { id: 'studyTimeByDate', label: 'By Date' },
-  { id: 'studyTimeByDateSummary', label: 'Daily Summary' },
-  { id: 'recommendations', label: 'Recommendations' },
-];
-
 function asNumber(v) {
   return Math.max(0, Math.round(Number(v) || 0));
 }
@@ -779,7 +770,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
   const root = document.createElement('div');
   root.id = 'study-manager-root';
   root.className = 'study-manager-view';
-  const AUTO_RUN_REPORTS = false;
+  const AUTO_RUN_REPORTS = true;
 
   let snapshot = studyManagerController.getSnapshot() || {};
   let pendingSnapshot = null;
@@ -1085,18 +1076,9 @@ export function renderStudyManager({ store, onNavigate, route }) {
 
   function renderControls() {
     controls.removeControl && controls.removeControl('collection');
-    controls.removeControl && controls.removeControl('refresh-all');
-    REPORT_REFRESH_ITEMS.forEach((item) => {
-      controls.removeControl && controls.removeControl(`refresh-${item.id}`);
-    });
 
     const collections = getSelectableCollections();
     if (!collections.length) return;
-    const isRefreshing = !!snapshot?.isComputing;
-    const requestedReportIds = Array.isArray(snapshot?.activeRequestedReportIds)
-      ? snapshot.activeRequestedReportIds.map((item) => String(item || '').trim()).filter(Boolean)
-      : [];
-    const isRefreshAllActive = isRefreshing && !requestedReportIds.length;
 
     controls.addElement({
       type: 'dropdown',
@@ -1113,51 +1095,6 @@ export function renderStudyManager({ store, onNavigate, route }) {
         renderBody();
         ensureSelectedCollectionReport();
       },
-    });
-
-    controls.addElement({
-      type: 'button',
-      key: 'refresh-all',
-      caption: 'data',
-      label: isRefreshAllActive ? 'Refreshing...' : 'Refresh All',
-      className: 'btn small',
-      onClick: () => {
-        if (pendingSnapshot) {
-          snapshot = pendingSnapshot;
-          pendingSnapshot = null;
-          renderControls();
-          renderBody();
-        }
-        try { studyManagerController.requestRefresh('manual', { delayMs: 0, collectionIds: [selectedCollectionId] }); } catch {}
-      },
-      disabled: isRefreshing,
-    });
-
-    REPORT_REFRESH_ITEMS.forEach((item) => {
-      const isActive = isRefreshing && requestedReportIds.includes(item.id);
-      controls.addElement({
-        type: 'button',
-        key: `refresh-${item.id}`,
-        caption: 'report',
-        label: isActive ? 'Refreshing...' : item.label,
-        className: 'btn small',
-        onClick: () => {
-          if (pendingSnapshot) {
-            snapshot = pendingSnapshot;
-            pendingSnapshot = null;
-            renderControls();
-            renderBody();
-          }
-          try {
-            studyManagerController.requestRefresh('manual', {
-              delayMs: 0,
-              collectionIds: [selectedCollectionId],
-              reportIds: [item.id],
-            });
-          } catch {}
-        },
-        disabled: isRefreshing,
-      });
     });
   }
 
@@ -1523,6 +1460,7 @@ export function renderStudyManager({ store, onNavigate, route }) {
 
   renderControls();
   renderBody();
+  ensureSelectedCollectionReport();
 
   const unsub = studyManagerController.subscribe((next) => {
     const nextSnap = next || {};

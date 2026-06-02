@@ -1,4 +1,4 @@
-import { isStudyRecordSeen, normalizeStudyViewState } from '../../utils/common/studyProgressState.js';
+import { isStudyRecordSeen, normalizeStudyViewState } from '../../utils/common/studyProgressState.mjs';
 
 function normalizeState(v) {
   return normalizeStudyViewState(v);

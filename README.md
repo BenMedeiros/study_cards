@@ -18,7 +18,7 @@ Quickstart (local)
 2. Start the local server:
    npm run dev
 3. Open the app in your browser:
-  http://127.0.0.1:3000/#/collections
+  http://127.0.0.1:3131/#/collections
 
 Notes
 - The app is served statically. The repo's dev script uses http-server (see package.json).
@@ -89,7 +89,6 @@ Development notes
 Deployment
 - The repo is static and can be deployed via GitHub Pages (configure Pages to serve from the master branch root) or any static host.
 
-OAuth bridge
-- `oauth-bridge.html` is a standalone browser bridge for ChatGPT OAuth.
-- Configure the backend `CUSTOMGPT_OAUTH_AUTHORIZE_BRIDGE_URL` to point at that page on the same static host as the frontend.
-- The bridge waits for Firebase auth, prompts for Google sign-in if needed, gets a Firebase ID token, posts it to the backend `/oauth/authorize/complete` endpoint, and then redirects back to ChatGPT.
+Deprecated OAuth bridge
+- Firebase/Google SSO is disabled by default; the app is local-only.
+- The old OAuth bridge and Firebase integration files remain in the repo for reference, but the shell does not show login controls or initialize Firebase.

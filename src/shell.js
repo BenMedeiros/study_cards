@@ -5,7 +5,6 @@ import { parseHashRoute } from './utils/browser/helpers.js';
 import { renderData } from './views/dataView/dataView.js';
 import { renderKanjiStudyCard } from './views/kanjiStudyCardView/kanjiStudyCardView.js';
 import { renderEntityExplorer } from './views/entityExplorerView/entityExplorerView.js';
-import { renderOauthLinkView } from './views/oauthLinkView/oauthLinkView.js';
 import { createCollectionBrowserDropdown } from './components/shell/collectionBrowser.js';
 import { openRightClickMenu, registerRightClickContext } from './components/shared/rightClickMenu.js';
 import { createShellTitleContextMenu } from './components/shell/shellTitleContextMenu.js';
@@ -13,12 +12,6 @@ import { createShellFooter } from './components/shell/shellFooter.js';
 import { createDropdown } from './components/shared/dropdown.js';
 import { timed } from './utils/browser/timing.js';
 import collectionSettingsManager from './managers/collectionSettingsManager.js';
-import {
-  getFirebaseAuthSnapshot,
-  signInWithGoogle,
-  signOutFirebaseUser,
-  subscribeFirebaseAuth,
-} from './integrations/firebase/auth.js';
 
 export function createAppShell({ store, onNavigate }) {
   const el = document.createElement('div');
@@ -74,8 +67,6 @@ export function createAppShell({ store, onNavigate }) {
   // Caption visibility is controlled explicitly via the brand toggle button.
   // Persist this preference in settings so it survives reloads.
   let captionsVisible = false;
-  let authActionPending = false;
-  let authActionError = '';
   try {
     const sm = store?.settings;
     if (sm && typeof sm.isReady === 'function' && sm.isReady() && typeof sm.get === 'function') {
@@ -85,30 +76,6 @@ export function createAppShell({ store, onNavigate }) {
       try { document.body.classList.toggle('hide-view-header-tools', !!sm.get('shell.hideViewHeaderTools', { consumerId: 'shell' })); } catch (e) {}
     }
   } catch (e) {}
-
-  try {
-    subscribeFirebaseAuth(() => {
-      authActionPending = false;
-      authActionError = '';
-      try { renderHeader(); } catch (e) {}
-    });
-  } catch (e) {}
-
-  async function handleAuthButtonClick() {
-    if (authActionPending) return;
-    authActionPending = true;
-    authActionError = '';
-    renderHeader();
-    try {
-      const authState = getFirebaseAuthSnapshot();
-      if (authState?.isSignedIn) await signOutFirebaseUser();
-      else await signInWithGoogle();
-    } catch (e) {
-      authActionError = String(e?.message || e || 'Authentication failed');
-      authActionPending = false;
-      renderHeader();
-    }
-  }
 
   function setCaptionsVisible(val, opts = {}) {
     captionsVisible = !!val;
@@ -630,40 +597,7 @@ export function createAppShell({ store, onNavigate }) {
     brandSubtitle.id = 'hdr-brand-subtitle';
     brandSubtitle.textContent = 'Local-first study tools';
 
-    const authState = getFirebaseAuthSnapshot();
-    const brandAuth = document.createElement('div');
-    brandAuth.className = 'brand-auth';
-    brandAuth.id = 'hdr-brand-auth';
-
-    const authStatus = document.createElement('span');
-    authStatus.className = 'brand-auth-status';
-    authStatus.id = 'hdr-auth-status';
-    if (!authState?.isReady) {
-      authStatus.textContent = 'Checking sign-in';
-    } else if (authState?.isSignedIn) {
-      const label = String(authState.displayName || authState.email || authState.uid || 'Signed in').trim();
-      authStatus.textContent = `Signed in: ${label}`;
-      if (authState.email) authStatus.title = authState.email;
-    } else {
-      authStatus.textContent = 'Not signed in';
-    }
-
-    const authButton = document.createElement('button');
-    authButton.type = 'button';
-    authButton.className = `btn small ${authState?.isSignedIn ? '' : 'primary'}`.trim();
-    authButton.id = 'hdr-auth-button';
-    authButton.disabled = !authState?.isReady || authActionPending;
-    authButton.textContent = authActionPending
-      ? 'Working...'
-      : (authState?.isSignedIn ? 'Sign out' : 'Log in');
-    authButton.addEventListener('click', () => {
-      void handleAuthButtonClick();
-    });
-    if (authActionError) authButton.title = authActionError;
-
-    brandAuth.append(authStatus, authButton);
-
-    brand.append(brandTitle, brandSubtitle, brandAuth);
+    brand.append(brandTitle, brandSubtitle);
 
     // (Captions toggle moved to the brand context menu.)
 
@@ -845,7 +779,21 @@ export function createAppShell({ store, onNavigate }) {
 
       if (route.pathname === '/oauth-link') {
         try { console.info(cachedRouteMounts.has('/oauth-link') ? 'shell.renderRoute /oauth-link cache hit' : 'shell.renderRoute /oauth-link cache miss'); } catch (e) {}
-        const mount = getCachedRouteMount('/oauth-link', () => timed('view.renderOauthLinkView', () => renderOauthLinkView({ store, onNavigate, route })));
+        const mount = getCachedRouteMount('/oauth-link', () => {
+          const localOnly = document.createElement('div');
+          localOnly.className = 'oauth-link-view';
+          const panel = document.createElement('section');
+          panel.className = 'oauth-link-panel';
+          const title = document.createElement('h1');
+          title.className = 'oauth-link-title';
+          title.textContent = 'OAuth disabled';
+          const message = document.createElement('p');
+          message.className = 'oauth-link-lede';
+          message.textContent = 'This app is running local-only. Firebase and Google SSO are disabled.';
+          panel.append(title, message);
+          localOnly.append(panel);
+          return localOnly;
+        });
         mount.hidden = false;
         mount.style.display = '';
         updateCachedRouteMount(mount, route);

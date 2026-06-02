@@ -2,7 +2,7 @@
   "schemas": [
     {
       "path": "japanese/_japanese.schemas.json",
-      "modifiedAt": "2026-03-30T18:08:04.343Z",
+      "modifiedAt": "2026-05-17T03:25:58.403Z",
       "description": "Shared Japanese collection schema types for reusable sentence-unit based content models.",
       "schemaTypeCount": 5,
       "valid": true,
@@ -13,7 +13,7 @@
     },
     {
       "path": "spanish/_spanish.schemas.json",
-      "modifiedAt": "2026-03-30T18:27:56.872Z",
+      "modifiedAt": "2026-05-17T03:25:58.404Z",
       "description": "Shared Spanish collection schema types for reusable sentence and word content models.",
       "schemaTypeCount": 3,
       "valid": true,
@@ -26,7 +26,7 @@
   "collections": [
     {
       "path": "general/languageHistory.json",
-      "modifiedAt": "2026-02-24T20:04:00.901Z",
+      "modifiedAt": "2026-05-17T03:25:58.403Z",
       "name": "Language History",
       "description": "Combined language history entries",
       "entriesCount": 12,
@@ -45,7 +45,7 @@
     },
     {
       "path": "general/numbers.json",
-      "modifiedAt": "2026-02-24T16:40:39.036Z",
+      "modifiedAt": "2026-05-17T03:25:58.403Z",
       "name": "Letters to Numbers",
       "description": "A=1, B=2, ... (v0 seed)",
       "entriesCount": 26,
@@ -64,7 +64,7 @@
     },
     {
       "path": "general/periodic_table.json",
-      "modifiedAt": "2026-02-24T16:40:54.917Z",
+      "modifiedAt": "2026-05-17T03:25:58.403Z",
       "name": "Periodic Table – First 70 Elements",
       "description": "Atomic number, symbol, and core properties for the first 70 elements of the periodic table.",
       "entriesCount": 70,
@@ -83,7 +83,7 @@
     },
     {
       "path": "general/pokemon.json",
-      "modifiedAt": "2026-03-15T16:15:58.070Z",
+      "modifiedAt": "2026-05-17T03:25:58.403Z",
       "name": "Pokémon Starters (Kanto)",
       "description": "First-generation Kanto starter Pokémon and first 151 Pokémon. Pokémon `type` values use the official Japanese main-series game type labels (e.g., ノーマル, ほのお, みず, でんき, くさ, どく, ひこう, etc.). Name root fields capture both surface segmentation and etymology for Japanese and English names.",
       "entriesCount": 151,
@@ -102,7 +102,7 @@
     },
     {
       "path": "general/programming.json",
-      "modifiedAt": "2026-02-24T16:41:24.452Z",
+      "modifiedAt": "2026-05-17T03:25:58.403Z",
       "name": "Programming",
       "description": "Consolidated programming collections: languages, SQL engines, web technologies.",
       "entriesCount": 21,
@@ -121,7 +121,7 @@
     },
     {
       "path": "greek/greek_alphabet.json",
-      "modifiedAt": "2026-02-24T16:36:04.736Z",
+      "modifiedAt": "2026-05-17T03:25:58.403Z",
       "name": "Greek Alphabet",
       "description": "Greek letters with standard alphabetical order, lowercase/uppercase forms, classical names, letter type classification, and pronunciation guides split into Classical vs Modern (IPA + simple helpers).",
       "entriesCount": 24,
@@ -140,7 +140,7 @@
     },
     {
       "path": "greek/greek_mythology.json",
-      "modifiedAt": "2026-02-24T16:38:03.473Z",
+      "modifiedAt": "2026-05-17T03:25:58.403Z",
       "name": "Greek Mythology",
       "description": "Consolidated Greek mythology entries (Olympians, Titans, Primordials, Chthonic).",
       "entriesCount": 43,
@@ -159,7 +159,7 @@
     },
     {
       "path": "japanese/japanese_grammar.json",
-      "modifiedAt": "2026-03-30T17:49:49.836Z",
+      "modifiedAt": "2026-05-17T03:25:58.403Z",
       "name": "Japanese Grammar",
       "description": "Consolidated Japanese grammar patterns with quick examples and links to sentence and paragraph usage.",
       "entriesCount": 317,
@@ -178,7 +178,7 @@
     },
     {
       "path": "japanese/japanese_paragraphs.json",
-      "modifiedAt": "2026-03-30T18:05:46.773Z",
+      "modifiedAt": "2026-05-17T03:25:58.403Z",
       "name": "Japanese Paragraphs",
       "description": "Learner-friendly multi-sentence Japanese reading passages with sentence-level chunking.",
       "entriesCount": 4,
@@ -197,7 +197,7 @@
     },
     {
       "path": "japanese/japanese_sentences.json",
-      "modifiedAt": "2026-03-30T18:05:46.769Z",
+      "modifiedAt": "2026-05-17T03:25:58.404Z",
       "name": "Japanese Sentences",
       "description": "Ichidan verbs with counters, proper nouns, and culturally useful notes.",
       "entriesCount": 214,
@@ -216,7 +216,7 @@
     },
     {
       "path": "japanese/japanese_songs.json",
-      "modifiedAt": "2026-03-31T02:56:04.214Z",
+      "modifiedAt": "2026-05-17T03:25:58.404Z",
       "name": "Japanese Songs",
       "description": "Song lyrics with learner-friendly sentence-level analysis and chunks.",
       "entriesCount": 2,
@@ -235,7 +235,7 @@
     },
     {
       "path": "japanese/japanese_words.json",
-      "modifiedAt": "2026-04-13T19:09:50.451Z",
+      "modifiedAt": "2026-05-17T03:25:58.404Z",
       "name": "All Japanese Words",
       "description": "First-generation Japanese words from various sources including dictionaries and language databases.",
       "entriesCount": 2731,
@@ -1708,7 +1708,7 @@
     },
     {
       "path": "persian/persian_alphabet.json",
-      "modifiedAt": "2026-04-13T21:37:15.149Z",
+      "modifiedAt": "2026-05-17T03:25:58.404Z",
       "name": "Persian Alphabet",
       "description": "Starter Persian alphabet collection with letter forms, learner-facing sound notes, romanized values, and short example words for each positional form.",
       "entriesCount": 32,
@@ -1727,7 +1727,7 @@
     },
     {
       "path": "spanish/spanish_sentences.json",
-      "modifiedAt": "2026-03-30T18:27:56.873Z",
+      "modifiedAt": "2026-05-17T03:25:58.405Z",
       "name": "Spanish Sentences",
       "description": "Spanish learner sentences with English translations and chunk references into the Spanish words collection.",
       "entriesCount": 1,
@@ -1746,7 +1746,7 @@
     },
     {
       "path": "spanish/spanish_words.json",
-      "modifiedAt": "2026-03-30T18:27:56.874Z",
+      "modifiedAt": "2026-05-17T03:25:58.405Z",
       "name": "All Spanish Words",
       "description": "First-generation Spanish vocabulary entries as learner-useful terms, with English glosses and lightweight grammatical metadata.",
       "entriesCount": 631,
@@ -1802,7 +1802,7 @@
   "prompts": [
     {
       "path": "japanese/japanese_sentences.prompt.json",
-      "modifiedAt": "2026-04-13T18:16:51.564Z",
+      "modifiedAt": "2026-05-17T03:25:58.404Z",
       "promptCount": 7,
       "valid": true,
       "validation": {
@@ -1812,7 +1812,7 @@
     },
     {
       "path": "japanese/japanese_songs.prompt.json",
-      "modifiedAt": "2026-03-31T03:16:51.772Z",
+      "modifiedAt": "2026-05-17T03:25:58.404Z",
       "promptCount": 5,
       "valid": true,
       "validation": {
@@ -1822,7 +1822,7 @@
     },
     {
       "path": "japanese/japanese_words.prompt.json",
-      "modifiedAt": "2026-04-13T18:16:51.563Z",
+      "modifiedAt": "2026-05-17T03:25:58.404Z",
       "promptCount": 6,
       "valid": true,
       "validation": {
@@ -1832,7 +1832,7 @@
     },
     {
       "path": "spanish/spanish_sentences.prompt.json",
-      "modifiedAt": "2026-04-13T18:21:11.755Z",
+      "modifiedAt": "2026-05-17T03:25:58.405Z",
       "promptCount": 7,
       "valid": true,
       "validation": {
@@ -1842,7 +1842,7 @@
     },
     {
       "path": "spanish/spanish_words.prompt.json",
-      "modifiedAt": "2026-04-13T18:21:11.754Z",
+      "modifiedAt": "2026-05-17T03:25:58.405Z",
       "promptCount": 5,
       "valid": true,
       "validation": {

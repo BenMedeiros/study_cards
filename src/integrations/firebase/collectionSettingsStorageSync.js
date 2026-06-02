@@ -1,18 +1,17 @@
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js';
-
-import { firebaseAuth, firebaseStorage } from './firebaseApp.js';
+import { assertFirebaseSyncEnabled } from './config.js';
 import { createCompressedCollectionSettingsSnapshot } from './collectionSettingsSnapshot.js';
 
-function requireSignedInUser() {
-  const user = firebaseAuth.currentUser;
+async function loadFirebaseStorageApi() {
+  assertFirebaseSyncEnabled();
+  const [api, app] = await Promise.all([
+    import('https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js'),
+    import('./firebaseApp.js'),
+  ]);
+  const user = app.firebaseAuth.currentUser;
   if (!user?.uid) {
     throw new Error('A signed-in Firebase user is required to upload collection settings');
   }
-  return user;
+  return { api, storage: app.firebaseStorage, user };
 }
 
 export function buildCollectionSettingsSnapshotPath(uid) {
@@ -22,10 +21,10 @@ export function buildCollectionSettingsSnapshotPath(uid) {
 }
 
 export async function uploadCollectionSettingsSnapshot({ path = null, metadata = null } = {}) {
-  const user = requireSignedInUser();
+  const { api, storage, user } = await loadFirebaseStorageApi();
   const payload = await createCompressedCollectionSettingsSnapshot();
   const objectPath = path || buildCollectionSettingsSnapshotPath(user.uid);
-  const storageRef = ref(firebaseStorage, objectPath);
+  const storageRef = api.ref(storage, objectPath);
   const uploadMetadata = {
     contentType: payload.contentType,
     cacheControl: 'no-store',
@@ -39,8 +38,8 @@ export async function uploadCollectionSettingsSnapshot({ path = null, metadata =
       ...(metadata && typeof metadata === 'object' ? metadata : {}),
     },
   };
-  const result = await uploadBytes(storageRef, payload.gzipBlob, uploadMetadata);
-  const downloadURL = await getDownloadURL(result.ref);
+  const result = await api.uploadBytes(storageRef, payload.gzipBlob, uploadMetadata);
+  const downloadURL = await api.getDownloadURL(result.ref);
   return {
     path: objectPath,
     downloadURL,

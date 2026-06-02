@@ -11,6 +11,7 @@ const DEFAULT_VIEW = {
   relatedFields: {},
   displayCards: 'all',
   headerTools: {},
+  cardSets: {},
   cards: {},
   speech: {},
 };
@@ -579,12 +580,40 @@ function _validateHeaderTools(config) {
   }
 }
 
+function _validateCardSets(config) {
+  if (!config || typeof config !== 'object' || Array.isArray(config)) throw new Error('cardSets must be an object');
+  if (Object.prototype.hasOwnProperty.call(config, 'enabled') && typeof config.enabled !== 'boolean') {
+    throw new Error('cardSets.enabled must be boolean');
+  }
+  if (Object.prototype.hasOwnProperty.call(config, 'activeSetIndex')) {
+    const n = Number(config.activeSetIndex);
+    if (!Number.isInteger(n) || n < 0) throw new Error('cardSets.activeSetIndex must be an integer >= 0');
+  }
+  if (Object.prototype.hasOwnProperty.call(config, 'splitMode')) {
+    const value = String(config.splitMode || '').trim();
+    if (!['setCount', 'cardsPerSet'].includes(value)) throw new Error('cardSets.splitMode must be "setCount" or "cardsPerSet"');
+  }
+  for (const key of ['setCount', 'cardsPerSet']) {
+    if (!Object.prototype.hasOwnProperty.call(config, key)) continue;
+    const n = Number(config[key]);
+    if (!Number.isInteger(n) || n < 1) throw new Error(`cardSets.${key} must be an integer >= 1`);
+  }
+  if (Object.prototype.hasOwnProperty.call(config, 'sortMode')) {
+    const value = String(config.sortMode || '').trim();
+    if (!['current', 'field', 'likeness'].includes(value)) throw new Error('cardSets.sortMode must be "current", "field", or "likeness"');
+  }
+  if (Object.prototype.hasOwnProperty.call(config, 'sortField') && typeof config.sortField !== 'string') {
+    throw new Error('cardSets.sortField must be a string');
+  }
+}
+
 function create(collKey) {
   const collectionDefaults = getDefaultViewForCollection(collKey);
   const validators = {
     displayCards: (v) => _validateDisplayCards(v),
     entryFields: (v, collection) => _validateEntryFields(v, collection),
     headerTools: (v) => _validateHeaderTools(v),
+    cardSets: (v) => _validateCardSets(v),
     cards: (v, collection) => _validateCards(v, collection),
     speech: (v) => {
       if (!v || typeof v !== 'object' || Array.isArray(v)) throw new Error('speech must be an object');
