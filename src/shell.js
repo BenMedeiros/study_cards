@@ -5,6 +5,7 @@ import { parseHashRoute } from './utils/browser/helpers.js';
 import { renderData } from './views/dataView/dataView.js';
 import { renderKanjiStudyCard } from './views/kanjiStudyCardView/kanjiStudyCardView.js';
 import { renderEntityExplorer } from './views/entityExplorerView/entityExplorerView.js';
+import { renderJapaneseStudyPage } from './pages/japaneseStudyPage/japaneseStudyPage.js';
 import { createCollectionBrowserDropdown } from './components/shell/collectionBrowser.js';
 import { openRightClickMenu, registerRightClickContext } from './components/shared/rightClickMenu.js';
 import { createShellTitleContextMenu } from './components/shell/shellTitleContextMenu.js';
@@ -440,7 +441,7 @@ export function createAppShell({ store, onNavigate }) {
   // Study time tracking (app x collection)
   let activeStudySession = null;
   let activeRoutePathname = null;
-  const cachedRoutePaths = new Set(['/kanji', '/data', '/explorer', '/study-manager', '/collections', '/manage-collections']);
+  const cachedRoutePaths = new Set(['/kanji', '/japanese-study', '/data', '/explorer', '/study-manager', '/collections', '/manage-collections']);
   const cachedRouteMounts = new Map();
 
   function forEachLifecycleNode(root, fn) {
@@ -505,6 +506,7 @@ export function createAppShell({ store, onNavigate }) {
     const p = String(pathname || '').trim();
     if (!p) return null;
     if (p === '/kanji') return 'kanji';
+    if (p === '/japanese-study') return 'japanese-study';
     if (p === '/explorer') return 'explorer';
     if (p === '/data') return 'data';
     if (p === '/collections') return 'collections';
@@ -657,6 +659,7 @@ export function createAppShell({ store, onNavigate }) {
 
     const links = [
       { href: '#/kanji', label: 'Kanji Study' },
+      { href: '#/japanese-study', label: 'Japanese Study' },
       { href: '#/data', label: 'Data' },
       { href: '#/study-manager', label: 'Study Manager' },
       { href: '#/collections', label: 'Collections' },
@@ -721,6 +724,15 @@ export function createAppShell({ store, onNavigate }) {
       if (route.pathname === '/kanji') {
         try { console.info(cachedRouteMounts.has('/kanji') ? 'shell.renderRoute /kanji cache hit' : 'shell.renderRoute /kanji cache miss'); } catch (e) {}
         const mount = getCachedRouteMount('/kanji', () => timed('view.renderKanjiStudyCard', () => renderKanjiStudyCard({ store })));
+        mount.hidden = false;
+        mount.style.display = '';
+        updateCachedRouteMount(mount, route);
+        activateCachedRouteMount(mount);
+        return;
+      }
+      if (route.pathname === '/japanese-study') {
+        try { console.info(cachedRouteMounts.has('/japanese-study') ? 'shell.renderRoute /japanese-study cache hit' : 'shell.renderRoute /japanese-study cache miss'); } catch (e) {}
+        const mount = getCachedRouteMount('/japanese-study', () => timed('page.renderJapaneseStudyPage', () => renderJapaneseStudyPage({ store })));
         mount.hidden = false;
         mount.style.display = '';
         updateCachedRouteMount(mount, route);
