@@ -1,0 +1,239 @@
+.japanese-study-page {
+  min-height: calc(100dvh - var(--shell-header-height, 0px) - var(--shell-footer-height, 0px));
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  overflow: hidden;
+}
+
+.japanese-study-top,
+.japanese-study-set-bar,
+.japanese-study-card,
+.japanese-study-footer,
+.japanese-study-empty {
+  width: min(100%, 48rem);
+  margin: 0 auto;
+}
+
+.japanese-study-top {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.japanese-study-title-wrap h1 {
+  margin: 0;
+  font-size: clamp(1.35rem, 8vw, 2.2rem);
+  line-height: 1;
+}
+
+.japanese-study-title-wrap p {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: var(--font-size-sm);
+}
+
+.japanese-study-field {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--muted);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.japanese-study-field input,
+.japanese-study-field select {
+  min-height: 2.5rem;
+  width: 100%;
+  border: var(--border-1);
+  border-radius: 0.75rem;
+  background: var(--surface-field);
+  color: var(--text);
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.japanese-study-set-bar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  border: var(--border-1);
+  border-radius: 1rem;
+  background: var(--surface-card);
+}
+
+.japanese-study-set-summary {
+  color: var(--muted);
+  font-size: var(--font-size-sm);
+}
+
+.japanese-study-set-details {
+  border-top: var(--border-1);
+  padding-top: 0.6rem;
+}
+
+.japanese-study-set-details summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.japanese-study-set-form {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.7rem;
+}
+
+.japanese-study-card {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(8rem, 1fr) auto;
+  gap: 1rem;
+  align-content: stretch;
+  overflow: auto;
+  border: var(--border-1);
+  border-radius: 1.25rem;
+  background: linear-gradient(180deg, var(--surface-card), var(--surface-card-muted));
+  padding: clamp(1rem, 5vw, 1.5rem);
+  box-shadow: var(--shadow-accent-soft);
+}
+
+.japanese-study-progress {
+  justify-self: end;
+  color: var(--muted);
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+}
+
+.japanese-study-prompt {
+  display: grid;
+  gap: 0.65rem;
+  place-items: center;
+  text-align: center;
+  min-height: 9rem;
+}
+
+.japanese-study-prompt-label,
+.japanese-study-card-label {
+  color: var(--muted);
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.japanese-study-prompt-value {
+  font-size: clamp(2.4rem, 17vw, 5rem);
+  line-height: 1.08;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.japanese-study-card[data-mode="english"] .japanese-study-prompt-value {
+  font-size: clamp(1.7rem, 10vw, 3rem);
+}
+
+.japanese-study-answer {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.japanese-study-card-line {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.7rem 0;
+  border-top: var(--border-1);
+}
+
+.japanese-study-card-value {
+  font-size: clamp(1.05rem, 5vw, 1.45rem);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.japanese-study-card-line.kanji .japanese-study-card-value,
+.japanese-study-card-line.reading .japanese-study-card-value {
+  font-size: clamp(1.35rem, 8vw, 2.2rem);
+  font-weight: 800;
+}
+
+.japanese-study-footer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  padding-bottom: max(0.25rem, env(safe-area-inset-bottom));
+}
+
+.japanese-study-button {
+  min-height: 3rem;
+  border: var(--border-1);
+  border-radius: 999px;
+  background: var(--surface-field-strong);
+  color: var(--text);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.japanese-study-button.primary {
+  background: var(--accent-bg-strong);
+  border-color: var(--accent-border-strong);
+  color: var(--accent);
+}
+
+.japanese-study-button.danger {
+  background: var(--status-danger-bg);
+  border-color: var(--status-danger-border-soft);
+  color: var(--status-danger-text-soft);
+}
+
+.japanese-study-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.japanese-study-empty {
+  display: grid;
+  place-items: center;
+  min-height: 14rem;
+  border: var(--border-1);
+  border-radius: 1rem;
+  background: var(--surface-card);
+  color: var(--muted);
+  padding: 1rem;
+  text-align: center;
+}
+
+@media (min-width: 720px) {
+  .japanese-study-page {
+    padding: 1rem;
+  }
+
+  .japanese-study-top {
+    grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
+  }
+
+  .japanese-study-set-bar {
+    grid-template-columns: minmax(12rem, 18rem) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .japanese-study-set-details {
+    grid-column: 1 / -1;
+  }
+
+  .japanese-study-set-form {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: end;
+  }
+
+  .japanese-study-footer {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
